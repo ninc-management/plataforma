@@ -48,13 +48,14 @@ jobs:
       if: branch = master
       script: 'curl http://nortan-dev.herokuapp.com'
     - stage: 'Deploy to Staging'
-      if: branch = production
+      if: branch = production OR branch = demo
       script: skip
       deploy: &heroku
         provider: heroku
         skip_cleanup: true
         app:
           production: nortan-demo
+          demo: nortan-demo
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
         strategy: git
