@@ -10,6 +10,7 @@ branches:
   only:
     - master
     - production
+    - demo
 
 addons:
   apt:
@@ -24,19 +25,46 @@ before_install:
 install:
   - travis_retry npm i
 
-before_script:
-
-script:
-  - npm run lint:styles
-  - npm run build:prod
-
-deploy:
-  provider: heroku
-  api_key:
-    secure: CxQcs/Kf69CCo/cOyWNRyqFGoF/5TCgU80s7GlWkZQEuq6dLe6Ed4r8SKhBzvCnCWVwfBGc38pXBDUgrTTBoKA1ssRgFSUbGzBDZBjNgy6UfFlrXibsWTbawbNQBgubR9ZFb2r+nXEM6uOLFd3o1fkF7n3cM8vXjvk8w/Eo4GrYt4ug83z13MBQ7DzkbR2Q8K+Titv5bgGPfNZRhw1FA2C6e+kFtp0KDIAoS+tYEqqZOAQZYUT0KhZaljDuwvAASOx32irpzoAyxPmDZoQPVHJHbPBFeAJoV2SUGkDRVQcIeDHYiL6KBRhXJPu7Z9Mqi88G1GQCo5ZV4x/ngwJ4xwgEdWk5A5PoeQbcFjBxt6gamU0jeiL5zNEYhnVjYLZk/oFQnWmN0WADkR+6KyOdySVoC/3xlTayBFuRAgMsl1bBQb4hH/L2PU7DLOOhguTalZcHehmSyLt2soCG6kbXslFf7HD6cAoc1hRtub5xKnl7LKSA9xUQasb1CditcpNL1okOxgsLDFqky7kJn1b1T0tnKdAQ6AcF2ljsVb8fYAoJnmnUd3u6MuSFEsjQowhX12a89XDKZgqt+KWrwjCmuM725kcYqpr86QhPJJ4IwMlCkapemhgaUFqFBzTekAT/Ei+tnlaG3xhQI8lKF7nP/cOOdjwRnTsOCaheU9cDRp60=
-  app:
-    master: nortan-dev
-    production: nortan
-
 git:
   depth: 1
+
+jobs:
+  include:
+    - stage: 'Lint and Build Test'
+      script: 'npm run lint:style'
+      name: 'Lint'
+    - script: 'npm run build'
+      name: 'Build'
+    - stage: 'Deploy to Dev'
+      if: branch = master
+      script: skip
+      deploy: &heroku
+        provider: heroku
+        app:
+          master: nortan-dev
+        api_key: $HEROKU_AUTH_TOKEN
+    - stage: 'Test Dev'
+      if: branch = master
+      script: 'curl http://nortan-dev.herokuapp.com'
+    - stage: 'Deploy to Staging'
+      if: branch = production
+      script: skip
+      deploy: &heroku
+        provider: heroku
+        app:
+          production: nortan-demo
+        api_key: $HEROKU_AUTH_TOKEN
+    - stage: 'Test Staging'
+      if: branch = production
+      script: 'curl http://nortan-demo.herokuapp.com'
+    - stage: 'Deploy to Production'
+      if: branch = production
+      script: skip
+      deploy:
+        <<: *heroku
+        on: production
+        app:
+          production: nortan
+    - stage: 'Test Production'
+      if: branch = production
+      script: 'curl http://nortan.herokuapp.com'
