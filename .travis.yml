@@ -30,16 +30,15 @@ git:
 
 jobs:
   include:
-    - stage: 'Lint and Build Test'
+    - stage: 'Lint Test'
       script: 'npm run lint:ci'
       name: 'Lint'
-    - script: 'npm run build'
-      name: 'Build'
     - stage: 'Deploy to Dev'
       if: branch = master
       script: skip
       deploy: &heroku
         provider: heroku
+        skip_cleanup: true
         app:
           master: nortan-dev
         api_key: $HEROKU_AUTH_TOKEN
@@ -53,6 +52,7 @@ jobs:
       script: skip
       deploy: &heroku
         provider: heroku
+        skip_cleanup: true
         app:
           production: nortan-demo
         api_key: $HEROKU_AUTH_TOKEN
