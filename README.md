@@ -1,10 +1,11 @@
-# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![Build Status](https://travis-ci.com/nortan-projetos/plataforma.svg?branch=master)](https://travis-ci.com/nortan-projetos/plataforma) [![Dependency Status](https://david-dm.org/nortan-projetos/plataforma/status.svg)](https://david-dm.org/nortan-projetos/plataforma) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/master/LICENSE)
+# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) D:[![Build Status](https://travis-ci.com/nortan-projetos/plataforma.svg?branch=master)](https://travis-ci.com/nortan-projetos/plataforma) T:[![Build Status](https://travis-ci.com/nortan-projetos/plataforma.svg?branch=demo)](https://travis-ci.com/nortan-projetos/plataforma) P:[![Build Status](https://travis-ci.com/nortan-projetos/plataforma.svg?branch=production)](https://travis-ci.com/nortan-projetos/plataforma) [![Dependency Status](https://david-dm.org/nortan-projetos/plataforma/status.svg)](https://david-dm.org/nortan-projetos/plataforma) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/master/LICENSE)
 
 ## Akveo Template Demo
 
 <a target="_blank" href="http://akveo.com/ngx-admin/">Temaplate Live Demo</a>
 
 ## BrowserStack
+
 This project runs its tests on multiple desktop and mobile browsers using [BrowserStack](http://www.browserstack.com).
 
 <img src="https://cloud.githubusercontent.com/assets/131406/22254249/534d889e-e254-11e6-8427-a759fb23b7bd.png" height="40" />

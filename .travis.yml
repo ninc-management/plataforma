@@ -30,9 +30,6 @@ git:
 
 jobs:
   include:
-    - stage: 'Lint Test'
-      script: 'npm run lint:ci'
-      name: 'Lint'
     - stage: 'Deploy to Dev'
       if: branch = master
       script: skip
@@ -44,8 +41,6 @@ jobs:
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
         strategy: git
-    - stage: 'Test Dev'
-      if: branch = master
       script: 'curl http://nortan-dev.herokuapp.com'
     - stage: 'Deploy to Staging'
       if: branch = production OR branch = demo
@@ -59,9 +54,6 @@ jobs:
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
         strategy: git
-    - stage: 'Test Staging'
-      if: branch = production
-      script: 'curl http://nortan-demo.herokuapp.com'
     - stage: 'Deploy to Production'
       if: branch = production
       script: skip
@@ -70,6 +62,3 @@ jobs:
         on: production
         app:
           production: nortan
-    - stage: 'Test Production'
-      if: branch = production
-      script: 'curl http://nortan.herokuapp.com'
