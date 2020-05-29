@@ -1,0 +1,46 @@
+{
+  "fullName": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 80
+  },
+  "cpf": {
+    "required": true,
+    "minLength": 15,
+    "maxLength": 15
+  },
+  "phone": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 15
+  },
+  "state": {
+    "required": true
+  },
+  "city": {
+    "required": true
+  },
+  "education": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 500
+  },
+  "interests": {
+    "required": true
+  },
+  "email": {
+    "required": true
+  },
+  "password": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 50
+  },
+  "meet": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 240
+  },
+  "more": true,
+  "terms": false
+}

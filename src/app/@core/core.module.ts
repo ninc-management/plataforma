@@ -1,6 +1,15 @@
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import {
+  ModuleWithProviders,
+  NgModule,
+  Optional,
+  SkipSelf,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
+import {
+  NbAuthModule,
+  NbPasswordAuthStrategy,
+  NbAuthJWTToken,
+} from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
@@ -28,9 +37,7 @@ const socialLinks = [
   },
 ];
 
-const DATA_SERVICES = [
-  { provide: UserData, useClass: UserService },
-];
+const DATA_SERVICES = [{ provide: UserData, useClass: UserService }];
 
 export class NbSimpleRoleProvider extends NbRoleProvider {
   getRole() {
@@ -43,19 +50,38 @@ export const NB_CORE_PROVIDERS = [
   ...MockDataModule.forRoot().providers,
   ...DATA_SERVICES,
   ...NbAuthModule.forRoot({
-
     strategies: [
-      NbDummyAuthStrategy.setup({
+      NbPasswordAuthStrategy.setup({
         name: 'email',
-        delay: 3000,
+        token: {
+          key: 'token',
+          class: NbAuthJWTToken,
+        },
+        login: {
+          defaultErrors: [
+            'Os dados de acesso não estão corretos, por favor tente novamente.',
+          ],
+          defaultMessages: ['Sessão iniciada com sucesso.'],
+        },
+        register: {
+          defaultErrors: [
+            'Email já cadastrado. Faça o acesso ao sistema utilizando este email.',
+          ],
+          defaultMessages: ['Cadastro realizado com sucesso.'],
+        },
+        logout: {
+          defaultErrors: ['Algo deu errado, tente novamente.'],
+          defaultMessages: ['Sessão encerrada com sucesso.'],
+        },
       }),
     ],
     forms: {
       login: {
-        socialLinks: socialLinks,
+        socialLinks: [],
       },
       register: {
-        socialLinks: socialLinks,
+        terms: false,
+        socialLinks: [],
       },
     },
   }).providers,
@@ -75,18 +101,15 @@ export const NB_CORE_PROVIDERS = [
   }).providers,
 
   {
-    provide: NbRoleProvider, useClass: NbSimpleRoleProvider,
+    provide: NbRoleProvider,
+    useClass: NbSimpleRoleProvider,
   },
   AnalyticsService,
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-  ],
-  exports: [
-    NbAuthModule,
-  ],
+  imports: [CommonModule],
+  exports: [NbAuthModule],
   declarations: [],
 })
 export class CoreModule {
@@ -97,9 +120,7 @@ export class CoreModule {
   static forRoot(): ModuleWithProviders<CoreModule> {
     return {
       ngModule: CoreModule,
-      providers: [
-        ...NB_CORE_PROVIDERS,
-      ],
+      providers: [...NB_CORE_PROVIDERS],
     };
   }
 }

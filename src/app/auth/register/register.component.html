@@ -1,0 +1,460 @@
+<h1 id="title" class="title">Pré-Cadastro</h1>
+
+<nb-alert
+  *ngIf="showMessages.error && errors?.length && !submitted"
+  outline="danger"
+  role="alert"
+>
+  <p class="alert-title"><b>Oh não!</b></p>
+  <ul class="alert-message-list">
+    <li *ngFor="let error of errors" class="alert-message">{{ error }}</li>
+  </ul>
+</nb-alert>
+
+<nb-alert
+  *ngIf="showMessages.success && messages?.length && !submitted"
+  outline="success"
+  role="alert"
+>
+  <p class="alert-title"><b>Deu tudo certo!</b></p>
+  <ul class="alert-message-list">
+    <li *ngFor="let message of messages" class="alert-message">
+      {{ message }}
+    </li>
+  </ul>
+</nb-alert>
+
+<form (ngSubmit)="register()" #form="ngForm" aria-labelledby="title">
+  <div class="form-control-group">
+    <label class="label" for="input-name">Nome completo:</label>
+    <input
+      nbInput
+      [(ngModel)]="user.fullName"
+      #fullName="ngModel"
+      id="input-name"
+      name="fullName"
+      placeholder="Nome completo"
+      autofocus
+      fullWidth
+      fieldSize="large"
+      [required]="validation.fullName.required"
+      [minlength]="validation.fullName.minLength"
+      [maxlength]="validation.fullName.maxLength"
+      [status]="
+        fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
+    />
+    <ng-container *ngIf="fullName.invalid && fullName.touched">
+      <p class="caption status-danger" *ngIf="fullName.errors?.required">
+        O nome é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength"
+      >
+        O nome deve conter entre
+        {{ validation.fullName.minLength }} a
+        {{ validation.fullName.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-email">Melhor email para contato:</label>
+    <input
+      nbInput
+      [(ngModel)]="user.email"
+      #email="ngModel"
+      id="input-email"
+      name="email"
+      pattern=".+@.+\..+"
+      placeholder="Endereço de email"
+      fullWidth
+      fieldSize="large"
+      [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
+      [required]="validation.email.required"
+      [attr.aria-invalid]="email.invalid && email.touched ? true : null"
+    />
+    <ng-container *ngIf="email.invalid && email.touched">
+      <p class="caption status-danger" *ngIf="email.errors?.required">
+        O email é obrigatório!
+      </p>
+      <p class="caption status-danger" *ngIf="email.errors?.pattern">
+        Digite um email válido!
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-phone">Telefone para contato:</label>
+    <input
+      nbInput
+      [(ngModel)]="user.phone"
+      #phone="ngModel"
+      id="input-phone"
+      name="phone"
+      placeholder="Telefone com DDD"
+      fullWidth
+      fieldSize="large"
+      [brmasker]="{ phone: true }"
+      [required]="validation.phone.required"
+      [minlength]="validation.phone.minLength"
+      [maxlength]="validation.phone.maxLength"
+      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
+    />
+    <ng-container *ngIf="phone.invalid && phone.touched">
+      <p class="caption status-danger" *ngIf="phone.errors?.required">
+        O telefone é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="phone.errors?.minlength || phone.errors?.maxlength"
+      >
+        O telefone deve conter entre
+        {{ validation.phone.minLength - 4 }} a
+        {{ validation.phone.maxLength - 4 }}
+        números
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-state">Estado:</label>
+        <nb-select
+          [(ngModel)]="user.state"
+          #state="ngModel"
+          id="input-state"
+          name="state"
+          placeholder="Selecione o estado"
+          fullWidth
+          [required]="validation.state.required"
+          [status]="
+            state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="state.invalid && state.touched ? true : null"
+          (selectedChange)="buildCityList(state.value)"
+        >
+          <nb-option *ngFor="let state of states" [value]="state">
+            {{ state }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-city">Cidade:</label>
+        <nb-select
+          [(ngModel)]="user.city"
+          #city="ngModel"
+          id="input-city"
+          name="city"
+          placeholder="Selecione a cidade"
+          fullWidth
+          [required]="validation.city.required"
+          [status]="
+            city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="city.invalid && city.touched ? true : null"
+        >
+          <nb-option *ngFor="let city of cities" [value]="city">
+            {{ city }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-education">Formação:</label>
+    <textarea
+      nbInput
+      [(ngModel)]="user.education"
+      #education="ngModel"
+      id="input-education"
+      name="education"
+      placeholder="Descreva sua formação"
+      fullWidth
+      fieldSize="large"
+      [required]="validation.education.required"
+      [minlength]="validation.education.minLength"
+      [maxlength]="validation.education.maxLength"
+      [status]="
+        education.dirty ? (education.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [attr.aria-invalid]="education.invalid && education.touched ? true : null"
+    ></textarea>
+    <ng-container *ngIf="education.invalid && education.touched">
+      <p class="caption status-danger" *ngIf="education.errors?.required">
+        A formação é obrigatória!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="education.errors?.minlength || education.errors?.maxlength"
+      >
+        A formação deve conter entre
+        {{ validation.education.minLength }} a
+        {{ validation.education.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-interests">Interesse em atuar em:</label>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-control-group">
+          <nb-checkbox
+            [(ngModel)]="user.arquitetura"
+            #arquitetura="ngModel"
+            name="arquitetura"
+            value="false"
+            [status]="arquitetura.value ? 'success' : 'basic'"
+            >Arquitetura</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.design"
+            #design="ngModel"
+            name="design"
+            value="false"
+            [status]="design.value ? 'success' : 'basic'"
+            >Design de Interiores</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.civil"
+            #civil="ngModel"
+            name="civil"
+            value="false"
+            [status]="civil.value ? 'success' : 'basic'"
+            >Engenharia Civil</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.eletrica"
+            #eletrica="ngModel"
+            name="eletrica"
+            value="false"
+            [status]="eletrica.value ? 'success' : 'basic'"
+            >Engenharia Elétrica</nb-checkbox
+          >
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-control-group">
+          <nb-checkbox
+            [(ngModel)]="user.sanitaria"
+            #sanitaria="ngModel"
+            name="sanitaria"
+            value="false"
+            [status]="sanitaria.value ? 'success' : 'basic'"
+            >Engenharia Sanitária</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.impermeabilizacao"
+            #impermeabilizacao="ngModel"
+            name="impermeabilizacao"
+            value="false"
+            [status]="impermeabilizacao.value ? 'success' : 'basic'"
+            >Impermeabilização</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.ambiental"
+            #ambiental="ngModel"
+            name="ambiental"
+            value="false"
+            [status]="ambiental.value ? 'success' : 'basic'"
+            >Engenharia Ambiental</nb-checkbox
+          ><br />
+          <nb-checkbox
+            [(ngModel)]="user.hidrico"
+            #hidrico="ngModel"
+            name="hidrico"
+            value="false"
+            [status]="hidrico.value ? 'success' : 'basic'"
+            >Recursos Hídricos</nb-checkbox
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-password">Senha:</label>
+    <input
+      nbInput
+      [(ngModel)]="user.password"
+      #password="ngModel"
+      type="password"
+      id="input-password"
+      name="password"
+      placeholder="Senha"
+      fullWidth
+      fieldSize="large"
+      [status]="
+        password.dirty ? (password.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [required]="validation.password.required"
+      [minlength]="validation.password.minLength"
+      [maxlength]="validation.password.maxLength"
+      [attr.aria-invalid]="password.invalid && password.touched ? true : null"
+    />
+    <ng-container *ngIf="password.invalid && password.touched">
+      <p class="caption status-danger" *ngIf="password.errors?.required">
+        A senha é obrigatória!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="password.errors?.minlength || password.errors?.maxlength"
+      >
+        A senha deve conter entre
+        {{ validation.password.minLength }} a
+        {{ validation.password.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-re-password">Repita a senha:</label>
+    <input
+      nbInput
+      [(ngModel)]="user.confirmPassword"
+      #rePass="ngModel"
+      type="password"
+      id="input-re-password"
+      name="rePass"
+      placeholder="Confirme a senha"
+      fullWidth
+      fieldSize="large"
+      [status]="
+        rePass.dirty ? (rePass.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [required]="validation.password.required"
+      [pattern]="password.value"
+      [attr.aria-invalid]="rePass.invalid && rePass.touched ? true : null"
+    />
+    <ng-container *ngIf="rePass.invalid && rePass.touched">
+      <p class="caption status-danger" *ngIf="rePass.errors?.required">
+        A confirmação de senha é obrigatória!
+      </p>
+      <p class="caption status-danger" *ngIf="rePass.errors?.pattern">
+        A senha não confere, redigite a senha.
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group accept-group" *ngIf="validation.more">
+    <nb-checkbox
+      [(ngModel)]="user.more"
+      #more="ngModel"
+      name="more"
+      [status]="more.value ? 'success' : 'basic'"
+    >
+      Quero saber mais
+    </nb-checkbox>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-meet"
+      >Melhor data e hora para reunião:</label
+    >
+    <textarea
+      nbInput
+      [(ngModel)]="user.meet"
+      #meet="ngModel"
+      id="input-meet"
+      name="meet"
+      placeholder="Escreva a melhor data e hora para reunião"
+      fullWidth
+      fieldSize="large"
+      [disabled]="!user.more"
+      [required]="validation.meet.required && user.more"
+      [minlength]="validation.meet.minLength"
+      [maxlength]="validation.meet.maxLength"
+      [status]="meet.dirty ? (meet.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="meet.invalid && meet.touched ? true : null"
+    ></textarea>
+    <ng-container *ngIf="meet.invalid && meet.touched">
+      <p class="caption status-danger" *ngIf="meet.errors?.required">
+        Esse detalhe é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="meet.errors?.minlength || meet.errors?.maxlength"
+      >
+        Os detalhes devem conter entre
+        {{ validation.meet.minLength }} a
+        {{ validation.meet.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group accept-group" *ngIf="validation.terms">
+    <nb-checkbox
+      name="terms"
+      [(ngModel)]="user.terms"
+      [required]="validation.terms"
+    >
+      Concordo com os
+      <a href="#" target="_blank"><strong>Termos e Condições</strong></a>
+    </nb-checkbox>
+  </div>
+
+  <button
+    nbButton
+    fullWidth
+    status="primary"
+    size="large"
+    [disabled]="submitted || !form.valid"
+    [class.btn-pulse]="submitted"
+  >
+    Registrar
+  </button>
+</form>
+
+<section
+  *ngIf="socialLinks && socialLinks.length > 0"
+  class="links"
+  aria-label="Social sign in"
+>
+  ou entre com:
+  <div class="socials">
+    <ng-container *ngFor="let socialLink of socialLinks">
+      <a
+        *ngIf="socialLink.link"
+        [routerLink]="socialLink.link"
+        [attr.target]="socialLink.target"
+        [attr.class]="socialLink.icon"
+        [class.with-icon]="socialLink.icon"
+      >
+        <nb-icon
+          *ngIf="socialLink.icon; else title"
+          [icon]="socialLink.icon"
+        ></nb-icon>
+        <ng-template #title>{{ socialLink.title }}</ng-template>
+      </a>
+      <a
+        *ngIf="socialLink.url"
+        [attr.href]="socialLink.url"
+        [attr.target]="socialLink.target"
+        [attr.class]="socialLink.icon"
+        [class.with-icon]="socialLink.icon"
+      >
+        <nb-icon
+          *ngIf="socialLink.icon; else title"
+          [icon]="socialLink.icon"
+        ></nb-icon>
+        <ng-template #title>{{ socialLink.title }}</ng-template>
+      </a>
+    </ng-container>
+  </div>
+</section>
+
+<section class="another-action" aria-label="Sign in">
+  Já possui uma conta? <a class="text-link" routerLink="../login">Entre</a>
+</section>
