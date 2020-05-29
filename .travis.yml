@@ -27,7 +27,7 @@ install:
 before_script:
 
 script:
-  - npm run lint:style
+  - npm run lint:styles
   - npm run build:prod
 
 git:
