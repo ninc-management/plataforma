@@ -92,7 +92,7 @@ export class BrMaskDirective implements OnInit {
         );
       }
     } else {
-      console.warn("Can't find parent FormGroup directive");
+      console.warn(`Can't find parent FormGroup directive`);
     }
     this.initialValue();
   }
@@ -493,7 +493,7 @@ export class BrMaskDirective implements OnInit {
    * @param {string} value
    */
   private thousand(value: string): string {
-    let val = value.replace(/\D/gi, '');
+    const val = value.replace(/\D/gi, '');
     const reverse = val.toString().split('').reverse().join('');
     const thousands = reverse.match(/\d{1,3}/g);
     if (thousands) {

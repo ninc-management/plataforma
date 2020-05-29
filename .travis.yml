@@ -31,7 +31,7 @@ git:
 jobs:
   include:
     - stage: 'Lint and Build Test'
-      script: 'npm run lint:style'
+      script: 'npm run lint:ci'
       name: 'Lint'
     - script: 'npm run build'
       name: 'Build'
