@@ -8,8 +8,8 @@ node_js:
 
 branches:
   only:
-  - master
-  - production
+    - master
+    - production
 
 addons:
   apt:
@@ -27,7 +27,7 @@ install:
 before_script:
 
 script:
-  - npm run lint:ci
+  - npm run lint:style
   - npm run build:prod
 
 git:
