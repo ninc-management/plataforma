@@ -19,6 +19,13 @@ export class NgxRegisterComponent extends NbRegisterComponent
     this.buildStateList();
   }
 
+  regexSanatizer(regex: string): string {
+    return regex.replace(
+      /[\\\^\$\.\|\?\*\+\(\)\[\{]/g,
+      (el) => "\\" + el
+    );
+  }
+
   buildStateList() {
     let states: string[] = [];
     for (const state of json_state_city.estados) {
