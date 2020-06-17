@@ -334,7 +334,7 @@
         rePass.dirty ? (rePass.invalid ? 'danger' : 'success') : 'basic'
       "
       [required]="validation.password.required"
-      [pattern]="regexSanatizer(password.value)"
+      [pattern]="password.value? regexSanatizer(password.value) : password.value"
       [attr.aria-invalid]="rePass.invalid && rePass.touched ? true : null"
     />
     <ng-container *ngIf="rePass.invalid && rePass.touched">
