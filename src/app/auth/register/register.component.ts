@@ -19,6 +19,14 @@ export class NgxRegisterComponent extends NbRegisterComponent
     this.buildStateList();
   }
 
+  register(): void {
+    // Remove existing token before register a new one
+    this.service.logout('email');
+    localStorage.clear();
+
+    super.register();
+  }
+
   regexSanatizer(regex: string): string {
     return regex.replace(
       /[\\\^\$\.\|\?\*\+\(\)\[\{]/g,
