@@ -64,6 +64,10 @@ export const NB_CORE_PROVIDERS = [
           defaultMessages: ['Sessão iniciada com sucesso.'],
         },
         register: {
+          redirect: {
+            success: '/externalRedirect?url=http://www.nortanprojetos.com',
+            failure: null,
+          },
           defaultErrors: [
             'Email já cadastrado. Faça o acesso ao sistema utilizando este email.',
           ],

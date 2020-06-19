@@ -2,6 +2,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 
 import { AuthGuard } from './shared/guards/auth.guard';
+import { RedirectGuard } from './shared/guards/redirect.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,11 @@ export const routes: Routes = [
     path: 'auth',
     loadChildren: () =>
       import('./auth/auth.module').then((m) => m.NgxAuthModule),
+  },
+  {
+    path: 'externalRedirect',
+    canActivate: [RedirectGuard],
+    component: RedirectGuard,
   },
   { path: '', redirectTo: 'pages', pathMatch: 'full' },
   { path: '**', redirectTo: 'pages' },
