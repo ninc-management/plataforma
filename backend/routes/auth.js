@@ -60,15 +60,7 @@ router.post('/login', (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return new Promise((resolve, reject) => {})
-          .then((state) => {
-            res.status(204).json({});
-          })
-          .catch((error) => {
-            res.status(401).json({
-              message: 'Email não cadastrado.',
-            });
-          });
+        throw new Error('Email não encontrado!');
       }
       fetchedUser = user;
       return bcrypt.compare(req.body.password, user.password);
@@ -76,7 +68,7 @@ router.post('/login', (req, res, next) => {
     .then((result) => {
       if (!result) {
         return res.status(401).json({
-          message: 'Senha não cadastrada.',
+          message: 'Senha não confere.',
         });
       }
       const token = jwt.sign(
@@ -90,7 +82,7 @@ router.post('/login', (req, res, next) => {
     })
     .catch((err) => {
       return res.status(401).json({
-        message: 'Erro na autenticação.',
+        message: 'Email não cadastrado.',
       });
     });
 });
