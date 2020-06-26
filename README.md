@@ -2,6 +2,40 @@
 
 ## Development: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=master)](https://travis-ci.org/nortan-projetos/plataforma) Stage: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=demo)](https://travis-ci.org/nortan-projetos/plataforma) Production: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=production)](https://travis-ci.org/nortan-projetos/plataforma)
 
+## How to Serve Locally
+
+To run this website locally, you need to install the dependencies following the instructions below:
+
+1. Install Node 12 or greater
+
+2. Install mongo server
+
+3. Go to project folder and install project dependencies
+
+```
+npm i
+```
+
+4. After install dependencies just start mongo server locally
+
+```
+mongod
+```
+
+5. Then start backend
+
+```
+npm run start:dev
+```
+
+5. Then start frontend
+
+```
+npm run ng serve -- --proxy-config proxy-config.json
+```
+
+6. Finally, Open a browser with this url: `localhost:4200`
+
 ## Akveo Template Demo
 
 <a target="_blank" href="http://akveo.com/ngx-admin/">Temaplate Live Demo</a>
