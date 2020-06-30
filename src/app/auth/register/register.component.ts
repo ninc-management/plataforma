@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { NbRegisterComponent } from '@nebular/auth';
+import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
+import {
+  NbRegisterComponent,
+  NbAuthService,
+  NB_AUTH_OPTIONS,
+} from '@nebular/auth';
 
-import * as json_state_city from '../../shared/state-city.json';
 import * as user_validation from '../../shared/user-validation.json';
+import { StatecityService } from '../../shared/services/statecity.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ngx-register',
@@ -15,8 +20,18 @@ export class NgxRegisterComponent extends NbRegisterComponent
   states: string[] = [];
   validation = (user_validation as any).default;
 
+  constructor(
+    private statecityService: StatecityService,
+    protected service: NbAuthService,
+    @Inject(NB_AUTH_OPTIONS) protected options = {},
+    protected cd: ChangeDetectorRef,
+    protected router: Router
+  ) {
+    super(service, options, cd, router);
+  }
+
   ngOnInit() {
-    this.buildStateList();
+    this.states = this.statecityService.buildStateList();
   }
 
   register(): void {
@@ -28,23 +43,11 @@ export class NgxRegisterComponent extends NbRegisterComponent
   }
 
   regexSanatizer(regex: string): string {
-    return regex.replace(
-      /[\\\^\$\.\|\?\*\+\(\)\[\{]/g,
-      (el) => "\\" + el
-    );
+    return regex.replace(/[\\\^\$\.\|\?\*\+\(\)\[\{]/g, (el) => '\\' + el);
   }
 
-  buildStateList() {
-    let states: string[] = [];
-    for (const state of json_state_city.estados) {
-      states.push(state.sigla);
-    }
-    this.states = states;
-  }
-
-  buildCityList(state: string) {
+  buildCityList(state: string): void {
     this.user.city = undefined;
-    let entry = json_state_city.estados.find((el) => el.sigla === state);
-    this.cities = entry.cidades;
+    this.cities = this.statecityService.buildCityList(state);
   }
 }
