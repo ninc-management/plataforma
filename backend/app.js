@@ -8,6 +8,7 @@ const helmet = require('helmet');
 // Import API endpoint routes
 const authRoutes = require('./routes/auth');
 const emailRoutes = require('./routes/email');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -40,5 +41,6 @@ app.get('/*', function (req, res) {
 // API endpoint routes
 app.use('/api/auth', authRoutes);
 app.use('/api/sendmail', emailRoutes);
+app.use('/api/user', userRoutes);
 
 module.exports = app;
