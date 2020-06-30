@@ -21,6 +21,7 @@ import { NgxLoginComponent } from './login/login.component';
 import { NgxLogoutComponent } from './logout/logout.component';
 import { NgxRegisterComponent } from './register/register.component';
 import { BrMaskDirective } from '../shared/directives/br-mask';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import { BrMaskDirective } from '../shared/directives/br-mask';
     NbCardModule,
     NbIconModule,
     NgxAuthRoutingModule,
+    SharedModule,
 
     NbAuthModule,
   ],
@@ -45,8 +47,6 @@ import { BrMaskDirective } from '../shared/directives/br-mask';
     NgxLoginComponent,
     NgxLogoutComponent,
     NgxRegisterComponent,
-    BrMaskDirective,
   ],
-  exports: [BrMaskDirective],
 })
 export class NgxAuthModule {}
