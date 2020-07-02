@@ -22,6 +22,7 @@ import {
   LayoutDirectionSwitcherComponent,
   SearchInputComponent,
   SwitcherComponent,
+  NbFileUploaderModule,
 } from './components';
 import {
   CapitalizePipe,
@@ -53,6 +54,7 @@ const NB_MODULES = [
   NbSelectModule,
   NbIconModule,
   NbEvaIconsModule,
+  NbFileUploaderModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,
@@ -86,7 +88,7 @@ export class ThemeModule {
           {
             name: 'default',
           },
-          [ DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME ],
+          [DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME]
         ).providers,
       ],
     };
