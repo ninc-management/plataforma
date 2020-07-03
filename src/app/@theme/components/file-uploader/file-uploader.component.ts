@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 
 import { NbFileUploaderService } from './file-uploader.service';
-import { NbFileUploaderOptions, NbFileItem } from './file-uploader.model';
+import { NbFileUploaderOptions } from './file-uploader.model';
 
 @Component({
   selector: 'nb-file-uploader',
@@ -23,6 +23,8 @@ import { NbFileUploaderOptions, NbFileItem } from './file-uploader.model';
   providers: [NbFileUploaderService],
 })
 export class NbFileUploaderComponent {
+  hasBaseDropZoneOver: boolean;
+
   @ViewChild('inputEl')
   inputEl: ElementRef;
 
@@ -32,6 +34,18 @@ export class NbFileUploaderComponent {
     directory: false,
     showUploadQueue: true,
   };
+
+  @Input()
+  isFileDrop: boolean;
+
+  @Input()
+  buttonLabel: string;
+
+  @Input()
+  dropAreaLabel: string;
+
+  @Input()
+  dropAreaFileChooserLabel: string;
 
   @Output()
   selectFile = new EventEmitter<File[]>();
@@ -48,11 +62,10 @@ export class NbFileUploaderComponent {
 
   onChange() {
     const files = this.inputEl.nativeElement.files;
-    const preparedFiles = this.getPreparedFiles(files);
-    this.uploader.uploadAll(preparedFiles, this.options);
+    this.uploader.uploadAll(files, this.options);
   }
 
-  private getPreparedFiles(files): NbFileItem[] {
-    return Array.from(files).map((file: File) => new NbFileItem(file));
+  fileOverBase(e: any): void {
+    this.hasBaseDropZoneOver = e;
   }
 }

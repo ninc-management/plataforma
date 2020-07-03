@@ -7,7 +7,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of as observableOf } from 'rxjs';
 
-import { NbFileUploaderOptions, NbFileItem } from './file-uploader.model';
+import {
+  NbFileUploaderOptions,
+  NbFileItem,
+  FilterFunction,
+} from './file-uploader.model';
 
 @Injectable()
 export class NbFileUploaderService {
@@ -17,7 +21,17 @@ export class NbFileUploaderService {
     return observableOf(this.uploadQueue);
   }
 
-  uploadAll(files: NbFileItem[], options: NbFileUploaderOptions) {
+  getPreparedFiles(files: FileList, filter: FilterFunction): NbFileItem[] {
+    if (filter) {
+      return Array.from(files)
+        .filter(filter.fn)
+        .map((file: File) => new NbFileItem(file));
+    }
+    return Array.from(files).map((file: File) => new NbFileItem(file));
+  }
+
+  uploadAll(fileList: FileList, options: NbFileUploaderOptions): void {
+    const files: NbFileItem[] = this.getPreparedFiles(fileList, options.filter);
     if (!files) {
       return;
     }

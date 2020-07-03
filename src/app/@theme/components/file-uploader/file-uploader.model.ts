@@ -4,6 +4,10 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
+export declare type FilterFunction = {
+  fn: (item?: File) => boolean;
+};
+
 export interface NbFileUploaderOptions {
   multiple?: boolean;
   directory?: boolean;
@@ -14,6 +18,7 @@ export interface NbFileUploaderOptions {
   headers?: { [key: string]: string };
 
   allowedFileTypes?: string[];
+  filter?: FilterFunction;
 }
 
 export class NbFileItem {

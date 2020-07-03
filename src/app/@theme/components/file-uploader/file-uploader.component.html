@@ -22,9 +22,37 @@
     />
   </ng-container>
 
-  <button nbButton status="primary" class="browse-button" (click)="browse()">
-    <i class="nb-arrow-thin-up"></i>
-    <span>Click to Upload</span>
+  <div
+    *ngIf="isFileDrop"
+    nbFileDrop
+    [ngClass]="{ 'nv-file-over': hasBaseDropZoneOver }"
+    [options]="options"
+    (fileOver)="fileOverBase($event)"
+    class="well my-drop-zone"
+    style="
+      text-align: center;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <p>
+      {{ dropAreaLabel }}
+      <b (click)="browse()" style="cursor: pointer;">{{
+        dropAreaFileChooserLabel
+      }}</b>
+    </p>
+  </div>
+
+  <button
+    *ngIf="!isFileDrop"
+    nbButton
+    status="primary"
+    class="browse-button"
+    (click)="browse()"
+  >
+    {{ buttonLabel }}
   </button>
 </div>
 

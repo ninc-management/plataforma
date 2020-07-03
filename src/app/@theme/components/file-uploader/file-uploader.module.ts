@@ -12,6 +12,7 @@ import { NbProgressBarModule, NbButtonModule } from '@nebular/theme';
 import { NbFileUploaderComponent } from './file-uploader.component';
 import { NbUploadQueueComponent } from './upload-queue.component';
 import { NbUploadQueueItemComponent } from './upload-queue-item.component';
+import { FileDropDirective } from './file-drop.directive';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { NbUploadQueueItemComponent } from './upload-queue-item.component';
     NbFileUploaderComponent,
     NbUploadQueueComponent,
     NbUploadQueueItemComponent,
+    FileDropDirective,
   ],
   exports: [
     NbFileUploaderComponent,
