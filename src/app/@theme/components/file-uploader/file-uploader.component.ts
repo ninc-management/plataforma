@@ -39,13 +39,13 @@ export class NbFileUploaderComponent {
   isFileDrop: boolean;
 
   @Input()
-  buttonLabel: string;
+  buttonLabel = 'Browse';
 
   @Input()
-  dropAreaLabel: string;
+  dropAreaLabel = 'Drag files here or';
 
   @Input()
-  dropAreaFileChooserLabel: string;
+  dropAreaFileChooserLabel = 'browse';
 
   @Output()
   selectFile = new EventEmitter<File[]>();
