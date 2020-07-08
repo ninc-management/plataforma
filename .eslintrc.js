@@ -42,7 +42,7 @@ module.exports = {
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/no-empty-function': 'warn',
     '@typescript-eslint/member-delimiter-style': [
-      'error',
+      'warn',
       {
         singleline: {
           delimiter: 'semi',
