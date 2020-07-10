@@ -8,6 +8,7 @@ import {
   NbInputModule,
   NbButtonModule,
   NbUserModule,
+  NbSpinnerModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../@theme/theme.module';
@@ -27,6 +28,7 @@ import { SharedModule } from '../shared/shared.module';
     NbMenuModule,
     NbInputModule,
     NbUserModule,
+    NbSpinnerModule,
     ThemeModule,
     DashboardModule,
     FormsModule,
