@@ -19,6 +19,7 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
   more: { type: Boolean },
   meet: { type: String },
+  profilePicture: { type: String },
 });
 
 userSchema.plugin(uniqueValidator);
