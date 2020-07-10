@@ -13,7 +13,6 @@ export interface NbFileUploaderOptions {
   directory?: boolean;
   showUploadQueue?: boolean;
 
-  url?: string;
   params?: { [key: string]: string };
   headers?: { [key: string]: string };
 
@@ -28,6 +27,7 @@ export class NbFileItem {
   progress: number = 0;
   size: number;
   type: string;
+  url: string;
 
   isUploading: boolean = false;
   isUploaded: boolean = false;
@@ -41,10 +41,11 @@ export class NbFileItem {
     this.lastModified = file.lastModified;
     this.size = file.size;
     this.type = file.type;
+    this.url = undefined;
   }
 
   onProgress(progress: number) {
-    this.progress = progress;
+    this.progress = Math.round(progress);
   }
 
   onBeforeUpload() {

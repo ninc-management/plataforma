@@ -5,16 +5,17 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'nb-upload-queue-item',
   template: `
     <span class="file-item-caption">
-      <span>{{ item.name }}</span>
-      <span class="file-progress">{{ item.progress + '%' }}</span>
+      <span>{{ item.getValue().name }}</span>
+      <span class="file-progress">{{ item.getValue().progress + '%' }}</span>
     </span>
     <nb-progress-bar
-      [value]="item.progress"
+      [value]="item.getValue().progress"
       [status]="status"
     ></nb-progress-bar>
   `,
@@ -22,16 +23,16 @@ import { Component, Input } from '@angular/core';
 })
 export class NbUploadQueueItemComponent {
   @Input()
-  item: any;
+  item: BehaviorSubject<any>;
 
   get status(): string {
-    if (this.item.progress <= 25) {
+    if (this.item.getValue().progress <= 25) {
       return 'danger';
     }
-    if (this.item.progress <= 50) {
+    if (this.item.getValue().progress <= 50) {
       return 'warning';
     }
-    if (this.item.progress <= 75) {
+    if (this.item.getValue().progress <= 75) {
       return 'info';
     }
     return 'success';
