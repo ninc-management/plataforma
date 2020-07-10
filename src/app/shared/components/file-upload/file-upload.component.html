@@ -1,0 +1,24 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{ width: windowWidth() + 'px' }"
+>
+  <div class="col-md-8">
+    <nb-card>
+      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-body>
+        <nb-file-uploader
+          [options]="options"
+          [isFileDrop]="true"
+          (filesList)="urlReceiver($event)"
+          dropAreaLabel="Arraste seu arquivo de imagem aqui ou"
+          dropAreaFileChooserLabel="ecolha um"
+        ></nb-file-uploader>
+      </nb-card-body>
+      <nb-card-footer>
+        <button nbButton status="danger" (click)="dismiss()">
+          Fechar
+        </button>
+      </nb-card-footer>
+    </nb-card>
+  </div>
+</div>
