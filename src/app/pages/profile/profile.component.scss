@@ -1,4 +1,25 @@
+@import '../../@theme/styles/themes';
+
 input:disabled,
 textarea:disabled {
-  color: #222b45 !important;
+  color: nb-theme(text-basic-color) !important;
+}
+
+:host {
+  .profile-picture .user-picture {
+    font-size: 0.9375rem !important;
+    line-height: 1.25rem !important;
+    height: 4rem !important;
+    width: 4rem !important;
+  }
+  nb-user.size-wide {
+    .user-picture {
+      height: 4rem !important;
+      width: 4rem !important;
+    }
+    .initials {
+      font-size: 0.9375rem !important;
+      line-height: 1.25rem !important;
+    }
+  }
 }
