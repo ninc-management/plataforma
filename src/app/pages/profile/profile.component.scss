@@ -1,11 +1,13 @@
 @import '../../@theme/styles/themes';
 
-input:disabled,
-textarea:disabled {
-  color: nb-theme(text-basic-color) !important;
+@include nb-install-component {
+  --checkbox-basic-disabled-text-color: nb-theme(checkbox-basic-text-color);
+  --input-basic-disabled-text-color: nb-theme(text-basic-color);
+  --select-outline-basic-disabled-text-color: nb-theme(text-basic-color);
 }
 
 :host {
+  // Alterações no tamanho da foto de perfil
   .profile-picture .user-picture {
     font-size: 0.9375rem !important;
     line-height: 1.25rem !important;
