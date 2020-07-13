@@ -16,10 +16,11 @@ export class UserService implements OnDestroy {
   constructor(private http: HttpClient, private authService: NbAuthService) {
     this.currentUser$ = this.currentUser.asObservable();
     this.authService
-      .getToken()
+      .onTokenChange()
       .pipe(takeUntil(this.destroy$))
       .subscribe((token) => {
-        this.getCurrentUser(token.getPayload()['email']);
+        if (token.getPayload())
+          this.getCurrentUser(token.getPayload()['email']);
       });
   }
 
