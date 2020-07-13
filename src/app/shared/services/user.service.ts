@@ -39,13 +39,9 @@ export class UserService implements OnDestroy {
   }
 
   updateCurrentUser(currentUser: any): void {
-    console.log('Atualizando Usuário');
     const body = {
       user: currentUser,
     };
-    this.http
-      .post('/api/user/update', body)
-      .pipe(take(1))
-      .subscribe((_) => console.log('atualizado'));
+    this.http.post('/api/user/update', body).pipe(take(1));
   }
 }

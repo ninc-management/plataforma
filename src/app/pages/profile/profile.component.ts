@@ -26,7 +26,6 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.states = this.statecityService.buildStateList();
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-      console.log(user);
       this.currentUser = user;
       if (this.currentUser.state)
         this.cities = this.statecityService.buildCityList(
@@ -53,9 +52,7 @@ export class ProfileComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe((urls) => {
-        console.log(urls);
         if (urls.length > 0) {
-          console.log(urls[0]);
           this.currentUser.profilePicture = urls[0];
           this.userService.updateCurrentUser(this.currentUser);
         }
