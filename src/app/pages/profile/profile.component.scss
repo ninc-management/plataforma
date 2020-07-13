@@ -2,26 +2,43 @@
 
 @include nb-install-component {
   --checkbox-basic-disabled-text-color: nb-theme(checkbox-basic-text-color);
+  --checkbox-success-disabled-text-color: nb-theme(checkbox-basic-text-color);
   --input-basic-disabled-text-color: nb-theme(text-basic-color);
   --select-outline-basic-disabled-text-color: nb-theme(text-basic-color);
+  --user-giant-width: 100%;
+  --user-giant-height: auto;
+  --user-giant-initials-text-font-size: 6rem;
 }
 
-:host {
-  // Alterações no tamanho da foto de perfil
-  .profile-picture .user-picture {
-    font-size: 0.9375rem !important;
-    line-height: 1.25rem !important;
-    height: 4rem !important;
-    width: 4rem !important;
+:host ::ng-deep {
+  .col-md-2 {
+    // justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
   }
-  nb-user.size-wide {
-    .user-picture {
-      height: 4rem !important;
-      width: 4rem !important;
-    }
-    .initials {
-      font-size: 0.9375rem !important;
-      line-height: 1.25rem !important;
-    }
+
+  .user-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  nb-user {
+    width: 100%;
+  }
+
+  .user-picture {
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-top: 100%;
+  }
+
+  .initials {
+    padding-top: 0 !important;
+  }
+
+  .initials::before {
+    content: '';
+    margin-top: 100%;
   }
 }

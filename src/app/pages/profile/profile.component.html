@@ -6,7 +6,7 @@
     >
       <nb-card-body>
         <div class="row">
-          <div class="col">
+          <div class="col-md-2">
             <nb-user
               [onlyPicture]="true"
               [picture]="currentUser?.profilePicture"
@@ -14,9 +14,11 @@
               size="giant"
             >
             </nb-user>
-            <button nbButton status="primary" (click)="uploadDialog()">
-              Editar foto
-            </button>
+            <div style="margin-top: 20px; margin-bottom: 20px;">
+              <button nbButton status="primary" (click)="uploadDialog()">
+                Editar foto
+              </button>
+            </div>
           </div>
           <div class="col-md-10">
             <form #form="ngForm" aria-labelledby="title">
