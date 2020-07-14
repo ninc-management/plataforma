@@ -22,8 +22,8 @@ addons:
 before_install:
   - npm i -g npm@latest
 
-install:
-  - travis_retry npm i
+# install:
+#   - travis_retry npm i
 
 git:
   depth: 1
@@ -33,27 +33,27 @@ jobs:
     - stage: 'Deploy to Dev'
       if: branch = master
       script: skip
-      deploy: &heroku
+      deploy: heroku
         provider: heroku
-        skip_cleanup: true
         app:
           master: nortan-dev
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
-        strategy: git
-      script: 'curl http://nortan-dev.herokuapp.com'
+        strategy: api
+        edge: true
+      # script: 'curl http://nortan-dev.herokuapp.com'
     - stage: 'Deploy to Staging'
       if: branch = production OR branch = demo
       script: skip
       deploy: &heroku
         provider: heroku
-        skip_cleanup: true
         app:
           production: nortan-demo
           demo: nortan-demo
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
-        strategy: git
+        strategy: api
+        edge: true
     - stage: 'Deploy to Production'
       if: branch = production
       script: skip
