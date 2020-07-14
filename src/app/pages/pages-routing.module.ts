@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ContractsComponent } from './contracts/contracts.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
       {
         path: 'profile',
         component: ProfileComponent,
+      },
+      {
+        path: 'contracts',
+        component: ContractsComponent,
       },
       {
         path: '',
