@@ -17,6 +17,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { PagesRoutingModule } from './pages-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { SharedModule } from '../shared/shared.module';
+import { ContractsComponent } from './contracts/contracts.component';
 
 @NgModule({
   imports: [
@@ -34,6 +35,6 @@ import { SharedModule } from '../shared/shared.module';
     FormsModule,
     SharedModule,
   ],
-  declarations: [PagesComponent, ProfileComponent],
+  declarations: [PagesComponent, ProfileComponent, ContractsComponent],
 })
 export class PagesModule {}
