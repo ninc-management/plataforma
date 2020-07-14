@@ -8,6 +8,18 @@
 // `ng build --env=prod` then `environment.prod.ts` will be used instead.
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
+declare let ENV_VARS: { [key: string]: string };
+
 export const environment = {
   production: false,
+  firebaseConfig: {
+    apiKey: ENV_VARS.FIREBASE_APIKEY,
+    authDomain: 'plataforma-nortan.firebaseapp.com',
+    databaseURL: 'https://plataforma-nortan.firebaseio.com',
+    projectId: 'plataforma-nortan',
+    storageBucket: 'plataforma-nortan.appspot.com',
+    messagingSenderId: ENV_VARS.FIREBASE_MSENDERID,
+    appId: ENV_VARS.FIREBASE_APPID,
+    measurementId: ENV_VARS.FIREBASE_MID,
+  },
 };
