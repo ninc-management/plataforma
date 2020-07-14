@@ -1,6 +1,7 @@
 language: node_js
 
-sudo: false
+os: linux
+
 dist: trusty
 
 node_js:
@@ -22,43 +23,46 @@ addons:
 before_install:
   - npm i -g npm@latest
 
-# install:
-#   - travis_retry npm i
+install:
+  - travis_retry npm --version
 
-git:
-  depth: 1
+stages:
+  - name: 'dev'
+    if: branch = master
+  - name: 'demo'
+    if: branch = demo
+  - name: 'prod'
+    if: branch = production
 
 jobs:
   include:
-    - stage: 'Deploy to Dev'
-      if: branch = master
+    - stage: 'dev'
+      name: 'Deploy to Dev'
       script: skip
-      deploy: heroku
+      deploy: &heroku
         provider: heroku
         app:
           master: nortan-dev
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
-        strategy: api
-        edge: true
-      # script: 'curl http://nortan-dev.herokuapp.com'
-    - stage: 'Deploy to Staging'
-      if: branch = production OR branch = demo
+        strategy: git
+    - stage: 'demo'
+      name: 'Deploy to Staging'
       script: skip
       deploy: &heroku
         provider: heroku
         app:
-          production: nortan-demo
           demo: nortan-demo
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
-        strategy: api
-        edge: true
-    - stage: 'Deploy to Production'
-      if: branch = production
+        strategy: git
+    - stage: 'prod'
+      name: 'Deploy to Production'
       script: skip
-      deploy:
-        <<: *heroku
-        on: production
+      deploy: &heroku
+        provider: heroku
         app:
           production: nortan
+        api_key: $HEROKU_AUTH_TOKEN
+        run: 'rm -rf src/app src/assets'
+        strategy: git
