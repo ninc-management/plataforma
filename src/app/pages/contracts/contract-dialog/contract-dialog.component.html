@@ -1,0 +1,13 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{ width: windowWidth() + 'px' }"
+>
+  <div class="col-md-8">
+    <nb-card>
+      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-body>
+        <ngx-contract-item></ngx-contract-item>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

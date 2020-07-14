@@ -18,6 +18,8 @@ import { PagesRoutingModule } from './pages-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { SharedModule } from '../shared/shared.module';
 import { ContractsComponent } from './contracts/contracts.component';
+import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
+import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
 
 @NgModule({
   imports: [
@@ -35,6 +37,6 @@ import { ContractsComponent } from './contracts/contracts.component';
     FormsModule,
     SharedModule,
   ],
-  declarations: [PagesComponent, ProfileComponent, ContractsComponent],
+  declarations: [PagesComponent, ProfileComponent, ContractsComponent, ContractDialogComponent, ContractItemComponent],
 })
 export class PagesModule {}
