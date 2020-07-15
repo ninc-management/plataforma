@@ -14,7 +14,7 @@ const app = express();
 
 // Connect to the database before starting the application server.
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/plataforma', {
+  .connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: false,
