@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const emailRoutes = require('./routes/email');
 const userRoutes = require('./routes/user');
+const contractRoutes = require('./routes/contract');
 
 const app = express();
 
@@ -43,5 +44,6 @@ app.get('/*', function (req, res) {
 app.use('/api/auth', authRoutes);
 app.use('/api/sendmail', emailRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/contract', contractRoutes);
 
 module.exports = app;
