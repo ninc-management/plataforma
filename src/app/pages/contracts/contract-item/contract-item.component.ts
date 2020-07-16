@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import { ContractService } from '../../../shared/services/contract.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -10,7 +11,9 @@ import { ContractService } from '../../../shared/services/contract.service';
 export class ContractItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   submitted = false;
-  contract: any = { code: 'ORC-001/2020-NRT/DAQ-00' };
+  contractNumber: number;
+  contract: any = {};
+  year = new Date().getFullYear();
   validation = (contract_validation as any).default;
   DEPARTMENTS = ['DPC', 'DAQ', 'DEC', 'DRM'];
   COORDINATIONS = [
@@ -28,7 +31,14 @@ export class ContractItemComponent implements OnInit {
 
   constructor(private contractService: ContractService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.contractService
+      .contractsSize()
+      .pipe(take(2))
+      .subscribe((size: number) => {
+        this.contractNumber = size;
+      });
+  }
 
   registerContract(): void {
     this.submitted = true;

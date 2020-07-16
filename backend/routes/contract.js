@@ -20,4 +20,16 @@ router.post('/', (req, res, next) => {
     });
 });
 
+router.post('/count', (req, res) => {
+  Contract.estimatedDocumentCount({}, function (err, result) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json({
+        size: result,
+      });
+    }
+  });
+});
+
 module.exports = router;

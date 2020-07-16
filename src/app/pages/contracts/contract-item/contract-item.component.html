@@ -77,6 +77,15 @@
       autofocus
       fullWidth
       fieldSize="large"
+      [ngModel]="
+        'ORC-' +
+        contractNumber +
+        '/' +
+        year +
+        '-NRT/' +
+        (contract.department ? contract.department : '') +
+        '-00'
+      "
       [required]="validation.code.required"
       [minlength]="validation.code.minLength"
       [maxlength]="validation.code.maxLength"
