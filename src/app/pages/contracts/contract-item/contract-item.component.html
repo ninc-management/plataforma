@@ -1,1 +1,291 @@
-<p>contract-item works!</p>
+<form (ngSubmit)="registerContract()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-department">Diretoria:</label>
+        <nb-select
+          [(ngModel)]="contract.department"
+          #department="ngModel"
+          id="input-department"
+          name="department"
+          placeholder="Selecione o departamento"
+          fullWidth
+          [required]="validation.department.required"
+          [status]="
+            department.dirty
+              ? department.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            department.invalid && department.touched ? true : null
+          "
+          [disabled]="false"
+        >
+          <nb-option
+            *ngFor="let department of DEPARTMENTS"
+            [value]="department"
+          >
+            {{ department }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-coordination">Coordenação:</label>
+        <nb-select
+          [(ngModel)]="contract.coordination"
+          #coordination="ngModel"
+          id="input-coordination"
+          name="coordination"
+          placeholder="Selecione a coordenação"
+          fullWidth
+          [required]="validation.coordination.required"
+          [status]="
+            coordination.dirty
+              ? coordination.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            coordination.invalid && coordination.touched ? true : null
+          "
+          [disabled]="false"
+        >
+          <nb-option
+            *ngFor="let coordination of COORDINATIONS"
+            [value]="coordination"
+          >
+            {{ coordination }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-code">Código do orçamento:</label>
+    <input
+      nbInput
+      [(ngModel)]="contract.code"
+      #code="ngModel"
+      id="input-code"
+      name="code"
+      placeholder="Código do Orçamento"
+      autofocus
+      fullWidth
+      fieldSize="large"
+      [required]="validation.code.required"
+      [minlength]="validation.code.minLength"
+      [maxlength]="validation.code.maxLength"
+      [status]="code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="code.invalid && code.touched ? true : null"
+      [disabled]="true"
+    />
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-type">Tipologia:</label>
+    <input
+      nbInput
+      [(ngModel)]="contract.type"
+      #type="ngModel"
+      id="input-type"
+      name="type"
+      placeholder="Tipologia do contrato"
+      fullWidth
+      fieldSize="large"
+      [required]="validation.type.required"
+      [minlength]="validation.type.minLength"
+      [maxlength]="validation.type.maxLength"
+      [status]="type.dirty ? (type.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="type.invalid && type.touched ? true : null"
+      [disabled]="false"
+    />
+    <ng-container *ngIf="type.invalid && type.touched">
+      <p class="caption status-danger" *ngIf="type.errors?.required">
+        A tipologia é obrigatória!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="type.errors?.minlength || type.errors?.maxlength"
+      >
+        A tipologia deve conter entre
+        {{ validation.type.minLength }} a
+        {{ validation.type.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-service">Serviço:</label>
+    <textarea
+      nbInput
+      [(ngModel)]="contract.service"
+      #service="ngModel"
+      id="input-service"
+      name="service"
+      placeholder="Descreva o serviço a ser realizado"
+      fullWidth
+      fieldSize="large"
+      [required]="validation.service.required"
+      [minlength]="validation.service.minLength"
+      [maxlength]="validation.service.maxLength"
+      [status]="
+        service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+      [disabled]="false"
+    ></textarea>
+    <ng-container *ngIf="service.invalid && service.touched">
+      <p class="caption status-danger" *ngIf="service.errors?.required">
+        A descrição do serviço é obrigatória!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="service.errors?.minlength || service.errors?.maxlength"
+      >
+        A descrição do serviço deve conter entre
+        {{ validation.service.minLength }} a
+        {{ validation.service.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-contractor">Cliente:</label>
+    <input
+      nbInput
+      [(ngModel)]="contract.contractor"
+      #contractor="ngModel"
+      id="input-contractor"
+      name="contractor"
+      placeholder="Nome do cliente"
+      fullWidth
+      fieldSize="large"
+      [required]="validation.contractor.required"
+      [minlength]="validation.contractor.minLength"
+      [maxlength]="validation.contractor.maxLength"
+      [status]="
+        contractor.dirty ? (contractor.invalid ? 'danger' : 'success') : 'basic'
+      "
+      [attr.aria-invalid]="
+        contractor.invalid && contractor.touched ? true : null
+      "
+      [disabled]="false"
+    />
+    <ng-container *ngIf="contractor.invalid && contractor.touched">
+      <p class="caption status-danger" *ngIf="contractor.errors?.required">
+        O nome do cliente é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength"
+      >
+        O nome do cliente deve conter entre
+        {{ validation.contractor.minLength }} a
+        {{ validation.contractor.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-name">Empreendimento:</label>
+    <input
+      nbInput
+      [(ngModel)]="contract.name"
+      #name="ngModel"
+      id="input-name"
+      name="name"
+      placeholder="Nome do empreendimento"
+      fullWidth
+      fieldSize="large"
+      [required]="validation.name.required"
+      [minlength]="validation.name.minLength"
+      [maxlength]="validation.name.maxLength"
+      [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+      [disabled]="false"
+    />
+    <ng-container *ngIf="name.invalid && name.touched">
+      <p class="caption status-danger" *ngIf="name.errors?.required">
+        O nome do empreendimento é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="name.errors?.minlength || name.errors?.maxlength"
+      >
+        O nome do empreendimento deve conter entre
+        {{ validation.name.minLength }} a
+        {{ validation.name.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <label class="label" for="input-value">Valor do contrato:</label>
+    <input
+      nbInput
+      [(ngModel)]="contract.value"
+      #value="ngModel"
+      id="input-value"
+      name="value"
+      placeholder="Valor do contrato"
+      fullWidth
+      fieldSize="large"
+      [brmasker]="{ money: true }"
+      [required]="validation.value.required"
+      [minlength]="validation.value.minLength"
+      [maxlength]="validation.value.maxLength"
+      [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+      [disabled]="false"
+    />
+    <ng-container *ngIf="value.invalid && value.touched">
+      <p class="caption status-danger" *ngIf="value.errors?.required">
+        O valor do contrato é obrigatório!
+      </p>
+      <p
+        class="caption status-danger"
+        *ngIf="value.errors?.minlength || value.errors?.maxlength"
+      >
+        O valor do contrato deve conter entre
+        {{ validation.value.minLength }} a
+        {{ validation.value.maxLength }}
+        numeros
+      </p>
+    </ng-container>
+  </div>
+
+  <div class="form-control-group">
+    <br />
+    <label class="label" for="input-interests"></label>
+    <nb-checkbox
+      [(ngModel)]="contract.trello"
+      #trello="ngModel"
+      name="trello"
+      [status]="trello.value ? 'success' : 'basic'"
+      [disabled]="false"
+      [required]="validation.trello.required"
+      >Adicionado no Trello</nb-checkbox
+    >
+  </div>
+
+  <button
+    nbButton
+    fullWidth
+    status="primary"
+    size="large"
+    style="margin-top: 20px;"
+    [disabled]="submitted || !form.valid || !trello.value"
+    [class.btn-pulse]="submitted"
+  >
+    Cadastrar
+  </button>
+</form>

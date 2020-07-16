@@ -1,0 +1,32 @@
+{
+  "author": { "required": true },
+  "department": { "required": true },
+  "coordination": { "required": true },
+  "code": { "required": true },
+  "type": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "service": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 500
+  },
+  "contractor": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "name": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "value": {
+    "required": true,
+    "minLength": 1,
+    "maxLength": 30
+  },
+  "trello": { "required": true }
+}
