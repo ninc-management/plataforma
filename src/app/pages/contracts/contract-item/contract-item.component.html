@@ -22,6 +22,7 @@
             department.invalid && department.touched ? true : null
           "
           [disabled]="false"
+          (selectedChange)="updateCode()"
         >
           <nb-option
             *ngFor="let department of DEPARTMENTS"
@@ -77,15 +78,6 @@
       autofocus
       fullWidth
       fieldSize="large"
-      [ngModel]="
-        'ORC-' +
-        contractNumber +
-        '/' +
-        year +
-        '-NRT/' +
-        (contract.department ? contract.department : '') +
-        '-00'
-      "
       [required]="validation.code.required"
       [minlength]="validation.code.minLength"
       [maxlength]="validation.code.maxLength"

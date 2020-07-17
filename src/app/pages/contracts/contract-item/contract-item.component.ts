@@ -13,7 +13,6 @@ export class ContractItemComponent implements OnInit {
   submitted = false;
   contractNumber: number;
   contract: any = {};
-  year = new Date().getFullYear();
   validation = (contract_validation as any).default;
   DEPARTMENTS = ['DPC', 'DAQ', 'DEC', 'DRM'];
   COORDINATIONS = [
@@ -37,6 +36,7 @@ export class ContractItemComponent implements OnInit {
       .pipe(take(2))
       .subscribe((size: number) => {
         this.contractNumber = size;
+        this.updateCode();
       });
   }
 
@@ -44,5 +44,16 @@ export class ContractItemComponent implements OnInit {
     this.submitted = true;
     this.contractService.saveContract(this.contract);
     this.submit.emit();
+  }
+
+  updateCode(): void {
+    this.contract.code =
+      'ORC-' +
+      this.contractNumber +
+      '/' +
+      new Date().getFullYear() +
+      '-NRT/' +
+      (this.contract.department ? this.contract.department : '') +
+      '-00';
   }
 }
