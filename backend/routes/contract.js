@@ -21,6 +21,16 @@ router.post('/', (req, res, next) => {
     });
 });
 
+router.post('/update', async (req, res, next) => {
+  await Contract.findOneAndUpdate(
+    { code: req.body.contract.code },
+    req.body.contract
+  );
+  return res.status(200).json({
+    message: 'Contrato Atualizado!',
+  });
+});
+
 router.post('/count', (req, res) => {
   Contract.estimatedDocumentCount({}, function (err, result) {
     if (err) {

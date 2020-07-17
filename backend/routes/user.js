@@ -17,7 +17,9 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   await User.findOneAndUpdate({ email: req.body.user.email }, req.body.user);
-  return res.status(200);
+  return res.status(200).json({
+    message: 'Usuário Atualizado!',
+  });
 });
 
 module.exports = router;
