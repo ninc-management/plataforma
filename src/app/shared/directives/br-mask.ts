@@ -8,15 +8,11 @@ import {
   OnInit,
   Optional,
   SkipSelf,
+  Output,
+  EventEmitter,
 } from '@angular/core';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroupDirective,
-} from '@angular/forms';
 
 export class BrMaskModel {
-  form?: AbstractControl;
   mask?: string;
   len?: number;
   person?: boolean;
@@ -39,7 +35,7 @@ export class BrMaskModel {
 @Injectable()
 export class BrMaskDirective implements OnInit {
   @Input() brmasker: BrMaskModel = new BrMaskModel();
-  @Input() formControlName: string;
+  @Output() ngModelChange = new EventEmitter<string>();
 
   /**
    * Event key up in directive
@@ -49,20 +45,19 @@ export class BrMaskDirective implements OnInit {
   @HostListener('keyup', ['$event'])
   inputKeyup(event: any): void {
     const value: string = this.returnValue(event.target.value);
-    this.setValueInFormControl(value);
+    this.setValue(value);
   }
-  @HostListener('ngModelChange', ['$event']) onNgModelChange(e: any) {
-    const value: string = this.returnValue(e);
-    if (value) {
-      this.setValueInFormControl(value);
-    }
-  }
+  // @HostListener('ngModelChange', ['$event']) onNgModelChange(e: any) {
+  //   const value: string = this.returnValue(e);
+  //   if (value) {
+  //     this.setValue(value);
+  //   }
+  // }
 
   constructor(
     @Optional()
     @Host()
     @SkipSelf()
-    private controlContainer: FormGroupDirective,
     private elementRef: ElementRef
   ) {}
 
@@ -70,50 +65,22 @@ export class BrMaskDirective implements OnInit {
     if (!this.brmasker.type) {
       this.brmasker.type = 'all';
     }
-
     if (!this.brmasker.decimal) {
       this.brmasker.decimal = 2;
     }
     if (this.brmasker.moneyInitHasInt === undefined) {
       this.brmasker.moneyInitHasInt = true;
     }
-
     if (!this.brmasker.decimalCaracter) {
       this.brmasker.decimalCaracter = ',';
     }
-    if (this.controlContainer) {
-      if (this.formControlName) {
-        this.brmasker.form = this.controlContainer.control.get(
-          this.formControlName
-        );
-      } else {
-        console.warn(
-          'Missing FormControlName directive from host element of the component'
-        );
-      }
-    } else {
-      console.warn(`Can't find parent FormGroup directive`);
-    }
+
     this.initialValue();
   }
 
   initialValue(): void {
     const value: string = this.returnValue(this.elementRef.nativeElement.value);
-    this.setValueInFormControl(value);
-  }
-
-  /**
-   * The verification of form
-   * @author Antonio Marques <tmowna@gmail.com>
-   * @example <caption>this.verifyFormControl()</caption>
-   * @returns {boolean} return a boolean value
-   */
-  verifyFormControl(): boolean {
-    if (this.brmasker.form instanceof FormControl) {
-      return true;
-    } else {
-      return false;
-    }
+    this.setValue(value);
   }
 
   /**
@@ -121,13 +88,11 @@ export class BrMaskDirective implements OnInit {
    * @author Antonio Marques <tmowna@gmail.com>
    * @example <caption>this.setValueInFormControl(string)</caption>
    */
-  setValueInFormControl(value: string): void {
-    if (!this.verifyFormControl()) {
+  setValue(value: string): void {
+    if (this.elementRef.nativeElement.value) {
       this.elementRef.nativeElement.value = value;
-      return;
+      this.ngModelChange.emit(value);
     }
-    this.brmasker.form.setValue(value);
-    this.brmasker.form.updateValueAndValidity();
   }
 
   /**
@@ -493,7 +458,7 @@ export class BrMaskDirective implements OnInit {
    * @param {string} value
    */
   private thousand(value: string): string {
-    const val = value.replace(/\D/gi, '');
+    let val = value.replace(/\D/gi, '');
     const reverse = val.toString().split('').reverse().join('');
     const thousands = reverse.match(/\d{1,3}/g);
     if (thousands) {

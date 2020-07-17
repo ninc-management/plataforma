@@ -240,7 +240,12 @@
       placeholder="Valor do contrato"
       fullWidth
       fieldSize="large"
-      [brmasker]="{ money: true }"
+      [brmasker]="{
+        money: true,
+        thousand: '.',
+        decimalCaracter: ',',
+        decimal: '2'
+      }"
       [required]="validation.value.required"
       [minlength]="validation.value.minLength"
       [maxlength]="validation.value.maxLength"

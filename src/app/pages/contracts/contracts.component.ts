@@ -15,7 +15,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   settings = {
     mode: 'external',
-    noDataMessage: 'Carregando contratos...',
+    noDataMessage: 'Não encontramos nenhum contrato para o filtro selecionado.',
     add: {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
@@ -56,6 +56,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
       value: {
         title: 'Valor',
         type: 'string',
+        width: '10%',
       },
     },
   };
