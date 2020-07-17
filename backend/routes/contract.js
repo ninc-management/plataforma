@@ -1,6 +1,7 @@
 const express = require('express');
 
 const Contract = require('../models/contract');
+const User = require('../models/user');
 
 const router = express.Router();
 
@@ -30,6 +31,11 @@ router.post('/count', (req, res) => {
       });
     }
   });
+});
+
+router.post('/all', async (req, res) => {
+  contracts = await Contract.find({}).populate('author', 'fullName');
+  return res.status(200).json(contracts);
 });
 
 module.exports = router;
