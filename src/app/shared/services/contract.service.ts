@@ -9,6 +9,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 })
 export class ContractService {
   private size$ = new BehaviorSubject<number>(0);
+  private contracts$ = new BehaviorSubject<any[]>([]);
 
   constructor(private http: HttpClient, private userService: UserService) {}
 
@@ -18,8 +19,28 @@ export class ContractService {
       const req = {
         contract: contract,
       };
-      this.http.post('/api/contract/', req).pipe(take(1)).subscribe();
+      this.http
+        .post('/api/contract/', req)
+        .pipe(take(1))
+        .subscribe(() => {
+          let tmp = this.contracts$.getValue();
+          contract.author = {
+            fullName: user.fullName,
+          };
+          tmp.push(contract);
+          this.contracts$.next(tmp);
+        });
     });
+  }
+
+  getContracts(): Observable<any[]> {
+    this.http
+      .post('/api/contract/all', {})
+      .pipe(take(1))
+      .subscribe((contracts: any[]) => {
+        this.contracts$.next(contracts);
+      });
+    return this.contracts$;
   }
 
   contractsSize(): Observable<number> {
