@@ -1,14 +1,13 @@
 <div class="row">
   <div class="col-12">
     <nb-card>
-      <button
-        nbButton
-        status="primary"
-        style="margin: 20px;"
-        (click)="contractDialog()"
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="source"
+        (edit)="contractDialog($event)"
+        (create)="contractDialog({})"
       >
-        Adicionar contrato
-      </button>
+      </ng2-smart-table>
     </nb-card>
   </div>
 </div>

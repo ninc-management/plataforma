@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 import {
   NbMenuModule,
   NbCardModule,
@@ -36,7 +37,14 @@ import { ContractItemComponent } from './contracts/contract-item/contract-item.c
     DashboardModule,
     FormsModule,
     SharedModule,
+    Ng2SmartTableModule,
   ],
-  declarations: [PagesComponent, ProfileComponent, ContractsComponent, ContractDialogComponent, ContractItemComponent],
+  declarations: [
+    PagesComponent,
+    ProfileComponent,
+    ContractsComponent,
+    ContractDialogComponent,
+    ContractItemComponent,
+  ],
 })
 export class PagesModule {}

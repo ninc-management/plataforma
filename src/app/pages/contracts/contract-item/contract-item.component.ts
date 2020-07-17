@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import { ContractService } from '../../../shared/services/contract.service';
 import { take } from 'rxjs/operators';
@@ -9,10 +9,11 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./contract-item.component.scss'],
 })
 export class ContractItemComponent implements OnInit {
+  @Input() contract: any;
   @Output() submit = new EventEmitter<void>();
+  editing = false;
   submitted = false;
   contractNumber: number;
-  contract: any = {};
   validation = (contract_validation as any).default;
   DEPARTMENTS = ['DPC', 'DAQ', 'DEC', 'DRM'];
   COORDINATIONS = [
@@ -31,6 +32,11 @@ export class ContractItemComponent implements OnInit {
   constructor(private contractService: ContractService) {}
 
   ngOnInit(): void {
+    if (this.contract) {
+      this.editing = true;
+    } else {
+      this.contract = {};
+    }
     this.contractService
       .contractsSize()
       .pipe(take(2))
@@ -42,18 +48,24 @@ export class ContractItemComponent implements OnInit {
 
   registerContract(): void {
     this.submitted = true;
-    this.contractService.saveContract(this.contract);
+    if (this.editing) {
+      this.contractService.editContract(this.contract);
+    } else {
+      this.contractService.saveContract(this.contract);
+    }
     this.submit.emit();
   }
 
   updateCode(): void {
-    this.contract.code =
-      'ORC-' +
-      this.contractNumber +
-      '/' +
-      new Date().getFullYear() +
-      '-NRT/' +
-      (this.contract.department ? this.contract.department : '') +
-      '-00';
+    if (!this.editing) {
+      this.contract.code =
+        'ORC-' +
+        this.contractNumber +
+        '/' +
+        new Date().getFullYear() +
+        '-NRT/' +
+        (this.contract.department ? this.contract.department : '') +
+        '-00';
+    }
   }
 }

@@ -6,7 +6,10 @@
     <nb-card>
       <nb-card-header>{{ title }}</nb-card-header>
       <nb-card-body>
-        <ngx-contract-item (submit)="dismiss()"></ngx-contract-item>
+        <ngx-contract-item
+          [contract]="contract"
+          (submit)="dismiss()"
+        ></ngx-contract-item>
       </nb-card-body>
     </nb-card>
   </div>

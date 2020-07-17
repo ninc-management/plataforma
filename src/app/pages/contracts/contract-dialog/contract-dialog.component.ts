@@ -8,6 +8,7 @@ import { NbDialogRef } from '@nebular/theme';
 })
 export class ContractDialogComponent implements OnInit {
   @Input() title: string;
+  @Input() contract: any;
 
   constructor(protected ref: NbDialogRef<ContractDialogComponent>) {}
 
