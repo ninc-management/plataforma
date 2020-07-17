@@ -33,6 +33,25 @@ export class ContractService {
     });
   }
 
+  editContract(contract: any): void {
+    let tmp = Object.assign({}, contract);
+    delete tmp.fullName;
+    delete tmp.author.fullName;
+    const req = {
+      contract: tmp,
+    };
+    this.http
+      .post('/api/contract/update', req)
+      .pipe(take(1))
+      .subscribe(() => {
+        let tmpArray = this.contracts$.getValue();
+        tmpArray[
+          tmpArray.findIndex((el) => el.code === contract.code)
+        ] = contract;
+        this.contracts$.next(tmpArray);
+      });
+  }
+
   getContracts(): Observable<any[]> {
     this.http
       .post('/api/contract/all', {})
