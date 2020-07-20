@@ -40,4 +40,8 @@ export class ContractDialogComponent implements OnInit {
   windowWidth(): number {
     return window.innerWidth;
   }
+
+  windowHeight(): number {
+    return window.innerHeight * 0.95;
+  }
 }

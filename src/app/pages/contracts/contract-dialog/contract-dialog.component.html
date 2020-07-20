@@ -1,9 +1,15 @@
 <div
   class="row justify-content-center"
-  [ngStyle]="{ width: windowWidth() + 'px' }"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
 >
   <div class="col-md-8">
-    <nb-card>
+    <nb-card
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
       <nb-card-header>
         {{ title }}
         <div class="buttons">
