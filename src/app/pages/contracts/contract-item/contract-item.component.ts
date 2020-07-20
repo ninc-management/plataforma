@@ -1,7 +1,8 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import * as contract_validation from '../../../shared/contract-validation.json';
 import { ContractService } from '../../../shared/services/contract.service';
 import { take } from 'rxjs/operators';
+import { DepartmentService } from '../../../shared/services/department.service';
+import * as contract_validation from '../../../shared/contract-validation.json';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -15,21 +16,13 @@ export class ContractItemComponent implements OnInit {
   submitted = false;
   contractNumber: number;
   validation = (contract_validation as any).default;
-  DEPARTMENTS = ['DPC', 'DAQ', 'DEC', 'DRM'];
-  COORDINATIONS = [
-    'Gerenciamento de Obras',
-    'Instalações',
-    'Impermeabilização',
-    'Projetos Arquitetônicos',
-    'Design de Interiores',
-    'Sistemas Elétricos',
-    'Sistemas Hidrosanitários',
-    'Sistemas Estruturais',
-    'Recursos Hidricos',
-    'Meio Ambiente',
-  ];
+  DEPARTMENTS: string[] = [];
+  COORDINATIONS: string[] = [];
 
-  constructor(private contractService: ContractService) {}
+  constructor(
+    private contractService: ContractService,
+    private departmentService: DepartmentService
+  ) {}
 
   ngOnInit(): void {
     if (this.contract) {
@@ -44,6 +37,7 @@ export class ContractItemComponent implements OnInit {
         this.contractNumber = size;
         this.updateCode();
       });
+    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
   }
 
   registerContract(): void {
@@ -54,6 +48,18 @@ export class ContractItemComponent implements OnInit {
       this.contractService.saveContract(this.contract);
     }
     this.submit.emit();
+  }
+
+  onDepartmentChange() {
+    this.updateCode();
+    this.updateCoordination();
+  }
+
+  updateCoordination() {
+    this.contract.coordination = undefined;
+    this.COORDINATIONS = this.departmentService.buildCoordinationsList(
+      this.contract.department
+    );
   }
 
   updateCode(): void {

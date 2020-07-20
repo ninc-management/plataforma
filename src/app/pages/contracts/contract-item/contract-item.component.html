@@ -22,7 +22,7 @@
             department.invalid && department.touched ? true : null
           "
           [disabled]="false"
-          (selectedChange)="updateCode()"
+          (selectedChange)="onDepartmentChange()"
         >
           <nb-option
             *ngFor="let department of DEPARTMENTS"
