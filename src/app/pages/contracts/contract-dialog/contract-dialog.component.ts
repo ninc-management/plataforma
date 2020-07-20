@@ -1,6 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { NbDialogRef } from '@nebular/theme';
+import { Component, OnInit, Input, Inject } from '@angular/core';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
+import { fromEvent } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-contract-dialog',
@@ -12,11 +14,19 @@ export class ContractDialogComponent implements OnInit {
   @Input() contract: any;
 
   constructor(
+    @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    fromEvent(this.document, 'keyup')
+      .pipe(
+        filter((event: KeyboardEvent) => event.keyCode === 27),
+        takeUntil(this.ref.onClose)
+      )
+      .subscribe(() => this.dismiss());
+  }
 
   dismiss(): void {
     if (this.contract)
