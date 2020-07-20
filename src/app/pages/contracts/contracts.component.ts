@@ -95,8 +95,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
         contract: event.data,
       },
       dialogClass: 'my-dialog',
-      closeOnBackdropClick: true,
-      closeOnEsc: true,
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
     });
   }
 }

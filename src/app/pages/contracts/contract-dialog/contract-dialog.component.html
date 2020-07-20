@@ -4,7 +4,14 @@
 >
   <div class="col-md-8">
     <nb-card>
-      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-header>
+        {{ title }}
+        <div class="buttons">
+          <button nbButton ghost (click)="dismiss()">
+            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+          </button>
+        </div>
+      </nb-card-header>
       <nb-card-body>
         <ngx-contract-item
           [contract]="contract"

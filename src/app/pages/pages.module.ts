@@ -10,6 +10,7 @@ import {
   NbButtonModule,
   NbUserModule,
   NbSpinnerModule,
+  NbIconModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../@theme/theme.module';
@@ -31,6 +32,7 @@ import { ContractItemComponent } from './contracts/contract-item/contract-item.c
     NbButtonModule,
     NbMenuModule,
     NbInputModule,
+    NbIconModule,
     NbUserModule,
     NbSpinnerModule,
     ThemeModule,

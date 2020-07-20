@@ -27,6 +27,12 @@ export class ContractItemComponent implements OnInit {
   ngOnInit(): void {
     if (this.contract) {
       this.editing = true;
+      this.COORDINATIONS = this.departmentService.buildCoordinationsList(
+        this.contract.department
+      );
+      this.contract.department = this.departmentService.composedName(
+        this.contract.department
+      );
     } else {
       this.contract = {};
     }
@@ -41,6 +47,9 @@ export class ContractItemComponent implements OnInit {
   }
 
   registerContract(): void {
+    this.contract.department = this.departmentService.extractAbreviation(
+      this.contract.department
+    );
     this.submitted = true;
     if (this.editing) {
       this.contractService.editContract(this.contract);
@@ -58,7 +67,7 @@ export class ContractItemComponent implements OnInit {
   updateCoordination() {
     this.contract.coordination = undefined;
     this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-      this.contract.department
+      this.departmentService.extractAbreviation(this.contract.department)
     );
   }
 
@@ -70,7 +79,9 @@ export class ContractItemComponent implements OnInit {
         '/' +
         new Date().getFullYear() +
         '-NRT/' +
-        (this.contract.department ? this.contract.department : '') +
+        (this.contract.department
+          ? this.departmentService.extractAbreviation(this.contract.department)
+          : '') +
         '-00';
     }
   }

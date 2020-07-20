@@ -8,15 +8,26 @@ export class DepartmentService {
   buildDepartmentList(): string[] {
     let departments: string[] = [];
     for (const department of json_department_coordination.departments) {
-      departments.push(department.abrev);
+      departments.push(this.composedName(department.abrev));
     }
     return departments;
   }
 
-  buildCoordinationsList(department: string): string[] {
+  buildCoordinationsList(departmentAbrev: string): string[] {
     let entry = json_department_coordination.departments.find(
-      (el) => el.abrev === department
+      (el) => el.abrev === departmentAbrev
     );
     return entry.coordinations;
+  }
+
+  composedName(abrev: string): string {
+    let entry = json_department_coordination.departments.find(
+      (el) => el.abrev === abrev
+    );
+    return entry.abrev + ' - ' + entry.name;
+  }
+
+  extractAbreviation(composedName: string): string {
+    return composedName.substr(0, 3);
   }
 }
