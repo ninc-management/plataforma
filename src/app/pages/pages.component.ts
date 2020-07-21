@@ -2,6 +2,7 @@ import { Component, DoCheck } from '@angular/core';
 
 import { MENU_ITEMS } from './pages-menu';
 import { Router } from '@angular/router';
+import { NbIconLibraries } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-pages',
@@ -16,7 +17,16 @@ import { Router } from '@angular/router';
 export class PagesComponent implements DoCheck {
   menu = MENU_ITEMS;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, iconsLibrary: NbIconLibraries) {
+    iconsLibrary.registerFontPack('fa', {
+      packClass: 'fa',
+      iconClassPrefix: 'fa',
+    });
+    iconsLibrary.registerFontPack('far', {
+      packClass: 'far',
+      iconClassPrefix: 'fa',
+    });
+  }
 
   ngDoCheck(): void {
     for (const menu of this.menu) {

@@ -22,6 +22,9 @@ import { SharedModule } from '../shared/shared.module';
 import { ContractsComponent } from './contracts/contracts.component';
 import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
+import { InvoicesComponent } from './invoices/invoices.component';
+import { InvoiceItemComponent } from './invoices/invoice-item/invoice-item.component';
+import { InvoiceDialogComponent } from './invoices/invoice-dialog/invoice-dialog.component';
 
 @NgModule({
   imports: [
@@ -47,6 +50,9 @@ import { ContractItemComponent } from './contracts/contract-item/contract-item.c
     ContractsComponent,
     ContractDialogComponent,
     ContractItemComponent,
+    InvoicesComponent,
+    InvoiceItemComponent,
+    InvoiceDialogComponent,
   ],
 })
 export class PagesModule {}
