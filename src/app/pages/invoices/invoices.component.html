@@ -1,1 +1,13 @@
-<p>invoices works!</p>
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="source"
+        (edit)="contractDialog($event)"
+        (create)="contractDialog({})"
+      >
+      </ng2-smart-table>
+    </nb-card>
+  </div>
+</div>
