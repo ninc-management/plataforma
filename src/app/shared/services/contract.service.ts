@@ -40,6 +40,7 @@ export class ContractService {
     const req = {
       contract: tmp,
     };
+    console.log(tmp);
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))

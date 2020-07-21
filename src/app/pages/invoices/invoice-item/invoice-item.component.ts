@@ -15,6 +15,7 @@ export class InvoiceItemComponent implements OnInit {
   editing = false;
   submitted = false;
   contractNumber: number;
+  revision: number = 0;
   validation = (contract_validation as any).default;
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
@@ -33,6 +34,8 @@ export class InvoiceItemComponent implements OnInit {
       this.invoice.department = this.departmentService.composedName(
         this.invoice.department
       );
+      this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
+      this.revision += 1;
     } else {
       this.invoice = {};
     }
@@ -52,6 +55,7 @@ export class InvoiceItemComponent implements OnInit {
     );
     this.submitted = true;
     if (this.editing) {
+      this.updateRevision();
       this.contractService.editContract(this.invoice);
     } else {
       this.contractService.saveContract(this.invoice);
@@ -84,5 +88,11 @@ export class InvoiceItemComponent implements OnInit {
           : '') +
         '-00';
     }
+  }
+
+  updateRevision(): void {
+    this.invoice.code =
+      this.invoice.code.slice(0, this.invoice.code.length - 2) +
+      this.revision.toString().padStart(2, '0');
   }
 }

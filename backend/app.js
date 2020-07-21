@@ -19,6 +19,7 @@ mongoose
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useFindAndModify: false,
+    autoIndex: false,
   })
   .then(() => {
     console.log('Database connection ready!');
