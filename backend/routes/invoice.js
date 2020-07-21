@@ -1,18 +1,19 @@
 const express = require('express');
 
 const Contract = require('../models/contract');
+const Invoice = require('../models/invoice');
 const User = require('../models/user');
 
 const router = express.Router();
 
 router.post('/', (req, res, next) => {
-  const contract = new Contract(req.body.contract);
-  contract
+  const invoice = new Invoice(req.body.invoice);
+  invoice
     .save()
-    .then((savedContract) => {
+    .then((savedInvoice) => {
       res.status(201).json({
-        message: 'Contrato cadastrado!',
-        contract: savedContract,
+        message: 'Orçamento cadastrado!',
+        invoice: savedInvoice,
       });
     })
     .catch((err) => {
@@ -23,17 +24,17 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await Contract.findOneAndUpdate(
-    { _id: req.body.contract._id },
-    req.body.contract
+  await Invoice.findOneAndUpdate(
+    { _id: req.body.invoice._id },
+    req.body.invoice
   );
   return res.status(200).json({
-    message: 'Contrato Atualizado!',
+    message: 'Orçamento Atualizado!',
   });
 });
 
 router.post('/count', (req, res) => {
-  Contract.estimatedDocumentCount({}, function (err, result) {
+  Invoice.estimatedDocumentCount({}, function (err, result) {
     if (err) {
       console.log(err);
     } else {
@@ -45,8 +46,8 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  contracts = await Contract.find({}).populate('author', 'fullName');
-  return res.status(200).json(contracts);
+  invoices = await Invoice.find({}).populate('author', 'fullName');
+  return res.status(200).json(invoices);
 });
 
 module.exports = router;

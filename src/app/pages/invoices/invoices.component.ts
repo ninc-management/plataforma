@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ContractService } from '../../shared/services/contract.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { InvoiceService } from '../../shared/services/invoice.service';
 
 @Component({
   selector: 'ngx-invoices',
@@ -66,7 +66,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private contractService: ContractService
+    private invoicetService: InvoiceService
   ) {}
 
   ngOnDestroy(): void {
@@ -75,8 +75,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.contractService
-      .getContracts()
+    this.invoicetService
+      .getInvoices()
       .pipe(takeUntil(this.destroy$))
       .subscribe((contracts: any[]) => {
         this.source.load(

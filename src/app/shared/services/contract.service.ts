@@ -22,12 +22,13 @@ export class ContractService {
       this.http
         .post('/api/contract/', req)
         .pipe(take(1))
-        .subscribe(() => {
+        .subscribe((res: any) => {
           let tmp = this.contracts$.getValue();
-          contract.author = {
+          let savedContract = res.contract;
+          savedContract.author = {
             fullName: user.fullName,
           };
-          tmp.push(contract);
+          tmp.push(savedContract);
           this.contracts$.next(tmp);
         });
     });
@@ -40,14 +41,13 @@ export class ContractService {
     const req = {
       contract: tmp,
     };
-    console.log(tmp);
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
         let tmpArray = this.contracts$.getValue();
         tmpArray[
-          tmpArray.findIndex((el) => el.code === contract.code)
+          tmpArray.findIndex((el) => el._id === contract._id)
         ] = contract;
         this.contracts$.next(tmpArray);
       });

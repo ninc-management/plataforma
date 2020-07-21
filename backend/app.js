@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const emailRoutes = require('./routes/email');
 const userRoutes = require('./routes/user');
 const contractRoutes = require('./routes/contract');
+const invoiceRoutes = require('./routes/invoice');
 
 const app = express();
 
@@ -46,5 +47,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/sendmail', emailRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/contract', contractRoutes);
+app.use('/api/invoice', invoiceRoutes);
 
 module.exports = app;

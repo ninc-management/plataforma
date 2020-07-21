@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { ContractService } from '../../../shared/services/contract.service';
 import { take } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
+import { InvoiceService } from '../../../shared/services/invoice.service';
 import * as contract_validation from '../../../shared/contract-validation.json';
 
 @Component({
@@ -21,7 +21,7 @@ export class InvoiceItemComponent implements OnInit {
   COORDINATIONS: string[] = [];
 
   constructor(
-    private contractService: ContractService,
+    private invoiceService: InvoiceService,
     private departmentService: DepartmentService
   ) {}
 
@@ -39,8 +39,8 @@ export class InvoiceItemComponent implements OnInit {
     } else {
       this.invoice = {};
     }
-    this.contractService
-      .contractsSize()
+    this.invoiceService
+      .invoicesSize()
       .pipe(take(2))
       .subscribe((size: number) => {
         this.contractNumber = size;
@@ -56,9 +56,9 @@ export class InvoiceItemComponent implements OnInit {
     this.submitted = true;
     if (this.editing) {
       this.updateRevision();
-      this.contractService.editContract(this.invoice);
+      this.invoiceService.editInvoice(this.invoice);
     } else {
-      this.contractService.saveContract(this.invoice);
+      this.invoiceService.saveInvoice(this.invoice);
     }
     this.submit.emit();
   }
