@@ -27,6 +27,7 @@ export class InvoiceService {
           let savedInvoice = res.invoice;
           savedInvoice.author = {
             fullName: user.fullName,
+            profilePicture: user.profilePicture,
           };
           tmp.push(savedInvoice);
           this.invoices$.next(tmp);

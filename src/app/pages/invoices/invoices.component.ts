@@ -19,11 +19,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
         return (
-          invoice.fullName.includes(this.searchQuery) ||
-          invoice.code.includes(this.searchQuery) ||
-          invoice.contractor.includes(this.searchQuery) ||
-          invoice.name.includes(this.searchQuery) ||
-          invoice.value.includes(this.searchQuery)
+          invoice.fullName
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractor
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.value.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.invoices;
