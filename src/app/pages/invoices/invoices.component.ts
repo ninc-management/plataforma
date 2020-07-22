@@ -13,6 +13,21 @@ import { InvoiceService } from '../../shared/services/invoice.service';
 })
 export class InvoicesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  invoices: any[] = [];
+  searchQuery = '';
+  get filtredInvoices(): any[] {
+    if (this.searchQuery !== '')
+      return this.invoices.filter((invoice) => {
+        return (
+          invoice.fullName.includes(this.searchQuery) ||
+          invoice.code.includes(this.searchQuery) ||
+          invoice.contractor.includes(this.searchQuery) ||
+          invoice.name.includes(this.searchQuery) ||
+          invoice.value.includes(this.searchQuery)
+        );
+      });
+    return this.invoices;
+  }
   settings = {
     mode: 'external',
     noDataMessage:
@@ -78,18 +93,18 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     this.invoicetService
       .getInvoices()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((contracts: any[]) => {
-        this.source.load(
-          contracts.map((contract: any) => {
-            if (!contract.fullName)
-              contract.fullName = contract.author.fullName;
-            return contract;
-          })
-        );
+      .subscribe((invoices: any[]) => {
+        this.invoices = invoices.map((invoice: any) => {
+          if (!invoice.fullName) invoice.fullName = invoice.author.fullName;
+          return invoice;
+        });
+        this.source.load(invoices);
       });
   }
 
   contractDialog(event): void {
+    console.log(event);
+
     this.dialogService.open(InvoiceDialogComponent, {
       context: {
         title: event.data ? 'EDIÇÃO DE ORÇAMENTO' : 'CADASTRO DE ORÇAMENTO',
@@ -100,5 +115,9 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
+  }
+
+  pageWidth(): number {
+    return window.innerWidth;
   }
 }

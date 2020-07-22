@@ -4,3 +4,9 @@
     overflow-y: auto;
   }
 }
+
+:host ::ng-deep {
+  .user-name {
+    font-weight: bold;
+  }
+}
