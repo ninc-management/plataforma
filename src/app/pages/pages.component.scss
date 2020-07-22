@@ -4,6 +4,20 @@
   --layout-padding-top: 0;
   --sidebar-padding: -1.25rem;
 
+  ::ng-deep {
+    nb-menu {
+      .menu-item {
+        a {
+          height: 48px;
+        }
+
+        .menu-icon {
+          width: 1rem;
+        }
+      }
+    }
+  }
+
   :host ::ng-deep {
     nb-sidebar nb-menu {
       margin: 0 var(--sidebar-padding) var(--sidebar-padding);

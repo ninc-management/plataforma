@@ -5,7 +5,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     title: 'Início',
     icon: {
       icon: 'home',
-      pack: 'fa',
+      pack: 'fac',
     },
     link: '/pages/dashboard',
     pathMatch: 'full',
@@ -15,7 +15,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     title: 'Orçamentos',
     icon: {
       icon: 'file-invoice-dollar',
-      pack: 'fa',
+      pack: 'fac',
     },
     link: '/pages/invoices',
     pathMatch: 'full',
@@ -23,8 +23,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Contratos',
     icon: {
-      icon: 'file-alt',
-      pack: 'fa',
+      icon: 'file-invoice',
+      pack: 'fac',
     },
     link: '/pages/contracts',
     pathMatch: 'full',
