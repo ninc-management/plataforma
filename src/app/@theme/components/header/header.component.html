@@ -22,14 +22,19 @@
       href="#"
       (click)="navigateHome()"
       matRipple
-      [matRippleUnbounded]="true"
+      [matRippleUnbounded]="false"
       [matRippleCentered]="false"
-      matRippleRadius="20"
+      style="
+        height: 42px;
+        display: flex;
+        border-radius: 0.17rem;
+        align-items: center;
+      "
       ><nb-icon
         icon="logo"
         pack="fac"
         *ngIf="!isPhone()"
-        style="width: 30px; height: 30px; vertical-align: 11px;"
+        style="width: 30px; height: 30px;"
       ></nb-icon>
       {{ menuTitle }}</a
     >
@@ -81,9 +86,9 @@
       class="user-action"
       *nbIsGranted="['view', 'user']"
       matRipple
-      [matRippleUnbounded]="true"
+      [matRippleUnbounded]="false"
       [matRippleCentered]="false"
-      matRippleRadius="20"
+      style="height: 48px; border-radius: 0.17rem;"
     >
       <nb-user
         [nbContextMenu]="userMenu"
