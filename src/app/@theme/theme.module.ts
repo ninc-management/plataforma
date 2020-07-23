@@ -1,6 +1,10 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  MatRippleModule,
+  MAT_RIPPLE_GLOBAL_OPTIONS,
+} from '@angular/material/core';
+import {
   NbActionsModule,
   NbLayoutModule,
   NbMenuModule,
@@ -15,7 +19,7 @@ import {
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbSecurityModule } from '@nebular/security';
-
+import { RippleService } from '../@core/utils/ripple.service';
 import {
   FooterComponent,
   HeaderComponent,
@@ -78,6 +82,9 @@ const PIPES = [
   imports: [CommonModule, ...NB_MODULES],
   exports: [CommonModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
+  providers: [
+    { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService },
+  ],
 })
 export class ThemeModule {
   static forRoot(): ModuleWithProviders<ThemeModule> {
