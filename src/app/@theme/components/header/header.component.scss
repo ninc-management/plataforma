@@ -2,10 +2,25 @@
 @import '~@nebular/theme/styles/global/breakpoints';
 @import '../../styles/themes';
 
+$hamburger-padding-x: 0px !default;
+$hamburger-padding-y: 0px !default;
+$hamburger-layer-width: 25px !default;
+$hamburger-layer-height: 3px !default;
+$hamburger-layer-spacing: 6px !default;
+$hamburger-layer-color: nb-theme(menu-item-icon-color);
+$hamburger-layer-border-radius: 4px !default;
+@import '~hamburgers/_sass/hamburgers/hamburgers';
+
 @include nb-install-component() {
   display: flex;
   justify-content: space-between;
   width: 100%;
+
+  ::ng-deep {
+    .mat-ripple-element {
+      background-color: nb-theme(color-basic-transparent-600);
+    }
+  }
 
   .logo-container {
     display: flex;
@@ -24,7 +39,7 @@
   }
 
   ::ng-deep nb-search button {
-    padding: 0!important;
+    padding: 0 !important;
   }
 
   .header-container {
@@ -36,10 +51,7 @@
       @include nb-ltr(padding-right, 1.25rem);
       @include nb-rtl(padding-left, 1.25rem);
       text-decoration: none;
-      color: nb-theme(text-hint-color);
-      nb-icon {
-        font-size: 1.75rem;
-      }
+      font-size: 1.75rem;
     }
 
     .logo {

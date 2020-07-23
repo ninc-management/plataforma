@@ -9,7 +9,6 @@ import {
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
-import { RippleService } from '../../../@core/utils/ripple.service';
 import { UserService } from '../../../shared/services/user.service';
 
 @Component({
@@ -19,6 +18,9 @@ import { UserService } from '../../../shared/services/user.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
+  public readonly materialTheme$: Observable<boolean>;
+  menuButtonClicked = false;
+  menuTitle = 'Nortan';
   userPictureOnly: boolean = false;
   user: any;
 
@@ -54,8 +56,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private userService: UserService,
     private layoutService: LayoutService,
-    private breakpointService: NbMediaBreakpointsService,
-    private rippleService: RippleService
+    private breakpointService: NbMediaBreakpointsService
   ) {
     this.materialTheme$ = this.themeService.onThemeChange().pipe(
       map((theme) => {
@@ -72,7 +73,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((user: any) => (this.user = user));
 
-    const { xl } = this.breakpointService.getBreakpointsMap();
+    const { sm, xl } = this.breakpointService.getBreakpointsMap();
     this.themeService
       .onMediaQueryChange()
       .pipe(
@@ -83,16 +84,25 @@ export class HeaderComponent implements OnInit, OnDestroy {
         (isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl)
       );
 
-    this.themeService
-      .onThemeChange()
-      .pipe(
-        map(({ name }) => name),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((themeName) => {
-        this.currentTheme = themeName;
-        this.rippleService.toggle(themeName?.startsWith('material'));
+    this.themeService.onThemeChange().pipe(
+      map(({ name }) => name),
+      takeUntil(this.destroy$)
+    );
+
+    this.menuService
+      .onItemSelect()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: { tag: string; item: any }) => {
+        if (document.documentElement.clientWidth <= sm) {
+          this.menuTitle =
+            event.item.title === 'Início' ? 'Nortan' : event.item.title;
+        }
       });
+
+    this.sidebarService
+      .onToggle()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => (this.menuButtonClicked = !this.menuButtonClicked));
   }
 
   ngOnDestroy() {
@@ -113,5 +123,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   navigateHome() {
     this.menuService.navigateHome();
     return false;
+  }
+
+  isPhone(): boolean {
+    const { sm } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= sm;
   }
 }

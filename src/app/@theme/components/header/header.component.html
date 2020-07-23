@@ -1,22 +1,43 @@
 <div class="header-container">
-  <div class="logo-container">
+  <div
+    class="logo-container"
+    [ngStyle]="{ 'margin-top.px': isPhone() ? 0 : -7 }"
+  >
     <a
-      href="#"
-      class="sidebar-toggle"
+      class="sidebar-toggle hamburger hamburger--collapse"
+      cursor="pointer"
       matRipple
-      [matRippleUnbounded]="true"
+      [ngClass]="{ 'is-active': menuButtonClicked }"
+      [matRippleUnbounded]="false"
       [matRippleCentered]="true"
+      matRippleRadius="20"
       (click)="toggleSidebar()"
     >
-      <nb-icon
-        [icon]="(materialTheme$ | async) ? 'menu-outline' : 'menu-2-outline'"
-      ></nb-icon>
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
     </a>
-    <a class="logo" href="#" (click)="navigateHome()">ngx-<span>admin</span></a>
+    <a
+      class="logo"
+      href="#"
+      (click)="navigateHome()"
+      matRipple
+      [matRippleUnbounded]="true"
+      [matRippleCentered]="false"
+      matRippleRadius="20"
+      ><nb-icon
+        icon="logo"
+        pack="fac"
+        *ngIf="!isPhone()"
+        style="width: 30px; height: 30px; vertical-align: 11px;"
+      ></nb-icon>
+      {{ menuTitle }}</a
+    >
   </div>
   <nb-select
     status="primary"
     matRipple
+    [matRippleUnbounded]="false"
     [selected]="currentTheme"
     (selectedChange)="changeTheme($event)"
   >
@@ -37,6 +58,7 @@
         matRipple
         [matRippleUnbounded]="true"
         [matRippleCentered]="true"
+        matRippleRadius="20"
       ></nb-search
     ></nb-action>
     <nb-action
@@ -45,6 +67,7 @@
       matRipple
       [matRippleUnbounded]="true"
       [matRippleCentered]="true"
+      matRippleRadius="20"
     ></nb-action>
     <nb-action
       class="control-item"
@@ -52,13 +75,15 @@
       matRipple
       [matRippleUnbounded]="true"
       [matRippleCentered]="true"
+      matRippleRadius="20"
     ></nb-action>
     <nb-action
       class="user-action"
       *nbIsGranted="['view', 'user']"
       matRipple
       [matRippleUnbounded]="true"
-      [matRippleCentered]="true"
+      [matRippleCentered]="false"
+      matRippleRadius="20"
     >
       <nb-user
         [nbContextMenu]="userMenu"
