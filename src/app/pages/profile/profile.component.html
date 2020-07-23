@@ -112,7 +112,50 @@
                   </p>
                 </ng-container>
               </div>
-
+              <div class="form-control-group">
+                <label class="label" for="input-document">CPF/CNPJ:</label>
+                <input
+                  nbInput
+                  [(ngModel)]="currentUser.document"
+                  #document="ngModel"
+                  id="input-document"
+                  name="document"
+                  placeholder="CPF/CNPJ"
+                  fullWidth
+                  fieldSize="large"
+                  [brmasker]="{ person: true }"
+                  [required]="validation.fullName.required"
+                  [minlength]="validation.fullName.minLength"
+                  [maxlength]="validation.fullName.maxLength"
+                  [status]="
+                    document.dirty
+                      ? document.invalid
+                        ? 'danger'
+                        : 'success'
+                      : 'basic'
+                  "
+                  [attr.aria-invalid]="
+                    document.invalid && document.touched ? true : null
+                  "
+                  [disabled]="true"
+                />
+                <ng-container *ngIf="document.invalid && document.touched">
+                  <p
+                    class="caption status-danger"
+                    *ngIf="document.errors?.required"
+                  >
+                    O CPF/CNPJ é obrigatório!
+                  </p>
+                  <p
+                    class="caption status-danger"
+                    *ngIf="
+                      document.errors?.minlength || document.errors?.maxlength
+                    "
+                  >
+                    O CPF/CNPJ deve ter 11 ou 14 caracteres
+                  </p>
+                </ng-container>
+              </div>
               <div class="form-control-group">
                 <label class="label" for="input-phone"
                   >Telefone para contato:</label
