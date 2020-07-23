@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'ngx-one-column-layout',
@@ -9,7 +9,23 @@ import { Component } from '@angular/core';
         <ngx-header></ngx-header>
       </nb-layout-header>
 
-      <nb-sidebar class="menu-sidebar" tag="menu-sidebar" responsive start>
+      <nb-sidebar
+        class="menu-sidebar"
+        tag="menu-sidebar"
+        responsive
+        start
+        [compactedBreakpoints]="[
+          'xs',
+          'is',
+          'sm',
+          'md',
+          'lg',
+          'xl',
+          'xxl',
+          'xxxl'
+        ]"
+        #sidebar
+      >
         <ng-content select="nb-menu"></ng-content>
       </nb-sidebar>
 
@@ -23,4 +39,7 @@ import { Component } from '@angular/core';
     </nb-layout>
   `,
 })
-export class OneColumnLayoutComponent {}
+export class OneColumnLayoutComponent {
+  @ViewChild('sidebar', { static: false, read: ElementRef })
+  sidebarRef: ElementRef<HTMLElement>;
+}
