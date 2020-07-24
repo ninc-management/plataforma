@@ -80,6 +80,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Valor',
         type: 'string',
         width: '10%',
+        compareFunction: this.valueSort,
       },
       status: {
         title: 'Status',
@@ -151,5 +152,18 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       case 'Negado':
         return 'danger';
     }
+  }
+
+  valueSort(direction: any, a: string, b: string): number {
+    let first = +a.replace(/[,.]/g, '');
+    let second = +b.replace(/[,.]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
   }
 }
