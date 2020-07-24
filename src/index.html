@@ -1,28 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Platarforma Nortan</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>Platarforma Nortan</title>
 
-  <base href="/">
+    <base href="/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpVhQiwAllg1RAFaxMWSpQruuGARy0Y1k&libraries=places"></script>
-</head>
-<body>
-  <ngx-app>Loading...</ngx-app>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpVhQiwAllg1RAFaxMWSpQruuGARy0Y1k&libraries=places"
+    ></script>
+  </head>
+  <body>
+    <ngx-app>Loading...</ngx-app>
 
-  <style>@-webkit-keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@-moz-keyframes spin{0%{-moz-transform:rotate(0)}100%{-moz-transform:rotate(360deg)}}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.spinner{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1003;background: #000000;overflow:hidden}  .spinner div:first-child{display:block;position:relative;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;box-shadow:0 3px 3px 0 rgba(255,56,106,1);transform:translate3d(0,0,0);animation:spin 2s linear infinite}  .spinner div:first-child:after,.spinner div:first-child:before{content:'';position:absolute;border-radius:50%}  .spinner div:first-child:before{top:5px;left:5px;right:5px;bottom:5px;box-shadow:0 3px 3px 0 rgb(255, 228, 32);-webkit-animation:spin 3s linear infinite;animation:spin 3s linear infinite}  .spinner div:first-child:after{top:15px;left:15px;right:15px;bottom:15px;box-shadow:0 3px 3px 0 rgba(61, 175, 255,1);animation:spin 1.5s linear infinite}</style>
-  <div id="nb-global-spinner" class="spinner">
-    <div class="blob blob-0"></div>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-    <div class="blob blob-4"></div>
-    <div class="blob blob-5"></div>
-  </div>
-
-</body>
+    <style>
+      .spinner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1003;
+        background: #ffffff;
+        overflow: hidden;
+      }
+    </style>
+    <div id="nb-global-spinner" class="spinner">
+      <svg
+        id="ejcld0b03d81"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 0 300 300"
+        shape-rendering="geometricPrecision"
+        text-rendering="geometricPrecision"
+        width="300"
+        height="300"
+      >
+        <style>
+          <![CDATA[#ejcld0b03d85_tr {animation: ejcld0b03d85_tr__tr 4000ms linear infinite normal forwards}@keyframes ejcld0b03d85_tr__tr { 0% {transform: translate(500.000473px,499.999512px) rotate(0deg)} 7.500000% {transform: translate(500.000473px,499.999512px) rotate(0deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 42.500000% {transform: translate(500.000473px,499.999512px) rotate(-180deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 57.500000% {transform: translate(500.000473px,499.999512px) rotate(-180deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 92.500000% {transform: translate(500.000473px,499.999512px) rotate(-360deg)} 100% {transform: translate(500.000473px,499.999512px) rotate(-360deg)} }#ejcld0b03d810_tr {animation: ejcld0b03d810_tr__tr 4000ms linear infinite normal forwards}@keyframes ejcld0b03d810_tr__tr { 0% {transform: translate(500.000473px,499.999512px) rotate(0deg)} 5% {transform: translate(500.000473px,499.999512px) rotate(0deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 45% {transform: translate(500.000473px,499.999512px) rotate(360deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 55% {transform: translate(500.000473px,499.999512px) rotate(360deg);animation-timing-function: cubic-bezier(0.680000,-0.550000,0.265000,1.550000)} 95% {transform: translate(500.000473px,499.999512px) rotate(720deg)} 100% {transform: translate(500.000473px,499.999512px) rotate(720deg)} }#ejcld0b03d810_ts {animation: ejcld0b03d810_ts__ts 4000ms linear infinite normal forwards}@keyframes ejcld0b03d810_ts__ts { 0% {transform: scale(1,1);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 7.500000% {transform: scale(1.608495,1.608495);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 42.500000% {transform: scale(1.608495,1.608495);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 50% {transform: scale(1,1);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 57.500000% {transform: scale(1.608495,1.608495);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 92.500000% {transform: scale(1.608495,1.608495);animation-timing-function: cubic-bezier(0.785000,0.135000,0.150000,0.860000)} 100% {transform: scale(1,1)} }]]>
+        </style>
+        <defs>
+          <clipPath id="ejcld0b03d82">
+            <path
+              id="ejcld0b03d83"
+              d="M0,1000L1000,1000L1000,0L0,0Z"
+              fill="rgb(0,0,0)"
+              stroke="none"
+              stroke-width="1"
+            />
+          </clipPath>
+        </defs>
+        <g
+          id="ejcld0b03d84"
+          transform="matrix(-0.25000000000000 0 0 0.25000000000000 275.00011825499996 25.00012207000026)"
+          clip-path="url(#ejcld0b03d82)"
+        >
+          <g
+            id="ejcld0b03d85_tr"
+            transform="translate(500.000473,499.999512) rotate(0)"
+          >
+            <g id="ejcld0b03d85" transform="translate(-500.000473,-499.999512)">
+              <g
+                id="ejcld0b03d86"
+                transform="matrix(1 0 0 1 574.04600000000005 624.21100000000001)"
+              >
+                <path
+                  id="ejcld0b03d87"
+                  d="M0,0L-126.330000,189.495000L-249.138000,-178.937000C-247.381000,-184.565000,-245.361000,-190.123000,-243.048000,-195.594000C-233.811000,-217.431000,-220.583000,-237.047000,-203.731000,-253.900000C-195.988000,-261.643000,-187.654000,-268.611000,-178.796000,-274.789000L-100.708000,-40.454000L-42.518000,-127.721000Z"
+                  fill="rgb(6,91,93)"
+                  stroke="none"
+                  stroke-width="1"
+                />
+              </g>
+              <g
+                id="ejcld0b03d88"
+                transform="matrix(1 0 0 1 669.00699999999995 571.38199999999995)"
+              >
+                <path
+                  id="ejcld0b03d89"
+                  d="M0,0C-9.236000,21.837000,-22.464000,41.454000,-39.316000,58.306000C-47.075000,66.065000,-55.426000,73.045000,-64.303000,79.231000L-142.330000,-155.068000L-200.519000,-67.791000L-243.163000,-195.429000L-116.723000,-385.089000L6.068000,-16.540000C4.317000,-10.951000,2.298000,-5.434000,0,0"
+                  fill="rgb(122,187,158)"
+                  stroke="none"
+                  stroke-width="1"
+                />
+              </g>
+            </g>
+          </g>
+          <g
+            id="ejcld0b03d810_tr"
+            transform="translate(500.000473,499.999512) rotate(0)"
+          >
+            <g id="ejcld0b03d810_ts" transform="scale(1,1)">
+              <g
+                id="ejcld0b03d810"
+                transform="translate(-500.000473,-499.999512)"
+              >
+                <path
+                  id="ejcld0b03d811"
+                  d="M0,0L38.100000,-57.151000C61.215000,-62.281000,82.893000,-71.231000,102.433000,-83.311000L144.543000,-48.593000L125.652000,-99.860000L124.853000,-99.295000C171.788000,-137.646000,201.756000,-195.979000,201.756000,-261.317000C201.756000,-301.535000,190.394000,-339.095000,170.718000,-370.980000L205.386000,-413.209000L154.121000,-394.197000L154.121000,-394.197000C142.581000,-408.206000,129.253000,-420.684000,114.489000,-431.289000L90.306000,-503.871000C186.294000,-465.175000,254.041000,-371.159000,254.041000,-261.317000C254.041000,-119.406000,140.966000,-3.909000,0,0"
+                  transform="matrix(1 0 0 1 507.38200002551855 761.31700000000001)"
+                  fill="rgb(0,47,65)"
+                  stroke="none"
+                  stroke-width="1"
+                />
+                <path
+                  id="ejcld0b03d812"
+                  d="M0,0L-42.115000,-34.722000L-23.149000,16.574000C-69.657000,54.932000,-99.305000,113.001000,-99.305000,177.994000C-99.305000,218.212000,-87.942000,255.772000,-68.267000,287.658000L-102.935000,329.887000L-51.669000,310.875000C-40.138000,324.874000,-26.819000,337.345000,-12.066000,347.946000L12.132000,420.543000C-83.849000,381.844000,-151.589000,287.832000,-151.589000,177.994000C-151.589000,36.084000,-38.514000,-79.414000,102.451000,-83.323000L64.351000,-26.172000C41.229000,-21.040000,19.545000,-12.086000,0,0"
+                  transform="matrix(1 0 0 1 390.16700001999948 322.00599999999940)"
+                  fill="rgb(0,47,65)"
+                  stroke="none"
+                  stroke-width="1"
+                />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </body>
 </html>
