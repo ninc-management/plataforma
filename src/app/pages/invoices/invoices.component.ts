@@ -107,8 +107,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   contractDialog(event): void {
-    console.log(event);
-
     this.dialogService.open(InvoiceDialogComponent, {
       context: {
         title: event.data ? 'EDIÇÃO DE ORÇAMENTO' : 'CADASTRO DE ORÇAMENTO',

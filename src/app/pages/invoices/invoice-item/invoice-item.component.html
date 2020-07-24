@@ -87,7 +87,7 @@
   </div>
 
   <div class="form-control-group">
-    <label class="label" for="input-type">Tipologia:</label>
+    <label class="label" for="input-type">Tipologia do empreendimento:</label>
     <input
       nbInput
       [(ngModel)]="invoice.type"
@@ -107,13 +107,13 @@
     />
     <ng-container *ngIf="type.invalid && type.touched">
       <p class="caption status-danger" *ngIf="type.errors?.required">
-        A tipologia é obrigatória!
+        A tipologia do empreendimento é obrigatória!
       </p>
       <p
         class="caption status-danger"
         *ngIf="type.errors?.minlength || type.errors?.maxlength"
       >
-        A tipologia deve conter entre
+        A tipologia do empreendimento deve conter entre
         {{ validation.type.minLength }} a
         {{ validation.type.maxLength }}
         caracteres
