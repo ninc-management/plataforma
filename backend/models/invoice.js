@@ -11,6 +11,7 @@ const invoiceSchema = mongoose.Schema({
   contractor: { type: String, required: true },
   name: { type: String, required: true },
   value: { type: String, required: true },
+  status: { type: String, required: true },
   trello: { type: Boolean, required: true },
 });
 

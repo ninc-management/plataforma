@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ContractService } from '../../../shared/services/contract.service';
 import { take } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
-import * as contract_validation from '../../../shared/contract-validation.json';
+import * as contract_validation from '../../../shared/invoice-validation.json';
 
 @Component({
   selector: 'ngx-contract-item',

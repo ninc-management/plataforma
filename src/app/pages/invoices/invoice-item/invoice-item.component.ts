@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
-import * as contract_validation from '../../../shared/contract-validation.json';
+import * as contract_validation from '../../../shared/invoice-validation.json';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -19,6 +19,7 @@ export class InvoiceItemComponent implements OnInit {
   validation = (contract_validation as any).default;
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
+  STATOOS = ['Em análise', 'Fechado', 'Negado'];
 
   constructor(
     private invoiceService: InvoiceService,

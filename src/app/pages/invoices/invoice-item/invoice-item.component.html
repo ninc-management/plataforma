@@ -269,18 +269,47 @@
     </ng-container>
   </div>
 
-  <div class="form-control-group">
-    <br />
-    <label class="label" for="input-interests"></label>
-    <nb-checkbox
-      [(ngModel)]="invoice.trello"
-      #trello="ngModel"
-      name="trello"
-      [status]="trello.value ? 'success' : 'basic'"
-      [disabled]="false"
-      [required]="validation.trello.required"
-      >Adicionado no Trello</nb-checkbox
-    >
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-status">Status:</label>
+        <nb-select
+          [(ngModel)]="invoice.status"
+          #status="ngModel"
+          id="input-status"
+          name="status"
+          placeholder="Selecione o departamento"
+          fullWidth
+          [required]="validation.status.required"
+          [status]="
+            status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="status.invalid && status.touched ? true : null"
+          [disabled]="false"
+        >
+          <nb-option *ngFor="let status of STATOOS" [value]="status">
+            {{ status }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-interests" style="margin-bottom: 16px;"
+          >Trello:
+        </label>
+        <br />
+        <nb-checkbox
+          [(ngModel)]="invoice.trello"
+          #trello="ngModel"
+          name="trello"
+          [status]="trello.value ? 'success' : 'basic'"
+          [disabled]="false"
+          [required]="validation.trello.required"
+          >Adicionado</nb-checkbox
+        >
+      </div>
+    </div>
   </div>
 
   <button

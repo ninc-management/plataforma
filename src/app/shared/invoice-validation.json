@@ -3,6 +3,7 @@
   "department": { "required": true },
   "coordination": { "required": true },
   "code": { "required": true },
+  "status": { "required": true },
   "type": {
     "required": true,
     "minLength": 3,
