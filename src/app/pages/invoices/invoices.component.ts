@@ -27,7 +27,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.value.toLowerCase().includes(this.searchQuery.toLowerCase())
+          invoice.value
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.invoices;
@@ -78,6 +81,22 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         type: 'string',
         width: '10%',
       },
+      status: {
+        title: 'Status',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Status',
+            list: [
+              { value: 'Em análise', title: 'Em análise' },
+              { value: 'Fechado', title: 'Fechado' },
+              { value: 'Negado', title: 'Negado' },
+            ],
+          },
+        },
+      },
     },
   };
 
@@ -121,5 +140,16 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   pageWidth(): number {
     return window.innerWidth;
+  }
+
+  statusColor(status: string): string {
+    switch (status) {
+      case 'Em análise':
+        return 'warning';
+      case 'Fechado':
+        return 'success';
+      case 'Negado':
+        return 'danger';
+    }
   }
 }

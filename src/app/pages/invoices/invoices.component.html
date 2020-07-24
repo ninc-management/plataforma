@@ -58,13 +58,20 @@
                       pack="fa"
                       status="success"
                     ></nb-icon>
-                    <span style="vertical-align: 1.6px;">{{
-                      invoice.value
-                    }}</span>
+                    <span style="vertical-align: 0.1em;">
+                      {{ invoice.value }}
+                    </span>
                   </p>
                 </div>
                 <div class="col-6">
-                  <nb-icon icon="clock" pack="fa" status="success"></nb-icon>
+                  <nb-icon
+                    icon="clock"
+                    pack="fa"
+                    [status]="statusColor(invoice.status)"
+                  ></nb-icon>
+                  <span style="vertical-align: 0.1em;">
+                    {{ invoice.status }}
+                  </span>
                 </div>
                 <div class="col-12">
                   <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
