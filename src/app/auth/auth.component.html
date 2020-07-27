@@ -8,6 +8,14 @@
             class="mx-auto d-block"
             alt="Logo"
             style="max-height: 200px;"
+            *ngIf="!authService.submitted$.getValue()"
+          />
+          <img
+            src="assets/images/spinner.svg"
+            class="mx-auto d-block"
+            alt="Logo"
+            style="height: 340px;"
+            *ngIf="authService.submitted$.getValue()"
           />
           <router-outlet></router-outlet>
         </nb-auth-block>

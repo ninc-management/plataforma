@@ -8,6 +8,7 @@ import {
 import * as user_validation from '../../shared/user-validation.json';
 import { StatecityService } from '../../shared/services/statecity.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'ngx-register',
@@ -25,19 +26,22 @@ export class NgxRegisterComponent extends NbRegisterComponent
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected cd: ChangeDetectorRef,
-    protected router: Router
+    protected router: Router,
+    protected authService: AuthService
   ) {
     super(service, options, cd, router);
   }
 
   ngOnInit() {
     this.states = this.statecityService.buildStateList();
+    this.authService.submitted$.next(false);
   }
 
   register(): void {
     // Remove existing token before register a new one
     this.service.logout('email');
     localStorage.clear();
+    this.authService.submitted$.next(true);
 
     super.register();
   }
