@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
   more: { type: Boolean },
   meet: { type: String },
   profilePicture: { type: String },
-  document: { type: String },
+  document: { type: String, unique: true },
 });
 
 userSchema.plugin(uniqueValidator);
