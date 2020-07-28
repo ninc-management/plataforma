@@ -29,11 +29,6 @@ export class ContractDialogComponent implements OnInit {
   }
 
   dismiss(): void {
-    if (this.contract)
-      if (this.contract.department.length > 3)
-        this.contract.department = this.departmentService.extractAbreviation(
-          this.contract.department
-        );
     this.ref.close();
   }
 

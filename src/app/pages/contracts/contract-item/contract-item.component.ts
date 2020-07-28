@@ -12,12 +12,15 @@ import * as contract_validation from '../../../shared/invoice-validation.json';
 export class ContractItemComponent implements OnInit {
   @Input() contract: any;
   @Output() submit = new EventEmitter<void>();
-  editing = false;
   submitted = false;
   contractNumber: number;
   validation = (contract_validation as any).default;
-  DEPARTMENTS: string[] = [];
-  COORDINATIONS: string[] = [];
+  STATOOS = ['Em análise', 'Fechado', 'Negado'];
+  INTERESTS = [...Array(24).keys()].map((index) => index + 1);
+  paymentIcon = {
+    icon: 'dollar-sign',
+    pack: 'fa',
+  };
 
   constructor(
     private contractService: ContractService,
@@ -25,25 +28,8 @@ export class ContractItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.contract) {
-      this.editing = true;
-      this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-        this.contract.department
-      );
-      this.contract.department = this.departmentService.composedName(
-        this.contract.department
-      );
-    } else {
-      this.contract = {};
-    }
-    this.contractService
-      .contractsSize()
-      .pipe(take(2))
-      .subscribe((size: number) => {
-        this.contractNumber = size;
-        this.updateCode();
-      });
-    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+    this.contract.interest = this.contract.payments.length;
+    this.contract.paid = 0; // Sum all payments
   }
 
   registerContract(): void {
@@ -51,38 +37,7 @@ export class ContractItemComponent implements OnInit {
       this.contract.department
     );
     this.submitted = true;
-    if (this.editing) {
-      this.contractService.editContract(this.contract);
-    } else {
-      this.contractService.saveContract(this.contract);
-    }
+    this.contractService.editContract(this.contract);
     this.submit.emit();
-  }
-
-  onDepartmentChange() {
-    this.updateCode();
-    this.updateCoordination();
-  }
-
-  updateCoordination() {
-    this.contract.coordination = undefined;
-    this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-      this.departmentService.extractAbreviation(this.contract.department)
-    );
-  }
-
-  updateCode(): void {
-    if (!this.editing) {
-      this.contract.code =
-        'ORC-' +
-        this.contractNumber +
-        '/' +
-        new Date().getFullYear() +
-        '-NRT/' +
-        (this.contract.department
-          ? this.departmentService.extractAbreviation(this.contract.department)
-          : '') +
-        '-00';
-    }
   }
 }

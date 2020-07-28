@@ -27,14 +27,14 @@ export class ContractsComponent implements OnInit, OnDestroy {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
+      deleteButtonContent: '<i class="fa fa-dollar-sign payment"></i>',
+      confirmDelete: false,
     },
     actions: {
       columnTitle: 'Ações',
-      add: true,
+      add: false,
       edit: true,
-      delete: false,
+      delete: true,
     },
     columns: {
       fullName: {
@@ -57,6 +57,23 @@ export class ContractsComponent implements OnInit, OnDestroy {
         title: 'Valor',
         type: 'string',
         width: '10%',
+        compareFunction: this.valueSort,
+      },
+      status: {
+        title: 'Status',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Status',
+            list: [
+              { value: 'Em adamento', title: 'Em adamento' },
+              { value: 'Concluído', title: 'Concluído' },
+              { value: 'Arquivado', title: 'Arquivado' },
+            ],
+          },
+        },
       },
     },
   };
@@ -81,7 +98,12 @@ export class ContractsComponent implements OnInit, OnDestroy {
         this.source.load(
           contracts.map((contract: any) => {
             if (!contract.fullName)
-              contract.fullName = contract.author.fullName;
+              contract.fullName = contract.invoice.author.fullName;
+            if (!contract.code) contract.code = contract.invoice.code;
+            if (!contract.contractor)
+              contract.contractor = contract.invoice.contractor;
+            if (!contract.value) contract.value = contract.invoice.value;
+            if (!contract.name) contract.name = contract.invoice.name;
             return contract;
           })
         );
@@ -91,7 +113,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   contractDialog(event): void {
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: event.data ? 'EDIÇÃO DE CONTRATO' : 'CADASTRO DE CONTRATO',
+        title: 'EDIÇÃO DE CONTRATO',
         contract: event.data,
       },
       dialogClass: 'my-dialog',
@@ -99,5 +121,18 @@ export class ContractsComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
+  }
+
+  valueSort(direction: any, a: string, b: string): number {
+    let first = +a.replace(/[,.]/g, '');
+    let second = +b.replace(/[,.]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
   }
 }

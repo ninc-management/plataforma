@@ -2,7 +2,8 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
-import * as contract_validation from '../../../shared/invoice-validation.json';
+import { ContractService } from '../../../shared/services/contract.service';
+import * as invoice_validation from '../../../shared/invoice-validation.json';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -14,16 +15,18 @@ export class InvoiceItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   editing = false;
   submitted = false;
-  contractNumber: number;
+  invoiceNumber: number;
   revision: number = 0;
-  validation = (contract_validation as any).default;
+  validation = (invoice_validation as any).default;
+  oldStatus: string;
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
   STATOOS = ['Em análise', 'Fechado', 'Negado'];
 
   constructor(
     private invoiceService: InvoiceService,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    private contractService: ContractService
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +40,7 @@ export class InvoiceItemComponent implements OnInit {
       );
       this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
       this.revision += 1;
+      this.oldStatus = this.invoice.status;
     } else {
       this.invoice = {};
     }
@@ -44,13 +48,13 @@ export class InvoiceItemComponent implements OnInit {
       .invoicesSize()
       .pipe(take(2))
       .subscribe((size: number) => {
-        this.contractNumber = size;
+        this.invoiceNumber = size;
         this.updateCode();
       });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
   }
 
-  registerContract(): void {
+  registerInvoice(): void {
     this.invoice.department = this.departmentService.extractAbreviation(
       this.invoice.department
     );
@@ -58,6 +62,10 @@ export class InvoiceItemComponent implements OnInit {
     if (this.editing) {
       this.updateRevision();
       this.invoiceService.editInvoice(this.invoice);
+      if (this.oldStatus !== this.invoice.status) {
+        if (this.invoice.status === 'Fechado')
+          this.contractService.saveContract(this.invoice);
+      }
     } else {
       this.invoiceService.saveInvoice(this.invoice);
     }
@@ -80,7 +88,7 @@ export class InvoiceItemComponent implements OnInit {
     if (!this.editing) {
       this.invoice.code =
         'ORC-' +
-        this.contractNumber +
+        this.invoiceNumber +
         '/' +
         new Date().getFullYear() +
         '-NRT/' +

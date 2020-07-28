@@ -3,4 +3,18 @@
     overflow-x: auto;
     overflow-y: auto;
   }
+
+  th {
+    &[ng2-st-actions-title] {
+      width: 5%;
+    }
+  }
+
+  .payment {
+    font-size: 1.5rem;
+  }
+
+  .ng2-smart-action-delete-delete:hover {
+    color: green !important;
+  }
 }

@@ -17,6 +17,7 @@ export class ContractService {
     const contract = {
       invoice: invoice._id,
       payments: [],
+      status: 'Em andamento',
     };
     const req = {
       contract: contract,
