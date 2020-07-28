@@ -13,4 +13,4 @@ const paymentSchema = mongoose.Schema({
 
 paymentSchema.plugin(uniqueValidator);
 
-module.exports = mongoose.model('Contract', paymentSchema);
+module.exports = mongoose.model('Payment', paymentSchema);

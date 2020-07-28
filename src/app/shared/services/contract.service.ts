@@ -13,25 +13,24 @@ export class ContractService {
 
   constructor(private http: HttpClient, private userService: UserService) {}
 
-  saveContract(contract: any): void {
-    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      contract.author = user._id;
-      const req = {
-        contract: contract,
-      };
-      this.http
-        .post('/api/contract/', req)
-        .pipe(take(1))
-        .subscribe((res: any) => {
-          let tmp = this.contracts$.getValue();
-          let savedContract = res.contract;
-          savedContract.author = {
-            fullName: user.fullName,
-          };
-          tmp.push(savedContract);
-          this.contracts$.next(tmp);
-        });
-    });
+  saveContract(invoice: any): void {
+    const contract = {
+      invoice: invoice._id,
+      payments: [],
+    };
+    const req = {
+      contract: contract,
+    };
+    this.http
+      .post('/api/contract/', req)
+      .pipe(take(1))
+      .subscribe((res: any) => {
+        let tmp = this.contracts$.getValue();
+        let savedContract = res.contract;
+        savedContract.invoice = invoice;
+        tmp.push(savedContract);
+        this.contracts$.next(tmp);
+      });
   }
 
   editContract(contract: any): void {

@@ -3,7 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const contractSchema = mongoose.Schema({
   invoice: { type: mongoose.ObjectId, ref: 'Invoice', required: true },
-  payments: [{ type: mongoose.ObjectId, ref: 'Payment', required: true }],
+  payments: [{ type: mongoose.ObjectId, ref: 'Payment' }],
 });
 
 contractSchema.plugin(uniqueValidator);
