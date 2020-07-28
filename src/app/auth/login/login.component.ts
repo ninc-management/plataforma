@@ -28,7 +28,6 @@ export class NgxLoginComponent extends NbLoginComponent {
   }
 
   login(): void {
-    console.log('Chamei o login: ', this.authService.submitted$.getValue());
     this.authService.submitted$.next(true);
     super.login();
   }
