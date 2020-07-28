@@ -36,7 +36,9 @@ router.post('/update', async (req, res, next) => {
 router.post('/count', (req, res) => {
   Invoice.estimatedDocumentCount({}, function (err, result) {
     if (err) {
-      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     } else {
       res.json({
         size: result,

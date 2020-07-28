@@ -10,7 +10,7 @@ const Payment = require('../models/payment');
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
-  const contract = new Contract(req.body.invoice._id);
+  const contract = new Contract(req.body.contract);
   contract.save(function (err, result) {
     if (err) {
       return res.status(500).json({
@@ -19,7 +19,7 @@ router.post('/', async (req, res, next) => {
     } else {
       return res.status(201).json({
         message: 'Contrato cadastrado!',
-        contract: savedContract,
+        contract: result,
       });
     }
   });
@@ -52,7 +52,9 @@ router.post('/addPayment', async (req, res, next) => {
 router.post('/count', (req, res) => {
   Contract.estimatedDocumentCount({}, function (err, result) {
     if (err) {
-      console.log(err);
+      res.status(500).json({
+        error: err,
+      });
     } else {
       res.json({
         size: result,
@@ -62,7 +64,20 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  contracts = await Contract.find({}).populate('payment');
+  contracts = await Contract.find({})
+    .populate({
+      path: 'payments',
+      populate: { path: 'payments' },
+    })
+    .populate({
+      path: 'invoice',
+      model: 'Invoice',
+      populate: {
+        path: 'author',
+        select: { fullName: 1, profilePicture: 1 },
+        model: 'User',
+      },
+    });
   return res.status(200).json(contracts);
 });
 
