@@ -12,6 +12,7 @@ import {
   NbSpinnerModule,
   NbIconModule,
   NbListModule,
+  NbTabsetModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../@theme/theme.module';
@@ -39,6 +40,7 @@ import { InvoiceDialogComponent } from './invoices/invoice-dialog/invoice-dialog
     NbIconModule,
     NbUserModule,
     NbListModule,
+    NbTabsetModule,
     NbSpinnerModule,
     ThemeModule,
     DashboardModule,
