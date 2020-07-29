@@ -286,6 +286,12 @@
               placeholder="Código do Orçamento"
               fullWidth
               fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
               [required]="validation.paid?.required"
               [status]="
                 paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'

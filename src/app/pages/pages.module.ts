@@ -13,6 +13,7 @@ import {
   NbIconModule,
   NbListModule,
   NbTabsetModule,
+  NbRadioModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../@theme/theme.module';
@@ -43,6 +44,7 @@ import { PaymentItemComponent } from './contracts/contract-item/payment-item/pay
     NbListModule,
     NbTabsetModule,
     NbSpinnerModule,
+    NbRadioModule,
     ThemeModule,
     DashboardModule,
     FormsModule,

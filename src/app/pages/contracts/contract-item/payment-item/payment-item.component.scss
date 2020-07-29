@@ -1,1 +1,7 @@
+@import '../../../../@theme/styles/themes';
 
+@include nb-install-component() {
+  nb-radio-group {
+    display: flex;
+  }
+}

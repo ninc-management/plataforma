@@ -22,7 +22,13 @@
         <ngx-contract-item
           [contract]="contract"
           (submit)="dismiss()"
+          *ngIf="isEditing"
         ></ngx-contract-item>
+        <ngx-payment-item
+          [contract]="contract"
+          (submit)="dismiss()"
+          *ngIf="!isEditing"
+        ></ngx-payment-item>
       </nb-card-body>
     </nb-card>
   </div>

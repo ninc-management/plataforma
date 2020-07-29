@@ -20,6 +20,14 @@ export class DepartmentService {
     return entry.coordinations;
   }
 
+  buildAllCoordinationsList(): string[] {
+    let coordinations: string[] = [];
+    for (const department of json_department_coordination.departments) {
+      coordinations.push(...department.coordinations);
+    }
+    return coordinations;
+  }
+
   composedName(abrev: string): string {
     let entry = json_department_coordination.departments.find(
       (el) => el.abrev === abrev

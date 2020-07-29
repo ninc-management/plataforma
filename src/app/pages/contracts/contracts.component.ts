@@ -110,11 +110,12 @@ export class ContractsComponent implements OnInit, OnDestroy {
       });
   }
 
-  contractDialog(event): void {
+  contractDialog(event, isEditing: boolean): void {
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: 'EDIÇÃO DE CONTRATO',
+        title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
         contract: event.data,
+        isEditing: isEditing,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

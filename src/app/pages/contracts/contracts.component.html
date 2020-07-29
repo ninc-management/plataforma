@@ -4,8 +4,8 @@
       <ng2-smart-table
         [settings]="settings"
         [source]="source"
-        (edit)="contractDialog($event)"
-        (create)="contractDialog({})"
+        (edit)="contractDialog($event, true)"
+        (delete)="contractDialog($event, false)"
       >
       </ng2-smart-table>
     </nb-card>

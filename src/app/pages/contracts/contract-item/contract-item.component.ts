@@ -25,11 +25,10 @@ export class ContractItemComponent implements OnInit {
   ngOnInit(): void {
     this.contract.interest = this.contract.payments.length;
     this.contract.paid = 0; // Sum all payments
-    console.log(this.contract);
+    document.documentElement.style.setProperty('--card-padding', '0');
   }
 
   registerContract(): void {
-    console.log(this.contract);
     this.submitted = true;
     let version = +this.contract.version;
     version += 1;

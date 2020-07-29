@@ -12,6 +12,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 export class ContractDialogComponent implements OnInit {
   @Input() title: string;
   @Input() contract: any;
+  @Input() isEditing: boolean;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
@@ -26,6 +27,7 @@ export class ContractDialogComponent implements OnInit {
         takeUntil(this.ref.onClose)
       )
       .subscribe(() => this.dismiss());
+    document.documentElement.style.setProperty('--card-padding', '1rem 1.5rem');
   }
 
   dismiss(): void {
