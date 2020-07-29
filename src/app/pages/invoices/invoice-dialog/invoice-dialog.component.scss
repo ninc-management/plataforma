@@ -1,9 +1,6 @@
 @import '../../../@theme/styles/themes';
 
 ::ng-deep {
-  flex: 1 0 auto;
-  min-width: 20rem;
-
   nb-card-header {
     display: flex;
     justify-content: space-between;
