@@ -5,52 +5,58 @@
       #form="ngForm"
       aria-labelledby="title"
     >
-      <div class="form-control-group">
-        <label class="label" for="input-author">Autor:</label>
-        <input
-          nbInput
-          [(ngModel)]="contract.fullName"
-          #author="ngModel"
-          id="input-author"
-          name="author"
-          placeholder="Nome do autor"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.author.required"
-          [minlength]="validation.author.minLength"
-          [maxlength]="validation.author.maxLength"
-          [status]="
-            author.dirty ? (author.invalid ? 'danger' : 'success') : 'basic'
-          "
-          [attr.aria-invalid]="author.invalid && author.touched ? true : null"
-          [disabled]="true"
-        />
-      </div>
       <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-7">
           <div class="form-control-group">
-            <label class="label" for="input-code">Código do orçamento:</label>
+            <label class="label" for="input-author">Autor:</label>
             <input
               nbInput
-              [(ngModel)]="contract.code"
-              #code="ngModel"
-              id="input-code"
-              name="code"
-              placeholder="Código do Orçamento"
+              [(ngModel)]="contract.fullName"
+              #author="ngModel"
+              id="input-author"
+              name="author"
+              placeholder="Nome do autor"
               fullWidth
               fieldSize="large"
-              [required]="validation.code.required"
-              [minlength]="validation.code.minLength"
-              [maxlength]="validation.code.maxLength"
+              [required]="validation.author.required"
               [status]="
-                code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'
+                author.dirty ? (author.invalid ? 'danger' : 'success') : 'basic'
               "
-              [attr.aria-invalid]="code.invalid && code.touched ? true : null"
-              [disabled]="true"
+              [attr.aria-invalid]="
+                author.invalid && author.touched ? true : null
+              "
+              [readonly]="true"
             />
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-2">
+          <div class="form-control-group">
+            <label class="label" for="input-version">Revisão:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.version"
+              #version="ngModel"
+              id="input-version"
+              name="version"
+              placeholder="Revisão"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.version.required"
+              [status]="
+                version.dirty
+                  ? version.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                version.invalid && version.touched ? true : null
+              "
+              [readonly]="false"
+            />
+          </div>
+        </div>
+        <div class="col-sm-3">
           <div class="form-control-group">
             <label class="label" for="input-status">Status:</label>
             <nb-select
@@ -68,7 +74,6 @@
               [attr.aria-invalid]="
                 status.invalid && status.touched ? true : null
               "
-              [disabled]="false"
             >
               <nb-option *ngFor="let status of STATOOS" [value]="status">
                 {{ status }}
@@ -77,12 +82,89 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="form-control-group">
+            <label class="label" for="input-code">Código do orçamento:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.code"
+              #code="ngModel"
+              id="input-code"
+              name="code"
+              placeholder="Código do Orçamento"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.code.required"
+              [status]="
+                code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="code.invalid && code.touched ? true : null"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-control-group">
+            <label class="label" for="input-department">Diretoria:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.invoice.department"
+              #department="ngModel"
+              id="input-department"
+              name="department"
+              placeholder="Código do Orçamento"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.department.required"
+              [status]="
+                department.dirty
+                  ? department.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                department.invalid && department.touched ? true : null
+              "
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-control-group">
+            <label class="label" for="input-coordination">Coordenação:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.invoice.coordination"
+              #coordination="ngModel"
+              id="input-coordination"
+              name="coordination"
+              placeholder="Código do Orçamento"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.coordination.required"
+              [status]="
+                coordination.dirty
+                  ? coordination.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                coordination.invalid && coordination.touched ? true : null
+              "
+              [readonly]="true"
+            />
+          </div>
+        </div>
+      </div>
 
       <div class="form-control-group">
         <label class="label" for="input-contractor">Cliente:</label>
         <input
           nbInput
-          [(ngModel)]="contract.contractor"
+          [(ngModel)]="contract?.contractor.fullName"
           #contractor="ngModel"
           id="input-contractor"
           name="contractor"
@@ -90,8 +172,6 @@
           fullWidth
           fieldSize="large"
           [required]="validation.contractor.required"
-          [minlength]="validation.contractor.minLength"
-          [maxlength]="validation.contractor.maxLength"
           [status]="
             contractor.dirty
               ? contractor.invalid
@@ -102,7 +182,7 @@
           [attr.aria-invalid]="
             contractor.invalid && contractor.touched ? true : null
           "
-          [disabled]="true"
+          [readonly]="true"
         />
         <ng-container *ngIf="contractor.invalid && contractor.touched">
           <p class="caption status-danger" *ngIf="contractor.errors?.required">
@@ -132,13 +212,11 @@
           fullWidth
           fieldSize="large"
           [required]="validation.name.required"
-          [minlength]="validation.name.minLength"
-          [maxlength]="validation.name.maxLength"
           [status]="
             name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'
           "
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
-          [disabled]="true"
+          [readonly]="true"
         />
         <ng-container *ngIf="name.invalid && name.touched">
           <p class="caption status-danger" *ngIf="name.errors?.required">
@@ -174,13 +252,11 @@
             decimal: '2'
           }"
           [required]="validation.value.required"
-          [minlength]="validation.value.minLength"
-          [maxlength]="validation.value.maxLength"
           [status]="
             value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [disabled]="true"
+          [readonly]="true"
         />
         <ng-container *ngIf="value.invalid && value.touched">
           <p class="caption status-danger" *ngIf="value.errors?.required">
@@ -210,14 +286,12 @@
               placeholder="Código do Orçamento"
               fullWidth
               fieldSize="large"
-              [required]="validation?.paid?.required"
-              [minlength]="validation?.paid?.minLength"
-              [maxlength]="validation?.paid?.maxLength"
+              [required]="validation.paid?.required"
               [status]="
                 paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'
               "
               [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
-              [disabled]="true"
+              [readonly]="true"
             />
           </div>
         </div>
@@ -233,9 +307,9 @@
               placeholder="Parcelas pagas"
               fullWidth
               fieldSize="large"
-              [required]="validation?.interest?.required"
-              [minlength]="validation?.interest?.minLength"
-              [maxlength]="validation?.interest?.maxLength"
+              [required]="validation.interest?.required"
+              [minlength]="validation.interest?.minLength"
+              [maxlength]="validation.interest?.maxLength"
               [status]="
                 interest.dirty
                   ? interest.invalid
@@ -246,7 +320,7 @@
               [attr.aria-invalid]="
                 interest.invalid && interest.touched ? true : null
               "
-              [disabled]="true"
+              [readonly]="true"
             />
           </div>
         </div>
@@ -258,17 +332,16 @@
               #total="ngModel"
               id="input-total"
               name="total"
-              placeholder="Selecione o total"
+              placeholder="Total"
               fullWidth
               size="large"
-              [required]="validation?.total?.required"
+              [required]="validation.total?.required"
               [status]="
                 total.dirty ? (total.invalid ? 'danger' : 'success') : 'basic'
               "
               [attr.aria-invalid]="total.invalid && total.touched ? true : null"
-              [disabled]="false"
             >
-              <nb-option *ngFor="let interest of INTERESTS" [value]="total">
+              <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
                 {{ interest }}
               </nb-option>
             </nb-select>

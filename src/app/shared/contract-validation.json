@@ -1,0 +1,26 @@
+{
+  "author": { "required": false },
+  "department": { "required": false },
+  "coordination": { "required": false },
+  "code": { "required": false },
+  "status": { "required": true },
+  "paid": { "required": false },
+  "interest": { "required": false },
+  "total": { "required": true },
+  "version": { "required": false },
+  "contractor": {
+    "required": false,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "name": {
+    "required": false,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "value": {
+    "required": false,
+    "minLength": 1,
+    "maxLength": 30
+  }
+}
