@@ -37,8 +37,8 @@ export class InvoiceService {
 
   editInvoice(invoice: any): void {
     let tmp = Object.assign({}, invoice);
-    delete tmp.fullName;
-    delete tmp.author.fullName;
+    delete tmp.author;
+    tmp.author = invoice.author._id;
     const req = {
       invoice: tmp,
     };

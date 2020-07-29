@@ -5,6 +5,8 @@ const contractSchema = mongoose.Schema({
   invoice: { type: mongoose.ObjectId, ref: 'Invoice', required: true },
   payments: [{ type: mongoose.ObjectId, ref: 'Payment' }],
   status: { type: String, required: true },
+  version: { type: String, required: true },
+  total: { type: String },
 });
 
 contractSchema.plugin(uniqueValidator);

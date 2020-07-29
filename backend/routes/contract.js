@@ -1,6 +1,6 @@
 const express = require('express');
 
-const Client = require('../models/client');
+const Contractor = require('../models/contractor');
 const User = require('../models/user');
 const UserPayment = require('../models/userPayment');
 const Invoice = require('../models/invoice');
@@ -44,9 +44,19 @@ router.post('/addPayment', async (req, res, next) => {
       req.body.contract.payment
     );
     res.status(200).json({
-      message: 'Contrato Atualizado!',
+      message: 'Pagamento adicionado!',
     });
   }
+});
+
+router.post('/update', async (req, res, next) => {
+  await Contract.findOneAndUpdate(
+    { _id: req.body.contract._id },
+    req.body.contract
+  );
+  return res.status(200).json({
+    message: 'Orçamento Atualizado!',
+  });
 });
 
 router.post('/count', (req, res) => {

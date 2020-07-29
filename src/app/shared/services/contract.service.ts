@@ -18,6 +18,7 @@ export class ContractService {
       invoice: invoice._id,
       payments: [],
       status: 'Em andamento',
+      version: '00',
     };
     const req = {
       contract: contract,
@@ -36,8 +37,9 @@ export class ContractService {
 
   editContract(contract: any): void {
     let tmp = Object.assign({}, contract);
-    delete tmp.fullName;
-    delete tmp.author.fullName;
+    delete tmp.invoice;
+    tmp.invoice = contract.invoice._id;
+    tmp.payments = tmp.payments.map((payment) => payment._id);
     const req = {
       contract: tmp,
     };
