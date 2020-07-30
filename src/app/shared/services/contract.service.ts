@@ -74,4 +74,13 @@ export class ContractService {
       });
     return this.size$;
   }
+
+  async addColaboratorPayment(userPayment: any): Promise<any> {
+    const req = {
+      userPayment: userPayment,
+    };
+    return await this.http
+      .post('/api/contract/addColaboratorPayment', req)
+      .toPromise();
+  }
 }

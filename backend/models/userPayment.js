@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userPaymentSchema = mongoose.Schema({
+  payment: { type: mongoose.ObjectId, ref: 'Payment', required: false },
   user: { type: mongoose.ObjectId, ref: 'User', required: true },
-  coordination: { type: mongoose.ObjectId, ref: 'Client', required: true },
+  coordination: { type: String, required: true },
   value: { type: String, required: true },
 });
 userPaymentSchema.plugin(uniqueValidator);

@@ -22,4 +22,9 @@ router.post('/update', async (req, res, next) => {
   });
 });
 
+router.post('/all', async (req, res) => {
+  users = await User.find({});
+  return res.status(200).json(users);
+});
+
 module.exports = router;

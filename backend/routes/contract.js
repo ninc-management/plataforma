@@ -49,6 +49,22 @@ router.post('/addPayment', async (req, res, next) => {
   }
 });
 
+router.post('/addColaboratorPayment', async (req, res, next) => {
+  const userPayment = new UserPayment(req.body.userPayment);
+  await userPayment.save(function (err, result) {
+    if (err) {
+      return res.status(500).json({
+        error: err,
+      });
+    } else {
+      res.status(200).json({
+        message: 'Pagamento de colaborador adicionado!',
+        userPayment: result,
+      });
+    }
+  });
+});
+
 router.post('/update', async (req, res, next) => {
   await Contract.findOneAndUpdate(
     { _id: req.body.contract._id },
