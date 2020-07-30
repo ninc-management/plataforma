@@ -1,0 +1,18 @@
+{
+  "nortan": { "required": true },
+  "nf": { "required": true },
+  "liquid": { "required": true },
+  "user": { "required": false },
+  "coordination": { "required": false },
+  "team": { "required": true, "minLength": 1 },
+  "service": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 500
+  },
+  "value": {
+    "required": true,
+    "minLength": 1,
+    "maxLength": 30
+  }
+}

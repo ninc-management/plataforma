@@ -1,7 +1,18 @@
 @import '../../../../@theme/styles/themes';
 
 @include nb-install-component() {
+  --radio-height: 14px;
+  --radio-width: 14px;
+  --radio-text-line-height: 16px;
+  --radio-text-font-size: 1em;
   nb-radio-group {
     display: flex;
+  }
+
+  ::ng-deep nb-radio {
+    label {
+      padding-top: 0.1rem !important;
+      padding-bottom: 0.1rem !important;
+    }
   }
 }

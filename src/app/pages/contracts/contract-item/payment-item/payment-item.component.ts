@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
-import * as contract_validation from '../../../../shared/contract-validation.json';
 import { DepartmentService } from '../../../../shared/services/department.service';
+import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-payment-item',
