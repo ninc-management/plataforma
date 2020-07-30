@@ -148,43 +148,39 @@
     <div class="col-sm-4">
       <div class="form-control-group">
         <label class="label" for="input-user">Colaborador:</label>
-        <input
-          nbInput
-          [(ngModel)]="payment.user"
-          #user="ngModel"
+        <nb-select
+          [(ngModel)]="userPayment.user"
+          #userList="ngModel"
           id="input-user"
-          name="user"
+          name="userList"
           placeholder="Nome do colaborador"
           fullWidth
-          fieldSize="large"
+          size="large"
           [required]="validation.user.required"
-          [status]="
-            user.dirty ? (user.invalid ? 'danger' : 'success') : 'basic'
+          [status]="userList.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            userList.invalid && userList.touched ? true : null
           "
-          [attr.aria-invalid]="user.invalid && user.touched ? true : null"
-          [readonly]="false"
-        />
+        >
+          <nb-option *ngFor="let user of USERS" [value]="user._id">
+            {{ user.fullName }}
+          </nb-option>
+        </nb-select>
       </div>
     </div>
     <div class="col-sm-4">
       <div class="form-control-group">
         <label class="label" for="input-coordination">Coordenação:</label>
         <nb-select
-          [(ngModel)]="payment.coordination"
+          [(ngModel)]="userPayment.coordination"
           #coordination="ngModel"
           id="input-coordination"
           name="coordination"
           placeholder="Coordenação"
           fullWidth
           size="large"
-          [required]="validation.coordination?.required"
-          [status]="
-            coordination.dirty
-              ? coordination.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
+          [required]="validation.coordination.required"
+          [status]="coordination.value ? 'success' : 'basic'"
           [attr.aria-invalid]="
             coordination.invalid && coordination.touched ? true : null
           "
@@ -219,7 +215,7 @@
         </label>
         <input
           nbInput
-          [(ngModel)]="contract.paid"
+          [(ngModel)]="userPayment.value"
           #paid="ngModel"
           id="input-paid"
           name="paid"
@@ -236,10 +232,8 @@
                   decimal: '2'
                 }
           "
-          [required]="validation.value.required"
-          [status]="
-            paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [required]="validation.paid.required"
+          [status]="paid.value ? 'success' : 'basic'"
           [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
           [readonly]="false"
         />
@@ -248,17 +242,33 @@
     <div class="col-sm-1">
       <button
         nbButton
+        type="button"
         fullWidth
         status="primary"
         size="large"
         style="margin-top: 28px;"
-        [class.btn-pulse]="submitted"
+        [disabled]="!paid.value || !coordination.value || !userList.value"
+        (click)="addColaborator()"
       >
         +
       </button>
     </div>
   </div>
-  <hr />
+  <nb-list style="width: 100%; padding: 10px 0;">
+    <nb-list-item *ngFor="let userPayment of payment.team">
+      <div class="row paymentRow">
+        <div class="col-sm-4">
+          {{ idToName(userPayment.user) }}
+        </div>
+        <div class="col-sm-4">
+          {{ userPayment.coordination }}
+        </div>
+        <div class="col-sm-4">
+          {{ userPayment.value }}
+        </div>
+      </div>
+    </nb-list-item>
+  </nb-list>
   <button
     nbButton
     fullWidth

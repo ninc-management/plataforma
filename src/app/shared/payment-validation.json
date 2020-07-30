@@ -14,5 +14,10 @@
     "required": true,
     "minLength": 1,
     "maxLength": 30
+  },
+  "paid": {
+    "required": false,
+    "minLength": 1,
+    "maxLength": 30
   }
 }
