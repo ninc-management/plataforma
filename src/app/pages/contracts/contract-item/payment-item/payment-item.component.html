@@ -24,6 +24,7 @@
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           [readonly]="false"
+          (ngModelChange)="toLiquid(payment.value)"
         />
         <ng-container *ngIf="value.invalid && value.touched">
           <p class="caption status-danger" *ngIf="value.errors?.required">
@@ -46,7 +47,7 @@
         <label class="label" for="input-nf">NF(%):</label>
         <input
           nbInput
-          [(ngModel)]="options.notaFiscal"
+          [(ngModel)]="payment.notaFiscal"
           #nf="ngModel"
           id="input-nf"
           name="nf"
@@ -65,7 +66,7 @@
         <label class="label" for="input-nortan">Nortan(%):</label>
         <input
           nbInput
-          [(ngModel)]="options.nortanPercentage"
+          [(ngModel)]="payment.nortanPercentage"
           #nortan="ngModel"
           id="input-nortan"
           name="nortan"
@@ -86,7 +87,7 @@
         <label class="label" for="input-liquid">Valor liquído:</label>
         <input
           nbInput
-          [(ngModel)]="payment.liquid"
+          [(ngModel)]="options.liquid"
           #liquid="ngModel"
           id="input-liquid"
           name="liquid"
@@ -223,14 +224,14 @@
           fullWidth
           fieldSize="large"
           [brmasker]="
-            options.valueType === '%'
-              ? { percent: true }
-              : {
+            options.valueType !== '%'
+              ? {
                   money: true,
                   thousand: '.',
                   decimalCaracter: ',',
                   decimal: '2'
                 }
+              : { percent: true }
           "
           [required]="validation.paid.required"
           [status]="paid.value ? 'success' : 'basic'"
@@ -274,7 +275,7 @@
     fullWidth
     status="primary"
     size="large"
-    [disabled]="submitted || !form.valid"
+    [disabled]="submitted || !form.valid || isTeamEmpty()"
     [class.btn-pulse]="submitted"
   >
     Adicionar

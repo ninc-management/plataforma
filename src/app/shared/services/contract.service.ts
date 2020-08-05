@@ -75,12 +75,13 @@ export class ContractService {
     return this.size$;
   }
 
-  async addColaboratorPayment(userPayment: any): Promise<any> {
+  addPayment(payment: any): void {
+    let tmp = Object.assign({}, payment);
+    delete tmp.team;
     const req = {
-      userPayment: userPayment,
+      payment: tmp,
+      team: payment.team,
     };
-    return await this.http
-      .post('/api/contract/addColaboratorPayment', req)
-      .toPromise();
+    this.http.post('/api/contract/addPayment', req).pipe(take(1)).subscribe();
   }
 }

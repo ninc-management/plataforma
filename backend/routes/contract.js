@@ -25,28 +25,43 @@ router.post('/', async (req, res, next) => {
   });
 });
 
-router.post('/addPayment', async (req, res, next) => {
+router.post('/addPayment', (req, res, next) => {
   const payment = new Payment(req.body.payment);
   let savedPayment;
-  await payment.save(function (err, result) {
-    if (err) {
-      return res.status(500).json({
+  payment
+    .save()
+    .then((savedPaymentDB) => {
+      savedPayment = savedPaymentDB;
+      for (uP of req.body.team) {
+        uP.payment = savedPayment._id;
+      }
+      return UserPayment.insertMany(req.body.team);
+    })
+    .then((savedUserPayments) => {
+      return Payment.findOneAndUpdate(
+        { _id: savedPayment._id },
+        { team: savedUserPayments.map((uP) => uP._id) }
+      );
+    })
+    .then(() => {
+      Contract.findById(savedPayment.contract, function (err, doc) {
+        if (err) {
+          throw err;
+        }
+        doc.payments.push(savedPayment._id);
+        doc.save().then(() => {
+          res.status(200).json({
+            message: 'Pagamento adicionado!',
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: 'Erro au adicionar pagamento e atualizar contrato!',
         error: err,
       });
-    } else {
-      savedPayment = result;
-    }
-  });
-  if (savedPayment) {
-    req.body.contract.payment.push(savedPayment);
-    await Contract.findOneAndUpdate(
-      { _id: req.body.contract._id },
-      req.body.contract.payment
-    );
-    res.status(200).json({
-      message: 'Pagamento adicionado!',
     });
-  }
 });
 
 router.post('/addColaboratorPayment', async (req, res, next) => {

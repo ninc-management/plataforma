@@ -32,7 +32,9 @@ export class BrMaskModel {
 @Directive({
   selector: '[brmasker]',
 })
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class BrMaskDirective implements OnInit {
   @Input() brmasker: BrMaskModel = new BrMaskModel();
   @Output() ngModelChange = new EventEmitter<string>();
