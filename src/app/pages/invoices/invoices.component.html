@@ -38,7 +38,6 @@
       </ng2-smart-table>
       <ng-template #phone>
         <nb-list>
-          <a></a>
           <nb-list-item *ngFor="let invoice of filtredInvoices">
             <a (click)="contractDialog({ data: invoice })">
               <div class="row">

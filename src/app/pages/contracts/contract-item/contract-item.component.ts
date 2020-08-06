@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ContractService } from '../../../shared/services/contract.service';
 import * as contract_validation from '../../../shared/contract-validation.json';
+import { StringUtilService } from '../../../shared/services/string-util.service';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -20,15 +21,24 @@ export class ContractItemComponent implements OnInit {
     pack: 'fa',
   };
 
-  constructor(private contractService: ContractService) {}
+  constructor(
+    private contractService: ContractService,
+    private stringUtil: StringUtilService
+  ) {}
 
   ngOnInit(): void {
     this.contract.interest = this.contract.payments.length;
-    this.contract.paid = 0; // Sum all payments
-    document.documentElement.style.setProperty('--card-padding', '0');
+    this.contract.paid = this.stringUtil.numberToMoney(
+      this.contract.payments.reduce(
+        (accumulator: number, payment: any) =>
+          accumulator + this.stringUtil.moneyToNumber(payment.value),
+        0
+      )
+    );
+    console.log(this.contract);
   }
 
-  registerContract(): void {
+  updateContract(): void {
     this.submitted = true;
     let version = +this.contract.version;
     version += 1;
@@ -36,4 +46,6 @@ export class ContractItemComponent implements OnInit {
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }
+
+  paymentDialog(event): void {}
 }

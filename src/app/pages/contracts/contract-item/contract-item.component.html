@@ -1,10 +1,6 @@
 <nb-tabset fullWidth>
   <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
-    <form
-      (ngSubmit)="registerContract()"
-      #form="ngForm"
-      aria-labelledby="title"
-    >
+    <form (ngSubmit)="updateContract()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-sm-7">
           <div class="form-control-group">
@@ -367,9 +363,27 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab
-    tabTitle="Ordens de empenho"
-    [tabIcon]="paymentIcon"
-    responsive
-  ></nb-tab>
+  <nb-tab tabTitle="Ordens de empenho" [tabIcon]="paymentIcon" responsive>
+    <nb-list>
+      <nb-list-item *ngFor="let payment of contract.payments; let i = index">
+        <a
+          (click)="paymentDialog({ data: payment })"
+          style="width: 100%; cursor: pointer;"
+        >
+          <div class="row" style="width: 100%;">
+            <div class="col-1">#{{ +i + 1 }}</div>
+            <div class="col-8">
+              {{ payment.service }}
+            </div>
+            <div class="col-3">
+              <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+              <span style="vertical-align: 0.1em;">
+                {{ payment.value }}
+              </span>
+            </div>
+          </div>
+        </a>
+      </nb-list-item>
+    </nb-list>
+  </nb-tab>
 </nb-tabset>

@@ -4,6 +4,7 @@ import * as contract_validation from '../../../../shared/payment-validation.json
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { BrMaskDirective } from '../../../../shared/directives/br-mask';
+import { StringUtilService } from '../../../../shared/services/string-util.service';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -32,7 +33,7 @@ export class PaymentItemComponent implements OnInit {
     private departmentService: DepartmentService,
     private contractService: ContractService,
     private userService: UserService,
-    private brMask: BrMaskDirective
+    private stringUtil: StringUtilService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -58,37 +59,13 @@ export class PaymentItemComponent implements OnInit {
     return entry.fullName;
   }
 
-  moneyToNumber(money: string): number {
-    const result = money.replace('.', '').replace(',', '.');
-    return +result;
-  }
-
-  round(num: number): number {
-    return Math.round((num + Number.EPSILON) * 100) / 100;
-  }
-
-  toMutiplyPercentage(percentage: string): number {
-    const num = (100 - +percentage) / 100;
-    return this.round(num);
-  }
-
   toLiquid(value: string): void {
-    const result = this.round(
-      this.moneyToNumber(value) *
-        this.toMutiplyPercentage(this.payment.notaFiscal) *
-        this.toMutiplyPercentage(this.payment.nortanPercentage)
-    )
-      .toFixed(2)
-      .toString();
-    this.options.liquid = this.brMask.writeValueMoney(
-      result.replace('.', ','),
-      {
-        money: true,
-        thousand: '.',
-        decimalCaracter: ',',
-        decimal: 2,
-      }
+    const result = this.stringUtil.round(
+      this.stringUtil.moneyToNumber(value) *
+        this.stringUtil.toMutiplyPercentage(this.payment.notaFiscal) *
+        this.stringUtil.toMutiplyPercentage(this.payment.nortanPercentage)
     );
+    this.options.liquid = this.stringUtil.numberToMoney(result);
   }
 
   isTeamEmpty(): boolean {

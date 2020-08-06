@@ -108,7 +108,16 @@ router.post('/all', async (req, res) => {
   contracts = await Contract.find({})
     .populate({
       path: 'payments',
-      populate: { path: 'payments' },
+      model: 'Payment',
+      populate: {
+        path: 'team',
+        model: 'UserPayment',
+        populate: {
+          path: 'user',
+          select: { fullName: 1, profilePicture: 1 },
+          model: 'User',
+        },
+      },
     })
     .populate({
       path: 'invoice',
