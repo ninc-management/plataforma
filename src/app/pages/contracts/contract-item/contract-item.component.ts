@@ -2,6 +2,8 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ContractService } from '../../../shared/services/contract.service';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import { StringUtilService } from '../../../shared/services/string-util.service';
+import { NbDialogService } from '@nebular/theme';
+import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -23,6 +25,7 @@ export class ContractItemComponent implements OnInit {
 
   constructor(
     private contractService: ContractService,
+    private dialogService: NbDialogService,
     private stringUtil: StringUtilService
   ) {}
 
@@ -47,5 +50,17 @@ export class ContractItemComponent implements OnInit {
     this.submit.emit();
   }
 
-  paymentDialog(event): void {}
+  paymentDialog(index: number): void {
+    this.dialogService.open(ContractDialogComponent, {
+      context: {
+        title: 'EDIÇÃO DE ORDEM DE EMPENHO',
+        contract: this.contract,
+        paymentIndex: index,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
+  }
 }

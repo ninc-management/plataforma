@@ -3,7 +3,6 @@ import { DepartmentService } from '../../../../shared/services/department.servic
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
-import { BrMaskDirective } from '../../../../shared/directives/br-mask';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 
 @Component({
@@ -13,13 +12,14 @@ import { StringUtilService } from '../../../../shared/services/string-util.servi
 })
 export class PaymentItemComponent implements OnInit {
   @Input() contract: any;
+  @Input() paymentIndex: number;
   @Output() submit = new EventEmitter<void>();
   COORDINATIONS: string[];
   USERS: any[];
   validation = (contract_validation as any).default;
   submitted = false;
   payment: any = {
-    team: [], // TODO: Tratar carregamento de OE
+    team: [],
     notaFiscal: '6', // Porcentagem da nota fiscal
     nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
   };
@@ -39,6 +39,10 @@ export class PaymentItemComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.COORDINATIONS = this.departmentService.buildAllCoordinationsList();
     this.USERS = await this.userService.getUsersList();
+    if (this.paymentIndex >= 0) {
+      this.payment = this.contract.payments[this.paymentIndex];
+      this.toLiquid(this.payment.value);
+    }
   }
 
   registerPayment(): void {

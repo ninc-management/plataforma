@@ -366,10 +366,7 @@
   <nb-tab tabTitle="Ordens de empenho" [tabIcon]="paymentIcon" responsive>
     <nb-list>
       <nb-list-item *ngFor="let payment of contract.payments; let i = index">
-        <a
-          (click)="paymentDialog({ data: payment })"
-          style="width: 100%; cursor: pointer;"
-        >
+        <a (click)="paymentDialog(i)" style="width: 100%; cursor: pointer;">
           <div class="row" style="width: 100%;">
             <div class="col-1">#{{ +i + 1 }}</div>
             <div class="col-8">

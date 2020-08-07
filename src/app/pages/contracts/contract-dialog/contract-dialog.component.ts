@@ -12,6 +12,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 export class ContractDialogComponent implements OnInit {
   @Input() title: string;
   @Input() contract: any;
+  @Input() paymentIndex: number;
   @Input() isEditing: boolean;
 
   constructor(
@@ -21,13 +22,13 @@ export class ContractDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    fromEvent(this.document, 'keyup')
-      .pipe(
-        filter((event: KeyboardEvent) => event.keyCode === 27),
-        takeUntil(this.ref.onClose)
-      )
-      .subscribe(() => this.dismiss());
-    document.documentElement.style.setProperty('--card-padding', '1rem 1.5rem');
+    // TODO: Pensar num tratamento melhor para dialogos aninhados, ao invés de fechar os 2
+    // fromEvent(this.document, 'keyup')
+    //   .pipe(
+    //     filter((event: KeyboardEvent) => event.keyCode === 27),
+    //     takeUntil(this.ref.onClose)
+    //   )
+    //   .subscribe(() => this.dismiss());
   }
 
   dismiss(): void {

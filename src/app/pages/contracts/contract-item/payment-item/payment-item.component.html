@@ -259,7 +259,11 @@
     <nb-list-item *ngFor="let userPayment of payment.team">
       <div class="row paymentRow">
         <div class="col-sm-4">
-          {{ idToName(userPayment.user) }}
+          {{
+            userPayment.user.fullName
+              ? userPayment.user.fullName
+              : idToName(userPayment.user)
+          }}
         </div>
         <div class="col-sm-4">
           {{ userPayment.coordination }}
@@ -278,6 +282,6 @@
     [disabled]="submitted || !form.valid || isTeamEmpty()"
     [class.btn-pulse]="submitted"
   >
-    Adicionar
+    {{ paymentIndex >= 0 ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>
