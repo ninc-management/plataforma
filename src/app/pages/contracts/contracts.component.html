@@ -38,8 +38,10 @@
       </ng2-smart-table>
       <ng-template #phone>
         <nb-list>
-          <nb-list-item *ngFor="let contract of filtredContracts">
-            <a (click)="contractDialog({ data: contract }, true)">
+          <nb-list-item
+            *ngFor="let contract of filtredContracts; let i = index"
+          >
+            <a (click)="contractDialog({ data: contract, index: i }, true)">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px;">
                   <nb-user

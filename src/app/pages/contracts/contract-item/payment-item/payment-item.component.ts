@@ -12,6 +12,7 @@ import { StringUtilService } from '../../../../shared/services/string-util.servi
 })
 export class PaymentItemComponent implements OnInit {
   @Input() contract: any;
+  @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Output() submit = new EventEmitter<void>();
   COORDINATIONS: string[];
@@ -47,9 +48,8 @@ export class PaymentItemComponent implements OnInit {
 
   registerPayment(): void {
     this.payment.contract = this.contract._id;
-    console.log(this.payment);
     this.submitted = true;
-    this.contractService.addPayment(this.payment);
+    this.contractService.addPayment(this.payment, this.contractIndex);
     this.submit.emit();
   }
 

@@ -140,6 +140,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
       context: {
         title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
         contract: event.data,
+        contractIndex: +event.index,
         isEditing: isEditing,
       },
       dialogClass: 'my-dialog',

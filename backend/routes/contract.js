@@ -38,6 +38,7 @@ router.post('/addPayment', (req, res, next) => {
       return UserPayment.insertMany(req.body.team);
     })
     .then((savedUserPayments) => {
+      savedPayment.team = savedUserPayments;
       return Payment.findOneAndUpdate(
         { _id: savedPayment._id },
         { team: savedUserPayments.map((uP) => uP._id) }
@@ -52,6 +53,7 @@ router.post('/addPayment', (req, res, next) => {
         doc.save().then(() => {
           res.status(200).json({
             message: 'Pagamento adicionado!',
+            payment: savedPayment,
           });
         });
       });

@@ -38,7 +38,6 @@ export class ContractItemComponent implements OnInit {
         0
       )
     );
-    console.log(this.contract);
   }
 
   updateContract(): void {

@@ -12,6 +12,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 export class ContractDialogComponent implements OnInit {
   @Input() title: string;
   @Input() contract: any;
+  @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Input() isEditing: boolean;
 

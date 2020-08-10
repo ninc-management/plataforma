@@ -75,13 +75,21 @@ export class ContractService {
     return this.size$;
   }
 
-  addPayment(payment: any): void {
+  addPayment(payment: any, contractIndex: number): void {
     let tmp = Object.assign({}, payment);
     delete tmp.team;
     const req = {
       payment: tmp,
       team: payment.team,
     };
-    this.http.post('/api/contract/addPayment', req).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/contract/addPayment', req)
+      .pipe(take(1))
+      .subscribe((res: any) => {
+        let tmp = this.contracts$.getValue();
+        let savedPayment = res.payment;
+        tmp[contractIndex].payments.push(savedPayment);
+        this.contracts$.next(tmp);
+      });
   }
 }
