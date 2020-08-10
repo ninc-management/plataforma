@@ -13,6 +13,32 @@ import { Subject } from 'rxjs';
 })
 export class ContractsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  contracts: any[] = [];
+  searchQuery = '';
+  get filtredContracts(): any[] {
+    if (this.searchQuery !== '')
+      return this.contracts.filter((contract) => {
+        return (
+          contract.fullName
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          contract.code
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          contract.contractor
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          contract.name
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          contract.value
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      });
+    return this.contracts;
+  }
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum contrato para o filtro selecionado.',
@@ -95,18 +121,17 @@ export class ContractsComponent implements OnInit, OnDestroy {
       .getContracts()
       .pipe(takeUntil(this.destroy$))
       .subscribe((contracts: any[]) => {
-        this.source.load(
-          contracts.map((contract: any) => {
-            if (!contract.fullName)
-              contract.fullName = contract.invoice.author.fullName;
-            if (!contract.code) contract.code = contract.invoice.code;
-            if (!contract.contractor)
-              contract.contractor = contract.invoice.contractor;
-            if (!contract.value) contract.value = contract.invoice.value;
-            if (!contract.name) contract.name = contract.invoice.name;
-            return contract;
-          })
-        );
+        this.contracts = contracts.map((contract: any) => {
+          if (!contract.fullName)
+            contract.fullName = contract.invoice.author.fullName;
+          if (!contract.code) contract.code = contract.invoice.code;
+          if (!contract.contractor)
+            contract.contractor = contract.invoice.contractor;
+          if (!contract.value) contract.value = contract.invoice.value;
+          if (!contract.name) contract.name = contract.invoice.name;
+          return contract;
+        });
+        this.source.load(this.contracts);
       });
   }
 
@@ -122,6 +147,21 @@ export class ContractsComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
+  }
+
+  pageWidth(): number {
+    return window.innerWidth;
+  }
+
+  statusColor(status: string): string {
+    switch (status) {
+      case 'Em andamento':
+        return 'warning';
+      case 'Concluído':
+        return 'success';
+      case 'Arquivado':
+        return 'danger';
+    }
   }
 
   valueSort(direction: any, a: string, b: string): number {
