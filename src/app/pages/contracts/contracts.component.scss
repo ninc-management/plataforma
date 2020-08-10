@@ -1,3 +1,5 @@
+@import '../../@theme/styles/themes';
+
 ::ng-deep {
   nb-card {
     overflow-x: auto;
@@ -15,6 +17,6 @@
   }
 
   .ng2-smart-action-delete-delete:hover {
-    color: green !important;
+    color: nb-theme(icon-success-color) !important;
   }
 }

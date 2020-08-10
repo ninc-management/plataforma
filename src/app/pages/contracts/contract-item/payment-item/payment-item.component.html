@@ -256,7 +256,7 @@
     </div>
   </div>
   <nb-list style="width: 100%; padding: 10px 0;">
-    <nb-list-item *ngFor="let userPayment of payment.team">
+    <nb-list-item *ngFor="let userPayment of payment.team; let i = index">
       <div class="row paymentRow">
         <div class="col-sm-4">
           {{
@@ -268,8 +268,17 @@
         <div class="col-sm-4">
           {{ userPayment.coordination }}
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           {{ userPayment.value }}
+        </div>
+        <div class="col-sm-1">
+          <nb-icon
+            class="xIcon"
+            status="basic"
+            icon="close-outline"
+            pack="nebular-essentials"
+            (click)="payment.team.splice(i, 1)"
+          ></nb-icon>
         </div>
       </div>
     </nb-list-item>

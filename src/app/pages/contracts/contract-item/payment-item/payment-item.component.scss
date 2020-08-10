@@ -19,6 +19,10 @@
     margin-left: nb-theme(--list-item-padding);
   }
 
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
+
   ::ng-deep nb-radio {
     label {
       padding-top: 0.1rem !important;
