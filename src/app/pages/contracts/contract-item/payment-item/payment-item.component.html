@@ -273,6 +273,7 @@
         </div>
         <div class="col-sm-1">
           <nb-icon
+            *ngIf="this.paymentIndex === undefined"
             class="xIcon"
             status="basic"
             icon="close-outline"
@@ -291,6 +292,6 @@
     [disabled]="submitted || !form.valid || isTeamEmpty()"
     [class.btn-pulse]="submitted"
   >
-    {{ paymentIndex >= 0 ? 'Atualizar' : 'Adicionar' }}
+    {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>

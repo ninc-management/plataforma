@@ -40,7 +40,7 @@ export class PaymentItemComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.COORDINATIONS = this.departmentService.buildAllCoordinationsList();
     this.USERS = await this.userService.getUsersList();
-    if (this.paymentIndex >= 0) {
+    if (this.paymentIndex !== undefined) {
       this.payment = this.contract.payments[this.paymentIndex];
       this.toLiquid(this.payment.value);
     }
