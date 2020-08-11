@@ -24,6 +24,14 @@
     color: nb-theme(icon-danger-color) !important;
   }
 
+  .danger {
+    color: nb-theme(icon-danger-color) !important;
+  }
+
+  .success {
+    color: nb-theme(icon-success-color) !important;
+  }
+
   ::ng-deep nb-radio {
     label {
       padding-top: 0.1rem !important;

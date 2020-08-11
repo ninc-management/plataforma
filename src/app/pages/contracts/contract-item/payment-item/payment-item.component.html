@@ -291,10 +291,22 @@
         <div class="col-sm-8" style="text-align: right;">
           Total:
         </div>
-        <div class="col-sm-2">
+        <div
+          class="col-sm-2"
+          [ngClass]="{
+            danger: total !== options.liquid && total !== '0',
+            success: total === options.liquid && total !== '0'
+          }"
+        >
           {{ total }}
         </div>
-        <div class="col-sm-1">
+        <div
+          class="col-sm-1"
+          [ngClass]="{
+            danger: total !== options.liquid && total !== '0',
+            success: total === options.liquid && total !== '0'
+          }"
+        >
           {{ toPercentage(total) }}
         </div>
         <div class="col-sm-1"></div>
@@ -306,7 +318,9 @@
     fullWidth
     status="primary"
     size="large"
-    [disabled]="submitted || !form.valid || isTeamEmpty()"
+    [disabled]="
+      submitted || !form.valid || isTeamEmpty() || total !== options.liquid
+    "
     [class.btn-pulse]="submitted"
   >
     {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
