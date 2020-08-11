@@ -210,8 +210,8 @@
             name="valueType"
             style="height: 16px;"
           >
-            <nb-radio value="%" style="height: 16px;">%</nb-radio>
             <nb-radio value="$" style="height: 16px;">R$</nb-radio>
+            <nb-radio value="%" style="height: 16px;">%</nb-radio>
           </nb-radio-group>
         </label>
         <input
@@ -268,8 +268,11 @@
         <div class="col-sm-4">
           {{ userPayment.coordination }}
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
           {{ userPayment.value }}
+        </div>
+        <div class="col-sm-1">
+          {{ toPercentage(userPayment.value) }}
         </div>
         <div class="col-sm-1">
           <nb-icon

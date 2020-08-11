@@ -26,7 +26,7 @@ export class PaymentItemComponent implements OnInit {
   };
   userPayment: any = {};
   options = {
-    valueType: '%',
+    valueType: '$',
     liquid: undefined,
   };
 
@@ -53,7 +53,9 @@ export class PaymentItemComponent implements OnInit {
     this.submit.emit();
   }
 
-  async addColaborator(): Promise<void> {
+  addColaborator(): void {
+    if (this.options.valueType === '%')
+      this.userPayment.value = this.toValue(this.userPayment.value);
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {};
   }
@@ -70,6 +72,23 @@ export class PaymentItemComponent implements OnInit {
         this.stringUtil.toMutiplyPercentage(this.payment.nortanPercentage)
     );
     this.options.liquid = this.stringUtil.numberToMoney(result);
+  }
+
+  toPercentage(value: string): string {
+    return (
+      this.stringUtil.numberToMoney(
+        (this.stringUtil.moneyToNumber(value) /
+          this.stringUtil.moneyToNumber(this.options.liquid)) *
+          100
+      ) + '%'
+    );
+  }
+
+  toValue(percentage: string): string {
+    return this.stringUtil.numberToMoney(
+      (this.stringUtil.moneyToNumber(percentage.slice(0, -1)) / 100) *
+        this.stringUtil.moneyToNumber(this.options.liquid)
+    );
   }
 
   isTeamEmpty(): boolean {

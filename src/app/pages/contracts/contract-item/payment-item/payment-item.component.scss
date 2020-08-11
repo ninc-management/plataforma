@@ -5,6 +5,7 @@
   --radio-width: 14px;
   --radio-text-line-height: 16px;
   --radio-text-font-size: 1em;
+  --radio-text-font-weight: nb-theme(text-label-font-weight);
   nb-radio-group {
     display: flex;
   }
@@ -16,7 +17,7 @@
 
   .paymentRow {
     width: 100%;
-    margin-left: nb-theme(--list-item-padding);
+    margin-left: 0;
   }
 
   .xIcon:hover {
