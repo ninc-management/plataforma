@@ -17,6 +17,7 @@ export class PaymentItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   COORDINATIONS: string[];
   USERS: any[];
+  total = '0';
   validation = (contract_validation as any).default;
   submitted = false;
   payment: any = {
@@ -27,7 +28,7 @@ export class PaymentItemComponent implements OnInit {
   userPayment: any = {};
   options = {
     valueType: '$',
-    liquid: undefined,
+    liquid: '0',
   };
 
   constructor(
@@ -58,6 +59,7 @@ export class PaymentItemComponent implements OnInit {
       this.userPayment.value = this.toValue(this.userPayment.value);
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {};
+    this.updateTotal();
   }
 
   idToName(id: string): string {
@@ -75,6 +77,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   toPercentage(value: string): string {
+    if (+this.options.liquid === 0) return '0,00%';
     return (
       this.stringUtil.numberToMoney(
         (this.stringUtil.moneyToNumber(value) /
@@ -93,5 +96,15 @@ export class PaymentItemComponent implements OnInit {
 
   isTeamEmpty(): boolean {
     return this.payment.team.length === 0;
+  }
+
+  updateTotal(): void {
+    this.total = this.stringUtil.numberToMoney(
+      this.payment.team.reduce(
+        (accumulator: number, userPayment: any) =>
+          accumulator + this.stringUtil.moneyToNumber(userPayment.value),
+        0
+      )
+    );
   }
 }

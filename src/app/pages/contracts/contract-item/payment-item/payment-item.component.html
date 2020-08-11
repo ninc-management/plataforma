@@ -281,9 +281,23 @@
             status="basic"
             icon="close-outline"
             pack="nebular-essentials"
-            (click)="payment.team.splice(i, 1)"
+            (click)="payment.team.splice(i, 1); updateTotal()"
           ></nb-icon>
         </div>
+      </div>
+    </nb-list-item>
+    <nb-list-item>
+      <div class="row paymentRow">
+        <div class="col-sm-8" style="text-align: right;">
+          Total:
+        </div>
+        <div class="col-sm-2">
+          {{ total }}
+        </div>
+        <div class="col-sm-1">
+          {{ toPercentage(total) }}
+        </div>
+        <div class="col-sm-1"></div>
       </div>
     </nb-list-item>
   </nb-list>
