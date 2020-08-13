@@ -18,7 +18,10 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
+          [overPaid]="contract.paid"
           [required]="validation.value.required"
+          [minLength]="validation.value.minLength"
+          [maxLength]="validation.value.maxLength"
           [status]="
             value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
           "
@@ -26,7 +29,11 @@
           [readonly]="false"
           (ngModelChange)="toLiquid(payment.value)"
         />
-        <ng-container *ngIf="value.invalid && value.touched">
+        <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
+          <p class="caption status-danger" *ngIf="value.errors?.overpaid">
+            O valor do empenho é superior ao valor restante a ser pago(R$
+            {{ contract.paid }})!
+          </p>
           <p class="caption status-danger" *ngIf="value.errors?.required">
             O valor do empenho é obrigatório!
           </p>

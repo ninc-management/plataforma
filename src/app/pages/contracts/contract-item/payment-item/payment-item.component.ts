@@ -1,4 +1,12 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { DepartmentService } from '../../../../shared/services/department.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import { ContractService } from '../../../../shared/services/contract.service';
@@ -15,6 +23,8 @@ export class PaymentItemComponent implements OnInit {
   @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Output() submit = new EventEmitter<void>();
+  @ViewChild('value', { static: false, read: ElementRef })
+  valueInputRef: ElementRef<HTMLInputElement>;
   COORDINATIONS: string[];
   USERS: any[];
   total = '0';
@@ -46,6 +56,13 @@ export class PaymentItemComponent implements OnInit {
       this.toLiquid(this.payment.value);
       this.updateTotal();
     }
+    this.contract.paid = this.stringUtil.numberToMoney(
+      this.contract.payments.reduce(
+        (accumulator: number, payment: any) =>
+          accumulator + this.stringUtil.moneyToNumber(payment.value),
+        0
+      )
+    );
   }
 
   registerPayment(): void {
