@@ -138,4 +138,11 @@ export class PaymentItemComponent implements OnInit {
         )
     );
   }
+
+  remainingBalance(): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.options.liquid) -
+        this.stringUtil.moneyToNumber(this.total)
+    );
+  }
 }
