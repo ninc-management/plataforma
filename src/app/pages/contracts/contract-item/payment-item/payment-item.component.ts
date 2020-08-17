@@ -51,11 +51,6 @@ export class PaymentItemComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.COORDINATIONS = this.departmentService.buildAllCoordinationsList();
     this.USERS = await this.userService.getUsersList();
-    if (this.paymentIndex !== undefined) {
-      this.payment = this.contract.payments[this.paymentIndex];
-      this.toLiquid(this.payment.value);
-      this.updateTotal();
-    }
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
         (accumulator: number, payment: any) =>
@@ -63,6 +58,15 @@ export class PaymentItemComponent implements OnInit {
         0
       )
     );
+    if (this.paymentIndex !== undefined) {
+      this.payment = this.contract.payments[this.paymentIndex];
+      this.toLiquid(this.payment.value);
+      this.updateTotal();
+      this.contract.paid = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.contract.paid) -
+          this.stringUtil.moneyToNumber(this.payment.value)
+      );
+    }
   }
 
   registerPayment(): void {
@@ -123,6 +127,15 @@ export class PaymentItemComponent implements OnInit {
           accumulator + this.stringUtil.moneyToNumber(userPayment.value),
         0
       )
+    );
+  }
+
+  notPaid(): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.contract.value) -
+        this.stringUtil.moneyToNumber(
+          this.contract.paid ? this.contract.paid : '0,00'
+        )
     );
   }
 }

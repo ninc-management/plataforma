@@ -18,7 +18,7 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
-          [overPaid]="contract.paid"
+          [overPaid]="notPaid()"
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
@@ -32,7 +32,7 @@
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
           <p class="caption status-danger" *ngIf="value.errors?.overpaid">
             O valor do empenho é superior ao valor restante a ser pago(R$
-            {{ contract.paid }})!
+            {{ notPaid() }})!
           </p>
           <p class="caption status-danger" *ngIf="value.errors?.required">
             O valor do empenho é obrigatório!
