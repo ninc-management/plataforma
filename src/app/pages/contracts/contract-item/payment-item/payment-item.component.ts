@@ -145,4 +145,15 @@ export class PaymentItemComponent implements OnInit {
         this.stringUtil.moneyToNumber(this.total)
     );
   }
+
+  lastPayment(): string {
+    if (
+      (this.paymentIndex === undefined &&
+        this.contract.payments.length != this.contract.total - 1) ||
+      (this.paymentIndex !== undefined &&
+        this.contract.payments.length - 1 != this.contract.total - 1)
+    )
+      return undefined;
+    return this.notPaid();
+  }
 }
