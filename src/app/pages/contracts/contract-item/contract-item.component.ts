@@ -52,9 +52,12 @@ export class ContractItemComponent implements OnInit {
   paymentDialog(index: number): void {
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: 'EDIÇÃO DE ORDEM DE EMPENHO',
+        title:
+          index != undefined
+            ? 'EDIÇÃO DE ORDEM DE EMPENHO'
+            : 'ADICIONAR ORDEM DE EMPENHO',
         contract: this.contract,
-        paymentIndex: index,
+        paymentIndex: index != undefined ? index : undefined,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

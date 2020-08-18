@@ -382,5 +382,17 @@
         </a>
       </nb-list-item>
     </nb-list>
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      style="margin-top: 20px;"
+      [disabled]="contract.payments.length == contract.total"
+      [class.btn-pulse]="submitted"
+      (click)="paymentDialog(undefined)"
+    >
+      Nova Ordem de Empenho
+    </button>
   </nb-tab>
 </nb-tabset>
