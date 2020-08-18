@@ -15,6 +15,7 @@ export class ContractDialogComponent implements OnInit {
   @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Input() isEditing: boolean;
+  isPayable = true;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
@@ -30,6 +31,8 @@ export class ContractDialogComponent implements OnInit {
     //     takeUntil(this.ref.onClose)
     //   )
     //   .subscribe(() => this.dismiss());
+    this.isPayable =
+      this.contract.payments.length < this.contract.total ? true : false;
   }
 
   dismiss(): void {

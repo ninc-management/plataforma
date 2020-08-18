@@ -1,17 +1,13 @@
 <div
   class="row justify-content-center"
   [ngStyle]="{
-    'width.px': windowWidth()
+    'width.px': !isPayable && !isEditing ? 'auto' : windowWidth()
   }"
 >
   <div class="col-md-8">
-    <nb-card
-      [ngStyle]="{
-        'max-height.px': windowHeight()
-      }"
-    >
+    <nb-card *ngIf="!isPayable && !isEditing; else normal">
       <nb-card-header>
-        {{ title }}
+        AVISO
         <div class="buttons">
           <button nbButton ghost (click)="dismiss()">
             <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
@@ -19,19 +15,39 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-contract-item
-          [contract]="contract"
-          (submit)="dismiss()"
-          *ngIf="isEditing"
-        ></ngx-contract-item>
-        <ngx-payment-item
-          [contract]="contract"
-          [contractIndex]="contractIndex"
-          [paymentIndex]="paymentIndex"
-          (submit)="dismiss()"
-          *ngIf="!isEditing"
-        ></ngx-payment-item>
+        <p>
+          Não é possivél adicionar outra ordem de empenho, pois o número de
+          parcelas pagas já é igual ao número de parcelas totais ({{
+            contract.total
+          }}).
+        </p>
       </nb-card-body>
     </nb-card>
+    <ng-template #normal>
+      <nb-card>
+        <nb-card-header>
+          {{ title }}
+          <div class="buttons">
+            <button nbButton ghost (click)="dismiss()">
+              <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+            </button>
+          </div>
+        </nb-card-header>
+        <nb-card-body>
+          <ngx-contract-item
+            [contract]="contract"
+            (submit)="dismiss()"
+            *ngIf="isEditing"
+          ></ngx-contract-item>
+          <ngx-payment-item
+            [contract]="contract"
+            [contractIndex]="contractIndex"
+            [paymentIndex]="paymentIndex"
+            (submit)="dismiss()"
+            *ngIf="!isEditing"
+          ></ngx-payment-item>
+        </nb-card-body>
+      </nb-card>
+    </ng-template>
   </div>
 </div>
