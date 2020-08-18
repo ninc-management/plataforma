@@ -58,6 +58,8 @@ export class PaymentItemComponent implements OnInit {
         0
       )
     );
+    if (this.contract.payments.length === this.contract.total - 1)
+      this.payment.value = this.notPaid();
     if (this.paymentIndex !== undefined) {
       this.payment = this.contract.payments[this.paymentIndex];
       this.toLiquid(this.payment.value);
