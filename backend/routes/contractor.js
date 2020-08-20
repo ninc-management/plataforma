@@ -22,14 +22,17 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await User.findByIdAndUpdate(req.body.contractor._id, req.body.contractor);
+  await Contractor.findByIdAndUpdate(
+    req.body.contractor._id,
+    req.body.contractor
+  );
   return res.status(200).json({
     message: 'Cliente Atualizado!',
   });
 });
 
 router.post('/all', async (req, res) => {
-  contracotrs = await User.find({});
+  contracotrs = await Contractor.find({});
   return res.status(200).json(contracotrs);
 });
 

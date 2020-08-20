@@ -19,6 +19,8 @@ export class ContractorItemComponent implements OnInit {
   ngOnInit(): void {
     if (this.contractor) {
       this.editing = true;
+    } else {
+      this.contractor = {};
     }
   }
 

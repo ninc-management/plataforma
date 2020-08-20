@@ -124,11 +124,17 @@ router.post('/all', async (req, res) => {
     .populate({
       path: 'invoice',
       model: 'Invoice',
-      populate: {
-        path: 'author',
-        select: { fullName: 1, profilePicture: 1 },
-        model: 'User',
-      },
+      populate: [
+        {
+          path: 'author',
+          select: { fullName: 1, profilePicture: 1 },
+          model: 'User',
+        },
+        {
+          path: 'contractor',
+          model: 'Contractor',
+        },
+      ],
     });
   return res.status(200).json(contracts);
 });

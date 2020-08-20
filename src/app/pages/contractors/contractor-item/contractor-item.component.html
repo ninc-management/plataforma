@@ -18,7 +18,6 @@
         fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'
       "
       [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
-      [disabled]="true"
     />
     <ng-container *ngIf="fullName.invalid && fullName.touched">
       <p class="caption status-danger" *ngIf="fullName.errors?.required">
@@ -51,7 +50,6 @@
       [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
       [required]="validation.email.required"
       [attr.aria-invalid]="email.invalid && email.touched ? true : null"
-      [disabled]="true"
     />
     <ng-container *ngIf="email.invalid && email.touched">
       <p class="caption status-danger" *ngIf="email.errors?.required">
@@ -81,7 +79,6 @@
         document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'
       "
       [attr.aria-invalid]="document.invalid && document.touched ? true : null"
-      [disabled]="true"
     />
     <ng-container *ngIf="document.invalid && document.touched">
       <p class="caption status-danger" *ngIf="document.errors?.required">
@@ -113,7 +110,6 @@
         address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'
       "
       [attr.aria-invalid]="address.invalid && address.touched ? true : null"
-      [disabled]="true"
     ></textarea>
     <ng-container *ngIf="address.invalid && address.touched">
       <p class="caption status-danger" *ngIf="address.errors?.required">

@@ -30,6 +30,7 @@ export class ContractItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.contract);
     this.contract.interest = this.contract.payments.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(

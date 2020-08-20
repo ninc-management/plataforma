@@ -126,7 +126,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
             contract.fullName = contract.invoice.author.fullName;
           if (!contract.code) contract.code = contract.invoice.code;
           if (!contract.contractor)
-            contract.contractor = contract.invoice.contractor;
+            contract.contractor = contract.invoice.contractor.fullName;
           if (!contract.value) contract.value = contract.invoice.value;
           if (!contract.name) contract.name = contract.invoice.name;
           return contract;

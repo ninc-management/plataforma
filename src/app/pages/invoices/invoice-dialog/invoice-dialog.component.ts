@@ -20,12 +20,13 @@ export class InvoiceDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    fromEvent(this.document, 'keyup')
-      .pipe(
-        filter((event: KeyboardEvent) => event.keyCode === 27),
-        takeUntil(this.ref.onClose)
-      )
-      .subscribe(() => this.dismiss());
+    // TODO: Pensar num tratamento melhor para dialogos aninhados, ao invés de fechar os 2
+    // fromEvent(this.document, 'keyup')
+    //   .pipe(
+    //     filter((event: KeyboardEvent) => event.keyCode === 27),
+    //     takeUntil(this.ref.onClose)
+    //   )
+    //   .subscribe(() => this.dismiss());
   }
 
   dismiss(): void {

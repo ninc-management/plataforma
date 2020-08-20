@@ -14,6 +14,7 @@ import {
   NbListModule,
   NbTabsetModule,
   NbRadioModule,
+  NbTooltipModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../@theme/theme.module';
@@ -46,6 +47,7 @@ import { ContractorItemComponent } from './contractors/contractor-item/contracto
     NbUserModule,
     NbListModule,
     NbTabsetModule,
+    NbTooltipModule,
     NbSpinnerModule,
     NbRadioModule,
     ThemeModule,

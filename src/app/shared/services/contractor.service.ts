@@ -49,11 +49,22 @@ export class ContractorService implements OnDestroy {
 
   getContractors(): Observable<any[]> {
     this.http
-      .post('/api/contractors/all', {})
+      .post('/api/contractor/all', {})
       .pipe(take(1))
       .subscribe((contractors: any[]) => {
         this.contractors$.next(contractors);
       });
     return this.contractors$;
+  }
+
+  idToName(id: string): string {
+    const tmp = this.contractors$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)].fullName;
+  }
+
+  idToContractor(id: string): any {
+    if (id === undefined) return undefined;
+    const tmp = this.contractors$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)];
   }
 }

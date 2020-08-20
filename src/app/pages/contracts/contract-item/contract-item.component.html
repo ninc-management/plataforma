@@ -160,13 +160,20 @@
         <label class="label" for="input-contractor">Cliente:</label>
         <input
           nbInput
-          [(ngModel)]="contract?.contractor.fullName"
+          [(ngModel)]="contract.contractor"
           #contractor="ngModel"
           id="input-contractor"
           name="contractor"
           placeholder="Nome do cliente"
           fullWidth
           fieldSize="large"
+          nbTooltip="CPF/CNPJ: {{
+            contract.invoice.contractor.document
+          }} — Email: {{ contract.invoice.contractor.email }} — Endereço: {{
+            contract.invoice.contractor.address
+          }}"
+          nbTooltipPlacement="top"
+          nbTooltipStatus="basic"
           [required]="validation.contractor.required"
           [status]="
             contractor.dirty

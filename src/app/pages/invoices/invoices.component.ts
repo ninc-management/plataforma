@@ -68,7 +68,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Código',
         type: 'string',
       },
-      contractor: {
+      contractorName: {
         title: 'Cliente',
         type: 'string',
       },
@@ -119,7 +119,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices: any[]) => {
         this.invoices = invoices.map((invoice: any) => {
-          if (!invoice.fullName) invoice.fullName = invoice.author.fullName;
+          if (!invoice.fullName) {
+            invoice.fullName = invoice.author.fullName;
+            invoice.contractorName = invoice.contractor?.fullName;
+          }
           return invoice;
         });
         this.source.load(invoices);

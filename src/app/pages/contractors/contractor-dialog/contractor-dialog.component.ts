@@ -15,7 +15,15 @@ export class ContractorDialogComponent implements OnInit {
     protected ref: NbDialogRef<ContractorDialogComponent>
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // TODO: Pensar num tratamento melhor para dialogos aninhados, ao invés de fechar os 2
+    // fromEvent(this.document, 'keyup')
+    //   .pipe(
+    //     filter((event: KeyboardEvent) => event.keyCode === 27),
+    //     takeUntil(this.ref.onClose)
+    //   )
+    //   .subscribe(() => this.dismiss());
+  }
 
   dismiss(): void {
     this.ref.close();

@@ -1,18 +1,30 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { take } from 'rxjs/operators';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  OnDestroy,
+} from '@angular/core';
+import { take, takeUntil } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
+import { ContractorService } from '../../../shared/services/contractor.service';
+import { Subject } from 'rxjs';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
+import { NbDialogService } from '@nebular/theme';
+import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-item',
   templateUrl: './invoice-item.component.html',
   styleUrls: ['./invoice-item.component.scss'],
 })
-export class InvoiceItemComponent implements OnInit {
+export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Input() invoice: any;
   @Output() submit = new EventEmitter<void>();
+  destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
   invoiceNumber: number;
@@ -22,12 +34,20 @@ export class InvoiceItemComponent implements OnInit {
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
   STATOOS = ['Em análise', 'Fechado', 'Negado'];
+  CONTRACTORS = [];
 
   constructor(
+    private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private departmentService: DepartmentService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    public contractorService: ContractorService
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     if (this.invoice) {
@@ -41,6 +61,8 @@ export class InvoiceItemComponent implements OnInit {
       this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
       this.revision += 1;
       this.oldStatus = this.invoice.status;
+      if (this.invoice.contractor._id !== undefined)
+        this.invoice.contractor = this.invoice.contractor._id;
     } else {
       this.invoice = {};
     }
@@ -50,6 +72,12 @@ export class InvoiceItemComponent implements OnInit {
       .subscribe((size: number) => {
         this.invoiceNumber = size;
         this.updateCode();
+      });
+    this.contractorService
+      .getContractors()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((contractors) => {
+        this.CONTRACTORS = contractors;
       });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
   }
@@ -66,6 +94,9 @@ export class InvoiceItemComponent implements OnInit {
         if (this.invoice.status === 'Fechado')
           this.contractService.saveContract(this.invoice);
       }
+      this.invoice.contractorName = this.contractorService.idToName(
+        this.invoice.contractor
+      );
     } else {
       this.invoiceService.saveInvoice(this.invoice);
     }
@@ -103,5 +134,17 @@ export class InvoiceItemComponent implements OnInit {
     this.invoice.code =
       this.invoice.code.slice(0, this.invoice.code.length - 2) +
       this.revision.toString().padStart(2, '0');
+  }
+
+  addContractor(): void {
+    this.dialogService.open(ContractorDialogComponent, {
+      context: {
+        title: 'ADICIONAR CLIENTE',
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }
