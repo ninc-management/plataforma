@@ -29,6 +29,9 @@ import { InvoicesComponent } from './invoices/invoices.component';
 import { InvoiceItemComponent } from './invoices/invoice-item/invoice-item.component';
 import { InvoiceDialogComponent } from './invoices/invoice-dialog/invoice-dialog.component';
 import { PaymentItemComponent } from './contracts/contract-item/payment-item/payment-item.component';
+import { ContractorsComponent } from './contractors/contractors.component';
+import { ContractorDialogComponent } from './contractors/contractor-dialog/contractor-dialog.component';
+import { ContractorItemComponent } from './contractors/contractor-item/contractor-item.component';
 
 @NgModule({
   imports: [
@@ -61,6 +64,9 @@ import { PaymentItemComponent } from './contracts/contract-item/payment-item/pay
     InvoiceItemComponent,
     InvoiceDialogComponent,
     PaymentItemComponent,
+    ContractorsComponent,
+    ContractorDialogComponent,
+    ContractorItemComponent,
   ],
 })
 export class PagesModule {}

@@ -1,0 +1,18 @@
+{
+  "email": { "required": true },
+  "address": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "fullName": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "document": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 18
+  }
+}
