@@ -8,7 +8,7 @@ const invoiceSchema = mongoose.Schema({
   code: { type: String, required: true, unique: true },
   type: { type: String, required: true },
   service: { type: String, required: true },
-  contractor: { type: String, required: true },
+  contractor: { type: mongoose.ObjectId, ref: 'Contractor', required: true },
   name: { type: String, required: true },
   value: { type: String, required: true },
   status: { type: String, required: true },

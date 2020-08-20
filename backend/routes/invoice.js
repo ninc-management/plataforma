@@ -1,5 +1,6 @@
 const express = require('express');
 
+const Contractor = require('../models/contractor');
 const Contract = require('../models/contract');
 const Invoice = require('../models/invoice');
 const User = require('../models/user');
