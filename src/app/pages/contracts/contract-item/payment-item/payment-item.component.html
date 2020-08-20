@@ -27,7 +27,7 @@
             value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [readonly]="false"
+          [readonly]="paymentIndex !== undefined ? true : false"
           (ngModelChange)="toLiquid(payment.value)"
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
@@ -137,6 +137,7 @@
       [required]="validation.service.required"
       [minlength]="validation.service.minLength"
       [maxlength]="validation.service.maxLength"
+      [readonly]="paymentIndex !== undefined"
       [status]="
         service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
       "
@@ -328,6 +329,7 @@
     </nb-list-item>
   </nb-list>
   <button
+    *ngIf="paymentIndex === undefined"
     nbButton
     fullWidth
     status="primary"

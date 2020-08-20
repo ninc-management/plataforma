@@ -54,7 +54,7 @@ export class ContractItemComponent implements OnInit {
       context: {
         title:
           index != undefined
-            ? 'EDIÇÃO DE ORDEM DE EMPENHO'
+            ? 'ORDEM DE EMPENHO'
             : 'ADICIONAR ORDEM DE EMPENHO',
         contract: this.contract,
         paymentIndex: index != undefined ? index : undefined,
