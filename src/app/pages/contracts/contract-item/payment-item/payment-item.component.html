@@ -55,7 +55,7 @@
         </ng-container>
       </div>
     </div>
-    <div class="col-sm-2">
+    <div class="col-6 col-md-2">
       <div class="form-control-group">
         <label class="label" for="input-nf">NF(%):</label>
         <input
@@ -74,7 +74,7 @@
         />
       </div>
     </div>
-    <div class="col-sm-2">
+    <div class="col-6 col-md-2">
       <div class="form-control-group">
         <label class="label" for="input-nortan">Nortan(%):</label>
         <input
@@ -271,23 +271,23 @@
   <nb-list style="width: 100%; padding: 10px 0;">
     <nb-list-item *ngFor="let userPayment of payment.team; let i = index">
       <div class="row paymentRow">
-        <div class="col-sm-4">
+        <div class="col-12 col-md-4">
           {{
             userPayment.user.fullName
               ? userPayment.user.fullName
               : idToName(userPayment.user)
           }}
         </div>
-        <div class="col-sm-4">
+        <div class="col-12 col-md-4">
           {{ userPayment.coordination }}
         </div>
-        <div class="col-sm-2">
+        <div class="col-5 col-md-2">
           {{ userPayment.value }}
         </div>
-        <div class="col-sm-1">
+        <div class="col-5 col-md-1">
           {{ toPercentage(userPayment.value) }}
         </div>
-        <div class="col-sm-1">
+        <div class="col-2 col-md-1">
           <nb-icon
             *ngIf="this.paymentIndex === undefined"
             class="xIcon"
@@ -301,12 +301,12 @@
     </nb-list-item>
     <nb-list-item>
       <div class="row paymentRow">
-        <div class="col-sm-4">Restante: {{ remainingBalance() }}</div>
-        <div class="col-sm-4" style="text-align: right;">
+        <div class="col-12 col-md-4">Restante: {{ remainingBalance() }}</div>
+        <div class="col-4 col-md-4" style="text-align: right;">
           Total:
         </div>
         <div
-          class="col-sm-2"
+          class="col-4 col-md-2"
           [ngClass]="{
             danger: total !== options.liquid && total !== '0',
             success: total === options.liquid && total !== '0'
@@ -315,7 +315,7 @@
           {{ total }}
         </div>
         <div
-          class="col-sm-1"
+          class="col-4 col-md-1"
           [ngClass]="{
             danger: total !== options.liquid && total !== '0',
             success: total === options.liquid && total !== '0'
@@ -323,7 +323,7 @@
         >
           {{ toPercentage(total) }}
         </div>
-        <div class="col-sm-1"></div>
+        <div class="col-md-1"></div>
       </div>
     </nb-list-item>
   </nb-list>

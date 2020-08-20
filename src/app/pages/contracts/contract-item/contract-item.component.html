@@ -25,7 +25,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-3 col-md-2">
           <div class="form-control-group">
             <label class="label" for="input-version">Revisão:</label>
             <input
@@ -52,7 +52,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-9 col-md-3">
           <div class="form-control-group">
             <label class="label" for="input-status">Status:</label>
             <nb-select
@@ -229,48 +229,49 @@
           </p>
         </ng-container>
       </div>
-
-      <div class="form-control-group">
-        <label class="label" for="input-value">Valor do contrato:</label>
-        <input
-          nbInput
-          [(ngModel)]="contract.value"
-          #value="ngModel"
-          id="input-value"
-          name="value"
-          placeholder="Valor do contrato"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: '2'
-          }"
-          [required]="validation.value.required"
-          [status]="
-            value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
-          "
-          [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [readonly]="true"
-        />
-        <ng-container *ngIf="value.invalid && value.touched">
-          <p class="caption status-danger" *ngIf="value.errors?.required">
-            O valor do contrato é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="value.errors?.minlength || value.errors?.maxlength"
-          >
-            O valor do contrato deve conter entre
-            {{ validation.value.minLength }} a
-            {{ validation.value.maxLength }}
-            numeros
-          </p>
-        </ng-container>
-      </div>
       <div class="row">
-        <div class="col-sm-8">
+        <div class="col-6 col-md-12">
+          <div class="form-control-group">
+            <label class="label" for="input-value">Valor do contrato:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.value"
+              #value="ngModel"
+              id="input-value"
+              name="value"
+              placeholder="Valor do contrato"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [required]="validation.value.required"
+              [status]="
+                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+              [readonly]="true"
+            />
+            <ng-container *ngIf="value.invalid && value.touched">
+              <p class="caption status-danger" *ngIf="value.errors?.required">
+                O valor do contrato é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.minlength || value.errors?.maxlength"
+              >
+                O valor do contrato deve conter entre
+                {{ validation.value.minLength }} a
+                {{ validation.value.maxLength }}
+                numeros
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-6 col-md-8">
           <div class="form-control-group">
             <label class="label" for="input-paid">Valor pago:</label>
             <input
@@ -297,7 +298,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-6 col-md-2">
           <div class="form-control-group">
             <label class="label" for="input-interest">Parcelas pagas:</label>
             <input
@@ -326,7 +327,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-6 col-md-2">
           <div class="form-control-group">
             <label class="label" for="input-total">Parcelas totais:</label>
             <nb-select

@@ -1,11 +1,22 @@
 <div
   class="row justify-content-center"
   [ngStyle]="{
-    'width.px': !isPayable && !isEditing ? 'auto' : windowWidth()
+    'width.px':
+      !isPayable && !isEditing && paymentIndex === undefined
+        ? 'auto'
+        : windowWidth()
   }"
 >
   <div class="col-md-8">
-    <nb-card *ngIf="!isPayable && !isEditing; else normal">
+    <nb-card
+      *ngIf="
+        !isPayable && !isEditing && paymentIndex === undefined;
+        else normal
+      "
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
       <nb-card-header>
         AVISO
         <div class="buttons">
@@ -24,7 +35,11 @@
       </nb-card-body>
     </nb-card>
     <ng-template #normal>
-      <nb-card>
+      <nb-card
+        [ngStyle]="{
+          'max-height.px': windowHeight()
+        }"
+      >
         <nb-card-header>
           {{ title }}
           <div class="buttons">

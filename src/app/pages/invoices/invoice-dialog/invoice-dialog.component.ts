@@ -42,6 +42,6 @@ export class InvoiceDialogComponent implements OnInit {
   }
 
   windowHeight(): number {
-    return window.innerHeight * 0.95;
+    return window.innerHeight * 0.99;
   }
 }
