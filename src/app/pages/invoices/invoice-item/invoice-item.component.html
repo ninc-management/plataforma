@@ -171,15 +171,9 @@
           placeholder="Selecione o cliente do orçamento"
           fullWidth
           size="large"
-          nbTooltip="CPF/CNPJ: {{
-            contractorService.idToContractor(invoice.contractor)?.document
-          }} — Email: {{
-            contractorService.idToContractor(invoice.contractor)?.email
-          }} — Endereço: {{
-            contractorService.idToContractor(invoice.contractor)?.address
-          }}"
+          [nbTooltip]="tooltipText(undefined)"
           nbTooltipPlacement="top"
-          nbTooltipStatus="basic"
+          nbTooltipStatus="primary"
           [required]="validation.contractor.required"
           [status]="
             contractor.dirty
@@ -195,11 +189,10 @@
           <nb-option
             *ngFor="let contractorItem of CONTRACTORS"
             [value]="contractorItem._id"
-            nbTooltip="CPF/CNPJ: {{ contractorItem.document }} — Email: {{
-              contractorItem.email
-            }} — Endereço: {{ contractorItem.address }}"
+            [nbTooltip]="tooltipText(contractorItem)"
             nbTooltipPlacement="top"
-            nbTooltipStatus="basic"
+            nbTooltipStatus="primary"
+            nbTooltipAdjustment="noop"
           >
             {{ contractorItem.fullName }}
           </nb-option>

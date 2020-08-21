@@ -167,13 +167,9 @@
           placeholder="Nome do cliente"
           fullWidth
           fieldSize="large"
-          nbTooltip="CPF/CNPJ: {{
-            contract.invoice.contractor.document
-          }} — Email: {{ contract.invoice.contractor.email }} — Endereço: {{
-            contract.invoice.contractor.address
-          }}"
+          [nbTooltip]="tooltipText()"
           nbTooltipPlacement="top"
-          nbTooltipStatus="basic"
+          nbTooltipStatus="primary"
           [required]="validation.contractor.required"
           [status]="
             contractor.dirty

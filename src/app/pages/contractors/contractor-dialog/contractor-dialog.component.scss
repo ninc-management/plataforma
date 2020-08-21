@@ -2,28 +2,28 @@
 
 @include nb-install-component() {
   --card-margin-bottom: 0;
+}
 
-  ::ng-deep {
-    nb-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      overflow: hidden;
-    }
-    .title {
-      flex: 1 0 auto;
-      margin-right: 3rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .buttons {
-      display: flex;
-      justify-content: space-evenly;
+::ng-deep {
+  nb-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+  }
+  .title {
+    flex: 1 0 auto;
+    margin-right: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .buttons {
+    display: flex;
+    justify-content: space-evenly;
 
-      [nbButton] {
-        flex: 0 0 3rem;
-      }
+    [nbButton] {
+      flex: 0 0 3rem;
     }
   }
 }

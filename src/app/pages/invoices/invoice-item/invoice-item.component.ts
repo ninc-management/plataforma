@@ -147,4 +147,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       autoFocus: false,
     });
   }
+
+  tooltipText(contractorItem: any): string {
+    if (this.invoice.contractor === undefined) return undefined;
+    const contractor = contractorItem
+      ? contractorItem
+      : this.contractorService.idToContractor(this.invoice.contractor);
+    return (
+      `CPF/CNPJ: ` +
+      contractor?.document +
+      `\nEmail: ` +
+      contractor?.email +
+      `\nEndereço: ` +
+      contractor?.address
+    );
+  }
 }

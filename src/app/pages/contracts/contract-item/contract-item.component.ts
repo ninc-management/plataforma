@@ -66,4 +66,15 @@ export class ContractItemComponent implements OnInit {
       autoFocus: false,
     });
   }
+
+  tooltipText(): string {
+    return (
+      `CPF/CNPJ: ` +
+      this.contract.invoice.contractor.document +
+      `\nEmail: ` +
+      this.contract.invoice.contractor.email +
+      `\nEndereço: ` +
+      this.contract.invoice.contractor.address
+    );
+  }
 }

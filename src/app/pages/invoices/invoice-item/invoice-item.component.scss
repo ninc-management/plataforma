@@ -1,0 +1,10 @@
+@import '../../../@theme/styles/themes';
+
+@include nb-install-component() {
+}
+
+::ng-deep {
+  nb-tooltip {
+    white-space: pre-wrap;
+  }
+}
