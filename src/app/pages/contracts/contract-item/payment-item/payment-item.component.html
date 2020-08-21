@@ -70,7 +70,8 @@
           [required]="validation.nf.required"
           [status]="nf.dirty ? (nf.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-          [readonly]="true"
+          [readonly]="paymentIndex !== undefined ? true : false"
+          (ngModelChange)="toLiquid(payment.value)"
         />
       </div>
     </div>
@@ -91,7 +92,8 @@
             nortan.dirty ? (nortan.invalid ? 'danger' : 'success') : 'basic'
           "
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
-          [readonly]="true"
+          [readonly]="paymentIndex !== undefined ? true : false"
+          (ngModelChange)="toLiquid(payment.value)"
         />
       </div>
     </div>
