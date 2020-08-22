@@ -23,7 +23,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor
+          invoice.contractor.fullName
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractor.document
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||

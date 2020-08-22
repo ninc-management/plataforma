@@ -160,7 +160,7 @@
   </div>
 
   <div class="row">
-    <div class="col-11">
+    <div class="col-9 col-md-11">
       <div class="form-control-group">
         <label class="label" for="input-contractor">Cliente:</label>
         <nb-select
@@ -172,6 +172,7 @@
           fullWidth
           size="large"
           [nbTooltip]="tooltipText(undefined)"
+          [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
           nbTooltipPlacement="top"
           nbTooltipStatus="primary"
           [required]="validation.contractor.required"
@@ -190,6 +191,7 @@
             *ngFor="let contractorItem of CONTRACTORS"
             [value]="contractorItem._id"
             [nbTooltip]="tooltipText(contractorItem)"
+            [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
             nbTooltipPlacement="top"
             nbTooltipStatus="primary"
             nbTooltipAdjustment="noop"
@@ -199,7 +201,7 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-1">
+    <div class="col-3 col-md-1">
       <div class="form-control-group">
         <button
           nbButton

@@ -6,15 +6,15 @@ import {
   Input,
   OnDestroy,
 } from '@angular/core';
-import { take, takeUntil } from 'rxjs/operators';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
+import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
+import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
+import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
-import { NbDialogService } from '@nebular/theme';
-import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -41,6 +41,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private departmentService: DepartmentService,
     private contractService: ContractService,
+    private breakpointService: NbMediaBreakpointsService,
     public contractorService: ContractorService
   ) {}
 
@@ -161,5 +162,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       `\nEndereço: ` +
       contractor?.address
     );
+  }
+
+  isPhone(): boolean {
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= md;
   }
 }
