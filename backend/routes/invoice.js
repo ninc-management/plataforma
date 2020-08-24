@@ -8,20 +8,36 @@ const User = require('../models/user');
 const router = express.Router();
 
 router.post('/', (req, res, next) => {
-  const invoice = new Invoice(req.body.invoice);
-  invoice
-    .save()
-    .then((savedInvoice) => {
-      res.status(201).json({
-        message: 'Orçamento cadastrado!',
-        invoice: savedInvoice,
-      });
-    })
-    .catch((err) => {
+  let invoice = new Invoice(req.body.invoice);
+  console.log('Pre Code: ', invoice.code);
+  Invoice.estimatedDocumentCount({}, function (err, result) {
+    if (err) {
       res.status(500).json({
         error: err,
       });
-    });
+    } else {
+      const count = result + 1;
+      console.log('Count: ', count);
+      invoice.code = invoice.code.replace(
+        /-(\d+)\//g,
+        '-' + count.toString() + '/'
+      );
+      console.log('Pos Code: ', invoice.code);
+      invoice
+        .save()
+        .then((savedInvoice) => {
+          res.status(201).json({
+            message: 'Orçamento cadastrado!',
+            invoice: savedInvoice,
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            error: err,
+          });
+        });
+    }
+  });
 });
 
 router.post('/update', async (req, res, next) => {

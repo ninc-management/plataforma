@@ -5,6 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { InvoiceService } from '../../shared/services/invoice.service';
+import { ContractorService } from '../../shared/services/contractor.service';
 
 @Component({
   selector: 'ngx-invoices',
@@ -108,7 +109,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private invoicetService: InvoiceService
+    private invoicetService: InvoiceService,
+    private contractorService: ContractorService
   ) {}
 
   ngOnDestroy(): void {
@@ -122,10 +124,13 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices: any[]) => {
         this.invoices = invoices.map((invoice: any) => {
-          if (!invoice.fullName) {
-            invoice.fullName = invoice.author.fullName;
-            invoice.contractorName = invoice.contractor?.fullName;
-          }
+          if (!invoice.fullName) invoice.fullName = invoice.author.fullName;
+          if (!invoice.contractor.fullName)
+            invoice.contractorName = this.contractorService.idToName(
+              invoice.contractor
+            );
+          if (invoice.contractor.fullName)
+            invoice.contractorName = invoice.contractor.fullName;
           return invoice;
         });
         this.source.load(invoices);
