@@ -171,8 +171,10 @@
           placeholder="Selecione o cliente do orçamento"
           fullWidth
           size="large"
-          [nbTooltip]="tooltipText(undefined)"
-          [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+          [nbTooltip]="tooltipText(invoice.contractor)"
+          [nbTooltipTrigger]="
+            isPhone() || invoice.contractor === undefined ? 'noop' : 'hint'
+          "
           nbTooltipPlacement="top"
           nbTooltipStatus="primary"
           [required]="validation.contractor.required"

@@ -150,8 +150,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   tooltipText(contractorItem: any): string {
-    if (this.invoice.contractor === undefined) return undefined;
-    const contractor = contractorItem
+    if (contractorItem === undefined) return undefined;
+    const contractor = contractorItem.fullName
       ? contractorItem
       : this.contractorService.idToContractor(this.invoice.contractor);
     return (
