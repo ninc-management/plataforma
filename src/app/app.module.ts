@@ -47,7 +47,7 @@ registerLocaleData(ptBr);
     ThemeModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'ptBr' }],
+  providers: [{ provide: LOCALE_ID, useValue: 'pt' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
