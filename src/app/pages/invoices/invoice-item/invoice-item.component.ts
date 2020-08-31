@@ -23,8 +23,9 @@ import * as invoice_validation from '../../../shared/invoice-validation.json';
   styleUrls: ['./invoice-item.component.scss'],
 })
 export class InvoiceItemComponent implements OnInit, OnDestroy {
-  @Input() invoice: any;
+  @Input() iInvoice: any;
   @Output() submit = new EventEmitter<void>();
+  invoice: any;
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
@@ -53,7 +54,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.invoice) {
+    if (this.iInvoice) {
+      this.invoice = Object.assign({}, this.iInvoice);
       this.editing = true;
       this.COORDINATIONS = this.departmentService.buildCoordinationsList(
         this.invoice.department
@@ -114,6 +116,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.invoice.contractorName = this.contractorService.idToName(
         this.invoice.contractor
       );
+      this.iInvoice = Object.assign({}, this.invoice);
     } else {
       this.invoiceService.saveInvoice(this.invoice);
     }
