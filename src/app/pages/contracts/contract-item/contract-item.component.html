@@ -233,7 +233,7 @@
         </ng-container>
       </div>
       <div class="row">
-        <div class="col-6 col-md-12">
+        <div class="col-6 col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-value">Valor do contrato:</label>
             <input
@@ -272,6 +272,63 @@
                 numeros
               </p>
             </ng-container>
+          </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-created">Data de criação:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.created"
+              #created="ngModel"
+              id="input-created"
+              name="created"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              (ngModelChange)="contract.lastUpdate = todayDate"
+              [nbDatepicker]="datepicker"
+              [required]="validation.created.required"
+              [status]="
+                created.dirty
+                  ? created.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                created.invalid && created.touched ? true : null
+              "
+              [readonly]="true"
+            />
+            <nb-datepicker #datepicker [max]="today"></nb-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-updated">Última atualização:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.lastUpdate"
+              #updated="ngModel"
+              id="input-updated"
+              name="updated"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.lastUpdate.required"
+              [status]="
+                updated.dirty
+                  ? updated.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                updated.invalid && updated.touched ? true : null
+              "
+              [readonly]="true"
+            />
           </div>
         </div>
         <div class="col-6 col-md-8">
@@ -359,7 +416,7 @@
         fullWidth
         status="primary"
         size="large"
-        style="margin-top: 20px;"
+        style="margin-top: 20px"
         [disabled]="submitted || !form.valid"
         [class.btn-pulse]="submitted"
       >
@@ -370,15 +427,15 @@
   <nb-tab tabTitle="Ordens de empenho" [tabIcon]="paymentIcon" responsive>
     <nb-list>
       <nb-list-item *ngFor="let payment of contract.payments; let i = index">
-        <a (click)="paymentDialog(i)" style="width: 100%; cursor: pointer;">
-          <div class="row" style="width: 100%;">
+        <a (click)="paymentDialog(i)" style="width: 100%; cursor: pointer">
+          <div class="row" style="width: 100%">
             <div class="col-1">#{{ +i + 1 }}</div>
             <div class="col">
               {{ payment.service }}
             </div>
             <div class="col-md-3">
               <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-              <span style="vertical-align: 0.1em;">
+              <span style="vertical-align: 0.1em">
                 {{ payment.value }}
               </span>
             </div>
@@ -391,7 +448,7 @@
       fullWidth
       status="primary"
       size="large"
-      style="margin-top: 20px;"
+      style="margin-top: 20px"
       [disabled]="contract.payments.length == contract.total"
       [class.btn-pulse]="submitted"
       (click)="paymentDialog(undefined)"

@@ -1,9 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ContractService } from '../../../shared/services/contract.service';
-import * as contract_validation from '../../../shared/contract-validation.json';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { NbDialogService } from '@nebular/theme';
 import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
+import { format, parseISO } from 'date-fns';
+import * as contract_validation from '../../../shared/contract-validation.json';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -11,10 +12,13 @@ import { ContractDialogComponent } from '../contract-dialog/contract-dialog.comp
   styleUrls: ['./contract-item.component.scss'],
 })
 export class ContractItemComponent implements OnInit {
-  @Input() contract: any;
+  @Input() iContract: any;
   @Output() submit = new EventEmitter<void>();
+  contract: any;
   submitted = false;
   contractNumber: number;
+  today = new Date();
+  todayDate = format(this.today, 'dd/MM/yyyy');
   validation = (contract_validation as any).default;
   STATOOS = ['Em andamento', 'Concluído', 'Arquivado'];
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
@@ -30,7 +34,7 @@ export class ContractItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.contract);
+    this.contract = Object.assign({}, this.iContract);
     this.contract.interest = this.contract.payments.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
@@ -39,6 +43,18 @@ export class ContractItemComponent implements OnInit {
         0
       )
     );
+    if (
+      this.contract.created !== undefined &&
+      typeof this.contract.created !== 'object'
+    )
+      this.contract.created = parseISO(this.contract.created);
+    if (
+      this.contract.lastUpdate !== undefined &&
+      typeof this.contract.lastUpdate !== 'object'
+    ) {
+      this.contract.lastUpdate = parseISO(this.contract.lastUpdate);
+      this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
+    }
   }
 
   updateContract(): void {
@@ -46,6 +62,8 @@ export class ContractItemComponent implements OnInit {
     let version = +this.contract.version;
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
+    this.contract.lastUpdate = new Date();
+    this.iContract = Object.assign({}, this.contract);
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }

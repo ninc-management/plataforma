@@ -14,11 +14,14 @@ export class ContractService {
   constructor(private http: HttpClient, private userService: UserService) {}
 
   saveContract(invoice: any): void {
+    const currentTime = new Date();
     const contract = {
       invoice: invoice._id,
       payments: [],
       status: 'Em andamento',
       version: '00',
+      created: currentTime,
+      lastUpdate: currentTime,
     };
     const req = {
       contract: contract,
@@ -36,6 +39,8 @@ export class ContractService {
   }
 
   editContract(contract: any): void {
+    const currentTime = new Date();
+    contract.lastUpdate = currentTime;
     let tmp = Object.assign({}, contract);
     delete tmp.invoice;
     tmp.invoice = contract.invoice._id;

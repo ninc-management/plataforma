@@ -7,6 +7,8 @@
   "paid": { "required": false },
   "interest": { "required": false },
   "total": { "required": true },
+  "created": { "required": true },
+  "lastUpdate": { "required": true },
   "version": { "required": false },
   "contractor": {
     "required": false,

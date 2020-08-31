@@ -7,6 +7,8 @@ const contractSchema = mongoose.Schema({
   status: { type: String, required: true },
   version: { type: String, required: true },
   total: { type: String },
+  created: { type: Date, required: true },
+  lastUpdate: { type: Date, required: true },
 });
 
 contractSchema.plugin(uniqueValidator);
