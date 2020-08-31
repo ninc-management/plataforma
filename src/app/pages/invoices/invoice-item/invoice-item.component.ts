@@ -64,9 +64,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
       this.revision += 1;
       this.oldStatus = this.invoice.status;
-      if (this.invoice.created !== undefined)
+      if (
+        this.invoice.created !== undefined &&
+        typeof this.invoice.created !== 'object'
+      )
         this.invoice.created = parseISO(this.invoice.created);
-      if (this.invoice.lastUpdate !== undefined)
+      if (
+        this.invoice.lastUpdate !== undefined &&
+        typeof this.invoice.lastUpdate !== 'object'
+      )
         this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
       if (this.invoice.contractor._id !== undefined)
         this.invoice.contractor = this.invoice.contractor._id;
