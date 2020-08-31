@@ -13,6 +13,8 @@ const invoiceSchema = mongoose.Schema({
   value: { type: String, required: true },
   status: { type: String, required: true },
   trello: { type: Boolean, required: true },
+  created: { type: Date, required: true },
+  lastUpdate: { type: Date, required: true },
 });
 
 invoiceSchema.plugin(uniqueValidator);

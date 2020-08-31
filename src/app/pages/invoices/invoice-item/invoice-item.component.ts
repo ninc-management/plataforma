@@ -14,6 +14,7 @@ import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { parseISO } from 'date-fns';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 
 @Component({
@@ -27,6 +28,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
+  today = new Date();
   invoiceNumber: number;
   revision: number = 0;
   validation = (invoice_validation as any).default;
@@ -62,10 +64,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
       this.revision += 1;
       this.oldStatus = this.invoice.status;
+      if (this.invoice.created !== undefined)
+        this.invoice.created = parseISO(this.invoice.created);
+      if (this.invoice.lastUpdate !== undefined)
+        this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
       if (this.invoice.contractor._id !== undefined)
         this.invoice.contractor = this.invoice.contractor._id;
     } else {
-      this.invoice = {};
+      this.invoice = {
+        created: new Date(),
+        lastUpdate: new Date(),
+      };
     }
     this.invoiceService
       .invoicesSize()
@@ -88,6 +97,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.invoice.department
     );
     this.submitted = true;
+    this.invoice.lastUpdate = new Date();
     if (this.editing) {
       this.updateRevision();
       this.invoiceService.editInvoice(this.invoice);
@@ -167,5 +177,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   isPhone(): boolean {
     const { md } = this.breakpointService.getBreakpointsMap();
     return document.documentElement.clientWidth <= md;
+  }
+
+  fixHours(): void {
+    const currentTime = new Date();
+    this.invoice.created.setHours(currentTime.getHours());
+    this.invoice.created.setMinutes(currentTime.getMinutes());
+    this.invoice.created.setSeconds(currentTime.getSeconds());
   }
 }

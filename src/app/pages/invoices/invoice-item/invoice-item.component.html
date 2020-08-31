@@ -211,7 +211,7 @@
           fullWidth
           status="primary"
           size="large"
-          style="margin-top: 28px;"
+          style="margin-top: 28px"
           (click)="addContractor()"
         >
           <nb-icon icon="person-add-outline"></nb-icon>
@@ -295,7 +295,7 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-5">
       <div class="form-control-group">
         <label class="label" for="input-status">Status:</label>
         <nb-select
@@ -319,9 +319,57 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       <div class="form-control-group">
-        <label class="label" for="input-interests" style="margin-bottom: 20px;"
+        <label class="label">
+          <!-- TODO: Remover depois de adicionar data de criação para todos os orçamentos -->
+          <!-- >{{ editing ? 'Ultima atualização' : 'Data de criação' }}:</label -->
+          {{ 'Data de criação' }}:</label
+        >
+        <!-- TODO: Alterar ngIf para editing depois de adicionar data de criação dos orçamentos -->
+        <input
+          *ngIf="false; else datePicker"
+          nbInput
+          [(ngModel)]="invoice.lastUpdate"
+          #date="ngModel"
+          id="input-date"
+          name="date"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.date.required"
+          [status]="
+            date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="date.invalid && date.touched ? true : null"
+          [readonly]="true"
+        />
+        <ng-template #datePicker>
+          <input
+            nbInput
+            [(ngModel)]="invoice.created"
+            #date="ngModel"
+            id="input-date"
+            name="date"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            (ngModelChange)="fixHours()"
+            [nbDatepicker]="datepicker"
+            [required]="validation.date.required"
+            [status]="
+              date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'
+            "
+            [attr.aria-invalid]="date.invalid && date.touched ? true : null"
+            [readonly]="true"
+          />
+          <nb-datepicker #datepicker [max]="today"></nb-datepicker>
+        </ng-template>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="form-control-group">
+        <label class="label" for="input-interests" style="margin-bottom: 20px"
           >Trello:
         </label>
         <br />
@@ -343,7 +391,7 @@
     fullWidth
     status="primary"
     size="large"
-    style="margin-top: 20px;"
+    style="margin-top: 20px"
     [disabled]="submitted || !form.valid || !trello.value"
     [class.btn-pulse]="submitted"
   >

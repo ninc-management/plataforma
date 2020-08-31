@@ -24,6 +24,7 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
+import { NbDateFnsDateModule } from '@nebular/date-fns';
 
 registerLocaleData(ptBr);
 
@@ -37,6 +38,7 @@ registerLocaleData(ptBr);
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),
+    NbDateFnsDateModule.forRoot({ format: 'dd/MM/yyyy' }),
     NbDialogModule.forRoot(),
     NbWindowModule.forRoot(),
     NbToastrModule.forRoot(),

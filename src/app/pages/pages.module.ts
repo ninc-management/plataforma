@@ -15,8 +15,8 @@ import {
   NbTabsetModule,
   NbRadioModule,
   NbTooltipModule,
+  NbDatepickerModule,
 } from '@nebular/theme';
-
 import { ThemeModule } from '../@theme/theme.module';
 import { PagesComponent } from './pages.component';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -36,25 +36,26 @@ import { ContractorItemComponent } from './contractors/contractor-item/contracto
 
 @NgModule({
   imports: [
-    PagesRoutingModule,
-    NbCardModule,
-    NbCheckboxModule,
-    NbSelectModule,
-    NbButtonModule,
-    NbMenuModule,
-    NbInputModule,
-    NbIconModule,
-    NbUserModule,
-    NbListModule,
-    NbTabsetModule,
-    NbTooltipModule,
-    NbSpinnerModule,
-    NbRadioModule,
-    ThemeModule,
     DashboardModule,
     FormsModule,
-    SharedModule,
+    NbButtonModule,
+    NbCardModule,
+    NbCheckboxModule,
+    NbDatepickerModule,
+    NbIconModule,
+    NbInputModule,
+    NbListModule,
+    NbMenuModule,
+    NbRadioModule,
+    NbSelectModule,
+    NbSpinnerModule,
+    NbTabsetModule,
+    NbTooltipModule,
+    NbUserModule,
     Ng2SmartTableModule,
+    PagesRoutingModule,
+    SharedModule,
+    ThemeModule,
   ],
   declarations: [
     PagesComponent,
