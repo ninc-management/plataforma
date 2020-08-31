@@ -13,6 +13,7 @@ import * as contract_validation from '../../../shared/contract-validation.json';
 })
 export class ContractItemComponent implements OnInit {
   @Input() iContract: any;
+  @Input() index: number;
   @Output() submit = new EventEmitter<void>();
   contract: any;
   submitted = false;
@@ -76,6 +77,7 @@ export class ContractItemComponent implements OnInit {
             ? 'ORDEM DE EMPENHO'
             : 'ADICIONAR ORDEM DE EMPENHO',
         contract: this.contract,
+        contractIndex: this.index,
         paymentIndex: index != undefined ? index : undefined,
       },
       dialogClass: 'my-dialog',

@@ -69,7 +69,10 @@ export class PaymentItemComponent implements OnInit {
       this.toLiquid(this.payment.value);
     }
     if (this.paymentIndex !== undefined) {
-      this.payment = this.contract.payments[this.paymentIndex];
+      this.payment = Object.assign(
+        {},
+        this.contract.payments[this.paymentIndex]
+      );
       this.toLiquid(this.payment.value);
       this.updateTotal();
       this.contract.paid = this.stringUtil.numberToMoney(
@@ -80,7 +83,7 @@ export class PaymentItemComponent implements OnInit {
         this.payment.paidDate !== undefined &&
         typeof this.payment.paidDate !== 'object'
       )
-        this.payment.paidDate = parseISO(this.payment.created);
+        this.payment.paidDate = parseISO(this.payment.paidDate);
       if (typeof this.payment.created !== 'object')
         this.payment.created = parseISO(this.payment.created);
       if (typeof this.payment.lastUpdate !== 'object') {
@@ -93,7 +96,16 @@ export class PaymentItemComponent implements OnInit {
   registerPayment(): void {
     this.payment.contract = this.contract._id;
     this.submitted = true;
-    this.contractService.addPayment(this.payment, this.contractIndex);
+    if (this.paymentIndex !== undefined) {
+      this.payment.lastUpdate = new Date();
+      this.contractService.editPayment(this.payment, this.contractIndex);
+      this.contract.payments[this.paymentIndex] = Object.assign(
+        {},
+        this.payment
+      );
+    } else {
+      this.contractService.addPayment(this.payment, this.contractIndex);
+    }
     this.submit.emit();
   }
 
@@ -176,5 +188,10 @@ export class PaymentItemComponent implements OnInit {
     )
       return undefined;
     return this.notPaid();
+  }
+
+  updatePaidDate(): void {
+    if (this.payment.paid === 'não') this.payment.paidDate = undefined;
+    else this.payment.paidDate = new Date();
   }
 }

@@ -165,7 +165,6 @@
           [required]="validation.service.required"
           [minlength]="validation.service.minLength"
           [maxlength]="validation.service.maxLength"
-          [readonly]="paymentIndex !== undefined"
           [status]="
             service.dirty
               ? service.invalid
@@ -204,6 +203,7 @@
           placeholder="OE paga?"
           fullWidth
           size="large"
+          (ngModelChange)="updatePaidDate()"
           [required]="validation.paidCheck.required"
           [status]="paidCheck.value ? 'success' : 'basic'"
           [attr.aria-invalid]="
@@ -500,7 +500,6 @@
     </nb-list-item>
   </nb-list>
   <button
-    *ngIf="paymentIndex === undefined"
     nbButton
     fullWidth
     status="primary"

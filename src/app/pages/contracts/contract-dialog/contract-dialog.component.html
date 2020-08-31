@@ -51,6 +51,7 @@
         <nb-card-body>
           <ngx-contract-item
             [iContract]="contract"
+            [index]="contractIndex"
             (submit)="dismiss()"
             *ngIf="isEditing"
           ></ngx-contract-item>

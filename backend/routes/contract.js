@@ -88,7 +88,17 @@ router.post('/update', async (req, res, next) => {
     req.body.contract
   );
   return res.status(200).json({
-    message: 'Orçamento Atualizado!',
+    message: 'Contrato Atualizado!',
+  });
+});
+
+router.post('/updatePayment', async (req, res, next) => {
+  await Payment.findOneAndUpdate(
+    { _id: req.body.payment._id },
+    req.body.payment
+  );
+  return res.status(200).json({
+    message: 'Ordem de Empenho Atualizada!',
   });
 });
 

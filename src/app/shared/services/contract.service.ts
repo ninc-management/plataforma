@@ -97,4 +97,23 @@ export class ContractService {
         this.contracts$.next(tmp);
       });
   }
+
+  editPayment(payment: any, contractIndex: number): void {
+    let tmp = Object.assign({}, payment);
+    delete tmp.team;
+    const req = {
+      payment: tmp,
+      team: payment.team,
+    };
+    this.http
+      .post('/api/contract/updatePayment', req)
+      .pipe(take(1))
+      .subscribe(() => {
+        let tmp = this.contracts$.getValue();
+        tmp[contractIndex].payments[
+          tmp[contractIndex].payments.findIndex((el) => el._id === payment._id)
+        ] = payment;
+        this.contracts$.next(tmp);
+      });
+  }
 }
