@@ -1,6 +1,6 @@
 <form (ngSubmit)="registerPayment()" #form="ngForm" aria-labelledby="title">
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-value">Valor:</label>
         <input
@@ -24,7 +24,13 @@
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
           [status]="
-            value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
+            value.dirty
+              ? value.invalid
+                ? 'danger'
+                : 'success'
+              : payment.value !== undefined
+              ? 'success'
+              : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           [readonly]="paymentIndex !== undefined ? true : false"
@@ -68,7 +74,15 @@
           fullWidth
           fieldSize="large"
           [required]="validation.nf.required"
-          [status]="nf.dirty ? (nf.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="
+            nf.dirty
+              ? nf.invalid
+                ? 'danger'
+                : 'success'
+              : payment.notaFiscal !== undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           [readonly]="paymentIndex !== undefined ? true : false"
           (ngModelChange)="toLiquid(payment.value)"
@@ -89,7 +103,13 @@
           fieldSize="large"
           [required]="validation.nortan.required"
           [status]="
-            nortan.dirty ? (nortan.invalid ? 'danger' : 'success') : 'basic'
+            nortan.dirty
+              ? nortan.invalid
+                ? 'danger'
+                : 'success'
+              : payment.nortanPercentage !== undefined
+              ? 'success'
+              : 'basic'
           "
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
           [readonly]="paymentIndex !== undefined ? true : false"
@@ -97,7 +117,7 @@
         />
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-liquid">Valor liquído:</label>
         <input
@@ -117,52 +137,203 @@
           }"
           [required]="validation.liquid.required"
           [status]="
-            liquid.dirty ? (liquid.invalid ? 'danger' : 'success') : 'basic'
+            liquid.dirty
+              ? liquid.invalid
+                ? 'danger'
+                : 'success'
+              : options.liquid !== undefined
+              ? 'success'
+              : 'basic'
           "
           [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
           [readonly]="true"
         />
       </div>
     </div>
-  </div>
-  <div class="form-control-group">
-    <label class="label" for="input-service">Serviço:</label>
-    <textarea
-      nbInput
-      [(ngModel)]="payment.service"
-      #service="ngModel"
-      id="input-service"
-      name="service"
-      placeholder="Descreva o serviço efetuado nessa ordem de empenho"
-      fullWidth
-      fieldSize="large"
-      [required]="validation.service.required"
-      [minlength]="validation.service.minLength"
-      [maxlength]="validation.service.maxLength"
-      [readonly]="paymentIndex !== undefined"
-      [status]="
-        service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
-      "
-      [attr.aria-invalid]="service.invalid && service.touched ? true : null"
-    ></textarea>
-    <ng-container *ngIf="service.invalid && service.touched">
-      <p class="caption status-danger" *ngIf="service.errors?.required">
-        O campo de serviço é obrigatório!
-      </p>
-      <p
-        class="caption status-danger"
-        *ngIf="service.errors?.minlength || service.errors?.maxlength"
-      >
-        O campo de serviço deve conter entre
-        {{ validation.service.minLength }} a
-        {{ validation.service.maxLength }}
-        caracteres
-      </p>
-    </ng-container>
+    <div class="col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-service">Serviço:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="payment.service"
+          #service="ngModel"
+          id="input-service"
+          name="service"
+          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.service.required"
+          [minlength]="validation.service.minLength"
+          [maxlength]="validation.service.maxLength"
+          [readonly]="paymentIndex !== undefined"
+          [status]="
+            service.dirty
+              ? service.invalid
+                ? 'danger'
+                : 'success'
+              : payment.service !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="service.invalid && service.touched">
+          <p class="caption status-danger" *ngIf="service.errors?.required">
+            O campo de serviço é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="service.errors?.minlength || service.errors?.maxlength"
+          >
+            O campo de serviço deve conter entre
+            {{ validation.service.minLength }} a
+            {{ validation.service.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidCheck">Pago?</label>
+        <nb-select
+          [(ngModel)]="payment.paid"
+          #paidCheck="ngModel"
+          id="input-paidCheck"
+          name="paidCheck"
+          placeholder="OE paga?"
+          fullWidth
+          size="large"
+          [required]="validation.paidCheck.required"
+          [status]="paidCheck.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            paidCheck.invalid && paidCheck.touched ? true : null
+          "
+        >
+          <nb-option value="não">NÃO</nb-option>
+          <nb-option value="sim">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidDate">Data do pagamento:</label>
+        <input
+          *ngIf="payment.paid === 'não'; else withdate"
+          nbInput
+          [(ngModel)]="payment.paidDate"
+          #paidDate="ngModel"
+          id="input-paidDate"
+          name="paidDate"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.paidDate.required"
+          [readonly]="true"
+          [disabled]="payment.paid === 'não'"
+          [status]="
+            paidDate.dirty
+              ? paidDate.invalid
+                ? 'danger'
+                : 'success'
+              : payment.paidDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            paidDate.invalid && paidDate.touched ? true : null
+          "
+        />
+        <ng-template #withdate>
+          <input
+            nbInput
+            [(ngModel)]="payment.paidDate"
+            #paidDate="ngModel"
+            id="input-paidDate"
+            name="paidDate"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="pDatepicker"
+            [required]="validation.paidDate.required"
+            [readonly]="true"
+            [status]="
+              paidDate.dirty
+                ? paidDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : payment.paidDate !== undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              paidDate.invalid && paidDate.touched ? true : null
+            "
+          />
+          <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
+        </ng-template>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-created">Data de criação:</label>
+        <input
+          nbInput
+          [(ngModel)]="payment.created"
+          #created="ngModel"
+          id="input-created"
+          name="created"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="cDatepicker"
+          [required]="validation.created.required"
+          [readonly]="true"
+          [status]="
+            created.dirty
+              ? created.invalid
+                ? 'danger'
+                : 'success'
+              : payment.created !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+        />
+        <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-updated">Última atualização:</label>
+        <input
+          nbInput
+          [(ngModel)]="options.lastUpdateDate"
+          #updated="ngModel"
+          id="input-updated"
+          name="updated"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.lastUpdate.required"
+          [readonly]="true"
+          [status]="
+            updated.dirty
+              ? updated.invalid
+                ? 'danger'
+                : 'success'
+              : options.lastUpdateDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
+        />
+      </div>
+    </div>
   </div>
   <hr />
   <div class="row" *ngIf="paymentIndex === undefined">
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-user">Colaborador:</label>
         <nb-select
@@ -185,7 +356,7 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-coordination">Coordenação:</label>
         <nb-select
@@ -211,23 +382,23 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-md-3">
       <div class="form-control-group">
         <label
           class="label"
           for="input-paid"
-          style="display: flex; margin-top: 4px;"
+          style="display: flex; margin-top: 4px"
         >
-          <span style="margin-right: 10px;">Valor:</span>
+          <span style="margin-right: 10px">Valor:</span>
           <nb-radio-group
             [(ngModel)]="options.valueType"
             #valueType="ngModel"
             id="input-value-type"
             name="valueType"
-            style="height: 16px;"
+            style="height: 16px"
           >
-            <nb-radio value="$" style="height: 16px;">R$</nb-radio>
-            <nb-radio value="%" style="height: 16px;">%</nb-radio>
+            <nb-radio value="$" style="height: 16px">R$</nb-radio>
+            <nb-radio value="%" style="height: 16px">%</nb-radio>
           </nb-radio-group>
         </label>
         <input
@@ -256,14 +427,14 @@
         />
       </div>
     </div>
-    <div class="col-sm-1">
+    <div class="col-md-1">
       <button
         nbButton
         type="button"
         fullWidth
         status="primary"
         size="large"
-        style="margin-top: 28px;"
+        style="margin-top: 28px"
         [disabled]="!paid.value || !coordination.value || !userList.value"
         (click)="addColaborator()"
       >
@@ -271,7 +442,7 @@
       </button>
     </div>
   </div>
-  <nb-list style="width: 100%; padding: 10px 0;">
+  <nb-list style="width: 100%; padding: 10px 0">
     <nb-list-item *ngFor="let userPayment of payment.team; let i = index">
       <div class="row paymentRow">
         <div class="col-12 col-md-4">
@@ -305,9 +476,7 @@
     <nb-list-item>
       <div class="row paymentRow">
         <div class="col-12 col-md-4">Restante: {{ remainingBalance() }}</div>
-        <div class="col-4 col-md-4" style="text-align: right;">
-          Total:
-        </div>
+        <div class="col-4 col-md-4" style="text-align: right">Total:</div>
         <div
           class="col-4 col-md-2"
           [ngClass]="{

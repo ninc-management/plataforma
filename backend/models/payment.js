@@ -8,6 +8,10 @@ const paymentSchema = mongoose.Schema({
   notaFiscal: { type: String, required: true },
   nortanPercentage: { type: String, required: true },
   team: [{ type: mongoose.ObjectId, ref: 'UserPayment' }],
+  created: { type: Date, required: true },
+  lastUpdate: { type: Date, required: true },
+  paid: { type: String },
+  paidDate: { type: Date },
 });
 
 paymentSchema.plugin(uniqueValidator);

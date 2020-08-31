@@ -3,6 +3,10 @@
   "nf": { "required": true },
   "liquid": { "required": true },
   "user": { "required": false },
+  "created": { "required": true },
+  "lastUpdate": { "required": true },
+  "paidDate": { "required": false },
+  "paidCheck": { "required": false },
   "coordination": { "required": false },
   "team": { "required": true, "minLength": 1 },
   "service": {

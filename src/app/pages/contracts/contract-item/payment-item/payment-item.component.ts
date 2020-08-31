@@ -7,11 +7,12 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
+import { format, parseISO } from 'date-fns';
 import { DepartmentService } from '../../../../shared/services/department.service';
-import * as contract_validation from '../../../../shared/payment-validation.json';
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
+import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -28,17 +29,22 @@ export class PaymentItemComponent implements OnInit {
   COORDINATIONS: string[];
   USERS: any[];
   total = '0';
+  today = new Date();
   validation = (contract_validation as any).default;
   submitted = false;
   payment: any = {
     team: [],
     notaFiscal: '6', // Porcentagem da nota fiscal
     nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
+    paid: 'não',
+    created: this.today,
+    lastUpdate: this.today,
   };
   userPayment: any = {};
   options = {
     valueType: '$',
     liquid: '0',
+    lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
   };
 
   constructor(
@@ -70,6 +76,17 @@ export class PaymentItemComponent implements OnInit {
         this.stringUtil.moneyToNumber(this.contract.paid) -
           this.stringUtil.moneyToNumber(this.payment.value)
       );
+      if (
+        this.payment.paidDate !== undefined &&
+        typeof this.payment.paidDate !== 'object'
+      )
+        this.payment.paidDate = parseISO(this.payment.created);
+      if (typeof this.payment.created !== 'object')
+        this.payment.created = parseISO(this.payment.created);
+      if (typeof this.payment.lastUpdate !== 'object') {
+        this.payment.lastUpdate = parseISO(this.payment.lastUpdate);
+        this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
+      }
     }
   }
 
