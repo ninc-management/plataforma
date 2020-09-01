@@ -71,6 +71,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       code: {
         title: 'Código',
         type: 'string',
+        sortDirection: 'desc',
         compareFunction: this.codeSort,
       },
       contractorName: {
