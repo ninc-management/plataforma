@@ -70,6 +70,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
       code: {
         title: 'Código',
         type: 'string',
+        compareFunction: this.codeSort,
       },
       contractor: {
         title: 'Cliente',
@@ -168,6 +169,19 @@ export class ContractsComponent implements OnInit, OnDestroy {
   valueSort(direction: any, a: string, b: string): number {
     let first = +a.replace(/[,.]/g, '');
     let second = +b.replace(/[,.]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
+  }
+
+  codeSort(direction: any, a: string, b: string): number {
+    let first = +a.match(/-(\d+)\//g)[0].match(/\d/g)[0];
+    let second = +b.match(/-(\d+)\//g)[0].match(/\d/g)[0];
 
     if (first < second) {
       return -1 * direction;

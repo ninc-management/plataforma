@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/', (req, res, next) => {
   let invoice = new Invoice(req.body.invoice);
-  console.log('Pre Code: ', invoice.code);
   Invoice.estimatedDocumentCount({}, function (err, result) {
     if (err) {
       res.status(500).json({
@@ -17,12 +16,10 @@ router.post('/', (req, res, next) => {
       });
     } else {
       const count = result + 1;
-      console.log('Count: ', count);
       invoice.code = invoice.code.replace(
         /-(\d+)\//g,
         '-' + count.toString() + '/'
       );
-      console.log('Pos Code: ', invoice.code);
       invoice
         .save()
         .then((savedInvoice) => {
