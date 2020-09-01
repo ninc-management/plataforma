@@ -2,12 +2,12 @@
   "departments": [
     {
       "abrev": "DAD",
-      "name": "Direção de Administração",
+      "name": "Diretoria de Administração",
       "coordinations": ["C.ADM - Coordenação de Administração"]
     },
     {
       "abrev": "DEC",
-      "name": "Direção de Engenharia Civil",
+      "name": "Diretoria de Engenharia Civil",
       "coordinations": [
         "C.G.O - Coordenação de Gerenciamento de Obras",
         "C.INST - Coordenação de Instalações",
@@ -16,7 +16,7 @@
     },
     {
       "abrev": "DAQ",
-      "name": "Direção de Arquitetura",
+      "name": "Diretoria de Arquitetura",
       "coordinations": [
         "C.P.A - Coordenação de Projetos Arquitetônicos",
         "C.D.I - Coordenação de Design de Interiores"
@@ -24,7 +24,7 @@
     },
     {
       "abrev": "DPC",
-      "name": "Direção de Projetos Complementares",
+      "name": "Diretoria de Projetos Complementares",
       "coordinations": [
         "C.S.E - Coordenação de Sistemas Elétricos",
         "C.S.H - Coordenação de Sistemas Hidrosanitários",
@@ -33,7 +33,7 @@
     },
     {
       "abrev": "DRM",
-      "name": "Direção de Recursos Hidrícos e Meio Ambiente",
+      "name": "Diretoria de Recursos Hidrícos e Meio Ambiente",
       "coordinations": [
         "C.R.H - Coordenação de Recursos Hidrícos",
         "C.M.A - Coordenação de Meio Ambiente"
