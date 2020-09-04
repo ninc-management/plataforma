@@ -34,7 +34,7 @@ export class PaymentItemComponent implements OnInit {
   submitted = false;
   payment: any = {
     team: [],
-    notaFiscal: '6', // Porcentagem da nota fiscal
+    notaFiscal: '15.5', // Porcentagem da nota fiscal
     nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
     paid: 'não',
     created: this.today,
