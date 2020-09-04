@@ -54,11 +54,18 @@ export class UserService implements OnDestroy {
     return await this.http
       .post('/api/user/all', {})
       .pipe(
-        map((users) =>
+        map((users) => {
           (users as any[]).map((user) => {
             return { fullName: user.fullName, _id: user._id };
-          })
-        )
+          });
+          (users as any[]).sort((a, b) => {
+            return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
+              b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+              ? -1
+              : 1;
+          });
+          return users;
+        })
       )
       .toPromise();
   }
