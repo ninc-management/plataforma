@@ -18,6 +18,14 @@
     }
 
     ng2-smart-table {
+      table tr.selected {
+        background-color: transparent !important;
+
+        &:hover {
+          background-color: nb-theme(smart-table-bg-active) !important;
+        }
+      }
+
       .form-control {
         background-color: nb-theme(input-basic-background-color);
         border-color: nb-theme(input-basic-border-color);
