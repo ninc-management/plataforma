@@ -37,7 +37,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
           contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.contracts;
+    return this.contracts.sort((a, b) => this.codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',

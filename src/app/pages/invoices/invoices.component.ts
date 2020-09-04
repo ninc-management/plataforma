@@ -37,7 +37,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.invoices;
+    return this.invoices.sort((a, b) => this.codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',
