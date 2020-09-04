@@ -212,7 +212,7 @@ export class BrMaskDirective implements OnInit {
         formValue = formValue.replace(/\d/gi, '');
       }
       if (this.brmasker.type === 'num') {
-        formValue = formValue.replace(/\D/gi, '');
+        return formValue.replace(/([^0-9,.])/gi, '');
       }
 
       if (this.brmasker.money) {
