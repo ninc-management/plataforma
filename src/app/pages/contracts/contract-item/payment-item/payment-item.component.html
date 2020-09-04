@@ -73,6 +73,7 @@
           placeholder="Revisão"
           fullWidth
           fieldSize="large"
+          [brmasker]="{ type: 'num' }"
           [required]="validation.nf.required"
           [status]="
             nf.dirty
@@ -101,6 +102,7 @@
           placeholder="Revisão"
           fullWidth
           fieldSize="large"
+          [brmasker]="{ type: 'num' }"
           [required]="validation.nortan.required"
           [status]="
             nortan.dirty
@@ -137,12 +139,10 @@
           }"
           [required]="validation.liquid.required"
           [status]="
-            liquid.dirty
-              ? liquid.invalid
+            options.liquid !== undefined
+              ? liquid.invalid || options.liquid.length === 0
                 ? 'danger'
                 : 'success'
-              : options.liquid !== undefined
-              ? 'success'
               : 'basic'
           "
           [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
