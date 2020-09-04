@@ -12,6 +12,11 @@ export class StringUtilService {
     return +result;
   }
 
+  numberToNumber(money: string): number {
+    const result = money.replace(',', '.');
+    return +result;
+  }
+
   numberToMoney(value: number): string {
     return this.brMask.writeValueMoney(
       value.toFixed(2).toString().replace('.', ','),
@@ -29,7 +34,6 @@ export class StringUtilService {
   }
 
   toMutiplyPercentage(percentage: string): number {
-    const num = (100 - +percentage) / 100;
-    return this.round(num);
+    return (100 - this.numberToNumber(percentage)) / 100;
   }
 }
