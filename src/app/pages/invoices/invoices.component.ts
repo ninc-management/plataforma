@@ -181,8 +181,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   codeSort(direction: any, a: string, b: string): number {
-    let first = +a.match(/-(\d+)\//g)[0].match(/\d/g)[0];
-    let second = +b.match(/-(\d+)\//g)[0].match(/\d/g)[0];
+    let first = +a.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
+    let second = +b.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
 
     if (first < second) {
       return -1 * direction;
