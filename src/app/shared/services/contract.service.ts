@@ -20,6 +20,7 @@ export class ContractService {
       payments: [],
       status: 'Em andamento',
       version: '00',
+      total: '1',
       created: currentTime,
       lastUpdate: currentTime,
     };

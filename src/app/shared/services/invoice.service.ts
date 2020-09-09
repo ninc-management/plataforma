@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
+import { ContractService } from './contract.service';
 import { take } from 'rxjs/operators';
 import { Observable, BehaviorSubject } from 'rxjs';
 
@@ -11,7 +12,11 @@ export class InvoiceService {
   private size$ = new BehaviorSubject<number>(0);
   private invoices$ = new BehaviorSubject<any[]>([]);
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private contractService: ContractService
+  ) {}
 
   saveInvoice(invoice: any): void {
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -31,6 +36,8 @@ export class InvoiceService {
           };
           tmp.push(savedInvoice);
           this.invoices$.next(tmp);
+          if (savedInvoice.status === 'Fechado')
+            this.contractService.saveContract(savedInvoice);
         });
     });
   }
