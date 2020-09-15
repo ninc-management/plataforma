@@ -84,9 +84,15 @@ export class PaymentItemComponent implements OnInit {
         typeof this.payment.paidDate !== 'object'
       )
         this.payment.paidDate = parseISO(this.payment.paidDate);
-      if (typeof this.payment.created !== 'object')
+      if (
+        this.payment.created !== undefined &&
+        typeof this.payment.created !== 'object'
+      )
         this.payment.created = parseISO(this.payment.created);
-      if (typeof this.payment.lastUpdate !== 'object') {
+      if (
+        this.payment.lastUpdate !== undefined &&
+        typeof this.payment.lastUpdate !== 'object'
+      ) {
         this.payment.lastUpdate = parseISO(this.payment.lastUpdate);
         this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
       }

@@ -10,7 +10,7 @@ const paymentSchema = mongoose.Schema({
   team: [{ type: mongoose.ObjectId, ref: 'UserPayment' }],
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
-  paid: { type: String },
+  paid: { type: String, required: true },
   paidDate: { type: Date },
 });
 
