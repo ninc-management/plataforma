@@ -3,13 +3,13 @@
     <nb-card>
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row">
-          <div class="col-2" style="padding-left: 0; padding-right: 0;">
+          <div class="col-2" style="padding-left: 0; padding-right: 0">
             <button
               nbButton
               fullWidth
               status="primary"
               (click)="contractDialog({})"
-              style="height: 100%;"
+              style="height: 100%"
             >
               <nb-icon icon="plus"></nb-icon>
             </button>
@@ -34,6 +34,7 @@
         [source]="source"
         (edit)="contractDialog($event)"
         (create)="contractDialog({})"
+        (delete)="generatePdf($event)"
       >
       </ng2-smart-table>
       <ng-template #phone>
@@ -41,7 +42,7 @@
           <nb-list-item *ngFor="let invoice of filtredInvoices">
             <a (click)="contractDialog({ data: invoice })">
               <div class="row">
-                <div class="col-12" style="margin-bottom: 10px;">
+                <div class="col-12" style="margin-bottom: 10px">
                   <nb-user
                     size="giant"
                     [name]="invoice.name"
@@ -57,7 +58,7 @@
                       pack="fa"
                       status="success"
                     ></nb-icon>
-                    <span style="vertical-align: 0.1em;">
+                    <span style="vertical-align: 0.1em">
                       {{ invoice.value }}
                     </span>
                   </p>
@@ -68,7 +69,7 @@
                     pack="fa"
                     [status]="statusColor(invoice.status)"
                   ></nb-icon>
-                  <span style="vertical-align: 0.1em;">
+                  <span style="vertical-align: 0.1em">
                     {{ invoice.status }}
                   </span>
                 </div>

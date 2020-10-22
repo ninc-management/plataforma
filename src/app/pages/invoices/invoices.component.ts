@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbIconLibraries } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs/operators';
@@ -54,14 +54,14 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
+      deleteButtonContent: '<i class="far fa-file-pdf pdf"></i>',
+      confirmDelete: false,
     },
     actions: {
       columnTitle: 'Ações',
       add: true,
       edit: true,
-      delete: false,
+      delete: true,
     },
     columns: {
       fullName: {
@@ -150,6 +150,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
+  }
+
+  generatePdf(event): void {
+    console.log(event);
   }
 
   pageWidth(): number {

@@ -9,6 +9,14 @@
     overflow-x: auto;
     overflow-y: auto;
   }
+
+  .pdf {
+    font-size: 1.5rem;
+  }
+
+  .ng2-smart-action-delete-delete:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
 }
 
 :host ::ng-deep {
