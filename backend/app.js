@@ -22,12 +22,14 @@ mongoose
     useNewUrlParser: true,
     useFindAndModify: false,
     autoIndex: false,
+    authSource: 'admin',
+    ssl: true,
   })
   .then(() => {
     console.log('Database connection ready!');
   })
-  .catch(() => {
-    console.log('Database Connection failed!');
+  .catch((error) => {
+    console.log('Database Connection failed! ', error);
     process.exit(1);
   });
 mongoose.set('useCreateIndex', true);
