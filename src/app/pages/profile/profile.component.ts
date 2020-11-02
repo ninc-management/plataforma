@@ -20,6 +20,7 @@ export class ProfileComponent implements OnInit {
   validation = (user_validation as any).default;
   isEditing = false;
   DEPARTMENTS: string[] = [];
+  POSITIONS: string[] = [];
 
   constructor(
     private userService: UserService,
@@ -38,6 +39,7 @@ export class ProfileComponent implements OnInit {
         );
     });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+    this.POSITIONS = this.buildPositionsList();
   }
 
   updateUser(): void {
@@ -78,5 +80,19 @@ export class ProfileComponent implements OnInit {
           this.userService.updateCurrentUser(this.currentUser);
         }
       });
+  }
+
+  buildPositionsList(): string[] {
+    let tmp = [];
+    tmp.push('Diretor de operações');
+    tmp.push('Co-Diretor de operações');
+    tmp.push('Diretor Executivo');
+    this.departmentService.buildDepartmentList().map((dp: string) => {
+      tmp.push('Diretor' + dp.slice(15));
+    });
+    this.departmentService.buildAllCoordinationsList().map((cd: string) => {
+      tmp.push('Coordenador' + cd.split('Coordenação')[1]);
+    });
+    return tmp;
   }
 }

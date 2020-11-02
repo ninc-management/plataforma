@@ -39,6 +39,9 @@
   "mainDepartment": {
     "required": true
   },
+  "position": {
+    "required": true
+  },
   "password": {
     "required": true,
     "minLength": 4,

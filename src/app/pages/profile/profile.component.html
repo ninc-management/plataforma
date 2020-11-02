@@ -309,6 +309,38 @@
               </div>
 
               <div class="form-control-group">
+                <label class="label" for="input-interests">Cargo:</label>
+                <nb-select
+                  [(ngModel)]="currentUser.position"
+                  #position="ngModel"
+                  id="input-position"
+                  name="position"
+                  placeholder="Selecione o seu cargo"
+                  fullWidth
+                  size="large"
+                  [required]="validation.position.required"
+                  [status]="
+                    position.dirty
+                      ? position.invalid
+                        ? 'danger'
+                        : 'success'
+                      : 'basic'
+                  "
+                  [attr.aria-invalid]="
+                    position.invalid && position.touched ? true : null
+                  "
+                  [disabled]="!isEditing"
+                >
+                  <nb-option
+                    *ngFor="let position of POSITIONS"
+                    [value]="position"
+                  >
+                    {{ position }}
+                  </nb-option>
+                </nb-select>
+              </div>
+
+              <div class="form-control-group">
                 <label class="label" for="input-education">Formação:</label>
                 <textarea
                   nbInput
