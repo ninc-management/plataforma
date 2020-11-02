@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { NbCardModule, NbButtonModule } from '@nebular/theme';
+import { NbCardModule, NbButtonModule, NbIconModule } from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,13 @@ import { OverPaidDirective } from './directives/over-paid.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
 
 @NgModule({
-  imports: [NbCardModule, NbButtonModule, CommonModule, NbFileUploaderModule],
+  imports: [
+    NbCardModule,
+    NbButtonModule,
+    CommonModule,
+    NbFileUploaderModule,
+    NbIconModule,
+  ],
   exports: [BrMaskDirective, OverPaidDirective, LastPaymentDirective],
   declarations: [
     BrMaskDirective,

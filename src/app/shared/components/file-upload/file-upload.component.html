@@ -4,7 +4,18 @@
 >
   <div class="col-md-8">
     <nb-card>
-      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-header>
+        {{ title }}
+        <div class="buttons">
+          <button
+            nbButton
+            ghost
+            (click)="dismiss()"
+            (focus)="$event.srcElement.blur()"
+          >
+            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+          </button></div
+      ></nb-card-header>
       <nb-card-body>
         <nb-file-uploader
           [options]="options"
@@ -15,9 +26,7 @@
         ></nb-file-uploader>
       </nb-card-body>
       <nb-card-footer>
-        <button nbButton status="danger" (click)="dismiss()">
-          Fechar
-        </button>
+        <button nbButton status="danger" (click)="dismiss()">Fechar</button>
       </nb-card-footer>
     </nb-card>
   </div>

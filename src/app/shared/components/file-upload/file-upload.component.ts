@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NbDialogRef } from '@nebular/theme';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { NbFileUploaderOptions } from '../../../@theme/components';
-import { take, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent } from 'rxjs';
 
 @Component({
   selector: 'ngx-file-upload',
@@ -18,9 +18,18 @@ export class FileUploadDialogComponent implements OnInit {
   options: NbFileUploaderOptions;
   urls: string[] = [];
 
-  constructor(protected ref: NbDialogRef<FileUploadDialogComponent>) {}
+  constructor(
+    @Inject(NB_DOCUMENT) protected document,
+    protected ref: NbDialogRef<FileUploadDialogComponent>
+  ) {}
 
   ngOnInit() {
+    fromEvent(this.document, 'keyup')
+      .pipe(
+        filter((event: KeyboardEvent) => event.keyCode === 27),
+        takeUntil(this.ref.onClose)
+      )
+      .subscribe(() => this.dismiss());
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
       fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
     );

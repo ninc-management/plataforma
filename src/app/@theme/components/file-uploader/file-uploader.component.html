@@ -3,7 +3,7 @@
     <input
       #inputEl
       type="file"
-      style="display: none;"
+      style="display: none"
       [accept]="accept"
       [multiple]="options.multiple"
       (change)="onChange()"
@@ -14,7 +14,7 @@
     <input
       #inputEl
       type="file"
-      style="display: none;"
+      style="display: none"
       [accept]="accept"
       [multiple]="options.multiple"
       webkitdirectory
@@ -39,9 +39,11 @@
   >
     <p>
       {{ dropAreaLabel }}
-      <b (click)="browse()" style="cursor: pointer;">{{
-        dropAreaFileChooserLabel
-      }}</b>
+      <b
+        (click)="browse()"
+        style="cursor: pointer; text-decoration: underline"
+        >{{ dropAreaFileChooserLabel }}</b
+      >
     </p>
   </div>
 
