@@ -90,7 +90,7 @@
       <nb-user
         [nbContextMenu]="userMenu"
         [onlyPicture]="userPictureOnly"
-        [name]="user?.exibitionName"
+        [name]="user?.exibitionName ? user?.exibitionName : user?.fullName"
         [picture]="user?.profilePicture"
       >
       </nb-user>
