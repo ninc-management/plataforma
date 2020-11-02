@@ -315,7 +315,9 @@ export class PdfService {
         {
           width: 70,
           stack: [
-            await new Img(invoice.author.profilePicture)
+            await new Img(
+              'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
+            )
               .width(60)
               .height(60)
               .build(),
