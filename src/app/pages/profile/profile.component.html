@@ -357,7 +357,7 @@
 
               <div class="form-control-group">
                 <label class="label" for="input-interests"
-                  >Interesse em atuar em:</label
+                  >Coordenações atuantes:</label
                 >
                 <div class="row">
                   <div class="col-sm-6">
@@ -368,7 +368,7 @@
                         name="arquitetura"
                         [status]="arquitetura.value ? 'success' : 'basic'"
                         [disabled]="!editing"
-                        >Arquitetura</nb-checkbox
+                        >Projetos Arquitetônicos</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.design"
@@ -379,12 +379,20 @@
                         >Design de Interiores</nb-checkbox
                       ><br />
                       <nb-checkbox
+                        [(ngModel)]="currentUser.instalacoes"
+                        #instalacoes="ngModel"
+                        name="instalacoes"
+                        [status]="instalacoes.value ? 'success' : 'basic'"
+                        [disabled]="!editing"
+                        >Instalações</nb-checkbox
+                      ><br />
+                      <nb-checkbox
                         [(ngModel)]="currentUser.civil"
                         #civil="ngModel"
                         name="civil"
                         [status]="civil.value ? 'success' : 'basic'"
                         [disabled]="!editing"
-                        >Engenharia Civil</nb-checkbox
+                        >Sistemas Estruturais</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.eletrica"
@@ -392,19 +400,27 @@
                         name="eletrica"
                         [status]="eletrica.value ? 'success' : 'basic'"
                         [disabled]="!editing"
-                        >Engenharia Elétrica</nb-checkbox
-                      >
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-control-group">
+                        >Sistemas Elétricos</nb-checkbox
+                      ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.sanitaria"
                         #sanitaria="ngModel"
                         name="sanitaria"
                         [status]="sanitaria.value ? 'success' : 'basic'"
                         [disabled]="!editing"
-                        >Engenharia Sanitária</nb-checkbox
+                        >Sistemas Hidrosanitários</nb-checkbox
+                      ><br />
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-control-group">
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.obras"
+                        #obras="ngModel"
+                        name="obras"
+                        [status]="obras.value ? 'success' : 'basic'"
+                        [disabled]="!editing"
+                        >Gerenciamento de Obras</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.impermeabilizacao"
@@ -420,7 +436,7 @@
                         name="ambiental"
                         [status]="ambiental.value ? 'success' : 'basic'"
                         [disabled]="!editing"
-                        >Engenharia Ambiental</nb-checkbox
+                        >Meio Ambiente</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.hidrico"
@@ -429,6 +445,14 @@
                         [status]="hidrico.value ? 'success' : 'basic'"
                         [disabled]="!editing"
                         >Recursos Hídricos</nb-checkbox
+                      ><br />
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.adm"
+                        #adm="ngModel"
+                        name="adm"
+                        [status]="adm.value ? 'success' : 'basic'"
+                        [disabled]="!editing"
+                        >Administração</nb-checkbox
                       >
                     </div>
                   </div>
