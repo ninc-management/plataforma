@@ -47,7 +47,7 @@
                   [attr.aria-invalid]="
                     fullName.invalid && fullName.touched ? true : null
                   "
-                  [disabled]="!editing"
+                  [disabled]="!isEditing"
                 />
                 <ng-container *ngIf="fullName.invalid && fullName.touched">
                   <p
@@ -94,7 +94,7 @@
                   [attr.aria-invalid]="
                     exibitionName.invalid && exibitionName.touched ? true : null
                   "
-                  [disabled]="!editing"
+                  [disabled]="!isEditing"
                 />
                 <ng-container
                   *ngIf="exibitionName.invalid && exibitionName.touched"
@@ -179,7 +179,7 @@
                   [attr.aria-invalid]="
                     document.invalid && document.touched ? true : null
                   "
-                  [disabled]="!editing"
+                  [disabled]="!isEditing"
                 />
                 <ng-container *ngIf="document.invalid && document.touched">
                   <p
@@ -225,7 +225,7 @@
                   [attr.aria-invalid]="
                     phone.invalid && phone.touched ? true : null
                   "
-                  [disabled]="!editing"
+                  [disabled]="!isEditing"
                 />
                 <ng-container *ngIf="phone.invalid && phone.touched">
                   <p
@@ -269,7 +269,7 @@
                         state.invalid && state.touched ? true : null
                       "
                       (selectedChange)="buildCityList(state.value)"
-                      [disabled]="!editing"
+                      [disabled]="!isEditing"
                     >
                       <nb-option *ngFor="let state of states" [value]="state">
                         {{ state }}
@@ -298,7 +298,7 @@
                       [attr.aria-invalid]="
                         city.invalid && city.touched ? true : null
                       "
-                      [disabled]="!editing"
+                      [disabled]="!isEditing"
                     >
                       <nb-option *ngFor="let city of cities" [value]="city">
                         {{ city }}
@@ -332,7 +332,7 @@
                   [attr.aria-invalid]="
                     education.invalid && education.touched ? true : null
                   "
-                  [disabled]="!editing"
+                  [disabled]="!isEditing"
                 ></textarea>
                 <ng-container *ngIf="education.invalid && education.touched">
                   <p
@@ -357,6 +357,40 @@
 
               <div class="form-control-group">
                 <label class="label" for="input-interests"
+                  >Diretoria principal:</label
+                >
+                <nb-select
+                  [(ngModel)]="currentUser.mainDepartment"
+                  #department="ngModel"
+                  id="input-department"
+                  name="department"
+                  placeholder="Selecione a diretoria"
+                  fullWidth
+                  size="large"
+                  [required]="validation.mainDepartment.required"
+                  [status]="
+                    department.dirty
+                      ? department.invalid
+                        ? 'danger'
+                        : 'success'
+                      : 'basic'
+                  "
+                  [attr.aria-invalid]="
+                    department.invalid && department.touched ? true : null
+                  "
+                  [disabled]="!isEditing"
+                >
+                  <nb-option
+                    *ngFor="let department of DEPARTMENTS"
+                    [value]="department"
+                  >
+                    {{ department }}
+                  </nb-option>
+                </nb-select>
+              </div>
+
+              <div class="form-control-group">
+                <label class="label" for="input-interests"
                   >Coordenações atuantes:</label
                 >
                 <div class="row">
@@ -367,7 +401,7 @@
                         #arquitetura="ngModel"
                         name="arquitetura"
                         [status]="arquitetura.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Projetos Arquitetônicos</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -375,7 +409,7 @@
                         #design="ngModel"
                         name="design"
                         [status]="design.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Design de Interiores</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -383,7 +417,7 @@
                         #instalacoes="ngModel"
                         name="instalacoes"
                         [status]="instalacoes.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Instalações</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -391,7 +425,7 @@
                         #civil="ngModel"
                         name="civil"
                         [status]="civil.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Sistemas Estruturais</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -399,7 +433,7 @@
                         #eletrica="ngModel"
                         name="eletrica"
                         [status]="eletrica.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Sistemas Elétricos</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -407,7 +441,7 @@
                         #sanitaria="ngModel"
                         name="sanitaria"
                         [status]="sanitaria.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Sistemas Hidrosanitários</nb-checkbox
                       ><br />
                     </div>
@@ -419,7 +453,7 @@
                         #obras="ngModel"
                         name="obras"
                         [status]="obras.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Gerenciamento de Obras</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -427,7 +461,7 @@
                         #impermeabilizacao="ngModel"
                         name="impermeabilizacao"
                         [status]="impermeabilizacao.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Impermeabilização</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -435,7 +469,7 @@
                         #ambiental="ngModel"
                         name="ambiental"
                         [status]="ambiental.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Meio Ambiente</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -443,7 +477,7 @@
                         #hidrico="ngModel"
                         name="hidrico"
                         [status]="hidrico.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Recursos Hídricos</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -451,7 +485,7 @@
                         #adm="ngModel"
                         name="adm"
                         [status]="adm.value ? 'success' : 'basic'"
-                        [disabled]="!editing"
+                        [disabled]="!isEditing"
                         >Administração</nb-checkbox
                       >
                     </div>
@@ -459,7 +493,7 @@
                 </div>
               </div>
 
-              <div class="row" *ngIf="editing" style="margin-top: 20px">
+              <div class="row" *ngIf="isEditing" style="margin-top: 20px">
                 <div class="col-6">
                   <button
                     nbButton
@@ -485,7 +519,7 @@
                 </div>
               </div>
               <button
-                *ngIf="!editing"
+                *ngIf="!isEditing"
                 style="margin-top: 20px"
                 nbButton
                 fullWidth

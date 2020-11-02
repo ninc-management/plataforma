@@ -24,6 +24,7 @@ const userSchema = mongoose.Schema({
   more: { type: Boolean },
   meet: { type: String },
   profilePicture: { type: String },
+  mainDepartment: { type: String, required: true },
   document: { type: String, unique: true },
 });
 

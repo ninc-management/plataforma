@@ -36,6 +36,9 @@
   "email": {
     "required": true
   },
+  "mainDepartment": {
+    "required": true
+  },
   "password": {
     "required": true,
     "minLength": 4,

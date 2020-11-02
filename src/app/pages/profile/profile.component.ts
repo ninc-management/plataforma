@@ -1,9 +1,10 @@
 import { Component, OnInit, Type, OnDestroy } from '@angular/core';
-import { UserService } from '../../shared/services/user.service';
-import { StatecityService } from '../../shared/services/statecity.service';
 import { NbDialogService } from '@nebular/theme';
-import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
 import { take } from 'rxjs/operators';
+import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
+import { DepartmentService } from '../../shared/services/department.service';
+import { StatecityService } from '../../shared/services/statecity.service';
+import { UserService } from '../../shared/services/user.service';
 import * as user_validation from '../../shared/user-validation.json';
 
 @Component({
@@ -17,11 +18,13 @@ export class ProfileComponent implements OnInit {
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
-  editing = false;
+  isEditing = false;
+  DEPARTMENTS: string[] = [];
 
   constructor(
     private userService: UserService,
     private statecityService: StatecityService,
+    private departmentService: DepartmentService,
     private dialogService: NbDialogService
   ) {}
 
@@ -34,20 +37,21 @@ export class ProfileComponent implements OnInit {
           this.currentUser.state
         );
     });
+    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
   }
 
   updateUser(): void {
-    this.editing = false;
+    this.isEditing = false;
     this.userService.updateCurrentUser(this.currentUser);
   }
 
   enableEditing(): void {
-    this.editing = true;
+    this.isEditing = true;
     this.tmpUser = Object.assign({}, this.currentUser);
   }
 
   revert(): void {
-    this.editing = false;
+    this.isEditing = false;
     this.currentUser = Object.assign({}, this.tmpUser);
   }
 
