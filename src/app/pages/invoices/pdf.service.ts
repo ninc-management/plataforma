@@ -797,9 +797,9 @@ export class PdfService {
 
     // QR code
     pdf.add({
-      absolutePosition: { x: 485, y: 841.89 - 100 },
+      absolutePosition: { x: 510, y: 841.89 - 100 },
       qr: 'https://nortanprojetos.com',
-      fit: '80',
+      fit: '70',
       foreground: '#052E41',
     });
 
