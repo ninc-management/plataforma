@@ -25,6 +25,9 @@
   "city": {
     "required": true
   },
+  "article": {
+    "required": true
+  },
   "education": {
     "required": true,
     "minLength": 3,

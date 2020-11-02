@@ -37,9 +37,9 @@ export class ProfileComponent implements OnInit {
         this.cities = this.statecityService.buildCityList(
           this.currentUser.state
         );
+      this.buildPositionsList();
     });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-    this.POSITIONS = this.buildPositionsList();
   }
 
   updateUser(): void {
@@ -82,17 +82,31 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  buildPositionsList(): string[] {
-    let tmp = [];
-    tmp.push('Diretor de operações');
-    tmp.push('Co-Diretor de operações');
-    tmp.push('Diretor Executivo');
+  buildPositionsList(): void {
+    console.log(this.currentUser.article);
+    this.POSITIONS = [];
+    this.POSITIONS.push(
+      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de operações'
+    );
+    this.POSITIONS.push(
+      'Co-Diretor' +
+        (this.currentUser.article == 'a' ? 'a' : '') +
+        'de operações'
+    );
+    this.POSITIONS.push(
+      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' Executivo'
+    );
     this.departmentService.buildDepartmentList().map((dp: string) => {
-      tmp.push('Diretor' + dp.slice(15));
+      this.POSITIONS.push(
+        'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + dp.slice(15)
+      );
     });
     this.departmentService.buildAllCoordinationsList().map((cd: string) => {
-      tmp.push('Coordenador' + cd.split('Coordenação')[1]);
+      this.POSITIONS.push(
+        'Coordenador' +
+          (this.currentUser.article == 'a' ? 'a' : '') +
+          cd.split('Coordenação')[1]
+      );
     });
-    return tmp;
   }
 }
