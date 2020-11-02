@@ -21,6 +21,12 @@ export class ProfileComponent implements OnInit {
   isEditing = false;
   DEPARTMENTS: string[] = [];
   POSITIONS: string[] = [];
+  LEVELS: string[] = [
+    'Freelancer',
+    'Associado Júnior',
+    'Associado',
+    'Associado Líder',
+  ];
 
   constructor(
     private userService: UserService,

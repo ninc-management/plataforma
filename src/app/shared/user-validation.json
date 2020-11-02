@@ -28,6 +28,9 @@
   "article": {
     "required": true
   },
+  "level": {
+    "required": true
+  },
   "education": {
     "required": true,
     "minLength": 3,

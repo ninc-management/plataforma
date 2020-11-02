@@ -28,6 +28,7 @@ const userSchema = mongoose.Schema({
   profilePicture: { type: String },
   mainDepartment: { type: String, required: true },
   position: { type: String, required: true },
+  level: { type: String, required: true },
   document: { type: String, unique: true },
 });
 
