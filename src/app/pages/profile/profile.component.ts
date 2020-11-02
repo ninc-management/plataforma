@@ -1,10 +1,10 @@
 import { Component, OnInit, Type, OnDestroy } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
 import { StatecityService } from '../../shared/services/statecity.service';
-import * as user_validation from '../../shared/user-validation.json';
 import { NbDialogService } from '@nebular/theme';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
 import { take } from 'rxjs/operators';
+import * as user_validation from '../../shared/user-validation.json';
 
 @Component({
   selector: 'ngx-profile',

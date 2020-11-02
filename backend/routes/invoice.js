@@ -63,7 +63,7 @@ router.post('/count', (req, res) => {
 
 router.post('/all', async (req, res) => {
   invoices = await Invoice.find({})
-    .populate('author', 'fullName profilePicture')
+    .populate('author', 'fullName profilePicture exibitionName phone')
     .populate('contractor');
   return res.status(200).json(invoices);
 });

@@ -71,9 +71,51 @@
               </div>
 
               <div class="form-control-group">
-                <label class="label" for="input-email"
-                  >Melhor email para contato:</label
+                <label class="label" for="input-ename">Nome de exibição:</label>
+                <input
+                  nbInput
+                  [(ngModel)]="currentUser.exibitionName"
+                  #exibitionName="ngModel"
+                  id="input-ename"
+                  name="exibitionName"
+                  placeholder="Nome de exibição"
+                  fullWidth
+                  fieldSize="large"
+                  [required]="validation.exibitionName.required"
+                  [minlength]="validation.exibitionName.minLength"
+                  [maxlength]="validation.exibitionName.maxLength"
+                  [status]="
+                    exibitionName.dirty
+                      ? exibitionName.invalid
+                        ? 'danger'
+                        : 'success'
+                      : 'basic'
+                  "
+                  [attr.aria-invalid]="
+                    exibitionName.invalid && exibitionName.touched ? true : null
+                  "
+                  [disabled]="!editing"
+                />
+                <ng-container
+                  *ngIf="exibitionName.invalid && exibitionName.touched"
                 >
+                  <p
+                    class="caption status-danger"
+                    *ngIf="
+                      exibitionName.errors?.minlength ||
+                      exibitionName.errors?.maxlength
+                    "
+                  >
+                    O nome de exibição deve conter entre
+                    {{ validation.exibitionName.minLength }} a
+                    {{ validation.exibitionName.maxLength }}
+                    caracteres
+                  </p>
+                </ng-container>
+              </div>
+
+              <div class="form-control-group">
+                <label class="label" for="input-email">Email pessoal:</label>
                 <input
                   nbInput
                   [(ngModel)]="currentUser.email"

@@ -34,7 +34,7 @@
         icon="logo"
         pack="fac"
         *ngIf="!isPhone()"
-        style="width: 30px; height: 30px; margin-bottom: 4px;"
+        style="width: 30px; height: 30px; margin-bottom: 4px"
       ></nb-icon>
       {{ menuTitle }}</a
     >
@@ -85,12 +85,12 @@
       matRipple
       [matRippleUnbounded]="false"
       [matRippleCentered]="false"
-      style="height: 48px; border-radius: 0.17rem;"
+      style="height: 48px; border-radius: 0.17rem"
     >
       <nb-user
         [nbContextMenu]="userMenu"
         [onlyPicture]="userPictureOnly"
-        [name]="user?.fullName"
+        [name]="user?.exibitionName"
         [picture]="user?.profilePicture"
       >
       </nb-user>
