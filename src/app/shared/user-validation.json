@@ -36,6 +36,9 @@
   "email": {
     "required": true
   },
+  "emailNortan": {
+    "required": true
+  },
   "mainDepartment": {
     "required": true
   },
