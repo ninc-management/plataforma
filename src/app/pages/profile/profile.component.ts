@@ -13,9 +13,11 @@ import { take } from 'rxjs/operators';
 })
 export class ProfileComponent implements OnInit {
   currentUser: any = {};
+  tmpUser;
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
+  editing = false;
 
   constructor(
     private userService: UserService,
@@ -32,6 +34,21 @@ export class ProfileComponent implements OnInit {
           this.currentUser.state
         );
     });
+  }
+
+  updateUser(): void {
+    this.editing = false;
+    this.userService.updateCurrentUser(this.currentUser);
+  }
+
+  enableEditing(): void {
+    this.editing = true;
+    this.tmpUser = Object.assign({}, this.currentUser);
+  }
+
+  revert(): void {
+    this.editing = false;
+    this.currentUser = Object.assign({}, this.tmpUser);
   }
 
   buildCityList(state: string): void {

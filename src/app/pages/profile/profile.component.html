@@ -14,7 +14,7 @@
               size="giant"
             >
             </nb-user>
-            <div style="margin-top: 20px; margin-bottom: 20px;">
+            <div style="margin-top: 20px; margin-bottom: 20px">
               <button nbButton status="primary" (click)="uploadDialog()">
                 Editar foto
               </button>
@@ -47,7 +47,7 @@
                   [attr.aria-invalid]="
                     fullName.invalid && fullName.touched ? true : null
                   "
-                  [disabled]="true"
+                  [disabled]="!editing"
                 />
                 <ng-container *ngIf="fullName.invalid && fullName.touched">
                   <p
@@ -137,7 +137,7 @@
                   [attr.aria-invalid]="
                     document.invalid && document.touched ? true : null
                   "
-                  [disabled]="true"
+                  [disabled]="!editing"
                 />
                 <ng-container *ngIf="document.invalid && document.touched">
                   <p
@@ -183,7 +183,7 @@
                   [attr.aria-invalid]="
                     phone.invalid && phone.touched ? true : null
                   "
-                  [disabled]="true"
+                  [disabled]="!editing"
                 />
                 <ng-container *ngIf="phone.invalid && phone.touched">
                   <p
@@ -227,7 +227,7 @@
                         state.invalid && state.touched ? true : null
                       "
                       (selectedChange)="buildCityList(state.value)"
-                      [disabled]="true"
+                      [disabled]="!editing"
                     >
                       <nb-option *ngFor="let state of states" [value]="state">
                         {{ state }}
@@ -256,7 +256,7 @@
                       [attr.aria-invalid]="
                         city.invalid && city.touched ? true : null
                       "
-                      [disabled]="true"
+                      [disabled]="!editing"
                     >
                       <nb-option *ngFor="let city of cities" [value]="city">
                         {{ city }}
@@ -290,7 +290,7 @@
                   [attr.aria-invalid]="
                     education.invalid && education.touched ? true : null
                   "
-                  [disabled]="true"
+                  [disabled]="!editing"
                 ></textarea>
                 <ng-container *ngIf="education.invalid && education.touched">
                   <p
@@ -325,7 +325,7 @@
                         #arquitetura="ngModel"
                         name="arquitetura"
                         [status]="arquitetura.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Arquitetura</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -333,7 +333,7 @@
                         #design="ngModel"
                         name="design"
                         [status]="design.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Design de Interiores</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -341,7 +341,7 @@
                         #civil="ngModel"
                         name="civil"
                         [status]="civil.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Engenharia Civil</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -349,7 +349,7 @@
                         #eletrica="ngModel"
                         name="eletrica"
                         [status]="eletrica.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Engenharia Elétrica</nb-checkbox
                       >
                     </div>
@@ -361,7 +361,7 @@
                         #sanitaria="ngModel"
                         name="sanitaria"
                         [status]="sanitaria.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Engenharia Sanitária</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -369,7 +369,7 @@
                         #impermeabilizacao="ngModel"
                         name="impermeabilizacao"
                         [status]="impermeabilizacao.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Impermeabilização</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -377,7 +377,7 @@
                         #ambiental="ngModel"
                         name="ambiental"
                         [status]="ambiental.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Engenharia Ambiental</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -385,7 +385,7 @@
                         #hidrico="ngModel"
                         name="hidrico"
                         [status]="hidrico.value ? 'success' : 'basic'"
-                        [disabled]="true"
+                        [disabled]="!editing"
                         >Recursos Hídricos</nb-checkbox
                       >
                     </div>
@@ -393,16 +393,42 @@
                 </div>
               </div>
 
-              <!-- <button
-            nbButton
-            fullWidth
-            status="primary"
-            size="large"
-            [disabled]="submitted || !form.valid"
-            [class.btn-pulse]="submitted"
-          >
-            Registrar
-          </button> -->
+              <div class="row" *ngIf="editing" style="margin-top: 20px">
+                <div class="col-6">
+                  <button
+                    nbButton
+                    fullWidth
+                    status="danger"
+                    size="large"
+                    (click)="revert()"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+                <div class="col-6">
+                  <button
+                    nbButton
+                    fullWidth
+                    status="success"
+                    size="large"
+                    [disabled]="!form.valid"
+                    (click)="updateUser()"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </div>
+              <button
+                *ngIf="!editing"
+                style="margin-top: 20px"
+                nbButton
+                fullWidth
+                status="primary"
+                size="large"
+                (click)="enableEditing()"
+              >
+                Editar Perfil
+              </button>
             </form>
           </div>
         </div>
