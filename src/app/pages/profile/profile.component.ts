@@ -1,4 +1,14 @@
-import { Component, OnInit, Type, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Type,
+  OnDestroy,
+  DoCheck,
+  ViewChildren,
+  QueryList,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { take } from 'rxjs/operators';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
@@ -12,13 +22,17 @@ import * as user_validation from '../../shared/user-validation.json';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, DoCheck {
+  @ViewChildren('expertise', { read: ElementRef }) expertiseRefs;
+  @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
   currentUser: any = {};
   tmpUser;
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
   isEditing = false;
+  COORDINATIONS: string[] = [];
+  ACTIVE_EXPERTISE: number[] = [];
   DEPARTMENTS: string[] = [];
   POSITIONS: string[] = [];
   LEVELS: string[] = [
@@ -37,18 +51,95 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.states = this.statecityService.buildStateList();
+    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+    this.COORDINATIONS = this.departmentService
+      .buildAllCoordinationsList()
+      .map((cd: string) => {
+        return cd.split(' ')[0];
+      })
+      .sort();
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
+      console.log(user);
       this.currentUser = user;
       if (this.currentUser.state)
         this.cities = this.statecityService.buildCityList(
           this.currentUser.state
         );
+      if (this.currentUser.expertise == undefined)
+        this.currentUser.expertise = [];
       this.buildPositionsList();
+      this.refreshExpertises();
     });
-    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+  }
+
+  ngDoCheck(): void {
+    this.fixTabText();
+    this.fixTabActive();
+  }
+
+  fixTabText(): void {
+    if (this.expertiseRefs != undefined) {
+      this.expertiseRefs.toArray().forEach((el) => {
+        const idx = this.currentUser.expertise.findIndex(
+          (ael) =>
+            ael.coordination ===
+            el.nativeElement.placeholder.split(' ').slice(-1)[0]
+        );
+        if (el.nativeElement.value != this.currentUser.expertise[idx].text)
+          el.nativeElement.value = this.currentUser.expertise[idx].text;
+      });
+    }
+  }
+
+  fixTabActive(): void {
+    if (this.tabsRef != undefined) {
+      if ([...this.tabsRef.nativeElement.children[0].children].length > 0) {
+        const children = [...this.tabsRef.nativeElement.children[0].children];
+        if (
+          children
+            .map((el) => el.classList.contains('active'))
+            .every((v) => v === false)
+        )
+          children[0].click();
+      }
+    }
+  }
+
+  refreshExpertises(): void {
+    const active: boolean[] = [
+      this.currentUser.adm,
+      this.currentUser.design,
+      this.currentUser.obras,
+      this.currentUser.impermeabilizacao,
+      this.currentUser.instalacoes,
+      this.currentUser.ambiental,
+      this.currentUser.arquitetura,
+      this.currentUser.hidrico,
+      this.currentUser.eletrica,
+      this.currentUser.civil,
+      this.currentUser.sanitaria,
+    ];
+    this.ACTIVE_EXPERTISE = [];
+    this.COORDINATIONS.filter((cd: string, idx: number) => {
+      return active[idx];
+    }).map((cd: string) => {
+      let idx = this.currentUser.expertise.findIndex(
+        (el) => el.coordination === cd
+      );
+      if (idx != -1) this.ACTIVE_EXPERTISE.push(idx);
+      else {
+        idx = this.currentUser.expertise.push({ coordination: cd, text: '' });
+        this.ACTIVE_EXPERTISE.push(idx - 1);
+      }
+    });
+  }
+
+  changed(event): void {
+    console.log(event);
   }
 
   updateUser(): void {
+    console.log(this.currentUser);
     this.isEditing = false;
     this.userService.updateCurrentUser(this.currentUser);
   }
@@ -61,6 +152,7 @@ export class ProfileComponent implements OnInit {
   revert(): void {
     this.isEditing = false;
     this.currentUser = Object.assign({}, this.tmpUser);
+    this.refreshExpertises();
   }
 
   buildCityList(state: string): void {
@@ -89,7 +181,6 @@ export class ProfileComponent implements OnInit {
   }
 
   buildPositionsList(): void {
-    console.log(this.currentUser.article);
     this.POSITIONS = [];
     this.POSITIONS.push(
       'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de operações'

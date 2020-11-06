@@ -36,6 +36,11 @@
     "minLength": 3,
     "maxLength": 500
   },
+  "expertise": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 500
+  },
   "interests": {
     "required": true
   },

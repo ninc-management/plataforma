@@ -352,7 +352,7 @@
               </div>
 
               <div class="row">
-                <div class="col-sm-6">
+                <div class="col-md-6">
                   <div class="form-control-group">
                     <label class="label" for="input-state">Estado:</label>
                     <nb-select
@@ -382,7 +382,7 @@
                     </nb-select>
                   </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-md-6">
                   <div class="form-control-group">
                     <label class="label" for="input-city">Cidade:</label>
                     <nb-select
@@ -414,7 +414,7 @@
               </div>
 
               <div class="row">
-                <div class="col-sm-6">
+                <div class="col-md-6">
                   <div class="form-control-group">
                     <label class="label" for="input-position">Cargo:</label>
                     <nb-select
@@ -447,9 +447,11 @@
                     </nb-select>
                   </div>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-level">Nível:</label>
+                    <label class="label" for="input-level"
+                      >Enquadramento:</label
+                    >
                     <nb-select
                       [(ngModel)]="currentUser.level"
                       #level="ngModel"
@@ -477,53 +479,6 @@
                     </nb-select>
                   </div>
                 </div>
-              </div>
-
-              <div class="form-control-group">
-                <label class="label" for="input-education">Formação:</label>
-                <textarea
-                  nbInput
-                  [(ngModel)]="currentUser.education"
-                  #education="ngModel"
-                  id="input-education"
-                  name="education"
-                  placeholder="Descreva sua formação"
-                  fullWidth
-                  fieldSize="large"
-                  [required]="validation.education.required"
-                  [minlength]="validation.education.minLength"
-                  [maxlength]="validation.education.maxLength"
-                  [status]="
-                    education.dirty
-                      ? education.invalid
-                        ? 'danger'
-                        : 'success'
-                      : 'basic'
-                  "
-                  [attr.aria-invalid]="
-                    education.invalid && education.touched ? true : null
-                  "
-                  [disabled]="!isEditing"
-                ></textarea>
-                <ng-container *ngIf="education.invalid && education.touched">
-                  <p
-                    class="caption status-danger"
-                    *ngIf="education.errors?.required"
-                  >
-                    A formação é obrigatória!
-                  </p>
-                  <p
-                    class="caption status-danger"
-                    *ngIf="
-                      education.errors?.minlength || education.errors?.maxlength
-                    "
-                  >
-                    A formação deve conter entre
-                    {{ validation.education.minLength }} a
-                    {{ validation.education.maxLength }}
-                    caracteres
-                  </p>
-                </ng-container>
               </div>
 
               <div class="form-control-group">
@@ -565,15 +520,16 @@
                   >Coordenações atuantes:</label
                 >
                 <div class="row">
-                  <div class="col-sm-6">
+                  <div class="col-md-4">
                     <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="currentUser.arquitetura"
-                        #arquitetura="ngModel"
-                        name="arquitetura"
-                        [status]="arquitetura.value ? 'success' : 'basic'"
+                        [(ngModel)]="currentUser.adm"
+                        #adm="ngModel"
+                        name="adm"
+                        [status]="adm.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
-                        >Projetos Arquitetônicos</nb-checkbox
+                        (ngModelChange)="refreshExpertises()"
+                        >Administração</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.design"
@@ -581,50 +537,16 @@
                         name="design"
                         [status]="design.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
                         >Design de Interiores</nb-checkbox
                       ><br />
-                      <nb-checkbox
-                        [(ngModel)]="currentUser.instalacoes"
-                        #instalacoes="ngModel"
-                        name="instalacoes"
-                        [status]="instalacoes.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        >Instalações</nb-checkbox
-                      ><br />
-                      <nb-checkbox
-                        [(ngModel)]="currentUser.civil"
-                        #civil="ngModel"
-                        name="civil"
-                        [status]="civil.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        >Sistemas Estruturais</nb-checkbox
-                      ><br />
-                      <nb-checkbox
-                        [(ngModel)]="currentUser.eletrica"
-                        #eletrica="ngModel"
-                        name="eletrica"
-                        [status]="eletrica.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        >Sistemas Elétricos</nb-checkbox
-                      ><br />
-                      <nb-checkbox
-                        [(ngModel)]="currentUser.sanitaria"
-                        #sanitaria="ngModel"
-                        name="sanitaria"
-                        [status]="sanitaria.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        >Sistemas Hidrosanitários</nb-checkbox
-                      ><br />
-                    </div>
-                  </div>
-                  <div class="col-sm-6">
-                    <div class="form-control-group">
                       <nb-checkbox
                         [(ngModel)]="currentUser.obras"
                         #obras="ngModel"
                         name="obras"
                         [status]="obras.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
                         >Gerenciamento de Obras</nb-checkbox
                       ><br />
                       <nb-checkbox
@@ -633,7 +555,21 @@
                         name="impermeabilizacao"
                         [status]="impermeabilizacao.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
                         >Impermeabilização</nb-checkbox
+                      ><br />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-control-group">
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.instalacoes"
+                        #instalacoes="ngModel"
+                        name="instalacoes"
+                        [status]="instalacoes.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                        >Instalações</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.ambiental"
@@ -641,7 +577,17 @@
                         name="ambiental"
                         [status]="ambiental.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
                         >Meio Ambiente</nb-checkbox
+                      ><br />
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.arquitetura"
+                        #arquitetura="ngModel"
+                        name="arquitetura"
+                        [status]="arquitetura.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                        >Projetos Arquitetônicos</nb-checkbox
                       ><br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.hidrico"
@@ -649,19 +595,118 @@
                         name="hidrico"
                         [status]="hidrico.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
                         >Recursos Hídricos</nb-checkbox
                       ><br />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="currentUser.adm"
-                        #adm="ngModel"
-                        name="adm"
-                        [status]="adm.value ? 'success' : 'basic'"
+                        [(ngModel)]="currentUser.eletrica"
+                        #eletrica="ngModel"
+                        name="eletrica"
+                        [status]="eletrica.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
-                        >Administração</nb-checkbox
-                      >
+                        (ngModelChange)="refreshExpertises()"
+                        >Sistemas Elétricos</nb-checkbox
+                      ><br />
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.civil"
+                        #civil="ngModel"
+                        name="civil"
+                        [status]="civil.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                        >Sistemas Estruturais</nb-checkbox
+                      ><br />
+                      <nb-checkbox
+                        [(ngModel)]="currentUser.sanitaria"
+                        #sanitaria="ngModel"
+                        name="sanitaria"
+                        [status]="sanitaria.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                        >Sistemas Hidrosanitários</nb-checkbox
+                      ><br />
                     </div>
                   </div>
                 </div>
+              </div>
+
+              <div class="form-control-group">
+                <label class="label" for="input-expertise"
+                  >Perfis de atuação:</label
+                >
+                <nb-tabset fullWidth #expertiseTabs>
+                  <nb-tab
+                    [tabTitle]="currentUser.expertise[idx].coordination"
+                    *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
+                  >
+                    <textarea
+                      nbInput
+                      [(ngModel)]="currentUser.expertise[i].text"
+                      #expertise="ngModel"
+                      id="input-expertise"
+                      name="expertise"
+                      placeholder="Descreva o seu perfil de atuação na {{
+                        currentUser.expertise[idx].coordination
+                      }}"
+                      fullWidth
+                      fieldSize="large"
+                      [required]="validation.expertise.required"
+                      [minlength]="validation.expertise.minLength"
+                      [maxlength]="validation.expertise.maxLength"
+                      [status]="
+                        expertise.dirty
+                          ? expertise.invalid
+                            ? 'danger'
+                            : 'success'
+                          : 'basic'
+                      "
+                      [attr.aria-invalid]="
+                        expertise.invalid && expertise.touched ? true : null
+                      "
+                      [disabled]="!isEditing"
+                    ></textarea>
+                    <ng-container
+                      *ngIf="expertise.invalid && expertise.touched"
+                    >
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.required &&
+                          currentUser.expertise[idx].text.length != 0
+                        "
+                      >
+                        É necessário preencher todos os perfis de atuação!
+                      </p>
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.required &&
+                          currentUser.expertise[idx].text.length == 0
+                        "
+                      >
+                        O perfil de atuação na
+                        {{ currentUser.expertise[idx].coordination }} é
+                        obrigatório!
+                      </p>
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.minlength ||
+                          expertise.errors?.maxlength
+                        "
+                      >
+                        O perfil de atuação deve conter entre
+                        {{ validation.expertise.minLength }} a
+                        {{ validation.expertise.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </nb-tab></nb-tabset
+                >
               </div>
 
               <div class="row" *ngIf="isEditing" style="margin-top: 20px">

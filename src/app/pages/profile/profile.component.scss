@@ -8,6 +8,12 @@
   --user-giant-width: 100%;
   --user-giant-height: auto;
   --user-giant-initials-text-font-size: 2rem;
+  --tabset-content-padding: 0;
+
+  nb-tab {
+    overflow: unset;
+    padding-top: 16px !important;
+  }
 }
 
 :host ::ng-deep {

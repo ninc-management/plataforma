@@ -30,6 +30,7 @@ const userSchema = mongoose.Schema({
   position: { type: String, required: true },
   level: { type: String, required: true },
   document: { type: String, unique: true },
+  expertise: [{ type: mongoose.ObjectId, ref: 'UserExpertise' }],
 });
 
 userSchema.plugin(uniqueValidator);
