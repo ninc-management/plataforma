@@ -166,7 +166,10 @@ export class PdfService {
           },
           //TODO: Create line1 and line2 field
           {
-            text: 'arquitetônico + interiores +\ncomplementares',
+            text:
+              invoice.subtitle1 +
+              '\n' +
+              (invoice.subtitle2 == undefined ? '' : invoice.subtitle2),
             fontSize: 12,
             alignment: 'right',
             color: '#052E41',

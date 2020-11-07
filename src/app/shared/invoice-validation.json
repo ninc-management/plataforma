@@ -30,5 +30,8 @@
     "minLength": 1,
     "maxLength": 30
   },
-  "trello": { "required": true }
+  "subtitle1": {
+    "minLength": 3,
+    "maxLength": 50
+  }
 }

@@ -1,10 +1,27 @@
 @import '../../../@theme/styles/themes';
 
 @include nb-install-component() {
+  .label-divider {
+    color: var(--text-basic-color);
+    font-family: var(--text-label-font-family);
+    font-size: var(--text-basic-font-size);
+    font-weight: var(--text-label-font-weight);
+    line-height: var(--text-label-line-height);
+  }
+
+  hr {
+    margin-top: var(--text-label-line-height);
+    margin-bottom: 0px;
+    border: 0;
+    border-top: 1px solid var(--text-basic-color);
+  }
 }
 
 ::ng-deep {
   nb-tooltip {
     white-space: pre-wrap;
+  }
+  .col-auto {
+    padding-right: 0px;
   }
 }
