@@ -65,7 +65,7 @@ router.post('/all', async (req, res) => {
   invoices = await Invoice.find({})
     .populate(
       'author',
-      'fullName profilePicture exibitionName phone emailNortan'
+      'fullName profilePicture exibitionName phone emailNortan article'
     )
     .populate('contractor');
   return res.status(200).json(invoices);

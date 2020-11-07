@@ -164,7 +164,6 @@ export class PdfService {
             bold: true,
             margin: [0, 5, 0, 0],
           },
-          //TODO: Create line1 and line2 field
           {
             text:
               invoice.subtitle1 +
@@ -205,9 +204,23 @@ export class PdfService {
 
     pdf.add({
       text:
-        'Nós da Nortan nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, @ Associad@ Nortan ' +
+        'Nós da Nortan nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
+        invoice.author.article +
+        ' Associad' +
+        invoice.author.article +
+        ' Nortan ' +
         invoice.fullName +
-        ', será sua Consultor@ Técnic@ Exclusiv@ e gestor@ do contrato, te guiando para solução mais eficiente.',
+        ', será ' +
+        (invoice.author.article == 'a' ? 'sua' : 'seu') +
+        ' Consulto' +
+        (invoice.author.article == 'a' ? 'ra' : 'r') +
+        ' Técnic' +
+        (invoice.author.article == 'a' ? 'a' : 'o') +
+        ' Exclusiv' +
+        (invoice.author.article == 'a' ? 'a' : 'o') +
+        ' e gesto' +
+        (invoice.author.article == 'a' ? 'ra' : 'r') +
+        ' do contrato, te guiando para solução mais eficiente.',
       alignment: 'center',
       style: 'insideText',
     });

@@ -11,7 +11,7 @@
 
   hr {
     margin-top: var(--text-label-line-height);
-    margin-bottom: 0px;
+    margin-bottom: 0;
     border: 0;
     border-top: 1px solid var(--text-basic-color);
   }
@@ -22,6 +22,6 @@
     white-space: pre-wrap;
   }
   .col-auto {
-    padding-right: 0px;
+    padding-right: 0;
   }
 }
