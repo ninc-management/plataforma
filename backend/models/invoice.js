@@ -16,6 +16,7 @@ const invoiceSchema = mongoose.Schema({
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
   subtitle1: { string: String },
+  subtitle2: { string: String },
 });
 
 invoiceSchema.plugin(uniqueValidator);

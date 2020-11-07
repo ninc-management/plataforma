@@ -33,5 +33,9 @@
   "subtitle1": {
     "minLength": 3,
     "maxLength": 50
+  },
+  "subtitle2": {
+    "minLength": 3,
+    "maxLength": 50
   }
 }
