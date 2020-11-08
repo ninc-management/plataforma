@@ -725,7 +725,7 @@
                   <button
                     nbButton
                     fullWidth
-                    status="success"
+                    status="primary"
                     size="large"
                     [disabled]="!form.valid"
                     (click)="updateUser()"
@@ -738,12 +738,13 @@
                 *ngIf="!isEditing"
                 style="margin-top: 20px"
                 nbButton
+                outline
                 fullWidth
-                status="primary"
+                status="info"
                 size="large"
                 (click)="enableEditing()"
               >
-                Editar Perfil
+                Habilitar Edição
               </button>
             </form>
           </div>
