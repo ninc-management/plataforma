@@ -209,7 +209,9 @@ export class PdfService {
         ' Associad' +
         invoice.author.article +
         ' Nortan ' +
-        invoice.fullName +
+        invoice.author.fullName +
+        ', ' +
+        invoice.author.education +
         ', será ' +
         (invoice.author.article == 'a' ? 'sua' : 'seu') +
         ' Consulto' +

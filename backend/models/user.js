@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
   article: { type: String, required: true },
   state: { type: String, required: true },
   city: { type: String, required: true },
-  education: { type: String, required: true },
+  education: { type: String },
   arquitetura: { type: Boolean },
   instalacoes: { type: Boolean },
   design: { type: Boolean },

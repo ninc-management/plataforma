@@ -34,7 +34,7 @@
   "education": {
     "required": true,
     "minLength": 3,
-    "maxLength": 500
+    "maxLength": 100
   },
   "expertise": {
     "required": true,
