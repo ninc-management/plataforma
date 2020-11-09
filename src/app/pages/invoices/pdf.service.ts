@@ -249,7 +249,12 @@ export class PdfService {
         },
         {
           width: '*',
-          text: 'Meu meu curriculo para a diretoria especifica aqui!',
+          text:
+            invoice.author.expertise[
+              invoice.author.expertise.findIndex(
+                (el) => el.coordination == invoice.coordination.split(' ')[0]
+              )
+            ],
           alignment: 'left',
           fontSize: 8,
         },
@@ -821,7 +826,7 @@ export class PdfService {
       foreground: '#052E41',
     });
 
-    pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
-    // pdf.create().open();
+    // pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
+    pdf.create().open();
   }
 }

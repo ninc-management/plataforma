@@ -2,7 +2,7 @@
 
 @include nb-install-component() {
   .label-divider {
-    color: var(--text-basic-color);
+    color: var(--text-hint-color);
     font-family: var(--text-label-font-family);
     font-size: var(--text-basic-font-size);
     font-weight: var(--text-label-font-weight);
@@ -13,7 +13,7 @@
     margin-top: var(--text-label-line-height);
     margin-bottom: 0;
     border: 0;
-    border-top: 1px solid var(--text-basic-color);
+    border-top: 1px solid var(--text-hint-color);
   }
 }
 

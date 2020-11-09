@@ -4,6 +4,7 @@ const Contractor = require('../models/contractor');
 const Contract = require('../models/contract');
 const Invoice = require('../models/invoice');
 const User = require('../models/user');
+const UserExpertise = require('../models/userExpertise');
 
 const router = express.Router();
 
@@ -63,10 +64,23 @@ router.post('/count', (req, res) => {
 
 router.post('/all', async (req, res) => {
   invoices = await Invoice.find({})
-    .populate(
-      'author',
-      'fullName profilePicture exibitionName phone emailNortan article education'
-    )
+    .populate({
+      path: 'author',
+      model: 'User',
+      select: {
+        fullName: 1,
+        profilePicture: 1,
+        exibitionName: 1,
+        phone: 1,
+        emailNortan: 1,
+        article: 1,
+        education: 1,
+      },
+      populate: {
+        path: 'expertise',
+        model: 'UserExpertise',
+      },
+    })
     .populate('contractor');
   return res.status(200).json(invoices);
 });
