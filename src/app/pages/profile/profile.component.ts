@@ -59,7 +59,6 @@ export class ProfileComponent implements OnInit, DoCheck {
       })
       .sort();
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-      console.log(user);
       this.currentUser = user;
       if (this.currentUser.state)
         this.cities = this.statecityService.buildCityList(

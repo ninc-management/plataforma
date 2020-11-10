@@ -10,6 +10,7 @@ import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
+import { UserService } from '../../../shared/services/user.service';
 import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { take, takeUntil } from 'rxjs/operators';
@@ -26,6 +27,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Input() iInvoice: any;
   @Output() submit = new EventEmitter<void>();
   invoice: any;
+  teamMember: any = {};
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
@@ -36,14 +38,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   oldStatus: string;
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
+  ALL_COORDINATIONS: string[] = [];
+  USER_COORDINATIONS: string[] = [];
   STATOOS = ['Em análise', 'Fechado', 'Negado'];
   CONTRACTORS = [];
+  USERS = [];
 
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private departmentService: DepartmentService,
     private contractService: ContractService,
+    private userService: UserService,
     private breakpointService: NbMediaBreakpointsService,
     public contractorService: ContractorService
   ) {}
@@ -97,7 +103,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .subscribe((contractors) => {
         this.CONTRACTORS = contractors;
       });
+    this.userService.getUsersList().then((uL: any[]) => {
+      this.USERS = uL;
+    });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+    this.ALL_COORDINATIONS = this.departmentService
+      .buildAllCoordinationsList()
+      .sort();
   }
 
   registerInvoice(): void {
@@ -132,6 +144,41 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.invoice.coordination = undefined;
     this.COORDINATIONS = this.departmentService.buildCoordinationsList(
       this.departmentService.extractAbreviation(this.invoice.department)
+    );
+  }
+
+  addColaborator(): void {
+    this.invoice.team.push(Object.assign({}, this.teamMember));
+    this.teamMember = {};
+    this.USER_COORDINATIONS = [];
+  }
+
+  idToName(id: string): string {
+    const entry = this.USERS.find((el) => el._id === id);
+    return entry?.fullName;
+  }
+
+  updateUserCoordinations(): void {
+    const selectedUser = this.USERS.find(
+      (el) => el._id === this.teamMember.user
+    );
+    const active: boolean[] = [
+      selectedUser.adm,
+      selectedUser.design,
+      selectedUser.obras,
+      selectedUser.impermeabilizacao,
+      selectedUser.instalacoes,
+      selectedUser.ambiental,
+      selectedUser.arquitetura,
+      selectedUser.hidrico,
+      selectedUser.eletrica,
+      selectedUser.civil,
+      selectedUser.sanitaria,
+    ];
+    this.USER_COORDINATIONS = this.ALL_COORDINATIONS.filter(
+      (cd: string, idx: number) => {
+        return active[idx];
+      }
     );
   }
 

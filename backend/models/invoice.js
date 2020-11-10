@@ -12,6 +12,7 @@ const invoiceSchema = mongoose.Schema({
   name: { type: String, required: true },
   value: { type: String, required: true },
   status: { type: String, required: true },
+  team: [{ type: mongoose.ObjectId, ref: 'TeamMember' }],
   trello: { type: Boolean },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },

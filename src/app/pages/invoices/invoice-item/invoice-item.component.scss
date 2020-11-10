@@ -1,12 +1,28 @@
 @import '../../../@theme/styles/themes';
 
 @include nb-install-component() {
+  --tabset-content-padding: 0;
+
+  nb-tab {
+    overflow: unset;
+    padding-top: 16px !important;
+  }
+
   .label-divider {
     color: var(--text-hint-color);
     font-family: var(--text-label-font-family);
     font-size: var(--text-basic-font-size);
     font-weight: var(--text-label-font-weight);
     line-height: var(--text-label-line-height);
+  }
+
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
+
+  .irow {
+    width: 100%;
+    margin-left: 0;
   }
 
   hr {

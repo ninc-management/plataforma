@@ -3,19 +3,9 @@ const express = require('express');
 const User = require('../models/user');
 const UserExpertise = require('../models/userExpertise');
 
-const router = express.Router();
+const Util = require('../shared/util');
 
-var mongoObjectId = function () {
-  var timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
-  return (
-    timestamp +
-    'xxxxxxxxxxxxxxxx'
-      .replace(/[x]/g, function () {
-        return ((Math.random() * 16) | 0).toString(16);
-      })
-      .toLowerCase()
-  );
-};
+const router = express.Router();
 
 router.post('/', (req, res, next) => {
   User.findOne({ email: req.body.email })
@@ -35,7 +25,7 @@ router.post('/update', async (req, res, next) => {
   if (req.body.user.expertise.length > 0) {
     UserExpertise.bulkWrite(
       req.body.user.expertise.map((expertise) => {
-        if (expertise._id == undefined) expertise._id = mongoObjectId();
+        if (expertise._id == undefined) expertise._id = Util.mongoObjectId();
         if (expertise.__v == undefined) expertise.__v = 0;
         if (expertise.user == undefined) expertise.user = req.body.user._id;
         return {

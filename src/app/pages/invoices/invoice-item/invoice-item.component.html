@@ -383,7 +383,7 @@
         </div>
       </div>
     </nb-tab>
-    <nb-tab tabTitle="Complmentar">
+    <nb-tab tabTitle="Complmentar" *ngIf="invoice._id != undefined">
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">Cabeçalho</label>
@@ -474,6 +474,99 @@
           <hr />
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-user">Colaborador:</label>
+            <nb-select
+              [(ngModel)]="teamMember.user"
+              #userList="ngModel"
+              id="input-user"
+              name="userList"
+              placeholder="Nome do colaborador"
+              fullWidth
+              size="large"
+              [status]="userList.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                userList.invalid && userList.touched ? true : null
+              "
+              (selectedChange)="updateUserCoordinations()"
+            >
+              <nb-option *ngFor="let user of USERS" [value]="user._id">
+                {{ user.fullName }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-control-group">
+            <label class="label" for="input-memberCoordination"
+              >Coordenação:</label
+            >
+            <nb-select
+              [(ngModel)]="teamMember.coordination"
+              #memberCoordination="ngModel"
+              id="input-memberCoordination"
+              name="memberCoordination"
+              placeholder="Coordenação"
+              fullWidth
+              size="large"
+              [status]="memberCoordination.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                memberCoordination.invalid && memberCoordination.touched
+                  ? true
+                  : null
+              "
+            >
+              <nb-option
+                *ngFor="let coordination of USER_COORDINATIONS"
+                [value]="coordination"
+              >
+                {{ coordination }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!memberCoordination.value || !userList.value"
+            (click)="addColaborator()"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let member of invoice.team; let i = index">
+          <div class="row irow">
+            <div class="col-12 col-md-6">
+              {{
+                member.user.fullName
+                  ? member.user.fullName
+                  : idToName(member.user)
+              }}
+            </div>
+            <div class="col-10 col-md-5">
+              {{ member.coordination }}
+            </div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="close-outline"
+                pack="nebular-essentials"
+                (click)="invoice.team.splice(i, 1)"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
     </nb-tab>
   </nb-tabset>
 
