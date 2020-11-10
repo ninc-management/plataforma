@@ -616,6 +616,37 @@
           <hr />
         </div>
       </div>
+      <div class="form-control-group">
+        <label class="label" for="input-subject">Assunto:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="invoice.subject"
+          #subject="ngModel"
+          id="input-subject"
+          name="subject"
+          placeholder="Digite o assunto da proposta de orçamento. Para texto em negrito use os delimitadores *! *. ex: *!texto*"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.subject.minLength"
+          [maxlength]="validation.subject.maxLength"
+          [status]="
+            subject.dirty ? (subject.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="subject.invalid && subject.touched ? true : null"
+          [disabled]="false"
+        ></textarea>
+        <ng-container *ngIf="subject.invalid && subject.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="subject.errors?.minlength || subject.errors?.maxlength"
+          >
+            O assunto deve conter entre
+            {{ validation.subject.minLength }} a
+            {{ validation.subject.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
     </nb-tab>
   </nb-tabset>
 

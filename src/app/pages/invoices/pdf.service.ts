@@ -410,10 +410,17 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    //TODO: Get Subject from Invoice
+    let subject = [];
+    for (let t of invoice.subject.split('*')) {
+      let bold = t.charAt(0) == '!' ? true : false;
+      if (bold) t = t.slice(1);
+      subject.push({
+        text: t,
+        bold: bold,
+      });
+    }
     pdf.add({
-      text:
-        'Mussum Ipsum, cacilds vidis litro abertis. Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo! Cevadis im ampola pa arma uma pindureta. Copo furadis é disculpa de bebadis, arcu quam euismod magna. Paisis, filhis, espiritis santis.',
+      text: subject,
       style: 'insideText',
       alignment: 'justify',
       pageBreak: 'after',

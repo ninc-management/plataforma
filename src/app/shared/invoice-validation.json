@@ -41,5 +41,9 @@
   "contactName": {
     "minLength": 3,
     "maxLength": 50
+  },
+  "subject": {
+    "minLength": 3,
+    "maxLength": 1000
   }
 }

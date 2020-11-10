@@ -19,6 +19,7 @@ const invoiceSchema = mongoose.Schema({
   subtitle1: { string: String },
   subtitle2: { string: String },
   contactName: { string: String },
+  subject: { string: String },
 });
 
 invoiceSchema.plugin(uniqueValidator);
