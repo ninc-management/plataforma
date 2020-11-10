@@ -400,7 +400,7 @@
           #subtitle1="ngModel"
           id="input-subtitle1"
           name="subtitle1"
-          placeholder="Nome do empreendimento"
+          placeholder="Digite os produtos do orçamento. ex: interiores + complementares"
           fullWidth
           fieldSize="large"
           [minlength]="validation.subtitle1.minLength"
@@ -422,7 +422,7 @@
             class="caption status-danger"
             *ngIf="subtitle1.errors?.minlength || subtitle1.errors?.maxlength"
           >
-            O nome do empreendimento deve conter entre
+            O subtítulo 1 deve conter entre
             {{ validation.subtitle1.minLength }} a
             {{ validation.subtitle1.maxLength }}
             caracteres
@@ -437,7 +437,7 @@
           #subtitle2="ngModel"
           id="input-subtitle2"
           name="subtitle2"
-          placeholder="Nome do empreendimento"
+          placeholder="Continuação dos produtos (opcional)"
           fullWidth
           fieldSize="large"
           [minlength]="validation.subtitle2.minLength"
@@ -459,7 +459,7 @@
             class="caption status-danger"
             *ngIf="subtitle2.errors?.minlength || subtitle2.errors?.maxlength"
           >
-            O nome do empreendimento deve conter entre
+            O subtítulo 2 deve conter entre
             {{ validation.subtitle2.minLength }} a
             {{ validation.subtitle2.maxLength }}
             caracteres
@@ -473,6 +473,47 @@
         <div class="col">
           <hr />
         </div>
+      </div>
+      <div class="form-control-group">
+        <label class="label" for="input-contactName"
+          >Primeiro nome do contato:</label
+        >
+        <input
+          nbInput
+          [(ngModel)]="invoice.contactName"
+          #contactName="ngModel"
+          id="input-contactName"
+          name="contactName"
+          placeholder="Primeiro nome do contato na empresa"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.contactName.minLength"
+          [maxlength]="validation.contactName.maxLength"
+          [status]="
+            contactName.dirty
+              ? contactName.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            contactName.invalid && contactName.touched ? true : null
+          "
+          [disabled]="false"
+        />
+        <ng-container *ngIf="contactName.invalid && contactName.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="
+              contactName.errors?.minlength || contactName.errors?.maxlength
+            "
+          >
+            O nome do contato deve conter entre
+            {{ validation.contactName.minLength }} a
+            {{ validation.contactName.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
       </div>
       <div class="row">
         <div class="col-md-6">
@@ -567,6 +608,14 @@
           </div>
         </nb-list-item>
       </nb-list>
+      <div class="row" style="margin-top: 8px">
+        <div class="col-auto">
+          <label class="label-divider">Dados do contrato</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
     </nb-tab>
   </nb-tabset>
 

@@ -37,5 +37,9 @@
   "subtitle2": {
     "minLength": 3,
     "maxLength": 50
+  },
+  "contactName": {
+    "minLength": 3,
+    "maxLength": 50
   }
 }
