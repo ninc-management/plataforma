@@ -617,7 +617,15 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-subject">Assunto:</label>
+        <label
+          class="label"
+          for="input-subject"
+          style="width: 100%; display: flex"
+          >Assunto:
+          <span style="text-align: right; width: 100%"
+            >(Negrito: *!texto*)</span
+          ></label
+        >
         <textarea
           nbInput
           [(ngModel)]="invoice.subject"
