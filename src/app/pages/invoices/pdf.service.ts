@@ -258,7 +258,7 @@ export class PdfService {
               invoice.author.expertise.findIndex(
                 (el) => el.coordination == invoice.coordination.split(' ')[0]
               )
-            ].text,
+            ]?.text,
           alignment: 'left',
           fontSize: 8,
         },
@@ -278,7 +278,6 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     for (let member of invoice.team) {
-      console.log(member);
       pdf.add({
         columns: [
           {
@@ -307,7 +306,7 @@ export class PdfService {
                 member.user.expertise.findIndex(
                   (el) => el.coordination == member.coordination.split(' ')[0]
                 )
-              ].text,
+              ]?.text,
             alignment: 'left',
             fontSize: 8,
           },
@@ -442,10 +441,8 @@ export class PdfService {
         body: [
           [{ text: 'ETAPA PRELIMINAR' }],
           [
-            //TODO: Get this dates from invoice
             {
-              text:
-                '(20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente)',
+              text: '(' + invoice.peep + ')',
               fontSize: 8,
             },
           ],

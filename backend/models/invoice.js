@@ -20,6 +20,7 @@ const invoiceSchema = mongoose.Schema({
   subtitle2: { string: String },
   contactName: { string: String },
   subject: { string: String },
+  peep: { string: String },
 });
 
 invoiceSchema.plugin(uniqueValidator);

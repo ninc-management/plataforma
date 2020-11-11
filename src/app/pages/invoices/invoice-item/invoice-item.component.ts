@@ -84,6 +84,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
       if (this.invoice.contractor._id !== undefined)
         this.invoice.contractor = this.invoice.contractor._id;
+      if (this.invoice.peep == undefined)
+        this.invoice.peep =
+          '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
     } else {
       this.invoice = {
         created: new Date(),
