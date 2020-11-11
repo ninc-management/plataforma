@@ -28,6 +28,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Output() submit = new EventEmitter<void>();
   invoice: any;
   teamMember: any = {};
+  aep = '';
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;

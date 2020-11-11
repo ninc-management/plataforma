@@ -16,11 +16,12 @@ const invoiceSchema = mongoose.Schema({
   trello: { type: Boolean },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
-  subtitle1: { string: String },
-  subtitle2: { string: String },
-  contactName: { string: String },
-  subject: { string: String },
-  peep: { string: String },
+  subtitle1: { type: String },
+  subtitle2: { type: String },
+  contactName: { type: String },
+  subject: { type: String },
+  peep: { type: String },
+  laep: [{ type: String }],
 });
 
 invoiceSchema.plugin(uniqueValidator);

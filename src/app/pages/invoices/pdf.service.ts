@@ -434,6 +434,9 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
+    const laep = invoice.laep.map((activity, index) => {
+      return activity + (index == invoice.laep.length - 1 ? '.' : ';');
+    });
     pdf.add({
       style: 'insideText',
       table: {
@@ -447,15 +450,8 @@ export class PdfService {
             },
           ],
           [
-            //TODO: Get this lis from invoice
             {
-              ul: [
-                'Mussum Ipsum, cacilds vidis litro abertis',
-                'Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo!',
-                'Cevadis im ampola pa arma uma pindureta!',
-                'Copo furadis é disculpa de bebadis, arcu quam euismod magna',
-                'Paisis, filhis, espiritis santis',
-              ],
+              ul: laep,
               fontSize: 10,
             },
           ],
