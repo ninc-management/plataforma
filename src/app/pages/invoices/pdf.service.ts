@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
+import extenso from 'extenso';
 import pdfMake from 'pdfmake';
 
 pdfMake.fonts = {
@@ -580,7 +581,7 @@ export class PdfService {
             {
               text: [
                 { text: 'VALOR DO PROJETO: R$ ' + invoice.value, bold: true },
-                '  (valor por extenso em reais)',
+                '  (' + extenso(invoice.value, { mode: 'currency' }) + ')',
               ],
             },
           ],
