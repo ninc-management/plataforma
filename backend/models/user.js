@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
+const userExpertise = {
+  coordination: { type: String, required: true },
+  text: { type: String, required: true },
+};
+
 const userSchema = mongoose.Schema({
   fullName: { type: String, required: true },
   exibitionName: { type: String },
@@ -30,7 +35,7 @@ const userSchema = mongoose.Schema({
   position: { type: String, required: true },
   level: { type: String, required: true },
   document: { type: String, unique: true },
-  expertise: [{ type: mongoose.ObjectId, ref: 'UserExpertise' }],
+  expertise: [userExpertise],
 });
 
 userSchema.plugin(uniqueValidator);

@@ -133,12 +133,7 @@ export class ProfileComponent implements OnInit, DoCheck {
     });
   }
 
-  changed(event): void {
-    console.log(event);
-  }
-
   updateUser(): void {
-    console.log(this.currentUser);
     this.isEditing = false;
     this.userService.updateCurrentUser(this.currentUser);
   }
