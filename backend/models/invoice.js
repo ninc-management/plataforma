@@ -23,6 +23,9 @@ const invoiceSchema = mongoose.Schema({
   peep: { type: String },
   laep: [{ type: String }],
   dep: { type: String },
+  peee: { type: String },
+  laee: [{ type: String }],
+  dee: { type: String },
 });
 
 invoiceSchema.plugin(uniqueValidator);

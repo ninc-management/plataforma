@@ -29,6 +29,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   invoice: any;
   teamMember: any = {};
   aep = '';
+  aee = '';
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
@@ -91,6 +92,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.invoice.dep == undefined)
         this.invoice.dep =
           'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
+      if (this.invoice.peee == undefined)
+        this.invoice.peee =
+          'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
+      if (this.invoice.dee == undefined)
+        this.invoice.dee =
+          'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.';
     } else {
       this.invoice = {
         created: new Date(),

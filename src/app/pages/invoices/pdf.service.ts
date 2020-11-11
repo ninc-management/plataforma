@@ -447,16 +447,17 @@ export class PdfService {
             {
               text: '(' + invoice.peep + ')',
               fontSize: 8,
+              alignment: 'justify',
             },
           ],
           [
             {
               ul: laep,
               fontSize: 10,
+              alignment: 'justify',
             },
           ],
           [
-            //TODO: Get this text from invoice
             {
               text: invoice.dep,
               alignment: 'justify',
@@ -470,6 +471,9 @@ export class PdfService {
     // Body - Invoice Info Mid Stage - Page 2
     pdf.add(pdf.ln(1));
 
+    const laee = invoice.laee.map((activity, index) => {
+      return activity + (index == invoice.laee.length - 1 ? '.' : ';');
+    });
     pdf.add({
       style: 'insideText',
       table: {
@@ -477,31 +481,22 @@ export class PdfService {
         body: [
           [{ text: 'ETAPA EXECUTIVA' }],
           [
-            //TODO: Get this dates from invoice
             {
-              text:
-                '(início após aprovação da proposta preliminar, 30 dias úteis para finalização)',
+              text: '(' + invoice.peee + ')',
               fontSize: 8,
+              alignment: 'justify',
             },
           ],
           [
-            //TODO: Get this lis from invoice
             {
-              ul: [
-                'Mussum Ipsum, cacilds vidis litro abertis',
-                'Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo!',
-                'Cevadis im ampola pa arma uma pindureta!',
-                'Copo furadis é disculpa de bebadis, arcu quam euismod magna',
-                'Paisis, filhis, espiritis santis',
-              ],
+              ul: laee,
               fontSize: 10,
+              alignment: 'justify',
             },
           ],
           [
-            //TODO: Get this text from invoice
             {
-              text:
-                'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.',
+              text: invoice.dee,
               alignment: 'justify',
             },
           ],
@@ -525,6 +520,7 @@ export class PdfService {
               text:
                 '(será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente e será feita 3 visitas à obra para verificar o andamento do trabalho conforme projeto)',
               fontSize: 8,
+              alignment: 'justify',
             },
           ],
           [
@@ -538,6 +534,7 @@ export class PdfService {
                 'Paisis, filhis, espiritis santis',
               ],
               fontSize: 10,
+              alignment: 'justify',
             },
           ],
         ],

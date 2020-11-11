@@ -53,5 +53,13 @@
   "dep": {
     "minLength": 3,
     "maxLength": 500
+  },
+  "peee": {
+    "minLength": 3,
+    "maxLength": 500
+  },
+  "dee": {
+    "minLength": 3,
+    "maxLength": 500
   }
 }
