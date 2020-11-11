@@ -61,5 +61,13 @@
   "dee": {
     "minLength": 3,
     "maxLength": 500
+  },
+  "peec": {
+    "minLength": 3,
+    "maxLength": 500
+  },
+  "dec": {
+    "minLength": 3,
+    "maxLength": 500
   }
 }

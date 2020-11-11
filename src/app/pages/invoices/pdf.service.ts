@@ -410,13 +410,15 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     let subject = [];
-    for (let t of invoice.subject.split('*')) {
-      let bold = t.charAt(0) == '!' ? true : false;
-      if (bold) t = t.slice(1);
-      subject.push({
-        text: t,
-        bold: bold,
-      });
+    if (invoice.subject != undefined) {
+      for (let t of invoice.subject.split('*')) {
+        let bold = t.charAt(0) == '!' ? true : false;
+        if (bold) t = t.slice(1);
+        subject.push({
+          text: t,
+          bold: bold,
+        });
+      }
     }
     pdf.add({
       text: subject,
@@ -508,6 +510,9 @@ export class PdfService {
     // Body - Invoice Info Final Stage - Page 2
     pdf.add(pdf.ln(1));
 
+    const laec = invoice.laec.map((activity, index) => {
+      return activity + (index == invoice.laec.length - 1 ? '.' : ';');
+    });
     pdf.add({
       style: 'insideText',
       table: {
@@ -515,25 +520,22 @@ export class PdfService {
         body: [
           [{ text: 'ETAPA COMPLEMENTAR' }],
           [
-            //TODO: Get this dates from invoice
             {
-              text:
-                '(será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente e será feita 3 visitas à obra para verificar o andamento do trabalho conforme projeto)',
+              text: '(' + invoice.peec + ')',
               fontSize: 8,
               alignment: 'justify',
             },
           ],
           [
-            //TODO: Get this lis from invoice
             {
-              ul: [
-                'Mussum Ipsum, cacilds vidis litro abertis',
-                'Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo!',
-                'Cevadis im ampola pa arma uma pindureta!',
-                'Copo furadis é disculpa de bebadis, arcu quam euismod magna',
-                'Paisis, filhis, espiritis santis',
-              ],
+              ul: laec,
               fontSize: 10,
+              alignment: 'justify',
+            },
+          ],
+          [
+            {
+              text: invoice.dec,
               alignment: 'justify',
             },
           ],

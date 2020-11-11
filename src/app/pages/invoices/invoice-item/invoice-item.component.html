@@ -881,6 +881,123 @@
           </p>
         </ng-container>
       </div>
+      <div class="row" style="margin-top: 8px">
+        <div class="col-auto">
+          <label class="label-divider">Etapa Complementar</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="form-control-group">
+        <label class="label" for="input-peec">Período de execução: </label>
+        <textarea
+          nbInput
+          [(ngModel)]="invoice.peec"
+          #peec="ngModel"
+          id="input-peec"
+          name="peec"
+          placeholder="Digite o texto do período de execução"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.peec.minLength"
+          [maxlength]="validation.peec.maxLength"
+          [status]="
+            peec.dirty ? (peec.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="peec.invalid && peec.touched ? true : null"
+          [disabled]="false"
+        ></textarea>
+        <ng-container *ngIf="peec.invalid && peec.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="peec.errors?.minlength || peec.errors?.maxlength"
+          >
+            O período de execução deve conter entre
+            {{ validation.peec.minLength }} a
+            {{ validation.peec.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="row">
+        <div class="col-md-11">
+          <div class="form-control-group">
+            <label class="label" for="input-aec">Atividades:</label>
+            <input
+              nbInput
+              [(ngModel)]="aec"
+              #laec="ngModel"
+              id="input-aec"
+              name="laec"
+              placeholder="Atividade"
+              fullWidth
+              fieldSize="large"
+              [status]="laec.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="laec.invalid && laec.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!laec.value"
+            (click)="invoice.laec.push(aec); aec = ''"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let activity of invoice.laec; let i = index">
+          <div class="row irow">
+            <div class="col-10 col-md-11">{{ activity }}</div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="close-outline"
+                pack="nebular-essentials"
+                (click)="invoice.laec.splice(i, 1)"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+      <div class="form-control-group">
+        <label class="label" for="input-dec">Detalhes: </label>
+        <textarea
+          nbInput
+          [(ngModel)]="invoice.dec"
+          #dec="ngModel"
+          id="input-dec"
+          name="dec"
+          placeholder="Digite o texto do período de execução"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.dec.minLength"
+          [maxlength]="validation.dec.maxLength"
+          [status]="dec.dirty ? (dec.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="dec.invalid && dec.touched ? true : null"
+          [disabled]="false"
+        ></textarea>
+        <ng-container *ngIf="dec.invalid && dec.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="dec.errors?.minlength || dec.errors?.maxlength"
+          >
+            O período de execução deve conter entre
+            {{ validation.dec.minLength }} a
+            {{ validation.dec.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
     </nb-tab>
   </nb-tabset>
 
