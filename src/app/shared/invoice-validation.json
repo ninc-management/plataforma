@@ -49,5 +49,9 @@
   "peep": {
     "minLength": 3,
     "maxLength": 500
+  },
+  "dep": {
+    "minLength": 3,
+    "maxLength": 500
   }
 }

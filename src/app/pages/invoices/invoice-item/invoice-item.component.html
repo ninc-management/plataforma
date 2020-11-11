@@ -735,6 +735,35 @@
           </div>
         </nb-list-item>
       </nb-list>
+      <div class="form-control-group">
+        <label class="label" for="input-dep">Detalhes: </label>
+        <textarea
+          nbInput
+          [(ngModel)]="invoice.dep"
+          #dep="ngModel"
+          id="input-dep"
+          name="dep"
+          placeholder="Digite o texto do período de execução"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.dep.minLength"
+          [maxlength]="validation.dep.maxLength"
+          [status]="dep.dirty ? (dep.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="dep.invalid && dep.touched ? true : null"
+          [disabled]="false"
+        ></textarea>
+        <ng-container *ngIf="dep.invalid && dep.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="dep.errors?.minlength || dep.errors?.maxlength"
+          >
+            O período de execução deve conter entre
+            {{ validation.dep.minLength }} a
+            {{ validation.dep.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
     </nb-tab>
   </nb-tabset>
 

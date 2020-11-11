@@ -458,8 +458,7 @@ export class PdfService {
           [
             //TODO: Get this text from invoice
             {
-              text:
-                'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.',
+              text: invoice.dep,
               alignment: 'justify',
             },
           ],

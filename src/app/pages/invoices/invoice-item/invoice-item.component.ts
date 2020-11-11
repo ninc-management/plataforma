@@ -88,6 +88,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.invoice.peep == undefined)
         this.invoice.peep =
           '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
+      if (this.invoice.dep == undefined)
+        this.invoice.dep =
+          'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
     } else {
       this.invoice = {
         created: new Date(),
