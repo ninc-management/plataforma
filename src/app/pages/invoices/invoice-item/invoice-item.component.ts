@@ -10,6 +10,7 @@ import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
+import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
 import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
@@ -28,9 +29,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Output() submit = new EventEmitter<void>();
   invoice: any;
   teamMember: any = {};
-  aep = '';
-  aee = '';
-  aec = '';
+  options = {
+    aep: '',
+    aee: '',
+    aec: '',
+    valueType: '$',
+    product: {
+      value: '',
+      name: '',
+    },
+    total: '0',
+  };
   destroy$ = new Subject<void>();
   editing = false;
   submitted = false;
@@ -53,6 +62,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private departmentService: DepartmentService,
     private contractService: ContractService,
     private userService: UserService,
+    public stringUtil: StringUtilService,
     private breakpointService: NbMediaBreakpointsService,
     public contractorService: ContractorService
   ) {}
@@ -65,6 +75,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.iInvoice) {
       this.invoice = Object.assign({}, this.iInvoice);
+      console.log(this.invoice);
       this.editing = true;
       this.COORDINATIONS = this.departmentService.buildCoordinationsList(
         this.invoice.department
@@ -105,6 +116,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.invoice.dec == undefined)
         this.invoice.dec =
           'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
+      this.updateTotal();
     } else {
       this.invoice = {
         created: new Date(),
@@ -201,6 +213,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         return active[idx];
       }
     );
+    this.teamMember.coordination = undefined;
   }
 
   updateCode(): void {
@@ -261,5 +274,33 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.invoice.created.setHours(currentTime.getHours());
     this.invoice.created.setMinutes(currentTime.getMinutes());
     this.invoice.created.setSeconds(currentTime.getSeconds());
+  }
+
+  addProduct(): void {
+    if (this.options.valueType === '%')
+      this.options.product.value = this.stringUtil.toValue(
+        this.options.product.value,
+        this.invoice.value
+      );
+    this.invoice.products.push(this.options.product);
+    this.options.product = { value: '', name: '' };
+    this.updateTotal();
+  }
+
+  remainingBalance(): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.invoice.value) -
+        this.stringUtil.moneyToNumber(this.options.total)
+    );
+  }
+
+  updateTotal(): void {
+    this.options.total = this.stringUtil.numberToMoney(
+      this.invoice.products.reduce(
+        (accumulator: number, produtc: any) =>
+          accumulator + this.stringUtil.moneyToNumber(produtc.value),
+        0
+      )
+    );
   }
 }

@@ -4,8 +4,6 @@ const Contractor = require('../models/contractor');
 const Contract = require('../models/contract');
 const Invoice = require('../models/invoice');
 const User = require('../models/user');
-const UserExpertise = require('../models/userExpertise');
-const TeamMember = require('../models/teamMember');
 
 const router = express.Router();
 
@@ -40,57 +38,20 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  // Handle team
-  if (req.body.invoice.team.length > 0) {
-    TeamMember.deleteMany({ invoice: req.body.invoice._id })
-      .then(() => {
-        return TeamMember.bulkWrite(
-          req.body.invoice.team.map((member) => {
-            if (member.invoice == undefined)
-              member.invoice = req.body.invoice._id;
-            return {
-              insertOne: {
-                document: member,
-              },
-            };
-          })
-        );
-      })
-      .then(() => {
-        return TeamMember.find({ invoice: req.body.invoice._id });
-      })
-      .then((savedTeam) => {
-        req.body.invoice.team = savedTeam.map((el) => el._id);
-        return Invoice.findOneAndUpdate(
-          { _id: req.body.invoice._id },
-          req.body.invoice,
-          function (err) {
-            if (err) throw err;
-            else {
-              res.status(200).json({
-                message: 'Orçamento Atualizado!',
-              });
-            }
-          }
-        );
-      })
-      .catch((err) => {
-        res.status(500).json({
-          message:
-            'Erro ao adicionar e atualizar time enquanto atualiza o orçamento!',
+  await Invoice.findOneAndUpdate(
+    { _id: req.body.invoice._id },
+    req.body.invoice,
+    function (err) {
+      if (err)
+        return res.status(500).json({
+          message: 'Erro ao atualizar orçamento!',
           error: err,
         });
+      return res.status(200).json({
+        message: 'Orçamento Atualizado!',
       });
-  } else {
-    // Update Invoice
-    await Invoice.findOneAndUpdate(
-      { _id: req.body.invoice._id },
-      req.body.invoice
-    );
-    return res.status(200).json({
-      message: 'Orçamento Atualizado!',
-    });
-  }
+    }
+  );
 });
 
 router.post('/count', (req, res) => {
@@ -130,7 +91,6 @@ router.post('/all', async (req, res) => {
     })
     .populate({
       path: 'team',
-      model: 'TeamMember',
       populate: {
         path: 'user',
         model: 'User',
@@ -143,7 +103,6 @@ router.post('/all', async (req, res) => {
         },
         populate: {
           path: 'expertise',
-          model: 'UserExpertise',
         },
       },
     })

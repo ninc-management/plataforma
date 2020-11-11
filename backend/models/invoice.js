@@ -1,6 +1,16 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
+const invoiceProduct = {
+  name: { type: String, required: true },
+  value: { type: String, required: true },
+};
+
+const teamMember = {
+  user: { type: mongoose.ObjectId, ref: 'User', required: true },
+  coordination: { type: String, required: true },
+};
+
 const invoiceSchema = mongoose.Schema({
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   department: { type: String, required: true },
@@ -12,7 +22,7 @@ const invoiceSchema = mongoose.Schema({
   name: { type: String, required: true },
   value: { type: String, required: true },
   status: { type: String, required: true },
-  team: [{ type: mongoose.ObjectId, ref: 'TeamMember' }],
+  team: [teamMember],
   trello: { type: Boolean },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
@@ -29,6 +39,7 @@ const invoiceSchema = mongoose.Schema({
   peec: { type: String },
   laec: [{ type: String }],
   dec: { type: String },
+  products: [invoiceProduct],
 });
 
 invoiceSchema.plugin(uniqueValidator);

@@ -51,7 +51,7 @@ export class PaymentItemComponent implements OnInit {
     private departmentService: DepartmentService,
     private contractService: ContractService,
     private userService: UserService,
-    private stringUtil: StringUtilService
+    public stringUtil: StringUtilService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -117,7 +117,10 @@ export class PaymentItemComponent implements OnInit {
 
   addColaborator(): void {
     if (this.options.valueType === '%')
-      this.userPayment.value = this.toValue(this.userPayment.value);
+      this.userPayment.value = this.stringUtil.toValue(
+        this.userPayment.value,
+        this.options.liquid
+      );
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {};
     this.updateTotal();
@@ -135,24 +138,6 @@ export class PaymentItemComponent implements OnInit {
         this.stringUtil.toMutiplyPercentage(this.payment.nortanPercentage)
     );
     this.options.liquid = this.stringUtil.numberToMoney(result);
-  }
-
-  toPercentage(value: string): string {
-    if (+this.options.liquid === 0) return '0,00%';
-    return (
-      this.stringUtil.numberToMoney(
-        (this.stringUtil.moneyToNumber(value) /
-          this.stringUtil.moneyToNumber(this.options.liquid)) *
-          100
-      ) + '%'
-    );
-  }
-
-  toValue(percentage: string): string {
-    return this.stringUtil.numberToMoney(
-      (this.stringUtil.moneyToNumber(percentage.slice(0, -1)) / 100) *
-        this.stringUtil.moneyToNumber(this.options.liquid)
-    );
   }
 
   isTeamEmpty(): boolean {

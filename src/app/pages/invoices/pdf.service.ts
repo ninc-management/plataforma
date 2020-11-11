@@ -572,6 +572,9 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
+    const products = invoice.products.map((product) => {
+      return product.name.toUpperCase() + ': R$ ' + product.value;
+    });
     pdf.add({
       style: 'insideText',
       table: {
@@ -586,10 +589,8 @@ export class PdfService {
             },
           ],
           [
-            //TODO: Get value datails as we did in teams.
             {
-              text:
-                'PROJETO ARQUITETÔNICO + INTERIORES BÁSICO: R$ 3.354,00\nPROJETO HIDROSSANITÁRIO R$ 1.045,00\nPROJETO ELÉTRICO R$ 1.045,00',
+              stack: products,
               fontSize: 8,
               margin: [0, 0, 0, 10],
             },

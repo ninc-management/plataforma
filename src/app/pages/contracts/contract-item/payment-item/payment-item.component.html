@@ -410,16 +410,12 @@
           placeholder="Valor"
           fullWidth
           fieldSize="large"
-          [brmasker]="
-            options.valueType !== '%'
-              ? {
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: '2'
-                }
-              : { percent: true }
-          "
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
           [required]="validation.paid.required"
           [status]="paid.value ? 'success' : 'basic'"
           [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
@@ -459,7 +455,7 @@
           {{ userPayment.value }}
         </div>
         <div class="col-5 col-md-1">
-          {{ toPercentage(userPayment.value) }}
+          {{ stringUtil.toPercentage(userPayment.value, options.liquid) }}
         </div>
         <div class="col-2 col-md-1" style="text-align: right">
           <nb-icon
@@ -493,7 +489,7 @@
             success: total === options.liquid && total !== '0'
           }"
         >
-          {{ toPercentage(total) }}
+          {{ stringUtil.toPercentage(total, options.liquid) }}
         </div>
         <div class="col-md-1"></div>
       </div>

@@ -36,4 +36,19 @@ export class StringUtilService {
   toMutiplyPercentage(percentage: string): number {
     return (100 - this.numberToNumber(percentage)) / 100;
   }
+
+  toPercentage(value: string, base: string): string {
+    if (+base === 0) return '0,00%';
+    return (
+      this.numberToMoney(
+        (this.moneyToNumber(value) / this.moneyToNumber(base)) * 100
+      ) + '%'
+    );
+  }
+
+  toValue(percentage: string, base: string): string {
+    return this.numberToMoney(
+      (this.moneyToNumber(percentage) / 100) * this.moneyToNumber(base)
+    );
+  }
 }

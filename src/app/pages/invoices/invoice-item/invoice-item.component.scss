@@ -2,6 +2,37 @@
 
 @include nb-install-component() {
   --tabset-content-padding: 0;
+  --radio-height: 14px;
+  --radio-width: 14px;
+  --radio-text-line-height: nb-theme(--text-label-line-height);
+  --radio-text-font-size: 1em;
+  --radio-text-font-weight: nb-theme(text-label-font-weight);
+  --radio-basic-text-color: nb-theme(text-hint-color);
+  nb-radio-group {
+    display: flex;
+  }
+
+  nb-list-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .paymentRow {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
+
+  .danger {
+    color: nb-theme(icon-danger-color) !important;
+  }
+
+  .success {
+    color: nb-theme(icon-success-color) !important;
+  }
 
   nb-tab {
     overflow: unset;
@@ -9,15 +40,11 @@
   }
 
   .label-divider {
-    color: var(--text-hint-color);
-    font-family: var(--text-label-font-family);
-    font-size: var(--text-basic-font-size);
-    font-weight: var(--text-label-font-weight);
-    line-height: var(--text-label-line-height);
-  }
-
-  .xIcon:hover {
-    color: nb-theme(icon-danger-color) !important;
+    color: nb-theme(text-hint-color);
+    font-family: nb-theme(text-label-font-family);
+    font-size: nb-theme(text-basic-font-size);
+    font-weight: nb-theme(text-label-font-weight);
+    line-height: nb-theme(text-label-line-height);
   }
 
   .irow {
@@ -26,10 +53,10 @@
   }
 
   hr {
-    margin-top: var(--text-label-line-height);
+    margin-top: nb-theme(text-label-line-height);
     margin-bottom: 0;
     border: 0;
-    border-top: 1px solid var(--text-hint-color);
+    border-top: 1px solid nb-theme(text-hint-color);
   }
 }
 
@@ -39,5 +66,11 @@
   }
   .col-auto {
     padding-right: 0;
+  }
+  nb-radio {
+    label {
+      padding-top: 0.1rem !important;
+      padding-bottom: 0.1rem !important;
+    }
   }
 }
