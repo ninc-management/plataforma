@@ -41,12 +41,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     aee: '',
     aec: '',
     valueType: '$',
+    stageValueType: '$',
     product: {
       value: '',
       name: '',
       subproducts: [],
     },
+    stage: {
+      value: '',
+      name: '',
+    },
     total: '0',
+    stageTotal: '0',
   };
   destroy$ = new Subject<void>();
   editing = false;
@@ -124,7 +130,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.invoice.dec == undefined)
         this.invoice.dec =
           'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
-      this.updateTotal();
+      this.updateTotal('product');
+      this.updateTotal('stage');
     } else {
       this.invoice = {
         created: new Date(),
@@ -293,7 +300,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.options.product.name = this.options.product.name.toUpperCase();
     this.invoice.products.push(this.options.product);
     this.options.product = { value: '', name: '', subproducts: [] };
-    this.updateTotal();
+    this.updateTotal('product');
   }
 
   addSubproduct(product): void {
@@ -310,21 +317,44 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
   }
 
-  remainingBalance(): string {
+  addStage(): void {
+    if (this.options.stageValueType === '%')
+      this.options.stage.value = this.stringUtil.toValue(
+        this.options.stage.value,
+        this.invoice.value
+      );
+    this.options.stage.name = this.options.stage.name;
+    this.invoice.stages.push(this.options.stage);
+    this.options.stage = { value: '', name: '' };
+    this.updateTotal('stage');
+  }
+
+  remainingBalance(base: string): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.invoice.value) -
-        this.stringUtil.moneyToNumber(this.options.total)
+        this.stringUtil.moneyToNumber(
+          base === 'product' ? this.options.total : this.options.stageTotal
+        )
     );
   }
 
-  updateTotal(): void {
-    this.options.total = this.stringUtil.numberToMoney(
-      this.invoice.products.reduce(
-        (accumulator: number, produtc: any) =>
-          accumulator + this.stringUtil.moneyToNumber(produtc.value),
-        0
-      )
-    );
+  updateTotal(base: string): void {
+    if (base === 'product')
+      this.options.total = this.stringUtil.numberToMoney(
+        this.invoice.products.reduce(
+          (accumulator: number, produtc: any) =>
+            accumulator + this.stringUtil.moneyToNumber(produtc.value),
+          0
+        )
+      );
+    else
+      this.options.stageTotal = this.stringUtil.numberToMoney(
+        this.invoice.stages.reduce(
+          (accumulator: number, stage: any) =>
+            accumulator + this.stringUtil.moneyToNumber(stage.value),
+          0
+        )
+      );
   }
 }
 

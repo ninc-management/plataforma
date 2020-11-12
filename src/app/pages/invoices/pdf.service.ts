@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
+import { StringUtilService } from '../../shared/services/string-util.service';
 import extenso from 'extenso';
 import pdfMake from 'pdfmake';
 
@@ -23,6 +24,114 @@ pdfMake.fonts = {
 })
 export class PdfService {
   today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+
+  constructor(private stringUtil: StringUtilService) {}
+
+  private applyVerticalAlignment(
+    node: any,
+    rowIndex: number,
+    align: string
+  ): void {
+    const allCellHeights = node.table.body[rowIndex].map(
+      (innerNode, columnIndex) => {
+        const findInlineHeight = this.findInlineHeight(
+          innerNode,
+          node.table.widths[columnIndex]._calcWidth
+        );
+        return findInlineHeight.height;
+      }
+    );
+    const maxRowHeight = Math.max(...allCellHeights);
+    node.table.body[rowIndex].forEach((cell, ci) => {
+      if (allCellHeights[ci] && maxRowHeight > allCellHeights[ci]) {
+        let topMargin;
+        if (align === 'bottom') {
+          topMargin = maxRowHeight - allCellHeights[ci];
+        } else if (align === 'center') {
+          topMargin = (maxRowHeight - allCellHeights[ci]) / 2;
+        }
+        if (cell._margin) {
+          cell._margin[1] = topMargin;
+        } else {
+          cell._margin = [0, topMargin, 0, 0];
+        }
+      }
+    });
+  }
+
+  private findInlineHeight(
+    cell: any,
+    maxWidth: number,
+    usedWidth: number = 0
+  ): any {
+    const calcLines = (inlines) => {
+      if (inlines == undefined)
+        return {
+          height: 0,
+          width: 0,
+        };
+      let currentMaxHeight = 0;
+      for (const currentNode of inlines) {
+        usedWidth += currentNode.width;
+        if (usedWidth > maxWidth) {
+          currentMaxHeight += currentNode.height;
+        } else {
+          currentMaxHeight = Math.max(currentNode.height, currentMaxHeight);
+        }
+      }
+      return {
+        height: currentMaxHeight,
+        width: usedWidth,
+      };
+    };
+    if (cell._offsets) {
+      usedWidth += cell._offsets.total;
+    }
+    if (cell._inlines && cell._inlines.length) {
+      return calcLines(cell._inlines);
+    } else if (cell.stack && cell.stack[0] && cell.stack[0]._inlines[0]) {
+      return cell.stack
+        .map((item) => {
+          return calcLines(item._inlines);
+        })
+        .reduce((prev, next) => {
+          return {
+            height: prev.height + next.height,
+            width: Math.max(prev.width + next.width),
+          };
+        });
+    } else if (cell.table) {
+      let currentMaxHeight = 0;
+      for (const currentTableBodies of cell.table.body) {
+        const innerTableHeights = currentTableBodies.map((innerTableCell) => {
+          const findInlineHeight = this.findInlineHeight(
+            innerTableCell,
+            maxWidth,
+            usedWidth
+          );
+
+          usedWidth = findInlineHeight.width;
+          return findInlineHeight.height;
+        });
+        currentMaxHeight = Math.max(...innerTableHeights, currentMaxHeight);
+      }
+      return {
+        height: currentMaxHeight,
+        width: usedWidth,
+      };
+    } else if (cell._height) {
+      usedWidth += cell._width;
+      return {
+        height: cell._height,
+        width: usedWidth,
+      };
+    }
+
+    return {
+      height: null,
+      width: usedWidth,
+    };
+  }
 
   noBorderTable(color: string): any {
     return {
@@ -50,7 +159,8 @@ export class PdfService {
       paddingRight: function (i, node) {
         return 10;
       },
-      paddingTop: function (i, node) {
+      paddingTop: (i: number, node: any) => {
+        this.applyVerticalAlignment(node, i, 'center');
         return i == 0 ? 10 : 0;
       },
       paddingBottom: function (i, node) {
@@ -70,7 +180,8 @@ export class PdfService {
       paddingRight: function (i, node) {
         return 10;
       },
-      paddingTop: function (i, node) {
+      paddingTop: (i: number, node: any) => {
+        this.applyVerticalAlignment(node, i, 'center');
         return 3;
       },
       paddingBottom: function (i, node) {
@@ -617,6 +728,32 @@ export class PdfService {
       layout: this.noBorderTable('#BFBFBF'),
     });
 
+    const stages = invoice.stages.map((stage) => {
+      return [
+        {
+          text: stage.name,
+          alignment: 'center',
+          border: [false, true, true, true],
+        },
+        {
+          text: this.stringUtil.toPercentage(stage.value, invoice.value),
+          alignment: 'center',
+          border: [true, true, true, true],
+        },
+        {
+          text: 'R$ ' + stage.value,
+          alignment: 'center',
+          border: [true, true, false, true],
+        },
+      ];
+    });
+    const total = this.stringUtil.numberToMoney(
+      invoice.stages.reduce(
+        (accumulator: number, stage: any) =>
+          accumulator + this.stringUtil.moneyToNumber(stage.value),
+        0
+      )
+    );
     pdf.add({
       style: 'insideText',
       table: {
@@ -642,74 +779,7 @@ export class PdfService {
               border: [true, true, false, true],
             },
           ],
-          [
-            {
-              text: 'Ordem de serviço',
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: '20%',
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'R$ 1.088,80',
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
-          ],
-          [
-            {
-              text: 'Estudo Preleminar',
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: '30%',
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'R$ 1.633,20',
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
-          ],
-          [
-            {
-              text: 'Anteprojeto',
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: '30%',
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'R$ 1.633,20',
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
-          ],
-          [
-            {
-              text: 'Projeto executivo',
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: '20%',
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'R$ 1.088,80',
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
-          ],
+          ...stages,
           [
             {
               text: 'TOTAL',
@@ -718,13 +788,13 @@ export class PdfService {
               border: [false, true, true, true],
             },
             {
-              text: '100%',
+              text: this.stringUtil.toPercentage(total, invoice.value),
               bold: true,
               alignment: 'center',
               border: [true, true, true, true],
             },
             {
-              text: 'R$ 5.444,00',
+              text: 'R$ ' + total,
               bold: true,
               alignment: 'center',
               border: [true, true, false, true],

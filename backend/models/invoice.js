@@ -7,6 +7,11 @@ const invoiceProduct = {
   subproducts: [{ type: String, required: true }],
 };
 
+const invoiceStage = {
+  name: { type: String, required: true },
+  value: { type: String, required: true },
+};
+
 const teamMember = {
   user: { type: mongoose.ObjectId, ref: 'User', required: true },
   coordination: { type: String, required: true },
@@ -41,6 +46,7 @@ const invoiceSchema = mongoose.Schema({
   laec: [{ type: String }],
   dec: { type: String },
   products: [invoiceProduct],
+  stages: [invoiceStage],
 });
 
 invoiceSchema.plugin(uniqueValidator);
