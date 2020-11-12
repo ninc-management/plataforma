@@ -2,6 +2,8 @@
 @import '~@nebular/theme/styles/theming';
 // @nebular out of the box themes
 @import '~@nebular/theme/styles/themes';
+// material themes
+@import '~@angular/material/theming';
 
 $nb-enable-css-custom-properties: true;
 

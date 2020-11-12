@@ -20,6 +20,12 @@ $hamburger-layer-border-radius: 4px;
     .mat-ripple-element {
       background-color: nb-theme(color-basic-transparent-600);
     }
+
+    .sidebar-toggle {
+      .mat-ripple-element {
+        margin-left: -10px;
+      }
+    }
   }
 
   .logo-container {

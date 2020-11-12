@@ -6,7 +6,6 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 
-import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { UserService } from '../../../shared/services/user.service';
@@ -27,19 +26,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   themes = [
     {
       value: 'default',
-      name: 'Light',
+      name: 'Claro',
     },
     {
       value: 'dark',
-      name: 'Dark',
+      name: 'Escuro',
     },
     {
       value: 'cosmic',
-      name: 'Cosmic',
+      name: 'Cosmico',
     },
     {
       value: 'corporate',
-      name: 'Corporate',
+      name: 'Emprasarial',
     },
   ];
 
@@ -55,7 +54,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private menuService: NbMenuService,
     private themeService: NbThemeService,
     private userService: UserService,
-    private layoutService: LayoutService,
     private breakpointService: NbMediaBreakpointsService
   ) {
     this.materialTheme$ = this.themeService.onThemeChange().pipe(

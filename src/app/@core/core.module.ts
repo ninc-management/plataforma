@@ -14,7 +14,7 @@ import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
-import { AnalyticsService } from './utils';
+import { AnalyticsService, LayoutService, SeoService } from './utils';
 import { UserData } from './data/users';
 import { UserService } from './mock/users.service';
 import { MockDataModule } from './mock/mock-data.module';
@@ -105,6 +105,8 @@ export const NB_CORE_PROVIDERS = [
     useClass: NbSimpleRoleProvider,
   },
   AnalyticsService,
+  LayoutService,
+  SeoService,
 ];
 
 @NgModule({

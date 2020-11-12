@@ -16,7 +16,6 @@
             },
             "aot": true,
             "preserveSymlinks": true,
-            "rebaseRootRelativeCssUrls": true,
             "outputPath": "backend/angular",
             "index": "src/index.html",
             "main": "src/main.ts",
