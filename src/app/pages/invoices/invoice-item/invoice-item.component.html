@@ -713,7 +713,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laep.value"
-            (click)="invoice.laep.push(aep); aep = ''"
+            (click)="invoice.laep.push(options.aep); options.aep = ''"
           >
             +
           </button>
@@ -830,7 +830,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laee.value"
-            (click)="invoice.laee.push(aee); aee = ''"
+            (click)="invoice.laee.push(options.aee); options.aee = ''"
           >
             +
           </button>
@@ -947,7 +947,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laec.value"
-            (click)="invoice.laec.push(aec); aec = ''"
+            (click)="invoice.laec.push(options.aec); options.aec = ''"
           >
             +
           </button>
@@ -1293,6 +1293,61 @@
               {{ stringUtil.toPercentage(options.stageTotal, invoice.value) }}
             </div>
             <div class="col-md-1"></div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+      <div class="row">
+        <div class="col-md-11">
+          <div class="form-control-group">
+            <label class="label" for="input-important">Importante:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.important"
+              #important="ngModel"
+              id="input-important"
+              name="limportant"
+              placeholder="Atividade"
+              fullWidth
+              fieldSize="large"
+              [status]="important.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                important.invalid && important.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!important.value"
+            (click)="
+              invoice.importants.push(options.important); options.important = ''
+            "
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item
+          *ngFor="let activity of invoice.importants; let i = index"
+        >
+          <div class="row irow">
+            <div class="col-10 col-md-11">{{ activity }}</div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="close-outline"
+                pack="nebular-essentials"
+                (click)="invoice.importants.splice(i, 1)"
+              ></nb-icon>
+            </div>
           </div>
         </nb-list-item>
       </nb-list>

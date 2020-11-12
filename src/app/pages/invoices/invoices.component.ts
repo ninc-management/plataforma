@@ -155,7 +155,6 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   async generatePDF(event): Promise<void> {
-    console.log(event.data);
     this.pdf.generate(event.data);
   }
 

@@ -47,6 +47,7 @@ const invoiceSchema = mongoose.Schema({
   dec: { type: String },
   products: [invoiceProduct],
   stages: [invoiceStage],
+  importants: [{ type: String }],
 });
 
 invoiceSchema.plugin(uniqueValidator);

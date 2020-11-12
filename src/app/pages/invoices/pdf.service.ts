@@ -817,6 +817,7 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
+    const importants = invoice.importants.map((important) => important);
     pdf.add({
       style: 'insideText',
       table: {
@@ -824,15 +825,8 @@ export class PdfService {
         dontBreakRows: true,
         body: [
           [
-            //TODO: Get this list from invoice. Pre add this list.
             {
-              ul: [
-                'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato.',
-                'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto.',
-                'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente.',
-                'O produto final será entregue por e-mail em PDF para o cliente + 02 (duas) cópias impressas. ',
-                'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante.',
-              ],
+              ul: importants,
               fontSize: 10,
             },
           ],
@@ -870,7 +864,6 @@ export class PdfService {
       stack: [
         { text: 'Mais informações:', bold: true, color: '#79BA9E' },
         {
-          //TODO: Add email Nortan and phone number to user
           text: invoice.author.emailNortan + ' • ' + invoice.author.phone,
           fontSize: 10,
         },
@@ -901,7 +894,7 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    // pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
-    pdf.create().open();
+    pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
+    // pdf.create().open();
   }
 }
