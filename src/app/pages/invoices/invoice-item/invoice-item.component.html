@@ -1083,8 +1083,29 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let product of invoice.products; let i = index">
           <div class="row paymentRow">
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-7">
               {{ product.name }}
+              <nb-list
+                style="width: 100%; padding-top: 10px; margin-bottom: -17px"
+                *ngIf="product.subproducts.length > 0"
+              >
+                <nb-list-item
+                  *ngFor="let subproduct of product.subproducts; let j = index"
+                >
+                  <div class="row paymentRow">
+                    <div class="col-10 col-md-11">{{ subproduct }}</div>
+                    <div class="col-2 col-md-1" style="text-align: right">
+                      <nb-icon
+                        class="xIcon"
+                        status="basic"
+                        icon="close-outline"
+                        pack="nebular-essentials"
+                        (click)="product.subproducts.splice(j, 1)"
+                      ></nb-icon>
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
             </div>
             <div class="col-5 col-md-2">
               {{ product.value }}
@@ -1092,7 +1113,14 @@
             <div class="col-5 col-md-1">
               {{ stringUtil.toPercentage(product.value, invoice.value) }}
             </div>
-            <div class="col-2 col-md-1" style="text-align: right">
+            <div class="col-2 col-md-2" style="text-align: right">
+              <nb-icon
+                class="addIcon"
+                status="basic"
+                icon="plus-outline"
+                pack="eva"
+                (click)="addSubproduct(product)"
+              ></nb-icon>
               <nb-icon
                 class="xIcon"
                 status="basic"

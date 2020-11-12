@@ -573,7 +573,17 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     const products = invoice.products.map((product) => {
-      return product.name.toUpperCase() + ': R$ ' + product.value;
+      if (product.subproducts.length > 0)
+        return [
+          {
+            text: product.name + ': R$ ' + product.value,
+          },
+          {
+            stack: product.subproducts,
+            fontSize: 6,
+          },
+        ];
+      return product.name + ': R$ ' + product.value;
     });
     pdf.add({
       style: 'insideText',

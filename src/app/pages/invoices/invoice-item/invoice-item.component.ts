@@ -5,6 +5,9 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
 } from '@angular/core';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
@@ -12,7 +15,11 @@ import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
-import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
+import {
+  NbDialogRef,
+  NbDialogService,
+  NbMediaBreakpointsService,
+} from '@nebular/theme';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -37,6 +44,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     product: {
       value: '',
       name: '',
+      subproducts: [],
     },
     total: '0',
   };
@@ -282,9 +290,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.options.product.value,
         this.invoice.value
       );
+    this.options.product.name = this.options.product.name.toUpperCase();
     this.invoice.products.push(this.options.product);
-    this.options.product = { value: '', name: '' };
+    this.options.product = { value: '', name: '', subproducts: [] };
     this.updateTotal();
+  }
+
+  addSubproduct(product): void {
+    console.log(product);
+    this.dialogService
+      .open(TextInputDialog, {
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.subscribe(
+        (name) => name && product.subproducts.push(name.toUpperCase())
+      );
   }
 
   remainingBalance(): string {
@@ -302,5 +325,47 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         0
       )
     );
+  }
+}
+
+@Component({
+  selector: 'ngx-text-input-dialog',
+  template: `
+    <nb-card
+      [ngStyle]="{
+        'width.px': dialogWidth()
+      }"
+    >
+      <nb-card-header>Subproduto:</nb-card-header>
+      <nb-card-body>
+        <input #name nbInput fullWidth placeholder="Digite o subproduto" />
+      </nb-card-body>
+      <nb-card-footer>
+        <button
+          nbButton
+          fullWidth
+          status="primary"
+          (click)="dismiss(name.value)"
+        >
+          Adicionar
+        </button>
+      </nb-card-footer>
+    </nb-card>
+  `,
+})
+export class TextInputDialog implements AfterViewInit {
+  @ViewChild('name', { read: ElementRef }) inputRef;
+  constructor(protected ref: NbDialogRef<TextInputDialog>) {}
+
+  dismiss(name: string): void {
+    this.ref.close(name);
+  }
+
+  ngAfterViewInit(): void {
+    this.inputRef.nativeElement.focus();
+  }
+
+  dialogWidth(): number {
+    return window.innerWidth * 0.5;
   }
 }

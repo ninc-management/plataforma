@@ -4,6 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const invoiceProduct = {
   name: { type: String, required: true },
   value: { type: String, required: true },
+  subproducts: [{ type: String, required: true }],
 };
 
 const teamMember = {
