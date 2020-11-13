@@ -35,7 +35,10 @@ mongoose
 mongoose.set('useCreateIndex', true);
 
 // app.use(logger('dev'));
-app.use(helmet());
+app.use( 
+  helmet({
+    contentSecurityPolicy: false,
+  }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', express.static(path.join(__dirname, 'angular')));
