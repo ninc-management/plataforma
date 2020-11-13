@@ -7,6 +7,7 @@ import {
 import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { PdfService } from '../pdf.service';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -21,7 +22,8 @@ export class InvoiceDialogComponent implements OnInit {
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<InvoiceDialogComponent>,
     protected departmentService: DepartmentService,
-    private breakpointService: NbMediaBreakpointsService
+    private breakpointService: NbMediaBreakpointsService,
+    private pdf: PdfService
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +60,10 @@ export class InvoiceDialogComponent implements OnInit {
     oInvoice.model = true;
     console.log(oInvoice);
     this.ref.close(oInvoice);
+  }
+
+  generatePDF(): void {
+    this.pdf.generate(this.invoice);
   }
 
   isPhone(): boolean {

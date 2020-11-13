@@ -1090,7 +1090,7 @@
             <div class="col-12 col-md-7">
               {{ product.name }}
               <nb-list
-                style="width: 100%; padding-top: 10px; margin-bottom: -17px"
+                class="subproducts-list"
                 *ngIf="product.subproducts.length > 0"
               >
                 <nb-list-item
@@ -1114,10 +1114,10 @@
             <div class="col-5 col-md-2">
               {{ product.value }}
             </div>
-            <div class="col-5 col-md-1">
+            <div class="col-4 col-md-1">
               {{ stringUtil.toPercentage(product.value, invoice.value) }}
             </div>
-            <div class="col-2 col-md-2" style="text-align: right">
+            <div class="col-3 col-md-2" style="text-align: right">
               <nb-icon
                 class="addIcon"
                 status="basic"

@@ -16,6 +16,18 @@
           <button
             nbButton
             ghost
+            *ngIf="isPhone() && invoice && !invoice.model"
+            (click)="generatePDF()"
+          >
+            <nb-icon
+              icon="file-pdf"
+              pack="far"
+              style="font-size: 18px"
+            ></nb-icon>
+          </button>
+          <button
+            nbButton
+            ghost
             *ngIf="invoice && !invoice.model"
             nbTooltip="Usar como modelo"
             [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"

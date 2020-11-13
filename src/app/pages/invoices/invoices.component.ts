@@ -1,5 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NbDialogService, NbIconLibraries } from '@nebular/theme';
+import {
+  NbDialogService,
+  NbIconLibraries,
+  NbMediaBreakpointsService,
+} from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
@@ -113,6 +117,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: NbDialogService,
     private invoicetService: InvoiceService,
+    private breakpointService: NbMediaBreakpointsService,
     private contractorService: ContractorService,
     private pdf: PdfService
   ) {}
@@ -145,7 +150,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(InvoiceDialogComponent, {
         context: {
-          title: event.data ? 'EDIÇÃO DE ORÇAMENTO' : 'CADASTRO DE ORÇAMENTO',
+          title: event.data
+            ? this.isPhone()
+              ? 'EDIÇÃO'
+              : 'EDIÇÃO DE ORÇAMENTO'
+            : 'CADASTRO DE ORÇAMENTO',
           invoice: event.data,
         },
         dialogClass: 'my-dialog',
@@ -163,6 +172,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   pageWidth(): number {
     return window.innerWidth;
+  }
+
+  isPhone(): boolean {
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= md;
   }
 
   statusColor(status: string): string {

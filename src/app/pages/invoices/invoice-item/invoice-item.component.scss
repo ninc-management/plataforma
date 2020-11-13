@@ -1,3 +1,5 @@
+@import '~bootstrap/scss/mixins/breakpoints';
+@import '~@nebular/theme/styles/global/breakpoints';
 @import '../../../@theme/styles/themes';
 
 @include nb-install-component() {
@@ -15,6 +17,16 @@
   nb-list-item {
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+
+  .subproducts-list {
+    width: 100%;
+    padding-top: 10px;
+  }
+  @include media-breakpoint-up(md) {
+    .subproducts-list {
+      margin-bottom: -17px;
+    }
   }
 
   .paymentRow {
