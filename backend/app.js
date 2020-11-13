@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-var logger = require('morgan');
+// var logger = require('morgan');
 const helmet = require('helmet');
 
 // Import API endpoint routes
