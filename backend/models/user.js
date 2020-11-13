@@ -36,6 +36,7 @@ const userSchema = mongoose.Schema({
   level: { type: String, required: true },
   document: { type: String, unique: true },
   expertise: [userExpertise],
+  theme: { type: String },
 });
 
 userSchema.plugin(uniqueValidator);

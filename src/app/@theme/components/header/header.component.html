@@ -39,17 +39,6 @@
       {{ menuTitle }}</a
     >
   </div>
-  <nb-select
-    status="primary"
-    matRipple
-    [matRippleUnbounded]="false"
-    [selected]="currentTheme"
-    (selectedChange)="changeTheme($event)"
-  >
-    <nb-option *ngFor="let theme of themes" [value]="theme.value" matRipple>{{
-      theme.name
-    }}</nb-option>
-  </nb-select>
 </div>
 
 <div class="header-container">

@@ -25,6 +25,9 @@
   "city": {
     "required": true
   },
+  "themeSelector": {
+    "required": true
+  },
   "article": {
     "required": true
   },

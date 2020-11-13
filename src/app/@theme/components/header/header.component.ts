@@ -23,27 +23,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userPictureOnly: boolean = false;
   user: any;
 
-  themes = [
-    {
-      value: 'default',
-      name: 'Claro',
-    },
-    {
-      value: 'dark',
-      name: 'Escuro',
-    },
-    {
-      value: 'cosmic',
-      name: 'Cosmico',
-    },
-    {
-      value: 'corporate',
-      name: 'Emprasarial',
-    },
-  ];
-
-  currentTheme = 'default';
-
   userMenu = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
@@ -55,21 +34,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private userService: UserService,
     private breakpointService: NbMediaBreakpointsService
-  ) {
-    this.materialTheme$ = this.themeService.onThemeChange().pipe(
-      map((theme) => {
-        const themeName: string = theme?.name || '';
-        return themeName.startsWith('material');
-      })
-    );
-  }
+  ) {}
 
   ngOnInit() {
-    this.currentTheme = this.themeService.currentTheme;
-
     this.userService.currentUser$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((user: any) => (this.user = user));
+      .subscribe((user: any) => {
+        this.user = user;
+        this.changeTheme();
+      });
 
     const { sm, xl } = this.breakpointService.getBreakpointsMap();
     this.themeService
@@ -81,11 +54,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe(
         (isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl)
       );
-
-    this.themeService.onThemeChange().pipe(
-      map(({ name }) => name),
-      takeUntil(this.destroy$)
-    );
 
     this.menuService
       .onItemSelect()
@@ -108,8 +76,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  changeTheme(themeName: string) {
-    this.themeService.changeTheme(themeName);
+  changeTheme() {
+    this.themeService.changeTheme(
+      this.user.theme == undefined ? 'default' : this.user.theme
+    );
   }
 
   toggleSidebar(): boolean {

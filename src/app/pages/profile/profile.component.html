@@ -23,7 +23,7 @@
           <div class="col-md-10">
             <form #form="ngForm" aria-labelledby="title">
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                   <div class="form-control-group">
                     <label class="label" for="input-name">Nome completo:</label>
                     <input
@@ -74,7 +74,7 @@
                   </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <div class="form-control-group">
                     <label class="label" for="input-ename"
                       >Nome de exibição:</label
@@ -121,6 +121,44 @@
                         caracteres
                       </p>
                     </ng-container>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="form-control-group">
+                    <label class="label" for="input-theme-selector"
+                      >Tema:</label
+                    >
+                    <nb-select
+                      [(ngModel)]="currentUser.theme"
+                      #themeSelector="ngModel"
+                      id="input-theme-selector"
+                      name="themeSelector"
+                      placeholder="Selecione o tema"
+                      fullWidth
+                      size="large"
+                      [required]="validation.themeSelector.required"
+                      [status]="
+                        themeSelector.dirty
+                          ? themeSelector.invalid
+                            ? 'danger'
+                            : 'success'
+                          : 'basic'
+                      "
+                      (selectedChange)="changeTheme()"
+                      [attr.aria-invalid]="
+                        themeSelector.invalid && themeSelector.touched
+                          ? true
+                          : null
+                      "
+                      [disabled]="!isEditing"
+                    >
+                      <nb-option
+                        *ngFor="let theme of THEMES"
+                        [value]="theme.value"
+                        >{{ theme.name }}</nb-option
+                      >
+                    </nb-select>
                   </div>
                 </div>
               </div>
@@ -330,6 +368,7 @@
                       name="article"
                       placeholder="Selecione o artigo"
                       fullWidth
+                      size="large"
                       [required]="validation.article.required"
                       [status]="
                         article.dirty
@@ -362,6 +401,7 @@
                       name="state"
                       placeholder="Selecione o estado"
                       fullWidth
+                      size="large"
                       [required]="validation.state.required"
                       [status]="
                         state.dirty
@@ -392,6 +432,7 @@
                       name="city"
                       placeholder="Selecione a cidade"
                       fullWidth
+                      size="large"
                       [required]="validation.city.required"
                       [status]="
                         city.dirty

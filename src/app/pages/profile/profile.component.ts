@@ -9,7 +9,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { take } from 'rxjs/operators';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
 import { DepartmentService } from '../../shared/services/department.service';
@@ -41,11 +41,30 @@ export class ProfileComponent implements OnInit, DoCheck {
     'Associado',
     'Associado Líder',
   ];
+  THEMES = [
+    {
+      value: 'default',
+      name: 'Claro',
+    },
+    {
+      value: 'dark',
+      name: 'Escuro',
+    },
+    {
+      value: 'cosmic',
+      name: 'Cosmico',
+    },
+    {
+      value: 'corporate',
+      name: 'Empresarial',
+    },
+  ];
 
   constructor(
     private userService: UserService,
     private statecityService: StatecityService,
     private departmentService: DepartmentService,
+    private themeService: NbThemeService,
     private dialogService: NbDialogService
   ) {}
 
@@ -66,8 +85,11 @@ export class ProfileComponent implements OnInit, DoCheck {
         );
       if (this.currentUser.expertise == undefined)
         this.currentUser.expertise = [];
+      if (this.currentUser.theme == undefined)
+        this.currentUser.theme = 'default';
       this.buildPositionsList();
       this.refreshExpertises();
+      console.log(this.currentUser);
     });
   }
 
@@ -199,5 +221,11 @@ export class ProfileComponent implements OnInit, DoCheck {
           cd.split('Coordenação')[1]
       );
     });
+  }
+
+  changeTheme() {
+    this.themeService.changeTheme(
+      this.currentUser?.theme == undefined ? 'default' : this.currentUser.theme
+    );
   }
 }
