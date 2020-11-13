@@ -9,7 +9,7 @@ node_js:
 
 branches:
   only:
-    - master
+    - main
     - production
     - demo
 
@@ -28,7 +28,7 @@ install:
 
 stages:
   - name: 'dev'
-    if: branch = master
+    if: branch = main
   - name: 'demo'
     if: branch = demo
   - name: 'prod'
@@ -42,7 +42,7 @@ jobs:
       deploy: &heroku
         provider: heroku
         app:
-          master: nortan-dev
+          main: nortan-dev
         api_key: $HEROKU_AUTH_TOKEN
         run: 'rm -rf src/app src/assets'
         strategy: git

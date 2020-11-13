@@ -1,0 +1,19 @@
+{
+  "extends": "./src/tsconfig.app.json",
+  "include": [
+    "./server.js",
+    "./backend/app.js",
+    "./backend/models/*.js",
+    "./backend/routes/*.js",
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./test/**/*.ts"
+  ],
+  "exclude": [
+    "./src/test.ts",
+    "./src/**/*.spec.ts",
+    "./node_modules/@nebular/**/*.spec.ts",
+    "./backend/angular",
+    "./e2e"
+  ]
+}
