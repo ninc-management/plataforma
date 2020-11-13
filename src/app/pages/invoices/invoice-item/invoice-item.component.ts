@@ -90,7 +90,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.iInvoice) {
       this.invoice = Object.assign({}, this.iInvoice);
-      this.editing = true;
+      this.editing = this.invoice.model ? false : true;
+      if (!this.editing) {
+        this.invoice.created = new Date();
+        this.invoice.lastUpdate = new Date();
+      }
       this.COORDINATIONS = this.departmentService.buildCoordinationsList(
         this.invoice.department
       );
@@ -319,7 +323,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         closeOnEsc: false,
         autoFocus: false,
       })
-      .onClose.subscribe(
+      .onClose.pipe(take(1))
+      .subscribe(
         (name) => name && product.subproducts.push(name.toUpperCase())
       );
   }
@@ -337,6 +342,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   remainingBalance(base: string): string {
+    if (this.invoice.value == undefined) return '0,00';
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.invoice.value) -
         this.stringUtil.moneyToNumber(

@@ -1,5 +1,9 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import {
+  NbDialogRef,
+  NbMediaBreakpointsService,
+  NB_DOCUMENT,
+} from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -16,7 +20,8 @@ export class InvoiceDialogComponent implements OnInit {
   constructor(
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<InvoiceDialogComponent>,
-    protected departmentService: DepartmentService
+    protected departmentService: DepartmentService,
+    private breakpointService: NbMediaBreakpointsService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +41,28 @@ export class InvoiceDialogComponent implements OnInit {
           this.invoice.department
         );
     this.ref.close();
+  }
+
+  useAsModel(): void {
+    if (this.invoice)
+      if (this.invoice.department.length > 3)
+        this.invoice.department = this.departmentService.extractAbreviation(
+          this.invoice.department
+        );
+    let oInvoice = Object.assign({}, this.invoice);
+    oInvoice.code = '';
+    delete oInvoice._id;
+    delete oInvoice.author;
+    delete oInvoice.created;
+    delete oInvoice.lastUpdate;
+    oInvoice.model = true;
+    console.log(oInvoice);
+    this.ref.close(oInvoice);
+  }
+
+  isPhone(): boolean {
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= md;
   }
 
   windowWidth(): number {

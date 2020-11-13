@@ -43,7 +43,15 @@
         <nb-card-header>
           {{ title }}
           <div class="buttons">
-            <button nbButton ghost (click)="dismiss()">
+            <button
+              nbButton
+              ghost
+              nbTooltip="Fechar"
+              [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+              nbTooltipPlacement="bottom"
+              nbTooltipStatus="info"
+              (click)="dismiss()"
+            >
               <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
             </button>
           </div>

@@ -24,7 +24,7 @@
               [attr.aria-invalid]="
                 department.invalid && department.touched ? true : null
               "
-              [disabled]="false"
+              [disabled]="editing"
               (selectedChange)="onDepartmentChange()"
             >
               <nb-option
@@ -220,6 +220,10 @@
               status="primary"
               size="large"
               style="margin-top: 28px"
+              nbTooltip="Adicionar cliente"
+              [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
               (click)="addContractor()"
             >
               <nb-icon icon="person-add-outline"></nb-icon>
@@ -383,7 +387,7 @@
         </div>
       </div>
     </nb-tab>
-    <nb-tab tabTitle="Complmentar" *ngIf="invoice._id != undefined">
+    <nb-tab tabTitle="Complementar">
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">Cabeçalho</label>
@@ -1136,7 +1140,7 @@
             <div class="col-12 col-md-4">
               Restante: {{ remainingBalance('product') }}
             </div>
-            <div class="col-4 col-md-4" style="text-align: right">Total:</div>
+            <div class="col-4 col-md-3" style="text-align: right">Total:</div>
             <div
               class="col-4 col-md-2"
               [ngClass]="{
@@ -1159,7 +1163,7 @@
             >
               {{ stringUtil.toPercentage(options.total, invoice.value) }}
             </div>
-            <div class="col-md-1"></div>
+            <div class="col-md-2"></div>
           </div>
         </nb-list-item>
       </nb-list>

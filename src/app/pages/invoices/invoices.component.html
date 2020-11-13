@@ -8,7 +8,7 @@
               nbButton
               fullWidth
               status="primary"
-              (click)="contractDialog({})"
+              (click)="invoiceDialog({})"
               style="height: 100%"
             >
               <nb-icon icon="plus"></nb-icon>
@@ -32,15 +32,15 @@
         *ngIf="pageWidth() >= 576; else phone"
         [settings]="settings"
         [source]="source"
-        (edit)="contractDialog($event)"
-        (create)="contractDialog({})"
+        (edit)="invoiceDialog($event)"
+        (create)="invoiceDialog({})"
         (delete)="generatePDF($event)"
       >
       </ng2-smart-table>
       <ng-template #phone>
         <nb-list>
           <nb-list-item *ngFor="let invoice of filtredInvoices">
-            <a (click)="contractDialog({ data: invoice })">
+            <a (click)="invoiceDialog({ data: invoice })">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
                   <nb-user

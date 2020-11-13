@@ -38,7 +38,7 @@ export class StringUtilService {
   }
 
   toPercentage(value: string, base: string): string {
-    if (+base === 0) return '0,00%';
+    if (+base === 0 || value == undefined || base == undefined) return '0,00%';
     return (
       this.numberToMoney(
         (this.moneyToNumber(value) / this.moneyToNumber(base)) * 100

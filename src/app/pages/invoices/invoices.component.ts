@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NbDialogService, NbIconLibraries } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { InvoiceService } from '../../shared/services/invoice.service';
 import { ContractorService } from '../../shared/services/contractor.service';
@@ -141,17 +141,20 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       });
   }
 
-  contractDialog(event): void {
-    this.dialogService.open(InvoiceDialogComponent, {
-      context: {
-        title: event.data ? 'EDIÇÃO DE ORÇAMENTO' : 'CADASTRO DE ORÇAMENTO',
-        invoice: event.data,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+  invoiceDialog(event): void {
+    this.dialogService
+      .open(InvoiceDialogComponent, {
+        context: {
+          title: event.data ? 'EDIÇÃO DE ORÇAMENTO' : 'CADASTRO DE ORÇAMENTO',
+          invoice: event.data,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((invoice) => invoice && this.invoiceDialog({ data: invoice }));
   }
 
   async generatePDF(event): Promise<void> {
