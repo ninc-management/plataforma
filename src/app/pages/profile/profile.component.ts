@@ -89,7 +89,6 @@ export class ProfileComponent implements OnInit, DoCheck {
         this.currentUser.theme = 'default';
       this.buildPositionsList();
       this.refreshExpertises();
-      console.log(this.currentUser);
     });
   }
 
@@ -204,7 +203,7 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.POSITIONS.push(
       'Co-Diretor' +
         (this.currentUser.article == 'a' ? 'a' : '') +
-        'de operações'
+        ' de operações'
     );
     this.POSITIONS.push(
       'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' Executivo'

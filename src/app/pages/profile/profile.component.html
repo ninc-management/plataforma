@@ -22,6 +22,18 @@
           </div>
           <div class="col-md-10">
             <form #form="ngForm" aria-labelledby="title">
+              <button
+                *ngIf="!isEditing"
+                style="margin-bottom: 10px"
+                nbButton
+                outline
+                fullWidth
+                status="info"
+                size="large"
+                (click)="enableEditing()"
+              >
+                Habilitar Edição
+              </button>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-control-group">
@@ -738,7 +750,7 @@
                   >
                     <textarea
                       nbInput
-                      [(ngModel)]="currentUser.expertise[i].text"
+                      [(ngModel)]="currentUser.expertise[idx].text"
                       #expertise="ngModel"
                       id="input-expertise"
                       name="expertise"
@@ -827,18 +839,6 @@
                   </button>
                 </div>
               </div>
-              <button
-                *ngIf="!isEditing"
-                style="margin-top: 20px"
-                nbButton
-                outline
-                fullWidth
-                status="info"
-                size="large"
-                (click)="enableEditing()"
-              >
-                Habilitar Edição
-              </button>
             </form>
           </div>
         </div>
