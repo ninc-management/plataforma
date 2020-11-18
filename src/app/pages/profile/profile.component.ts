@@ -24,6 +24,7 @@ import * as user_validation from '../../shared/user-validation.json';
 })
 export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('expertise', { read: ElementRef }) expertiseRefs;
+  @ViewChildren('shortExpertise', { read: ElementRef }) shortExpertiseRefs;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
   currentUser: any = {};
   tmpUser;
@@ -94,7 +95,10 @@ export class ProfileComponent implements OnInit, DoCheck {
   }
 
   fixTabText(): void {
-    if (this.expertiseRefs != undefined) {
+    if (
+      this.expertiseRefs != undefined &&
+      this.shortExpertiseRefs != undefined
+    ) {
       this.expertiseRefs.toArray().forEach((el) => {
         const idx = this.currentUser.expertise.findIndex(
           (ael) =>
@@ -103,6 +107,20 @@ export class ProfileComponent implements OnInit, DoCheck {
         );
         if (el.nativeElement.value != this.currentUser.expertise[idx].text)
           el.nativeElement.value = this.currentUser.expertise[idx].text;
+      });
+      this.shortExpertiseRefs.toArray().forEach((el) => {
+        const idx = this.currentUser.expertise.findIndex(
+          (ael) =>
+            ael.coordination ===
+            el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
+        );
+        if (
+          el.nativeElement.value !=
+          this.currentUser.expertise[idx].shortExpertise
+        )
+          el.nativeElement.value = this.currentUser.expertise[
+            idx
+          ].shortExpertise;
       });
     }
   }
@@ -142,9 +160,16 @@ export class ProfileComponent implements OnInit, DoCheck {
       let idx = this.currentUser.expertise.findIndex(
         (el) => el.coordination === cd
       );
-      if (idx != -1) this.ACTIVE_EXPERTISE.push(idx);
-      else {
-        idx = this.currentUser.expertise.push({ coordination: cd, text: '' });
+      if (idx != -1) {
+        if (this.currentUser.expertise[idx].shortExpertise == undefined)
+          this.currentUser.expertise[idx].shortExpertise = '';
+        this.ACTIVE_EXPERTISE.push(idx);
+      } else {
+        idx = this.currentUser.expertise.push({
+          coordination: cd,
+          text: '',
+          shortExpertise: '',
+        });
         this.ACTIVE_EXPERTISE.push(idx - 1);
       }
     });

@@ -688,67 +688,87 @@
               </div>
 
               <div class="form-control-group">
-                <label class="label" for="input-education"
-                  >Especialidade:</label
-                >
-                <textarea
-                  nbInput
-                  [(ngModel)]="currentUser.education"
-                  #education="ngModel"
-                  id="input-education"
-                  name="education"
-                  placeholder="Descreva a sua especialidade. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
-                  fullWidth
-                  fieldSize="large"
-                  [required]="validation.education.required"
-                  [minlength]="validation.education.minLength"
-                  [maxlength]="validation.education.maxLength"
-                  [status]="
-                    education.dirty
-                      ? education.invalid
-                        ? 'danger'
-                        : 'success'
-                      : 'basic'
-                  "
-                  [attr.aria-invalid]="
-                    education.invalid && education.touched ? true : null
-                  "
-                  [disabled]="!isEditing"
-                ></textarea>
-                <ng-container *ngIf="education.invalid && education.touched">
-                  <p
-                    class="caption status-danger"
-                    *ngIf="
-                      education.errors?.required &&
-                      currentUser.education.length == 0
-                    "
-                  >
-                    A especialidade é obrigatório!
-                  </p>
-                  <p
-                    class="caption status-danger"
-                    *ngIf="
-                      education.errors?.minlength || education.errors?.maxlength
-                    "
-                  >
-                    A especialidade atuação deve conter entre
-                    {{ validation.education.minLength }} a
-                    {{ validation.education.maxLength }}
-                    caracteres
-                  </p>
-                </ng-container>
-              </div>
-
-              <div class="form-control-group">
                 <label class="label" for="input-expertise"
-                  >Perfis de atuação:</label
+                  >Perfis de atuação por coordenação:</label
                 >
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
                     [tabTitle]="currentUser.expertise[idx].coordination"
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
-                    {{ currentUser.exibitionName }} é {{ currentUser.level }},
+                    <label class="label" for="input-shortExpertise"
+                      >Especialidade:</label
+                    >
+                    <textarea
+                      nbInput
+                      [(ngModel)]="currentUser.expertise[idx].shortExpertise"
+                      #shortExpertise="ngModel"
+                      id="input-shortExpertise"
+                      name="shortExpertise"
+                      placeholder="Descreva a sua especialidade na {{
+                        currentUser.expertise[idx].coordination
+                      }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
+                      fullWidth
+                      fieldSize="large"
+                      [required]="validation.shortExpertise.required"
+                      [minlength]="validation.shortExpertise.minLength"
+                      [maxlength]="validation.shortExpertise.maxLength"
+                      [status]="
+                        shortExpertise.dirty
+                          ? shortExpertise.invalid
+                            ? 'danger'
+                            : 'success'
+                          : 'basic'
+                      "
+                      [attr.aria-invalid]="
+                        shortExpertise.invalid && shortExpertise.touched
+                          ? true
+                          : null
+                      "
+                      [disabled]="!isEditing"
+                    ></textarea>
+                    <ng-container
+                      *ngIf="shortExpertise.invalid && shortExpertise.touched"
+                    >
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.required &&
+                          currentUser.expertise[idx].shortExpertise.length != 0
+                        "
+                      >
+                        É necessário preencher todas as especialidades!
+                      </p>
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.required &&
+                          currentUser.expertise[idx].shortExpertise.length == 0
+                        "
+                      >
+                        A especialidade em
+                        {{ currentUser.expertise[idx].coordination }} é
+                        obrigatória!
+                      </p>
+                      <p
+                        class="caption status-danger"
+                        *ngIf="
+                          expertise.errors?.minlength ||
+                          expertise.errors?.maxlength
+                        "
+                      >
+                        A especialidade deve conter entre
+                        {{ validation.shortExpertise.minLength }} a
+                        {{ validation.shortExpertise.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                    <label class="label" for="input-expertise"
+                      >Perfil de atuação:</label
+                    >
+                    <p>
+                      {{ currentUser.exibitionName }} é {{ currentUser.level }},
+                    </p>
                     <textarea
                       nbInput
                       [(ngModel)]="currentUser.expertise[idx].text"

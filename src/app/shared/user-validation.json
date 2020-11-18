@@ -37,12 +37,17 @@
   "education": {
     "required": true,
     "minLength": 3,
-    "maxLength": 100
+    "maxLength": 500
   },
   "expertise": {
     "required": true,
     "minLength": 3,
     "maxLength": 500
+  },
+  "shortExpertise": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 100
   },
   "interests": {
     "required": true

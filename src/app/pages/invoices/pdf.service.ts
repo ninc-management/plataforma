@@ -325,7 +325,11 @@ export class PdfService {
         ' Nortan ' +
         invoice.author.fullName +
         ', ' +
-        invoice.author.education +
+        invoice.author.expertise[
+          invoice.author.expertise.findIndex(
+            (el) => el.coordination == invoice.coordination.split(' ')[0]
+          )
+        ]?.shortExpertise +
         ', será ' +
         (invoice.author.article == 'a' ? 'sua' : 'seu') +
         ' Consulto' +
@@ -904,7 +908,7 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
-    // pdf.create().open();
+    // pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
+    pdf.create().open();
   }
 }

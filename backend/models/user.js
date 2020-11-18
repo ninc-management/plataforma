@@ -4,6 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const userExpertise = {
   coordination: { type: String, required: true },
   text: { type: String, required: true },
+  shortExpertise: { type: String, required: true },
 };
 
 const userSchema = mongoose.Schema({
