@@ -723,7 +723,7 @@
                       currentUser.education.length == 0
                     "
                   >
-                    O perfil de atuação na é obrigatório!
+                    A especialidade é obrigatório!
                   </p>
                   <p
                     class="caption status-danger"
@@ -731,7 +731,7 @@
                       education.errors?.minlength || education.errors?.maxlength
                     "
                   >
-                    O perfil de atuação deve conter entre
+                    A especialidade atuação deve conter entre
                     {{ validation.education.minLength }} a
                     {{ validation.education.maxLength }}
                     caracteres
@@ -748,6 +748,7 @@
                     [tabTitle]="currentUser.expertise[idx].coordination"
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
+                    {{ currentUser.exibitionName }} é {{ currentUser.level }},
                     <textarea
                       nbInput
                       [(ngModel)]="currentUser.expertise[idx].text"
