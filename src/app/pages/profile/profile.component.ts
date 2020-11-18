@@ -168,6 +168,7 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.isEditing = false;
     this.currentUser = Object.assign({}, this.tmpUser);
     this.refreshExpertises();
+    this.changeTheme();
   }
 
   buildCityList(state: string): void {

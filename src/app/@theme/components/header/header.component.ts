@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   menuTitle = 'Nortan';
   userPictureOnly: boolean = false;
   user: any;
+  logoIcon: string = 'logo';
 
   userMenu = [
     { title: 'Perfil', link: 'pages/profile' },
@@ -69,6 +70,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .onToggle()
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => (this.menuButtonClicked = !this.menuButtonClicked));
+
+    this.themeService
+      .onThemeChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((theme) => {
+        this.logoIcon = ['dark', 'cosmic'].includes(theme.name)
+          ? 'logoWhite'
+          : 'logo';
+      });
   }
 
   ngOnDestroy() {
