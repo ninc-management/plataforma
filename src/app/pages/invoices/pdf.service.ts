@@ -278,9 +278,11 @@ export class PdfService {
           },
           {
             text:
-              invoice.subtitle1 +
+              invoice.subtitle1.toLowerCase() +
               '\n' +
-              (invoice.subtitle2 == undefined ? '' : invoice.subtitle2),
+              (invoice.subtitle2 == undefined
+                ? ''
+                : invoice.subtitle2.toLowerCase()),
             fontSize: 12,
             alignment: 'right',
             color: '#052E41',
