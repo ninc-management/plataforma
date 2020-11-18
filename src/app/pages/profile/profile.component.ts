@@ -35,12 +35,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   ACTIVE_EXPERTISE: number[] = [];
   DEPARTMENTS: string[] = [];
   POSITIONS: string[] = [];
-  LEVELS: string[] = [
-    'Freelancer',
-    'Associado Júnior',
-    'Associado',
-    'Associado Líder',
-  ];
+  LEVELS: string[] = [];
   THEMES = [
     {
       value: 'default',
@@ -88,6 +83,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       if (this.currentUser.theme == undefined)
         this.currentUser.theme = 'default';
       this.buildPositionsList();
+      this.buildLevelList();
       this.refreshExpertises();
     });
   }
@@ -221,6 +217,14 @@ export class ProfileComponent implements OnInit, DoCheck {
           cd.split('Coordenação')[1]
       );
     });
+  }
+
+  buildLevelList(): void {
+    this.LEVELS = [];
+    this.LEVELS.push('Freelancer');
+    this.LEVELS.push('Associad' + this.currentUser.article + ' Júnior');
+    this.LEVELS.push('Associad' + this.currentUser.article);
+    this.LEVELS.push('Associad' + this.currentUser.article + ' Líder');
   }
 
   changeTheme() {

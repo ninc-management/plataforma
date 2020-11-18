@@ -392,7 +392,7 @@
                       [attr.aria-invalid]="
                         article.invalid && article.touched ? true : null
                       "
-                      (selectedChange)="buildPositionsList()"
+                      (selectedChange)="buildPositionsList(); buildLevelList()"
                       [disabled]="!isEditing"
                     >
                       <nb-option value="a">A</nb-option>
