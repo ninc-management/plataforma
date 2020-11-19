@@ -575,7 +575,7 @@ export class PdfService {
           [{ text: 'ETAPA PRELIMINAR' }],
           [
             {
-              text: '(' + invoice.peep + ')',
+              text: invoice.peep?.length > 0 ? '(' + invoice.peep + ')' : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -612,7 +612,7 @@ export class PdfService {
           [{ text: 'ETAPA EXECUTIVA' }],
           [
             {
-              text: '(' + invoice.peee + ')',
+              text: invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -649,7 +649,7 @@ export class PdfService {
           [{ text: 'ETAPA COMPLEMENTAR' }],
           [
             {
-              text: '(' + invoice.peec + ')',
+              text: invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '',
               fontSize: 8,
               alignment: 'justify',
             },
