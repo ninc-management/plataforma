@@ -185,6 +185,11 @@
               "
               nbTooltipPlacement="top"
               nbTooltipStatus="primary"
+              (selectedChange)="
+                invoice.contractorFullName = contractorService.idToName(
+                  invoice.contractor
+                )
+              "
               [required]="validation.contractor.required"
               [status]="
                 contractor.dirty
@@ -515,6 +520,46 @@
             O nome do contato deve conter entre
             {{ validation.contactName.minLength }} a
             {{ validation.contactName.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="form-control-group">
+        <label class="label" for="input-contractorName">Contratante:</label>
+        <input
+          nbInput
+          [(ngModel)]="invoice.contractorFullName"
+          #contractorName="ngModel"
+          id="input-contractorName"
+          name="contractorName"
+          placeholder="Primeiro nome do contato na empresa"
+          fullWidth
+          fieldSize="large"
+          [minlength]="validation.contractorName.minLength"
+          [maxlength]="validation.contractorName.maxLength"
+          [status]="
+            contractorName.dirty
+              ? contractorName.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            contractorName.invalid && contractorName.touched ? true : null
+          "
+          [disabled]="false"
+        />
+        <ng-container *ngIf="contractorName.invalid && contractorName.touched">
+          <p
+            class="caption status-danger"
+            *ngIf="
+              contractorName.errors?.minlength ||
+              contractorName.errors?.maxlength
+            "
+          >
+            O nome do contratante deve conter entre
+            {{ validation.contractorName.minLength }} a
+            {{ validation.contractorName.maxLength }}
             caracteres
           </p>
         </ng-container>

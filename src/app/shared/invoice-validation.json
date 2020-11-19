@@ -42,6 +42,10 @@
     "minLength": 3,
     "maxLength": 50
   },
+  "contractorName": {
+    "minLength": 3,
+    "maxLength": 200
+  },
   "subject": {
     "minLength": 3,
     "maxLength": 1000

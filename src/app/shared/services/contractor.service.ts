@@ -59,7 +59,7 @@ export class ContractorService implements OnDestroy {
 
   idToName(id: string): string {
     const tmp = this.contractors$.getValue();
-    return tmp[tmp.findIndex((el) => el._id === id)].fullName;
+    return tmp[tmp.findIndex((el) => el._id === id)]?.fullName;
   }
 
   idToContractor(id: string): any {

@@ -162,6 +162,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((contractors) => {
         this.CONTRACTORS = contractors;
+        if (this.iInvoice && this.invoice.contractorFullName == undefined)
+          this.invoice.contractorFullName = this.contractorService.idToName(
+            this.invoice.contractor
+          );
       });
     this.userService.getUsersList().then((uL: any[]) => {
       this.USERS = uL;

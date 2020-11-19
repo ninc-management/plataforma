@@ -523,7 +523,7 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     pdf.add({
-      text: invoice.contractor.fullName,
+      text: invoice.contractorFullName,
       style: 'insideText',
     });
 
