@@ -373,6 +373,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         )
       );
   }
+
+  trackByIndex(index: number, obj: any): any {
+    return index;
+  }
 }
 
 @Component({
