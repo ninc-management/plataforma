@@ -278,7 +278,9 @@ export class PdfService {
           },
           {
             text:
-              invoice.subtitle1.toLowerCase() +
+              (invoice.subtitle1 == undefined
+                ? ''
+                : invoice.subtitle1.toLowerCase()) +
               '\n' +
               (invoice.subtitle2 == undefined
                 ? ''
@@ -908,7 +910,7 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    // pdf.create().download(invoice.code.replace('/', '_') + '.pdf');
+    // pdf.create().download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
     pdf.create().open();
   }
 }
