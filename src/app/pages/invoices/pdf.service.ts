@@ -529,7 +529,10 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     pdf.add({
-      text: invoice.contractorFullName,
+      text:
+        invoice.contractorFullName != undefined
+          ? invoice.contractorFullName
+          : invoice.contractor.fullName,
       style: 'insideText',
     });
 
@@ -921,7 +924,7 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    // pdf.create().download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
-    pdf.create().open();
+    pdf.create().download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
+    // pdf.create().open();
   }
 }
