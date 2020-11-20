@@ -1295,14 +1295,14 @@
       <div class="row">
         <div class="col-md-8">
           <div class="form-control-group">
-            <label class="label" for="input-stage">Etapas:</label>
+            <label class="label" for="input-stage">Parcelamentos:</label>
             <input
               nbInput
               [(ngModel)]="options.stage.name"
               #stage="ngModel"
               id="input-stage"
               name="stage"
-              placeholder="Nome da etapa"
+              placeholder="Nome do parcelamento"
               fullWidth
               fieldSize="large"
               [status]="stage.value ? 'success' : 'basic'"
@@ -1381,7 +1381,7 @@
                 [(ngModel)]="invoice.stages[i].name"
                 id="input-stage-{{ i }}"
                 name="stage-{{ i }}"
-                placeholder="etapa"
+                placeholder="parcelamento"
                 fullWidth
                 [status]="
                   invoice.stages[i].name.length == 0 ? 'danger' : 'basic'
