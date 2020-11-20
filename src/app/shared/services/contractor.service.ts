@@ -52,7 +52,14 @@ export class ContractorService implements OnDestroy {
       .post('/api/contractor/all', {})
       .pipe(take(1))
       .subscribe((contractors: any[]) => {
-        this.contractors$.next(contractors);
+        this.contractors$.next(
+          contractors.sort((a, b) => {
+            return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
+              b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+              ? -1
+              : 1;
+          })
+        );
       });
     return this.contractors$;
   }

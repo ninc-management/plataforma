@@ -45,7 +45,14 @@ export class UserService implements OnDestroy {
       .post('/api/user/all', {})
       .pipe(take(1))
       .subscribe((users: any[]) => {
-        this.users$.next(users);
+        this.users$.next(
+          users.sort((a, b) => {
+            return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
+              b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+              ? -1
+              : 1;
+          })
+        );
       });
     return this.users$;
   }
@@ -54,11 +61,11 @@ export class UserService implements OnDestroy {
     return await this.http
       .post('/api/user/all', {})
       .pipe(
-        map((users) => {
-          (users as any[]).map((user) => {
+        map((users: any[]) => {
+          users.map((user) => {
             return { fullName: user.fullName, _id: user._id };
           });
-          (users as any[]).sort((a, b) => {
+          users.sort((a, b) => {
             return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
               b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
               ? -1
