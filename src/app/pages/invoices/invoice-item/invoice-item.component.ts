@@ -9,6 +9,7 @@ import {
   ElementRef,
   AfterViewInit,
 } from '@angular/core';
+import { CompleterService, CompleterData } from 'ng2-completer';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
@@ -63,6 +64,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   revision: number = 0;
   validation = (invoice_validation as any).default;
   oldStatus: string;
+
+  contractorSearch: string;
+  contractorData: CompleterData;
+
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
   ALL_COORDINATIONS: string[] = [];
@@ -79,7 +84,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public stringUtil: StringUtilService,
     private breakpointService: NbMediaBreakpointsService,
-    public contractorService: ContractorService
+    public contractorService: ContractorService,
+    public completerService: CompleterService
   ) {}
 
   ngOnDestroy(): void {
@@ -101,6 +107,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.invoice.department = this.departmentService.composedName(
         this.invoice.department
       );
+      this.contractorSearch = this.invoice.contractor.fullName;
       this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
       this.revision += 1;
       this.oldStatus = this.invoice.status;
@@ -114,8 +121,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         typeof this.invoice.lastUpdate !== 'object'
       )
         this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
-      if (this.invoice.contractor._id !== undefined)
-        this.invoice.contractor = this.invoice.contractor._id;
       if (this.invoice.peep == undefined)
         this.invoice.peep =
           '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
@@ -166,6 +171,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           this.invoice.contractorFullName = this.contractorService.idToName(
             this.invoice.contractor
           );
+        this.contractorData = this.completerService.local(
+          contractors,
+          'fullName',
+          'fullName'
+        );
       });
     this.userService.getUsersList().then((uL: any[]) => {
       this.USERS = uL;
@@ -282,16 +292,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   tooltipText(contractorItem: any): string {
     if (contractorItem === undefined) return undefined;
-    const contractor = contractorItem.fullName
-      ? contractorItem
-      : this.contractorService.idToContractor(this.invoice.contractor);
     return (
       `CPF/CNPJ: ` +
-      contractor?.document +
+      contractorItem?.document +
       `\nEmail: ` +
-      contractor?.email +
+      contractorItem?.email +
       `\nEndereço: ` +
-      contractor?.address
+      contractorItem?.address
     );
   }
 

@@ -171,25 +171,23 @@
         <div class="col-9 col-md-11">
           <div class="form-control-group">
             <label class="label" for="input-contractor">Cliente:</label>
-            <nb-select
-              [(ngModel)]="invoice.contractor"
+            <nb-completer
+              [(ngModel)]="contractorSearch"
+              (selected)="invoice.contractor = $event.originalObject"
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
-              placeholder="Selecione o cliente do orçamento"
-              fullWidth
-              size="large"
-              [nbTooltip]="tooltipText(invoice.contractor)"
-              [nbTooltipTrigger]="
-                isPhone() || invoice.contractor === undefined ? 'noop' : 'hint'
+              [dataService]="contractorData"
+              [minSearchLength]="0"
+              [placeholder]="
+                'Digite e selecione o nome do cliente do orçamento'
               "
-              nbTooltipPlacement="top"
-              nbTooltipStatus="primary"
-              (selectedChange)="
-                invoice.contractorFullName = contractorService.idToName(
-                  invoice.contractor
-                )
-              "
+              [matchClass]="'match'"
+              [fullWidth]="true"
+              [fieldSize]="'large'"
+              [isPhone]="isPhone()"
+              [tooltipFunction]="tooltipText"
+              [inputObject]="invoice.contractor"
               [required]="validation.contractor.required"
               [status]="
                 contractor.dirty
@@ -202,18 +200,7 @@
                 contractor.invalid && contractor.touched ? true : null
               "
             >
-              <nb-option
-                *ngFor="let contractorItem of CONTRACTORS"
-                [value]="contractorItem._id"
-                [nbTooltip]="tooltipText(contractorItem)"
-                [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
-                nbTooltipPlacement="top"
-                nbTooltipStatus="primary"
-                nbTooltipAdjustment="noop"
-              >
-                {{ contractorItem.fullName }}
-              </nb-option>
-            </nb-select>
+            </nb-completer>
           </div>
         </div>
         <div class="col-3 col-md-1">

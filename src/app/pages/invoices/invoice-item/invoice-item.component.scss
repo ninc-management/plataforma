@@ -10,6 +10,7 @@
   --radio-text-font-size: 1em;
   --radio-text-font-weight: nb-theme(text-label-font-weight);
   --radio-basic-text-color: nb-theme(text-hint-color);
+
   nb-radio-group {
     display: flex;
   }
@@ -79,6 +80,7 @@
 ::ng-deep {
   nb-tooltip {
     white-space: pre-wrap;
+    max-width: 800px;
   }
   .col-auto {
     padding-right: 0;
