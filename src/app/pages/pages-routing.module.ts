@@ -5,6 +5,7 @@ import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ContractsComponent } from './contracts/contracts.component';
+import { ContractorsComponent } from './contractors/contractors.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 
 const routes: Routes = [
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'contracts',
         component: ContractsComponent,
+      },
+      {
+        path: 'contractors',
+        component: ContractorsComponent,
       },
       {
         path: '',
