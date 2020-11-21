@@ -59,25 +59,17 @@
         nbTooltipStatus="primary"
         nbTooltipAdjustment="noop"
       >
-        <div class="completer-row" [ctrRow]="rowIndex" [dataItem]="item">
-          <span
-            *ngIf="item.image || item.image === ''"
-            class="completer-image-holder"
-          >
+        <div class="completer-row row" [ctrRow]="rowIndex" [dataItem]="item">
+          <div class="col-2" class="completer-image-holder">
             <nb-user
-              *ngIf="item.image != ''"
               class="completer-image"
               [onlyPicture]="true"
-              [name]="'Image'"
+              [name]="item.title"
               [picture]="item.image"
             >
             </nb-user>
-            <span
-              *ngIf="item.image === ''"
-              class="completer-image-default"
-            ></span>
-          </span>
-          <span>
+          </div>
+          <div class="col-10" style="display: flex; align-items: center">
             <completer-list-item
               class="completer-title"
               [text]="item.title"
@@ -94,7 +86,7 @@
               [type]="'description'"
             >
             </completer-list-item>
-          </span>
+          </div>
         </div>
       </nb-list-item>
     </nb-list>

@@ -67,14 +67,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   contractorSearch: string;
   contractorData: CompleterData;
+  userSearch: string;
+  userData: CompleterData;
 
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
   ALL_COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
   STATOOS = ['Em análise', 'Fechado', 'Negado'];
-  CONTRACTORS = [];
-  USERS = [];
 
   constructor(
     private dialogService: NbDialogService,
@@ -166,19 +166,20 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .getContractors()
       .pipe(takeUntil(this.destroy$))
       .subscribe((contractors) => {
-        this.CONTRACTORS = contractors;
+        this.contractorData = this.completerService.local(
+          contractors,
+          'fullName,document',
+          'fullName'
+        );
         if (this.iInvoice && this.invoice.contractorFullName == undefined)
           this.invoice.contractorFullName = this.contractorService.idToName(
             this.invoice.contractor
           );
-        this.contractorData = this.completerService.local(
-          contractors,
-          'fullName',
-          'fullName'
-        );
       });
     this.userService.getUsersList().then((uL: any[]) => {
-      this.USERS = uL;
+      this.userData = this.completerService
+        .local(uL, 'fullName', 'fullName')
+        .imageField('profilePicture');
     });
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
     this.ALL_COORDINATIONS = this.departmentService
@@ -223,19 +224,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   addColaborator(): void {
     this.invoice.team.push(Object.assign({}, this.teamMember));
+    this.userSearch = undefined;
     this.teamMember = {};
     this.USER_COORDINATIONS = [];
   }
 
-  idToName(id: string): string {
-    const entry = this.USERS.find((el) => el._id === id);
-    return entry?.fullName;
-  }
-
   updateUserCoordinations(): void {
-    const selectedUser = this.USERS.find(
-      (el) => el._id === this.teamMember.user
-    );
+    const selectedUser = this.teamMember.user;
     const active: boolean[] = [
       selectedUser.adm,
       selectedUser.design,

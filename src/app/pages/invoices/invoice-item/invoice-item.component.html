@@ -173,6 +173,7 @@
             <label class="label" for="input-contractor">Cliente:</label>
             <nb-completer
               [(ngModel)]="contractorSearch"
+              [inputName]="'contractorCompleter'"
               (selected)="invoice.contractor = $event.originalObject"
               #contractor="ngModel"
               id="input-contractor"
@@ -181,6 +182,9 @@
               [minSearchLength]="0"
               [placeholder]="
                 'Digite e selecione o nome do cliente do orçamento'
+              "
+              [textNoResults]="
+                'Não foi possível achar um cliente com o nome digitado'
               "
               [matchClass]="'match'"
               [fullWidth]="true"
@@ -555,24 +559,39 @@
         <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-user">Colaborador:</label>
-            <nb-select
-              [(ngModel)]="teamMember.user"
+            <nb-completer
+              [(ngModel)]="userSearch"
+              [inputName]="'userListCompleter'"
+              (selected)="
+                teamMember.user = $event.originalObject;
+                updateUserCoordinations()
+              "
               #userList="ngModel"
               id="input-user"
               name="userList"
-              placeholder="Nome do colaborador"
-              fullWidth
-              size="large"
-              [status]="userList.value ? 'success' : 'basic'"
+              [dataService]="userData"
+              [minSearchLength]="0"
+              [placeholder]="
+                'Digite e selecione o nome do cliente do orçamento'
+              "
+              [textNoResults]="
+                'Não foi possível achar um colaborador com o nome digitado'
+              "
+              [matchClass]="'match'"
+              [fullWidth]="true"
+              [fieldSize]="'large'"
+              [status]="
+                userList.dirty && userSearch
+                  ? userList.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
               [attr.aria-invalid]="
                 userList.invalid && userList.touched ? true : null
               "
-              (selectedChange)="updateUserCoordinations()"
             >
-              <nb-option *ngFor="let user of USERS" [value]="user._id">
-                {{ user.fullName }}
-              </nb-option>
-            </nb-select>
+            </nb-completer>
           </div>
         </div>
         <div class="col-md-5">
@@ -623,11 +642,7 @@
         <nb-list-item *ngFor="let member of invoice.team; let i = index">
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{
-                member.user.fullName
-                  ? member.user.fullName
-                  : idToName(member.user)
-              }}
+              {{ member.user.fullName }}
             </div>
             <div class="col-10 col-md-5">
               {{ member.coordination }}
