@@ -19,7 +19,7 @@
     background: nb-theme(card-background-color);
     border: nb-theme(card-border-width) nb-theme(card-border-style)
       nb-theme(card-border-color);
-    border-width: 1px 1px;
+    border-width: 1px;
     max-height: 300px !important;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -32,7 +32,7 @@
   nb-list {
     width: 100%;
     nb-list-item {
-      padding: 0 0;
+      padding: 0;
     }
   }
 }

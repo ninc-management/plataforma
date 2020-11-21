@@ -178,6 +178,7 @@
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
+              [selectedText]="invoice.contractor.fullName"
               [dataService]="contractorData"
               [minSearchLength]="0"
               [placeholder]="
@@ -190,6 +191,7 @@
               [fullWidth]="true"
               [fieldSize]="'large'"
               [isPhone]="isPhone()"
+              [showAvatar]="false"
               [tooltipFunction]="tooltipText"
               [inputObject]="invoice.contractor"
               [required]="validation.contractor.required"
@@ -569,10 +571,11 @@
               #userList="ngModel"
               id="input-user"
               name="userList"
+              [selectedText]="teamMember.user?.fullName"
               [dataService]="userData"
               [minSearchLength]="0"
               [placeholder]="
-                'Digite e selecione o nome do cliente do orçamento'
+                'Digite e selecione o nome do colaborador do orçamento'
               "
               [textNoResults]="
                 'Não foi possível achar um colaborador com o nome digitado'

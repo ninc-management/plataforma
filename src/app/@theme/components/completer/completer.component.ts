@@ -41,6 +41,7 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
   styleUrls: ['./completer.component.scss'],
   providers: [COMPLETER_CONTROL_VALUE_ACCESSOR],
 })
+/* eslint-disable @typescript-eslint/indent */
 export class NbCompleterComponent
   implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() public dataService: CompleterData | undefined;
@@ -49,9 +50,14 @@ export class NbCompleterComponent
   @Input() public minSearchLength = MIN_SEARCH_LENGTH;
   @Input() public maxChars = MAX_CHARS;
   @Input() public overrideSuggested = false;
-  @Input() public fillHighlighted = true;
+  @Input() public fillHighlighted = false;
   @Input() public clearSelected = false;
+  @Input() public openOnFocus = true;
+  @Input() public openOnClick = false;
+  @Input() public selectOnClick = false;
+  @Input() public selectOnFocus = true;
   @Input() public placeholder = '';
+  @Input() public selectedText: string = undefined;
   @Input() public matchClass: string | undefined;
   @Input() public textSearching = TEXT_SEARCHING;
   @Input() public textNoResults = TEXT_NO_RESULTS;
@@ -62,6 +68,7 @@ export class NbCompleterComponent
   @Input() public fieldSize = 'normal';
   @Input() public status = 'basic';
   @Input() public isPhone = false;
+  @Input() public showAvatar = true;
   @Input() public inputObject: any | undefined;
   @Input() public tooltipFunction: (args: any) => string = function (
     args: any
@@ -75,14 +82,17 @@ export class NbCompleterComponent
 
   public displaySearching = true;
   public searchStr = '';
+  public focused = false;
 
   @ViewChild(CtrCompleter, { static: true }) private completer:
     | CtrCompleter
     | undefined;
+  /* eslint-enable @typescript-eslint/indent */
 
   private destroy$ = new Subject<void>();
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
+  private lastSelected: CompleterItem;
 
   get value(): any {
     return this.searchStr;
@@ -95,23 +105,23 @@ export class NbCompleterComponent
     }
   }
 
-  public onTouched() {
+  public onTouched(): void {
     this._onTouchedCallback();
   }
 
-  public writeValue(value: any) {
+  public writeValue(value: any): void {
     this.searchStr = value;
   }
 
-  public registerOnChange(fn: any) {
+  public registerOnChange(fn: any): void {
     this._onChangeCallback = fn;
   }
 
-  public registerOnTouched(fn: any) {
+  public registerOnTouched(fn: any): void {
     this._onTouchedCallback = fn;
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     if (!this.completer) {
       return;
     }
@@ -121,6 +131,7 @@ export class NbCompleterComponent
       .subscribe((item: CompleterItem) => {
         if (item) {
           this.selected.emit(item);
+          this.lastSelected = item;
           this._onChangeCallback(item.title);
         }
       });
@@ -140,8 +151,16 @@ export class NbCompleterComponent
     this.destroy$.complete();
   }
 
-  public onBlur() {
+  public onBlur(): void {
     this.blur.emit();
+    setTimeout(() => {
+      this.focused = false;
+      this.searchStr = this.selectedText;
+    }, 500);
     this.onTouched();
+  }
+
+  public onFocus(): void {
+    this.focused = true;
   }
 }
