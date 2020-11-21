@@ -26,6 +26,7 @@ import {
   LayoutDirectionSwitcherComponent,
   SearchInputComponent,
   SwitcherComponent,
+  NbCompleterModule,
   NbFileUploaderModule,
 } from './components';
 import {
@@ -58,6 +59,7 @@ const NB_MODULES = [
   NbSelectModule,
   NbIconModule,
   NbEvaIconsModule,
+  NbCompleterModule,
   NbFileUploaderModule,
 ];
 const COMPONENTS = [
@@ -80,7 +82,7 @@ const PIPES = [
 
 @NgModule({
   imports: [CommonModule, MatRippleModule, ...NB_MODULES],
-  exports: [CommonModule, ...PIPES, ...COMPONENTS],
+  exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
   providers: [
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService },

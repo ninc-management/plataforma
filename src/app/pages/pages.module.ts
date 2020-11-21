@@ -17,6 +17,7 @@ import {
   NbTooltipModule,
   NbDatepickerModule,
 } from '@nebular/theme';
+import { Ng2CompleterModule } from 'ng2-completer';
 import { ThemeModule } from '../@theme/theme.module';
 import { PagesComponent } from './pages.component';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -56,6 +57,7 @@ import { ContractorItemComponent } from './contractors/contractor-item/contracto
     NbTooltipModule,
     NbUserModule,
     Ng2SmartTableModule,
+    Ng2CompleterModule,
     PagesRoutingModule,
     SharedModule,
     ThemeModule,

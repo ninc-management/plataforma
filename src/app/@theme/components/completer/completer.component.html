@@ -1,0 +1,102 @@
+<div class="completer-holder" ctrCompleter>
+  <input
+    nbInput
+    [status]="status"
+    [fullWidth]="fullWidth"
+    [fieldSize]="fieldSize"
+    ctrInput="clearSelected=clearSelected; overrideSuggested=overrideSuggested; fillHighlighted=fillHighlighted"
+    [(ngModel)]="searchStr"
+    #inputCompleter="ngModel"
+    [attr.name]="inputName"
+    [attr.maxlength]="maxChars"
+    [tabindex]="fieldTabindex"
+    [disabled]="disableInput"
+    (blur)="onBlur()"
+    [placeholder]="placeholder"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    [nbTooltip]="tooltipFunction(this.inputObject)"
+    [nbTooltipTrigger]="isPhone ? 'noop' : 'hint'"
+    nbTooltipPlacement="top"
+    nbTooltipStatus="primary"
+    nbTooltipAdjustment="noop"
+  />
+
+  <div
+    class="completer-dropdown-holder"
+    *ctrList="
+      dataService;
+      minSearchLength: minSearchLength;
+      pause: pause;
+      autoMatch: autoMatch;
+      let items = results;
+      let searchActive = searching;
+      let isInitialized = searchInitialized
+    "
+  >
+    <nb-list
+      class="completer-dropdown"
+      ctrDropdown
+      *ngIf="isInitialized && inputCompleter.dirty"
+    >
+      <nb-list-item
+        *ngIf="searchActive && displaySearching"
+        class="completer-searching"
+        >{{ textSearching }}</nb-list-item
+      >
+      <nb-list-item
+        *ngIf="!searchActive && (!items || items.length === 0)"
+        class="completer-no-results"
+        >{{ textNoResults }}</nb-list-item
+      >
+      <nb-list-item
+        class="completer-row-wrapper"
+        *ngFor="let item of items; let rowIndex = index"
+        [nbTooltip]="tooltipFunction(item.originalObject)"
+        [nbTooltipTrigger]="isPhone ? 'noop' : 'hint'"
+        nbTooltipPlacement="top"
+        nbTooltipStatus="primary"
+        nbTooltipAdjustment="noop"
+      >
+        <div class="completer-row" [ctrRow]="rowIndex" [dataItem]="item">
+          <span
+            *ngIf="item.image || item.image === ''"
+            class="completer-image-holder"
+          >
+            <nb-user
+              *ngIf="item.image != ''"
+              class="completer-image"
+              [onlyPicture]="true"
+              [name]="'Image'"
+              [picture]="item.image"
+            >
+            </nb-user>
+            <span
+              *ngIf="item.image === ''"
+              class="completer-image-default"
+            ></span>
+          </span>
+          <span>
+            <completer-list-item
+              class="completer-title"
+              [text]="item.title"
+              [matchClass]="matchClass"
+              [searchStr]="searchStr"
+              [type]="'title'"
+            ></completer-list-item>
+            <completer-list-item
+              *ngIf="item.description && item.description != ''"
+              class="completer-description"
+              [text]="item.description"
+              [matchClass]="matchClass"
+              [searchStr]="searchStr"
+              [type]="'description'"
+            >
+            </completer-list-item>
+          </span>
+        </div>
+      </nb-list-item>
+    </nb-list>
+  </div>
+</div>
