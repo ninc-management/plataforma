@@ -336,24 +336,36 @@
     <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-user">Colaborador:</label>
-        <nb-select
-          [(ngModel)]="userPayment.user"
+        <nb-completer
+          [(ngModel)]="userSearch"
+          [inputName]="'userListCompleter'"
+          (selected)="
+            userPayment.user = $event.originalObject; updateUserCoordinations()
+          "
           #userList="ngModel"
           id="input-user"
           name="userList"
-          placeholder="Nome do colaborador"
-          fullWidth
-          size="large"
-          [required]="validation.user.required"
-          [status]="userList.value ? 'success' : 'basic'"
+          [dataService]="userData"
+          [minSearchLength]="0"
+          [placeholder]="'Digite o nome do colaborador'"
+          [textNoResults]="
+            'Não foi possível achar um colaborador com o nome digitado'
+          "
+          [matchClass]="'match'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [status]="
+            userList.dirty && userSearch
+              ? userList.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="
             userList.invalid && userList.touched ? true : null
           "
         >
-          <nb-option *ngFor="let user of USERS" [value]="user._id">
-            {{ user.fullName }}
-          </nb-option>
-        </nb-select>
+        </nb-completer>
       </div>
     </div>
     <div class="col-md-4">
@@ -374,7 +386,7 @@
           "
         >
           <nb-option
-            *ngFor="let coordination of COORDINATIONS"
+            *ngFor="let coordination of USER_COORDINATIONS"
             [value]="coordination"
           >
             {{ coordination }}
@@ -442,11 +454,7 @@
     <nb-list-item *ngFor="let userPayment of payment.team; let i = index">
       <div class="row paymentRow">
         <div class="col-12 col-md-4">
-          {{
-            userPayment.user.fullName
-              ? userPayment.user.fullName
-              : idToName(userPayment.user)
-          }}
+          {{ userPayment.user.fullName }}
         </div>
         <div class="col-12 col-md-4">
           {{ userPayment.coordination }}

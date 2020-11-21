@@ -8,6 +8,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { format, parseISO } from 'date-fns';
+import { CompleterService, CompleterData } from 'ng2-completer';
 import { DepartmentService } from '../../../../shared/services/department.service';
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
@@ -26,8 +27,8 @@ export class PaymentItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
   valueInputRef: ElementRef<HTMLInputElement>;
-  COORDINATIONS: string[];
-  USERS: any[];
+  ALL_COORDINATIONS: string[];
+  USER_COORDINATIONS: string[];
   total = '0';
   today = new Date();
   validation = (contract_validation as any).default;
@@ -47,16 +48,22 @@ export class PaymentItemComponent implements OnInit {
     lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
   };
 
+  userSearch: string;
+  userData: CompleterData;
+
   constructor(
     private departmentService: DepartmentService,
     private contractService: ContractService,
     private userService: UserService,
+    private completerService: CompleterService,
     public stringUtil: StringUtilService
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.COORDINATIONS = this.departmentService.buildAllCoordinationsList();
-    this.USERS = await this.userService.getUsersList();
+    this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+    this.userData = this.completerService
+      .local(await this.userService.getUsersList(), 'fullName', 'fullName')
+      .imageField('profilePicture');
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
         (accumulator: number, payment: any) =>
@@ -123,12 +130,8 @@ export class PaymentItemComponent implements OnInit {
       );
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {};
+    this.userSearch = undefined;
     this.updateTotal();
-  }
-
-  idToName(id: string): string {
-    const entry = this.USERS.find((el) => el._id === id);
-    return entry.fullName;
   }
 
   toLiquid(value: string): void {
@@ -184,5 +187,28 @@ export class PaymentItemComponent implements OnInit {
   updatePaidDate(): void {
     if (this.payment.paid === 'não') this.payment.paidDate = undefined;
     else this.payment.paidDate = new Date();
+  }
+
+  updateUserCoordinations(): void {
+    const selectedUser = this.userPayment.user;
+    const active: boolean[] = [
+      selectedUser.adm,
+      selectedUser.design,
+      selectedUser.obras,
+      selectedUser.impermeabilizacao,
+      selectedUser.instalacoes,
+      selectedUser.ambiental,
+      selectedUser.arquitetura,
+      selectedUser.hidrico,
+      selectedUser.eletrica,
+      selectedUser.civil,
+      selectedUser.sanitaria,
+    ];
+    this.USER_COORDINATIONS = this.ALL_COORDINATIONS.filter(
+      (cd: string, idx: number) => {
+        return active[idx];
+      }
+    );
+    this.userPayment.coordination = undefined;
   }
 }
