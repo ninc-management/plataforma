@@ -1,5 +1,9 @@
 import { Component, OnInit, Inject, Input } from '@angular/core';
-import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+import {
+  NB_DOCUMENT,
+  NbDialogRef,
+  NbMediaBreakpointsService,
+} from '@nebular/theme';
 
 @Component({
   selector: 'ngx-contractor-dialog',
@@ -13,7 +17,8 @@ export class ContractorDialogComponent implements OnInit {
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
-    protected ref: NbDialogRef<ContractorDialogComponent>
+    protected ref: NbDialogRef<ContractorDialogComponent>,
+    private breakpointService: NbMediaBreakpointsService
   ) {}
 
   ngOnInit(): void {
@@ -28,6 +33,11 @@ export class ContractorDialogComponent implements OnInit {
 
   dismiss(): void {
     this.ref.close();
+  }
+
+  isPhone(): boolean {
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= md;
   }
 
   windowWidth(): number {
