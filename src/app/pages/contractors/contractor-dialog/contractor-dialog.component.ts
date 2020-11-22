@@ -9,6 +9,7 @@ import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 export class ContractorDialogComponent implements OnInit {
   @Input() title: string;
   @Input() contractor: any;
+  @Input() contractorIndex: number;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,

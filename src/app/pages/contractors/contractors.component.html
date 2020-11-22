@@ -1,1 +1,65 @@
-<p>contractors works!</p>
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header *ngIf="pageWidth() < 576">
+        <div class="row">
+          <div class="col-2" style="padding-left: 0; padding-right: 0">
+            <button
+              nbButton
+              fullWidth
+              status="primary"
+              (click)="contractorDialog({})"
+              style="height: 100%"
+            >
+              <nb-icon icon="plus"></nb-icon>
+            </button>
+          </div>
+          <div class="col-10">
+            <input
+              nbInput
+              [(ngModel)]="searchQuery"
+              #contractor="ngModel"
+              id="input-contractor"
+              name="contractor"
+              placeholder="Busque aqui..."
+              fullWidth
+              fieldSize="large"
+            />
+          </div>
+        </div>
+      </nb-card-header>
+      <ng2-smart-table
+        *ngIf="pageWidth() >= 576; else phone"
+        [settings]="settings"
+        [source]="source"
+        (edit)="contractorDialog($event)"
+      >
+      </ng2-smart-table>
+      <ng-template #phone>
+        <nb-list>
+          <nb-list-item
+            *ngFor="let contractor of filtredContractors; let i = index"
+          >
+            <a (click)="contractorDialog({ data: contractor })">
+              <div class="row">
+                <div class="col-12" style="margin-bottom: 10px">
+                  <nb-user
+                    size="giant"
+                    [name]="contractor.fullName"
+                    [title]="contractor.document"
+                  >
+                  </nb-user>
+                </div>
+                <div class="col-12">
+                  <p>
+                    {{ contractor.email }}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </nb-list-item>
+        </nb-list>
+      </ng-template>
+    </nb-card>
+  </div>
+</div>
