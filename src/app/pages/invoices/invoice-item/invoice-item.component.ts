@@ -276,7 +276,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   addContractor(): void {
     this.dialogService.open(ContractorDialogComponent, {
       context: {
-        title: 'ADICIONAR CLIENTE',
+        title: 'CADASTRO DE CLIENTE',
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
