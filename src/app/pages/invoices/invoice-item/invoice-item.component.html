@@ -476,46 +476,68 @@
           <hr />
         </div>
       </div>
-      <div class="form-control-group">
-        <label class="label" for="input-contactName"
-          >Primeiro nome do contato:</label
-        >
-        <input
-          nbInput
-          [(ngModel)]="invoice.contactName"
-          #contactName="ngModel"
-          id="input-contactName"
-          name="contactName"
-          placeholder="Primeiro nome do contato na empresa"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.contactName.minLength"
-          [maxlength]="validation.contactName.maxLength"
-          [status]="
-            contactName.dirty
-              ? contactName.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            contactName.invalid && contactName.touched ? true : null
-          "
-          [disabled]="false"
-        />
-        <ng-container *ngIf="contactName.invalid && contactName.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="
-              contactName.errors?.minlength || contactName.errors?.maxlength
-            "
-          >
-            O nome do contato deve conter entre
-            {{ validation.contactName.minLength }} a
-            {{ validation.contactName.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="form-control-group">
+            <label class="label" for="input-contactName"
+              >Primeiro nome do contato:</label
+            >
+            <input
+              nbInput
+              [(ngModel)]="invoice.contactName"
+              #contactName="ngModel"
+              id="input-contactName"
+              name="contactName"
+              placeholder="Primeiro nome do contato na empresa"
+              fullWidth
+              fieldSize="large"
+              [minlength]="validation.contactName.minLength"
+              [maxlength]="validation.contactName.maxLength"
+              [status]="
+                contactName.dirty
+                  ? contactName.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                contactName.invalid && contactName.touched ? true : null
+              "
+              [disabled]="false"
+            />
+            <ng-container *ngIf="contactName.invalid && contactName.touched">
+              <p
+                class="caption status-danger"
+                *ngIf="
+                  contactName.errors?.minlength || contactName.errors?.maxlength
+                "
+              >
+                O nome do contato deve conter entre
+                {{ validation.contactName.minLength }} a
+                {{ validation.contactName.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-contactPlural">Usar plural:</label>
+            <div class="row">
+              <div class="col-12">
+                <nb-checkbox
+                  [(ngModel)]="invoice.contactPlural"
+                  #contactPlural="ngModel"
+                  name="contactPlural"
+                  [status]="contactPlural.value ? 'success' : 'basic'"
+                  style="top: 12px; position: relative"
+                >
+                  Tratar no plural
+                </nb-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="form-control-group">
         <label class="label" for="input-contractorName">Contratante:</label>

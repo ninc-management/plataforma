@@ -483,7 +483,11 @@ export class PdfService {
 
     pdf.add({
       text:
-        'Nesse arquivo vocês encontrarão a descrição do serviço com as etapas do projeto, os prazos, os valores e tudo o que foi pedido por vocês no nosso primeiro contato.',
+        'Nesse arquivo voc' +
+        (invoice.contactPlural ? 'ês' : 'ê') +
+        ' encontrar' +
+        (invoice.contactPlural ? 'ão' : 'á') +
+        ' a descrição do serviço com as etapas do projeto, os prazos, os valores e tudo o que foi pedido por vocês no nosso primeiro contato.',
       alignment: 'center',
       style: 'insideText',
     });
