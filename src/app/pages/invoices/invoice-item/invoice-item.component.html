@@ -580,6 +580,23 @@
         </ng-container>
       </div>
       <div class="row">
+        <div class="col-12">
+          <nb-alert outline="info" role="alert" style="margin-bottom: 0">
+            <b
+              >Não é preciso inserir o gestor na lista de membros!
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="O gestor sempre está no orçamento, sendo o primeiro a aparecer, e seu perfil de atuação será o mesmo da coordenação do orçamento"
+                [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon
+            ></b>
+          </nb-alert>
+        </div>
         <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-user">Colaborador:</label>
@@ -679,6 +696,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.team.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -822,6 +840,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.laep.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -955,6 +974,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.laee.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -1088,6 +1108,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.laec.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -1257,6 +1278,7 @@
                         icon="trash-2-outline"
                         pack="eva"
                         (click)="product.subproducts.splice(j, 1)"
+                        [options]="{ animation: { type: 'shake' } }"
                       ></nb-icon>
                     </div>
                   </div>
@@ -1276,6 +1298,7 @@
                 icon="plus-outline"
                 pack="eva"
                 (click)="addSubproduct(product)"
+                [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               <nb-icon
                 class="xIcon"
@@ -1283,6 +1306,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.products.splice(i, 1); updateTotal('product')"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -1428,6 +1452,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.stages.splice(i, 1); updateTotal('stage')"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>
@@ -1534,6 +1559,7 @@
                 icon="trash-2-outline"
                 pack="eva"
                 (click)="invoice.importants.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
           </div>

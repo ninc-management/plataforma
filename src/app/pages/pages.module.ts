@@ -16,6 +16,7 @@ import {
   NbRadioModule,
   NbTooltipModule,
   NbDatepickerModule,
+  NbAlertModule,
 } from '@nebular/theme';
 import { Ng2CompleterModule } from 'ng2-completer';
 import { ThemeModule } from '../@theme/theme.module';
@@ -42,6 +43,7 @@ import { ContractorItemComponent } from './contractors/contractor-item/contracto
   imports: [
     DashboardModule,
     FormsModule,
+    NbAlertModule,
     NbButtonModule,
     NbCardModule,
     NbCheckboxModule,
