@@ -728,6 +728,9 @@ export class PdfService {
         ];
       return product.name + ': R$ ' + product.value;
     });
+    let extensoValue = extenso(invoice.value, { mode: 'currency' });
+    if ((extensoValue.split(' ')[0] = 'mil'))
+      extensoValue = 'um ' + extensoValue;
     pdf.add({
       style: 'insideText',
       table: {
@@ -738,7 +741,7 @@ export class PdfService {
             {
               text: [
                 { text: 'VALOR DO PROJETO: R$ ' + invoice.value, bold: true },
-                '  (' + extenso(invoice.value, { mode: 'currency' }) + ')',
+                '  (' + extensoValue + ')',
               ],
             },
           ],
@@ -851,7 +854,9 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    const importants = invoice.importants.map((important) => important);
+    const importants = invoice.importants.map((important, index) => {
+      return important + (index == invoice.importants.length - 1 ? '.' : ';');
+    });
     pdf.add({
       style: 'insideText',
       table: {
