@@ -59,7 +59,6 @@ export class InvoiceDialogComponent implements OnInit {
     delete oInvoice.lastUpdate;
     delete oInvoice.status;
     oInvoice.model = true;
-    console.log(oInvoice);
     this.ref.close(oInvoice);
   }
 

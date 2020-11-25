@@ -121,40 +121,47 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         typeof this.invoice.lastUpdate !== 'object'
       )
         this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
-      if (this.invoice.peep == undefined)
-        this.invoice.peep =
-          '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
-      if (this.invoice.dep == undefined)
-        this.invoice.dep =
-          'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
-      if (this.invoice.peee == undefined)
-        this.invoice.peee =
-          'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
-      if (this.invoice.dee == undefined)
-        this.invoice.dee =
-          'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.';
-      if (this.invoice.peec == undefined)
-        this.invoice.peec =
-          'será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente';
-      if (this.invoice.dec == undefined)
-        this.invoice.dec =
-          'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
-      if (this.invoice.importants.length == 0)
-        this.invoice.importants = [
-          'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato.',
-          'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto.',
-          'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente.',
-          'O produto final será entregue por e-mail em PDF para o cliente + 02 (duas) cópias impressas. ',
-          'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante.',
-        ];
       this.updateTotal('product');
       this.updateTotal('stage');
     } else {
       this.invoice = {
         created: new Date(),
         lastUpdate: new Date(),
+        importants: [],
+        stages: [],
+        products: [],
+        laec: [],
+        laee: [],
+        laep: [],
+        team: [],
       };
     }
+    if (this.invoice.peep == undefined)
+      this.invoice.peep =
+        '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
+    if (this.invoice.dep == undefined)
+      this.invoice.dep =
+        'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
+    if (this.invoice.peee == undefined)
+      this.invoice.peee =
+        'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
+    if (this.invoice.dee == undefined)
+      this.invoice.dee =
+        'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.';
+    if (this.invoice.peec == undefined)
+      this.invoice.peec =
+        'será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente';
+    if (this.invoice.dec == undefined)
+      this.invoice.dec =
+        'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
+    if (this.invoice.importants.length == 0)
+      this.invoice.importants = [
+        'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato.',
+        'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto.',
+        'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente.',
+        'O produto final será entregue por e-mail em PDF para o cliente + 02 (duas) cópias impressas. ',
+        'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante.',
+      ];
     this.invoiceService
       .invoicesSize()
       .pipe(take(2))
