@@ -75,6 +75,7 @@ export class PdfService {
         usedWidth += currentNode.width;
         if (usedWidth > maxWidth) {
           currentMaxHeight += currentNode.height;
+          usedWidth = currentNode.width;
         } else {
           currentMaxHeight = Math.max(currentNode.height, currentMaxHeight);
         }
