@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 // var logger = require('morgan');
 const helmet = require('helmet');
-
+const cors = require('cors');
 // Import API endpoint routes
 const authRoutes = require('./routes/auth');
 const emailRoutes = require('./routes/email');
@@ -35,10 +35,12 @@ mongoose
 mongoose.set('useCreateIndex', true);
 
 // app.use(logger('dev'));
-app.use( 
+app.use(
   helmet({
     contentSecurityPolicy: false,
-  }));
+  })
+);
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', express.static(path.join(__dirname, 'angular')));

@@ -25,6 +25,14 @@ import {
   NbWindowModule,
 } from '@nebular/theme';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = {
+  url: '',
+  options: {
+    path: '/api/socket.io',
+  },
+};
 
 registerLocaleData(ptBr);
 
@@ -48,6 +56,7 @@ registerLocaleData(ptBr);
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    SocketIoModule.forRoot(config),
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'pt' }],
   bootstrap: [AppComponent],
