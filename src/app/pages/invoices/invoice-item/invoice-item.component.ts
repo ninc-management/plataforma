@@ -185,11 +185,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
             this.invoice.contractor
           );
       });
-    this.userService.getUsersList().then((uL: any[]) => {
-      this.userData = this.completerService
-        .local(uL, 'fullName', 'fullName')
-        .imageField('profilePicture');
-    });
+
+    this.userData = this.completerService
+      .local(this.userService.getUsersList(), 'fullName', 'fullName')
+      .imageField('profilePicture');
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
     this.ALL_COORDINATIONS = this.departmentService
       .buildAllCoordinationsList()

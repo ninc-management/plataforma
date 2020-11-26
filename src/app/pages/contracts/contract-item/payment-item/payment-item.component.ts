@@ -59,10 +59,10 @@ export class PaymentItemComponent implements OnInit {
     public stringUtil: StringUtilService
   ) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
     this.userData = this.completerService
-      .local(await this.userService.getUsersList(), 'fullName', 'fullName')
+      .local(this.userService.getUsersList(), 'fullName', 'fullName')
       .imageField('profilePicture');
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(

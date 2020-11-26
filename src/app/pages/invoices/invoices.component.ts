@@ -117,7 +117,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private invoicetService: InvoiceService,
+    private invoiceService: InvoiceService,
     private breakpointService: NbMediaBreakpointsService,
     private contractorService: ContractorService,
     private userService: UserService,
@@ -130,8 +130,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.contractorService;
-    this.invoicetService
+    this.invoiceService
       .getInvoices()
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices: any[]) => {
@@ -148,7 +147,9 @@ export class InvoicesComponent implements OnInit, OnDestroy {
                 return (member.user = this.userService.idToUser(member.user));
               return member;
             });
-            invoice.fullName = invoice.author.fullName;
+            invoice.fullName = invoice.author.exibitionName
+              ? invoice.author.exibitionName
+              : invoice.author.fullName;
             invoice.contractorName = invoice.contractor.fullName;
             return invoice;
           });

@@ -40,8 +40,12 @@ server.listen(port);
 
 const io = require('socket.io')(server, { path: '/api/socket.io' });
 const Invoice = require('./backend/models/invoice');
+const User = require('./backend/models/user');
 
 io.on('connection', (socket) => {
+  User.watch().on('change', (data) => {
+    socket.emit('users', data);
+  });
   Invoice.watch().on('change', (data) => {
     socket.emit('invoices', data);
   });

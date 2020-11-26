@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
+import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
@@ -20,6 +21,7 @@ export class InvoiceService implements OnDestroy {
     private userService: UserService,
     private contractService: ContractService,
     private contractorService: ContractorService,
+    private wsService: WebSocketService,
     private socket: Socket
   ) {
     this.contractorService.getContractors();
@@ -68,7 +70,7 @@ export class InvoiceService implements OnDestroy {
       this.socket
         .fromEvent('invoices')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) => this.watchHandler(data));
+        .subscribe((data) => this.wsService.handle(data, this.invoices$));
     }
 
     return this.invoices$;
@@ -82,37 +84,5 @@ export class InvoiceService implements OnDestroy {
         this.size$.next(+numberJson['size'] + 1);
       });
     return this.size$;
-  }
-
-  watchHandler(data: any): void {
-    if (data == {}) return;
-    switch (data.operationType) {
-      case 'update': {
-        let tmpArray = this.invoices$.getValue();
-        let idx = tmpArray.findIndex((el) => el._id === data.documentKey._id);
-        if (data.updateDescription.updatedFields)
-          tmpArray[idx] = Object.assign(
-            tmpArray[idx],
-            data.updateDescription.updatedFields
-          );
-        if (data.updateDescription.removedFields.length > 0)
-          for (const f of data.updateDescription.removedFields)
-            delete tmpArray[idx][f];
-        this.invoices$.next(tmpArray);
-        break;
-      }
-
-      case 'insert': {
-        let tmpArray = this.invoices$.getValue();
-        tmpArray.push(data.fullDocument);
-        this.invoices$.next(tmpArray);
-        break;
-      }
-
-      default: {
-        console.log('Caso não tratado!', data);
-        break;
-      }
-    }
   }
 }
