@@ -69,44 +69,7 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  invoices = await Invoice.find({})
-    .populate({
-      path: 'author',
-      model: 'User',
-      select: {
-        fullName: 1,
-        profilePicture: 1,
-        exibitionName: 1,
-        phone: 1,
-        emailNortan: 1,
-        article: 1,
-        education: 1,
-        level: 1,
-        expertise: 1,
-      },
-      populate: {
-        path: 'expertise',
-        model: 'UserExpertise',
-      },
-    })
-    .populate({
-      path: 'team',
-      populate: {
-        path: 'user',
-        model: 'User',
-        select: {
-          fullName: 1,
-          profilePicture: 1,
-          exibitionName: 1,
-          expertise: 1,
-          level: 1,
-        },
-        populate: {
-          path: 'expertise',
-        },
-      },
-    })
-    .populate('contractor');
+  invoices = await Invoice.find({});
   return res.status(200).json(invoices);
 });
 

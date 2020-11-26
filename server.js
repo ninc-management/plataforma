@@ -39,11 +39,10 @@ server.on('listening', onListening);
 server.listen(port);
 
 const io = require('socket.io')(server, { path: '/api/socket.io' });
+const Invoice = require('./backend/models/invoice');
 
 io.on('connection', (socket) => {
-  console.log('A user connected', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
+  Invoice.watch().on('change', (data) => {
+    socket.emit('invoices', data);
   });
 });

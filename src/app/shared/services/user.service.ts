@@ -31,29 +31,32 @@ export class UserService implements OnDestroy {
   }
 
   getCurrentUser(userEmail: string): void {
-    const body = {
-      email: userEmail,
-    };
-    this.http
-      .post('/api/user/', body)
-      .pipe(take(1))
-      .subscribe((user) => this.currentUser.next(user));
+    this.getUsers()
+      .pipe(take(2))
+      .subscribe((users) => {
+        const user = users.filter((user) => user.email == userEmail)[0];
+        if (user != undefined) this.currentUser.next(user);
+      });
   }
 
   getUsers(): Observable<any[]> {
-    this.http
-      .post('/api/user/all', {})
-      .pipe(take(1))
-      .subscribe((users: any[]) => {
-        this.users$.next(
-          users.sort((a, b) => {
-            return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
-              b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-              ? -1
-              : 1;
-          })
-        );
-      });
+    if (this.users$.getValue().length == 0) {
+      this.http
+        .post('/api/user/all', {})
+        .pipe(take(1))
+        .subscribe((users: any[]) => {
+          this.users$.next(
+            users.sort((a, b) => {
+              return a.fullName
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') <
+                b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                ? -1
+                : 1;
+            })
+          );
+        });
+    }
     return this.users$;
   }
 
@@ -78,5 +81,16 @@ export class UserService implements OnDestroy {
       user: currentUser,
     };
     this.http.post('/api/user/update', body).pipe(take(1)).subscribe();
+  }
+
+  idToName(id: string): string {
+    const tmp = this.users$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)]?.fullName;
+  }
+
+  idToUser(id: string): any {
+    if (id === undefined) return undefined;
+    const tmp = this.users$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)];
   }
 }

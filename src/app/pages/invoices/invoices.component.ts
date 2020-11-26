@@ -11,6 +11,7 @@ import { Subject } from 'rxjs';
 import { InvoiceService } from '../../shared/services/invoice.service';
 import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
+import { UserService } from 'app/shared/services/user.service';
 
 @Component({
   selector: 'ngx-invoices',
@@ -119,6 +120,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     private invoicetService: InvoiceService,
     private breakpointService: NbMediaBreakpointsService,
     private contractorService: ContractorService,
+    private userService: UserService,
     private pdf: PdfService
   ) {}
 
@@ -128,21 +130,30 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.contractorService;
     this.invoicetService
       .getInvoices()
       .pipe(takeUntil(this.destroy$))
       .subscribe((invoices: any[]) => {
-        this.invoices = invoices.map((invoice: any) => {
-          if (!invoice.fullName) invoice.fullName = invoice.author.fullName;
-          if (!invoice.contractor.fullName)
-            invoice.contractorName = this.contractorService.idToName(
-              invoice.contractor
-            );
-          if (invoice.contractor.fullName)
+        if (invoices.length > 0) {
+          this.invoices = invoices.map((invoice: any) => {
+            if (invoice.author?.fullName == undefined)
+              invoice.author = this.userService.idToUser(invoice.author);
+            if (invoice.contractor?.fullName == undefined)
+              invoice.contractor = this.contractorService.idToContractor(
+                invoice.contractor
+              );
+            invoice.team.map((member) => {
+              if (member.user?.fullName == undefined)
+                return (member.user = this.userService.idToUser(member.user));
+              return member;
+            });
+            invoice.fullName = invoice.author.fullName;
             invoice.contractorName = invoice.contractor.fullName;
-          return invoice;
-        });
-        this.source.load(invoices);
+            return invoice;
+          });
+          this.source.load(invoices);
+        }
       });
   }
 
