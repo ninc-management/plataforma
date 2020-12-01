@@ -730,7 +730,7 @@ export class PdfService {
       return product.name + ': R$ ' + product.value;
     });
     let extensoValue = extenso(invoice.value, { mode: 'currency' });
-    if ((extensoValue.split(' ')[0] = 'mil'))
+    if ((extensoValue.split(' ')[0] == 'mil'))
       extensoValue = 'um ' + extensoValue;
     pdf.add({
       style: 'insideText',
