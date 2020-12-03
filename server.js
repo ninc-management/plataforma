@@ -42,6 +42,7 @@ const io = require('socket.io')(server, { path: '/api/socket.io' });
 const Invoice = require('./backend/models/invoice');
 const User = require('./backend/models/user');
 const Contract = require('./backend/models/contract');
+const Contractor = require('./backend/models/contractor');
 
 io.on('connection', (socket) => {
   User.watch().on('change', (data) => {
@@ -52,5 +53,8 @@ io.on('connection', (socket) => {
   });
   Contract.watch().on('change', (data) => {
     socket.emit('contracts', data);
+  });
+  Contractor.watch().on('change', (data) => {
+    socket.emit('contractors', data);
   });
 });

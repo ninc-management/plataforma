@@ -1,9 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { WebSocketService } from './web-socket.service';
 import { Observable } from 'rxjs/Observable';
-import { NbAuthService } from '@nebular/auth';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take, map } from 'rxjs/operators';
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,11 @@ export class ContractorService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private contractors$ = new BehaviorSubject<any[]>([]);
 
-  constructor(private http: HttpClient, private authService: NbAuthService) {}
+  constructor(
+    private http: HttpClient,
+    private wsService: WebSocketService,
+    private socket: Socket
+  ) {}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -64,6 +69,10 @@ export class ContractorService implements OnDestroy {
             })
           );
         });
+      this.socket
+        .fromEvent('contractors')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data) => this.wsService.handle(data, this.contractors$));
     }
     return this.contractors$;
   }
