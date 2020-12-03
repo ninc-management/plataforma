@@ -54,8 +54,8 @@ export class PaymentItemComponent implements OnInit {
   constructor(
     private departmentService: DepartmentService,
     private contractService: ContractService,
-    private userService: UserService,
     private completerService: CompleterService,
+    public userService: UserService,
     public stringUtil: StringUtilService
   ) {}
 

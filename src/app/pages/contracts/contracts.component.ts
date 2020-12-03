@@ -136,7 +136,6 @@ export class ContractsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((contracts: any[]) => {
               this.contracts = contracts.map((contract: any) => {
-                console.log(contract);
                 if (contract.invoice?.author == undefined)
                   contract.invoice = this.invoiceService.idToInvoice(
                     contract.invoice

@@ -455,7 +455,7 @@
     <nb-list-item *ngFor="let userPayment of payment.team; let i = index">
       <div class="row paymentRow">
         <div class="col-12 col-md-4">
-          {{ userPayment.user.fullName }}
+          {{ userService.idToName(userPayment.user) }}
         </div>
         <div class="col-12 col-md-4">
           {{ userPayment.coordination }}

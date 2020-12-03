@@ -11,7 +11,6 @@ export class WebSocketService {
     if (data == {}) return;
     switch (data.operationType) {
       case 'update': {
-        console.log('Atualizando!', data);
         let tmpArray = oArray$.getValue();
         let idx = tmpArray.findIndex((el) => el._id === data.documentKey._id);
         if (data.updateDescription.updatedFields)
@@ -27,7 +26,6 @@ export class WebSocketService {
       }
 
       case 'insert': {
-        console.log('Criando!', data);
         let tmpArray = oArray$.getValue();
         tmpArray.push(data.fullDocument);
         oArray$.next(tmpArray);
