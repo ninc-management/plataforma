@@ -25,7 +25,7 @@ export class DepartmentService {
     for (const department of json_department_coordination.departments) {
       coordinations.push(...department.coordinations);
     }
-    return coordinations;
+    return coordinations.sort();
   }
 
   composedName(abrev: string): string {

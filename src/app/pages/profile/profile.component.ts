@@ -71,8 +71,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       .buildAllCoordinationsList()
       .map((cd: string) => {
         return cd.split(' ')[0];
-      })
-      .sort();
+      });
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       this.currentUser = user;
       if (this.currentUser.state)

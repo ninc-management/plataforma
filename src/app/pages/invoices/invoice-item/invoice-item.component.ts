@@ -191,8 +191,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .imageField('profilePicture');
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
     this.ALL_COORDINATIONS = this.departmentService
-      .buildAllCoordinationsList()
-      .sort();
+      .buildAllCoordinationsList();
   }
 
   registerInvoice(): void {
