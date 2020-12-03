@@ -85,4 +85,10 @@ export class InvoiceService implements OnDestroy {
       });
     return this.size$;
   }
+
+  idToInvoice(id: string): any {
+    if (id === undefined) return undefined;
+    const tmp = this.invoices$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)];
+  }
 }

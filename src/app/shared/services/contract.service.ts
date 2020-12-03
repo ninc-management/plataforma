@@ -1,17 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from './user.service';
-import { take } from 'rxjs/operators';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { WebSocketService } from './web-socket.service';
+import { take, takeUntil } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Socket } from 'ngx-socket-io';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ContractService {
+export class ContractService implements OnDestroy {
   private size$ = new BehaviorSubject<number>(0);
+  private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<any[]>([]);
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(
+    private http: HttpClient,
+    private wsService: WebSocketService,
+    private socket: Socket
+  ) {}
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   saveContract(invoice: any): void {
     const currentTime = new Date();
@@ -27,47 +38,32 @@ export class ContractService {
     const req = {
       contract: contract,
     };
-    this.http
-      .post('/api/contract/', req)
-      .pipe(take(1))
-      .subscribe((res: any) => {
-        let tmp = this.contracts$.getValue();
-        let savedContract = res.contract;
-        savedContract.invoice = invoice;
-        tmp.push(savedContract);
-        this.contracts$.next(tmp);
-      });
+    this.http.post('/api/contract/', req).pipe(take(1)).subscribe();
   }
 
   editContract(contract: any): void {
     const currentTime = new Date();
     contract.lastUpdate = currentTime;
     let tmp = Object.assign({}, contract);
-    delete tmp.invoice;
-    tmp.invoice = contract.invoice._id;
-    tmp.payments = tmp.payments.map((payment) => payment._id);
     const req = {
       contract: tmp,
     };
-    this.http
-      .post('/api/contract/update', req)
-      .pipe(take(1))
-      .subscribe(() => {
-        let tmpArray = this.contracts$.getValue();
-        tmpArray[
-          tmpArray.findIndex((el) => el._id === contract._id)
-        ] = contract;
-        this.contracts$.next(tmpArray);
-      });
+    this.http.post('/api/contract/update', req).pipe(take(1)).subscribe();
   }
 
   getContracts(): Observable<any[]> {
-    this.http
-      .post('/api/contract/all', {})
-      .pipe(take(1))
-      .subscribe((contracts: any[]) => {
-        this.contracts$.next(contracts);
-      });
+    if (this.contracts$.getValue().length == 0) {
+      this.http
+        .post('/api/contract/all', {})
+        .pipe(take(1))
+        .subscribe((contracts: any[]) => {
+          this.contracts$.next(contracts);
+        });
+      this.socket
+        .fromEvent('contracts')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data) => this.wsService.handle(data, this.contracts$));
+    }
     return this.contracts$;
   }
 
@@ -81,40 +77,9 @@ export class ContractService {
     return this.size$;
   }
 
-  addPayment(payment: any, contractIndex: number): void {
-    let tmp = Object.assign({}, payment);
-    delete tmp.team;
-    const req = {
-      payment: tmp,
-      team: payment.team,
-    };
-    this.http
-      .post('/api/contract/addPayment', req)
-      .pipe(take(1))
-      .subscribe((res: any) => {
-        let tmp = this.contracts$.getValue();
-        let savedPayment = res.payment;
-        tmp[contractIndex].payments.push(savedPayment);
-        this.contracts$.next(tmp);
-      });
-  }
-
-  editPayment(payment: any, contractIndex: number): void {
-    let tmp = Object.assign({}, payment);
-    delete tmp.team;
-    const req = {
-      payment: tmp,
-      team: payment.team,
-    };
-    this.http
-      .post('/api/contract/updatePayment', req)
-      .pipe(take(1))
-      .subscribe(() => {
-        let tmp = this.contracts$.getValue();
-        tmp[contractIndex].payments[
-          tmp[contractIndex].payments.findIndex((el) => el._id === payment._id)
-        ] = payment;
-        this.contracts$.next(tmp);
-      });
+  idToContract(id: string): any {
+    if (id === undefined) return undefined;
+    const tmp = this.contracts$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)];
   }
 }

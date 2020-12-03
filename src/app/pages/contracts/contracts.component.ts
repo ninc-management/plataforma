@@ -3,6 +3,9 @@ import { NbDialogService } from '@nebular/theme';
 import { ContractDialogComponent } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractService } from '../../shared/services/contract.service';
+import { ContractorService } from '../../shared/services/contractor.service';
+import { InvoiceService } from '../../shared/services/invoice.service';
+import { UserService } from '../../shared/services/user.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -110,7 +113,10 @@ export class ContractsComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private contractorService: ContractorService,
+    private invoiceService: InvoiceService,
+    private userService: UserService
   ) {}
 
   ngOnDestroy(): void {
@@ -118,24 +124,43 @@ export class ContractsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  /* eslint-disable @typescript-eslint/indent */
   ngOnInit(): void {
-    this.contractService
-      .getContracts()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((contracts: any[]) => {
-        this.contracts = contracts.map((contract: any) => {
-          if (!contract.fullName)
-            contract.fullName = contract.invoice.author.fullName;
-          if (!contract.code) contract.code = contract.invoice.code;
-          if (!contract.contractor)
-            contract.contractor = contract.invoice.contractor.fullName;
-          if (!contract.value) contract.value = contract.invoice.value;
-          if (!contract.name) contract.name = contract.invoice.name;
-          return contract;
-        });
-        this.source.load(this.contracts);
+    this.invoiceService //TODO: Improve this dependence loading
+      .getInvoices()
+      .pipe(take(2))
+      .subscribe((invoices) => {
+        if (invoices.length > 0)
+          this.contractService
+            .getContracts()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((contracts: any[]) => {
+              this.contracts = contracts.map((contract: any) => {
+                console.log(contract);
+                if (contract.invoice?.author == undefined)
+                  contract.invoice = this.invoiceService.idToInvoice(
+                    contract.invoice
+                  );
+                if (!contract.fullName)
+                  contract.fullName = contract.invoice.author?.fullName
+                    ? contract.invoice.author.fullName
+                    : this.userService.idToName(contract.invoice.author);
+                if (!contract.code) contract.code = contract.invoice.code;
+                if (!contract.contractor)
+                  contract.contractor = contract.invoice.contractor?.fullName
+                    ? contract.invoice.contractor.fullName
+                    : this.contractorService.idToName(
+                        contract.invoice.contractor
+                      );
+                if (!contract.value) contract.value = contract.invoice.value;
+                if (!contract.name) contract.name = contract.invoice.name;
+                return contract;
+              });
+              this.source.load(this.contracts);
+            });
       });
   }
+  /* eslint-enable @typescript-eslint/indent */
 
   contractDialog(event, isEditing: boolean): void {
     this.dialogService.open(ContractDialogComponent, {

@@ -107,18 +107,17 @@ export class PaymentItemComponent implements OnInit {
   }
 
   registerPayment(): void {
-    this.payment.contract = this.contract._id;
     this.submitted = true;
     if (this.paymentIndex !== undefined) {
       this.payment.lastUpdate = new Date();
-      this.contractService.editPayment(this.payment, this.contractIndex);
       this.contract.payments[this.paymentIndex] = Object.assign(
         {},
         this.payment
       );
     } else {
-      this.contractService.addPayment(this.payment, this.contractIndex);
+      this.contract.payments.push(Object.assign({}, this.payment));
     }
+    this.contractService.editContract(this.contract);
     this.submit.emit();
   }
 

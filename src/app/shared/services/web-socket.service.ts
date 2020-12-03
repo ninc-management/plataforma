@@ -27,6 +27,7 @@ export class WebSocketService {
       }
 
       case 'insert': {
+        console.log('Criando!', data);
         let tmpArray = oArray$.getValue();
         tmpArray.push(data.fullDocument);
         oArray$.next(tmpArray);
