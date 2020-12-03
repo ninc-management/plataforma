@@ -190,8 +190,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .local(this.userService.getUsersList(), 'fullName', 'fullName')
       .imageField('profilePicture');
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-    this.ALL_COORDINATIONS = this.departmentService
-      .buildAllCoordinationsList();
+    this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
   }
 
   registerInvoice(): void {

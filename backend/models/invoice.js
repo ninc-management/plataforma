@@ -35,7 +35,7 @@ const invoiceSchema = mongoose.Schema({
   subtitle1: { type: String },
   subtitle2: { type: String },
   contactName: { type: String },
-  contactPlural: { type: String },
+  contactPlural: { type: Boolean },
   contractorFullName: { type: String },
   subject: { type: String },
   peep: { type: String },
