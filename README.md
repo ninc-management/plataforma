@@ -1,7 +1,5 @@
 # Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![Dependency Status](https://david-dm.org/nortan-projetos/plataforma/status.svg)](https://david-dm.org/nortan-projetos/plataforma) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/main/LICENSE)
 
-## Development: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=main)](https://travis-ci.org/nortan-projetos/plataforma) Stage: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=demo)](https://travis-ci.org/nortan-projetos/plataforma) Production: [![Build Status](https://travis-ci.org/nortan-projetos/plataforma.svg?branch=production)](https://travis-ci.org/nortan-projetos/plataforma)
-
 ## How to Serve Locally
 
 To run this website locally, you need to install the dependencies following the instructions below:
