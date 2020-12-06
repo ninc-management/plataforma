@@ -19,7 +19,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(3).fill({});
+  METRICS: metricItem[] = new Array(4).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -87,6 +87,25 @@ export class ProgressSectionComponent implements OnInit {
         ),
         loading: this.metricsService
           .receivedValue(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[3] = {
+        title: 'Orçamento como gestor',
+        value: this.metricsService
+          .invoiceAsManger(user._id)
+          .pipe(map((x) => x.toString())),
+        description: this.metricsService.invoiceAsManger(user._id, 'Mês').pipe(
+          map((pastInvoices) => {
+            return (
+              this.metricsService.plural('Mês', 1) +
+              ' você enviou ' +
+              (pastInvoices == 0 ? 'nenhum' : pastInvoices) +
+              (pastInvoices > 1 ? ' orçamentos' : ' orçamento')
+            );
+          })
+        ),
+        loading: this.metricsService
+          .invoiceAsManger(user._id)
           .pipe(map((x) => x == undefined)),
       };
     });
