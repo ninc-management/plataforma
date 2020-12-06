@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MetricsService } from 'app/shared/services/metrics.service';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { take, map } from 'rxjs/operators';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 interface metricItem {
   title: string;
-  value: Observable<number>;
+  value: Observable<string>;
   // activeProgress: Observable<number>;
   description: Observable<string>;
   loading: Observable<boolean>;
@@ -18,29 +19,74 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(2).fill({});
+  METRICS: metricItem[] = new Array(3).fill({});
 
   constructor(
     private metricsService: MetricsService,
-    private userService: UserService
+    private userService: UserService,
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnInit(): void {
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       this.METRICS[0] = {
         title: 'Contratos como gestor',
-        value: this.metricsService.contractsAsManger(user._id),
-        description: this.metricsService.contractsAsMangerLast(user._id, 'Mês'),
+        value: this.metricsService
+          .contractsAsManger(user._id)
+          .pipe(map((x) => x.toString())),
+        description: this.metricsService
+          .contractsAsManger(user._id, 'Mês')
+          .pipe(
+            map((pastContracts) => {
+              return (
+                this.metricsService.plural('Mês', 1) +
+                ' você fechou ' +
+                (pastContracts == 0 ? 'nenhum' : pastContracts) +
+                (pastContracts > 1 ? ' contratos' : ' contrato')
+              );
+            })
+          ),
         loading: this.metricsService
           .contractsAsManger(user._id)
           .pipe(map((x) => x == undefined)),
       };
       this.METRICS[1] = {
         title: 'Contratos como membro',
-        value: this.metricsService.contractsAsMember(user._id),
-        description: this.metricsService.contractsAsMemberLast(user._id, 'Mês'),
+        value: this.metricsService
+          .contractsAsMember(user._id)
+          .pipe(map((x) => x.toString())),
+        description: this.metricsService
+          .contractsAsMember(user._id, 'Mês')
+          .pipe(
+            map((pastContracts) => {
+              return (
+                this.metricsService.plural('Mês', 1) +
+                ' você participou de ' +
+                (pastContracts == 0 ? 'nenhum' : pastContracts) +
+                (pastContracts > 1 ? ' contratos' : ' contrato')
+              );
+            })
+          ),
         loading: this.metricsService
           .contractsAsMember(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[2] = {
+        title: 'Valor recebido',
+        value: this.metricsService
+          .receivedValue(user._id)
+          .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x))),
+        description: this.metricsService.receivedValue(user._id, 'Mês').pipe(
+          map((pastPayments) => {
+            return (
+              this.metricsService.plural('Mês', 1) +
+              ' você recebeu R$ ' +
+              this.stringUtil.numberToMoney(pastPayments)
+            );
+          })
+        ),
+        loading: this.metricsService
+          .receivedValue(user._id)
           .pipe(map((x) => x == undefined)),
       };
     });

@@ -34,7 +34,7 @@ export class MetricsService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  private plural(last: string, number: number) {
+  plural(last: string, number: number): string {
     switch (last) {
       case 'Dia': {
         return number > 1 ? 'Nos últimos ' + number + ' dias' : 'Ontem';
@@ -50,6 +50,7 @@ export class MetricsService implements OnDestroy {
           : 'No ano passado';
       }
       default: {
+        return '';
       }
     }
   }
@@ -108,23 +109,6 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  contractsAsMangerLast(
-    uId: string,
-    last = 'Mês',
-    number = 1
-  ): Observable<string> {
-    return this.contractsAsManger(uId, last, number).pipe(
-      map((pastContracts) => {
-        return (
-          this.plural(last, number) +
-          ' você fechou ' +
-          (pastContracts == 0 ? 'nenhum' : pastContracts) +
-          (pastContracts > 1 ? ' contratos' : ' contrato')
-        );
-      })
-    );
-  }
-
   contractsAsMember(
     uId: string,
     last = 'Hoje',
@@ -135,7 +119,7 @@ export class MetricsService implements OnDestroy {
       this.invoiceService.getInvoices()
     ).pipe(
       map(([contracts, invoices]) => {
-        if (contracts.length > 0 && invoices.length > 0) {
+        if (contracts.length > 0 && invoices.length > 0)
           return contracts.filter((contract) => {
             let created = contract.created;
             if (typeof created !== 'object') created = parseISO(created);
@@ -144,26 +128,28 @@ export class MetricsService implements OnDestroy {
               this.compareDates(created, last, number)
             );
           }).length;
-        }
       }),
       takeUntil(this.destroy$)
     );
   }
 
-  contractsAsMemberLast(
-    uId: string,
-    last = 'Mês',
-    number = 1
-  ): Observable<string> {
-    return this.contractsAsMember(uId, last, number).pipe(
-      map((pastContracts) => {
-        return (
-          this.plural(last, number) +
-          ' você participou de ' +
-          (pastContracts == 0 ? 'nenhum' : pastContracts) +
-          (pastContracts > 1 ? ' contratos' : ' contrato')
-        );
-      })
+  receivedValue(uId: string, last = 'Hoje', number = 1): Observable<number> {
+    return combineLatest(
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices()
+    ).pipe(
+      map(([contracts, invoices]) => {
+        if (contracts.length > 0 && invoices.length > 0)
+          return contracts.reduce((received, contract) => {
+            let created = contract.created;
+            if (typeof created !== 'object') created = parseISO(created);
+            const paid = this.contractService.hasPayments(contract._id, uId);
+            if (this.compareDates(created, last, number) && paid.hasPayments)
+              return (received += paid.value);
+            return received;
+          }, 0);
+      }),
+      takeUntil(this.destroy$)
     );
   }
 }
