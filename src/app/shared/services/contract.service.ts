@@ -9,6 +9,7 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class ContractService implements OnDestroy {
+  private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<any[]>([]);
@@ -52,7 +53,8 @@ export class ContractService implements OnDestroy {
   }
 
   getContracts(): Observable<any[]> {
-    if (this.contracts$.getValue().length == 0) {
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/contract/all', {})
         .pipe(take(1))

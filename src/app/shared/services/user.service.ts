@@ -11,6 +11,7 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
+  private requested = false;
   private currentUser = new BehaviorSubject({});
   private destroy$ = new Subject<void>();
   private users$ = new BehaviorSubject<any[]>([]);
@@ -47,7 +48,8 @@ export class UserService implements OnDestroy {
   }
 
   getUsers(): Observable<any[]> {
-    if (this.users$.getValue().length == 0) {
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))

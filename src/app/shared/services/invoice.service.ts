@@ -12,6 +12,7 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class InvoiceService implements OnDestroy {
+  private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private invoices$ = new BehaviorSubject<any[]>([]);
   private destroy$ = new Subject<void>();
@@ -20,12 +21,9 @@ export class InvoiceService implements OnDestroy {
     private http: HttpClient,
     private userService: UserService,
     private contractService: ContractService,
-    private contractorService: ContractorService,
     private wsService: WebSocketService,
     private socket: Socket
-  ) {
-    this.contractorService.getContractors();
-  }
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -60,7 +58,8 @@ export class InvoiceService implements OnDestroy {
   }
 
   getInvoices(): Observable<any[]> {
-    if (this.invoices$.getValue().length == 0) {
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/invoice/all', {})
         .pipe(take(1))

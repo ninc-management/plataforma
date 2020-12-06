@@ -7,7 +7,7 @@ import {
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { InvoiceService } from '../../shared/services/invoice.service';
 import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
@@ -130,11 +130,13 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.invoiceService
-      .getInvoices()
+    combineLatest(
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors()
+    )
       .pipe(takeUntil(this.destroy$))
-      .subscribe((invoices: any[]) => {
-        if (invoices.length > 0) {
+      .subscribe(([invoices, contractors]) => {
+        if (invoices.length > 0 && contractors.length > 0) {
           this.invoices = invoices.map((invoice: any) => {
             if (invoice.author?.fullName == undefined)
               invoice.author = this.userService.idToUser(invoice.author);

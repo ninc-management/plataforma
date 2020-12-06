@@ -7,7 +7,7 @@ import { ContractorService } from '../../shared/services/contractor.service';
 import { InvoiceService } from '../../shared/services/invoice.service';
 import { UserService } from '../../shared/services/user.service';
 import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'ngx-contracts',
@@ -126,37 +126,38 @@ export class ContractsComponent implements OnInit, OnDestroy {
 
   /* eslint-disable @typescript-eslint/indent */
   ngOnInit(): void {
-    this.invoiceService //TODO: Improve this dependence loading
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        if (invoices.length > 0)
-          this.contractService
-            .getContracts()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((contracts: any[]) => {
-              this.contracts = contracts.map((contract: any) => {
-                if (contract.invoice?.author == undefined)
-                  contract.invoice = this.invoiceService.idToInvoice(
-                    contract.invoice
-                  );
-                if (!contract.fullName)
-                  contract.fullName = contract.invoice.author?.fullName
-                    ? contract.invoice.author.fullName
-                    : this.userService.idToName(contract.invoice.author);
-                if (!contract.code) contract.code = contract.invoice.code;
-                if (!contract.contractor)
-                  contract.contractor = contract.invoice.contractor?.fullName
-                    ? contract.invoice.contractor.fullName
-                    : this.contractorService.idToName(
-                        contract.invoice.contractor
-                      );
-                if (!contract.value) contract.value = contract.invoice.value;
-                if (!contract.name) contract.name = contract.invoice.name;
-                return contract;
-              });
-              this.source.load(this.contracts);
-            });
+    combineLatest(
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors()
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([contracts, invoices, contractors]) => {
+        if (
+          contracts.length > 0 &&
+          invoices.length > 0 &&
+          contractors.length > 0
+        ) {
+          this.contracts = contracts.map((contract: any) => {
+            if (contract.invoice?.author == undefined)
+              contract.invoice = this.invoiceService.idToInvoice(
+                contract.invoice
+              );
+            if (!contract.fullName)
+              contract.fullName = contract.invoice.author?.fullName
+                ? contract.invoice.author.fullName
+                : this.userService.idToName(contract.invoice.author);
+            if (!contract.code) contract.code = contract.invoice.code;
+            if (!contract.contractor)
+              contract.contractor = contract.invoice.contractor?.fullName
+                ? contract.invoice.contractor.fullName
+                : this.contractorService.idToName(contract.invoice.contractor);
+            if (!contract.value) contract.value = contract.invoice.value;
+            if (!contract.name) contract.name = contract.invoice.name;
+            return contract;
+          });
+          this.source.load(this.contracts);
+        }
       });
   }
   /* eslint-enable @typescript-eslint/indent */
