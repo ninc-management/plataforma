@@ -1,4 +1,4 @@
-# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![Dependency Status](https://david-dm.org/nortan-projetos/plataforma/status.svg)](https://david-dm.org/nortan-projetos/plataforma) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/main/LICENSE)
+# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/main/LICENSE)
 
 ## How to Serve Locally
 
