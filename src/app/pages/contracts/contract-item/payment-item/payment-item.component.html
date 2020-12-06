@@ -33,7 +33,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [readonly]="paymentIndex !== undefined ? true : false"
+          [readonly]="paymentIndex !== undefined"
           (ngModelChange)="toLiquid(payment.value)"
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
@@ -85,7 +85,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-          [readonly]="paymentIndex !== undefined ? true : false"
+          [readonly]="paymentIndex !== undefined"
           (ngModelChange)="toLiquid(payment.value)"
         />
       </div>
@@ -114,7 +114,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
-          [readonly]="paymentIndex !== undefined ? true : false"
+          [readonly]="paymentIndex !== undefined"
           (ngModelChange)="toLiquid(payment.value)"
         />
       </div>

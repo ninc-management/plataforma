@@ -36,8 +36,7 @@ export class ContractDialogComponent implements OnInit {
     //     takeUntil(this.ref.onClose)
     //   )
     //   .subscribe(() => this.dismiss());
-    this.isPayable =
-      this.contract.payments.length < this.contract.total ? true : false;
+    this.isPayable = this.contract.payments.length < this.contract.total;
   }
 
   dismiss(): void {

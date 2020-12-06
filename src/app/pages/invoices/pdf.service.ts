@@ -554,7 +554,7 @@ export class PdfService {
     let subject = [];
     if (invoice.subject != undefined) {
       for (let t of invoice.subject.split('*')) {
-        let bold = t.charAt(0) == '!' ? true : false;
+        let bold = t.charAt(0) == '!';
         if (bold) t = t.slice(1);
         subject.push({
           text: t,
@@ -730,7 +730,7 @@ export class PdfService {
       return product.name + ': R$ ' + product.value;
     });
     let extensoValue = extenso(invoice.value, { mode: 'currency' });
-    if ((extensoValue.split(' ')[0] == 'mil'))
+    if (extensoValue.split(' ')[0] == 'mil')
       extensoValue = 'um ' + extensoValue;
     pdf.add({
       style: 'insideText',

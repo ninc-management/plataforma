@@ -96,7 +96,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.iInvoice) {
       this.invoice = Object.assign({}, this.iInvoice);
-      this.editing = this.invoice.model ? false : true;
+      this.editing = this.invoice.model == undefined;
       if (!this.editing) {
         this.invoice.created = new Date();
         this.invoice.lastUpdate = new Date();

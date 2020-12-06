@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <nb-card
-      [nbSpinner]="currentUser?.fullName ? false : true"
+      [nbSpinner]="currentUser?.fullName == undefined"
       nbSpinnerStatus="primary"
     >
       <nb-card-body>
