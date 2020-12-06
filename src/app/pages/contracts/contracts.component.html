@@ -17,14 +17,23 @@
           </div>
         </div>
       </nb-card-header>
-      <ng2-smart-table
-        *ngIf="pageWidth() >= 576; else phone"
-        [settings]="settings"
-        [source]="source"
-        (edit)="contractDialog($event, true)"
-        (delete)="contractDialog($event, false)"
-      >
-      </ng2-smart-table>
+      <div
+        *ngIf="contracts.length == 0; else table"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+        style="width: 100%; height: 654px"
+      ></div>
+      <ng-template #table>
+        <ng2-smart-table
+          *ngIf="pageWidth() >= 576; else phone"
+          [settings]="settings"
+          [source]="source"
+          (edit)="contractDialog($event, true)"
+          (delete)="contractDialog($event, false)"
+        >
+        </ng2-smart-table>
+      </ng-template>
       <ng-template #phone>
         <nb-list>
           <nb-list-item
@@ -32,7 +41,7 @@
           >
             <a (click)="contractDialog({ data: contract, index: i }, true)">
               <div class="row">
-                <div class="col-12" style="margin-bottom: 10px;">
+                <div class="col-12" style="margin-bottom: 10px">
                   <nb-user
                     size="giant"
                     [name]="contract.name"
@@ -48,7 +57,7 @@
                       pack="fa"
                       status="success"
                     ></nb-icon>
-                    <span style="vertical-align: 0.1em;">
+                    <span style="vertical-align: 0.1em">
                       {{ contract.value }}
                     </span>
                   </p>
@@ -59,7 +68,7 @@
                     pack="fa"
                     [status]="statusColor(contract.status)"
                   ></nb-icon>
-                  <span style="vertical-align: 0.1em;">
+                  <span style="vertical-align: 0.1em">
                     {{ contract.status }}
                   </span>
                 </div>
