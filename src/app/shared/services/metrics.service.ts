@@ -109,7 +109,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoiceAsManger(uId: string, last = 'Hoje', number = 1): Observable<number> {
+  invoicesAsManger(uId: string, last = 'Hoje', number = 1): Observable<number> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
@@ -142,6 +142,23 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
+              this.compareDates(created, last, number)
+            );
+          }).length;
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  invoicesAsMember(uId: string, last = 'Hoje', number = 1): Observable<number> {
+    return this.invoiceService.getInvoices().pipe(
+      map((invoices) => {
+        if (invoices.length > 0)
+          return invoices.filter((invoice) => {
+            let created = invoice.created;
+            if (typeof created !== 'object') created = parseISO(created);
+            return (
+              this.invoiceService.isInvoiceMember(invoice, uId) &&
               this.compareDates(created, last, number)
             );
           }).length;

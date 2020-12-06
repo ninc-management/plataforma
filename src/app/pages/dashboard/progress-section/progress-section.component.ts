@@ -19,7 +19,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(4).fill({});
+  METRICS: metricItem[] = new Array(5).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -90,11 +90,11 @@ export class ProgressSectionComponent implements OnInit {
           .pipe(map((x) => x == undefined)),
       };
       this.METRICS[3] = {
-        title: 'Orçamento como gestor',
+        title: 'Orçamentos como gestor',
         value: this.metricsService
-          .invoiceAsManger(user._id)
+          .invoicesAsManger(user._id)
           .pipe(map((x) => x.toString())),
-        description: this.metricsService.invoiceAsManger(user._id, 'Mês').pipe(
+        description: this.metricsService.invoicesAsManger(user._id, 'Mês').pipe(
           map((pastInvoices) => {
             return (
               this.metricsService.plural('Mês', 1) +
@@ -105,7 +105,26 @@ export class ProgressSectionComponent implements OnInit {
           })
         ),
         loading: this.metricsService
-          .invoiceAsManger(user._id)
+          .invoicesAsManger(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[4] = {
+        title: 'Orçamentos como membro',
+        value: this.metricsService
+          .invoicesAsMember(user._id)
+          .pipe(map((x) => x.toString())),
+        description: this.metricsService.invoicesAsMember(user._id, 'Mês').pipe(
+          map((pastInvoices) => {
+            return (
+              this.metricsService.plural('Mês', 1) +
+              ' você participou de ' +
+              (pastInvoices == 0 ? 'nenhum' : pastInvoices) +
+              (pastInvoices > 1 ? ' orçamentos' : ' orçamento')
+            );
+          })
+        ),
+        loading: this.metricsService
+          .invoicesAsMember(user._id)
           .pipe(map((x) => x == undefined)),
       };
     });
