@@ -18,7 +18,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(1).fill({ title: '', value: of(1) });
+  METRICS: metricItem[] = new Array(2).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -33,6 +33,14 @@ export class ProgressSectionComponent implements OnInit {
         description: this.metricsService.contractsAsMangerLast(user._id, 'Mês'),
         loading: this.metricsService
           .contractsAsManger(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[1] = {
+        title: 'Contratos como membro',
+        value: this.metricsService.contractsAsMember(user._id),
+        description: this.metricsService.contractsAsMemberLast(user._id, 'Mês'),
+        loading: this.metricsService
+          .contractsAsMember(user._id)
           .pipe(map((x) => x == undefined)),
       };
     });

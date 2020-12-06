@@ -90,4 +90,20 @@ export class InvoiceService implements OnDestroy {
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
+
+  isInvoiceAuthor(iId: any, uId: string): boolean {
+    const author =
+      iId._id == undefined ? this.idToInvoice(iId).author : iId.author;
+    return (author?._id == undefined ? author : author._id) == uId;
+  }
+
+  isInvoiceMember(iId: any, uId: string): boolean {
+    const invoice = iId._id == undefined ? this.idToInvoice(iId) : iId;
+    return invoice.team.filter(
+      (member) =>
+        (member.user?._id == undefined ? member.user : member.user._id) == uId
+    ).length > 0
+      ? true
+      : false;
+  }
 }

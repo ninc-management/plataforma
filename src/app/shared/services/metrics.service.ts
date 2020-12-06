@@ -85,7 +85,7 @@ export class MetricsService implements OnDestroy {
   }
 
   contractsAsManger(
-    uid: string,
+    uId: string,
     last = 'Hoje',
     number = 1
   ): Observable<number> {
@@ -98,12 +98,8 @@ export class MetricsService implements OnDestroy {
           return contracts.filter((contract) => {
             let created = contract.created;
             if (typeof created !== 'object') created = parseISO(created);
-            const author =
-              contract.invoice._id == undefined
-                ? this.invoiceService.idToInvoice(contract.invoice).author
-                : this.invoiceService.idToInvoice(contract.invoice._id).author;
             return (
-              (author?._id == undefined ? author : author._id) == uid &&
+              this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
               this.compareDates(created, last, number)
             );
           }).length;
@@ -113,16 +109,58 @@ export class MetricsService implements OnDestroy {
   }
 
   contractsAsMangerLast(
-    uid: string,
+    uId: string,
     last = 'Mês',
     number = 1
   ): Observable<string> {
-    return this.contractsAsManger(uid, last, number).pipe(
+    return this.contractsAsManger(uId, last, number).pipe(
       map((pastContracts) => {
         return (
           this.plural(last, number) +
           ' você fechou ' +
-          pastContracts +
+          (pastContracts == 0 ? 'nenhum' : pastContracts) +
+          (pastContracts > 1 ? ' contratos' : ' contrato')
+        );
+      })
+    );
+  }
+
+  contractsAsMember(
+    uId: string,
+    last = 'Hoje',
+    number = 1
+  ): Observable<number> {
+    return combineLatest(
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices()
+    ).pipe(
+      map(([contracts, invoices]) => {
+        if (contracts.length > 0 && invoices.length > 0) {
+          return contracts.filter((contract) => {
+            let created = contract.created;
+            if (typeof created !== 'object') created = parseISO(created);
+            return (
+              this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
+              this.compareDates(created, last, number)
+            );
+          }).length;
+        }
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  contractsAsMemberLast(
+    uId: string,
+    last = 'Mês',
+    number = 1
+  ): Observable<string> {
+    return this.contractsAsMember(uId, last, number).pipe(
+      map((pastContracts) => {
+        return (
+          this.plural(last, number) +
+          ' você participou de ' +
+          (pastContracts == 0 ? 'nenhum' : pastContracts) +
           (pastContracts > 1 ? ' contratos' : ' contrato')
         );
       })
