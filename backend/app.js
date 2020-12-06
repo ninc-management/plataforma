@@ -1,4 +1,5 @@
 const path = require('path');
+const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -35,6 +36,7 @@ mongoose
 mongoose.set('useCreateIndex', true);
 
 // app.use(logger('dev'));
+app.use(compression());
 app.use(
   helmet({
     contentSecurityPolicy: false,

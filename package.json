@@ -55,6 +55,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "4.3.1",
     "classlist.js": "1.1.20150312",
+    "compression": "^1.7.4",
     "core-js": "2.5.1",
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",
