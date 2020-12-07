@@ -5,6 +5,10 @@ $shadow-green: #00977e;
 @include nb-install-component() {
   --spinner-primary-background-color: transparent;
 
+  .subtitle {
+    white-space: break-spaces;
+  }
+
   .progress-info {
     display: flex;
     flex-direction: column;

@@ -13,8 +13,11 @@ import {
   startOfMonth,
   startOfYear,
   endOfYear,
+  addMonths,
+  addYears,
 } from 'date-fns';
 import { endOfMonth, subYears, subDays } from 'date-fns/esm';
+import { StringUtilService } from './string-util.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +29,8 @@ export class MetricsService implements OnDestroy {
     private contractService: ContractService,
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
-    private userService: UserService
+    private userService: UserService,
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnDestroy(): void {
@@ -41,7 +45,7 @@ export class MetricsService implements OnDestroy {
       }
       case 'Mês': {
         return number > 1
-          ? 'Nos últimos ' + number + ' mêses'
+          ? 'Nos últimos ' + number + ' meses'
           : 'No mês passado';
       }
       case 'Ano': {
@@ -55,7 +59,12 @@ export class MetricsService implements OnDestroy {
     }
   }
 
-  private compareDates(date: any, last = 'Hoje', number = 1): boolean {
+  private compareDates(
+    date: any,
+    last = 'Hoje',
+    number = 1,
+    untilToday = false
+  ): boolean {
     switch (last) {
       case 'Hoje': {
         return isSameMonth(new Date(), date);
@@ -67,17 +76,27 @@ export class MetricsService implements OnDestroy {
         });
       }
       case 'Mês': {
-        const lastMonthStart = startOfMonth(subMonths(new Date(), number));
+        const lastMonthStart = untilToday
+          ? subMonths(new Date(), number)
+          : startOfMonth(subMonths(new Date(), number));
+        const lastMonthEnd = untilToday
+          ? new Date()
+          : endOfMonth(addMonths(lastMonthStart, number - 1));
         return isWithinInterval(date, {
           start: lastMonthStart,
-          end: endOfMonth(lastMonthStart),
+          end: lastMonthEnd,
         });
       }
       case 'Ano': {
-        const lastYearStart = startOfYear(subYears(new Date(), number));
+        const lastYearStart = untilToday
+          ? subYears(new Date(), number)
+          : startOfYear(subYears(new Date(), number));
+        const lastYearEnd = untilToday
+          ? new Date()
+          : endOfYear(addYears(lastYearStart, number - 1));
         return isWithinInterval(date, {
           start: lastYearStart,
-          end: endOfYear(lastYearStart),
+          end: lastYearEnd,
         });
       }
       default: {
@@ -88,7 +107,8 @@ export class MetricsService implements OnDestroy {
   contractsAsManger(
     uId: string,
     last = 'Hoje',
-    number = 1
+    number = 1,
+    untilToday = false
   ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
@@ -101,7 +121,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
-              this.compareDates(created, last, number)
+              this.compareDates(created, last, number, untilToday)
             );
           }).length;
       }),
@@ -109,7 +129,12 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoicesAsManger(uId: string, last = 'Hoje', number = 1): Observable<number> {
+  invoicesAsManger(
+    uId: string,
+    last = 'Hoje',
+    number = 1,
+    untilToday = false
+  ): Observable<number> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
@@ -118,7 +143,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceAuthor(invoice, uId) &&
-              this.compareDates(created, last, number)
+              this.compareDates(created, last, number, untilToday)
             );
           }).length;
       }),
@@ -129,7 +154,8 @@ export class MetricsService implements OnDestroy {
   contractsAsMember(
     uId: string,
     last = 'Hoje',
-    number = 1
+    number = 1,
+    untilToday = false
   ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
@@ -142,7 +168,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
-              this.compareDates(created, last, number)
+              this.compareDates(created, last, number, untilToday)
             );
           }).length;
       }),
@@ -150,7 +176,12 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoicesAsMember(uId: string, last = 'Hoje', number = 1): Observable<number> {
+  invoicesAsMember(
+    uId: string,
+    last = 'Hoje',
+    number = 1,
+    untilToday = false
+  ): Observable<number> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
@@ -159,7 +190,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceMember(invoice, uId) &&
-              this.compareDates(created, last, number)
+              this.compareDates(created, last, number, untilToday)
             );
           }).length;
       }),
@@ -167,7 +198,12 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValue(uId: string, last = 'Hoje', number = 1): Observable<number> {
+  receivedValue(
+    uId: string,
+    last = 'Hoje',
+    number = 1,
+    untilToday = false
+  ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
       this.invoiceService.getInvoices()
@@ -178,10 +214,35 @@ export class MetricsService implements OnDestroy {
             let created = contract.created;
             if (typeof created !== 'object') created = parseISO(created);
             const paid = this.contractService.hasPayments(contract._id, uId);
-            if (this.compareDates(created, last, number) && paid.hasPayments)
+            if (
+              this.compareDates(created, last, number, untilToday) &&
+              paid.hasPayments
+            )
               return (received += paid.value);
             return received;
           }, 0);
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  invoicesToContracts(
+    uId: string,
+    last = 'Mês',
+    number = 1,
+    untilToday = false
+  ): Observable<number> {
+    return combineLatest(
+      this.contractsAsManger(uId, last, number, untilToday),
+      this.invoicesAsManger(uId, last, number, untilToday)
+    ).pipe(
+      map(([contracts, invoices]) => {
+        if (contracts != undefined && invoices != undefined)
+          return this.stringUtil.moneyToNumber(
+            this.stringUtil
+              .toPercentage(contracts.toString(), invoices.toString())
+              .slice(0, -1)
+          );
       }),
       takeUntil(this.destroy$)
     );

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MetricsService } from 'app/shared/services/metrics.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { take, map } from 'rxjs/operators';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -19,7 +19,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(5).fill({});
+  METRICS: metricItem[] = new Array(6).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -125,6 +125,16 @@ export class ProgressSectionComponent implements OnInit {
         ),
         loading: this.metricsService
           .invoicesAsMember(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[5] = {
+        title: 'Taxa de conversão (Gestor):\nOrçamento → Contrato',
+        value: this.metricsService
+          .invoicesToContracts(user._id, 'Mês', 3, true)
+          .pipe(map((x) => x.toString() + '%')),
+        description: of(this.metricsService.plural('Mês', 3)),
+        loading: this.metricsService
+          .invoicesToContracts(user._id)
           .pipe(map((x) => x == undefined)),
       };
     });
