@@ -90,7 +90,7 @@ export class PdfService {
     }
     if (cell._inlines && cell._inlines.length) {
       return calcLines(cell._inlines);
-    } else if (cell.stack && cell.stack[0] && cell.stack[0]._inlines[0]) {
+    } else if (cell.stack && cell.stack[0]) {
       return cell.stack
         .map((item) => {
           return calcLines(item._inlines);
