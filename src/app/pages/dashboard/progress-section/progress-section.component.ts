@@ -19,7 +19,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(6).fill({});
+  METRICS: metricItem[] = new Array(7).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -30,6 +30,24 @@ export class ProgressSectionComponent implements OnInit {
   ngOnInit(): void {
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       this.METRICS[0] = {
+        title: 'Valor recebido',
+        value: this.metricsService
+          .receivedValue(user._id)
+          .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x))),
+        description: this.metricsService.receivedValue(user._id, 'Mês').pipe(
+          map((pastPayments) => {
+            return (
+              this.metricsService.plural('Mês', 1) +
+              ' você recebeu R$ ' +
+              this.stringUtil.numberToMoney(pastPayments)
+            );
+          })
+        ),
+        loading: this.metricsService
+          .receivedValue(user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[1] = {
         title: 'Contratos como gestor',
         value: this.metricsService
           .contractsAsManger(user._id)
@@ -50,7 +68,7 @@ export class ProgressSectionComponent implements OnInit {
           .contractsAsManger(user._id)
           .pipe(map((x) => x == undefined)),
       };
-      this.METRICS[1] = {
+      this.METRICS[2] = {
         title: 'Contratos como membro',
         value: this.metricsService
           .contractsAsMember(user._id)
@@ -69,24 +87,6 @@ export class ProgressSectionComponent implements OnInit {
           ),
         loading: this.metricsService
           .contractsAsMember(user._id)
-          .pipe(map((x) => x == undefined)),
-      };
-      this.METRICS[2] = {
-        title: 'Valor recebido',
-        value: this.metricsService
-          .receivedValue(user._id)
-          .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x))),
-        description: this.metricsService.receivedValue(user._id, 'Mês').pipe(
-          map((pastPayments) => {
-            return (
-              this.metricsService.plural('Mês', 1) +
-              ' você recebeu R$ ' +
-              this.stringUtil.numberToMoney(pastPayments)
-            );
-          })
-        ),
-        loading: this.metricsService
-          .receivedValue(user._id)
           .pipe(map((x) => x == undefined)),
       };
       this.METRICS[3] = {
@@ -130,11 +130,21 @@ export class ProgressSectionComponent implements OnInit {
       this.METRICS[5] = {
         title: 'Taxa de conversão (Gestor):\nOrçamento → Contrato',
         value: this.metricsService
-          .invoicesToContracts(user._id, 'Mês', 3, true)
+          .invoicesToContracts('manager', user._id, 'Mês', 3, true)
           .pipe(map((x) => x.toString() + '%')),
         description: of(this.metricsService.plural('Mês', 3)),
         loading: this.metricsService
-          .invoicesToContracts(user._id)
+          .invoicesToContracts('manager', user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[6] = {
+        title: 'Taxa de conversão (Membro):\nOrçamento → Contrato',
+        value: this.metricsService
+          .invoicesToContracts('member', user._id, 'Mês', 3, true)
+          .pipe(map((x) => x.toString() + '%')),
+        description: of(this.metricsService.plural('Mês', 3)),
+        loading: this.metricsService
+          .invoicesToContracts('member', user._id)
           .pipe(map((x) => x == undefined)),
       };
     });

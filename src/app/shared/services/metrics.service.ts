@@ -227,15 +227,25 @@ export class MetricsService implements OnDestroy {
   }
 
   invoicesToContracts(
+    role: 'manager' | 'member',
     uId: string,
     last = 'Mês',
     number = 1,
     untilToday = false
   ): Observable<number> {
-    return combineLatest(
-      this.contractsAsManger(uId, last, number, untilToday),
-      this.invoicesAsManger(uId, last, number, untilToday)
-    ).pipe(
+    /* eslint-disable @typescript-eslint/indent */
+    const combined$ =
+      role == 'manager'
+        ? combineLatest(
+            this.contractsAsManger(uId, last, number, untilToday),
+            this.invoicesAsManger(uId, last, number, untilToday)
+          )
+        : combineLatest(
+            this.contractsAsMember(uId, last, number, untilToday),
+            this.invoicesAsMember(uId, last, number, untilToday)
+          );
+    /* eslint-enable @typescript-eslint/indent */
+    return combined$.pipe(
       map(([contracts, invoices]) => {
         if (contracts != undefined && invoices != undefined)
           return this.stringUtil.moneyToNumber(
