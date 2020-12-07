@@ -5,7 +5,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { take, map } from 'rxjs/operators';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 
-interface metricItem {
+interface MetricItem {
   title: string;
   value: Observable<string>;
   // activeProgress: Observable<number>;
@@ -19,7 +19,7 @@ interface metricItem {
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit {
-  METRICS: metricItem[] = new Array(7).fill({});
+  METRICS: MetricItem[] = new Array(9).fill({});
 
   constructor(
     private metricsService: MetricsService,
@@ -51,7 +51,7 @@ export class ProgressSectionComponent implements OnInit {
         title: 'Contratos como gestor',
         value: this.metricsService
           .contractsAsManger(user._id)
-          .pipe(map((x) => x.toString())),
+          .pipe(map((pastContracts) => pastContracts.count.toString())),
         description: this.metricsService
           .contractsAsManger(user._id, 'Mês')
           .pipe(
@@ -59,8 +59,8 @@ export class ProgressSectionComponent implements OnInit {
               return (
                 this.metricsService.plural('Mês', 1) +
                 ' você fechou ' +
-                (pastContracts == 0 ? 'nenhum' : pastContracts) +
-                (pastContracts > 1 ? ' contratos' : ' contrato')
+                (pastContracts.count == 0 ? 'nenhum' : pastContracts.count) +
+                (pastContracts.count > 1 ? ' contratos' : ' contrato')
               );
             })
           ),
@@ -72,7 +72,7 @@ export class ProgressSectionComponent implements OnInit {
         title: 'Contratos como membro',
         value: this.metricsService
           .contractsAsMember(user._id)
-          .pipe(map((x) => x.toString())),
+          .pipe(map((pastContracts) => pastContracts.count.toString())),
         description: this.metricsService
           .contractsAsMember(user._id, 'Mês')
           .pipe(
@@ -80,8 +80,8 @@ export class ProgressSectionComponent implements OnInit {
               return (
                 this.metricsService.plural('Mês', 1) +
                 ' você participou de ' +
-                (pastContracts == 0 ? 'nenhum' : pastContracts) +
-                (pastContracts > 1 ? ' contratos' : ' contrato')
+                (pastContracts.count == 0 ? 'nenhum' : pastContracts.count) +
+                (pastContracts.count > 1 ? ' contratos' : ' contrato')
               );
             })
           ),
@@ -93,14 +93,14 @@ export class ProgressSectionComponent implements OnInit {
         title: 'Orçamentos como gestor',
         value: this.metricsService
           .invoicesAsManger(user._id)
-          .pipe(map((x) => x.toString())),
+          .pipe(map((pastInvoices) => pastInvoices.count.toString())),
         description: this.metricsService.invoicesAsManger(user._id, 'Mês').pipe(
           map((pastInvoices) => {
             return (
               this.metricsService.plural('Mês', 1) +
               ' você enviou ' +
-              (pastInvoices == 0 ? 'nenhum' : pastInvoices) +
-              (pastInvoices > 1 ? ' orçamentos' : ' orçamento')
+              (pastInvoices.count == 0 ? 'nenhum' : pastInvoices.count) +
+              (pastInvoices.count > 1 ? ' orçamentos' : ' orçamento')
             );
           })
         ),
@@ -112,14 +112,14 @@ export class ProgressSectionComponent implements OnInit {
         title: 'Orçamentos como membro',
         value: this.metricsService
           .invoicesAsMember(user._id)
-          .pipe(map((x) => x.toString())),
+          .pipe(map((pastInvoices) => pastInvoices.count.toString())),
         description: this.metricsService.invoicesAsMember(user._id, 'Mês').pipe(
           map((pastInvoices) => {
             return (
               this.metricsService.plural('Mês', 1) +
               ' você participou de ' +
-              (pastInvoices == 0 ? 'nenhum' : pastInvoices) +
-              (pastInvoices > 1 ? ' orçamentos' : ' orçamento')
+              (pastInvoices.count == 0 ? 'nenhum' : pastInvoices.count) +
+              (pastInvoices.count > 1 ? ' orçamentos' : ' orçamento')
             );
           })
         ),
@@ -145,6 +145,26 @@ export class ProgressSectionComponent implements OnInit {
         description: of(this.metricsService.plural('Mês', 3)),
         loading: this.metricsService
           .invoicesToContracts('member', user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[7] = {
+        title: 'Taxa de conversão de valores (Gestor):\nOrçamento → Contrato',
+        value: this.metricsService
+          .invoicesToContractsValue('manager', user._id, 'Mês', 3, true)
+          .pipe(map((x) => x.toString() + '%')),
+        description: of(this.metricsService.plural('Mês', 3)),
+        loading: this.metricsService
+          .invoicesToContractsValue('manager', user._id)
+          .pipe(map((x) => x == undefined)),
+      };
+      this.METRICS[8] = {
+        title: 'Taxa de conversão de valores (Membro):\nOrçamento → Contrato',
+        value: this.metricsService
+          .invoicesToContractsValue('member', user._id, 'Mês', 3, true)
+          .pipe(map((x) => x.toString() + '%')),
+        description: of(this.metricsService.plural('Mês', 3)),
+        loading: this.metricsService
+          .invoicesToContractsValue('member', user._id)
           .pipe(map((x) => x == undefined)),
       };
     });

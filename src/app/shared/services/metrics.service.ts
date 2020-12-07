@@ -19,6 +19,11 @@ import {
 import { endOfMonth, subYears, subDays } from 'date-fns/esm';
 import { StringUtilService } from './string-util.service';
 
+interface MetricInfo {
+  count: number;
+  value: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -109,21 +114,34 @@ export class MetricsService implements OnDestroy {
     last = 'Hoje',
     number = 1,
     fromToday = false
-  ): Observable<number> {
+  ): Observable<MetricInfo> {
     return combineLatest(
       this.contractService.getContracts(),
       this.invoiceService.getInvoices()
     ).pipe(
       map(([contracts, invoices]) => {
         if (contracts.length > 0 && invoices.length > 0)
-          return contracts.filter((contract) => {
-            let created = contract.created;
-            if (typeof created !== 'object') created = parseISO(created);
-            return (
-              this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
-              this.compareDates(created, last, number, fromToday)
-            );
-          }).length;
+          return contracts.reduce(
+            (metricInfo: MetricInfo, contract) => {
+              let created = contract.created;
+              if (typeof created !== 'object') created = parseISO(created);
+              if (
+                this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
+                this.compareDates(created, last, number, fromToday)
+              ) {
+                const invoice =
+                  contract.invoice?._id == undefined
+                    ? this.invoiceService.idToInvoice(contract.invoice)
+                    : contract.invoice;
+                metricInfo.count += 1;
+                metricInfo.value += this.stringUtil.moneyToNumber(
+                  invoice.value
+                );
+              }
+              return metricInfo;
+            },
+            { count: 0, value: 0 }
+          );
       }),
       takeUntil(this.destroy$)
     );
@@ -134,18 +152,27 @@ export class MetricsService implements OnDestroy {
     last = 'Hoje',
     number = 1,
     fromToday = false
-  ): Observable<number> {
+  ): Observable<MetricInfo> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
-          return invoices.filter((invoice) => {
-            let created = invoice.created;
-            if (typeof created !== 'object') created = parseISO(created);
-            return (
-              this.invoiceService.isInvoiceAuthor(invoice, uId) &&
-              this.compareDates(created, last, number, fromToday)
-            );
-          }).length;
+          return invoices.reduce(
+            (metricInfo: MetricInfo, invoice) => {
+              let created = invoice.created;
+              if (typeof created !== 'object') created = parseISO(created);
+              if (
+                this.invoiceService.isInvoiceAuthor(invoice, uId) &&
+                this.compareDates(created, last, number, fromToday)
+              ) {
+                metricInfo.count += 1;
+                metricInfo.value += this.stringUtil.moneyToNumber(
+                  invoice.value
+                );
+              }
+              return metricInfo;
+            },
+            { count: 0, value: 0 }
+          );
       }),
       takeUntil(this.destroy$)
     );
@@ -156,21 +183,34 @@ export class MetricsService implements OnDestroy {
     last = 'Hoje',
     number = 1,
     fromToday = false
-  ): Observable<number> {
+  ): Observable<MetricInfo> {
     return combineLatest(
       this.contractService.getContracts(),
       this.invoiceService.getInvoices()
     ).pipe(
       map(([contracts, invoices]) => {
         if (contracts.length > 0 && invoices.length > 0)
-          return contracts.filter((contract) => {
-            let created = contract.created;
-            if (typeof created !== 'object') created = parseISO(created);
-            return (
-              this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
-              this.compareDates(created, last, number, fromToday)
-            );
-          }).length;
+          return contracts.reduce(
+            (metricInfo: MetricInfo, contract) => {
+              let created = contract.created;
+              if (typeof created !== 'object') created = parseISO(created);
+              if (
+                this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
+                this.compareDates(created, last, number, fromToday)
+              ) {
+                const invoice =
+                  contract.invoice?._id == undefined
+                    ? this.invoiceService.idToInvoice(contract.invoice)
+                    : contract.invoice;
+                metricInfo.count += 1;
+                metricInfo.value += this.stringUtil.moneyToNumber(
+                  invoice.value
+                );
+              }
+              return metricInfo;
+            },
+            { count: 0, value: 0 }
+          );
       }),
       takeUntil(this.destroy$)
     );
@@ -181,18 +221,27 @@ export class MetricsService implements OnDestroy {
     last = 'Hoje',
     number = 1,
     fromToday = false
-  ): Observable<number> {
+  ): Observable<MetricInfo> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
-          return invoices.filter((invoice) => {
-            let created = invoice.created;
-            if (typeof created !== 'object') created = parseISO(created);
-            return (
-              this.invoiceService.isInvoiceMember(invoice, uId) &&
-              this.compareDates(created, last, number, fromToday)
-            );
-          }).length;
+          return invoices.reduce(
+            (metricInfo: MetricInfo, invoice) => {
+              let created = invoice.created;
+              if (typeof created !== 'object') created = parseISO(created);
+              if (
+                this.invoiceService.isInvoiceMember(invoice, uId) &&
+                this.compareDates(created, last, number, fromToday)
+              ) {
+                metricInfo.count += 1;
+                metricInfo.value += this.stringUtil.moneyToNumber(
+                  invoice.value
+                );
+              }
+              return metricInfo;
+            },
+            { count: 0, value: 0 }
+          );
       }),
       takeUntil(this.destroy$)
     );
@@ -250,7 +299,45 @@ export class MetricsService implements OnDestroy {
         if (contracts != undefined && invoices != undefined)
           return this.stringUtil.moneyToNumber(
             this.stringUtil
-              .toPercentage(contracts.toString(), invoices.toString())
+              .toPercentage(
+                contracts.count.toString(),
+                invoices.count.toString()
+              )
+              .slice(0, -1)
+          );
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  invoicesToContractsValue(
+    role: 'manager' | 'member',
+    uId: string,
+    last = 'Mês',
+    number = 1,
+    fromToday = false
+  ): Observable<number> {
+    /* eslint-disable @typescript-eslint/indent */
+    const combined$ =
+      role == 'manager'
+        ? combineLatest(
+            this.contractsAsManger(uId, last, number, fromToday),
+            this.invoicesAsManger(uId, last, number, fromToday)
+          )
+        : combineLatest(
+            this.contractsAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember(uId, last, number, fromToday)
+          );
+    /* eslint-enable @typescript-eslint/indent */
+    return combined$.pipe(
+      map(([contracts, invoices]) => {
+        if (contracts != undefined && invoices != undefined)
+          return this.stringUtil.moneyToNumber(
+            this.stringUtil
+              .toPercentage(
+                contracts.value.toString(),
+                invoices.value.toString()
+              )
               .slice(0, -1)
           );
       }),
