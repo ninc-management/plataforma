@@ -63,7 +63,7 @@ export class MetricsService implements OnDestroy {
     date: any,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): boolean {
     switch (last) {
       case 'Hoje': {
@@ -76,10 +76,10 @@ export class MetricsService implements OnDestroy {
         });
       }
       case 'Mês': {
-        const lastMonthStart = untilToday
+        const lastMonthStart = fromToday
           ? subMonths(new Date(), number)
           : startOfMonth(subMonths(new Date(), number));
-        const lastMonthEnd = untilToday
+        const lastMonthEnd = fromToday
           ? new Date()
           : endOfMonth(addMonths(lastMonthStart, number - 1));
         return isWithinInterval(date, {
@@ -88,10 +88,10 @@ export class MetricsService implements OnDestroy {
         });
       }
       case 'Ano': {
-        const lastYearStart = untilToday
+        const lastYearStart = fromToday
           ? subYears(new Date(), number)
           : startOfYear(subYears(new Date(), number));
-        const lastYearEnd = untilToday
+        const lastYearEnd = fromToday
           ? new Date()
           : endOfYear(addYears(lastYearStart, number - 1));
         return isWithinInterval(date, {
@@ -108,7 +108,7 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
@@ -121,7 +121,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
-              this.compareDates(created, last, number, untilToday)
+              this.compareDates(created, last, number, fromToday)
             );
           }).length;
       }),
@@ -133,7 +133,7 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
@@ -143,7 +143,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceAuthor(invoice, uId) &&
-              this.compareDates(created, last, number, untilToday)
+              this.compareDates(created, last, number, fromToday)
             );
           }).length;
       }),
@@ -155,7 +155,7 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
@@ -168,7 +168,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
-              this.compareDates(created, last, number, untilToday)
+              this.compareDates(created, last, number, fromToday)
             );
           }).length;
       }),
@@ -180,7 +180,7 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
@@ -190,7 +190,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             return (
               this.invoiceService.isInvoiceMember(invoice, uId) &&
-              this.compareDates(created, last, number, untilToday)
+              this.compareDates(created, last, number, fromToday)
             );
           }).length;
       }),
@@ -202,7 +202,7 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Hoje',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     return combineLatest(
       this.contractService.getContracts(),
@@ -215,7 +215,7 @@ export class MetricsService implements OnDestroy {
             if (typeof created !== 'object') created = parseISO(created);
             const paid = this.contractService.hasPayments(contract._id, uId);
             if (
-              this.compareDates(created, last, number, untilToday) &&
+              this.compareDates(created, last, number, fromToday) &&
               paid.hasPayments
             )
               return (received += paid.value);
@@ -231,18 +231,18 @@ export class MetricsService implements OnDestroy {
     uId: string,
     last = 'Mês',
     number = 1,
-    untilToday = false
+    fromToday = false
   ): Observable<number> {
     /* eslint-disable @typescript-eslint/indent */
     const combined$ =
       role == 'manager'
         ? combineLatest(
-            this.contractsAsManger(uId, last, number, untilToday),
-            this.invoicesAsManger(uId, last, number, untilToday)
+            this.contractsAsManger(uId, last, number, fromToday),
+            this.invoicesAsManger(uId, last, number, fromToday)
           )
         : combineLatest(
-            this.contractsAsMember(uId, last, number, untilToday),
-            this.invoicesAsMember(uId, last, number, untilToday)
+            this.contractsAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember(uId, last, number, fromToday)
           );
     /* eslint-enable @typescript-eslint/indent */
     return combined$.pipe(
