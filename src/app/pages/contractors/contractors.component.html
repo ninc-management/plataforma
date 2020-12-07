@@ -28,14 +28,23 @@
           </div>
         </div>
       </nb-card-header>
-      <ng2-smart-table
-        *ngIf="pageWidth() >= 576; else phone"
-        [settings]="settings"
-        [source]="source"
-        (create)="contractorDialog({})"
-        (edit)="contractorDialog($event)"
-      >
-      </ng2-smart-table>
+      <div
+        *ngIf="contractors.length == 0; else table"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+        style="width: 100%; height: 654px"
+      ></div>
+      <ng-template #table>
+        <ng2-smart-table
+          *ngIf="pageWidth() >= 576; else phone"
+          [settings]="settings"
+          [source]="source"
+          (create)="contractorDialog({})"
+          (edit)="contractorDialog($event)"
+        >
+        </ng2-smart-table>
+      </ng-template>
       <ng-template #phone>
         <nb-list>
           <nb-list-item
