@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Umbler
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [production]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          #name: id_rsa # optional
+          #config: ${{ secrets.CONFIG }} # ssh_config; optional
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Branch checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: production
+      - name: Commit to Umbler using git remote
+        run: |
+          git remote add umbler ${{ secrets.UMBLER_REMOTE }}
+          git config --global user.email "contact@augustoicaro.com"
+          git config --global user.name "Augusto Icaro Farias da Cunha"
+          git cherry-pick 1d173f8269aef72b3cdd88f5f06796eb02cfa7ba
+          git push umbler production:master -f
