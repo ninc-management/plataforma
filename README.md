@@ -1,4 +1,9 @@
-# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/main/LICENSE)
+# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![GitHub](https://img.shields.io/github/license/nortan-projetos/plataforma.svg)](https://raw.githubusercontent.com/nortan-projetos/nortan-projetos.github.io/main/LICENSE)
+
+![DEV](https://github.com/nortan-projetos/plataforma/workflows/Development/badge.svg)
+![DEMO](https://github.com/nortan-projetos/plataforma/workflows/Demo/badge.svg)
+![PROD](https://github.com/nortan-projetos/plataforma/workflows/Production/badge.svg)
+![UMBLER](https://github.com/nortan-projetos/plataforma/workflows/Umbler/badge.svg)
 
 ## How to Serve Locally
 
