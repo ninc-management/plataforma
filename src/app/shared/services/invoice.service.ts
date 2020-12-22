@@ -67,9 +67,11 @@ export class InvoiceService implements OnDestroy {
           this.invoices$.next(invoices);
         });
       this.socket
-        .fromEvent('invoices')
+        .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) => this.wsService.handle(data, this.invoices$));
+        .subscribe((data) =>
+          this.wsService.handle(data, this.invoices$, 'invoices')
+        );
     }
 
     return this.invoices$;

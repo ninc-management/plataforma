@@ -64,9 +64,11 @@ export class ContractService implements OnDestroy {
           this.contracts$.next(contracts);
         });
       this.socket
-        .fromEvent('contracts')
+        .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) => this.wsService.handle(data, this.contracts$));
+        .subscribe((data) =>
+          this.wsService.handle(data, this.contracts$, 'contracts')
+        );
     }
     return this.contracts$;
   }

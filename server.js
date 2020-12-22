@@ -31,30 +31,21 @@ const onListening = () => {
 
 const port = util.normalizePort(process.env.PORT || '8080');
 console.log('App now running on port', port);
-app.set('port', port);
+app.express.set('port', port);
 
-const server = http.createServer(app);
+const server = http.createServer(app.express);
 server.on('error', onError);
 server.on('listening', onListening);
 server.listen(port);
 
-const io = require('socket.io')(server, { path: '/api/socket.io' });
-const Invoice = require('./backend/models/invoice');
-const User = require('./backend/models/user');
-const Contract = require('./backend/models/contract');
-const Contractor = require('./backend/models/contractor');
+const io = require('socket.io')(server, {
+  path: '/api/socket.io',
+  transports: ['websocket'],
+});
 
 io.on('connection', (socket) => {
-  User.watch().on('change', (data) => {
-    socket.emit('users', data);
-  });
-  Invoice.watch().on('change', (data) => {
-    socket.emit('invoices', data);
-  });
-  Contract.watch().on('change', (data) => {
-    socket.emit('contracts', data);
-  });
-  Contractor.watch().on('change', (data) => {
-    socket.emit('contractors', data);
+  app.db.watch().on('change', (data) => {
+    console.log(data);
+    socket.emit('dbchange', data);
   });
 });

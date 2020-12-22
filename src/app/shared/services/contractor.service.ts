@@ -29,14 +29,7 @@ export class ContractorService implements OnDestroy {
     const req = {
       contractor: contractor,
     };
-    this.http
-      .post('/api/contractor/', req)
-      .pipe(take(1))
-      .subscribe((res: any) => {
-        let tmp = this.contractors$.getValue();
-        tmp.push(res.contractor);
-        this.contractors$.next(tmp);
-      });
+    this.http.post('/api/contractor/', req).pipe(take(1)).subscribe();
   }
 
   editContractor(contractor: any): void {
@@ -72,9 +65,11 @@ export class ContractorService implements OnDestroy {
           );
         });
       this.socket
-        .fromEvent('contractors')
+        .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) => this.wsService.handle(data, this.contractors$));
+        .subscribe((data) =>
+          this.wsService.handle(data, this.contractors$, 'contractors')
+        );
     }
     return this.contractors$;
   }

@@ -31,6 +31,7 @@ const config: SocketIoConfig = {
   url: '',
   options: {
     path: '/api/socket.io',
+    transports: ['websocket'],
   },
 };
 

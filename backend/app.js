@@ -25,6 +25,9 @@ mongoose
     autoIndex: false,
     authSource: 'admin',
     ssl: true,
+    poolSize: 100,
+    keepAlive: 29000,
+    connectTimeoutMS: 29000,
   })
   .then(() => {
     console.log('Database connection ready!');
@@ -60,4 +63,7 @@ app.use('/api/contractor', contractorRoutes);
 app.use('/api/contract', contractRoutes);
 app.use('/api/invoice', invoiceRoutes);
 
-module.exports = app;
+module.exports = {
+  express: app,
+  db: mongoose.connection,
+};
