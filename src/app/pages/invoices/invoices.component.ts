@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import {
   NbDialogService,
   NbIconLibraries,
@@ -18,7 +25,8 @@ import { UserService } from 'app/shared/services/user.service';
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.scss'],
 })
-export class InvoicesComponent implements OnInit, OnDestroy {
+export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('smartTable', { read: ElementRef }) tableRef;
   private destroy$ = new Subject<void>();
   invoices: any[] = [];
   searchQuery = '';
@@ -88,6 +96,27 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Empreendimento',
         type: 'string',
       },
+      role: {
+        title: 'Papel',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: 'Gestor', title: 'Gestor' },
+              { value: 'Membro', title: 'Membro' },
+              { value: 'Gestor Membro', title: 'Ambos' },
+              { value: 'Nenhum', title: 'Nenhum' },
+            ],
+          },
+        },
+        filterFunction(cell: any, search?: string): boolean {
+          if (search.includes(cell)) return true;
+          return false;
+        },
+      },
       value: {
         title: 'Valor',
         type: 'string',
@@ -101,7 +130,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         filter: {
           type: 'list',
           config: {
-            selectText: 'Status',
+            selectText: 'Todos',
             list: [
               { value: 'Em análise', title: 'Em análise' },
               { value: 'Fechado', title: 'Fechado' },
@@ -132,10 +161,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest(
       this.invoiceService.getInvoices(),
-      this.contractorService.getContractors()
+      this.contractorService.getContractors(),
+      this.userService.currentUser$
     )
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([invoices, contractors]) => {
+      .subscribe(([invoices, contractors, user]) => {
         if (invoices.length > 0 && contractors.length > 0) {
           this.invoices = invoices.map((invoice: any) => {
             if (invoice.author?.fullName == undefined)
@@ -153,9 +183,34 @@ export class InvoicesComponent implements OnInit, OnDestroy {
               ? invoice.author.exibitionName
               : invoice.author.fullName;
             invoice.contractorName = invoice.contractor.fullName;
+            invoice.role = this.invoiceService.role(invoice, user);
             return invoice;
           });
           this.source.load(invoices);
+        }
+      });
+  }
+
+  ngAfterViewInit(): void {
+    combineLatest(
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors()
+    )
+      .pipe(take(3))
+      .subscribe(([invoices, contractors]) => {
+        if (invoices.length > 0 && contractors.length > 0) {
+          setTimeout(() => {
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
+              'Gestor Membro';
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
+              new Event('change')
+            );
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].value =
+              'Em análise';
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
+              new Event('change')
+            );
+          }, 1);
         }
       });
   }

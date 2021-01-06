@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { ContractDialogComponent } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -14,7 +21,8 @@ import { Subject, combineLatest } from 'rxjs';
   templateUrl: './contracts.component.html',
   styleUrls: ['./contracts.component.scss'],
 })
-export class ContractsComponent implements OnInit, OnDestroy {
+export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('smartTable', { read: ElementRef }) tableRef;
   private destroy$ = new Subject<void>();
   contracts: any[] = [];
   searchQuery = '';
@@ -84,6 +92,27 @@ export class ContractsComponent implements OnInit, OnDestroy {
         title: 'Empreendimento',
         type: 'string',
       },
+      role: {
+        title: 'Papel',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              { value: 'Gestor', title: 'Gestor' },
+              { value: 'Membro', title: 'Membro' },
+              { value: 'Gestor Membro', title: 'Ambos' },
+              { value: 'Nenhum', title: 'Nenhum' },
+            ],
+          },
+        },
+        filterFunction(cell: any, search?: string): boolean {
+          if (search.includes(cell)) return true;
+          return false;
+        },
+      },
       value: {
         title: 'Valor',
         type: 'string',
@@ -97,9 +126,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
         filter: {
           type: 'list',
           config: {
-            selectText: 'Status',
+            selectText: 'Todos',
             list: [
-              { value: 'Em adamento', title: 'Em adamento' },
+              { value: 'Em andamento', title: 'Em andamento' },
               { value: 'Concluído', title: 'Concluído' },
               { value: 'Arquivado', title: 'Arquivado' },
             ],
@@ -129,10 +158,11 @@ export class ContractsComponent implements OnInit, OnDestroy {
     combineLatest(
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
-      this.contractorService.getContractors()
+      this.contractorService.getContractors(),
+      this.userService.currentUser$
     )
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([contracts, invoices, contractors]) => {
+      .subscribe(([contracts, invoices, contractors, user]) => {
         if (
           contracts.length > 0 &&
           invoices.length > 0 &&
@@ -162,6 +192,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
                 : this.contractorService.idToName(contract.invoice.contractor);
             if (!contract.value) contract.value = contract.invoice.value;
             if (!contract.name) contract.name = contract.invoice.name;
+            contract.role = this.invoiceService.role(contract.invoice, user);
             return contract;
           });
           this.source.load(this.contracts);
@@ -169,6 +200,35 @@ export class ContractsComponent implements OnInit, OnDestroy {
       });
   }
   /* eslint-enable @typescript-eslint/indent */
+
+  ngAfterViewInit(): void {
+    combineLatest(
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors()
+    )
+      .pipe(take(4))
+      .subscribe(([contracts, invoices, contractors]) => {
+        if (
+          contracts.length > 0 &&
+          invoices.length > 0 &&
+          contractors.length > 0
+        ) {
+          setTimeout(() => {
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
+              'Gestor Membro';
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
+              new Event('change')
+            );
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].value =
+              'Em andamento';
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
+              new Event('change')
+            );
+          }, 1);
+        }
+      });
+  }
 
   contractDialog(event, isEditing: boolean): void {
     this.dialogService.open(ContractDialogComponent, {

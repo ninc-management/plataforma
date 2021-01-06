@@ -38,6 +38,7 @@
       <ng-template #table>
         <ng2-smart-table
           *ngIf="pageWidth() >= 576; else phone"
+          #smartTable
           [settings]="settings"
           [source]="source"
           (edit)="invoiceDialog($event)"

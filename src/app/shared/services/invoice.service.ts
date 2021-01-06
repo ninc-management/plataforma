@@ -108,4 +108,10 @@ export class InvoiceService implements OnDestroy {
       ? true
       : false;
   }
+
+  role(invoice: any, user: any): string {
+    if (this.isInvoiceAuthor(invoice._id, user._id)) return 'Gestor';
+    if (this.isInvoiceMember(invoice._id, user._id)) return 'Membro';
+    return 'Nenhum';
+  }
 }
