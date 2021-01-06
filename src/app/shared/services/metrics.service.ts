@@ -4,7 +4,7 @@ import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
 import { UserService } from './user.service';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map, tap } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 import {
   parseISO,
   isSameMonth,
@@ -253,21 +253,36 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<number> {
-    return combineLatest(
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices()
-    ).pipe(
-      map(([contracts, invoices]) => {
-        if (contracts.length > 0 && invoices.length > 0)
+    return this.contractService.getContracts().pipe(
+      map((contracts) => {
+        if (contracts.length > 0)
           return contracts.reduce((received, contract) => {
-            let created = contract.created;
-            if (typeof created !== 'object') created = parseISO(created);
-            const paid = this.contractService.hasPayments(contract._id, uId);
-            if (
-              this.compareDates(created, last, number, fromToday) &&
-              paid.hasPayments
-            )
-              return (received += paid.value);
+            if (this.contractService.hasPayments(contract._id, uId)) {
+              const value = contract.payments.reduce((paid, payment) => {
+                if (payment.paid != 'não') {
+                  let paidDate = payment.paidDate;
+                  if (typeof paidDate !== 'object')
+                    paidDate = parseISO(paidDate);
+                  if (this.compareDates(paidDate, last, number, fromToday))
+                    return (
+                      paid +
+                      payment.team.reduce((upaid, member) => {
+                        const author =
+                          member.user._id == undefined
+                            ? member.user
+                            : member.user._id;
+                        if (author == uId)
+                          return (
+                            upaid + this.stringUtil.moneyToNumber(member.value)
+                          );
+                        return upaid;
+                      }, 0)
+                    );
+                }
+                return paid;
+              }, 0);
+              return received + value;
+            }
             return received;
           }, 0);
       }),

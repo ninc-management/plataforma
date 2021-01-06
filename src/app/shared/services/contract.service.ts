@@ -89,19 +89,8 @@ export class ContractService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  hasPayments(cId: any, uId: string): { hasPayments: boolean; value: number } {
+  hasPayments(cId: any, uId: string): boolean {
     const contract = cId._id == undefined ? this.idToContract(cId) : cId;
-    if (contract.payments.length == 0) return { hasPayments: false, value: 0 };
-    const paid = contract.payments.reduce((paid, payment) => {
-      if (payment.paid == 'não') return paid;
-      return (paid += payment.team.reduce((upaid, member) => {
-        const author =
-          member.user._id == undefined ? member.user : member.user._id;
-        if (author == uId)
-          return (upaid += this.stringUtil.moneyToNumber(member.value));
-        return upaid;
-      }, 0));
-    }, 0);
-    return { hasPayments: paid > 0, value: paid };
+    return contract.payments.length != 0;
   }
 }

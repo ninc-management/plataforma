@@ -10,7 +10,6 @@ export class WebSocketService {
   handle(data: any, oArray$: BehaviorSubject<any[]>, coll: string): void {
     if (data == {}) return;
     if (data.ns.coll != coll) return;
-    console.log('Recebido!', data);
     switch (data.operationType) {
       case 'update': {
         let tmpArray = oArray$.getValue();
