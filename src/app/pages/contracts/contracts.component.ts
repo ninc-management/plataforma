@@ -143,6 +143,10 @@ export class ContractsComponent implements OnInit, OnDestroy {
               contract.invoice = this.invoiceService.idToInvoice(
                 contract.invoice
               );
+            if (contract.invoice.author?.fullName == undefined)
+              contract.invoice.author = this.userService.idToUser(
+                contract.invoice.author
+              );
             if (!contract.fullName) {
               const author = contract.invoice.author?.fullName
                 ? contract.invoice.author
