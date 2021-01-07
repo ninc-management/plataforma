@@ -102,8 +102,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             selectText: 'Todos',
             list: [
               { value: 'Gestor', title: 'Gestor' },
-              { value: 'Membro', title: 'Membro' },
-              { value: 'Gestor Membro', title: 'Ambos' },
+              { value: 'Equipe', title: 'Equipe' },
+              { value: 'Equipe Gestor', title: 'Ambos' },
               { value: 'Nenhum', title: 'Nenhum' },
             ],
           },
@@ -216,7 +216,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         ) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
-              'Gestor Membro';
+              'Equipe Gestor';
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
               new Event('change')
             );
