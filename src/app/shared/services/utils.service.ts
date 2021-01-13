@@ -29,6 +29,13 @@ export class UtilsService {
     }, {});
   }
 
+  assingOrIncrement(base: number, increment: number): number {
+    let result = 0;
+    if (base != undefined) result += base;
+    result += increment;
+    return result;
+  }
+
   deepCopy(obj: any): any {
     var copy;
 

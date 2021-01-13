@@ -204,6 +204,39 @@ export class ProgressSectionComponent implements OnInit {
               .pipe(map((x) => x == undefined)),
           });
         }
+        for (const department of this.departmentService.userDepartments(
+          user._id
+        )) {
+          this.METRICS.push({
+            title: 'Representação na ' + department,
+            value: this.metricsService
+              .receivedValueByDepartmentsFiltered(user._id)
+              .pipe(
+                map((userDepartment) =>
+                  this.metricsService.userDepartmentRepresentation(
+                    department,
+                    userDepartment
+                  )
+                )
+              ),
+            description: this.metricsService
+              .receivedValueByDepartmentsFiltered(user._id, 'Mês', 1)
+              .pipe(
+                map(
+                  (userDepartment) =>
+                    this.metricsService.plural('Mês', 1) +
+                    ' foi ' +
+                    this.metricsService.userDepartmentRepresentation(
+                      department,
+                      userDepartment
+                    )
+                )
+              ),
+            loading: this.metricsService
+              .receivedValueByCoordinationsFiltered(user._id)
+              .pipe(map((x) => x == undefined)),
+          });
+        }
       }
     });
   }

@@ -36,12 +36,17 @@ interface UserAndCoordinations {
 }
 
 // Department-coordination.json file order
-interface Departaments {
-  DAD: number;
-  DEC: number;
-  DAQ: number;
-  DPC: number;
-  DRM: number;
+interface Departments {
+  DAD?: number;
+  DEC?: number;
+  DAQ?: number;
+  DPC?: number;
+  DRM?: number;
+}
+
+interface UserAndDepartments {
+  user: Departments;
+  global: Departments;
 }
 
 @Injectable({
@@ -50,7 +55,7 @@ interface Departaments {
 export class MetricsService implements OnDestroy {
   destroy$ = new Subject<void>();
 
-  defaultCoordsValue: Coordinations = {
+  private defaultCoordsValue: Coordinations = {
     CADM: 0,
     CDI: 0,
     CGO: 0,
@@ -63,9 +68,23 @@ export class MetricsService implements OnDestroy {
     CSEST: 0,
     CSH: 0,
   };
-  defaultUserCoordValue: UserAndCoordinations = {
+
+  private defaultDepartments: Departments = {
+    DAD: 0,
+    DEC: 0,
+    DAQ: 0,
+    DPC: 0,
+    DRM: 0,
+  };
+
+  private defaultUserCoordValue: UserAndCoordinations = {
     user: Object.assign({}, this.defaultCoordsValue),
     global: Object.assign({}, this.defaultCoordsValue),
+  };
+
+  private defaultUserDepartmentValue: UserAndDepartments = {
+    user: Object.assign({}, this.defaultDepartments),
+    global: Object.assign({}, this.defaultDepartments),
   };
 
   constructor(
@@ -81,6 +100,44 @@ export class MetricsService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  userDepartmentRepresentation(
+    department: string,
+    userDepartment: UserAndDepartments
+  ): string {
+    const departmentsAbrevs = this.departmentService
+      .buildDepartmentList()
+      .map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
+    switch (department) {
+      case departmentsAbrevs[0]:
+        return this.stringUtil.toPercentage(
+          userDepartment.user.DAD.toString(),
+          userDepartment.global.DAD.toString()
+        );
+      case departmentsAbrevs[1]:
+        return this.stringUtil.toPercentage(
+          userDepartment.user.DEC.toString(),
+          userDepartment.global.DEC.toString()
+        );
+      case departmentsAbrevs[2]:
+        return this.stringUtil.toPercentage(
+          userDepartment.user.DAQ.toString(),
+          userDepartment.global.DAQ.toString()
+        );
+      case departmentsAbrevs[3]:
+        return this.stringUtil.toPercentage(
+          userDepartment.user.DPC.toString(),
+          userDepartment.global.DPC.toString()
+        );
+      case departmentsAbrevs[4]:
+        return this.stringUtil.toPercentage(
+          userDepartment.user.DRM.toString(),
+          userDepartment.global.DRM.toString()
+        );
+      default:
+        return '';
+    }
   }
 
   userCoordRepresentation(
@@ -586,7 +643,189 @@ export class MetricsService implements OnDestroy {
               break;
           }
         }
-        return filtered as UserAndCoordinations;
+        return filtered;
+      })
+    );
+  }
+
+  receivedValueByDepartments(
+    uId: string = undefined,
+    last = 'Hoje',
+    number = 1,
+    fromToday = false
+  ): Observable<UserAndDepartments> {
+    return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
+      map((userCoord: UserAndCoordinations) => {
+        if (userCoord == undefined) return undefined;
+        let userDepartment = this.utils.deepCopy(
+          this.defaultUserDepartmentValue
+        );
+        userDepartment.user.DAD += userCoord.user.CADM;
+        userDepartment.global.DAD += userCoord.global.CADM;
+
+        userDepartment.user.DAQ += userCoord.user.CDI;
+        userDepartment.global.DAQ += userCoord.global.CDI;
+
+        userDepartment.user.DEC += userCoord.user.CGO;
+        userDepartment.global.DEC += userCoord.global.CGO;
+
+        userDepartment.user.DEC += userCoord.user.CIMP;
+        userDepartment.global.DEC += userCoord.global.CIMP;
+
+        userDepartment.user.DEC += userCoord.user.CINST;
+        userDepartment.global.DEC += userCoord.global.CINST;
+
+        userDepartment.user.DRM += userCoord.user.CMA;
+        userDepartment.global.DRM += userCoord.global.CMA;
+
+        userDepartment.user.DAQ += userCoord.user.CPA;
+        userDepartment.global.DAQ += userCoord.global.CPA;
+
+        userDepartment.user.DRM += userCoord.user.CRH;
+        userDepartment.global.DRM += userCoord.global.CRH;
+
+        userDepartment.user.DPC += userCoord.user.CSE;
+        userDepartment.global.DPC += userCoord.global.CSE;
+
+        userDepartment.user.DPC += userCoord.user.CSEST;
+        userDepartment.global.DPC += userCoord.global.CSEST;
+
+        userDepartment.user.DPC += userCoord.user.CSH;
+        userDepartment.global.DPC += userCoord.global.CSH;
+
+        return userDepartment;
+      })
+    );
+  }
+
+  receivedValueByDepartmentsFiltered(
+    uId: string = undefined,
+    last = 'Hoje',
+    number = 1,
+    fromToday = false
+  ): Observable<UserAndDepartments> {
+    return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
+      map((userDepartment: UserAndDepartments) => {
+        if (userDepartment == undefined) return undefined;
+        let filtered: UserAndDepartments = { user: {}, global: {} };
+        for (const coord of this.departmentService.userCoordinations(uId)) {
+          const coords = this.departmentService.buildAllCoordinationsList();
+          switch (coord) {
+            case coords[0]:
+              filtered.user.DAD = this.utils.assingOrIncrement(
+                filtered.user.DAD,
+                userDepartment.user.DAD
+              );
+              filtered.global.DAD = this.utils.assingOrIncrement(
+                filtered.global.DAD,
+                userDepartment.global.DAD
+              );
+              break;
+            case coords[1]:
+              filtered.user.DAQ = this.utils.assingOrIncrement(
+                filtered.user.DAQ,
+                userDepartment.user.DAQ
+              );
+              filtered.global.DAQ = this.utils.assingOrIncrement(
+                filtered.global.DAQ,
+                userDepartment.global.DAQ
+              );
+              break;
+            case coords[2]:
+              filtered.user.DEC = this.utils.assingOrIncrement(
+                filtered.user.DEC,
+                userDepartment.user.DEC
+              );
+              filtered.global.DEC = this.utils.assingOrIncrement(
+                filtered.global.DEC,
+                userDepartment.global.DEC
+              );
+              break;
+            case coords[3]:
+              filtered.user.DEC = this.utils.assingOrIncrement(
+                filtered.user.DEC,
+                userDepartment.user.DEC
+              );
+              filtered.global.DEC = this.utils.assingOrIncrement(
+                filtered.global.DEC,
+                userDepartment.global.DEC
+              );
+              break;
+            case coords[4]:
+              filtered.user.DEC = this.utils.assingOrIncrement(
+                filtered.user.DEC,
+                userDepartment.user.DEC
+              );
+              filtered.global.DEC = this.utils.assingOrIncrement(
+                filtered.global.DEC,
+                userDepartment.global.DEC
+              );
+              break;
+            case coords[5]:
+              filtered.user.DRM = this.utils.assingOrIncrement(
+                filtered.user.DRM,
+                userDepartment.user.DRM
+              );
+              filtered.global.DRM = this.utils.assingOrIncrement(
+                filtered.global.DRM,
+                userDepartment.global.DRM
+              );
+              break;
+            case coords[6]:
+              filtered.user.DAQ = this.utils.assingOrIncrement(
+                filtered.user.DAQ,
+                userDepartment.user.DAQ
+              );
+              filtered.global.DAQ = this.utils.assingOrIncrement(
+                filtered.global.DAQ,
+                userDepartment.global.DAQ
+              );
+              break;
+            case coords[7]:
+              filtered.user.DRM = this.utils.assingOrIncrement(
+                filtered.user.DRM,
+                userDepartment.user.DRM
+              );
+              filtered.global.DRM = this.utils.assingOrIncrement(
+                filtered.global.DRM,
+                userDepartment.global.DRM
+              );
+              break;
+            case coords[8]:
+              filtered.user.DPC = this.utils.assingOrIncrement(
+                filtered.user.DPC,
+                userDepartment.user.DPC
+              );
+              filtered.global.DPC = this.utils.assingOrIncrement(
+                filtered.global.DPC,
+                userDepartment.global.DPC
+              );
+              break;
+            case coords[9]:
+              filtered.user.DPC = this.utils.assingOrIncrement(
+                filtered.user.DPC,
+                userDepartment.user.DPC
+              );
+              filtered.global.DPC = this.utils.assingOrIncrement(
+                filtered.global.DPC,
+                userDepartment.global.DPC
+              );
+              break;
+            case coords[10]:
+              filtered.user.DPC = this.utils.assingOrIncrement(
+                filtered.user.DPC,
+                userDepartment.user.DPC
+              );
+              filtered.global.DPC = this.utils.assingOrIncrement(
+                filtered.global.DPC,
+                userDepartment.global.DPC
+              );
+              break;
+            default:
+              break;
+          }
+        }
+        return filtered;
       })
     );
   }
