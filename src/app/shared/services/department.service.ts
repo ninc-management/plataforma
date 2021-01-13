@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { UserService } from './user.service';
 import * as json_department_coordination from '../department-coordination.json';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DepartmentService {
+  constructor(private userService: UserService) {}
+
   buildDepartmentList(): string[] {
     let departments: string[] = [];
     for (const department of json_department_coordination.departments) {
@@ -37,5 +40,27 @@ export class DepartmentService {
 
   extractAbreviation(composedName: string): string {
     return composedName.substr(0, 3);
+  }
+
+  userCoordinations(uId: string): string[] {
+    if (uId == undefined) return [];
+    const user = this.userService.idToUser(uId);
+    const active: boolean[] = [
+      user.adm,
+      user.design,
+      user.obras,
+      user.impermeabilizacao,
+      user.instalacoes,
+      user.ambiental,
+      user.arquitetura,
+      user.hidrico,
+      user.eletrica,
+      user.civil,
+      user.sanitaria,
+    ];
+    const allCoords = this.buildAllCoordinationsList();
+    return allCoords.filter((cd: string, idx: number) => {
+      return active[idx];
+    });
   }
 }

@@ -89,7 +89,7 @@ export class ContractService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  hasPayments(cId: any, uId: string): boolean {
+  hasPayments(cId: any): boolean {
     const contract = cId._id == undefined ? this.idToContract(cId) : cId;
     return contract.payments.length != 0;
   }
