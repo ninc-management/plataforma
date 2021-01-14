@@ -45,7 +45,6 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   app.db.watch().on('change', (data) => {
-    console.log(data);
     socket.emit('dbchange', data);
   });
 });
