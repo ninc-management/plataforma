@@ -1,7 +1,18 @@
 <nb-card>
   <nb-card-body>
     <div class="progress-info" *ngFor="let item of METRICS">
-      <div class="subtitle">{{ item.title }}</div>
+      <div class="subtitle">
+        {{ item.title }}
+        <nb-icon
+          status="info"
+          icon="info"
+          pack="eva"
+          [options]="{ animation: { type: 'pulse' } }"
+          nbTooltip="{{ item.tooltip }}"
+          nbTooltipPlacement="top"
+          nbTooltipStatus="info"
+        ></nb-icon>
+      </div>
       <div
         *ngIf="item.loading | async; else metric"
         [nbSpinner]="true"

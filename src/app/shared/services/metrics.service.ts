@@ -814,7 +814,7 @@ export class MetricsService implements OnDestroy {
   invoicesToContracts(
     role: 'manager' | 'member',
     uId: string,
-    last = 'Mês',
+    last = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<number> {
@@ -846,7 +846,7 @@ export class MetricsService implements OnDestroy {
   invoicesToContractsValue(
     role: 'manager' | 'member',
     uId: string,
-    last = 'Mês',
+    last = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<number> {

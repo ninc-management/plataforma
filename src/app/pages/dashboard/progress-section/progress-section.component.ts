@@ -8,6 +8,7 @@ import { take, map } from 'rxjs/operators';
 
 interface MetricItem {
   title: string;
+  tooltip: string;
   value: Observable<string>;
   // activeProgress: Observable<number>;
   description: Observable<string>;
@@ -34,6 +35,8 @@ export class ProgressSectionComponent implements OnInit {
       if (user._id != undefined) {
         this.METRICS.push({
           title: 'Valor recebido',
+          tooltip:
+            'Soma de todos os valores pagos para o associado no mês corrente pela Nortan',
           value: this.metricsService
             .receivedValueNortan(user._id)
             .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
@@ -54,6 +57,8 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Valor repassado Nortan',
+          tooltip:
+            'Soma de todos os valores pagos aos associados no mês corrente',
           value: this.metricsService
             .receivedValueNortan(user._id)
             .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.global))),
@@ -74,6 +79,8 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Contratos como gestor',
+          tooltip:
+            'Número de contratos criados a partir de um orçamento do associado no mês corrente',
           value: this.metricsService
             .contractsAsManger(user._id)
             .pipe(map((pastContracts) => pastContracts.count.toString())),
@@ -95,6 +102,8 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Contratos como membro',
+          tooltip:
+            'Número de contratos no qual o associado faz parte da equipe do orçamento no mês corrente',
           value: this.metricsService
             .contractsAsMember(user._id)
             .pipe(map((pastContracts) => pastContracts.count.toString())),
@@ -116,6 +125,8 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Orçamentos como gestor',
+          tooltip:
+            'Número de orçamentos passados/criados pelo associado no mês corrente',
           value: this.metricsService
             .invoicesAsManger(user._id)
             .pipe(map((pastInvoices) => pastInvoices.count.toString())),
@@ -137,6 +148,8 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Orçamentos como membro',
+          tooltip:
+            'Número de orçamentos no qual o associado faz parte da equipe no mês corrente',
           value: this.metricsService
             .invoicesAsMember(user._id)
             .pipe(map((pastInvoices) => pastInvoices.count.toString())),
@@ -158,40 +171,88 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Taxa de conversão (Gestor):\nOrçamento → Contrato',
+          tooltip:
+            'Porcentagem de orçamentos como gestor que foram fechados e viraram contratos no mês corrente (Orçamentos fechados/Orçamentos criados)',
           value: this.metricsService
-            .invoicesToContracts('manager', user._id, 'Mês', 3, true)
-            .pipe(map((x) => x.toString() + '%')),
-          description: of(this.metricsService.plural('Mês', 3)),
+            .invoicesToContracts('manager', user._id)
+            .pipe(map((x) => this.stringUtil.numberToMoney(x) + '%')),
+          description: this.metricsService
+            .invoicesToContracts('manager', user._id, 'Mês')
+            .pipe(
+              map(
+                (x) =>
+                  this.metricsService.plural('Mês', 1) +
+                  ' foi ' +
+                  this.stringUtil.numberToMoney(x) +
+                  '%'
+              )
+            ),
           loading: this.metricsService
             .invoicesToContracts('manager', user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({
           title: 'Taxa de conversão (Membro):\nOrçamento → Contrato',
+          tooltip:
+            'Porcentagem de orçamentos como membro que foram fechados e viraram contratos no mês corrente',
           value: this.metricsService
-            .invoicesToContracts('member', user._id, 'Mês', 3, true)
-            .pipe(map((x) => x.toString() + '%')),
-          description: of(this.metricsService.plural('Mês', 3)),
+            .invoicesToContracts('member', user._id)
+            .pipe(map((x) => this.stringUtil.numberToMoney(x) + '%')),
+          description: this.metricsService
+            .invoicesToContracts('member', user._id, 'Mês')
+            .pipe(
+              map(
+                (x) =>
+                  this.metricsService.plural('Mês', 1) +
+                  ' foi ' +
+                  this.stringUtil.numberToMoney(x) +
+                  '%'
+              )
+            ),
           loading: this.metricsService
             .invoicesToContracts('member', user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({
           title: 'Taxa de conversão de valores (Gestor):\nOrçamento → Contrato',
+          tooltip:
+            'Porcentagem dos total de valor em orçamentos como gestor passados que foram fechados e viraram contrato no mês corrente',
           value: this.metricsService
-            .invoicesToContractsValue('manager', user._id, 'Mês', 3, true)
-            .pipe(map((x) => x.toString() + '%')),
-          description: of(this.metricsService.plural('Mês', 3)),
+            .invoicesToContractsValue('manager', user._id)
+            .pipe(map((x) => this.stringUtil.numberToMoney(x) + '%')),
+          description: this.metricsService
+            .invoicesToContractsValue('manager', user._id, 'Mês')
+            .pipe(
+              map(
+                (x) =>
+                  this.metricsService.plural('Mês', 1) +
+                  ' foi ' +
+                  this.stringUtil.numberToMoney(x) +
+                  '%'
+              )
+            ),
           loading: this.metricsService
             .invoicesToContractsValue('manager', user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({
           title: 'Taxa de conversão de valores (Membro):\nOrçamento → Contrato',
+          tooltip:
+            'Porcentagem dos total de valor em orçamentos como membro passados que foram fechados e viraram contrato no mês corrente',
           value: this.metricsService
-            .invoicesToContractsValue('member', user._id, 'Mês', 3, true)
-            .pipe(map((x) => x.toString() + '%')),
-          description: of(this.metricsService.plural('Mês', 3)),
+            .invoicesToContractsValue('member', user._id)
+            .pipe(map((x) => this.stringUtil.numberToMoney(x) + '%')),
+          description: this.metricsService
+            .invoicesToContractsValue('member', user._id, 'Mês')
+            .pipe(
+              map(
+                (x) =>
+                  this.metricsService.plural('Mês', 1) +
+                  ' foi ' +
+                  this.stringUtil.numberToMoney(x) +
+                  '%'
+              )
+            ),
           loading: this.metricsService
             .invoicesToContractsValue('member', user._id)
             .pipe(map((x) => x == undefined)),
@@ -201,6 +262,10 @@ export class ProgressSectionComponent implements OnInit {
         )) {
           this.METRICS.push({
             title: 'Representação na ' + coord.split(' ')[0],
+            tooltip:
+              'Porcentagem do valor pago ao associado referente a ' +
+              coord.split('')[0] +
+              ' comparado com a soma dos valores pagos aos associados da coordenação no mês corrente',
             value: this.metricsService
               .receivedValueByCoordinationsFiltered(user._id)
               .pipe(
@@ -231,6 +296,10 @@ export class ProgressSectionComponent implements OnInit {
         )) {
           this.METRICS.push({
             title: 'Representação na ' + department,
+            tooltip:
+              'Porcentagem do valor pago ao associado referente a ' +
+              department +
+              ' comparado com a soma dos valores pagos aos associados da diretoria no mês corrente',
             value: this.metricsService
               .receivedValueByDepartmentsFiltered(user._id)
               .pipe(
@@ -261,6 +330,8 @@ export class ProgressSectionComponent implements OnInit {
         }
         this.METRICS.push({
           title: 'Representação na Nortan',
+          tooltip:
+            'Porcentagem da soma dos valores pagos ao associado comparado com a somoa de todos os valores pagos aos associados no mês corrente',
           value: this.metricsService
             .receivedValueNortan(user._id)
             .pipe(
