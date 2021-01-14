@@ -259,6 +259,35 @@ export class ProgressSectionComponent implements OnInit {
               .pipe(map((x) => x == undefined)),
           });
         }
+        this.METRICS.push({
+          title: 'Representação na Nortan',
+          value: this.metricsService
+            .receivedValueNortan(user._id)
+            .pipe(
+              map((userGlobal) =>
+                this.stringUtil.toPercentageNumber(
+                  userGlobal.user,
+                  userGlobal.global
+                )
+              )
+            ),
+          description: this.metricsService
+            .receivedValueNortan(user._id, 'Mês', 1)
+            .pipe(
+              map(
+                (userGlobal) =>
+                  this.metricsService.plural('Mês', 1) +
+                  ' foi ' +
+                  this.stringUtil.toPercentageNumber(
+                    userGlobal.user,
+                    userGlobal.global
+                  )
+              )
+            ),
+          loading: this.metricsService
+            .receivedValueNortan(user._id)
+            .pipe(map((x) => x == undefined)),
+        });
       }
     });
   }

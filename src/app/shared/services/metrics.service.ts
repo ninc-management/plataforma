@@ -116,29 +116,29 @@ export class MetricsService implements OnDestroy {
       .map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
     switch (department) {
       case departmentsAbrevs[0]:
-        return this.stringUtil.toPercentage(
-          userDepartment.user.DAD.toString(),
-          userDepartment.global.DAD.toString()
+        return this.stringUtil.toPercentageNumber(
+          userDepartment.user.DAD,
+          userDepartment.global.DAD
         );
       case departmentsAbrevs[1]:
-        return this.stringUtil.toPercentage(
-          userDepartment.user.DEC.toString(),
-          userDepartment.global.DEC.toString()
+        return this.stringUtil.toPercentageNumber(
+          userDepartment.user.DEC,
+          userDepartment.global.DEC
         );
       case departmentsAbrevs[2]:
-        return this.stringUtil.toPercentage(
-          userDepartment.user.DAQ.toString(),
-          userDepartment.global.DAQ.toString()
+        return this.stringUtil.toPercentageNumber(
+          userDepartment.user.DAQ,
+          userDepartment.global.DAQ
         );
       case departmentsAbrevs[3]:
-        return this.stringUtil.toPercentage(
-          userDepartment.user.DPC.toString(),
-          userDepartment.global.DPC.toString()
+        return this.stringUtil.toPercentageNumber(
+          userDepartment.user.DPC,
+          userDepartment.global.DPC
         );
       case departmentsAbrevs[4]:
-        return this.stringUtil.toPercentage(
-          userDepartment.user.DRM.toString(),
-          userDepartment.global.DRM.toString()
+        return this.stringUtil.toPercentageNumber(
+          userDepartment.user.DRM,
+          userDepartment.global.DRM
         );
       default:
         return '';
@@ -152,59 +152,59 @@ export class MetricsService implements OnDestroy {
     const coords = this.departmentService.buildAllCoordinationsList();
     switch (coord) {
       case coords[0]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CADM.toString(),
-          userCoord.global.CADM.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CADM,
+          userCoord.global.CADM
         );
       case coords[1]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CDI.toString(),
-          userCoord.global.CDI.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CDI,
+          userCoord.global.CDI
         );
       case coords[2]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CGO.toString(),
-          userCoord.global.CGO.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CGO,
+          userCoord.global.CGO
         );
       case coords[3]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CIMP.toString(),
-          userCoord.global.CIMP.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CIMP,
+          userCoord.global.CIMP
         );
       case coords[4]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CINST.toString(),
-          userCoord.global.CINST.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CINST,
+          userCoord.global.CINST
         );
       case coords[5]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CMA.toString(),
-          userCoord.global.CMA.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CMA,
+          userCoord.global.CMA
         );
       case coords[6]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CPA.toString(),
-          userCoord.global.CPA.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CPA,
+          userCoord.global.CPA
         );
       case coords[7]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CRH.toString(),
-          userCoord.global.CRH.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CRH,
+          userCoord.global.CRH
         );
       case coords[8]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CSE.toString(),
-          userCoord.global.CSE.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CSE,
+          userCoord.global.CSE
         );
       case coords[9]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CSEST.toString(),
-          userCoord.global.CSEST.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CSEST,
+          userCoord.global.CSEST
         );
       case coords[10]:
-        return this.stringUtil.toPercentage(
-          userCoord.user.CSH.toString(),
-          userCoord.global.CSH.toString()
+        return this.stringUtil.toPercentageNumber(
+          userCoord.user.CSH,
+          userCoord.global.CSH
         );
       default:
         return '';
@@ -835,10 +835,7 @@ export class MetricsService implements OnDestroy {
         if (contracts != undefined && invoices != undefined)
           return this.stringUtil.moneyToNumber(
             this.stringUtil
-              .toPercentage(
-                contracts.count.toString(),
-                invoices.count.toString()
-              )
+              .toPercentageNumber(contracts.count, invoices.count)
               .slice(0, -1)
           );
       }),
@@ -870,10 +867,7 @@ export class MetricsService implements OnDestroy {
         if (contracts != undefined && invoices != undefined)
           return this.stringUtil.moneyToNumber(
             this.stringUtil
-              .toPercentage(
-                contracts.value.toString(),
-                invoices.value.toString()
-              )
+              .toPercentageNumber(contracts.value, invoices.value)
               .slice(0, -1)
           );
       }),
