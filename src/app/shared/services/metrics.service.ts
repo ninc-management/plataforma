@@ -15,6 +15,11 @@ interface MetricInfo {
   value: number;
 }
 
+interface UserAndGlobalMetric {
+  user: number;
+  global: number;
+}
+
 // Sorted alphabetically
 interface Coordinations {
   CADM?: number;
@@ -360,51 +365,6 @@ export class MetricsService implements OnDestroy {
             },
             { count: 0, value: 0 }
           );
-      }),
-      takeUntil(this.destroy$)
-    );
-  }
-
-  receivedValue(
-    uId: string,
-    last = 'Hoje',
-    number = 1,
-    fromToday = false
-  ): Observable<number> {
-    return this.contractService.getContracts().pipe(
-      map((contracts) => {
-        if (contracts.length > 0)
-          return contracts.reduce((received, contract) => {
-            if (this.contractService.hasPayments(contract._id)) {
-              const value = contract.payments.reduce((paid, payment) => {
-                if (payment.paid != 'não') {
-                  let paidDate = payment.paidDate;
-                  if (typeof paidDate !== 'object')
-                    paidDate = parseISO(paidDate);
-                  if (
-                    this.utils.compareDates(paidDate, last, number, fromToday)
-                  )
-                    return (
-                      paid +
-                      payment.team.reduce((upaid, member) => {
-                        const author =
-                          member.user._id == undefined
-                            ? member.user
-                            : member.user._id;
-                        if (author == uId)
-                          return (
-                            upaid + this.stringUtil.moneyToNumber(member.value)
-                          );
-                        return upaid;
-                      }, 0)
-                    );
-                }
-                return paid;
-              }, 0);
-              return received + value;
-            }
-            return received;
-          }, 0);
       }),
       takeUntil(this.destroy$)
     );
@@ -826,6 +786,27 @@ export class MetricsService implements OnDestroy {
           }
         }
         return filtered;
+      })
+    );
+  }
+
+  receivedValueNortan(
+    uId: string = undefined,
+    last = 'Hoje',
+    number = 1,
+    fromToday = false
+  ): Observable<UserAndGlobalMetric> {
+    return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
+      map((userDepartment: UserAndDepartments) => {
+        if (userDepartment == undefined) return undefined;
+        let result: UserAndGlobalMetric = { user: 0, global: 0 };
+        result.user = Object.values(userDepartment.user).reduce(
+          (acc, value) => acc + value
+        );
+        result.global = Object.values(userDepartment.global).reduce(
+          (acc, value) => acc + value
+        );
+        return result;
       })
     );
   }

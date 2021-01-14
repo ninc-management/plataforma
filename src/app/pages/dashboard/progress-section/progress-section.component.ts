@@ -35,19 +35,41 @@ export class ProgressSectionComponent implements OnInit {
         this.METRICS.push({
           title: 'Valor recebido',
           value: this.metricsService
-            .receivedValue(user._id)
-            .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x))),
-          description: this.metricsService.receivedValue(user._id, 'Mês').pipe(
-            map((pastPayments) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você recebeu R$ ' +
-                this.stringUtil.numberToMoney(pastPayments)
-              );
-            })
-          ),
+            .receivedValueNortan(user._id)
+            .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
+          description: this.metricsService
+            .receivedValueNortan(user._id, 'Mês')
+            .pipe(
+              map((pastPayments) => {
+                return (
+                  this.metricsService.plural('Mês', 1) +
+                  ' você recebeu R$ ' +
+                  this.stringUtil.numberToMoney(pastPayments.user)
+                );
+              })
+            ),
           loading: this.metricsService
-            .receivedValue(user._id)
+            .receivedValueNortan(user._id)
+            .pipe(map((x) => x == undefined)),
+        });
+        this.METRICS.push({
+          title: 'Valor repassado Nortan',
+          value: this.metricsService
+            .receivedValueNortan(user._id)
+            .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.global))),
+          description: this.metricsService
+            .receivedValueNortan(user._id, 'Mês')
+            .pipe(
+              map((pastPayments) => {
+                return (
+                  this.metricsService.plural('Mês', 1) +
+                  ' a Nortan repassou R$ ' +
+                  this.stringUtil.numberToMoney(pastPayments.global)
+                );
+              })
+            ),
+          loading: this.metricsService
+            .receivedValueNortan(user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({
