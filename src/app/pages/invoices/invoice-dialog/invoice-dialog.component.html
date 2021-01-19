@@ -28,6 +28,16 @@
           <button
             nbButton
             ghost
+            *ngIf="!isPhone()"
+            nbTooltip="Visualizar orçamento"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+          >
+            <nb-icon icon="eye" pack="eva" style="font-size: 18px"></nb-icon>
+          </button>
+          <button
+            nbButton
+            ghost
             *ngIf="invoice && !invoice.model"
             nbTooltip="Usar como modelo"
             [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
