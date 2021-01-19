@@ -13,6 +13,7 @@ import { DepartmentService } from '../../../../shared/services/department.servic
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
@@ -56,7 +57,8 @@ export class PaymentItemComponent implements OnInit {
     private contractService: ContractService,
     private completerService: CompleterService,
     public userService: UserService,
-    public stringUtil: StringUtilService
+    public stringUtil: StringUtilService,
+    private utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -76,8 +78,7 @@ export class PaymentItemComponent implements OnInit {
       this.toLiquid(this.payment.value);
     }
     if (this.paymentIndex !== undefined) {
-      this.payment = Object.assign(
-        {},
+      this.payment = this.utils.deepCopy(
         this.contract.payments[this.paymentIndex]
       );
       this.toLiquid(this.payment.value);
@@ -123,12 +124,11 @@ export class PaymentItemComponent implements OnInit {
     this.submitted = true;
     if (this.paymentIndex !== undefined) {
       this.payment.lastUpdate = new Date();
-      this.contract.payments[this.paymentIndex] = Object.assign(
-        {},
+      this.contract.payments[this.paymentIndex] = this.utils.deepCopy(
         this.payment
       );
     } else {
-      this.contract.payments.push(Object.assign({}, this.payment));
+      this.contract.payments.push(this.utils.deepCopy(this.payment));
     }
     this.contractService.editContract(this.contract);
     this.submit.emit();

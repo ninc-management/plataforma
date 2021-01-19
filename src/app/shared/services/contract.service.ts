@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { StringUtilService } from './string-util.service';
+import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
@@ -19,6 +20,7 @@ export class ContractService implements OnDestroy {
     private http: HttpClient,
     private wsService: WebSocketService,
     private stringUtil: StringUtilService,
+    private utils: UtilsService,
     private socket: Socket
   ) {}
 
@@ -47,7 +49,7 @@ export class ContractService implements OnDestroy {
   editContract(contract: any): void {
     const currentTime = new Date();
     contract.lastUpdate = currentTime;
-    let tmp = Object.assign({}, contract);
+    let tmp = this.utils.deepCopy(contract);
     const req = {
       contract: tmp,
     };

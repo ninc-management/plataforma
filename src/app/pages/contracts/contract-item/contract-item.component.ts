@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { NbDialogService } from '@nebular/theme';
 import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
 import { format, parseISO } from 'date-fns';
@@ -31,11 +32,12 @@ export class ContractItemComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private dialogService: NbDialogService,
-    private stringUtil: StringUtilService
+    private stringUtil: StringUtilService,
+    private utils: UtilsService
   ) {}
 
   ngOnInit(): void {
-    this.contract = Object.assign({}, this.iContract);
+    this.contract = this.utils.deepCopy(this.iContract);
     this.contract.interest = this.contract.payments.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
@@ -64,7 +66,7 @@ export class ContractItemComponent implements OnInit {
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
     this.contract.lastUpdate = new Date();
-    this.iContract = Object.assign({}, this.contract);
+    this.iContract = this.utils.deepCopy(this.contract);
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }

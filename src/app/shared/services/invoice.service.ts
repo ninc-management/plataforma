@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
+import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
@@ -21,6 +22,7 @@ export class InvoiceService implements OnDestroy {
     private http: HttpClient,
     private userService: UserService,
     private contractService: ContractService,
+    private utils: UtilsService,
     private wsService: WebSocketService,
     private socket: Socket
   ) {}
@@ -48,7 +50,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   editInvoice(invoice: any): void {
-    let tmp = Object.assign({}, invoice);
+    let tmp = this.utils.deepCopy(invoice);
     delete tmp.author;
     tmp.author = invoice.author._id;
     const req = {
