@@ -200,7 +200,7 @@ export class PdfService {
     };
   }
 
-  async generate(invoice: any): Promise<void> {
+  async generate(invoice: any, preview = false): Promise<void> {
     const pdf = new PdfMakeWrapper();
 
     // Metadata definition
@@ -934,7 +934,10 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    pdf.create().download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
-    // pdf.create().open();
+    if (preview) pdf.create().open();
+    else
+      pdf
+        .create()
+        .download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
   }
 }

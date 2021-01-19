@@ -16,6 +16,7 @@ import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import {
   NbDialogRef,
   NbDialogService,
@@ -34,8 +35,8 @@ import * as invoice_validation from '../../../shared/invoice-validation.json';
 })
 export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Input() iInvoice: any;
+  @Input() tempInvoice: any;
   @Output() submit = new EventEmitter<void>();
-  invoice: any;
   teamMember: any = {};
   options = {
     aep: '',
@@ -83,6 +84,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private userService: UserService,
     public stringUtil: StringUtilService,
+    private utils: UtilsService,
     private breakpointService: NbMediaBreakpointsService,
     public contractorService: ContractorService,
     public completerService: CompleterService
@@ -95,36 +97,37 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.iInvoice) {
-      this.invoice = Object.assign({}, this.iInvoice);
-      this.editing = this.invoice.model == undefined;
+      this.editing = this.tempInvoice.model == undefined;
       if (!this.editing) {
-        this.invoice.created = new Date();
-        this.invoice.lastUpdate = new Date();
+        this.tempInvoice.created = new Date();
+        this.tempInvoice.lastUpdate = new Date();
       }
       this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-        this.invoice.department
+        this.tempInvoice.department
       );
-      this.invoice.department = this.departmentService.composedName(
-        this.invoice.department
+      this.tempInvoice.department = this.departmentService.composedName(
+        this.tempInvoice.department
       );
-      this.contractorSearch = this.invoice.contractor.fullName;
-      this.revision = +this.invoice.code.slice(this.invoice.code.length - 2);
+      this.contractorSearch = this.tempInvoice.contractor.fullName;
+      this.revision = +this.tempInvoice.code.slice(
+        this.tempInvoice.code.length - 2
+      );
       this.revision += 1;
-      this.oldStatus = this.invoice.status;
+      this.oldStatus = this.tempInvoice.status;
       if (
-        this.invoice.created !== undefined &&
-        typeof this.invoice.created !== 'object'
+        this.tempInvoice.created !== undefined &&
+        typeof this.tempInvoice.created !== 'object'
       )
-        this.invoice.created = parseISO(this.invoice.created);
+        this.tempInvoice.created = parseISO(this.tempInvoice.created);
       if (
-        this.invoice.lastUpdate !== undefined &&
-        typeof this.invoice.lastUpdate !== 'object'
+        this.tempInvoice.lastUpdate !== undefined &&
+        typeof this.tempInvoice.lastUpdate !== 'object'
       )
-        this.invoice.lastUpdate = parseISO(this.invoice.lastUpdate);
+        this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
       this.updateTotal('product');
       this.updateTotal('stage');
     } else {
-      this.invoice = {
+      this.tempInvoice = {
         created: new Date(),
         lastUpdate: new Date(),
         importants: [],
@@ -136,28 +139,28 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         team: [],
       };
     }
-    if (this.invoice.contactPlural == undefined)
-      this.invoice.contactPlural = false;
-    if (this.invoice.peep == undefined)
-      this.invoice.peep =
+    if (this.tempInvoice.contactPlural == undefined)
+      this.tempInvoice.contactPlural = false;
+    if (this.tempInvoice.peep == undefined)
+      this.tempInvoice.peep =
         '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
-    if (this.invoice.dep == undefined)
-      this.invoice.dep =
+    if (this.tempInvoice.dep == undefined)
+      this.tempInvoice.dep =
         'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
-    if (this.invoice.peee == undefined)
-      this.invoice.peee =
+    if (this.tempInvoice.peee == undefined)
+      this.tempInvoice.peee =
         'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
-    if (this.invoice.dee == undefined)
-      this.invoice.dee =
+    if (this.tempInvoice.dee == undefined)
+      this.tempInvoice.dee =
         'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.';
-    if (this.invoice.peec == undefined)
-      this.invoice.peec =
+    if (this.tempInvoice.peec == undefined)
+      this.tempInvoice.peec =
         'será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente';
-    if (this.invoice.dec == undefined)
-      this.invoice.dec =
+    if (this.tempInvoice.dec == undefined)
+      this.tempInvoice.dec =
         'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
-    if (this.invoice.importants.length == 0)
-      this.invoice.importants = [
+    if (this.tempInvoice.importants.length == 0)
+      this.tempInvoice.importants = [
         'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato.',
         'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto.',
         'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente.',
@@ -180,9 +183,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           'fullName,document',
           'fullName'
         );
-        if (this.iInvoice && this.invoice.contractorFullName == undefined)
-          this.invoice.contractorFullName = this.contractorService.idToName(
-            this.invoice.contractor
+        if (this.iInvoice && this.tempInvoice.contractorFullName == undefined)
+          this.tempInvoice.contractorFullName = this.contractorService.idToName(
+            this.tempInvoice.contractor
           );
       });
 
@@ -194,24 +197,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   registerInvoice(): void {
-    this.invoice.department = this.departmentService.extractAbreviation(
-      this.invoice.department
+    this.tempInvoice.department = this.departmentService.extractAbreviation(
+      this.tempInvoice.department
     );
     this.submitted = true;
-    this.invoice.lastUpdate = new Date();
+    this.tempInvoice.lastUpdate = new Date();
     if (this.editing) {
       this.updateRevision();
-      this.invoiceService.editInvoice(this.invoice);
-      if (this.oldStatus !== this.invoice.status) {
-        if (this.invoice.status === 'Fechado')
-          this.contractService.saveContract(this.invoice);
+      this.invoiceService.editInvoice(this.tempInvoice);
+      if (this.oldStatus !== this.tempInvoice.status) {
+        if (this.tempInvoice.status === 'Fechado')
+          this.contractService.saveContract(this.tempInvoice);
       }
-      this.invoice.contractorName = this.contractorService.idToName(
-        this.invoice.contractor
+      this.tempInvoice.contractorName = this.contractorService.idToName(
+        this.tempInvoice.contractor
       );
-      this.iInvoice = Object.assign({}, this.invoice);
+      this.iInvoice = this.utils.deepCopy(this.tempInvoice);
     } else {
-      this.invoiceService.saveInvoice(this.invoice);
+      this.invoiceService.saveInvoice(this.tempInvoice);
     }
     this.submit.emit();
   }
@@ -222,14 +225,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateCoordination() {
-    this.invoice.coordination = undefined;
+    this.tempInvoice.coordination = undefined;
     this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-      this.departmentService.extractAbreviation(this.invoice.department)
+      this.departmentService.extractAbreviation(this.tempInvoice.department)
     );
   }
 
   addColaborator(): void {
-    this.invoice.team.push(Object.assign({}, this.teamMember));
+    this.tempInvoice.team.push(Object.assign({}, this.teamMember));
     this.userSearch = undefined;
     this.teamMember = {};
     this.USER_COORDINATIONS = [];
@@ -260,22 +263,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateCode(): void {
     if (!this.editing) {
-      this.invoice.code =
+      this.tempInvoice.code =
         'ORC-' +
         this.invoiceNumber +
         '/' +
         new Date().getFullYear() +
         '-NRT/' +
-        (this.invoice.department
-          ? this.departmentService.extractAbreviation(this.invoice.department)
+        (this.tempInvoice.department
+          ? this.departmentService.extractAbreviation(
+              this.tempInvoice.department
+            )
           : '') +
         '-00';
     }
   }
 
   updateRevision(): void {
-    this.invoice.code =
-      this.invoice.code.slice(0, this.invoice.code.length - 2) +
+    this.tempInvoice.code =
+      this.tempInvoice.code.slice(0, this.tempInvoice.code.length - 2) +
       this.revision.toString().padStart(2, '0');
   }
 
@@ -310,19 +315,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   fixHours(): void {
     const currentTime = new Date();
-    this.invoice.created.setHours(currentTime.getHours());
-    this.invoice.created.setMinutes(currentTime.getMinutes());
-    this.invoice.created.setSeconds(currentTime.getSeconds());
+    this.tempInvoice.created.setHours(currentTime.getHours());
+    this.tempInvoice.created.setMinutes(currentTime.getMinutes());
+    this.tempInvoice.created.setSeconds(currentTime.getSeconds());
   }
 
   addProduct(): void {
     if (this.options.valueType === '%')
       this.options.product.value = this.stringUtil.toValue(
         this.options.product.value,
-        this.invoice.value
+        this.tempInvoice.value
       );
     this.options.product.name = this.options.product.name.toUpperCase();
-    this.invoice.products.push(this.options.product);
+    this.tempInvoice.products.push(this.options.product);
     this.options.product = { value: '', name: '', subproducts: [] };
     this.updateTotal('product');
   }
@@ -345,18 +350,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     if (this.options.stageValueType === '%')
       this.options.stage.value = this.stringUtil.toValue(
         this.options.stage.value,
-        this.invoice.value
+        this.tempInvoice.value
       );
     this.options.stage.name = this.options.stage.name;
-    this.invoice.stages.push(this.options.stage);
+    this.tempInvoice.stages.push(this.options.stage);
     this.options.stage = { value: '', name: '' };
     this.updateTotal('stage');
   }
 
   remainingBalance(base: string): string {
-    if (this.invoice.value == undefined) return '0,00';
+    if (this.tempInvoice.value == undefined) return '0,00';
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.invoice.value) -
+      this.stringUtil.moneyToNumber(this.tempInvoice.value) -
         this.stringUtil.moneyToNumber(
           base === 'product' ? this.options.total : this.options.stageTotal
         )
@@ -366,7 +371,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   updateTotal(base: string): void {
     if (base === 'product')
       this.options.total = this.stringUtil.numberToMoney(
-        this.invoice.products.reduce(
+        this.tempInvoice.products.reduce(
           (accumulator: number, produtc: any) =>
             accumulator + this.stringUtil.moneyToNumber(produtc.value),
           0
@@ -374,7 +379,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
     else
       this.options.stageTotal = this.stringUtil.numberToMoney(
-        this.invoice.stages.reduce(
+        this.tempInvoice.stages.reduce(
           (accumulator: number, stage: any) =>
             accumulator + this.stringUtil.moneyToNumber(stage.value),
           0

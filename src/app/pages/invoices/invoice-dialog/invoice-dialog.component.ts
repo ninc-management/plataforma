@@ -7,6 +7,7 @@ import {
 import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfService } from '../pdf.service';
 
 @Component({
@@ -17,11 +18,13 @@ import { PdfService } from '../pdf.service';
 export class InvoiceDialogComponent implements OnInit {
   @Input() title: string;
   @Input() invoice: any;
+  tempInvoice: any;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<InvoiceDialogComponent>,
     protected departmentService: DepartmentService,
+    private utils: UtilsService,
     private breakpointService: NbMediaBreakpointsService,
     private pdf: PdfService
   ) {}
@@ -34,6 +37,7 @@ export class InvoiceDialogComponent implements OnInit {
     //     takeUntil(this.ref.onClose)
     //   )
     //   .subscribe(() => this.dismiss());
+    if (this.invoice) this.tempInvoice = this.utils.deepCopy(this.invoice);
   }
 
   dismiss(): void {
@@ -51,7 +55,7 @@ export class InvoiceDialogComponent implements OnInit {
         this.invoice.department = this.departmentService.extractAbreviation(
           this.invoice.department
         );
-    let oInvoice = Object.assign({}, this.invoice);
+    let oInvoice = this.utils.deepCopy(this.invoice);
     oInvoice.code = '';
     delete oInvoice._id;
     delete oInvoice.author;
@@ -64,6 +68,11 @@ export class InvoiceDialogComponent implements OnInit {
 
   generatePDF(): void {
     this.pdf.generate(this.invoice);
+  }
+
+  previewPDF(): void {
+    console.log(this.tempInvoice);
+    this.pdf.generate(this.tempInvoice, true);
   }
 
   isPhone(): boolean {

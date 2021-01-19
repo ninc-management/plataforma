@@ -28,10 +28,11 @@
           <button
             nbButton
             ghost
-            *ngIf="!isPhone()"
+            *ngIf="!isPhone() && invoice && !invoice.model"
             nbTooltip="Visualizar orçamento"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
+            (click)="previewPDF()"
           >
             <nb-icon icon="eye" pack="eva" style="font-size: 18px"></nb-icon>
           </button>
@@ -63,6 +64,7 @@
       <nb-card-body>
         <ngx-invoice-item
           [iInvoice]="invoice"
+          [tempInvoice]="tempInvoice"
           (submit)="dismiss()"
         ></ngx-invoice-item>
       </nb-card-body>

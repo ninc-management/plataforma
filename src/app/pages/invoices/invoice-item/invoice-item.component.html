@@ -6,7 +6,7 @@
           <div class="form-control-group">
             <label class="label" for="input-department">Diretoria:</label>
             <nb-select
-              [(ngModel)]="invoice.department"
+              [(ngModel)]="tempInvoice.department"
               #department="ngModel"
               id="input-department"
               name="department"
@@ -40,7 +40,7 @@
           <div class="form-control-group">
             <label class="label" for="input-coordination">Coordenação:</label>
             <nb-select
-              [(ngModel)]="invoice.coordination"
+              [(ngModel)]="tempInvoice.coordination"
               #coordination="ngModel"
               id="input-coordination"
               name="coordination"
@@ -74,7 +74,7 @@
         <label class="label" for="input-code">Código do orçamento:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.code"
+          [(ngModel)]="tempInvoice.code"
           #code="ngModel"
           id="input-code"
           name="code"
@@ -98,7 +98,7 @@
         >
         <input
           nbInput
-          [(ngModel)]="invoice.type"
+          [(ngModel)]="tempInvoice.type"
           #type="ngModel"
           id="input-type"
           name="type"
@@ -135,7 +135,7 @@
         <label class="label" for="input-service">Serviço:</label>
         <textarea
           nbInput
-          [(ngModel)]="invoice.service"
+          [(ngModel)]="tempInvoice.service"
           #service="ngModel"
           id="input-service"
           name="service"
@@ -174,11 +174,11 @@
             <nb-completer
               [(ngModel)]="contractorSearch"
               [inputName]="'contractorCompleter'"
-              (selected)="invoice.contractor = $event.originalObject"
+              (selected)="tempInvoice.contractor = $event.originalObject"
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
-              [selectedText]="invoice.contractor?.fullName"
+              [selectedText]="tempInvoice.contractor?.fullName"
               [dataService]="contractorData"
               [minSearchLength]="0"
               [placeholder]="
@@ -193,7 +193,7 @@
               [isPhone]="isPhone()"
               [showAvatar]="false"
               [tooltipFunction]="tooltipText"
-              [inputObject]="invoice.contractor"
+              [inputObject]="tempInvoice.contractor"
               [required]="validation.contractor.required"
               [status]="
                 contractor.dirty
@@ -234,7 +234,7 @@
         <label class="label" for="input-name">Empreendimento:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.name"
+          [(ngModel)]="tempInvoice.name"
           #name="ngModel"
           id="input-name"
           name="name"
@@ -270,7 +270,7 @@
         <label class="label" for="input-value">Valor do contrato:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.value"
+          [(ngModel)]="tempInvoice.value"
           #value="ngModel"
           id="input-value"
           name="value"
@@ -313,7 +313,7 @@
           <div class="form-control-group">
             <label class="label" for="input-status">Status:</label>
             <nb-select
-              [(ngModel)]="invoice.status"
+              [(ngModel)]="tempInvoice.status"
               #status="ngModel"
               id="input-status"
               name="status"
@@ -346,7 +346,7 @@
             <input
               *ngIf="false; else datePicker"
               nbInput
-              [(ngModel)]="invoice.lastUpdate"
+              [(ngModel)]="tempInvoice.lastUpdate"
               #date="ngModel"
               id="input-date"
               name="date"
@@ -363,7 +363,7 @@
             <ng-template #datePicker>
               <input
                 nbInput
-                [(ngModel)]="invoice.created"
+                [(ngModel)]="tempInvoice.created"
                 #date="ngModel"
                 id="input-date"
                 name="date"
@@ -398,7 +398,7 @@
         <label class="label" for="input-subtitle1">Subtítulo linha 1:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.subtitle1"
+          [(ngModel)]="tempInvoice.subtitle1"
           #subtitle1="ngModel"
           id="input-subtitle1"
           name="subtitle1"
@@ -435,7 +435,7 @@
         <label class="label" for="input-subtitle2">Subtítulo linha 2:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.subtitle2"
+          [(ngModel)]="tempInvoice.subtitle2"
           #subtitle2="ngModel"
           id="input-subtitle2"
           name="subtitle2"
@@ -484,7 +484,7 @@
             >
             <input
               nbInput
-              [(ngModel)]="invoice.contactName"
+              [(ngModel)]="tempInvoice.contactName"
               #contactName="ngModel"
               id="input-contactName"
               name="contactName"
@@ -526,7 +526,7 @@
             <div class="row">
               <div class="col-12">
                 <nb-checkbox
-                  [(ngModel)]="invoice.contactPlural"
+                  [(ngModel)]="tempInvoice.contactPlural"
                   #contactPlural="ngModel"
                   name="contactPlural"
                   [status]="contactPlural.value ? 'success' : 'basic'"
@@ -543,7 +543,7 @@
         <label class="label" for="input-contractorName">Contratante:</label>
         <input
           nbInput
-          [(ngModel)]="invoice.contractorFullName"
+          [(ngModel)]="tempInvoice.contractorFullName"
           #contractorName="ngModel"
           id="input-contractorName"
           name="contractorName"
@@ -681,7 +681,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of invoice.team; let i = index">
+        <nb-list-item *ngFor="let member of tempInvoice.team; let i = index">
           <div class="row irow">
             <div class="col-12 col-md-6">
               {{ member.user.fullName }}
@@ -695,7 +695,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.team.splice(i, 1)"
+                (click)="tempInvoice.team.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -714,7 +714,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.subject"
+          [(ngModel)]="tempInvoice.subject"
           #subject="ngModel"
           id="input-subject"
           name="subject"
@@ -755,7 +755,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.peep"
+          [(ngModel)]="tempInvoice.peep"
           #peep="ngModel"
           id="input-peep"
           name="peep"
@@ -811,7 +811,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laep.value"
-            (click)="invoice.laep.push(options.aep); options.aep = ''"
+            (click)="tempInvoice.laep.push(options.aep); options.aep = ''"
           >
             +
           </button>
@@ -820,7 +820,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let activity of invoice.laep;
+            let activity of tempInvoice.laep;
             let i = index;
             trackBy: trackByIndex
           "
@@ -829,12 +829,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="invoice.laep[i]"
+                [(ngModel)]="tempInvoice.laep[i]"
                 id="input-laepItem-{{ i }}"
                 name="laepItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="invoice.laep[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laep[i].length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -843,7 +843,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.laep.splice(i, 1)"
+                (click)="tempInvoice.laep.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -856,7 +856,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.dep"
+          [(ngModel)]="tempInvoice.dep"
           #dep="ngModel"
           id="input-dep"
           name="dep"
@@ -895,7 +895,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.peee"
+          [(ngModel)]="tempInvoice.peee"
           #peee="ngModel"
           id="input-peee"
           name="peee"
@@ -951,7 +951,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laee.value"
-            (click)="invoice.laee.push(options.aee); options.aee = ''"
+            (click)="tempInvoice.laee.push(options.aee); options.aee = ''"
           >
             +
           </button>
@@ -960,7 +960,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let activity of invoice.laee;
+            let activity of tempInvoice.laee;
             let i = index;
             trackBy: trackByIndex
           "
@@ -969,12 +969,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="invoice.laee[i]"
+                [(ngModel)]="tempInvoice.laee[i]"
                 id="input-laeeItem-{{ i }}"
                 name="laeeItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="invoice.laee[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laee[i].length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -983,7 +983,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.laee.splice(i, 1)"
+                (click)="tempInvoice.laee.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -996,7 +996,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.dee"
+          [(ngModel)]="tempInvoice.dee"
           #dee="ngModel"
           id="input-dee"
           name="dee"
@@ -1035,7 +1035,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.peec"
+          [(ngModel)]="tempInvoice.peec"
           #peec="ngModel"
           id="input-peec"
           name="peec"
@@ -1091,7 +1091,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laec.value"
-            (click)="invoice.laec.push(options.aec); options.aec = ''"
+            (click)="tempInvoice.laec.push(options.aec); options.aec = ''"
           >
             +
           </button>
@@ -1100,7 +1100,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let activity of invoice.laec;
+            let activity of tempInvoice.laec;
             let i = index;
             trackBy: trackByIndex
           "
@@ -1109,12 +1109,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="invoice.laec[i]"
+                [(ngModel)]="tempInvoice.laec[i]"
                 id="input-laecItem-{{ i }}"
                 name="laecItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="invoice.laec[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laec[i].length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -1123,7 +1123,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.laec.splice(i, 1)"
+                (click)="tempInvoice.laec.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1136,7 +1136,7 @@
         >
         <textarea
           nbInput
-          [(ngModel)]="invoice.dec"
+          [(ngModel)]="tempInvoice.dec"
           #dec="ngModel"
           id="input-dec"
           name="dec"
@@ -1246,7 +1246,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let product of invoice.products;
+            let product of tempInvoice.products;
             let i = index;
             trackBy: trackByIndex
           "
@@ -1255,12 +1255,14 @@
             <div class="col-12 col-md-7">
               <input
                 nbInput
-                [(ngModel)]="invoice.products[i].name"
+                [(ngModel)]="tempInvoice.products[i].name"
                 id="input-product-{{ i }}"
                 name="product-{{ i }}"
                 placeholder="produto"
                 fullWidth
-                [status]="invoice.products[i].length == 0 ? 'danger' : 'basic'"
+                [status]="
+                  tempInvoice.products[i].length == 0 ? 'danger' : 'basic'
+                "
               />
               <nb-list
                 class="subproducts-list"
@@ -1307,7 +1309,7 @@
               {{ product.value }}
             </div>
             <div class="col-4 col-md-1">
-              {{ stringUtil.toPercentage(product.value, invoice.value) }}
+              {{ stringUtil.toPercentage(product.value, tempInvoice.value) }}
             </div>
             <div class="col-3 col-md-2" style="text-align: right">
               <nb-icon
@@ -1323,7 +1325,9 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.products.splice(i, 1); updateTotal('product')"
+                (click)="
+                  tempInvoice.products.splice(i, 1); updateTotal('product')
+                "
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1339,9 +1343,9 @@
               class="col-4 col-md-2"
               [ngClass]="{
                 danger:
-                  options.total !== invoice.value && options.total !== '0',
+                  options.total !== tempInvoice.value && options.total !== '0',
                 success:
-                  options.total === invoice.value && options.total !== '0'
+                  options.total === tempInvoice.value && options.total !== '0'
               }"
             >
               {{ options.total }}
@@ -1350,12 +1354,12 @@
               class="col-4 col-md-1"
               [ngClass]="{
                 danger:
-                  options.total !== invoice.value && options.total !== '0',
+                  options.total !== tempInvoice.value && options.total !== '0',
                 success:
-                  options.total === invoice.value && options.total !== '0'
+                  options.total === tempInvoice.value && options.total !== '0'
               }"
             >
-              {{ stringUtil.toPercentage(options.total, invoice.value) }}
+              {{ stringUtil.toPercentage(options.total, tempInvoice.value) }}
             </div>
             <div class="col-md-2"></div>
           </div>
@@ -1438,7 +1442,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let stage of invoice.stages;
+            let stage of tempInvoice.stages;
             let i = index;
             trackBy: trackByIndex
           "
@@ -1447,13 +1451,13 @@
             <div class="col-12 col-md-8">
               <input
                 nbInput
-                [(ngModel)]="invoice.stages[i].name"
+                [(ngModel)]="tempInvoice.stages[i].name"
                 id="input-stage-{{ i }}"
                 name="stage-{{ i }}"
                 placeholder="parcelamento"
                 fullWidth
                 [status]="
-                  invoice.stages[i].name.length == 0 ? 'danger' : 'basic'
+                  tempInvoice.stages[i].name.length == 0 ? 'danger' : 'basic'
                 "
               />
             </div>
@@ -1461,7 +1465,7 @@
               {{ stage.value }}
             </div>
             <div class="col-5 col-md-1">
-              {{ stringUtil.toPercentage(stage.value, invoice.value) }}
+              {{ stringUtil.toPercentage(stage.value, tempInvoice.value) }}
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
@@ -1469,7 +1473,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.stages.splice(i, 1); updateTotal('stage')"
+                (click)="tempInvoice.stages.splice(i, 1); updateTotal('stage')"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1485,10 +1489,10 @@
               class="col-4 col-md-2"
               [ngClass]="{
                 danger:
-                  options.stageTotal !== invoice.value &&
+                  options.stageTotal !== tempInvoice.value &&
                   options.stageTotal !== '0',
                 success:
-                  options.stageTotal === invoice.value &&
+                  options.stageTotal === tempInvoice.value &&
                   options.stageTotal !== '0'
               }"
             >
@@ -1498,14 +1502,16 @@
               class="col-4 col-md-1"
               [ngClass]="{
                 danger:
-                  options.stageTotal !== invoice.value &&
+                  options.stageTotal !== tempInvoice.value &&
                   options.stageTotal !== '0',
                 success:
-                  options.stageTotal === invoice.value &&
+                  options.stageTotal === tempInvoice.value &&
                   options.stageTotal !== '0'
               }"
             >
-              {{ stringUtil.toPercentage(options.stageTotal, invoice.value) }}
+              {{
+                stringUtil.toPercentage(options.stageTotal, tempInvoice.value)
+              }}
             </div>
             <div class="col-md-1"></div>
           </div>
@@ -1543,7 +1549,8 @@
             style="margin-top: 28px"
             [disabled]="!important.value"
             (click)="
-              invoice.importants.push(options.important); options.important = ''
+              tempInvoice.importants.push(options.important);
+              options.important = ''
             "
           >
             +
@@ -1553,7 +1560,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let activity of invoice.importants;
+            let activity of tempInvoice.importants;
             let i = index;
             trackBy: trackByIndex
           "
@@ -1562,13 +1569,13 @@
             <div class="col-10 col-md-11">
               <textarea
                 nbInput
-                [(ngModel)]="invoice.importants[i]"
+                [(ngModel)]="tempInvoice.importants[i]"
                 id="input-important-{{ i }}"
                 name="important-{{ i }}"
                 placeholder="detalhe importante"
                 fullWidth
                 [status]="
-                  invoice.importants[i].length == 0 ? 'danger' : 'basic'
+                  tempInvoice.importants[i].length == 0 ? 'danger' : 'basic'
                 "
               ></textarea>
             </div>
@@ -1578,7 +1585,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="invoice.importants.splice(i, 1)"
+                (click)="tempInvoice.importants.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
