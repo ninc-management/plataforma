@@ -3,12 +3,14 @@ import {
   NbDialogRef,
   NbMediaBreakpointsService,
   NB_DOCUMENT,
+  NbDialogService,
 } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, take } from 'rxjs/operators';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfService } from '../pdf.service';
+import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -23,6 +25,7 @@ export class InvoiceDialogComponent implements OnInit {
   constructor(
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<InvoiceDialogComponent>,
+    private dialogService: NbDialogService,
     protected departmentService: DepartmentService,
     private utils: UtilsService,
     private breakpointService: NbMediaBreakpointsService,
@@ -71,8 +74,17 @@ export class InvoiceDialogComponent implements OnInit {
   }
 
   previewPDF(): void {
-    console.log(this.tempInvoice);
     this.pdf.generate(this.tempInvoice, true);
+
+    this.dialogService.open(PdfDialogComponent, {
+      context: {
+        dataUrl$: this.pdf.pdfData$,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 
   isPhone(): boolean {

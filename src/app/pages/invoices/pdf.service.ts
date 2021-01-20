@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
 import { StringUtilService } from '../../shared/services/string-util.service';
+import { Subject } from 'rxjs';
 import extenso from 'extenso';
 import pdfMake from 'pdfmake';
 
@@ -24,6 +25,7 @@ pdfMake.fonts = {
 })
 export class PdfService {
   today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  pdfData$ = new Subject<string>();
 
   constructor(private stringUtil: StringUtilService) {}
 
@@ -934,8 +936,11 @@ export class PdfService {
       background: '#d2e8e9',
     });
 
-    if (preview) pdf.create().open();
-    else
+    if (preview) {
+      pdf.create().getDataUrl((dataURL: any) => {
+        this.pdfData$.next(dataURL);
+      });
+    } else
       pdf
         .create()
         .download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
