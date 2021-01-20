@@ -1163,6 +1163,176 @@
       </div>
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
+          <label class="label-divider">Lista de Materias</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-material">Material/Serviço:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.material.name"
+              #material="ngModel"
+              id="input-material"
+              name="material"
+              placeholder="Nome do material/serviço"
+              fullWidth
+              fieldSize="large"
+              [status]="material.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                material.invalid && material.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-materialAmount">Quantidade:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.material.amount"
+              (ngModelChange)="updateMaterialTotal()"
+              #materialAmount="ngModel"
+              id="input-materialAmount"
+              name="materialAmount"
+              placeholder="Quantidade"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [status]="materialAmount.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                materialAmount.invalid && materialAmount.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-materialValue">Valor/m²:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.material.value"
+              (ngModelChange)="updateMaterialTotal()"
+              #materialValue="ngModel"
+              id="input-materialValue"
+              name="materialValue"
+              placeholder="Valor"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [status]="materialValue.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                materialValue.invalid && materialValue.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-materialTotal">Total:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.material.total"
+              #materialTotal="ngModel"
+              id="input-materialTotal"
+              name="materialTotal"
+              placeholder="Total"
+              fullWidth
+              fieldSize="large"
+              disabled="true"
+              [attr.aria-invalid]="
+                materialTotal.invalid && materialTotal.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="
+              !material.value || !materialAmount.value || !materialValue.value
+            "
+            (click)="addMaterial(); updateTotal('material')"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item
+          *ngFor="
+            let material of tempInvoice.materials;
+            let i = index;
+            trackBy: trackByIndex
+          "
+        >
+          <div class="row paymentRow">
+            <div class="col-12 col-md-4">
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.materials[i].name"
+                id="input-product-{{ i }}"
+                name="product-{{ i }}"
+                placeholder="produto"
+                fullWidth
+                [status]="
+                  tempInvoice.materials[i].length == 0 ? 'danger' : 'basic'
+                "
+              />
+            </div>
+            <div class="col-3 col-md-2">
+              {{ material.amount }}
+            </div>
+            <div class="col-3 col-md-2">
+              {{ material.value }}
+            </div>
+            <div class="col-4 col-md-3">
+              {{ material.total }}
+            </div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="tempInvoice.materials.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+        <nb-list-item>
+          <div class="row paymentRow">
+            <div class="col-12 col-md-6"></div>
+            <div class="col-4 col-md-2" style="text-align: right">Total:</div>
+            <div class="col-4 col-md-3">
+              {{ options.materialTotal }}
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+      <div class="row" style="margin-top: 8px">
+        <div class="col-auto">
           <label class="label-divider">Valores</label>
         </div>
         <div class="col">

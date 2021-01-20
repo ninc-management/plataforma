@@ -45,6 +45,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     important: '',
     valueType: '$',
     stageValueType: '$',
+    material: {
+      name: '',
+      amount: '',
+      value: '',
+      total: '0,00',
+    },
     product: {
       value: '',
       name: '',
@@ -56,6 +62,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     },
     total: '0',
     stageTotal: '0',
+    materialTotal: '0,00',
   };
   destroy$ = new Subject<void>();
   editing = false;
@@ -137,6 +144,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         laee: [],
         laep: [],
         team: [],
+        materials: [],
       };
     }
     if (this.tempInvoice.contactPlural == undefined)
@@ -322,6 +330,28 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.tempInvoice.created.setSeconds(currentTime.getSeconds());
   }
 
+  updateMaterialTotal(): void {
+    if (
+      (this.options.material.value == undefined ||
+        this.options.material.value.length == 0) &&
+      (this.options.material.amount == undefined ||
+        this.options.material.amount.length == 0)
+    )
+      this.options.material.total = '0,00';
+    else
+      this.options.material.total = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.options.material.value) *
+          this.stringUtil.moneyToNumber(this.options.material.amount)
+      );
+  }
+
+  addMaterial(): void {
+    this.updateMaterialTotal();
+    this.tempInvoice.materials.push(this.options.material);
+    this.options.material = { value: '', name: '', amount: '', total: '0,00' };
+    // this.updateTotal('product');
+  }
+
   addProduct(): void {
     if (this.options.valueType === '%')
       this.options.product.value = this.stringUtil.toValue(
@@ -371,22 +401,41 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateTotal(base: string): void {
-    if (base === 'product')
-      this.options.total = this.stringUtil.numberToMoney(
-        this.tempInvoice.products.reduce(
-          (accumulator: number, produtc: any) =>
-            accumulator + this.stringUtil.moneyToNumber(produtc.value),
-          0
-        )
-      );
-    else
-      this.options.stageTotal = this.stringUtil.numberToMoney(
-        this.tempInvoice.stages.reduce(
-          (accumulator: number, stage: any) =>
-            accumulator + this.stringUtil.moneyToNumber(stage.value),
-          0
-        )
-      );
+    switch (base) {
+      case 'product': {
+        this.options.total = this.stringUtil.numberToMoney(
+          this.tempInvoice.products.reduce(
+            (accumulator: number, produtc: any) =>
+              accumulator + this.stringUtil.moneyToNumber(produtc.value),
+            0
+          )
+        );
+        break;
+      }
+      case 'stage': {
+        this.options.stageTotal = this.stringUtil.numberToMoney(
+          this.tempInvoice.stages.reduce(
+            (accumulator: number, stage: any) =>
+              accumulator + this.stringUtil.moneyToNumber(stage.value),
+            0
+          )
+        );
+        break;
+      }
+      case 'material': {
+        this.options.materialTotal = this.stringUtil.numberToMoney(
+          this.tempInvoice.materials.reduce(
+            (accumulator: number, material: any) =>
+              accumulator + this.stringUtil.moneyToNumber(material.total),
+            0
+          )
+        );
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   trackByIndex(index: number, obj: any): any {
