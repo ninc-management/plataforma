@@ -261,6 +261,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.teamMember.coordination = undefined;
   }
 
+  /* eslint-disable @typescript-eslint/indent */
   updateCode(): void {
     if (!this.editing) {
       this.tempInvoice.code =
@@ -277,6 +278,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         '-00';
     }
   }
+  /* eslint-enable @typescript-eslint/indent */
 
   updateRevision(): void {
     this.tempInvoice.code =
