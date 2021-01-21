@@ -134,6 +134,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
       this.updateTotal('product');
       this.updateTotal('stage');
+      this.updateTotal('material');
+      this.materialWithDiscount();
     } else {
       this.tempInvoice = {
         created: new Date(),
@@ -361,7 +363,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.updateMaterialTotal();
     this.tempInvoice.materials.push(this.options.material);
     this.options.material = { value: '', name: '', amount: '', total: '0,00' };
-    // this.updateTotal('product');
+    this.updateTotal('material');
+    this.materialWithDiscount();
   }
 
   addProduct(): void {

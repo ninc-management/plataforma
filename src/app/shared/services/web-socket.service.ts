@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  constructor(private utils: UtilsService) {}
+  constructor() {}
 
   handle(data: any, oArray$: BehaviorSubject<any[]>, coll: string): void {
     if (data == {}) return;
@@ -16,7 +15,8 @@ export class WebSocketService {
         let tmpArray = oArray$.getValue();
         let idx = tmpArray.findIndex((el) => el._id === data.documentKey._id);
         if (data.updateDescription.updatedFields)
-          tmpArray[idx] = this.utils.deepCopy(
+          tmpArray[idx] = Object.assign(
+            tmpArray[idx],
             data.updateDescription.updatedFields
           );
         if (data.updateDescription.removedFields.length > 0)

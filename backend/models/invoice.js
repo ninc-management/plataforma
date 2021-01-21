@@ -7,6 +7,13 @@ const invoiceProduct = {
   subproducts: [{ type: String, required: true }],
 };
 
+const invoiceMaterial = {
+  name: { type: String, required: true },
+  amount: { type: String, required: true },
+  value: { type: String, required: true },
+  total: { type: String, required: true },
+};
+
 const invoiceStage = {
   name: { type: String, required: true },
   value: { type: String, required: true },
@@ -47,8 +54,10 @@ const invoiceSchema = mongoose.Schema({
   peec: { type: String },
   laec: [{ type: String }],
   dec: { type: String },
+  materialDiscount: { type: String },
   products: [invoiceProduct],
   stages: [invoiceStage],
+  materials: [invoiceMaterial],
   importants: [{ type: String }],
 });
 

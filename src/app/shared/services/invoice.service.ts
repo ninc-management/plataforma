@@ -50,11 +50,8 @@ export class InvoiceService implements OnDestroy {
   }
 
   editInvoice(invoice: any): void {
-    let tmp = this.utils.deepCopy(invoice);
-    delete tmp.author;
-    tmp.author = invoice.author._id;
     const req = {
-      invoice: tmp,
+      invoice: invoice,
     };
     this.http.post('/api/invoice/update', req).pipe(take(1)).subscribe();
   }

@@ -1271,9 +1271,7 @@
             [disabled]="
               !material.value || !materialAmount.value || !materialValue.value
             "
-            (click)="
-              addMaterial(); updateTotal('material'); materialWithDiscount()
-            "
+            (click)="addMaterial()"
           >
             +
           </button>
@@ -1292,8 +1290,8 @@
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.materials[i].name"
-                id="input-product-{{ i }}"
-                name="product-{{ i }}"
+                id="input-material-{{ i }}"
+                name="material-{{ i }}"
                 placeholder="produto"
                 fullWidth
                 [status]="
@@ -1316,7 +1314,11 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.materials.splice(i, 1)"
+                (click)="
+                  tempInvoice.materials.splice(i, 1);
+                  updateTotal('material');
+                  materialWithDiscount()
+                "
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
