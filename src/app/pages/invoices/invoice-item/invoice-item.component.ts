@@ -63,6 +63,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     total: '0',
     stageTotal: '0',
     materialTotal: '0,00',
+    materialTotalWithDiscount: '0,00',
   };
   destroy$ = new Subject<void>();
   editing = false;
@@ -343,6 +344,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.stringUtil.moneyToNumber(this.options.material.value) *
           this.stringUtil.moneyToNumber(this.options.material.amount)
       );
+  }
+
+  materialWithDiscount(): void {
+    const discount =
+      this.tempInvoice.materialDiscount == undefined
+        ? '0,00'
+        : this.tempInvoice.materialDiscount;
+    this.options.materialTotalWithDiscount = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.options.materialTotal) -
+        this.stringUtil.moneyToNumber(discount)
+    );
   }
 
   addMaterial(): void {

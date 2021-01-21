@@ -1271,7 +1271,9 @@
             [disabled]="
               !material.value || !materialAmount.value || !materialValue.value
             "
-            (click)="addMaterial(); updateTotal('material')"
+            (click)="
+              addMaterial(); updateTotal('material'); materialWithDiscount()
+            "
           >
             +
           </button>
@@ -1323,9 +1325,50 @@
         <nb-list-item>
           <div class="row paymentRow">
             <div class="col-12 col-md-6"></div>
-            <div class="col-4 col-md-2" style="text-align: right">Total:</div>
+            <div class="col-4 col-md-2" style="text-align: right">
+              Subtotal:
+            </div>
             <div class="col-4 col-md-3">
               {{ options.materialTotal }}
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+        </nb-list-item>
+        <nb-list-item>
+          <div class="row paymentRow">
+            <div class="col-12 col-md-6"></div>
+            <div class="col-4 col-md-2" style="text-align: right">
+              Desconto:
+            </div>
+            <div class="col-4 col-md-3">
+              <input
+                nbInput
+                fullWidth
+                [(ngModel)]="tempInvoice.materialDiscount"
+                (ngModelChange)="materialWithDiscount()"
+                #discount="ngModel"
+                id="material-discount"
+                name="material-discount"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [attr.aria-invalid]="
+                  discount.invalid && discount.touched ? true : null
+                "
+              />
+            </div>
+            <div class="col-md-1"></div>
+          </div>
+        </nb-list-item>
+        <nb-list-item>
+          <div class="row paymentRow">
+            <div class="col-12 col-md-6"></div>
+            <div class="col-4 col-md-2" style="text-align: right">Total:</div>
+            <div class="col-4 col-md-3">
+              {{ this.options.materialTotalWithDiscount }}
             </div>
             <div class="col-md-1"></div>
           </div>
