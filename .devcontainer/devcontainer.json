@@ -34,15 +34,7 @@
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
   "runArgs": ["-it", "--rm", "--network=host", "--user=nodejs"],
 
-  "containerEnv": {
-    "JWT_SECRET": "${localEnv:JWT_SECRET",
-    "EMAIL_PASSWD": "${localEnv:EMAIL_PASSWD",
-    "FIREBASE_APIKEY": "${localEnv:FIREBASE_APIKEY",
-    "FIREBASE_MSENDERID": "${localEnv:FIREBASE_MSENDERID",
-    "FIREBASE_APPID": "${localEnv:FIREBASE_APPID",
-    "FIREBASE_MID": "${localEnv:FIREBASE_MID",
-    "MONGODB_URI": "${localEnv:MONGODB_URI"
-  },
+  "containerEnv": {},
 
   "workspaceFolder": "/home/${localEnv:USER}/nortan",
 
