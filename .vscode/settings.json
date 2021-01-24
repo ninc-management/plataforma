@@ -1,4 +1,153 @@
 {
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "tslint.enable": false
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "tslint.enable": false,
+  "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 120,
+  "editor.renderWhitespace": "all",
+  "git.autofetch": true,
+  "editor.autoIndent": "full",
+  "editor.codeLens": false,
+  "editor.cursorBlinking": "solid",
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorStyle": "line",
+  "editor.fontSize": 14,
+  "editor.fontFamily": "Cascadia Code PL",
+  "editor.fontLigatures": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": false,
+  "editor.formatOnSave": true,
+  "editor.letterSpacing": 0.5,
+  "editor.lineHeight": 25,
+  "editor.minimap.enabled": false,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.suggestSelection": "first",
+  "editor.tabCompletion": "on",
+  "editor.tabSize": 2,
+  "prettier.printWidth": 120,
+  "prettier.bracketSpacing": true,
+  "prettier.singleQuote": true,
+  "files.autoSave": "onFocusChange",
+  "files.hotExit": "onExit",
+  "files.defaultLanguage": "",
+  "files.trimTrailingWhitespace": true,
+  "terminal.integrated.localEchoStyle": "dim",
+  "terminal.integrated.localEchoLatencyThreshold": 0,
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "emphasis",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "strong",
+        "settings": {
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": "entity.other.attribute-name",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "markup.underline",
+        "settings": {
+          "fontStyle": "underline"
+        }
+      },
+      {
+        "scope": "markup.bold",
+        "settings": {
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": "markup.heading",
+        "settings": {
+          "fontStyle": "bold"
+        }
+      },
+      {
+        "scope": "markup.italic",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "storage.type",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "storage.modifier",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "name": "String interpolation",
+        "scope": [
+          "punctuation.definition.template-expression.begin",
+          "punctuation.definition.template-expression.end",
+          "punctuation.section.embedded"
+        ],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": "keyword.control",
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": [
+          "keyword.operator.new",
+          "keyword.operator.expression",
+          "keyword.operator.cast",
+          "keyword.operator.sizeof",
+          "keyword.operator.logical.python"
+        ],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "name": "this.self",
+        "scope": "variable.language",
+        "settings": {
+          "fontStyle": "italic",
+          "foreground": "#ff5874"
+        }
+      },
+      {
+        "name": "@Decorator",
+        "scope": ["meta.decorator punctuation.decorator"],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": ["punctuation.definition.comment", "comment"],
+        "settings": {
+          // "foreground": "#ff5874",
+          "fontStyle": "italic"
+        }
+      }
+    ]
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "window.zoomLevel": 0,
+  "tabnine.experimentalAutoImports": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.implementationsCodeLens.enabled": true
 }
