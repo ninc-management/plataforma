@@ -18,6 +18,7 @@
     "conventional-changelog": "conventional-changelog",
     "start": "node server.js",
     "start:dev": "nodemon ./server.js",
+    "start:proxy": "ng serve --proxy-config proxy-config.json",
     "build": "ng build --prod --aot",
     "test": "ng test",
     "test:coverage": "rimraf coverage && npm run test -- --code-coverage",
