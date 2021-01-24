@@ -149,5 +149,34 @@
   "window.zoomLevel": 0,
   "tabnine.experimentalAutoImports": true,
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.implementationsCodeLens.enabled": true
+  "typescript.implementationsCodeLens.enabled": true,
+  "workbench.colorTheme": "Material Theme Darker High Contrast",
+  "workbench.colorCustomizations": {
+    "[Material Theme Darker High Contrast]": {
+      "activityBarBadge.background": "#FFA000",
+      "activityBar.activeBorder": "#FFA000",
+      "list.activeSelectionForeground": "#FFA000",
+      "list.inactiveSelectionForeground": "#FFA000",
+      "list.highlightForeground": "#FFA000",
+      "scrollbarSlider.activeBackground": "#FFA00050",
+      "editorSuggestWidget.highlightForeground": "#FFA000",
+      "textLink.foreground": "#FFA000",
+      "progressBar.background": "#FFA000",
+      "pickerGroup.foreground": "#FFA000",
+      "tab.activeBorder": "#FFA000",
+      "notificationLink.foreground": "#FFA000",
+      "editorWidget.resizeBorder": "#FFA000",
+      "editorWidget.border": "#FFA000",
+      "settings.modifiedItemIndicator": "#FFA000",
+      "settings.headerForeground": "#FFA000",
+      "panelTitle.activeBorder": "#FFA000",
+      "breadcrumb.activeSelectionForeground": "#FFA000",
+      "menu.selectionForeground": "#FFA000",
+      "menubar.selectionForeground": "#FFA000",
+      "editor.findMatchBorder": "#FFA000",
+      "selection.background": "#FFA00040",
+      "statusBarItem.remoteBackground": "#FFA000"
+    }
+  },
+  "materialTheme.accent": "Yellow"
 }

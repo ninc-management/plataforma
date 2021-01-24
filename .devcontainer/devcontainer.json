@@ -28,7 +28,8 @@
     "yzhang.markdown-all-in-one",
     "davidanson.vscode-markdownlint",
     "jakewilson.vscode-placeholder-images",
-    "mrmlnc.vscode-scss"
+    "mrmlnc.vscode-scss",
+    "equinusocio.vsc-material-theme"
   ],
 
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
