@@ -877,6 +877,97 @@ export class PdfService {
       layout: this.noBorderTable('#82ADAD'),
     });
 
+    if (invoice.materials.length > 0) {
+      const materials = invoice.materials.map((material) => {
+        return [
+          {
+            text: material.name,
+            alignment: 'center',
+            border: [false, true, true, true],
+          },
+          {
+            text: material.amount,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'R$ ' + material.total,
+            alignment: 'center',
+            border: [true, true, false, true],
+          },
+        ];
+      });
+      const total = this.stringUtil.numberToMoney(
+        invoice.materials.reduce(
+          (accumulator: number, material: any) =>
+            accumulator + this.stringUtil.moneyToNumber(material.total),
+          0
+        )
+      );
+      // Body - Materials List - Page 3
+      pdf.add(pdf.ln(1));
+
+      pdf.add({
+        text: 'Lista de materias:',
+        bold: true,
+        style: 'insideText',
+      });
+
+      pdf.add(pdf.ln(1));
+
+      pdf.add({
+        style: 'insideText',
+        table: {
+          widths: ['*', '*', '*'],
+          dontBreakRows: true,
+          body: [
+            [
+              {
+                text: 'MATERIAL',
+                bold: true,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: 'QUANTIDADE',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'VALOR',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ],
+            ...materials,
+            [
+              {
+                text: '',
+                bold: true,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: 'TOTAL',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'R$ ' + total,
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ],
+          ],
+        },
+        layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+      });
+    }
+
     pdf.add(pdf.ln(2));
 
     pdf.add({

@@ -10,7 +10,6 @@ const invoiceProduct = {
 const invoiceMaterial = {
   name: { type: String, required: true },
   amount: { type: String, required: true },
-  value: { type: String, required: true },
   total: { type: String, required: true },
 };
 

@@ -48,8 +48,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     material: {
       name: '',
       amount: '',
-      value: '',
-      total: '0,00',
+      total: '',
     },
     product: {
       value: '',
@@ -334,37 +333,37 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateMaterialTotal(): void {
-    if (
-      (this.options.material.value == undefined ||
-        this.options.material.value.length == 0) &&
-      (this.options.material.amount == undefined ||
-        this.options.material.amount.length == 0)
-    )
-      this.options.material.total = '0,00';
-    else
-      this.options.material.total = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.options.material.value) *
-          this.stringUtil.moneyToNumber(this.options.material.amount)
-      );
+    // if (
+    //   (this.options.material.value == undefined ||
+    //     this.options.material.value.length == 0) &&
+    //   (this.options.material.amount == undefined ||
+    //     this.options.material.amount.length == 0)
+    // )
+    //   this.options.material.total = '0,00';
+    // else
+    //   this.options.material.total = this.stringUtil.numberToMoney(
+    //     this.stringUtil.moneyToNumber(this.options.material.value) *
+    //       this.stringUtil.moneyToNumber(this.options.material.amount)
+    //   );
   }
 
   materialWithDiscount(): void {
-    const discount =
-      this.tempInvoice.materialDiscount == undefined
-        ? '0,00'
-        : this.tempInvoice.materialDiscount;
-    this.options.materialTotalWithDiscount = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.options.materialTotal) -
-        this.stringUtil.moneyToNumber(discount)
-    );
+    // const discount =
+    //   this.tempInvoice.materialDiscount == undefined
+    //     ? '0,00'
+    //     : this.tempInvoice.materialDiscount;
+    // this.options.materialTotalWithDiscount = this.stringUtil.numberToMoney(
+    //   this.stringUtil.moneyToNumber(this.options.materialTotal) -
+    //     this.stringUtil.moneyToNumber(discount)
+    // );
   }
 
   addMaterial(): void {
     this.updateMaterialTotal();
     this.tempInvoice.materials.push(this.options.material);
-    this.options.material = { value: '', name: '', amount: '', total: '0,00' };
+    this.options.material = { name: '', amount: '', total: '0,00' };
     this.updateTotal('material');
-    this.materialWithDiscount();
+    // this.materialWithDiscount();
   }
 
   addProduct(): void {
