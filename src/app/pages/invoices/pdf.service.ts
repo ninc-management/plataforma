@@ -654,42 +654,48 @@ export class PdfService {
     });
 
     // Body - Invoice Info Final Stage - Page 2
-    pdf.add(pdf.ln(1));
+    if (
+      invoice.peec?.length > 0 &&
+      invoice.laec.length > 0 &&
+      invoice.dec?.length > 0
+    ) {
+      pdf.add(pdf.ln(1));
 
-    const laec = invoice.laec.map((activity, index) => {
-      return activity + (index == invoice.laec.length - 1 ? '.' : ';');
-    });
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [{ text: 'ETAPA COMPLEMENTAR' }],
-          [
-            {
-              text: invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '',
-              fontSize: 8,
-              alignment: 'justify',
-            },
+      const laec = invoice.laec.map((activity, index) => {
+        return activity + (index == invoice.laec.length - 1 ? '.' : ';');
+      });
+      pdf.add({
+        style: 'insideText',
+        table: {
+          widths: ['*'],
+          dontBreakRows: true,
+          body: [
+            [{ text: 'ETAPA COMPLEMENTAR' }],
+            [
+              {
+                text: '(' + invoice.peec + ')',
+                fontSize: 8,
+                alignment: 'justify',
+              },
+            ],
+            [
+              {
+                ul: laec,
+                fontSize: 10,
+                alignment: 'justify',
+              },
+            ],
+            [
+              {
+                text: invoice.dec,
+                alignment: 'justify',
+              },
+            ],
           ],
-          [
-            {
-              ul: laec,
-              fontSize: 10,
-              alignment: 'justify',
-            },
-          ],
-          [
-            {
-              text: invoice.dec,
-              alignment: 'justify',
-            },
-          ],
-        ],
-      },
-      layout: this.noBorderTable('#BCDCCE'),
-    });
+        },
+        layout: this.noBorderTable('#BCDCCE'),
+      });
+    }
 
     // Body - Invoice Values - Page 2
     pdf.add(pdf.ln(1));
