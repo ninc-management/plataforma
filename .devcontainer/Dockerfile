@@ -1,19 +1,19 @@
 FROM node:12
 
 # Define pasta padrão
-WORKDIR /home/nodejs/nortan
+WORKDIR /home/node/nortan
 
 # Adiciona novo usuário e grupo para evitar usar o root
-RUN groupadd -r nodejs && useradd -m -r -g nodejs -s /bin/bash nodejs
+#RUN groupadd -r node && useradd -m -r -g node -s /bin/bash node
 
 # Adciona bashrc
-COPY .bashrc /home/nodejs
+COPY .bashrc /home/node
 
 # Define variáveis de ambiente
 ENV  TZ Brazil/East
 
 # Corrige permissões da pasta
-RUN chmod -Rf 775 /home/nodejs && chown -Rf nodejs:nodejs /home/nodejs
+RUN chmod -Rf 775 /home/node && chown -Rf node:node /home/node
 
-# Passa a usar o novo usuário não root "nodejs"
-USER nodejs
+# Passa a usar o novo usuário não root "node"
+USER node

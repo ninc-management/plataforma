@@ -33,7 +33,7 @@
   ],
 
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-  "runArgs": ["-it", "--rm", "--network=host", "--user=nodejs"],
+  "runArgs": ["-it", "--rm", "--network=host", "--user=node"],
 
   "containerEnv": {},
 
