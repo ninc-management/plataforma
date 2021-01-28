@@ -884,7 +884,20 @@ export class PdfService {
     });
 
     if (invoice.materials.length > 0) {
-      const materials = invoice.materials.map((material) => {
+      let materials = invoice.materials.map((material) => {
+        if (invoice.materialListType == '1')
+          return [
+            {
+              text: material.name,
+              alignment: 'center',
+              border: [false, true, true, true],
+            },
+            {
+              text: material.amount,
+              alignment: 'center',
+              border: [true, true, false, true],
+            },
+          ];
         return [
           {
             text: material.name,
@@ -897,12 +910,60 @@ export class PdfService {
             border: [true, true, true, true],
           },
           {
+            text: material.value,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
             text: 'R$ ' + material.total,
             alignment: 'center',
             border: [true, true, false, true],
           },
         ];
       });
+      const header = () => {
+        if (invoice.materialListType == '1')
+          return [
+            {
+              text: 'MATERIAL',
+              bold: true,
+              alignment: 'center',
+              border: [false, true, true, true],
+            },
+            {
+              text: 'QUANTIDADE',
+              bold: true,
+              alignment: 'center',
+              border: [true, true, false, true],
+            },
+          ];
+        return [
+          {
+            text: 'MATERIAL',
+            bold: true,
+            alignment: 'center',
+            border: [false, true, true, true],
+          },
+          {
+            text: 'QUANTIDADE',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'VALOR',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'TOTAL',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, false, true],
+          },
+        ];
+      };
       const total = this.stringUtil.numberToMoney(
         invoice.materials.reduce(
           (accumulator: number, material: any) =>
@@ -910,6 +971,33 @@ export class PdfService {
           0
         )
       );
+      if (invoice.materialListType == '2')
+        materials.push([
+          {
+            text: '',
+            bold: true,
+            alignment: 'center',
+            border: [false, true, true, true],
+          },
+          {
+            text: '',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'TOTAL',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'R$ ' + total,
+            bold: true,
+            alignment: 'center',
+            border: [true, true, false, true],
+          },
+        ]);
       // Body - Materials List - Page 3
       pdf.add(pdf.ln(1));
 
@@ -924,51 +1012,10 @@ export class PdfService {
       pdf.add({
         style: 'insideText',
         table: {
-          widths: ['*', '*', '*'],
+          widths:
+            invoice.materialListType == '1' ? ['*', '*'] : ['*', '*', '*', '*'],
           dontBreakRows: true,
-          body: [
-            [
-              {
-                text: 'MATERIAL',
-                bold: true,
-                alignment: 'center',
-                border: [false, true, true, true],
-              },
-              {
-                text: 'QUANTIDADE',
-                bold: true,
-                alignment: 'center',
-                border: [true, true, true, true],
-              },
-              {
-                text: 'VALOR',
-                bold: true,
-                alignment: 'center',
-                border: [true, true, false, true],
-              },
-            ],
-            ...materials,
-            [
-              {
-                text: '',
-                bold: true,
-                alignment: 'center',
-                border: [false, true, true, true],
-              },
-              {
-                text: 'TOTAL',
-                bold: true,
-                alignment: 'center',
-                border: [true, true, true, true],
-              },
-              {
-                text: 'R$ ' + total,
-                bold: true,
-                alignment: 'center',
-                border: [true, true, false, true],
-              },
-            ],
-          ],
+          body: [header(), ...materials],
         },
         layout: this.noSideBorderTable('#BFBFBF', '#476471'),
       });

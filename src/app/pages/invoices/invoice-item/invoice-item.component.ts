@@ -45,11 +45,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     important: '',
     valueType: '$',
     stageValueType: '$',
-    material: {
-      name: '',
-      amount: '',
-      total: '',
-    },
+    material: { name: '', amount: '', value: '', total: '0,00' },
     product: {
       value: '',
       name: '',
@@ -131,10 +127,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         typeof this.tempInvoice.lastUpdate !== 'object'
       )
         this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
+      if (this.tempInvoice.materialListType == undefined)
+        this.tempInvoice.materialListType = '1';
       this.updateTotal('product');
       this.updateTotal('stage');
       this.updateTotal('material');
-      this.materialWithDiscount();
     } else {
       this.tempInvoice = {
         created: new Date(),
@@ -147,6 +144,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         laep: [],
         team: [],
         materials: [],
+        materialListType: '1',
       };
     }
     if (this.tempInvoice.contactPlural == undefined)
@@ -333,37 +331,38 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateMaterialTotal(): void {
-    // if (
-    //   (this.options.material.value == undefined ||
-    //     this.options.material.value.length == 0) &&
-    //   (this.options.material.amount == undefined ||
-    //     this.options.material.amount.length == 0)
-    // )
-    //   this.options.material.total = '0,00';
-    // else
-    //   this.options.material.total = this.stringUtil.numberToMoney(
-    //     this.stringUtil.moneyToNumber(this.options.material.value) *
-    //       this.stringUtil.moneyToNumber(this.options.material.amount)
-    //   );
-  }
-
-  materialWithDiscount(): void {
-    // const discount =
-    //   this.tempInvoice.materialDiscount == undefined
-    //     ? '0,00'
-    //     : this.tempInvoice.materialDiscount;
-    // this.options.materialTotalWithDiscount = this.stringUtil.numberToMoney(
-    //   this.stringUtil.moneyToNumber(this.options.materialTotal) -
-    //     this.stringUtil.moneyToNumber(discount)
-    // );
+    if (
+      this.options.material.value == undefined ||
+      this.options.material.value.length == 0 ||
+      this.options.material.amount == undefined ||
+      this.options.material.amount.length == 0
+    )
+      this.options.material.total = '0,00';
+    else
+      this.options.material.total = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.options.material.value) *
+          this.stringUtil.moneyToNumber(this.options.material.amount)
+      );
   }
 
   addMaterial(): void {
     this.updateMaterialTotal();
     this.tempInvoice.materials.push(this.options.material);
-    this.options.material = { name: '', amount: '', total: '0,00' };
+    this.options.material = { name: '', amount: '', value: '', total: '0,00' };
     this.updateTotal('material');
-    // this.materialWithDiscount();
+  }
+
+  isAddMaterialDisabled(): boolean {
+    if (this.tempInvoice.materialListType == '1')
+      return (
+        this.options.material.name.length == 0 ||
+        this.options.material.amount.length == 0
+      );
+    return (
+      this.options.material.name.length == 0 ||
+      this.options.material.amount.length == 0 ||
+      this.options.material.value.length == 0
+    );
   }
 
   addProduct(): void {
