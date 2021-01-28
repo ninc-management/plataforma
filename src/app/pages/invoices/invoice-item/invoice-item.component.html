@@ -1335,6 +1335,61 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
+            <div class="col-4 col-md-7" style="text-align: right">
+              Desconto:
+            </div>
+            <div class="col-4 col-md-2">
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.discount"
+                (ngModelChange)="
+                  updateDiscountPercentage(); updateTotal('product')
+                "
+                #discountValue="ngModel"
+                id="input-discountValue"
+                name="discountValue"
+                placeholder="Desconto"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="discountValue.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="
+                  discountValue.invalid && discountValue.touched ? true : null
+                "
+              />
+            </div>
+            <div class="col-4 col-md-3" style="display: flex">
+              <input
+                nbInput
+                [(ngModel)]="options.discountPercentage"
+                (ngModelChange)="updateDiscountValue(); updateTotal('product')"
+                #discountPercentage="ngModel"
+                id="input-discountPercentage"
+                name="discountPercentage"
+                placeholder="Porcentagem"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="discountPercentage.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="
+                  discountPercentage.invalid && discountPercentage.touched
+                    ? true
+                    : null
+                "
+              /><b style="margin-left: 5px">%</b>
+            </div>
+          </div>
+        </nb-list-item>
+        <nb-list-item>
+          <div class="row paymentRow">
             <div class="col-12 col-md-4">
               Restante: {{ remainingBalance('product') }}
             </div>
@@ -1672,26 +1727,26 @@
             />
             <ng-template #inputMask>
               <input
-              nbInput
-              [(ngModel)]="options.material.amount"
-              (ngModelChange)="updateMaterialTotal()"
-              #materialAmount="ngModel"
-              id="input-materialAmount"
-              name="materialAmount"
-              placeholder="Quantidade"
-              fullWidth
-              fieldSize="large"
-              [brmasker]="{
-                money: true,
-                thousand: '.',
-                decimalCaracter: ',',
-                decimal: '2'
-              }"
-              [status]="materialAmount.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                materialAmount.invalid && materialAmount.touched ? true : null
-              "
-            />
+                nbInput
+                [(ngModel)]="options.material.amount"
+                (ngModelChange)="updateMaterialTotal()"
+                #materialAmount="ngModel"
+                id="input-materialAmount"
+                name="materialAmount"
+                placeholder="Quantidade"
+                fullWidth
+                fieldSize="large"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="materialAmount.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="
+                  materialAmount.invalid && materialAmount.touched ? true : null
+                "
+              />
             </ng-template>
           </div>
         </div>

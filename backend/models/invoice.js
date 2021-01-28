@@ -54,7 +54,7 @@ const invoiceSchema = mongoose.Schema({
   peec: { type: String },
   laec: [{ type: String }],
   dec: { type: String },
-  materialDiscount: { type: String },
+  discount: { type: String },
   materialListType: { type: String },
   products: [invoiceProduct],
   stages: [invoiceStage],

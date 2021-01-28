@@ -8,6 +8,7 @@ export class StringUtilService {
   constructor(private brMask: BrMaskDirective) {}
 
   moneyToNumber(money: string): number {
+    if (!money) return 0;
     const result = money.replace('.', '').replace(',', '.');
     return +result;
   }

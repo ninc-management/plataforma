@@ -56,6 +56,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       name: '',
     },
     total: '0',
+    discountPercentage: '',
     stageTotal: '0',
     materialTotal: '0,00',
     materialTotalWithDiscount: '0,00',
@@ -129,6 +130,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
       if (this.tempInvoice.materialListType == undefined)
         this.tempInvoice.materialListType = '1';
+      this.updateDiscountPercentage();
       this.updateTotal('product');
       this.updateTotal('stage');
       this.updateTotal('material');
@@ -391,6 +393,32 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
   }
 
+  updateDiscountPercentage(): void {
+    this.options.discountPercentage = this.stringUtil
+      .toPercentageNumber(
+        this.stringUtil.moneyToNumber(this.tempInvoice.discount),
+        this.tempInvoice.products.reduce(
+          (accumulator: number, product: any) =>
+            accumulator + this.stringUtil.moneyToNumber(product.value),
+          0
+        )
+      )
+      .slice(0, -1);
+  }
+
+  updateDiscountValue(): void {
+    const total = this.tempInvoice.products.reduce(
+      (accumulator: number, product: any) =>
+        accumulator + this.stringUtil.moneyToNumber(product.value),
+      0
+    );
+    this.tempInvoice.discount = this.stringUtil.numberToMoney(
+      total -
+        this.stringUtil.toMutiplyPercentage(this.options.discountPercentage) *
+          total
+    );
+  }
+
   addStage(): void {
     if (this.options.stageValueType === '%')
       this.options.stage.value = this.stringUtil.toValue(
@@ -418,10 +446,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       case 'product': {
         this.options.total = this.stringUtil.numberToMoney(
           this.tempInvoice.products.reduce(
-            (accumulator: number, produtc: any) =>
-              accumulator + this.stringUtil.moneyToNumber(produtc.value),
+            (accumulator: number, product: any) =>
+              accumulator + this.stringUtil.moneyToNumber(product.value),
             0
-          )
+          ) - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
         );
         break;
       }
