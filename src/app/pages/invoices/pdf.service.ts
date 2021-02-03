@@ -724,19 +724,37 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    const products = invoice.products.map((product) => {
+    let products = invoice.products.map((product) => {
       if (product.subproducts.length > 0)
         return [
           {
-            text: product.name + ': R$ ' + product.value,
+            text:
+              invoice.productListType == '1'
+                ? product.name + ': R$ ' + product.value
+                : product.name +
+                  ': ' +
+                  product.amount +
+                  ' x R$ ' +
+                  product.value +
+                  ' = R$ ' +
+                  product.total,
           },
           {
             stack: product.subproducts.map((subproduct) => subproduct),
             fontSize: 6,
           },
         ];
-      return product.name + ': R$ ' + product.value;
+      return invoice.productListType == '1'
+        ? product.name + ': R$ ' + product.value
+        : product.name +
+            ': ' +
+            product.amount +
+            ' x R$ ' +
+            product.value +
+            ' = R$ ' +
+            product.total;
     });
+    if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
     let extensoValue = extenso(invoice.value, { mode: 'currency' });
     if (extensoValue.split(' ')[0] == 'mil')
       extensoValue = 'um ' + extensoValue;

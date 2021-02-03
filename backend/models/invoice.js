@@ -3,7 +3,9 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const invoiceProduct = {
   name: { type: String, required: true },
+  amount: { type: String, required: true },
   value: { type: String, required: true },
+  total: { type: String, required: true },
   subproducts: [{ type: String, required: true }],
 };
 
@@ -56,6 +58,7 @@ const invoiceSchema = mongoose.Schema({
   dec: { type: String },
   discount: { type: String },
   materialListType: { type: String },
+  productListType: { type: String },
   products: [invoiceProduct],
   stages: [invoiceStage],
   materials: [invoiceMaterial],

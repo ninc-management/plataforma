@@ -1170,7 +1170,33 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label
+              class="label"
+              for="input-product-type"
+              style="display: flex; margin-top: 4px"
+            >
+              <span style="margin-right: 10px">Tipo da lista:</span>
+              <nb-radio-group
+                [(ngModel)]="tempInvoice.productListType"
+                #productListType="ngModel"
+                id="input-product-list-type"
+                name="productListType"
+                style="height: 16px"
+              >
+                <nb-radio value="1" style="height: 16px">Simplificada</nb-radio>
+                <nb-radio value="2" style="height: 16px">Completa</nb-radio>
+              </nb-radio-group>
+            </label>
+          </div>
+        </div>
+        <div
+          [ngClass]="{
+            'col-12 col-md-5': tempInvoice.productListType == '2',
+            'col-8': tempInvoice.productListType == '1'
+          }"
+        >
           <div class="form-control-group">
             <label class="label" for="input-product">Produto:</label>
             <input
@@ -1189,7 +1215,38 @@
             />
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+          <div class="form-control-group">
+            <label class="label" for="input-product">Quantidade:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.product.amount"
+              (ngModelChange)="updateProductTotal()"
+              #productAmount="ngModel"
+              id="input-product-amount"
+              name="productAmount"
+              placeholder="Quantidade"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [status]="productAmount.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                productAmount.invalid && productAmount.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div
+          [ngClass]="{
+            'col-3 col-md-2': tempInvoice.productListType == '2',
+            'col-md-3': tempInvoice.productListType == '1'
+          }"
+        >
           <div class="form-control-group">
             <label
               class="label"
@@ -1211,6 +1268,7 @@
             <input
               nbInput
               [(ngModel)]="options.product.value"
+              (ngModelChange)="updateProductTotal()"
               #paid="ngModel"
               id="input-paid"
               name="paid"
@@ -1228,7 +1286,33 @@
             />
           </div>
         </div>
-        <div class="col-md-1">
+        <div class="col-4 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+          <div class="form-control-group">
+            <label class="label" for="input-materialTotal">Total:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.product.total"
+              #productTotal="ngModel"
+              id="input-productTotal"
+              name="productTotal"
+              placeholder="Total"
+              fullWidth
+              fieldSize="large"
+              disabled="true"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [status]="productTotal.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                productTotal.invalid && productTotal.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-2 col-md-1">
           <button
             nbButton
             type="button"
@@ -1236,7 +1320,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="!product.value || !paid.value"
+            [disabled]="isAddProductDisabled()"
             (click)="addProduct()"
           >
             +
@@ -1252,7 +1336,12 @@
           "
         >
           <div class="row paymentRow">
-            <div class="col-12 col-md-7">
+            <div
+              [ngClass]="{
+                'col-12 col-md-4': tempInvoice.productListType == '2',
+                'col-12 col-md-7': tempInvoice.productListType == '1'
+              }"
+            >
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].name"
@@ -1305,11 +1394,31 @@
                 </nb-list-item>
               </nb-list>
             </div>
-            <div class="col-5 col-md-2">
+            <div
+              class="col-3 col-md-2"
+              *ngIf="tempInvoice.productListType == '2'"
+            >
+              {{ product.amount }}
+            </div>
+            <div
+              [ngClass]="{
+                'col-3 col-md-2': tempInvoice.productListType == '2',
+                'col-5 col-md-2': tempInvoice.productListType == '1'
+              }"
+            >
               {{ product.value }}
             </div>
-            <div class="col-4 col-md-1">
+            <div
+              class="col-4 col-md-1"
+              *ngIf="tempInvoice.productListType == '1'"
+            >
               {{ stringUtil.toPercentage(product.value, tempInvoice.value) }}
+            </div>
+            <div
+              class="col-4 col-md-2"
+              *ngIf="tempInvoice.productListType == '2'"
+            >
+              {{ product.total }}
             </div>
             <div class="col-3 col-md-2" style="text-align: right">
               <nb-icon
@@ -1666,9 +1775,9 @@
               <span style="margin-right: 10px">Tipo da lista:</span>
               <nb-radio-group
                 [(ngModel)]="tempInvoice.materialListType"
-                #valueType="ngModel"
-                id="input-value-type"
-                name="materialType"
+                #materialListType="ngModel"
+                id="input-material-list-type"
+                name="materialListType"
                 style="height: 16px"
               >
                 <nb-radio value="1" style="height: 16px">Simplificada</nb-radio>

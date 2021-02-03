@@ -48,6 +48,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     material: { name: '', amount: '', value: '', total: '0,00' },
     product: {
       value: '',
+      amount: '',
+      total: '0,00',
       name: '',
       subproducts: [],
     },
@@ -130,6 +132,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
       if (this.tempInvoice.materialListType == undefined)
         this.tempInvoice.materialListType = '1';
+      if (this.tempInvoice.productListType == undefined)
+        this.tempInvoice.productListType = '1';
       this.updateDiscountPercentage();
       this.updateTotal('product');
       this.updateTotal('stage');
@@ -147,6 +151,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         team: [],
         materials: [],
         materialListType: '1',
+        productListType: '1',
       };
     }
     if (this.tempInvoice.contactPlural == undefined)
@@ -367,6 +372,43 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     );
   }
 
+  isAddProductDisabled(): boolean {
+    if (this.tempInvoice.productListType == '1')
+      return (
+        this.options.product.name.length == 0 ||
+        this.options.product.value.length == 0
+      );
+    return (
+      this.options.product.name.length == 0 ||
+      this.options.product.amount.length == 0 ||
+      this.options.product.value.length == 0
+    );
+  }
+
+  /* eslint-disable @typescript-eslint/indent */
+  updateProductTotal(): void {
+    if (
+      this.options.product.value == undefined ||
+      this.options.product.value.length == 0 ||
+      this.options.product.amount == undefined ||
+      this.options.product.amount.length == 0 ||
+      this.tempInvoice.productListType == '1'
+    )
+      this.options.product.total = '0,00';
+    else
+      this.options.product.total = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(
+          this.options.valueType == '$'
+            ? this.options.product.value
+            : this.stringUtil.toValue(
+                this.options.product.value,
+                this.tempInvoice.value
+              )
+        ) * this.stringUtil.moneyToNumber(this.options.product.amount)
+      );
+  }
+  /* eslint-enable @typescript-eslint/indent */
+
   addProduct(): void {
     if (this.options.valueType === '%')
       this.options.product.value = this.stringUtil.toValue(
@@ -375,7 +417,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
-    this.options.product = { value: '', name: '', subproducts: [] };
+    this.options.product = {
+      value: '',
+      name: '',
+      amount: '',
+      total: '0,00',
+      subproducts: [],
+    };
     this.updateTotal('product');
   }
 
