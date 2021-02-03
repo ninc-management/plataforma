@@ -3,9 +3,7 @@
 {
   "name": "Nortan",
   "build": { "dockerfile": "Dockerfile" },
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/home/${localEnv:USER}/nortan,type=bind"
-  ],
+  "mounts": ["source=${localWorkspaceFolder},target=/root/nortan,type=bind"],
 
   // Set *default* container specific settings.json values on container create.
   "settings": {
@@ -33,11 +31,11 @@
   ],
 
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-  "runArgs": ["-it", "--rm", "--network=host", "--user=node"],
+  "runArgs": ["-it", "--rm", "--network=host", "--user=root"],
 
   "containerEnv": {},
 
-  "workspaceFolder": "/home/${localEnv:USER}/nortan",
+  "workspaceFolder": "/root/nortan",
 
   "overrideCommand": false
 }
