@@ -134,6 +134,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.materialListType = '1';
       if (this.tempInvoice.productListType == undefined)
         this.tempInvoice.productListType = '1';
+      if (this.tempInvoice.invoiceType == undefined)
+        this.tempInvoice.invoiceType = 'projeto';
       this.updateDiscountPercentage();
       this.updateTotal('product');
       this.updateTotal('stage');
@@ -152,6 +154,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         materials: [],
         materialListType: '1',
         productListType: '1',
+        invoiceType: 'projeto',
       };
     }
     if (this.tempInvoice.contactPlural == undefined)

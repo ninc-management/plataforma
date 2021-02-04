@@ -59,6 +59,7 @@ const invoiceSchema = mongoose.Schema({
   discount: { type: String },
   materialListType: { type: String },
   productListType: { type: String },
+  invoiceType: { type: String },
   products: [invoiceProduct],
   stages: [invoiceStage],
   materials: [invoiceMaterial],

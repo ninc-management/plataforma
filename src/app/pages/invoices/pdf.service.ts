@@ -490,7 +490,9 @@ export class PdfService {
         (invoice.contactPlural ? 'ês' : 'ê') +
         ' encontrar' +
         (invoice.contactPlural ? 'ão' : 'á') +
-        ' a descrição do serviço com as etapas do projeto, os prazos, os valores e tudo o que foi pedido por vocês no nosso primeiro contato.',
+        ' a descrição do serviço com as etapas do ' +
+        invoice.invoiceType +
+        ', os prazos, os valores e tudo o que foi pedido por vocês no nosso primeiro contato.',
       alignment: 'center',
       style: 'insideText',
     });
@@ -767,7 +769,14 @@ export class PdfService {
           [
             {
               text: [
-                { text: 'VALOR DO PROJETO: R$ ' + invoice.value, bold: true },
+                {
+                  text:
+                    'VALOR DO ' +
+                    invoice.invoiceType.toUpperCase() +
+                    ': R$ ' +
+                    invoice.value,
+                  bold: true,
+                },
                 '  (' + extensoValue + ')',
               ],
             },
@@ -782,7 +791,9 @@ export class PdfService {
           [
             {
               text:
-                'PARCELAMENTO DE HONORÁRIOS PELAS ETAPAS DE PROJETO/SERVIÇO:',
+                'PARCELAMENTO DE HONORÁRIOS PELAS ETAPAS DO ' +
+                invoice.invoiceType.toUpperCase() +
+                ':',
               bold: true,
             },
           ],

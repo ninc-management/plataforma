@@ -388,6 +388,39 @@
     <nb-tab tabTitle="Complementar">
       <div class="row">
         <div class="col-auto">
+          <label class="label-divider">Tipo de orçamento</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+        <div class="col-12">
+          <div class="form-control-group">
+            <label
+              class="label"
+              for="input-invoice-type"
+              style="display: flex; margin-top: 4px"
+            >
+              <span style="margin-right: 10px">Tipo:</span>
+              <nb-radio-group
+                [(ngModel)]="tempInvoice.invoiceType"
+                #invoiceType="ngModel"
+                id="input-invoice-type"
+                name="invoiceType"
+                style="height: 16px"
+              >
+                <nb-radio value="projeto" style="height: 16px"
+                  >Projeto</nb-radio
+                >
+                <nb-radio value="serviço" style="height: 16px"
+                  >Serviço</nb-radio
+                >
+              </nb-radio-group>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-auto">
           <label class="label-divider">Cabeçalho</label>
         </div>
         <div class="col">
