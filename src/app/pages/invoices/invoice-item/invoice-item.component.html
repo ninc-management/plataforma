@@ -1226,7 +1226,8 @@
         </div>
         <div
           [ngClass]="{
-            'col-12 col-md-5': tempInvoice.productListType == '2',
+            'col-12': tempInvoice.productListType == '2',
+            'col-md-5': tempInvoice.productListType == '2',
             'col-8': tempInvoice.productListType == '1'
           }"
         >
@@ -1276,7 +1277,8 @@
         </div>
         <div
           [ngClass]="{
-            'col-3 col-md-2': tempInvoice.productListType == '2',
+            'col-3': tempInvoice.productListType == '2',
+            'col-md-2': tempInvoice.productListType == '2',
             'col-md-3': tempInvoice.productListType == '1'
           }"
         >
@@ -1371,8 +1373,9 @@
           <div class="row paymentRow">
             <div
               [ngClass]="{
-                'col-12 col-md-4': tempInvoice.productListType == '2',
-                'col-12 col-md-7': tempInvoice.productListType == '1'
+                'col-12': true,
+                'col-md-5': tempInvoice.productListType == '2',
+                'col-md-8': tempInvoice.productListType == '1'
               }"
             >
               <input
@@ -1435,8 +1438,9 @@
             </div>
             <div
               [ngClass]="{
-                'col-3 col-md-2': tempInvoice.productListType == '2',
-                'col-5 col-md-2': tempInvoice.productListType == '1'
+                'col-3': tempInvoice.productListType == '2',
+                'col-5': tempInvoice.productListType == '1',
+                'col-md-2': true
               }"
             >
               {{ product.value }}
@@ -1448,12 +1452,12 @@
               {{ stringUtil.toPercentage(product.value, tempInvoice.value) }}
             </div>
             <div
-              class="col-4 col-md-2"
+              class="col-3 col-md-2"
               *ngIf="tempInvoice.productListType == '2'"
             >
               {{ product.total }}
             </div>
-            <div class="col-3 col-md-2" style="text-align: right">
+            <div class="col-3 col-md-1" style="text-align: right">
               <nb-icon
                 class="addIcon"
                 status="basic"
@@ -1821,7 +1825,8 @@
         </div>
         <div
           [ngClass]="{
-            'col-12 col-md-4': tempInvoice.materialListType == 2,
+            'col-12': tempInvoice.materialListType == 2,
+            'col-md-4': tempInvoice.materialListType == 2,
             'col-6': tempInvoice.materialListType == 1
           }"
         >
@@ -1845,7 +1850,8 @@
         </div>
         <div
           [ngClass]="{
-            'col-3 col-md-2': tempInvoice.materialListType == 2,
+            'col-3': tempInvoice.materialListType == 2,
+            'col-md-2': tempInvoice.materialListType == 2,
             'col-5': tempInvoice.materialListType == 1
           }"
         >
@@ -1972,8 +1978,10 @@
           <div class="row paymentRow">
             <div
               [ngClass]="{
-                'col-12 col-md-4': tempInvoice.materialListType == 2,
-                'col-5 col-md-6': tempInvoice.materialListType == 1
+                'col-12': tempInvoice.materialListType == 2,
+                'col-md-4': tempInvoice.materialListType == 2,
+                'col-5': tempInvoice.materialListType == 1,
+                'col-md-6': tempInvoice.materialListType == 1
               }"
             >
               <input
@@ -1990,8 +1998,10 @@
             </div>
             <div
               [ngClass]="{
-                'col-3 col-md-2': tempInvoice.materialListType == 2,
-                'col-5 col-md-5': tempInvoice.materialListType == 1
+                'col-3': tempInvoice.materialListType == 2,
+                'col-md-2': tempInvoice.materialListType == 2,
+                'col-5': tempInvoice.materialListType == 1,
+                'col-md-5': tempInvoice.materialListType == 1
               }"
             >
               {{ material.amount }}
