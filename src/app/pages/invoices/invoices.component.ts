@@ -198,7 +198,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     )
       .pipe(take(3))
       .subscribe(([invoices, contractors]) => {
-        if (invoices.length > 0 && contractors.length > 0) {
+        if (invoices.length > 0 && contractors.length > 0 && !this.isPhone()) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
