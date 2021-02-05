@@ -256,8 +256,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.USER_COORDINATIONS = [];
   }
 
-  updateUserCoordinations(): void {
-    const selectedUser = this.teamMember.user;
+  updateUserCoordinations(user: any = undefined): string[] {
+    const selectedUser = user == undefined ? this.teamMember.user : user;
     const active: boolean[] = [
       selectedUser.adm,
       selectedUser.design,
@@ -271,12 +271,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       selectedUser.civil,
       selectedUser.sanitaria,
     ];
-    this.USER_COORDINATIONS = this.ALL_COORDINATIONS.filter(
-      (cd: string, idx: number) => {
+    if (user != undefined) {
+      return this.ALL_COORDINATIONS.filter((cd: string, idx: number) => {
         return active[idx];
-      }
-    );
+      });
+    }
     this.teamMember.coordination = undefined;
+    return [];
   }
 
   /* eslint-disable @typescript-eslint/indent */

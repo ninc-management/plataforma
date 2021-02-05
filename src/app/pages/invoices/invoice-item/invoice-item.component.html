@@ -714,13 +714,37 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of tempInvoice.team; let i = index">
+        <nb-list-item
+          *ngFor="
+            let member of tempInvoice.team;
+            let i = index;
+            trackBy: trackByIndex
+          "
+        >
           <div class="row irow">
             <div class="col-12 col-md-6">
               {{ member.user.fullName }}
             </div>
             <div class="col-10 col-md-5">
-              {{ member.coordination }}
+              <nb-select
+                [(ngModel)]="tempInvoice.team[i].coordination"
+                id="input-memberCoordination-{{ i }}"
+                name="memberCoordination-{{ i }}"
+                placeholder="Coordenação"
+                fullWidth
+                size="large"
+              >
+                <nb-option
+                  *ngFor="
+                    let coordination of updateUserCoordinations(
+                      tempInvoice.team[i].user
+                    )
+                  "
+                  [value]="coordination"
+                >
+                  {{ coordination }}
+                </nb-option>
+              </nb-select>
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
