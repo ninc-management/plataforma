@@ -205,7 +205,7 @@
   </div>
 
   <div class="form-control-group">
-    <label class="label" for="input-interests">Interesse em atuar em:</label>
+    <label class="label" for="input-interests">Áreas de atuação:</label>
     <div class="row">
       <div class="col-sm-6">
         <div class="form-control-group">
@@ -334,7 +334,9 @@
         rePass.dirty ? (rePass.invalid ? 'danger' : 'success') : 'basic'
       "
       [required]="validation.password.required"
-      [pattern]="password.value? regexSanatizer(password.value) : password.value"
+      [pattern]="
+        password.value ? regexSanatizer(password.value) : password.value
+      "
       [attr.aria-invalid]="rePass.invalid && rePass.touched ? true : null"
     />
     <ng-container *ngIf="rePass.invalid && rePass.touched">
