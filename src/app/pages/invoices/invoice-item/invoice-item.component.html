@@ -1238,6 +1238,7 @@
             </label>
             <nb-radio-group
               [(ngModel)]="tempInvoice.productListType"
+              (ngModelChange)="options.valueType = '$'"
               #productListType="ngModel"
               id="input-product-list-type"
               name="productListType"
@@ -1315,6 +1316,7 @@
             >
               <span style="margin-right: 10px">Valor:</span>
               <nb-radio-group
+                *ngIf="tempInvoice.productListType == '1'"
                 [(ngModel)]="options.valueType"
                 #valueType="ngModel"
                 id="input-value-type"

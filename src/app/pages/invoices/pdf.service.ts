@@ -657,8 +657,8 @@ export class PdfService {
 
     // Body - Invoice Info Final Stage - Page 2
     if (
-      invoice.peec?.length > 0 &&
-      invoice.laec.length > 0 &&
+      invoice.peec?.length > 0 ||
+      invoice.laec.length > 0 ||
       invoice.dec?.length > 0
     ) {
       pdf.add(pdf.ln(1));
@@ -675,7 +675,7 @@ export class PdfService {
             [{ text: 'ETAPA COMPLEMENTAR' }],
             [
               {
-                text: '(' + invoice.peec + ')',
+                text: invoice.peec?.length > 0 ? ('(' + invoice.peec + ')') : '',
                 fontSize: 8,
                 alignment: 'justify',
               },
@@ -726,37 +726,6 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    let products = invoice.products.map((product) => {
-      if (product.subproducts.length > 0)
-        return [
-          {
-            text:
-              invoice.productListType == '1'
-                ? product.name + ': R$ ' + product.value
-                : product.name +
-                  ': ' +
-                  product.amount +
-                  ' x R$ ' +
-                  product.value +
-                  ' = R$ ' +
-                  product.total,
-          },
-          {
-            stack: product.subproducts.map((subproduct) => subproduct),
-            fontSize: 6,
-          },
-        ];
-      return invoice.productListType == '1'
-        ? product.name + ': R$ ' + product.value
-        : product.name +
-            ': ' +
-            product.amount +
-            ' x R$ ' +
-            product.value +
-            ' = R$ ' +
-            product.total;
-    });
-    if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
     let extensoValue = extenso(invoice.value, { mode: 'currency' });
     if (extensoValue.split(' ')[0] == 'mil')
       extensoValue = 'um ' + extensoValue;
@@ -781,13 +750,185 @@ export class PdfService {
               ],
             },
           ],
-          [
-            {
-              stack: products,
-              fontSize: 8,
-              margin: [0, 0, 0, 10],
-            },
-          ],
+        ],
+      },
+      layout: this.noBorderTable('#BFBFBF'),
+    });
+
+    const productHeader = () => {
+      if (invoice.productListType == '1')
+        return [
+          {
+            text: invoice.invoiceType.toUpperCase(),
+            bold: true,
+            alignment: 'center',
+            border: [false, true, true, true],
+            fontSize: 8,
+          },
+          {
+            text: 'VALOR',
+            bold: true,
+            alignment: 'center',
+            border: [true, true, false, true],
+            fontSize: 8,
+          },
+        ];
+      return [
+        {
+          text: invoice.invoiceType.toUpperCase(),
+          bold: true,
+          alignment: 'center',
+          border: [false, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: 'QUANTIDADE',
+          bold: true,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: 'VALOR',
+          bold: true,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: 'TOTAL',
+          bold: true,
+          alignment: 'center',
+          border: [true, true, false, true],
+          fontSize: 8,
+        },
+      ];
+    };
+
+    let products = invoice.products.map((product) => {
+      let name: any[] = [
+        {
+          fontSize: 8,
+          text: product.name,
+        },
+      ];
+      if( product.subproducts.length > 0 )
+        name.push({
+          stack: product.subproducts.map((subproduct) => subproduct),
+          alignment: 'left',
+          fontSize: 6,
+        });
+      if (invoice.productListType == '1')
+        return [
+          {
+            stack: name,
+            alignment: 'left',
+            border: [false, true, true, true],
+          },
+          {
+            text: 'R$ ' + product.value,
+            alignment: 'center',
+            border: [true, true, false, true],
+            fontSize: 8,
+          },
+        ];
+      return [
+        {
+          stack: name,
+          alignment: 'left',
+          border: [false, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: product.amount,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: product.value,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: 'R$ ' + product.total,
+          alignment: 'center',
+          border: [true, true, false, true],
+          fontSize: 8,
+        },
+      ];
+    });
+    // if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
+    const footer = () => {
+      let result: any[] = [];
+      if (invoice.discount) {
+        const discount: any[] =
+        [{
+          text: 'DESCONTO',
+          alignment: 'right',
+          border: [false, true, true, true],
+          colSpan: invoice.productListType == '1' ? 1 : 3,
+          fontSize: 8,
+          bold: true,
+        },
+        {
+          text: 'R$ ' + invoice.discount,
+          alignment: 'center',
+          border: [true, true, false, true],
+          fontSize: 8,
+          bold: true,
+        }];
+        if (invoice.productListType == '2')
+          discount.splice(1,0,...[{},{}]);
+        result.push(discount);
+      }
+      const total = this.stringUtil.numberToMoney(
+        invoice.products.reduce(
+          (accumulator: number, product: any) =>
+            accumulator + this.stringUtil.moneyToNumber(invoice.productListType == '1' ?product.value : product.total),
+          0
+        ) - this.stringUtil.moneyToNumber(invoice.discount)
+      );
+      const productTotal: any[] =
+        [{
+          text: 'TOTAL',
+          alignment: 'right',
+          border: [false, true, true, true],
+          colSpan: invoice.productListType == '1' ? 1 : 3,
+          fontSize: 8,
+          bold: true,
+        },
+        {
+          text: 'R$ ' + total,
+          alignment: 'center',
+          border: [true, true, false, true],
+          fontSize: 8,
+          bold: true,
+        }];
+      if (invoice.productListType == '2')
+        productTotal.splice(1,0,...[{},{}]);
+      result.push(productTotal);
+      return result;
+    };
+
+    pdf.add({
+      style: 'insideText',
+      table: {
+        widths:
+          invoice.productListType == '1' ? ['*', 50] : ['*', 'auto', 'auto', 50],
+        dontBreakRows: true,
+        body: [productHeader(), ...products, ...footer()],
+      },
+      layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+    });
+
+    pdf.add({
+      style: 'insideText',
+      table: {
+        widths: ['*'],
+        dontBreakRows: true,
+        body: [
           [
             {
               text:
@@ -879,37 +1020,6 @@ export class PdfService {
       },
       layout: this.noSideBorderTable('#BFBFBF', '#476471'),
       pageBreak: 'after',
-    });
-
-    // Body - Importante Notes - Page 3
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      text: 'Importante:',
-      bold: true,
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    const importants = invoice.importants.map((important, index) => {
-      return important + (index == invoice.importants.length - 1 ? '.' : ';');
-    });
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [
-            {
-              ul: importants,
-              fontSize: 10,
-            },
-          ],
-        ],
-      },
-      layout: this.noBorderTable('#82ADAD'),
     });
 
     if (invoice.materials.length > 0) {
@@ -1049,6 +1159,37 @@ export class PdfService {
         layout: this.noSideBorderTable('#BFBFBF', '#476471'),
       });
     }
+
+    // Body - Importante Notes - Page 3
+    pdf.add(pdf.ln(1));
+
+    pdf.add({
+      text: 'Importante:',
+      bold: true,
+      style: 'insideText',
+    });
+
+    pdf.add(pdf.ln(1));
+
+    const importants = invoice.importants.map((important, index) => {
+      return important + (index == invoice.importants.length - 1 ? '.' : ';');
+    });
+    pdf.add({
+      style: 'insideText',
+      table: {
+        widths: ['*'],
+        dontBreakRows: true,
+        body: [
+          [
+            {
+              ul: importants,
+              fontSize: 10,
+            },
+          ],
+        ],
+      },
+      layout: this.noBorderTable('#82ADAD'),
+    });
 
     pdf.add(pdf.ln(2));
 

@@ -499,7 +499,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.options.total = this.stringUtil.numberToMoney(
           this.tempInvoice.products.reduce(
             (accumulator: number, product: any) =>
-              accumulator + this.stringUtil.moneyToNumber(product.value),
+              accumulator + this.stringUtil.moneyToNumber(this.tempInvoice.productListType == '1' ? product.value : product.total),
             0
           ) - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
         );
