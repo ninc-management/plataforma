@@ -30,6 +30,11 @@ router.post('/register', (req, res, next) => {
       password: hash,
       more: req.body.more ? req.body.more : false,
       meet: req.body.more ? req.body.meet : '',
+      emailNortan: req.body.emailNortan ? req.body.emailNortanortan : 'a',
+      article: req.body.article ? req.body.article : 'a',
+      position: req.body.position ? req.body.position : 'a',
+      level: req.body.level ? req.body.level : 'a',
+      mainDepartment: req.body.mainDepartment ? req.body.mainDepartment : 'a',
     });
     user
       .save()
@@ -39,13 +44,17 @@ router.post('/register', (req, res, next) => {
           process.env.JWT_SECRET,
           { expiresIn: '1h' }
         );
-        res.redirect(
-          307,
-          '/api/sendmail/?' +
-            querystring.stringify({
-              token: token,
-            })
-        );
+        res.status(201).json({
+          message: 'Usuário cadastrado com sucesso',
+          token: token,
+        });
+        // res.redirect(
+        //   307,
+        //   '/api/sendmail/?' +
+        //     querystring.stringify({
+        //       token: token,
+        //     })
+        // );
       })
       .catch((err) => {
         res.status(500).json({

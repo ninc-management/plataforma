@@ -15,7 +15,8 @@ import { AuthService } from '../auth.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class NgxRegisterComponent extends NbRegisterComponent
+export class NgxRegisterComponent
+  extends NbRegisterComponent
   implements OnInit {
   cities: string[] = [];
   states: string[] = [];
