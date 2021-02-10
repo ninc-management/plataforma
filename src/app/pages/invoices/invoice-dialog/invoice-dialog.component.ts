@@ -53,13 +53,17 @@ export class InvoiceDialogComponent implements OnInit {
   }
 
   useAsModel(): void {
-    if (this.invoice)
-      if (this.invoice.department.length > 3)
-        this.invoice.department = this.departmentService.extractAbreviation(
-          this.invoice.department
-        );
     let oInvoice = this.utils.deepCopy(this.invoice);
+    if (oInvoice.department.length > 3)
+      oInvoice.department = this.departmentService.extractAbreviation(
+        oInvoice.department
+      );
     oInvoice.code = '';
+    oInvoice.products.map((product) => {
+      product.amount = product.amount ? product.amount : '1';
+      product.total = product.total ? product.total : product.value;
+      return product;
+    });
     delete oInvoice._id;
     delete oInvoice.author;
     delete oInvoice.created;
