@@ -6,7 +6,7 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
 import { ContractDialogComponent } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractService } from '../../shared/services/contract.service';
@@ -54,7 +54,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum contrato para o filtro selecionado.',
     add: {
-      addButtonContent: '<i class="nb-plus"></i>',
+      addButtonContent: '<i class="icon-file-csv"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
     },
@@ -69,7 +69,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     },
     actions: {
       columnTitle: 'Ações',
-      add: false,
+      add: true,
       edit: true,
       delete: true,
     },
@@ -145,6 +145,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractService: ContractService,
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
+    private breakpointService: NbMediaBreakpointsService,
     private userService: UserService
   ) {}
 
@@ -212,7 +213,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         if (
           contracts.length > 0 &&
           invoices.length > 0 &&
-          contractors.length > 0
+          contractors.length > 0 &&
+          !this.isPhone()
         ) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
@@ -247,6 +249,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pageWidth(): number {
     return window.innerWidth;
+  }
+
+  isPhone(): boolean {
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= md;
   }
 
   statusColor(status: string): string {
