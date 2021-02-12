@@ -675,7 +675,7 @@ export class PdfService {
             [{ text: 'ETAPA COMPLEMENTAR' }],
             [
               {
-                text: invoice.peec?.length > 0 ? ('(' + invoice.peec + ')') : '',
+                text: invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '',
                 fontSize: 8,
                 alignment: 'justify',
               },
@@ -812,7 +812,7 @@ export class PdfService {
           text: product.name,
         },
       ];
-      if( product.subproducts.length > 0 )
+      if (product.subproducts.length > 0)
         name.push({
           stack: product.subproducts.map((subproduct) => subproduct),
           alignment: 'left',
@@ -863,35 +863,38 @@ export class PdfService {
     const footer = () => {
       let result: any[] = [];
       if (invoice.discount) {
-        const discount: any[] =
-        [{
-          text: 'DESCONTO',
-          alignment: 'right',
-          border: [false, true, true, true],
-          colSpan: invoice.productListType == '1' ? 1 : 3,
-          fontSize: 8,
-          bold: true,
-        },
-        {
-          text: 'R$ ' + invoice.discount,
-          alignment: 'center',
-          border: [true, true, false, true],
-          fontSize: 8,
-          bold: true,
-        }];
-        if (invoice.productListType == '2')
-          discount.splice(1,0,...[{},{}]);
+        const discount: any[] = [
+          {
+            text: 'DESCONTO',
+            alignment: 'right',
+            border: [false, true, true, true],
+            colSpan: invoice.productListType == '1' ? 1 : 3,
+            fontSize: 8,
+            bold: true,
+          },
+          {
+            text: 'R$ ' + invoice.discount,
+            alignment: 'center',
+            border: [true, true, false, true],
+            fontSize: 8,
+            bold: true,
+          },
+        ];
+        if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}]);
         result.push(discount);
       }
       const total = this.stringUtil.numberToMoney(
         invoice.products.reduce(
           (accumulator: number, product: any) =>
-            accumulator + this.stringUtil.moneyToNumber(invoice.productListType == '1' ?product.value : product.total),
+            accumulator +
+            this.stringUtil.moneyToNumber(
+              invoice.productListType == '1' ? product.value : product.total
+            ),
           0
         ) - this.stringUtil.moneyToNumber(invoice.discount)
       );
-      const productTotal: any[] =
-        [{
+      const productTotal: any[] = [
+        {
           text: 'TOTAL',
           alignment: 'right',
           border: [false, true, true, true],
@@ -905,9 +908,10 @@ export class PdfService {
           border: [true, true, false, true],
           fontSize: 8,
           bold: true,
-        }];
+        },
+      ];
       if (invoice.productListType == '2')
-        productTotal.splice(1,0,...[{},{}]);
+        productTotal.splice(1, 0, ...[{}, {}]);
       result.push(productTotal);
       return result;
     };
@@ -916,7 +920,9 @@ export class PdfService {
       style: 'insideText',
       table: {
         widths:
-          invoice.productListType == '1' ? ['*', 50] : ['*', 'auto', 'auto', 50],
+          invoice.productListType == '1'
+            ? ['*', 50]
+            : ['*', 'auto', 'auto', 50],
         dontBreakRows: true,
         body: [productHeader(), ...products, ...footer()],
       },
