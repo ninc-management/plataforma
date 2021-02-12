@@ -811,6 +811,55 @@ export class MetricsService implements OnDestroy {
     );
   }
 
+  receivedValueList(
+    last = 'Hoje',
+    number = 1,
+    fromToday = false
+  ): Observable<any> {
+    return this.contractService.getContracts().pipe(
+      map((contracts) => {
+        if (contracts.length > 0)
+          return contracts.reduce((received: any, contract) => {
+            if (this.contractService.hasPayments(contract._id)) {
+              const value = contract.payments.reduce((paid: any, payment) => {
+                if (payment.paid != 'não') {
+                  let paidDate = payment.paidDate;
+                  if (typeof paidDate !== 'object')
+                    paidDate = parseISO(paidDate);
+                  if (
+                    this.utils.compareDates(paidDate, last, number, fromToday)
+                  ) {
+                    const uCPayments = payment.team.reduce(
+                      (upaid: any, member) => {
+                        const author =
+                          member.user._id == undefined
+                            ? this.userService.idToName(member.user)
+                            : member.user.fullName;
+                        const value = this.stringUtil.moneyToNumber(
+                          member.value
+                        );
+                        upaid[author] = upaid[author]
+                          ? upaid[author] + value
+                          : value;
+
+                        return upaid;
+                      },
+                      {}
+                    );
+                    paid = this.utils.sumObjectsByKey(paid, uCPayments);
+                  }
+                }
+                return paid;
+              }, {});
+              received = this.utils.sumObjectsByKey(received, value);
+            }
+            return received;
+          }, {});
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
   invoicesToContracts(
     role: 'manager' | 'member',
     uId: string,
