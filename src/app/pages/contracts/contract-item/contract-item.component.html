@@ -77,6 +77,115 @@
             </nb-select>
           </div>
         </div>
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-user">Colaborador:</label>
+            <nb-completer
+              [(ngModel)]="userSearch"
+              [inputName]="'userListCompleter'"
+              (selected)="teamMember.user = $event.originalObject"
+              #userList="ngModel"
+              id="input-user"
+              name="userList"
+              [selectedText]="teamMember.user?.fullName"
+              [dataService]="userData"
+              [minSearchLength]="0"
+              [placeholder]="
+                'Digite e selecione o nome do colaborador do orçamento'
+              "
+              [textNoResults]="
+                'Não foi possível achar um colaborador com o nome digitado'
+              "
+              [matchClass]="'match'"
+              [fullWidth]="true"
+              [fieldSize]="'large'"
+              [status]="
+                userList.dirty && userSearch
+                  ? userList.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                userList.invalid && userList.touched ? true : null
+              "
+            >
+            </nb-completer>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-control-group">
+            <label class="label" for="input-memberCoordination"
+              >Coordenação:</label
+            >
+            <nb-select
+              [(ngModel)]="teamMember.coordination"
+              #memberCoordination="ngModel"
+              id="input-memberCoordination"
+              name="memberCoordination"
+              placeholder="Coordenação"
+              fullWidth
+              size="large"
+              [status]="memberCoordination.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                memberCoordination.invalid && memberCoordination.touched
+                  ? true
+                  : null
+              "
+            >
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!memberCoordination.value || !userList.value"
+            (click)="addColaborator(); memberCoordination.reset()"
+          >
+            +
+          </button>
+        </div>
+        <nb-list style="width: 100%; padding: 10px 0">
+          <nb-list-item
+            *ngFor="
+              let member of contract.team;
+              let i = index;
+              trackBy: trackByIndex
+            "
+          >
+            <div class="row irow">
+              <div class="col-12 col-md-6">
+                {{ member.user.fullName }}
+              </div>
+              <div class="col-10 col-md-5">
+                <nb-select
+                  [(ngModel)]="contract.team[i].coordination"
+                  id="input-memberCoordination-{{ i }}"
+                  name="memberCoordination-{{ i }}"
+                  placeholder="Coordenação"
+                  fullWidth
+                  size="large"
+                >
+                </nb-select>
+              </div>
+              <div class="col-2 col-md-1" style="text-align: right">
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="contract.team.splice(i, 1)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
       </div>
       <div class="row">
         <div class="col-sm-4">

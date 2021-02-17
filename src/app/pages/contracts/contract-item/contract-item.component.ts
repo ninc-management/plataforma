@@ -1,7 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { CompleterService, CompleterData } from 'ng2-completer';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { UserService } from 'app/shared/services/user.service';
 import { NbDialogService } from '@nebular/theme';
 import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
 import { format, parseISO } from 'date-fns';
@@ -29,10 +31,16 @@ export class ContractItemComponent implements OnInit {
     pack: 'fa',
   };
 
+  teamMember: any = {};
+  userSearch: string;
+  userData: CompleterData;
+
   constructor(
     private contractService: ContractService,
     private dialogService: NbDialogService,
     private stringUtil: StringUtilService,
+    private completerService: CompleterService,
+    private userService: UserService,
     private utils: UtilsService
   ) {}
 
@@ -58,6 +66,21 @@ export class ContractItemComponent implements OnInit {
       this.contract.lastUpdate = parseISO(this.contract.lastUpdate);
       this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
     }
+    if (!this.contract.team || this.contract.team?.length == 0) {
+      this.contract.team = this.utils.deepCopy(this.contract.invoice.team);
+      this.contract.team = this.contract.team.map((member) => {
+        member.user = this.userService.idToUser(member.user);
+        return member;
+      });
+      this.contract.team.unshift({
+        user: this.contract.invoice.author,
+        coordination: 'CAD',
+      });
+      console.log(this.contract.team);
+    }
+    this.userData = this.completerService
+      .local(this.userService.getUsersList(), 'fullName', 'fullName')
+      .imageField('profilePicture');
   }
 
   updateContract(): void {
@@ -98,5 +121,11 @@ export class ContractItemComponent implements OnInit {
       `\nEndereço: ` +
       this.contract.invoice.contractor.address
     );
+  }
+
+  addColaborator(): void {}
+
+  trackByIndex(index: number, obj: any): any {
+    return index;
   }
 }
