@@ -816,10 +816,13 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<any> {
-    return this.contractService.getContracts().pipe(
-      map((contracts) => {
-        if (contracts.length > 0)
-          return contracts.reduce((received: any, contract) => {
+    return combineLatest(
+      this.contractService.getContracts(),
+      this.userService.getUsers()
+    ).pipe(
+      map(([contracts, users]) => {
+        if (contracts.length > 0 && users.length > 0) {
+          const partial = contracts.reduce((received: any, contract) => {
             if (this.contractService.hasPayments(contract._id)) {
               const value = contract.payments.reduce((paid: any, payment) => {
                 if (payment.paid != 'não') {
@@ -855,6 +858,12 @@ export class MetricsService implements OnDestroy {
             }
             return received;
           }, {});
+          const complete = users.reduce((userList: any, user) => {
+            userList[user.fullName] = 0;
+            return userList;
+          }, {});
+          return this.utils.sumObjectsByKey(partial, complete);
+        }
       }),
       takeUntil(this.destroy$)
     );
