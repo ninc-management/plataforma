@@ -13,6 +13,11 @@ import { ContractService } from '../../shared/services/contract.service';
 import { ContractorService } from '../../shared/services/contractor.service';
 import { InvoiceService } from '../../shared/services/invoice.service';
 import { UserService } from '../../shared/services/user.service';
+import { MetricsService } from 'app/shared/services/metrics.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { format, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { saveAs } from 'file-saver';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 
@@ -146,7 +151,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
     private breakpointService: NbMediaBreakpointsService,
-    private userService: UserService
+    private userService: UserService,
+    private metricsService: MetricsService,
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnDestroy(): void {
@@ -291,5 +298,24 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       return direction;
     }
     return 0;
+  }
+
+  downloadReport() {
+    this.metricsService
+      .receivedValueList('Mês')
+      .pipe(take(1))
+      .subscribe((data) => {
+        const lastMonth = format(subMonths(new Date(), 1), 'MMMM-yyyy', {
+          locale: ptBR,
+        });
+        const csv = Object.keys(data).map((key) => {
+          return key + ';' + this.stringUtil.numberToMoney(data[key]);
+        });
+
+        const csvArray = csv.join('\r\n');
+
+        var blob = new Blob([csvArray], { type: 'text/csv' });
+        saveAs(blob, 'valoresRecebidos-' + lastMonth + '.csv');
+      });
   }
 }
