@@ -4,7 +4,13 @@
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row">
           <div class="col-2" style="padding-left: 0; padding-right: 0">
-            <button nbButton fullWidth status="success" style="height: 100%">
+            <button
+              nbButton
+              fullWidth
+              status="primary"
+              style="height: 100%"
+              (click)="downloadReport()"
+            >
               <i class="icon-file-csv" style="font-size: 1.5rem"></i>
             </button>
           </div>
@@ -35,6 +41,7 @@
           #smartTable
           [settings]="settings"
           [source]="source"
+          (create)="downloadReport()"
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"
         >

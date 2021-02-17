@@ -2,8 +2,9 @@
 
 @font-face {
   font-family: 'icons';
-  src:  url('../../../assets/fonts/icons.eot?6rw0ga');
-  src:  url('../../../assets/fonts/icons.eot?6rw0ga#iefix') format('embedded-opentype'),
+  src: url('../../../assets/fonts/icons.eot?6rw0ga');
+  src: url('../../../assets/fonts/icons.eot?6rw0ga#iefix')
+      format('embedded-opentype'),
     url('../../../assets/fonts/icons.ttf?6rw0ga') format('truetype'),
     url('../../../assets/fonts/icons.woff?6rw0ga') format('woff'),
     url('../../../assets/fonts/icons.svg?6rw0ga#icons') format('svg');
@@ -13,7 +14,6 @@
 }
 
 ::ng-deep {
-
   .icon-file-csv {
     font-family: 'icons' !important;
     font-style: normal;
@@ -27,8 +27,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  .icon-file-csv:before {
-    content: "\e900";
+  .icon-file-csv::before {
+    content: '\e900';
   }
 
   nb-card {
