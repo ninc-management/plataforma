@@ -30,6 +30,9 @@ export class ContractItemComponent implements OnInit {
     icon: 'dollar-sign',
     pack: 'fa',
   };
+  options = {
+    valueType: '%',
+  };
 
   teamMember: any = {};
   userSearch: string;
@@ -123,7 +126,15 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  addColaborator(): void {}
+  addColaborator(): void {
+    if (this.options.valueType == '$')
+      this.teamMember.distribution = this.stringUtil
+        .toPercentage(this.teamMember.distribution, this.contract.total)
+        .slice(0, -1);
+    this.contract.team.push(Object.assign({}, this.teamMember));
+    this.userSearch = undefined;
+    this.teamMember = {};
+  }
 
   trackByIndex(index: number, obj: any): any {
     return index;

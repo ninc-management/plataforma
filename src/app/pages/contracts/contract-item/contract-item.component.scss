@@ -2,6 +2,20 @@
 
 @include nb-install-component() {
   --tabset-content-padding: 0;
+  --radio-height: 14px;
+  --radio-width: 14px;
+  --radio-text-line-height: nb-theme(--text-label-line-height);
+  --radio-text-font-size: 1em;
+  --radio-text-font-weight: nb-theme(text-label-font-weight);
+  --radio-basic-text-color: nb-theme(text-hint-color);
+
+  nb-radio-group {
+    display: flex;
+
+    nb-radio {
+      display: flex;
+    }
+  }
 
   nb-tab {
     overflow: unset;
@@ -11,6 +25,10 @@
     width: 100%;
     margin-left: 0;
     align-items: center;
+  }
+
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
   }
 }
 
