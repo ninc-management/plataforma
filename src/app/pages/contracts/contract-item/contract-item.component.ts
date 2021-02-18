@@ -80,6 +80,11 @@ export class ContractItemComponent implements OnInit {
         coordination: 'CAD',
       });
       console.log(this.contract.team);
+    } else {
+      this.contract.team = this.contract.team.map((member) => {
+        member.user = this.userService.idToUser(member.user);
+        return member;
+      });
     }
     this.userData = this.completerService
       .local(this.userService.getUsersList(), 'fullName', 'fullName')

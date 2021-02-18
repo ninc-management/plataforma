@@ -19,6 +19,11 @@ const payment = {
   paidDate: { type: Date },
 };
 
+const teamMember = {
+  user: { type: mongoose.ObjectId, ref: 'User', required: true },
+  distribution: { type: String, required: true },
+};
+
 const contractSchema = mongoose.Schema({
   invoice: { type: mongoose.ObjectId, ref: 'Invoice', required: true },
   payments: [payment],
@@ -27,6 +32,7 @@ const contractSchema = mongoose.Schema({
   total: { type: String },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
+  team: [teamMember],
 });
 
 contractSchema.plugin(uniqueValidator);
