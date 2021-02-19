@@ -638,7 +638,7 @@
               [inputName]="'userListCompleter'"
               (selected)="
                 teamMember.user = $event.originalObject;
-                updateUserCoordinations()
+                USER_COORDINATIONS = updateUserCoordinations()
               "
               #userList="ngModel"
               id="input-user"

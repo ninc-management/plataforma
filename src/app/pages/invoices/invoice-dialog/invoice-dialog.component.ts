@@ -59,11 +59,18 @@ export class InvoiceDialogComponent implements OnInit {
         oInvoice.department
       );
     oInvoice.code = '';
-    oInvoice.products.map((product) => {
-      product.amount = product.amount ? product.amount : '1';
-      product.total = product.total ? product.total : product.value;
-      return product;
-    });
+    if (oInvoice.products.length > 0)
+      oInvoice.products.map((product) => {
+        product.amount = product.amount ? product.amount : '1';
+        product.total = product.total ? product.total : product.value;
+        return product;
+      });
+    if (oInvoice.materials.length > 0)
+      oInvoice.materials.map((material) => {
+        material.value = material.value ? material.value : '0,00';
+        material.total = material.total ? material.total : '0,00';
+        return material;
+      });
     delete oInvoice._id;
     delete oInvoice.author;
     delete oInvoice.created;

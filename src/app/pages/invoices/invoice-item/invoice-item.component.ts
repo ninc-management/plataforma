@@ -259,19 +259,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   updateUserCoordinations(user: any = undefined): string[] {
     const selectedUser = user == undefined ? this.teamMember.user : user;
     const active: boolean[] = [
-      selectedUser.adm,
-      selectedUser.design,
-      selectedUser.obras,
-      selectedUser.impermeabilizacao,
-      selectedUser.instalacoes,
-      selectedUser.ambiental,
-      selectedUser.arquitetura,
-      selectedUser.hidrico,
-      selectedUser.eletrica,
-      selectedUser.civil,
-      selectedUser.sanitaria,
+      selectedUser.adm ? true : false,
+      selectedUser.design ? true : false,
+      selectedUser.obras ? true : false,
+      selectedUser.impermeabilizacao ? true : false,
+      selectedUser.instalacoes ? true : false,
+      selectedUser.ambiental ? true : false,
+      selectedUser.arquitetura ? true : false,
+      selectedUser.hidrico ? true : false,
+      selectedUser.eletrica ? true : false,
+      selectedUser.civil ? true : false,
+      selectedUser.sanitaria ? true : false,
     ];
-    if (user != undefined) {
+    if (selectedUser != undefined) {
       return this.ALL_COORDINATIONS.filter((cd: string, idx: number) => {
         return active[idx];
       });
@@ -357,6 +357,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   addMaterial(): void {
+    if (this.tempInvoice.productListType == '1') {
+      this.options.material.value = '0,00';
+      this.options.material.total = '0,00';
+    }
     this.updateMaterialTotal();
     this.tempInvoice.materials.push(this.options.material);
     this.options.material = { name: '', amount: '', value: '', total: '0,00' };
@@ -419,6 +423,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.options.product.value,
         this.tempInvoice.value
       );
+    if (this.tempInvoice.productListType == '1') {
+      this.options.product.amount = '1';
+      this.options.product.total = this.options.product.value;
+    }
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
     this.options.product = {
@@ -499,7 +507,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.options.total = this.stringUtil.numberToMoney(
           this.tempInvoice.products.reduce(
             (accumulator: number, product: any) =>
-              accumulator + this.stringUtil.moneyToNumber(this.tempInvoice.productListType == '1' ? product.value : product.total),
+              accumulator +
+              this.stringUtil.moneyToNumber(
+                this.tempInvoice.productListType == '1'
+                  ? product.value
+                  : product.total
+              ),
             0
           ) - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
         );
