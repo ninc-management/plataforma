@@ -15,6 +15,7 @@ import { UserService } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
+import { ignoreElements } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -103,6 +104,28 @@ export class PaymentItemComponent implements OnInit {
       ) {
         this.payment.lastUpdate = parseISO(this.payment.lastUpdate);
         this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
+      }
+    } else {
+      this.payment.team = this.contract.invoice.team.slice().map((member) => {
+        member.user = member.user?._id ? member.user._id : member.user;
+        return member;
+      });
+      for (const member of this.contract.team) {
+        let entry = this.payment.team.find((el) => {
+          const id1 = el.user?._id ? el.user._id : el.user;
+          const id2 = member.user?._id ? member.user._id : member.user;
+          return id1 === id2;
+        });
+        if (entry) entry.value = member.distribution;
+        else {
+          const m: any = { user: member.user, value: member.distribution };
+          const authorId = this.contract.invoice.author?._id
+            ? this.contract.invoice.author._id
+            : this.contract.invoice.author;
+          if (member.user === authorId)
+            m.coordination = this.contract.invoice.coordination;
+          this.payment.team.push(m);
+        }
       }
     }
   }
