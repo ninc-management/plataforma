@@ -79,7 +79,6 @@ export class ContractItemComponent implements OnInit {
         user: this.contract.invoice.author,
         coordination: 'CAD',
       });
-      console.log(this.contract.team);
     } else {
       this.contract.team = this.contract.team.map((member) => {
         member.user = this.userService.idToUser(member.user);

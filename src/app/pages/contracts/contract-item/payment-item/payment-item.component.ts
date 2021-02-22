@@ -48,6 +48,8 @@ export class PaymentItemComponent implements OnInit {
     valueType: '$',
     liquid: '0',
     lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
+    lastLiquid: '0',
+    lastTeam: [],
   };
 
   userSearch: string;
@@ -116,17 +118,34 @@ export class PaymentItemComponent implements OnInit {
           const id2 = member.user?._id ? member.user._id : member.user;
           return id1 === id2;
         });
-        if (entry) entry.value = member.distribution;
-        else {
-          const m: any = { user: member.user, value: member.distribution };
+        if (entry) {
+          entry.value = member.distribution;
+          if (this.options.liquid !== '0')
+            entry.value = this.stringUtil.numberToMoney(
+              this.stringUtil.moneyToNumber(this.options.liquid) *
+                (1 - this.stringUtil.toMutiplyPercentage(entry.value))
+            );
+        } else {
+          /* eslint-disable @typescript-eslint/indent */
+          const value =
+            this.options.liquid !== '0'
+              ? this.stringUtil.numberToMoney(
+                  this.stringUtil.moneyToNumber(this.options.liquid) *
+                    (1 -
+                      this.stringUtil.toMutiplyPercentage(member.distribution))
+                )
+              : member.distribution;
+          const m: any = { user: member.user, value: value };
           const authorId = this.contract.invoice.author?._id
             ? this.contract.invoice.author._id
             : this.contract.invoice.author;
           if (member.user === authorId)
             m.coordination = this.contract.invoice.coordination;
           this.payment.team.push(m);
+          /* eslint-enable @typescript-eslint/indent */
         }
       }
+      this.updateTotal();
     }
   }
 
@@ -245,5 +264,52 @@ export class PaymentItemComponent implements OnInit {
       }
     );
     this.userPayment.coordination = undefined;
+  }
+
+  calculateTeamValues(): void {
+    if (this.options.liquid !== '0') {
+      this.payment.team.map((member, index) => {
+        console.log(
+          member,
+          index,
+          this.options.lastLiquid,
+          this.options.lastTeam[index]
+        );
+        if (
+          this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <=
+          100
+        )
+          member.value = this.stringUtil.numberToMoney(
+            this.stringUtil.moneyToNumber(this.options.liquid) *
+              (1 -
+                this.stringUtil.toMutiplyPercentage(
+                  this.options.lastTeam[index].value
+                ))
+          );
+        else {
+          const p = this.stringUtil
+            .toPercentage(
+              this.options.lastTeam[index].value,
+              this.options.lastLiquid
+            )
+            .slice(0, -1);
+          console.log('Porcentagem:', p, 'Liquido:', this.options.liquid);
+          member.value = this.stringUtil.numberToMoney(
+            this.stringUtil.moneyToNumber(this.options.liquid) *
+              (1 - this.stringUtil.toMutiplyPercentage(p))
+          );
+        }
+        return member;
+      });
+    }
+  }
+
+  updateLastValues(): void {
+    console.log(this.options.liquid, this.payment.team);
+    this.options.lastLiquid = this.options.liquid.slice();
+    this.options.lastTeam = [];
+    this.payment.team.map((member) =>
+      this.options.lastTeam.push(this.utils.deepCopy(member))
+    );
   }
 }

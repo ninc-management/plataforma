@@ -2,7 +2,18 @@
   <div class="row">
     <div class="col-md-4">
       <div class="form-control-group">
-        <label class="label" for="input-value">Valor:</label>
+        <label class="label" for="input-value"
+          >Valor:
+          <nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma OE."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon
+        ></label>
         <input
           nbInput
           [(ngModel)]="payment.value"
@@ -34,7 +45,9 @@
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           [readonly]="paymentIndex !== undefined"
-          (ngModelChange)="toLiquid(payment.value)"
+          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
+          (focus)="updateLastValues()"
+          (focusout)="updateLastValues()"
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
           <p class="caption status-danger" *ngIf="value.errors?.overpaid">
