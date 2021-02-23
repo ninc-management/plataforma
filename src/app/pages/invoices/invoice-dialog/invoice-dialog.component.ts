@@ -6,11 +6,9 @@ import {
   NbDialogService,
 } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
-import { fromEvent } from 'rxjs';
-import { filter, takeUntil, take } from 'rxjs/operators';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfService } from '../pdf.service';
 import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -27,7 +25,6 @@ export class InvoiceDialogComponent implements OnInit {
     protected ref: NbDialogRef<InvoiceDialogComponent>,
     private dialogService: NbDialogService,
     protected departmentService: DepartmentService,
-    private utils: UtilsService,
     private breakpointService: NbMediaBreakpointsService,
     private pdf: PdfService
   ) {}
@@ -40,7 +37,7 @@ export class InvoiceDialogComponent implements OnInit {
     //     takeUntil(this.ref.onClose)
     //   )
     //   .subscribe(() => this.dismiss());
-    if (this.invoice) this.tempInvoice = this.utils.deepCopy(this.invoice);
+    if (this.invoice) this.tempInvoice = _.cloneDeep(this.invoice);
   }
 
   dismiss(): void {
@@ -53,7 +50,7 @@ export class InvoiceDialogComponent implements OnInit {
   }
 
   useAsModel(): void {
-    let oInvoice = this.utils.deepCopy(this.invoice);
+    let oInvoice = _.cloneDeep(this.invoice);
     if (oInvoice.department.length > 3)
       oInvoice.department = this.departmentService.extractAbreviation(
         oInvoice.department

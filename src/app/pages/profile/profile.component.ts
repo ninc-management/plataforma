@@ -15,8 +15,8 @@ import { FileUploadDialogComponent } from '../../shared/components/file-upload/f
 import { DepartmentService } from '../../shared/services/department.service';
 import { StatecityService } from '../../shared/services/statecity.service';
 import { UserService } from '../../shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import * as user_validation from '../../shared/user-validation.json';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-profile',
@@ -59,7 +59,6 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   constructor(
     private userService: UserService,
-    private utils: UtilsService,
     private statecityService: StatecityService,
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
@@ -183,12 +182,12 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   enableEditing(): void {
     this.isEditing = true;
-    this.tmpUser = this.utils.deepCopy(this.currentUser);
+    this.tmpUser = _.cloneDeep(this.currentUser);
   }
 
   revert(): void {
     this.isEditing = false;
-    this.currentUser = this.utils.deepCopy(this.tmpUser);
+    this.currentUser = _.cloneDeep(this.tmpUser);
     this.refreshExpertises();
     this.changeTheme();
   }

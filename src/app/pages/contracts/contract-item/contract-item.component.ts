@@ -1,13 +1,13 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
+import { format, parseISO } from 'date-fns';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
-import { UserService } from 'app/shared/services/user.service';
-import { NbDialogService } from '@nebular/theme';
+import { UserService } from '../../../shared/services/user.service';
 import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
-import { format, parseISO } from 'date-fns';
 import * as contract_validation from '../../../shared/contract-validation.json';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -43,12 +43,11 @@ export class ContractItemComponent implements OnInit {
     private dialogService: NbDialogService,
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
-    private userService: UserService,
-    private utils: UtilsService
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.contract = this.utils.deepCopy(this.iContract);
+    this.contract = _.cloneDeep(this.iContract);
     this.contract.interest = this.contract.payments.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
@@ -70,7 +69,7 @@ export class ContractItemComponent implements OnInit {
       this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
     }
     if (!this.contract.team || this.contract.team?.length == 0) {
-      this.contract.team = this.utils.deepCopy(this.contract.invoice.team);
+      this.contract.team = _.cloneDeep(this.contract.invoice.team);
       this.contract.team = this.contract.team.map((member) => {
         member.user = this.userService.idToUser(member.user);
         return member;
@@ -96,7 +95,7 @@ export class ContractItemComponent implements OnInit {
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
     this.contract.lastUpdate = new Date();
-    this.iContract = this.utils.deepCopy(this.contract);
+    this.iContract = _.cloneDeep(this.contract);
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }

@@ -10,23 +10,23 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { CompleterService, CompleterData } from 'ng2-completer';
+import {
+  NbDialogRef,
+  NbDialogService,
+  NbMediaBreakpointsService,
+} from '@nebular/theme';
+import { take, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { parseISO } from 'date-fns';
+import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
-import {
-  NbDialogRef,
-  NbDialogService,
-  NbMediaBreakpointsService,
-} from '@nebular/theme';
-import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
-import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { parseISO } from 'date-fns';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -90,7 +90,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private userService: UserService,
     public stringUtil: StringUtilService,
-    private utils: UtilsService,
     private breakpointService: NbMediaBreakpointsService,
     public contractorService: ContractorService,
     public completerService: CompleterService
@@ -230,7 +229,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.contractorName = this.contractorService.idToName(
         this.tempInvoice.contractor
       );
-      this.iInvoice = this.utils.deepCopy(this.tempInvoice);
+      this.iInvoice = _.cloneDeep(this.tempInvoice);
     } else {
       this.invoiceService.saveInvoice(this.tempInvoice);
     }

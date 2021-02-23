@@ -13,9 +13,8 @@ import { DepartmentService } from '../../../../shared/services/department.servic
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
-import { ignoreElements } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -60,8 +59,7 @@ export class PaymentItemComponent implements OnInit {
     private contractService: ContractService,
     private completerService: CompleterService,
     public userService: UserService,
-    public stringUtil: StringUtilService,
-    private utils: UtilsService
+    public stringUtil: StringUtilService
   ) {}
 
   ngOnInit(): void {
@@ -81,9 +79,7 @@ export class PaymentItemComponent implements OnInit {
       this.toLiquid(this.payment.value);
     }
     if (this.paymentIndex !== undefined) {
-      this.payment = this.utils.deepCopy(
-        this.contract.payments[this.paymentIndex]
-      );
+      this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
       this.toLiquid(this.payment.value);
       this.updateTotal();
       this.contract.paid = this.stringUtil.numberToMoney(
@@ -166,11 +162,9 @@ export class PaymentItemComponent implements OnInit {
     this.submitted = true;
     if (this.paymentIndex !== undefined) {
       this.payment.lastUpdate = new Date();
-      this.contract.payments[this.paymentIndex] = this.utils.deepCopy(
-        this.payment
-      );
+      this.contract.payments[this.paymentIndex] = _.cloneDeep(this.payment);
     } else {
-      this.contract.payments.push(this.utils.deepCopy(this.payment));
+      this.contract.payments.push(_.cloneDeep(this.payment));
     }
     this.contractService.editContract(this.contract);
     this.submit.emit();
@@ -269,12 +263,6 @@ export class PaymentItemComponent implements OnInit {
   calculateTeamValues(): void {
     if (this.options.liquid !== '0') {
       this.payment.team.map((member, index) => {
-        console.log(
-          member,
-          index,
-          this.options.lastLiquid,
-          this.options.lastTeam[index]
-        );
         if (
           this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <=
           100
@@ -293,7 +281,6 @@ export class PaymentItemComponent implements OnInit {
               this.options.lastLiquid
             )
             .slice(0, -1);
-          console.log('Porcentagem:', p, 'Liquido:', this.options.liquid);
           member.value = this.stringUtil.numberToMoney(
             this.stringUtil.moneyToNumber(this.options.liquid) *
               (1 - this.stringUtil.toMutiplyPercentage(p))
@@ -305,11 +292,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateLastValues(): void {
-    console.log(this.options.liquid, this.payment.team);
     this.options.lastLiquid = this.options.liquid.slice();
-    this.options.lastTeam = [];
-    this.payment.team.map((member) =>
-      this.options.lastTeam.push(this.utils.deepCopy(member))
-    );
+    this.options.lastTeam = _.cloneDeep(this.payment.team);
   }
 }

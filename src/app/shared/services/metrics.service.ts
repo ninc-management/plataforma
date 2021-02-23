@@ -1,4 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { parseISO } from 'date-fns';
+import { Subject, Observable, combineLatest } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
@@ -6,9 +9,7 @@ import { UserService } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
-import { parseISO } from 'date-fns';
-import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 interface MetricInfo {
   count: number;
@@ -508,7 +509,7 @@ export class MetricsService implements OnDestroy {
                             }
                             return upaid;
                           },
-                          this.utils.deepCopy(this.defaultUserCoordValue)
+                          _.cloneDeep(this.defaultUserCoordValue)
                         );
                         paid.user = this.utils.sumObjectsByKey(
                           paid.user,
@@ -522,7 +523,7 @@ export class MetricsService implements OnDestroy {
                     }
                     return paid;
                   },
-                  this.utils.deepCopy(this.defaultUserCoordValue)
+                  _.cloneDeep(this.defaultUserCoordValue)
                 );
                 received.user = this.utils.sumObjectsByKey(
                   received.user,
@@ -535,7 +536,7 @@ export class MetricsService implements OnDestroy {
               }
               return received;
             },
-            this.utils.deepCopy(this.defaultUserCoordValue)
+            _.cloneDeep(this.defaultUserCoordValue)
           );
       }),
       takeUntil(this.destroy$)
@@ -617,9 +618,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return undefined;
-        let userDepartment = this.utils.deepCopy(
-          this.defaultUserDepartmentValue
-        );
+        let userDepartment = _.cloneDeep(this.defaultUserDepartmentValue);
         userDepartment.user.DAD += userCoord.user.CADM;
         userDepartment.global.DAD += userCoord.global.CADM;
 

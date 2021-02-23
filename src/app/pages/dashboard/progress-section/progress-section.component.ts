@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MetricsService } from 'app/shared/services/metrics.service';
-import { Observable, of } from 'rxjs';
-import { UserService } from 'app/shared/services/user.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { DepartmentService } from 'app/shared/services/department.service';
+import { Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
+import { MetricsService } from '../../../shared/services/metrics.service';
+import { UserService } from '../../../shared/services/user.service';
+import { StringUtilService } from '../../../shared/services/string-util.service';
+import { DepartmentService } from '../../../shared/services/department.service';
 
 interface MetricItem {
   title: string;
