@@ -138,11 +138,16 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           config: {
             selectText: 'Todos',
             list: [
+              { value: 'Em andamento A receber', title: 'Ativo' },
               { value: 'Em andamento', title: 'Em andamento' },
               { value: 'Concluído', title: 'Concluído' },
               { value: 'Arquivado', title: 'Arquivado' },
             ],
           },
+        },
+        filterFunction(cell: any, search?: string): boolean {
+          if (search.includes(cell)) return true;
+          return false;
         },
       },
     },
@@ -239,7 +244,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
               new Event('change')
             );
             this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].value =
-              'Em andamento';
+              'Em andamento A receber';
             this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
               new Event('change')
             );
