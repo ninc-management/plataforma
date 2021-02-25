@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { format, parseISO } from 'date-fns';
@@ -18,9 +18,7 @@ import * as _ from 'lodash';
 export class ContractItemComponent implements OnInit {
   @Input() iContract: any;
   @Input() index: number;
-  @Output() submit = new EventEmitter<void>();
   contract: any;
-  submitted = false;
   contractNumber: number;
   today = new Date();
   todayDate = format(this.today, 'dd/MM/yyyy');
@@ -87,14 +85,13 @@ export class ContractItemComponent implements OnInit {
   }
 
   updateContract(): void {
-    this.submitted = true;
     let version = +this.contract.version;
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
     this.contract.lastUpdate = new Date();
     this.iContract = _.cloneDeep(this.contract);
-    this.contractService.editContract(this.contract);
-    this.submit.emit();
+    this.contractService.editContract(this.iContract);
+    this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
   }
 
   paymentDialog(index: number): void {

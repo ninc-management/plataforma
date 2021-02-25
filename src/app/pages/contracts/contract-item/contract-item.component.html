@@ -552,8 +552,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="submitted || !form.valid"
-        [class.btn-pulse]="submitted"
+        [disabled]="!form.valid"
       >
         Atualizar
       </button>
@@ -584,7 +583,6 @@
       status="primary"
       size="large"
       [disabled]="contract.payments.length == contract.total"
-      [class.btn-pulse]="submitted"
       (click)="paymentDialog(undefined)"
     >
       Nova Ordem de Empenho
