@@ -24,7 +24,7 @@ export class ContractItemComponent implements OnInit {
   today = new Date();
   todayDate = format(this.today, 'dd/MM/yyyy');
   validation = (contract_validation as any).default;
-  STATOOS = ['Em andamento', 'Concluído', 'Arquivado'];
+  STATOOS = ['Em andamento', 'A receber', 'Concluído', 'Arquivado'];
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   paymentIcon = {
     icon: 'dollar-sign',
