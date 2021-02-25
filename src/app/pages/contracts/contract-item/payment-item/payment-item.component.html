@@ -44,7 +44,6 @@
               : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [readonly]="paymentIndex !== undefined"
           (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
           (focus)="updateLastValues()"
           (focusout)="updateLastValues()"
@@ -98,8 +97,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-          [readonly]="paymentIndex !== undefined"
-          (ngModelChange)="toLiquid(payment.value)"
+          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
         />
       </div>
     </div>
@@ -127,8 +125,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
-          [readonly]="paymentIndex !== undefined"
-          (ngModelChange)="toLiquid(payment.value)"
+          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
         />
       </div>
     </div>
