@@ -124,6 +124,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '10%',
         compareFunction: this.valueSort,
       },
+      interest: {
+        title: 'Parcelamentos',
+        type: 'string',
+        width: '10%',
+      },
       status: {
         title: 'Status',
         type: 'string',
@@ -229,9 +234,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
               new Event('change')
             );
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].value =
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].value =
               'Em andamento';
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
+            this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
               new Event('change')
             );
           }, 1);
