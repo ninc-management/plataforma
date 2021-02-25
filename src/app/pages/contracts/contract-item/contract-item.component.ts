@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { format, parseISO } from 'date-fns';
+import { take } from 'rxjs/operators';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
@@ -49,13 +50,7 @@ export class ContractItemComponent implements OnInit {
   ngOnInit(): void {
     this.contract = _.cloneDeep(this.iContract);
     this.contract.interest = this.contract.payments.length;
-    this.contract.paid = this.stringUtil.numberToMoney(
-      this.contract.payments.reduce(
-        (accumulator: number, payment: any) =>
-          accumulator + this.stringUtil.moneyToNumber(payment.value),
-        0
-      )
-    );
+    this.calculatePaidValue();
     if (
       this.contract.created !== undefined &&
       typeof this.contract.created !== 'object'
@@ -103,21 +98,35 @@ export class ContractItemComponent implements OnInit {
   }
 
   paymentDialog(index: number): void {
-    this.dialogService.open(ContractDialogComponent, {
-      context: {
-        title:
-          index != undefined
-            ? 'ORDEM DE EMPENHO'
-            : 'ADICIONAR ORDEM DE EMPENHO',
-        contract: this.contract,
-        contractIndex: this.index,
-        paymentIndex: index != undefined ? index : undefined,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+    this.dialogService
+      .open(ContractDialogComponent, {
+        context: {
+          title:
+            index != undefined
+              ? 'ORDEM DE EMPENHO'
+              : 'ADICIONAR ORDEM DE EMPENHO',
+          contract: this.contract,
+          contractIndex: this.index,
+          paymentIndex: index != undefined ? index : undefined,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => this.calculatePaidValue());
+  }
+
+  calculatePaidValue(): void {
+    this.contract.paid = this.stringUtil.numberToMoney(
+      this.contract.payments.reduce((accumulator: number, payment: any) => {
+        if (payment.paid == 'sim')
+          accumulator =
+            accumulator + this.stringUtil.moneyToNumber(payment.value);
+        return accumulator;
+      }, 0)
+    );
   }
 
   tooltipText(): string {

@@ -208,12 +208,10 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
               contract.contractor = contract.invoice.contractor?.fullName
                 ? contract.invoice.contractor.fullName
                 : this.contractorService.idToName(contract.invoice.contractor);
-            if (!contract.value) contract.value = contract.invoice.value;
-            if (!contract.interests) {
-              contract.interests =
-                contract.payments.length.toString() + '/' + contract.total;
-            }
             if (!contract.name) contract.name = contract.invoice.name;
+            contract.value = contract.invoice.value;
+            contract.interests =
+              contract.payments.length.toString() + '/' + contract.total;
             contract.role = this.invoiceService.role(contract.invoice, user);
             return contract;
           });

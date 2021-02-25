@@ -166,6 +166,12 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.contract.payments.push(_.cloneDeep(this.payment));
     }
+    this.contract.status =
+      this.payment.paid == 'sim'
+        ? this.contract.total == this.contract.payments.length
+          ? 'Concluído'
+          : 'Em andamento'
+        : 'A receber';
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }
@@ -289,6 +295,7 @@ export class PaymentItemComponent implements OnInit {
         return member;
       });
     }
+    this.updateTotal();
   }
 
   updateLastValues(): void {
