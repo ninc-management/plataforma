@@ -124,10 +124,10 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         width: '10%',
         compareFunction: this.valueSort,
       },
-      interest: {
-        title: 'Parcelamentos',
+      interests: {
+        title: 'Parcelas',
         type: 'string',
-        width: '10%',
+        width: '50px',
       },
       status: {
         title: 'Status',
@@ -204,6 +204,10 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
                 ? contract.invoice.contractor.fullName
                 : this.contractorService.idToName(contract.invoice.contractor);
             if (!contract.value) contract.value = contract.invoice.value;
+            if (!contract.interests) {
+              contract.interests =
+                contract.payments.length.toString() + '/' + contract.total;
+            }
             if (!contract.name) contract.name = contract.invoice.name;
             contract.role = this.invoiceService.role(contract.invoice, user);
             return contract;
