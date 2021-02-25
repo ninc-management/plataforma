@@ -140,6 +140,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             list: [
               { value: 'Em andamento A receber', title: 'Ativo' },
               { value: 'Em andamento', title: 'Em andamento' },
+              { value: 'A receber', title: 'A receber' },
               { value: 'Concluído', title: 'Concluído' },
               { value: 'Arquivado', title: 'Arquivado' },
             ],
