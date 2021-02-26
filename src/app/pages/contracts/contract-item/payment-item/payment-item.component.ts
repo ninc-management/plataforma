@@ -163,6 +163,16 @@ export class PaymentItemComponent implements OnInit {
     this.updateTotal();
   }
 
+  updateValue(idx: number): void {
+    // this.payment.team[idx].value = ;
+  }
+
+  updatePercentage(idx: number): void {
+    this.payment.team[idx].percentage = this.stringUtil
+      .toPercentage(this.payment.team[idx].value, this.options.liquid)
+      .slice(0, -1);
+  }
+
   toLiquid(value: string): void {
     const result = this.stringUtil.round(
       this.stringUtil.moneyToNumber(value) *
@@ -248,6 +258,9 @@ export class PaymentItemComponent implements OnInit {
               (1 - this.stringUtil.toMutiplyPercentage(p))
           );
         }
+        member.percentage = this.stringUtil
+          .toPercentage(member.value, this.options.liquid)
+          .slice(0, -1);
         return member;
       });
     }
