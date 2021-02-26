@@ -333,7 +333,18 @@
         </div>
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-user">Colaborador:</label>
+            <label class="label" for="input-user"
+              >Colaborador:
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Adicione as % de recebimento de cada membro do contrato para que a ordem de empenho seja calculada automaticamente."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon
+            ></label>
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
