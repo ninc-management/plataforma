@@ -21,6 +21,7 @@ const payment = {
 
 const teamMember = {
   user: { type: mongoose.ObjectId, ref: 'User', required: true },
+  coordination: { type: String, required: true },
   distribution: { type: String, required: true },
 };
 

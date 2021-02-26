@@ -6,6 +6,7 @@ import { take } from 'rxjs/operators';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
+import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
@@ -25,6 +26,7 @@ export class ContractItemComponent implements OnInit {
   validation = (contract_validation as any).default;
   STATOOS = ['Em andamento', 'A receber', 'Concluído', 'Arquivado'];
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
+  USER_COORDINATIONS = [];
   paymentIcon = {
     icon: 'dollar-sign',
     pack: 'fa',
@@ -42,7 +44,8 @@ export class ContractItemComponent implements OnInit {
     private dialogService: NbDialogService,
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
-    private userService: UserService
+    private userService: UserService,
+    public departmentService: DepartmentService
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +74,7 @@ export class ContractItemComponent implements OnInit {
       });
       this.contract.team.unshift({
         user: this.contract.invoice.author,
-        coordination: 'CAD',
+        coordination: this.contract.invoice.coordination,
       });
     } else {
       this.contract.team = this.contract.team.map((member) => {

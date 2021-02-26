@@ -46,17 +46,17 @@ export class DepartmentService {
     if (uId == undefined) return [];
     const user = this.userService.idToUser(uId);
     const active: boolean[] = [
-      user.adm,
-      user.design,
-      user.obras,
-      user.impermeabilizacao,
-      user.instalacoes,
-      user.ambiental,
-      user.arquitetura,
-      user.hidrico,
-      user.eletrica,
-      user.civil,
-      user.sanitaria,
+      user.adm ? true : false,
+      user.design ? true : false,
+      user.obras ? true : false,
+      user.impermeabilizacao ? true : false,
+      user.instalacoes ? true : false,
+      user.ambiental ? true : false,
+      user.arquitetura ? true : false,
+      user.hidrico ? true : false,
+      user.eletrica ? true : false,
+      user.civil ? true : false,
+      user.sanitaria ? true : false,
     ];
     const allCoords = this.buildAllCoordinationsList();
     return allCoords.filter((cd: string, idx: number) => {

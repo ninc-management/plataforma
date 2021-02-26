@@ -331,7 +331,7 @@
             />
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-user"
               >Colaborador:
@@ -348,7 +348,13 @@
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
-              (selected)="teamMember.user = $event.originalObject"
+              (selected)="
+                teamMember.user = $event.originalObject;
+                USER_COORDINATIONS = departmentService.userCoordinations(
+                  teamMember.user._id
+                );
+                teamMember.coordination = undefined
+              "
               #userList="ngModel"
               id="input-user"
               name="userList"
@@ -376,7 +382,36 @@
             </nb-completer>
           </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-memberCoordination"
+              >Coordenação:</label
+            >
+            <nb-select
+              [(ngModel)]="teamMember.coordination"
+              #memberCoordination="ngModel"
+              id="input-memberCoordination"
+              name="memberCoordination"
+              placeholder="Coordenação"
+              fullWidth
+              size="large"
+              [status]="memberCoordination.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                memberCoordination.invalid && memberCoordination.touched
+                  ? true
+                  : null
+              "
+            >
+              <nb-option
+                *ngFor="let coordination of USER_COORDINATIONS"
+                [value]="coordination"
+              >
+                {{ coordination }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-md-3">
           <div class="form-control-group">
             <label
               class="label"
@@ -440,11 +475,32 @@
             "
           >
             <div class="row irow">
-              <div class="col-12 col-md-6">
+              <div class="col-12 col-md-4">
                 {{ member.user.fullName }}
               </div>
+              <div class="col-12 col-md-4">
+                <nb-select
+                  [(ngModel)]="contract.team[i].coordination"
+                  id="input-memberCoordination-{{ i }}"
+                  name="memberCoordination-{{ i }}"
+                  placeholder="Coordenação"
+                  fullWidth
+                  size="large"
+                >
+                  <nb-option
+                    *ngFor="
+                      let coordination of departmentService.userCoordinations(
+                        contract.team[i].user._id
+                      )
+                    "
+                    [value]="coordination"
+                  >
+                    {{ coordination }}
+                  </nb-option>
+                </nb-select>
+              </div>
               <div
-                class="col-10 col-md-5"
+                class="col-10 col-md-3"
                 style="display: flex; align-items: center"
               >
                 <input

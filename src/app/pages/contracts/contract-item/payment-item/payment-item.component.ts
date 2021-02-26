@@ -214,23 +214,8 @@ export class PaymentItemComponent implements OnInit {
 
   updateUserCoordinations(): void {
     const selectedUser = this.userPayment.user;
-    const active: boolean[] = [
-      selectedUser.adm,
-      selectedUser.design,
-      selectedUser.obras,
-      selectedUser.impermeabilizacao,
-      selectedUser.instalacoes,
-      selectedUser.ambiental,
-      selectedUser.arquitetura,
-      selectedUser.hidrico,
-      selectedUser.eletrica,
-      selectedUser.civil,
-      selectedUser.sanitaria,
-    ];
-    this.USER_COORDINATIONS = this.ALL_COORDINATIONS.filter(
-      (cd: string, idx: number) => {
-        return active[idx];
-      }
+    this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+      selectedUser._id
     );
     this.userPayment.coordination = undefined;
   }

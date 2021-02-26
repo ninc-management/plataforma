@@ -257,26 +257,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateUserCoordinations(user: any = undefined): string[] {
     const selectedUser = user == undefined ? this.teamMember.user : user;
-    const active: boolean[] = [
-      selectedUser.adm ? true : false,
-      selectedUser.design ? true : false,
-      selectedUser.obras ? true : false,
-      selectedUser.impermeabilizacao ? true : false,
-      selectedUser.instalacoes ? true : false,
-      selectedUser.ambiental ? true : false,
-      selectedUser.arquitetura ? true : false,
-      selectedUser.hidrico ? true : false,
-      selectedUser.eletrica ? true : false,
-      selectedUser.civil ? true : false,
-      selectedUser.sanitaria ? true : false,
-    ];
-    if (selectedUser != undefined) {
-      return this.ALL_COORDINATIONS.filter((cd: string, idx: number) => {
-        return active[idx];
-      });
-    }
     this.teamMember.coordination = undefined;
-    return [];
+    return this.departmentService.userCoordinations(selectedUser._id);
   }
 
   /* eslint-disable @typescript-eslint/indent */
