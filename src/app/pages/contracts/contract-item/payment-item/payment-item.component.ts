@@ -229,8 +229,6 @@ export class PaymentItemComponent implements OnInit {
   calculateTeamValues(): void {
     if (this.options.liquid !== '0') {
       this.payment.team.map((member, index) => {
-        console.log(this.options.lastTeam[index].value);
-        // if (!this.options.lastTeam[index].value) return member;
         if (
           this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1
         )
@@ -259,5 +257,9 @@ export class PaymentItemComponent implements OnInit {
   updateLastValues(): void {
     this.options.lastLiquid = this.options.liquid.slice();
     this.options.lastTeam = _.cloneDeep(this.payment.team);
+  }
+
+  trackByIndex(index: number, obj: any): any {
+    return index;
   }
 }
