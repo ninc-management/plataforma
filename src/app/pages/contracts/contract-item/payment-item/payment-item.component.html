@@ -491,7 +491,7 @@
           <input
             nbInput
             [(ngModel)]="payment.team[i].value"
-            (ngModelChange)="updateTotal()"
+            (ngModelChange)="updatePercentage(i); updateTotal()"
             id="input-memberValue-{{ i }}"
             name="memberValue-{{ i }}"
             placeholder="Valor"
@@ -505,8 +505,24 @@
             [status]="payment.team[i].value ? 'success' : 'basic'"
           />
         </div>
-        <div class="col-5 col-md-1">
-          {{ stringUtil.toPercentage(userPayment.value, options.liquid) }}
+        <div class="col-5 col-md-1" style="display: flex; align-items: center">
+          <input
+            nbInput
+            [(ngModel)]="payment.team[i].percentage"
+            (ngModelChange)="updateTotal()"
+            id="input-memberPercentage-{{ i }}"
+            name="memberPercentage-{{ i }}"
+            placeholder="Porcentagem"
+            fullWidth
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: '2'
+            }"
+            [status]="payment.team[i].value ? 'success' : 'basic'"
+          />
+          %
         </div>
         <div class="col-2 col-md-1" style="text-align: right">
           <nb-icon
