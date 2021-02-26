@@ -74,10 +74,6 @@ export class PaymentItemComponent implements OnInit {
         0
       )
     );
-    if (this.contract.payments.length === this.contract.total - 1) {
-      this.payment.value = this.notPaid();
-      this.toLiquid(this.payment.value);
-    }
     if (this.paymentIndex !== undefined) {
       this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
       this.toLiquid(this.payment.value);
@@ -106,11 +102,19 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.payment.team = _.cloneDeep(this.contract.team).map((member) => {
         member.user = member.user?._id ? member.user._id : member.user;
-        member.value = member.distribution;
+        member.value = this.stringUtil.numberToMoney(
+          1 - this.stringUtil.toMutiplyPercentage(member.distribution)
+        );
         delete member.distribution;
         return member;
       });
       this.updateTotal();
+    }
+    if (this.contract.payments.length === this.contract.total - 1) {
+      this.payment.value = this.notPaid();
+      this.toLiquid(this.payment.value);
+      this.updateLastValues();
+      this.calculateTeamValues();
     }
   }
 
@@ -224,15 +228,11 @@ export class PaymentItemComponent implements OnInit {
     if (this.options.liquid !== '0') {
       this.payment.team.map((member, index) => {
         if (
-          this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <=
-          100
+          this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1
         )
           member.value = this.stringUtil.numberToMoney(
             this.stringUtil.moneyToNumber(this.options.liquid) *
-              (1 -
-                this.stringUtil.toMutiplyPercentage(
-                  this.options.lastTeam[index].value
-                ))
+              this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );
         else {
           const p = this.stringUtil
