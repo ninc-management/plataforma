@@ -104,43 +104,12 @@ export class PaymentItemComponent implements OnInit {
         this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
       }
     } else {
-      this.payment.team = this.contract.invoice.team.slice().map((member) => {
+      this.payment.team = _.cloneDeep(this.contract.team).map((member) => {
         member.user = member.user?._id ? member.user._id : member.user;
+        member.value = member.distribution;
+        delete member.distribution;
         return member;
       });
-      for (const member of this.contract.team) {
-        let entry = this.payment.team.find((el) => {
-          const id1 = el.user?._id ? el.user._id : el.user;
-          const id2 = member.user?._id ? member.user._id : member.user;
-          return id1 === id2;
-        });
-        if (entry) {
-          entry.value = member.distribution;
-          if (this.options.liquid !== '0')
-            entry.value = this.stringUtil.numberToMoney(
-              this.stringUtil.moneyToNumber(this.options.liquid) *
-                (1 - this.stringUtil.toMutiplyPercentage(entry.value))
-            );
-        } else {
-          /* eslint-disable @typescript-eslint/indent */
-          const value =
-            this.options.liquid !== '0'
-              ? this.stringUtil.numberToMoney(
-                  this.stringUtil.moneyToNumber(this.options.liquid) *
-                    (1 -
-                      this.stringUtil.toMutiplyPercentage(member.distribution))
-                )
-              : member.distribution;
-          const m: any = { user: member.user, value: value };
-          const authorId = this.contract.invoice.author?._id
-            ? this.contract.invoice.author._id
-            : this.contract.invoice.author;
-          if (member.user === authorId)
-            m.coordination = this.contract.invoice.coordination;
-          this.payment.team.push(m);
-          /* eslint-enable @typescript-eslint/indent */
-        }
-      }
       this.updateTotal();
     }
   }
