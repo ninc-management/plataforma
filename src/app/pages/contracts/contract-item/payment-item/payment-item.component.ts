@@ -102,9 +102,11 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.payment.team = _.cloneDeep(this.contract.team).map((member) => {
         member.user = member.user?._id ? member.user._id : member.user;
-        member.value = this.stringUtil.numberToMoney(
-          1 - this.stringUtil.toMutiplyPercentage(member.distribution)
-        );
+        if (member.distribution)
+          member.value = this.stringUtil.numberToMoney(
+            1 - this.stringUtil.toMutiplyPercentage(member.distribution)
+          );
+        else member.value = '0';
         delete member.distribution;
         return member;
       });
@@ -227,6 +229,8 @@ export class PaymentItemComponent implements OnInit {
   calculateTeamValues(): void {
     if (this.options.liquid !== '0') {
       this.payment.team.map((member, index) => {
+        console.log(this.options.lastTeam[index].value);
+        // if (!this.options.lastTeam[index].value) return member;
         if (
           this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1
         )
