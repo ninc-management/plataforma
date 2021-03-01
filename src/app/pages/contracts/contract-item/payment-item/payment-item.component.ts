@@ -77,7 +77,8 @@ export class PaymentItemComponent implements OnInit {
     if (this.paymentIndex !== undefined) {
       this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
       this.toLiquid(this.payment.value);
-      this.updateTotal();
+      this.updateLastValues();
+      this.calculateTeamValues();
       this.contract.paid = this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(this.contract.paid) -
           this.stringUtil.moneyToNumber(this.payment.value)
@@ -110,13 +111,12 @@ export class PaymentItemComponent implements OnInit {
         delete member.distribution;
         return member;
       });
-      this.updateTotal();
-    }
-    if (this.contract.payments.length === this.contract.total - 1) {
-      this.payment.value = this.notPaid();
-      this.toLiquid(this.payment.value);
-      this.updateLastValues();
-      this.calculateTeamValues();
+      if (this.contract.payments.length === this.contract.total - 1) {
+        this.payment.value = this.notPaid();
+        this.toLiquid(this.payment.value);
+        this.updateLastValues();
+        this.calculateTeamValues();
+      }
     }
   }
 
@@ -164,7 +164,13 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateValue(idx: number): void {
-    // this.payment.team[idx].value = ;
+    this.payment.team[idx].value = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.options.liquid) *
+        (1 -
+          this.stringUtil.toMutiplyPercentage(
+            this.payment.team[idx].percentage
+          ))
+    );
   }
 
   updatePercentage(idx: number): void {
