@@ -485,7 +485,24 @@
           {{ userService.idToName(userPayment.user) }}
         </div>
         <div class="col-12 col-md-3">
-          {{ userPayment.coordination }}
+          <nb-select
+            [(ngModel)]="payment.team[i].coordination"
+            id="input-memberCoordination-{{ i }}"
+            name="memberCoordination-{{ i }}"
+            placeholder="Coordenação"
+            fullWidth
+          >
+            <nb-option
+              *ngFor="
+                let coordination of departmentService.userCoordinations(
+                  payment.team[i].user
+                )
+              "
+              [value]="coordination"
+            >
+              {{ coordination }}
+            </nb-option>
+          </nb-select>
         </div>
         <div class="col-5 col-md-2">
           <input

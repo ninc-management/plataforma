@@ -55,7 +55,7 @@ export class PaymentItemComponent implements OnInit {
   userData: CompleterData;
 
   constructor(
-    private departmentService: DepartmentService,
+    public departmentService: DepartmentService,
     private contractService: ContractService,
     private completerService: CompleterService,
     public userService: UserService,
