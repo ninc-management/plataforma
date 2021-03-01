@@ -484,7 +484,7 @@
         <div class="col-12 col-md-4">
           {{ userService.idToName(userPayment.user) }}
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-3">
           {{ userPayment.coordination }}
         </div>
         <div class="col-5 col-md-2">
@@ -505,11 +505,11 @@
             [status]="payment.team[i].value ? 'success' : 'basic'"
           />
         </div>
-        <div class="col-5 col-md-1" style="display: flex; align-items: center">
+        <div class="col-5 col-md-2" style="display: flex; align-items: center">
           <input
             nbInput
             [(ngModel)]="payment.team[i].percentage"
-            (ngModelChange)="updateTotal()"
+            (ngModelChange)="updateValue(i); updateTotal()"
             id="input-memberPercentage-{{ i }}"
             name="memberPercentage-{{ i }}"
             placeholder="Porcentagem"
