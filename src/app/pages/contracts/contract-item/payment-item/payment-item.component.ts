@@ -64,8 +64,15 @@ export class PaymentItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+    const team = this.contract.team.map((member) => {
+      const user =
+        member.user?._id == undefined
+          ? this.userService.idToUser(member.user)
+          : member.user;
+      return user;
+    });
     this.userData = this.completerService
-      .local(this.invoiceMemberList(), 'fullName', 'fullName')
+      .local(team, 'fullName', 'fullName')
       .imageField('profilePicture');
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce(
@@ -118,19 +125,6 @@ export class PaymentItemComponent implements OnInit {
         this.calculateTeamValues();
       }
     }
-  }
-
-  invoiceMemberList(): any[] {
-    let members = [];
-    members.push(this.contract.invoice.author);
-    this.contract.invoice.team.map((member) => {
-      const user =
-        member.user?._id == undefined
-          ? this.userService.idToUser(member.user)
-          : member.user;
-      members.push(user);
-    });
-    return members;
   }
 
   registerPayment(): void {
