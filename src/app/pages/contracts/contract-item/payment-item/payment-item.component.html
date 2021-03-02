@@ -545,9 +545,10 @@
           <nb-icon
             class="xIcon"
             status="basic"
-            icon="close-outline"
-            pack="nebular-essentials"
+            icon="trash-2-outline"
+            pack="eva"
             (click)="payment.team.splice(i, 1); updateTotal()"
+            [options]="{ animation: { type: 'shake' } }"
           ></nb-icon>
         </div>
       </div>
