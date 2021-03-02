@@ -78,7 +78,7 @@ export class PaymentItemComponent implements OnInit {
       this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
       this.toLiquid(this.payment.value);
       this.updateLastValues();
-      this.calculateTeamValues();
+      this.calculateTeamValues(false);
       this.contract.paid = this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(this.contract.paid) -
           this.stringUtil.moneyToNumber(this.payment.value)
@@ -242,7 +242,7 @@ export class PaymentItemComponent implements OnInit {
     this.userPayment.coordination = undefined;
   }
 
-  calculateTeamValues(): void {
+  calculateTeamValues(calculateValue = true): void {
     if (this.options.liquid !== '0') {
       this.payment.team.map((member, index) => {
         if (
@@ -252,7 +252,7 @@ export class PaymentItemComponent implements OnInit {
             this.stringUtil.moneyToNumber(this.options.liquid) *
               this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );
-        else {
+        else if (calculateValue) {
           const p = this.stringUtil
             .toPercentage(
               this.options.lastTeam[index].value,
