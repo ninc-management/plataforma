@@ -119,6 +119,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   calculatePaidValue(): void {
+    this.contract.interest = this.contract.payments.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.payments.reduce((accumulator: number, payment: any) => {
         if (payment.paid == 'sim')
