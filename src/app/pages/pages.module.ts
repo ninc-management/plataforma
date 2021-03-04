@@ -38,6 +38,7 @@ import { PaymentItemComponent } from './contracts/contract-item/payment-item/pay
 import { ContractorsComponent } from './contractors/contractors.component';
 import { ContractorDialogComponent } from './contractors/contractor-dialog/contractor-dialog.component';
 import { ContractorItemComponent } from './contractors/contractor-item/contractor-item.component';
+import { ReceiptItemComponent } from './contracts/contract-item/receipt-item/receipt-item.component';
 
 @NgModule({
   imports: [
@@ -78,6 +79,7 @@ import { ContractorItemComponent } from './contractors/contractor-item/contracto
     ContractorsComponent,
     ContractorDialogComponent,
     ContractorItemComponent,
+    ReceiptItemComponent,
   ],
 })
 export class PagesModule {}

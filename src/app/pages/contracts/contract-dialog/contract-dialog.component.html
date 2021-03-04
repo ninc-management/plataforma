@@ -2,7 +2,10 @@
   class="row justify-content-center"
   [ngStyle]="{
     'width.px':
-      !isPayable && !isEditing && paymentIndex === undefined
+      !isPayable &&
+      !componentType.CONTRACT &&
+      paymentIndex === undefined &&
+      receiptIndex === undefined
         ? 'auto'
         : windowWidth()
   }"
@@ -10,7 +13,10 @@
   <div class="col-md-8">
     <nb-card
       *ngIf="
-        !isPayable && !isEditing && paymentIndex === undefined;
+        !isPayable &&
+          !componentType.CONTRACT &&
+          paymentIndex === undefined &&
+          receiptIndex === undefined;
         else normal
       "
       [ngStyle]="{
@@ -60,15 +66,22 @@
           <ngx-contract-item
             [iContract]="contract"
             [index]="contractIndex"
-            *ngIf="isEditing"
+            *ngIf="componentType.CONTRACT"
           ></ngx-contract-item>
           <ngx-payment-item
             [contract]="contract"
             [contractIndex]="contractIndex"
             [paymentIndex]="paymentIndex"
             (submit)="dismiss()"
-            *ngIf="!isEditing"
+            *ngIf="componentType.PAYMENT"
           ></ngx-payment-item>
+          <ngx-receipt-item
+            [contract]="contract"
+            [contractIndex]="contractIndex"
+            [receiptIndex]="paymentIndex"
+            (submit)="dismiss()"
+            *ngIf="componentType.RECEIPT"
+          ></ngx-receipt-item>
         </nb-card-body>
       </nb-card>
     </ng-template>

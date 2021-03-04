@@ -8,6 +8,12 @@ import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
+export interface ComponentType {
+  CONTRACT?: boolean;
+  PAYMENT?: boolean;
+  RECEIPT?: boolean;
+}
+
 @Component({
   selector: 'ngx-contract-dialog',
   templateUrl: './contract-dialog.component.html',
@@ -18,7 +24,8 @@ export class ContractDialogComponent implements OnInit {
   @Input() contract: any;
   @Input() contractIndex: number;
   @Input() paymentIndex: number;
-  @Input() isEditing: boolean;
+  @Input() receiptIndex: number;
+  @Input() componentType: ComponentType;
   isPayable = true;
 
   constructor(

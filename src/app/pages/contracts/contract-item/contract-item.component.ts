@@ -31,6 +31,10 @@ export class ContractItemComponent implements OnInit {
     icon: 'dollar-sign',
     pack: 'fa',
   };
+  receiptIcon = {
+    icon: 'file-invoice',
+    pack: 'fac',
+  };
   options = {
     valueType: '%',
   };
@@ -97,17 +101,27 @@ export class ContractItemComponent implements OnInit {
     this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
   }
 
-  paymentDialog(index: number): void {
+  paymentDialog(index: number, isPayment: boolean): void {
+    index = index != undefined ? index : undefined;
+    let title = '';
+    if (isPayment)
+      title =
+        index != undefined
+          ? 'ORDEM DE PAGAMENTO'
+          : 'ADICIONAR ORDEM DE PAGAMENTO';
+    else
+      title =
+        index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
+
     this.dialogService
       .open(ContractDialogComponent, {
         context: {
-          title:
-            index != undefined
-              ? 'ORDEM DE EMPENHO'
-              : 'ADICIONAR ORDEM DE EMPENHO',
+          title: title,
           contract: this.contract,
           contractIndex: this.index,
-          paymentIndex: index != undefined ? index : undefined,
+          paymentIndex: isPayment ? index : undefined,
+          receiptIndex: isPayment ? undefined : index,
+          componentType: isPayment ? { PAYMENT: true } : { RECEIPT: true },
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

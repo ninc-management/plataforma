@@ -258,7 +258,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
         contract: event.data,
         contractIndex: +event.index,
-        isEditing: isEditing,
+        componentType: isEditing ? { CONTRACT: true } : { PAYMENT: true },
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

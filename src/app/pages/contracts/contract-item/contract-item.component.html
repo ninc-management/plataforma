@@ -623,6 +623,57 @@
       </button>
     </form>
   </nb-tab>
+  <nb-tab tabTitle="Ordens de empenho" [tabIcon]="receiptIcon" responsive>
+    <nb-list>
+      <!-- <nb-list-item *ngFor="let payment of contract.payments; let i = index">
+        <div class="row irow" style="width: 100%">
+          <div class="col-10 col-md-11">
+            <div class="irow row">
+              <a
+                (click)="paymentDialog(i, false)"
+                style="width: 100%; cursor: pointer; display: flex"
+              >
+                <div class="col-1">#{{ +i + 1 }}</div>
+                <div class="col">
+                  {{ payment.service }}
+                </div>
+                <div class="col-md-3">
+                  <nb-icon
+                    icon="dollar-sign"
+                    pack="fa"
+                    status="success"
+                  ></nb-icon>
+                  <span style="vertical-align: 0.1em">
+                    {{ payment.value }}
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-2 col-md-1" style="text-align: right">
+            <nb-icon
+              class="xIcon"
+              status="basic"
+              icon="trash-2-outline"
+              pack="eva"
+              (click)="contract.payments.splice(i, 1); calculatePaidValue()"
+              [options]="{ animation: { type: 'shake' } }"
+            ></nb-icon>
+          </div>
+        </div>
+      </nb-list-item> -->
+    </nb-list>
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="contract.receipts?.length == contract.total"
+      (click)="paymentDialog(undefined, false)"
+    >
+      Nova Ordem de Empenho
+    </button>
+  </nb-tab>
   <nb-tab tabTitle="Ordens de empenho" [tabIcon]="paymentIcon" responsive>
     <nb-alert
       outline="info"
@@ -646,7 +697,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i)"
+                (click)="paymentDialog(i, true)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -685,7 +736,7 @@
       status="primary"
       size="large"
       [disabled]="contract.payments.length == contract.total"
-      (click)="paymentDialog(undefined)"
+      (click)="paymentDialog(undefined, true)"
     >
       Nova Ordem de Empenho
     </button>
