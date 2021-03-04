@@ -256,8 +256,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateUserCoordinations(user: any = undefined): string[] {
+    if (user == undefined) this.teamMember.coordination = undefined;
     const selectedUser = user == undefined ? this.teamMember.user : user;
-    this.teamMember.coordination = undefined;
     return this.departmentService.userCoordinations(selectedUser._id);
   }
 

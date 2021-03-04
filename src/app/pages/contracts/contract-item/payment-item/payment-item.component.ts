@@ -146,11 +146,18 @@ export class PaymentItemComponent implements OnInit {
   }
 
   addColaborator(): void {
-    if (this.options.valueType === '%')
+    if (this.options.valueType === '%') {
+      this.userPayment.percentage = this.userPayment.value;
       this.userPayment.value = this.stringUtil.toValue(
         this.userPayment.value,
         this.options.liquid
       );
+    } else
+      this.userPayment.percentage = this.stringUtil
+        .toPercentage(this.userPayment.value, this.options.liquid)
+        .slice(0, -1);
+
+    this.userPayment.user = this.userPayment.user._id;
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {};
     this.userSearch = undefined;
