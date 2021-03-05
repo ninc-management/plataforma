@@ -6,9 +6,11 @@ import {
   NbDialogService,
 } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
+import { UserService } from '../../../shared/services/user.service';
 import { PdfService } from '../pdf.service';
-import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
+import { PdfDialogComponent } from '../../../shared/components/pdf-dialog/pdf-dialog.component';
 import * as _ from 'lodash';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -26,6 +28,7 @@ export class InvoiceDialogComponent implements OnInit {
     private dialogService: NbDialogService,
     protected departmentService: DepartmentService,
     private breakpointService: NbMediaBreakpointsService,
+    private userService: UserService,
     private pdf: PdfService
   ) {}
 
@@ -68,8 +71,10 @@ export class InvoiceDialogComponent implements OnInit {
         material.total = material.total ? material.total : '0,00';
         return material;
       });
+    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      oInvoice.author = user;
+    });
     delete oInvoice._id;
-    delete oInvoice.author;
     delete oInvoice.created;
     delete oInvoice.lastUpdate;
     delete oInvoice.status;

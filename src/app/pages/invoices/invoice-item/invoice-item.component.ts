@@ -155,6 +155,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         productListType: '1',
         invoiceType: 'projeto',
       };
+      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+        this.tempInvoice.author = user;
+      });
     }
     if (this.tempInvoice.contactPlural == undefined)
       this.tempInvoice.contactPlural = false;
@@ -207,7 +210,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       });
 
     this.userData = this.completerService
-      .local(this.userService.getUsersList(), 'fullName', 'fullName')
+      .local(
+        this.userService
+          .getUsersList()
+          .filter((user) => user._id != this.tempInvoice.author._id),
+        'fullName',
+        'fullName'
+      )
       .imageField('profilePicture');
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();

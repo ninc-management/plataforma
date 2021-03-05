@@ -25,9 +25,9 @@ import { Component } from '@angular/core';
         class="ion ion-social-linkedin"
       ></a>
       <a
-        href="https://github.com/nortan-projetos"
+        href="https://www.youtube.com/channel/UCyHRkfO7rtMiBUCkcXw5Rcw"
         target="_blank"
-        class="ion ion-social-github"
+        class="ion ion-social-youtube"
       ></a>
     </div>
   `,

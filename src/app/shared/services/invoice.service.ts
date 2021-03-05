@@ -33,20 +33,17 @@ export class InvoiceService implements OnDestroy {
   }
 
   saveInvoice(invoice: any): void {
-    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      invoice.author = user._id;
-      const req = {
-        invoice: invoice,
-      };
-      this.http
-        .post('/api/invoice/', req)
-        .pipe(take(1))
-        .subscribe((res: any) => {
-          const savedInvoice = res.invoice;
-          if (savedInvoice.status === 'Fechado')
-            this.contractService.saveContract(savedInvoice);
-        });
-    });
+    const req = {
+      invoice: invoice,
+    };
+    this.http
+      .post('/api/invoice/', req)
+      .pipe(take(1))
+      .subscribe((res: any) => {
+        const savedInvoice = res.invoice;
+        if (savedInvoice.status === 'Fechado')
+          this.contractService.saveContract(savedInvoice);
+      });
   }
 
   editInvoice(invoice: any): void {
