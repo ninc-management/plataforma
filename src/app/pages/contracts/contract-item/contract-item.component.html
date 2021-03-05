@@ -624,6 +624,22 @@
     </form>
   </nb-tab>
   <nb-tab tabTitle="Ordens de empenho" [tabIcon]="receiptIcon" responsive>
+    <nb-alert
+      outline="info"
+      role="alert"
+      style="margin: 5px 0; display: flow-root"
+    >
+      <nb-icon
+        status="info"
+        icon="info"
+        pack="eva"
+        [options]="{ animation: { type: 'pulse' } }"
+      ></nb-icon>
+      <b>
+        Para consilidar a remoção de uma ordem de empenho, é necessário
+        atualizar o contrato.</b
+      >
+    </nb-alert>
     <nb-list>
       <!-- <nb-list-item *ngFor="let payment of contract.payments; let i = index">
         <div class="row irow" style="width: 100%">
@@ -668,7 +684,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="contract.receipts?.length == contract.total"
+      [disabled]="contract.receipts.length == contract.total"
       (click)="paymentDialog(undefined, false)"
     >
       Nova Ordem de Empenho

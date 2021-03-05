@@ -32,7 +32,7 @@ export class ContractItemComponent implements OnInit {
     pack: 'fa',
   };
   receiptIcon = {
-    icon: 'file-invoice',
+    icon: 'receipt',
     pack: 'fac',
   };
   options = {

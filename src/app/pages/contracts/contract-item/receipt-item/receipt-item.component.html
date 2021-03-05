@@ -1,1 +1,352 @@
-<p>receipt-item works!</p>
+<form (ngSubmit)="registerPayment()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-control-group">
+        <label class="label" for="input-value"
+          >Valor:
+          <nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma OE."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon
+        ></label>
+        <input
+          nbInput
+          [(ngModel)]="receipt.value"
+          #value="ngModel"
+          id="input-value"
+          name="value"
+          placeholder="Valor empenhado"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
+          [overPaid]="notPaid()"
+          [lastPayment]="lastPayment()"
+          [required]="validation.value.required"
+          [minLength]="validation.value.minLength"
+          [maxLength]="validation.value.maxLength"
+          [status]="
+            value.dirty
+              ? value.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.value !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+          (ngModelChange)="toLiquid(receipt.value)"
+        />
+        <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
+          <p class="caption status-danger" *ngIf="value.errors?.overpaid">
+            O valor do empenho é superior ao valor restante a ser pago (R$
+            {{ notPaid() }})!
+          </p>
+          <p class="caption status-danger" *ngIf="value.errors?.lastpayment">
+            O valor do empenho da última parcela deve ser igual ao valor
+            restante a ser pago (R$
+            {{ notPaid() }})!
+          </p>
+          <p class="caption status-danger" *ngIf="value.errors?.required">
+            O valor do empenho é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="value.errors?.minlength || value.errors?.maxlength"
+          >
+            O valor do empenho deve conter entre
+            {{ validation.value.minLength }} a
+            {{ validation.value.maxLength }}
+            numeros
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="form-control-group">
+        <label class="label" for="input-nf">NF(%):</label>
+        <input
+          nbInput
+          [(ngModel)]="receipt.notaFiscal"
+          #nf="ngModel"
+          id="input-nf"
+          name="nf"
+          placeholder="Revisão"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{ type: 'num' }"
+          [required]="validation.nf.required"
+          [status]="
+            nf.dirty
+              ? nf.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.notaFiscal !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+          (ngModelChange)="toLiquid(receipt.value)"
+        />
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="form-control-group">
+        <label class="label" for="input-nortan">Nortan(%):</label>
+        <input
+          nbInput
+          [(ngModel)]="receipt.nortanPercentage"
+          #nortan="ngModel"
+          id="input-nortan"
+          name="nortan"
+          placeholder="Revisão"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{ type: 'num' }"
+          [required]="validation.nortan.required"
+          [status]="
+            nortan.dirty
+              ? nortan.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.nortanPercentage !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
+          (ngModelChange)="toLiquid(receipt.value)"
+        />
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-control-group">
+        <label class="label" for="input-liquid">Valor liquído:</label>
+        <input
+          nbInput
+          [(ngModel)]="options.liquid"
+          #liquid="ngModel"
+          id="input-liquid"
+          name="liquid"
+          placeholder="Valor liquido"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
+          [required]="validation.liquid.required"
+          [status]="
+            options.liquid !== undefined
+              ? liquid.invalid || options.liquid.length === 0
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
+          [readonly]="true"
+        />
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-service">Serviço:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="receipt.service"
+          #service="ngModel"
+          id="input-service"
+          name="service"
+          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.service.required"
+          [minlength]="validation.service.minLength"
+          [maxlength]="validation.service.maxLength"
+          [status]="
+            service.dirty
+              ? service.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.service !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="service.invalid && service.touched">
+          <p class="caption status-danger" *ngIf="service.errors?.required">
+            O campo de serviço é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="service.errors?.minlength || service.errors?.maxlength"
+          >
+            O campo de serviço deve conter entre
+            {{ validation.service.minLength }} a
+            {{ validation.service.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidCheck">Pago?</label>
+        <nb-select
+          [(ngModel)]="receipt.paid"
+          #paidCheck="ngModel"
+          id="input-paidCheck"
+          name="paidCheck"
+          placeholder="OE paga?"
+          fullWidth
+          size="large"
+          (ngModelChange)="updatePaidDate()"
+          [required]="validation.paidCheck.required"
+          [status]="paidCheck.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            paidCheck.invalid && paidCheck.touched ? true : null
+          "
+        >
+          <nb-option value="não">NÃO</nb-option>
+          <nb-option value="sim">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidDate">Data do pagamento:</label>
+        <input
+          *ngIf="receipt.paid === 'não'; else withdate"
+          nbInput
+          [(ngModel)]="receipt.paidDate"
+          #paidDate="ngModel"
+          id="input-paidDate"
+          name="paidDate"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.paidDate.required"
+          [readonly]="true"
+          [disabled]="receipt.paid === 'não'"
+          [status]="
+            paidDate.dirty
+              ? paidDate.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.paidDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            paidDate.invalid && paidDate.touched ? true : null
+          "
+        />
+        <ng-template #withdate>
+          <input
+            nbInput
+            [(ngModel)]="receipt.paidDate"
+            #paidDate="ngModel"
+            id="input-paidDate"
+            name="paidDate"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="pDatepicker"
+            [required]="validation.paidDate.required"
+            [readonly]="true"
+            [status]="
+              paidDate.dirty
+                ? paidDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : receipt.paidDate !== undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              paidDate.invalid && paidDate.touched ? true : null
+            "
+          />
+          <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
+        </ng-template>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-created">Data de criação:</label>
+        <input
+          nbInput
+          [(ngModel)]="receipt.created"
+          #created="ngModel"
+          id="input-created"
+          name="created"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="cDatepicker"
+          [required]="validation.created.required"
+          [readonly]="true"
+          [status]="
+            created.dirty
+              ? created.invalid
+                ? 'danger'
+                : 'success'
+              : receipt.created !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+        />
+        <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-updated">Última atualização:</label>
+        <input
+          nbInput
+          [(ngModel)]="options.lastUpdateDate"
+          #updated="ngModel"
+          id="input-updated"
+          name="updated"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.lastUpdate.required"
+          [readonly]="true"
+          [status]="
+            updated.dirty
+              ? updated.invalid
+                ? 'danger'
+                : 'success'
+              : options.lastUpdateDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
+        />
+      </div>
+    </div>
+  </div>
+
+  <button
+    nbButton
+    fullWidth
+    status="primary"
+    size="large"
+    [disabled]="!form.valid"
+  >
+    {{ receiptIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+  </button>
+</form>

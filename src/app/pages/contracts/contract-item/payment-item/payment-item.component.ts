@@ -28,11 +28,11 @@ export class PaymentItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
   valueInputRef: ElementRef<HTMLInputElement>;
+  validation = (contract_validation as any).default;
   ALL_COORDINATIONS: string[];
   USER_COORDINATIONS: string[];
   total = '0';
   today = new Date();
-  validation = (contract_validation as any).default;
   submitted = false;
   payment: any = {
     team: [],
