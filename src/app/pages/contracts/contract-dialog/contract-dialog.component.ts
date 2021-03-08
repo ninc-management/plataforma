@@ -8,10 +8,10 @@ import { DepartmentService } from '../../../shared/services/department.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
-export interface ComponentType {
-  CONTRACT?: boolean;
-  PAYMENT?: boolean;
-  RECEIPT?: boolean;
+export enum ComponentTypes {
+  CONTRACT,
+  PAYMENT,
+  RECEIPT,
 }
 
 @Component({
@@ -25,8 +25,9 @@ export class ContractDialogComponent implements OnInit {
   @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Input() receiptIndex: number;
-  @Input() componentType: ComponentType;
+  @Input() componentType: number;
   isPayable = true;
+  types = ComponentTypes;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
@@ -43,7 +44,7 @@ export class ContractDialogComponent implements OnInit {
     //     takeUntil(this.ref.onClose)
     //   )
     //   .subscribe(() => this.dismiss());
-    this.isPayable = this.contract.payments.length < this.contract.total;
+    this.isPayable = this.contract.receipts.length < this.contract.total;
   }
 
   dismiss(): void {

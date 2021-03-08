@@ -9,7 +9,7 @@
             icon="info"
             pack="eva"
             [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma OE."
+            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma ordem de pagamento."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
           ></nb-icon
@@ -65,7 +65,7 @@
             class="caption status-danger"
             *ngIf="value.errors?.minlength || value.errors?.maxlength"
           >
-            O valor do empenho deve conter entre
+            O valor do empenho deve estar entre
             {{ validation.value.minLength }} a
             {{ validation.value.maxLength }}
             numeros

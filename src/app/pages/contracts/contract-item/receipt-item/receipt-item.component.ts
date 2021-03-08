@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { format, parseISO } from 'date-fns';
+import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import * as _ from 'lodash';
@@ -28,11 +29,52 @@ export class ReceiptItemComponent implements OnInit {
     lastUpdateDate: format(this.receipt.lastUpdate, 'dd/MM/yyyy'),
   };
 
-  constructor(private stringUtil: StringUtilService) {}
+  constructor(
+    private contractService: ContractService,
+    private stringUtil: StringUtilService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.receiptIndex !== undefined) {
+      this.receipt = _.cloneDeep(this.contract.receipts[this.receiptIndex]);
+      if (
+        this.receipt.paidDate !== undefined &&
+        typeof this.receipt.paidDate !== 'object'
+      )
+        this.receipt.paidDate = parseISO(this.receipt.paidDate);
+      if (
+        this.receipt.created !== undefined &&
+        typeof this.receipt.created !== 'object'
+      )
+        this.receipt.created = parseISO(this.receipt.created);
+      if (
+        this.receipt.lastUpdate !== undefined &&
+        typeof this.receipt.lastUpdate !== 'object'
+      ) {
+        this.receipt.lastUpdate = parseISO(this.receipt.lastUpdate);
+        this.receipt.lastUpdate = format(this.receipt.lastUpdate, 'dd/MM/yyyy');
+      }
+    } else {
+      if (this.contract.receipts.length === this.contract.total - 1)
+        this.receipt.value = this.notPaid();
+    }
+  }
 
-  registerPayment(): void {}
+  registerReceipt(): void {
+    if (this.receiptIndex !== undefined) {
+      this.receipt.lastUpdate = new Date();
+      this.contract.receipts[this.receiptIndex] = _.cloneDeep(this.receipt);
+    } else {
+      this.contract.receipts.push(_.cloneDeep(this.receipt));
+    }
+    this.contract.status =
+      this.receipt.paid == 'sim'
+        ? this.contract.total == this.contract.receipts.length
+          ? 'Concluído'
+          : 'Em andamento'
+        : 'A receber';
+    this.contractService.editContract(this.contract);
+  }
 
   notPaid(): string {
     return this.stringUtil.numberToMoney(

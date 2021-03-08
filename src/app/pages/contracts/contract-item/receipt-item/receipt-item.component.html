@@ -1,4 +1,4 @@
-<form (ngSubmit)="registerPayment()" #form="ngForm" aria-labelledby="title">
+<form (ngSubmit)="registerReceipt()" #form="ngForm" aria-labelledby="title">
   <div class="row">
     <div class="col-md-4">
       <div class="form-control-group">
@@ -9,7 +9,7 @@
             icon="info"
             pack="eva"
             [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma OE."
+            nbTooltip="Não será possível alterar o valor da ordem de empenho se ela já foi paga."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
           ></nb-icon
@@ -43,27 +43,28 @@
               ? 'success'
               : 'basic'
           "
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
           <p class="caption status-danger" *ngIf="value.errors?.overpaid">
-            O valor do empenho é superior ao valor restante a ser pago (R$
+            O valor do pagamento é superior ao valor restante a ser pago (R$
             {{ notPaid() }})!
           </p>
           <p class="caption status-danger" *ngIf="value.errors?.lastpayment">
-            O valor do empenho da última parcela deve ser igual ao valor
+            O valor do pagamento da última parcela deve ser igual ao valor
             restante a ser pago (R$
             {{ notPaid() }})!
           </p>
           <p class="caption status-danger" *ngIf="value.errors?.required">
-            O valor do empenho é obrigatório!
+            O valor do pagamento é obrigatório!
           </p>
           <p
             class="caption status-danger"
             *ngIf="value.errors?.minlength || value.errors?.maxlength"
           >
-            O valor do empenho deve conter entre
+            O valor do pagamento deve estar entre
             {{ validation.value.minLength }} a
             {{ validation.value.maxLength }}
             numeros
@@ -94,6 +95,7 @@
               ? 'success'
               : 'basic'
           "
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -122,6 +124,7 @@
               ? 'success'
               : 'basic'
           "
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -160,37 +163,41 @@
     </div>
     <div class="col-md-12">
       <div class="form-control-group">
-        <label class="label" for="input-service">Serviço:</label>
+        <label class="label" for="input-description">Descrição:</label>
         <textarea
           nbInput
-          [(ngModel)]="receipt.service"
-          #service="ngModel"
-          id="input-service"
-          name="service"
-          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
+          [(ngModel)]="receipt.description"
+          #description="ngModel"
+          id="input-description"
+          name="description"
+          placeholder="Descreva os detalhes da ordem de pagamento"
           fullWidth
           fieldSize="large"
           [required]="validation.service.required"
           [minlength]="validation.service.minLength"
           [maxlength]="validation.service.maxLength"
           [status]="
-            service.dirty
-              ? service.invalid
+            description.dirty
+              ? description.invalid
                 ? 'danger'
                 : 'success'
-              : receipt.service !== undefined
+              : receipt.description !== undefined
               ? 'success'
               : 'basic'
           "
-          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+          [attr.aria-invalid]="
+            description.invalid && description.touched ? true : null
+          "
         ></textarea>
-        <ng-container *ngIf="service.invalid && service.touched">
-          <p class="caption status-danger" *ngIf="service.errors?.required">
+        <ng-container *ngIf="description.invalid && description.touched">
+          <p class="caption status-danger" *ngIf="description.errors?.required">
             O campo de serviço é obrigatório!
           </p>
           <p
             class="caption status-danger"
-            *ngIf="service.errors?.minlength || service.errors?.maxlength"
+            *ngIf="
+              description.errors?.minlength || description.errors?.maxlength
+            "
           >
             O campo de serviço deve conter entre
             {{ validation.service.minLength }} a

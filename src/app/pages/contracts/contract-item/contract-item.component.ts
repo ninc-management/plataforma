@@ -7,7 +7,10 @@ import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
-import { ContractDialogComponent } from '../contract-dialog/contract-dialog.component';
+import {
+  ContractDialogComponent,
+  ComponentTypes,
+} from '../contract-dialog/contract-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
 
@@ -54,7 +57,7 @@ export class ContractItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.contract = _.cloneDeep(this.iContract);
-    this.contract.interest = this.contract.payments.length;
+    this.contract.interest = this.contract.receipts.length;
     this.calculatePaidValue();
     if (
       this.contract.created !== undefined &&
@@ -121,7 +124,9 @@ export class ContractItemComponent implements OnInit {
           contractIndex: this.index,
           paymentIndex: isPayment ? index : undefined,
           receiptIndex: isPayment ? undefined : index,
-          componentType: isPayment ? { PAYMENT: true } : { RECEIPT: true },
+          componentType: isPayment
+            ? ComponentTypes.PAYMENT
+            : ComponentTypes.RECEIPT,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -133,12 +138,12 @@ export class ContractItemComponent implements OnInit {
   }
 
   calculatePaidValue(): void {
-    this.contract.interest = this.contract.payments.length;
+    this.contract.interest = this.contract.receipts.length;
     this.contract.paid = this.stringUtil.numberToMoney(
-      this.contract.payments.reduce((accumulator: number, payment: any) => {
-        if (payment.paid == 'sim')
+      this.contract.receipts.reduce((accumulator: number, recipt: any) => {
+        if (recipt.paid == 'sim')
           accumulator =
-            accumulator + this.stringUtil.moneyToNumber(payment.value);
+            accumulator + this.stringUtil.moneyToNumber(recipt.value);
         return accumulator;
       }, 0)
     );

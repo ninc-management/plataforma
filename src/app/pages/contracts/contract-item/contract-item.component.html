@@ -641,7 +641,7 @@
       >
     </nb-alert>
     <nb-list>
-      <!-- <nb-list-item *ngFor="let payment of contract.payments; let i = index">
+      <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
         <div class="row irow" style="width: 100%">
           <div class="col-10 col-md-11">
             <div class="irow row">
@@ -651,7 +651,7 @@
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
                 <div class="col">
-                  {{ payment.service }}
+                  {{ receipt.description }}
                 </div>
                 <div class="col-md-3">
                   <nb-icon
@@ -660,7 +660,7 @@
                     status="success"
                   ></nb-icon>
                   <span style="vertical-align: 0.1em">
-                    {{ payment.value }}
+                    {{ receipt.value }}
                   </span>
                 </div>
               </a>
@@ -672,12 +672,12 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.payments.splice(i, 1); calculatePaidValue()"
+              (click)="contract.receipts.splice(i, 1); calculatePaidValue()"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
         </div>
-      </nb-list-item> -->
+      </nb-list-item>
     </nb-list>
     <button
       nbButton
@@ -739,7 +739,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.payments.splice(i, 1); calculatePaidValue()"
+              (click)="contract.payments.splice(i, 1)"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
@@ -751,7 +751,6 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="contract.payments.length == contract.total"
       (click)="paymentDialog(undefined, true)"
     >
       Nova Ordem de Pagamento

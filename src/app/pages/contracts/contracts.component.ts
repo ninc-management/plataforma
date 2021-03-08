@@ -7,7 +7,10 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
-import { ContractDialogComponent } from './contract-dialog/contract-dialog.component';
+import {
+  ContractDialogComponent,
+  ComponentTypes,
+} from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractService } from '../../shared/services/contract.service';
 import { ContractorService } from '../../shared/services/contractor.service';
@@ -212,7 +215,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             if (!contract.name) contract.name = contract.invoice.name;
             contract.value = contract.invoice.value;
             contract.interests =
-              contract.payments.length.toString() + '/' + contract.total;
+              contract.receipts.length.toString() + '/' + contract.total;
             contract.role = this.invoiceService.role(contract.invoice, user);
             return contract;
           });
@@ -255,12 +258,12 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
   contractDialog(event, isEditing: boolean): void {
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: isEditing
-          ? 'EDIÇÃO DE CONTRATO'
-          : 'ADICIONAR ORDEM DE PAGAMENTO',
+        title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
         contract: event.data,
         contractIndex: +event.index,
-        componentType: isEditing ? { CONTRACT: true } : { PAYMENT: true },
+        componentType: isEditing
+          ? ComponentTypes.CONTRACT
+          : ComponentTypes.RECEIPT,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

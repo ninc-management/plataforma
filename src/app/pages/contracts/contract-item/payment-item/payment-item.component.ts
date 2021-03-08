@@ -103,11 +103,11 @@ export class PaymentItemComponent implements OnInit {
         delete member.distribution;
         return member;
       });
-      if (this.contract.payments.length === this.contract.total - 1) {
-        this.payment.value = this.notPaid();
-        this.updateLastValues();
-        this.calculateTeamValues();
-      }
+      // if (this.contract.payments.length === this.contract.total - 1) {
+      //   this.payment.value = this.notPaid();
+      //   this.updateLastValues();
+      //   this.calculateTeamValues();
+      // }
     }
   }
 
@@ -119,12 +119,6 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.contract.payments.push(_.cloneDeep(this.payment));
     }
-    this.contract.status =
-      this.payment.paid == 'sim'
-        ? this.contract.total == this.contract.payments.length
-          ? 'Concluído'
-          : 'Em andamento'
-        : 'A receber';
     this.contractService.editContract(this.contract);
     this.submit.emit();
   }
