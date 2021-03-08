@@ -36,8 +36,6 @@ export class PaymentItemComponent implements OnInit {
   submitted = false;
   payment: any = {
     team: [],
-    notaFiscal: '15.5', // Porcentagem da nota fiscal
-    nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
     paid: 'não',
     created: this.today,
     lastUpdate: this.today,
@@ -45,9 +43,8 @@ export class PaymentItemComponent implements OnInit {
   userPayment: any = {};
   options = {
     valueType: '$',
-    liquid: '0',
     lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
-    lastLiquid: '0',
+    lastValue: '0',
     lastTeam: [],
   };
 
@@ -74,22 +71,10 @@ export class PaymentItemComponent implements OnInit {
     this.userData = this.completerService
       .local(team, 'fullName', 'fullName')
       .imageField('profilePicture');
-    this.contract.paid = this.stringUtil.numberToMoney(
-      this.contract.payments.reduce(
-        (accumulator: number, payment: any) =>
-          accumulator + this.stringUtil.moneyToNumber(payment.value),
-        0
-      )
-    );
     if (this.paymentIndex !== undefined) {
       this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
-      this.toLiquid(this.payment.value);
       this.updateLastValues();
       this.calculateTeamValues(false);
-      this.contract.paid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.contract.paid) -
-          this.stringUtil.moneyToNumber(this.payment.value)
-      );
       if (
         this.payment.paidDate !== undefined &&
         typeof this.payment.paidDate !== 'object'
@@ -120,7 +105,6 @@ export class PaymentItemComponent implements OnInit {
       });
       if (this.contract.payments.length === this.contract.total - 1) {
         this.payment.value = this.notPaid();
-        this.toLiquid(this.payment.value);
         this.updateLastValues();
         this.calculateTeamValues();
       }
@@ -150,11 +134,11 @@ export class PaymentItemComponent implements OnInit {
       this.userPayment.percentage = this.userPayment.value;
       this.userPayment.value = this.stringUtil.toValue(
         this.userPayment.value,
-        this.options.liquid
+        this.payment.value
       );
     } else
       this.userPayment.percentage = this.stringUtil
-        .toPercentage(this.userPayment.value, this.options.liquid)
+        .toPercentage(this.userPayment.value, this.payment.value)
         .slice(0, -1);
 
     this.userPayment.user = this.userPayment.user._id;
@@ -166,7 +150,7 @@ export class PaymentItemComponent implements OnInit {
 
   updateValue(idx: number): void {
     this.payment.team[idx].value = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.options.liquid) *
+      this.stringUtil.moneyToNumber(this.payment.value) *
         (1 -
           this.stringUtil.toMutiplyPercentage(
             this.payment.team[idx].percentage
@@ -176,17 +160,8 @@ export class PaymentItemComponent implements OnInit {
 
   updatePercentage(idx: number): void {
     this.payment.team[idx].percentage = this.stringUtil
-      .toPercentage(this.payment.team[idx].value, this.options.liquid)
+      .toPercentage(this.payment.team[idx].value, this.payment.value)
       .slice(0, -1);
-  }
-
-  toLiquid(value: string): void {
-    const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(value) *
-        this.stringUtil.toMutiplyPercentage(this.payment.notaFiscal) *
-        this.stringUtil.toMutiplyPercentage(this.payment.nortanPercentage)
-    );
-    this.options.liquid = this.stringUtil.numberToMoney(result);
   }
 
   isTeamEmpty(): boolean {
@@ -214,7 +189,7 @@ export class PaymentItemComponent implements OnInit {
 
   remainingBalance(): string {
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.options.liquid) -
+      this.stringUtil.moneyToNumber(this.payment.value) -
         this.stringUtil.moneyToNumber(this.total)
     );
   }
@@ -244,29 +219,29 @@ export class PaymentItemComponent implements OnInit {
   }
 
   calculateTeamValues(calculateValue = true): void {
-    if (this.options.liquid !== '0') {
+    if (this.payment.value !== '0') {
       this.payment.team.map((member, index) => {
         if (
           this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1
         )
           member.value = this.stringUtil.numberToMoney(
-            this.stringUtil.moneyToNumber(this.options.liquid) *
+            this.stringUtil.moneyToNumber(this.payment.value) *
               this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );
         else if (calculateValue) {
           const p = this.stringUtil
             .toPercentage(
               this.options.lastTeam[index].value,
-              this.options.lastLiquid
+              this.options.lastValue
             )
             .slice(0, -1);
           member.value = this.stringUtil.numberToMoney(
-            this.stringUtil.moneyToNumber(this.options.liquid) *
+            this.stringUtil.moneyToNumber(this.payment.value) *
               (1 - this.stringUtil.toMutiplyPercentage(p))
           );
         }
         member.percentage = this.stringUtil
-          .toPercentage(member.value, this.options.liquid)
+          .toPercentage(member.value, this.payment.value)
           .slice(0, -1);
         return member;
       });
@@ -275,7 +250,9 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateLastValues(): void {
-    this.options.lastLiquid = this.options.liquid.slice();
+    this.options.lastValue = this.payment.value
+      ? this.payment.value.slice()
+      : '0';
     this.options.lastTeam = _.cloneDeep(this.payment.team);
   }
 

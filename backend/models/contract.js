@@ -10,8 +10,6 @@ const userPayment = {
 const payment = {
   service: { type: String, required: true },
   value: { type: String, required: true },
-  notaFiscal: { type: String, required: true },
-  nortanPercentage: { type: String, required: true },
   team: [userPayment],
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },

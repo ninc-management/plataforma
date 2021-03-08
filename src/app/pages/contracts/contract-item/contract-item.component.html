@@ -690,7 +690,7 @@
       Nova Ordem de Empenho
     </button>
   </nb-tab>
-  <nb-tab tabTitle="Ordens de empenho" [tabIcon]="paymentIcon" responsive>
+  <nb-tab tabTitle="Ordens de pagamento" [tabIcon]="paymentIcon" responsive>
     <nb-alert
       outline="info"
       role="alert"
@@ -703,7 +703,7 @@
         [options]="{ animation: { type: 'pulse' } }"
       ></nb-icon>
       <b>
-        Para consilidar a remoção de uma ordem de empenho, é necessário
+        Para consilidar a remoção de uma ordem de pagamento, é necessário
         atualizar o contrato.</b
       >
     </nb-alert>
@@ -754,7 +754,7 @@
       [disabled]="contract.payments.length == contract.total"
       (click)="paymentDialog(undefined, true)"
     >
-      Nova Ordem de Empenho
+      Nova Ordem de Pagamento
     </button>
   </nb-tab>
 </nb-tabset>

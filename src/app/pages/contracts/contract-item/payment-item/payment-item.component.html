@@ -44,7 +44,7 @@
               : 'basic'
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
+          (ngModelChange)="calculateTeamValues()"
           (focus)="updateLastValues()"
           (focusout)="updateLastValues()"
         />
@@ -73,136 +73,7 @@
         </ng-container>
       </div>
     </div>
-    <div class="col-6 col-md-2">
-      <div class="form-control-group">
-        <label class="label" for="input-nf">NF(%):</label>
-        <input
-          nbInput
-          [(ngModel)]="payment.notaFiscal"
-          #nf="ngModel"
-          id="input-nf"
-          name="nf"
-          placeholder="Revisão"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{ type: 'num' }"
-          [required]="validation.nf.required"
-          [status]="
-            nf.dirty
-              ? nf.invalid
-                ? 'danger'
-                : 'success'
-              : payment.notaFiscal !== undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
-        />
-      </div>
-    </div>
-    <div class="col-6 col-md-2">
-      <div class="form-control-group">
-        <label class="label" for="input-nortan">Nortan(%):</label>
-        <input
-          nbInput
-          [(ngModel)]="payment.nortanPercentage"
-          #nortan="ngModel"
-          id="input-nortan"
-          name="nortan"
-          placeholder="Revisão"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{ type: 'num' }"
-          [required]="validation.nortan.required"
-          [status]="
-            nortan.dirty
-              ? nortan.invalid
-                ? 'danger'
-                : 'success'
-              : payment.nortanPercentage !== undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
-          (ngModelChange)="toLiquid(payment.value); calculateTeamValues()"
-        />
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-liquid">Valor liquído:</label>
-        <input
-          nbInput
-          [(ngModel)]="options.liquid"
-          #liquid="ngModel"
-          id="input-liquid"
-          name="liquid"
-          placeholder="Valor liquido"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: '2'
-          }"
-          [required]="validation.liquid.required"
-          [status]="
-            options.liquid !== undefined
-              ? liquid.invalid || options.liquid.length === 0
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-md-12">
-      <div class="form-control-group">
-        <label class="label" for="input-service">Serviço:</label>
-        <textarea
-          nbInput
-          [(ngModel)]="payment.service"
-          #service="ngModel"
-          id="input-service"
-          name="service"
-          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.service.required"
-          [minlength]="validation.service.minLength"
-          [maxlength]="validation.service.maxLength"
-          [status]="
-            service.dirty
-              ? service.invalid
-                ? 'danger'
-                : 'success'
-              : payment.service !== undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
-        ></textarea>
-        <ng-container *ngIf="service.invalid && service.touched">
-          <p class="caption status-danger" *ngIf="service.errors?.required">
-            O campo de serviço é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="service.errors?.minlength || service.errors?.maxlength"
-          >
-            O campo de serviço deve conter entre
-            {{ validation.service.minLength }} a
-            {{ validation.service.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
-      </div>
-    </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-paidCheck">Pago?</label>
         <nb-select
@@ -225,7 +96,7 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6 col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-paidDate">Data do pagamento:</label>
         <input
@@ -284,7 +155,7 @@
         </ng-template>
       </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6">
       <div class="form-control-group">
         <label class="label" for="input-created">Data de criação:</label>
         <input
@@ -313,7 +184,7 @@
         <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
       </div>
     </div>
-    <div class="col-6 col-md-3">
+    <div class="col-6">
       <div class="form-control-group">
         <label class="label" for="input-updated">Última atualização:</label>
         <input
@@ -338,6 +209,48 @@
           "
           [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
         />
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-service">Serviço:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="payment.service"
+          #service="ngModel"
+          id="input-service"
+          name="service"
+          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.service.required"
+          [minlength]="validation.service.minLength"
+          [maxlength]="validation.service.maxLength"
+          [status]="
+            service.dirty
+              ? service.invalid
+                ? 'danger'
+                : 'success'
+              : payment.service !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="service.invalid && service.touched">
+          <p class="caption status-danger" *ngIf="service.errors?.required">
+            O campo de serviço é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="service.errors?.minlength || service.errors?.maxlength"
+          >
+            O campo de serviço deve conter entre
+            {{ validation.service.minLength }} a
+            {{ validation.service.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
       </div>
     </div>
   </div>
@@ -560,8 +473,8 @@
         <div
           class="col-4 col-md-2"
           [ngClass]="{
-            danger: total !== options.liquid && total !== '0',
-            success: total === options.liquid && total !== '0'
+            danger: total !== payment.value && total !== '0',
+            success: total === payment.value && total !== '0'
           }"
         >
           {{ total }}
@@ -569,11 +482,11 @@
         <div
           class="col-4 col-md-1"
           [ngClass]="{
-            danger: total !== options.liquid && total !== '0',
-            success: total === options.liquid && total !== '0'
+            danger: total !== payment.value && total !== '0',
+            success: total === payment.value && total !== '0'
           }"
         >
-          {{ stringUtil.toPercentage(total, options.liquid) }}
+          {{ stringUtil.toPercentage(total, payment.value) }}
         </div>
         <div class="col-md-1"></div>
       </div>
@@ -585,7 +498,7 @@
     status="primary"
     size="large"
     [disabled]="
-      submitted || !form.valid || isTeamEmpty() || total !== options.liquid
+      submitted || !form.valid || isTeamEmpty() || total !== payment.value
     "
     [class.btn-pulse]="submitted"
   >
