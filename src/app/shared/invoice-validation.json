@@ -2,6 +2,7 @@
   "author": { "required": true },
   "department": { "required": true },
   "coordination": { "required": true },
+  "administration": { "required": true },
   "code": { "required": true },
   "date": { "required": true },
   "status": { "required": true },

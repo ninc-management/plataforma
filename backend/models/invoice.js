@@ -30,6 +30,7 @@ const invoiceSchema = mongoose.Schema({
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   department: { type: String, required: true },
   coordination: { type: String, required: true },
+  administration: { type: String, required: true },
   code: { type: String, required: true, unique: true },
   type: { type: String, required: true },
   service: { type: String, required: true },

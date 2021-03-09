@@ -2,7 +2,7 @@
   <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
     <form (ngSubmit)="updateContract()" #form="ngForm" aria-labelledby="title">
       <div class="row">
-        <div class="col-sm-7">
+        <div class="col-md-7">
           <div class="form-control-group">
             <label class="label" for="input-author">Autor:</label>
             <input
@@ -79,7 +79,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-sm-4">
+        <div class="col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-code">Código do orçamento:</label>
             <input
@@ -100,7 +100,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-2">
+        <div class="col-md-2">
           <div class="form-control-group">
             <label class="label" for="input-department">Diretoria:</label>
             <input
@@ -127,7 +127,7 @@
             />
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-coordination">Coordenação:</label>
             <input
@@ -154,49 +154,85 @@
             />
           </div>
         </div>
-      </div>
-
-      <div class="form-control-group">
-        <label class="label" for="input-contractor">Cliente:</label>
-        <input
-          nbInput
-          [(ngModel)]="contract.contractor"
-          #contractor="ngModel"
-          id="input-contractor"
-          name="contractor"
-          placeholder="Nome do cliente"
-          fullWidth
-          fieldSize="large"
-          [nbTooltip]="tooltipText()"
-          nbTooltipPlacement="top"
-          nbTooltipStatus="primary"
-          [required]="validation.contractor.required"
-          [status]="
-            contractor.dirty
-              ? contractor.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            contractor.invalid && contractor.touched ? true : null
-          "
-          [readonly]="true"
-        />
-        <ng-container *ngIf="contractor.invalid && contractor.touched">
-          <p class="caption status-danger" *ngIf="contractor.errors?.required">
-            O nome do cliente é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength"
-          >
-            O nome do cliente deve conter entre
-            {{ validation.contractor.minLength }} a
-            {{ validation.contractor.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-contractor">Cliente:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.contractor"
+              #contractor="ngModel"
+              id="input-contractor"
+              name="contractor"
+              placeholder="Nome do cliente"
+              fullWidth
+              fieldSize="large"
+              [nbTooltip]="tooltipText()"
+              nbTooltipPlacement="top"
+              nbTooltipStatus="primary"
+              [required]="validation.contractor.required"
+              [status]="
+                contractor.dirty
+                  ? contractor.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                contractor.invalid && contractor.touched ? true : null
+              "
+              [readonly]="true"
+            />
+            <ng-container *ngIf="contractor.invalid && contractor.touched">
+              <p
+                class="caption status-danger"
+                *ngIf="contractor.errors?.required"
+              >
+                O nome do cliente é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="
+                  contractor.errors?.minlength || contractor.errors?.maxlength
+                "
+              >
+                O nome do cliente deve conter entre
+                {{ validation.contractor.minLength }} a
+                {{ validation.contractor.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-administration"
+              >Administração do contrato:</label
+            >
+            <nb-select
+              [(ngModel)]="contract.invoice.administration"
+              #administration="ngModel"
+              id="input-administration"
+              name="administration"
+              placeholder="Selecione o tipo de administração"
+              fullWidth
+              size="large"
+              [disabled]="true"
+              [status]="
+                administration.dirty
+                  ? administration.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                administration.invalid && administration.touched ? true : null
+              "
+            >
+              <nb-option value="nortan"> Administração Nortan </nb-option>
+              <nb-option value="pessoal"> Administração Pessoal </nb-option>
+            </nb-select>
+          </div>
+        </div>
       </div>
 
       <div class="form-control-group">
