@@ -59,6 +59,7 @@ export class ContractItemComponent implements OnInit {
     this.contract = _.cloneDeep(this.iContract);
     this.contract.interest = this.contract.receipts.length;
     this.calculatePaidValue();
+    this.calculateBalance();
     if (
       this.contract.created !== undefined &&
       typeof this.contract.created !== 'object'
@@ -134,7 +135,10 @@ export class ContractItemComponent implements OnInit {
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe(() => this.calculatePaidValue());
+      .subscribe(() => {
+        this.calculatePaidValue();
+        this.calculateBalance();
+      });
   }
 
   calculatePaidValue(): void {
@@ -146,6 +150,18 @@ export class ContractItemComponent implements OnInit {
             accumulator + this.stringUtil.moneyToNumber(recipt.value);
         return accumulator;
       }, 0)
+    );
+  }
+
+  calculateBalance(): void {
+    this.contract.balance = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.contract.paid) -
+        this.contract.payments.reduce((accumulator: number, payment: any) => {
+          if (payment.paid == 'sim')
+            accumulator =
+              accumulator + this.stringUtil.moneyToNumber(payment.value);
+          return accumulator;
+        }, 0)
     );
   }
 

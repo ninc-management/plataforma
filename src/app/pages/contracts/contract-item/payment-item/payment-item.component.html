@@ -29,8 +29,6 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
-          [overPaid]="notPaid()"
-          [lastPayment]="lastPayment()"
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
@@ -109,7 +107,6 @@
           placeholder="Escolha uma data"
           fullWidth
           fieldSize="large"
-          [required]="validation.paidDate.required"
           [readonly]="true"
           [disabled]="payment.paid === 'não'"
           [status]="
@@ -314,7 +311,6 @@
           placeholder="Coordenação"
           fullWidth
           size="large"
-          [required]="validation.coordination.required"
           [status]="coordination.value ? 'success' : 'basic'"
           [attr.aria-invalid]="
             coordination.invalid && coordination.touched ? true : null
@@ -363,7 +359,6 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
-          [required]="validation.paid.required"
           [status]="paid.value ? 'success' : 'basic'"
           [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
           [readonly]="false"

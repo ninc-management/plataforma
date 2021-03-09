@@ -173,12 +173,13 @@ export class PaymentItemComponent implements OnInit {
   }
 
   notPaid(): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.contract.value) -
-        this.stringUtil.moneyToNumber(
-          this.contract.paid ? this.contract.paid : '0,00'
-        )
-    );
+    // return this.stringUtil.numberToMoney(
+    //   this.stringUtil.moneyToNumber(this.contract.value) -
+    //     this.stringUtil.moneyToNumber(
+    //       this.contract.paid ? this.contract.paid : '0,00'
+    //     )
+    // );
+    return '';
   }
 
   remainingBalance(): string {
@@ -189,14 +190,15 @@ export class PaymentItemComponent implements OnInit {
   }
 
   lastPayment(): string {
-    if (
-      (this.paymentIndex === undefined &&
-        this.contract.payments.length != this.contract.total - 1) ||
-      (this.paymentIndex !== undefined &&
-        this.contract.payments.length - 1 != this.contract.total - 1)
-    )
-      return undefined;
-    return this.notPaid();
+    // if (
+    //   (this.paymentIndex === undefined &&
+    //     this.contract.payments.length != this.contract.total - 1) ||
+    //   (this.paymentIndex !== undefined &&
+    //     this.contract.payments.length - 1 != this.contract.total - 1)
+    // )
+    //   return undefined;
+    // return this.notPaid();
+    return '';
   }
 
   updatePaidDate(): void {

@@ -54,9 +54,12 @@ export class ReceiptItemComponent implements OnInit {
         this.receipt.lastUpdate = parseISO(this.receipt.lastUpdate);
         this.receipt.lastUpdate = format(this.receipt.lastUpdate, 'dd/MM/yyyy');
       }
+      this.toLiquid(this.receipt.value);
     } else {
-      if (this.contract.receipts.length === this.contract.total - 1)
+      if (this.contract.receipts.length === this.contract.total - 1) {
         this.receipt.value = this.notPaid();
+        this.toLiquid(this.receipt.value);
+      }
     }
   }
 

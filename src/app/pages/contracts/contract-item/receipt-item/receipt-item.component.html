@@ -43,7 +43,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid == 'sim'"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -95,7 +95,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid == 'sim'"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -124,7 +124,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid == 'sim'"
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
