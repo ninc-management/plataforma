@@ -385,7 +385,7 @@ export class MetricsService implements OnDestroy {
               if (this.contractService.hasPayments(contract._id)) {
                 const value = contract.payments.reduce(
                   (paid: UserAndCoordinations, payment) => {
-                    if (payment.paid != 'não') {
+                    if (payment.paid) {
                       let paidDate = payment.paidDate;
                       if (typeof paidDate !== 'object')
                         paidDate = parseISO(paidDate);
@@ -824,7 +824,7 @@ export class MetricsService implements OnDestroy {
           const partial = contracts.reduce((received: any, contract) => {
             if (this.contractService.hasPayments(contract._id)) {
               const value = contract.payments.reduce((paid: any, payment) => {
-                if (payment.paid != 'não') {
+                if (payment.paid) {
                   let paidDate = payment.paidDate;
                   if (typeof paidDate !== 'object')
                     paidDate = parseISO(paidDate);

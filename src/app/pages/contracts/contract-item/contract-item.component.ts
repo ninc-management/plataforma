@@ -145,7 +145,7 @@ export class ContractItemComponent implements OnInit {
     this.contract.interest = this.contract.receipts.length;
     this.contract.paid = this.stringUtil.numberToMoney(
       this.contract.receipts.reduce((accumulator: number, recipt: any) => {
-        if (recipt.paid == 'sim')
+        if (recipt.paid)
           accumulator =
             accumulator + this.stringUtil.moneyToNumber(recipt.value);
         return accumulator;
@@ -157,7 +157,7 @@ export class ContractItemComponent implements OnInit {
     this.contract.balance = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.contract.paid) -
         this.contract.payments.reduce((accumulator: number, payment: any) => {
-          if (payment.paid == 'sim')
+          if (payment.paid)
             accumulator =
               accumulator + this.stringUtil.moneyToNumber(payment.value);
           return accumulator;

@@ -13,7 +13,7 @@ const payment = {
   team: [userPayment],
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
-  paid: { type: String, required: true },
+  paid: { type: Boolean, required: true },
   paidDate: { type: Date },
 };
 
@@ -24,7 +24,7 @@ const receipt = {
   nortanPercentage: { type: String, required: true },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
-  paid: { type: String, required: true },
+  paid: { type: Boolean, required: true },
   paidDate: { type: Date },
 };
 

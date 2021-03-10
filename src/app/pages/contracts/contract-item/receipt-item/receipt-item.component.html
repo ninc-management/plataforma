@@ -43,7 +43,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid == 'sim'"
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -95,7 +95,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid == 'sim'"
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -124,7 +124,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid == 'sim'"
+          [disabled]="receipt.paid"
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -225,8 +225,8 @@
             paidCheck.invalid && paidCheck.touched ? true : null
           "
         >
-          <nb-option value="não">NÃO</nb-option>
-          <nb-option value="sim">SIM</nb-option>
+          <nb-option value=false>NÃO</nb-option>
+          <nb-option value=true>SIM</nb-option>
         </nb-select>
       </div>
     </div>
@@ -234,7 +234,7 @@
       <div class="form-control-group">
         <label class="label" for="input-paidDate">Data do pagamento:</label>
         <input
-          *ngIf="receipt.paid === 'não'; else withdate"
+          *ngIf="!receipt.paid; else withdate"
           nbInput
           [(ngModel)]="receipt.paidDate"
           #paidDate="ngModel"
@@ -245,7 +245,7 @@
           fieldSize="large"
           [required]="validation.paidDate.required"
           [readonly]="true"
-          [disabled]="receipt.paid === 'não'"
+          [disabled]="!receipt.paid"
           [status]="
             paidDate.dirty
               ? paidDate.invalid

@@ -71,7 +71,7 @@ export class ReceiptItemComponent implements OnInit {
       this.contract.receipts.push(_.cloneDeep(this.receipt));
     }
     this.contract.status =
-      this.receipt.paid == 'sim'
+      this.receipt.paid
         ? this.contract.total == this.contract.receipts.length
           ? 'Concluído'
           : 'Em andamento'
@@ -109,7 +109,7 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   updatePaidDate(): void {
-    if (this.receipt.paid === 'não') this.receipt.paidDate = undefined;
+    if (!this.receipt.paid) this.receipt.paidDate = undefined;
     else this.receipt.paidDate = new Date();
   }
 }

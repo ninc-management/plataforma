@@ -202,7 +202,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updatePaidDate(): void {
-    if (this.payment.paid === 'não') this.payment.paidDate = undefined;
+    if (!this.payment.paid) this.payment.paidDate = undefined;
     else this.payment.paidDate = new Date();
   }
 
