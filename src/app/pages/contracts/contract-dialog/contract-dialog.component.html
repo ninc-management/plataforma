@@ -3,7 +3,7 @@
   [ngStyle]="{
     'width.px':
       !isPayable &&
-      componentType != types.CONTRACT &&
+      componentType === types.RECEIPT &&
       paymentIndex === undefined &&
       receiptIndex === undefined
         ? 'auto'
@@ -14,7 +14,7 @@
     <nb-card
       *ngIf="
         !isPayable &&
-          componentType != types.CONTRACT &&
+          componentType === types.RECEIPT &&
           paymentIndex === undefined &&
           receiptIndex === undefined;
         else normal
@@ -82,6 +82,13 @@
             (submit)="dismiss()"
             *ngIf="componentType == types.RECEIPT"
           ></ngx-receipt-item>
+          <ngx-expense-item
+            [contract]="contract"
+            [contractIndex]="contractIndex"
+            [expenseIndex]="expenseIndex"
+            (submit)="dismiss()"
+            *ngIf="componentType == types.EXPENSE"
+          ></ngx-expense-item>
         </nb-card-body>
       </nb-card>
     </ng-template>

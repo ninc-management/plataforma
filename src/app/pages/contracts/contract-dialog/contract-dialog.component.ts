@@ -12,6 +12,7 @@ export enum ComponentTypes {
   CONTRACT,
   PAYMENT,
   RECEIPT,
+  EXPENSE,
 }
 
 @Component({
@@ -25,7 +26,8 @@ export class ContractDialogComponent implements OnInit {
   @Input() contractIndex: number;
   @Input() paymentIndex: number;
   @Input() receiptIndex: number;
-  @Input() componentType: number;
+  @Input() expenseIndex: number;
+  @Input() componentType: ComponentTypes;
   isPayable = true;
   types = ComponentTypes;
 

@@ -715,7 +715,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i, false)"
+                (click)="paymentDialog(i, types.RECEIPT)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -754,7 +754,7 @@
       status="primary"
       size="large"
       [disabled]="contract.receipts.length == contract.total"
-      (click)="paymentDialog(undefined, false)"
+      (click)="paymentDialog(undefined, types.RECEIPT)"
     >
       Nova Ordem de Empenho
     </button>
@@ -782,7 +782,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i, true)"
+                (click)="paymentDialog(i, types.PAYMENT)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -820,7 +820,7 @@
       fullWidth
       status="primary"
       size="large"
-      (click)="paymentDialog(undefined, true)"
+      (click)="paymentDialog(undefined, types.PAYMENT)"
     >
       Nova Ordem de Pagamento
     </button>
@@ -832,7 +832,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i, true)"
+                (click)="paymentDialog(i, types.EXPENSE)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -870,7 +870,7 @@
       fullWidth
       status="primary"
       size="large"
-      (click)="paymentDialog(undefined, true)"
+      (click)="paymentDialog(undefined, types.EXPENSE)"
     >
       Nova Despesa
     </button>

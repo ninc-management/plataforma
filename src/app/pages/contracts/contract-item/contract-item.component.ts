@@ -24,6 +24,7 @@ export class ContractItemComponent implements OnInit {
   @Input() index: number;
   contract: any;
   contractNumber: number;
+  types = ComponentTypes;
   today = new Date();
   todayDate = format(this.today, 'dd/MM/yyyy');
   validation = (contract_validation as any).default;
@@ -109,17 +110,28 @@ export class ContractItemComponent implements OnInit {
     this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
   }
 
-  paymentDialog(index: number, isPayment: boolean): void {
+  paymentDialog(index: number, componentType: ComponentTypes): void {
     index = index != undefined ? index : undefined;
     let title = '';
-    if (isPayment)
-      title =
-        index != undefined
-          ? 'ORDEM DE PAGAMENTO'
-          : 'ADICIONAR ORDEM DE PAGAMENTO';
-    else
-      title =
-        index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
+    switch (componentType) {
+      case ComponentTypes.RECEIPT:
+        title =
+          index != undefined
+            ? 'ORDEM DE EMPENHO'
+            : 'ADICIONAR ORDEM DE EMPENHO';
+        break;
+      case ComponentTypes.PAYMENT:
+        title =
+          index != undefined
+            ? 'ORDEM DE PAGAMENTO'
+            : 'ADICIONAR ORDEM DE PAGAMENTO';
+        break;
+      case ComponentTypes.EXPENSE:
+        title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
+        break;
+      default:
+        break;
+    }
 
     this.dialogService
       .open(ContractDialogComponent, {
@@ -127,11 +139,13 @@ export class ContractItemComponent implements OnInit {
           title: title,
           contract: this.contract,
           contractIndex: this.index,
-          paymentIndex: isPayment ? index : undefined,
-          receiptIndex: isPayment ? undefined : index,
-          componentType: isPayment
-            ? ComponentTypes.PAYMENT
-            : ComponentTypes.RECEIPT,
+          paymentIndex:
+            componentType == ComponentTypes.PAYMENT ? index : undefined,
+          receiptIndex:
+            componentType == ComponentTypes.RECEIPT ? index : undefined,
+          expenseIndex:
+            componentType == ComponentTypes.EXPENSE ? index : undefined,
+          componentType: componentType,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
