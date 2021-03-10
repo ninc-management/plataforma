@@ -38,6 +38,10 @@ export class ContractItemComponent implements OnInit {
     icon: 'receipt',
     pack: 'fac',
   };
+  expenseIcon = {
+    icon: 'minus',
+    pack: 'fac',
+  };
   options = {
     valueType: '%',
   };
