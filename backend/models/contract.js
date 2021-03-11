@@ -7,6 +7,16 @@ const userPayment = {
   value: { type: String, required: true },
 };
 
+const expense = {
+  description: { type: String, required: true },
+  nf: { type: Boolean, required: true },
+  value: { type: String, required: true },
+  created: { type: Date, required: true },
+  lastUpdate: { type: Date, required: true },
+  paid: { type: Boolean, required: true },
+  paidDate: { type: Date },
+};
+
 const payment = {
   service: { type: String, required: true },
   value: { type: String, required: true },
@@ -38,6 +48,7 @@ const contractSchema = mongoose.Schema({
   invoice: { type: mongoose.ObjectId, ref: 'Invoice', required: true },
   payments: [payment],
   receipts: [receipt],
+  expenses: [expense],
   status: { type: String, required: true },
   version: { type: String, required: true },
   total: { type: String },

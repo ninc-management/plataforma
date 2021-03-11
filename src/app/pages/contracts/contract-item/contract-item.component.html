@@ -826,8 +826,8 @@
     </button>
   </nb-tab>
   <nb-tab tabTitle="Despesas" [tabIcon]="expenseIcon" responsive>
-    <!-- <nb-list>
-      <nb-list-item *ngFor="let payment of contract.payments; let i = index">
+    <nb-list>
+      <nb-list-item *ngFor="let expense of contract.expenses; let i = index">
         <div class="row irow" style="width: 100%">
           <div class="col-10 col-md-11">
             <div class="irow row">
@@ -837,7 +837,7 @@
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
                 <div class="col">
-                  {{ payment.service }}
+                  {{ expense.description }}
                 </div>
                 <div class="col-md-3">
                   <nb-icon
@@ -846,7 +846,7 @@
                     status="success"
                   ></nb-icon>
                   <span style="vertical-align: 0.1em">
-                    {{ payment.value }}
+                    {{ expense.value }}
                   </span>
                 </div>
               </a>
@@ -858,13 +858,13 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.payments.splice(i, 1)"
+              (click)="contract.expenses.splice(i, 1)"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
         </div>
       </nb-list-item>
-    </nb-list> -->
+    </nb-list>
     <button
       nbButton
       fullWidth

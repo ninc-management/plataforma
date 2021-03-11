@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NbFileUploaderOptions } from '../../../../@theme/components';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { ContractService } from '../../../../shared/services/contract.service';
+import * as _ from 'lodash';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
@@ -31,7 +33,7 @@ export class ExpenseItemComponent implements OnInit {
   fileTypesAllowed: string[];
   maxFileSize = 5;
 
-  constructor() {}
+  constructor(private contractService: ContractService) {}
 
   ngOnInit(): void {
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
@@ -60,6 +62,27 @@ export class ExpenseItemComponent implements OnInit {
         },
       },
     };
+
+    if (this.expenseIndex !== undefined) {
+      this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
+      if (
+        this.expense.paidDate !== undefined &&
+        typeof this.expense.paidDate !== 'object'
+      )
+        this.expense.paidDate = parseISO(this.expense.paidDate);
+      if (
+        this.expense.created !== undefined &&
+        typeof this.expense.created !== 'object'
+      )
+        this.expense.created = parseISO(this.expense.created);
+      if (
+        this.expense.lastUpdate !== undefined &&
+        typeof this.expense.lastUpdate !== 'object'
+      ) {
+        this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
+        this.expense.lastUpdate = format(this.expense.lastUpdate, 'dd/MM/yyyy');
+      }
+    }
   }
 
   urlReceiver(fileList: BehaviorSubject<any>[]): void {
@@ -76,7 +99,18 @@ export class ExpenseItemComponent implements OnInit {
     }
   }
 
-  registerExpense(): void {}
+  registerExpense(): void {
+    if (this.expenseIndex !== undefined) {
+      this.expense.lastUpdate = new Date();
+      this.contract.expenses[this.expenseIndex] = _.cloneDeep(this.expense);
+    } else {
+      this.contract.expenses.push(_.cloneDeep(this.expense));
+    }
+    this.contractService.editContract(this.contract);
+  }
 
-  updatePaidDate(): void {}
+  updatePaidDate(): void {
+    if (!this.expense.paid) this.expense.paidDate = undefined;
+    else this.expense.paidDate = new Date();
+  }
 }
