@@ -20,6 +20,7 @@ import {
 } from '@nebular/theme';
 import { Ng2CompleterModule } from 'ng2-completer';
 import { ThemeModule } from '../@theme/theme.module';
+import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
 import { PagesComponent } from './pages.component';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { PagesRoutingModule } from './pages-routing.module';
@@ -50,6 +51,7 @@ import { ExpenseItemComponent } from './contracts/contract-item/expense-item/exp
     NbCardModule,
     NbCheckboxModule,
     NbDatepickerModule,
+    NbFileUploaderModule,
     NbIconModule,
     NbInputModule,
     NbListModule,

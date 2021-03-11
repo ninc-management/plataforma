@@ -1,1 +1,287 @@
-<p>expense-item works!</p>
+<form (ngSubmit)="registerExpense()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="form-control-group">
+        <label class="label" for="input-value"
+          >Valor:
+          <nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon
+        ></label>
+        <input
+          nbInput
+          [(ngModel)]="expense.value"
+          #value="ngModel"
+          id="input-value"
+          name="value"
+          placeholder="Valor da despesa"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
+          [required]="validation.value.required"
+          [minLength]="validation.value.minLength"
+          [maxLength]="validation.value.maxLength"
+          [status]="
+            value.dirty
+              ? value.invalid
+                ? 'danger'
+                : 'success'
+              : expense.value !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [disabled]="expense.paid"
+          [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+        />
+        <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
+          <p class="caption status-danger" *ngIf="value.errors?.required">
+            O valor da despesa é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="value.errors?.minlength || value.errors?.maxlength"
+          >
+            O valor da despesa deve conter entre
+            {{ validation.value.minLength }} a
+            {{ validation.value.maxLength }}
+            números
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-control-group">
+        <label class="label" for="input-nf">Com nota fiscal?</label>
+        <nb-select
+          [(ngModel)]="expense.nf"
+          #nf="ngModel"
+          id="input-nf"
+          name="nf"
+          placeholder="nota fiscal?"
+          fullWidth
+          size="large"
+          [required]="validation.nf.required"
+          [status]="nf.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+        >
+          <nb-option [value]="false">NÃO</nb-option>
+          <nb-option [value]="true">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-md-12" *ngIf="expense.nf">
+      <nb-file-uploader
+        [options]="uploaderOptions"
+        [isFileDrop]="true"
+        (filesList)="urlReceiver($event)"
+        dropAreaLabel="Arraste seu comprovante aqui ou"
+        dropAreaFileChooserLabel="escolha um arquivo"
+      ></nb-file-uploader>
+    </div>
+    <div class="col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-description">Descrição:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="expense.description"
+          #description="ngModel"
+          id="input-description"
+          name="description"
+          placeholder="Descreva os detalhes da despesa"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.service.required"
+          [minlength]="validation.service.minLength"
+          [maxlength]="validation.service.maxLength"
+          [status]="
+            description.dirty
+              ? description.invalid
+                ? 'danger'
+                : 'success'
+              : expense.description !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            description.invalid && description.touched ? true : null
+          "
+        ></textarea>
+        <ng-container *ngIf="description.invalid && description.touched">
+          <p class="caption status-danger" *ngIf="description.errors?.required">
+            O campo de descrição é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="
+              description.errors?.minlength || description.errors?.maxlength
+            "
+          >
+            O campo de descrição deve conter entre
+            {{ validation.service.minLength }} a
+            {{ validation.service.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidCheck">Pago?</label>
+        <nb-select
+          [(ngModel)]="expense.paid"
+          #paidCheck="ngModel"
+          id="input-paidCheck"
+          name="paidCheck"
+          placeholder="OE paga?"
+          fullWidth
+          size="large"
+          (ngModelChange)="updatePaidDate()"
+          [required]="validation.paidCheck.required"
+          [status]="paidCheck.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            paidCheck.invalid && paidCheck.touched ? true : null
+          "
+        >
+          <nb-option [value]="false">NÃO</nb-option>
+          <nb-option [value]="true">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-paidDate">Data do pagamento:</label>
+        <input
+          *ngIf="!expense.paid; else withdate"
+          nbInput
+          [(ngModel)]="expense.paidDate"
+          #paidDate="ngModel"
+          id="input-paidDate"
+          name="paidDate"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.paidDate.required"
+          [readonly]="true"
+          [disabled]="!expense.paid"
+          [status]="
+            paidDate.dirty
+              ? paidDate.invalid
+                ? 'danger'
+                : 'success'
+              : expense.paidDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            paidDate.invalid && paidDate.touched ? true : null
+          "
+        />
+        <ng-template #withdate>
+          <input
+            nbInput
+            [(ngModel)]="expense.paidDate"
+            #paidDate="ngModel"
+            id="input-paidDate"
+            name="paidDate"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="pDatepicker"
+            [required]="validation.paidDate.required"
+            [readonly]="true"
+            [status]="
+              paidDate.dirty
+                ? paidDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : expense.paidDate !== undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              paidDate.invalid && paidDate.touched ? true : null
+            "
+          />
+          <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
+        </ng-template>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-created">Data de criação:</label>
+        <input
+          nbInput
+          [(ngModel)]="expense.created"
+          #created="ngModel"
+          id="input-created"
+          name="created"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="cDatepicker"
+          [required]="validation.created.required"
+          [readonly]="true"
+          [status]="
+            created.dirty
+              ? created.invalid
+                ? 'danger'
+                : 'success'
+              : expense.created !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+        />
+        <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-updated">Última atualização:</label>
+        <input
+          nbInput
+          [(ngModel)]="options.lastUpdateDate"
+          #updated="ngModel"
+          id="input-updated"
+          name="updated"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.lastUpdate.required"
+          [readonly]="true"
+          [status]="
+            updated.dirty
+              ? updated.invalid
+                ? 'danger'
+                : 'success'
+              : options.lastUpdateDate !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
+        />
+      </div>
+    </div>
+  </div>
+
+  <button
+    nbButton
+    fullWidth
+    status="primary"
+    size="large"
+    [disabled]="!form.valid"
+  >
+    {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+  </button>
+</form>
