@@ -577,7 +577,7 @@
               #balance="ngModel"
               id="input-balance"
               name="balance"
-              placeholder="Código do Orçamento"
+              placeholder="Balanço do contrato"
               fullWidth
               fieldSize="large"
               [brmasker]="{
@@ -588,10 +588,8 @@
               }"
               [required]="validation.balance?.required"
               [status]="
-                balance.dirty
-                  ? balance.invalid
-                    ? 'danger'
-                    : 'success'
+                balance.invalid || contract.balance[0] == '-'
+                  ? 'danger'
                   : 'basic'
               "
               [attr.aria-invalid]="
@@ -610,7 +608,7 @@
               #paid="ngModel"
               id="input-paid"
               name="paid"
-              placeholder="Código do Orçamento"
+              placeholder="Valor pago"
               fullWidth
               fieldSize="large"
               [brmasker]="{
@@ -741,7 +739,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.receipts.splice(i, 1); calculatePaidValue()"
+              (click)="contract.receipts.splice(i, 1); calculatePaidValue(); calculateBalance()"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
@@ -808,7 +806,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.payments.splice(i, 1)"
+              (click)="contract.payments.splice(i, 1); calculateBalance()"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
@@ -858,7 +856,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.expenses.splice(i, 1)"
+              (click)="contract.expenses.splice(i, 1); calculateBalance()"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>

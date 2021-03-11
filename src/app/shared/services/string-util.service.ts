@@ -19,7 +19,7 @@ export class StringUtilService {
   }
 
   numberToMoney(value: number): string {
-    return this.brMask.writeValueMoney(
+    const result = this.brMask.writeValueMoney(
       value.toFixed(2).toString().replace('.', ','),
       {
         money: true,
@@ -28,6 +28,7 @@ export class StringUtilService {
         decimal: 2,
       }
     );
+    return value < 0 ? '-' + result : result;
   }
 
   round(num: number): number {

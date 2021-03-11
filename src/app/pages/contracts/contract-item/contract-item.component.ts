@@ -179,6 +179,12 @@ export class ContractItemComponent implements OnInit {
             accumulator =
               accumulator + this.stringUtil.moneyToNumber(payment.value);
           return accumulator;
+        }, 0) -
+        this.contract.expenses.reduce((accumulator: number, expense: any) => {
+          if (expense.paid)
+            accumulator =
+              accumulator + this.stringUtil.moneyToNumber(expense.value);
+          return accumulator;
         }, 0)
     );
   }
