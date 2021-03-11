@@ -63,7 +63,7 @@
             class="caption status-danger"
             *ngIf="value.errors?.minlength || value.errors?.maxlength"
           >
-            O valor do empenho deve estar entre
+            O valor do empenho deve conter entre
             {{ validation.value.minLength }} a
             {{ validation.value.maxLength }}
             numeros
@@ -89,8 +89,8 @@
             paidCheck.invalid && paidCheck.touched ? true : null
           "
         >
-          <nb-option value=false>NÃO</nb-option>
-          <nb-option value=true>SIM</nb-option>
+          <nb-option [value]="false">NÃO</nb-option>
+          <nb-option [value]="true">SIM</nb-option>
         </nb-select>
       </div>
     </div>

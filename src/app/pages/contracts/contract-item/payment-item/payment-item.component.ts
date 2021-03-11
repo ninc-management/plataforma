@@ -36,7 +36,7 @@ export class PaymentItemComponent implements OnInit {
   submitted = false;
   payment: any = {
     team: [],
-    paid: 'não',
+    paid: false,
     created: this.today,
     lastUpdate: this.today,
   };

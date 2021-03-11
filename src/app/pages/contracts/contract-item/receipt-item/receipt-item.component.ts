@@ -19,7 +19,7 @@ export class ReceiptItemComponent implements OnInit {
   receipt: any = {
     notaFiscal: '15.5', // Porcentagem da nota fiscal
     nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
-    paid: 'não',
+    paid: false,
     created: this.today,
     lastUpdate: this.today,
   };
@@ -70,12 +70,11 @@ export class ReceiptItemComponent implements OnInit {
     } else {
       this.contract.receipts.push(_.cloneDeep(this.receipt));
     }
-    this.contract.status =
-      this.receipt.paid
-        ? this.contract.total == this.contract.receipts.length
-          ? 'Concluído'
-          : 'Em andamento'
-        : 'A receber';
+    this.contract.status = this.receipt.paid
+      ? this.contract.total == this.contract.receipts.length
+        ? 'Concluído'
+        : 'Em andamento'
+      : 'A receber';
     this.contractService.editContract(this.contract);
   }
 
