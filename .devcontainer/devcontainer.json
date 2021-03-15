@@ -27,7 +27,8 @@
     "davidanson.vscode-markdownlint",
     "jakewilson.vscode-placeholder-images",
     "mrmlnc.vscode-scss",
-    "equinusocio.vsc-material-theme"
+    "equinusocio.vsc-material-theme",
+    "github.vscode-pull-request-github"
   ],
 
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust

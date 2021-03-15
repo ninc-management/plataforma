@@ -1,0 +1,68 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
+>
+  <div class="col-md-8">
+    <nb-card
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
+      <nb-card-header>
+        <div class="row" style="width: 100%">
+          <div class="col-auto" style="display: flex; align-items: center">
+            <nb-icon
+              status="warning"
+              icon="alert-triangle"
+              pack="eva"
+              [options]="{ animation: { type: 'pulse' } }"
+            ></nb-icon>
+            <b style="margin-left: 10px; display: flex; align-items: center">
+              {{ question }}
+            </b>
+          </div>
+          <div class="col buttons">
+            <button
+              nbButton
+              ghost
+              nbTooltip="Fechar"
+              nbTooltipPlacement="bottom"
+              nbTooltipStatus="info"
+              (click)="dismiss(false)"
+            >
+              <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+            </button>
+          </div>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <div class="row">
+          <div class="col-6">
+            <button
+              nbButton
+              fullWidth
+              status="success"
+              size="large"
+              (click)="dismiss(true)"
+            >
+              SIM
+            </button>
+          </div>
+          <div class="col-6">
+            <button
+              nbButton
+              fullWidth
+              status="danger"
+              size="large"
+              (click)="dismiss(false)"
+            >
+              NÃO
+            </button>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

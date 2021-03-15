@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Component({
-  selector: 'pdf-dialog',
+  selector: 'ngx-pdf-dialog',
   templateUrl: './pdf-dialog.component.html',
   styleUrls: ['./pdf-dialog.component.scss'],
 })

@@ -4,6 +4,7 @@ import {
   NbButtonModule,
   NbIconModule,
   NbSpinnerModule,
+  NbTooltipModule,
 } from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
@@ -13,12 +14,14 @@ import { OverPaidDirective } from './directives/over-paid.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   imports: [
     NbCardModule,
     NbButtonModule,
     NbSpinnerModule,
+    NbTooltipModule,
     CommonModule,
     NbFileUploaderModule,
     NbIconModule,
@@ -31,6 +34,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     OverPaidDirective,
     LastPaymentDirective,
     PdfDialogComponent,
+    ConfirmationDialogComponent,
   ],
 })
 export class SharedModule {}
