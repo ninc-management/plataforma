@@ -11,6 +11,7 @@ import {
   ContractDialogComponent,
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
 
@@ -156,6 +157,57 @@ export class ContractItemComponent implements OnInit {
       .subscribe(() => {
         this.calculatePaidValue();
         this.calculateBalance();
+      });
+  }
+
+  confirmationDialog(index: number, componentType: ComponentTypes): void {
+    let item = '';
+    switch (componentType) {
+      case ComponentTypes.RECEIPT:
+        item = 'a ordem de empenho #' + index.toString() + '?';
+        break;
+      case ComponentTypes.PAYMENT:
+        item = 'a ordem de pagamento #' + index.toString() + '?';
+        break;
+      case ComponentTypes.EXPENSE:
+        item = 'a despesa #' + index.toString() + '?';
+        break;
+      default:
+        break;
+    }
+
+    this.dialogService
+      .open(ConfirmationDialogComponent, {
+        context: {
+          question: 'Realmente deseja exlucir ' + item,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((response) => {
+        if (response) {
+          switch (componentType) {
+            case ComponentTypes.RECEIPT:
+              this.contract.receipts.splice(index, 1);
+              this.calculatePaidValue();
+              this.calculateBalance();
+              break;
+            case ComponentTypes.PAYMENT:
+              this.contract.payments.splice(index, 1);
+              this.calculateBalance();
+              break;
+            case ComponentTypes.EXPENSE:
+              this.contract.expenses.splice(index, 1);
+              this.calculateBalance();
+              break;
+            default:
+              break;
+          }
+          this.updateContract();
+        }
       });
   }
 

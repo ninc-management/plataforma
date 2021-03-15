@@ -691,22 +691,6 @@
     </form>
   </nb-tab>
   <nb-tab tabTitle="Ordens de empenho" [tabIcon]="receiptIcon" responsive>
-    <nb-alert
-      outline="info"
-      role="alert"
-      style="margin: 5px 0; display: flow-root"
-    >
-      <nb-icon
-        status="info"
-        icon="info"
-        pack="eva"
-        [options]="{ animation: { type: 'pulse' } }"
-      ></nb-icon>
-      <b>
-        Para consilidar a remoção de uma ordem de empenho, é necessário
-        atualizar o contrato.</b
-      >
-    </nb-alert>
     <nb-list>
       <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
         <div class="row irow" style="width: 100%">
@@ -739,7 +723,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.receipts.splice(i, 1); calculatePaidValue(); calculateBalance()"
+              (click)="confirmationDialog(i, types.RECEIPT)"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
@@ -758,22 +742,6 @@
     </button>
   </nb-tab>
   <nb-tab tabTitle="Ordens de pagamento" [tabIcon]="paymentIcon" responsive>
-    <nb-alert
-      outline="info"
-      role="alert"
-      style="margin: 5px 0; display: flow-root"
-    >
-      <nb-icon
-        status="info"
-        icon="info"
-        pack="eva"
-        [options]="{ animation: { type: 'pulse' } }"
-      ></nb-icon>
-      <b>
-        Para consilidar a remoção de uma ordem de pagamento, é necessário
-        atualizar o contrato.</b
-      >
-    </nb-alert>
     <nb-list>
       <nb-list-item *ngFor="let payment of contract.payments; let i = index">
         <div class="row irow" style="width: 100%">
@@ -806,7 +774,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.payments.splice(i, 1); calculateBalance()"
+              (click)="confirmationDialog(i, types.PAYMENT)"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
@@ -856,7 +824,7 @@
               status="basic"
               icon="trash-2-outline"
               pack="eva"
-              (click)="contract.expenses.splice(i, 1); calculateBalance()"
+              (click)="confirmationDialog(i, types.EXPENSE)"
               [options]="{ animation: { type: 'shake' } }"
             ></nb-icon>
           </div>
