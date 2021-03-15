@@ -1,6 +1,40 @@
 <form (ngSubmit)="registerExpense()" #form="ngForm" aria-labelledby="title">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-5">
+      <div class="form-control-group">
+        <label class="label" for="input-user">Autor: </label>
+        <nb-completer
+          [(ngModel)]="userSearch"
+          [inputName]="'userListCompleter'"
+          (selected)="expense.author = $event.originalObject"
+          #userList="ngModel"
+          id="input-user"
+          name="userList"
+          [selectedText]="expense.author?.fullName"
+          [dataService]="userData"
+          [minSearchLength]="0"
+          [placeholder]="'Digite e selecione o nome do colaborador'"
+          [textNoResults]="
+            'Não foi possível achar um colaborador com o nome digitado'
+          "
+          [matchClass]="'match'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [status]="
+            userList.dirty && userSearch
+              ? userList.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            userList.invalid && userList.touched ? true : null
+          "
+        >
+        </nb-completer>
+      </div>
+    </div>
+    <div class="col-md-3">
       <div class="form-control-group">
         <label class="label" for="input-value"
           >Valor:

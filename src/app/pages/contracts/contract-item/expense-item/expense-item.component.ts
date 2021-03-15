@@ -3,7 +3,9 @@ import { NbFileUploaderOptions } from '../../../../@theme/components';
 import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
+import { CompleterData, CompleterService } from 'ng2-completer';
 import { ContractService } from '../../../../shared/services/contract.service';
+import { UserService } from '../../../../shared/services/user.service';
 import * as _ from 'lodash';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 
@@ -33,7 +35,14 @@ export class ExpenseItemComponent implements OnInit {
   fileTypesAllowed: string[];
   maxFileSize = 5;
 
-  constructor(private contractService: ContractService) {}
+  userSearch: string;
+  userData: CompleterData;
+
+  constructor(
+    private contractService: ContractService,
+    private completerService: CompleterService,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
@@ -63,6 +72,14 @@ export class ExpenseItemComponent implements OnInit {
       },
     };
 
+    this.userData = this.completerService
+      .local(
+        this.contract.team.map((member) => member.user),
+        'fullName',
+        'fullName'
+      )
+      .imageField('profilePicture');
+
     if (this.expenseIndex !== undefined) {
       this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (
@@ -82,7 +99,14 @@ export class ExpenseItemComponent implements OnInit {
         this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
         this.expense.lastUpdate = format(this.expense.lastUpdate, 'dd/MM/yyyy');
       }
+      if (this.expense.author?.fullName == undefined)
+        this.expense.author = this.userService.idToUser(this.expense.author);
+    } else {
+      this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
+        this.expense.author = author;
+      });
     }
+    this.userSearch = this.expense.author.fullName;
   }
 
   urlReceiver(fileList: BehaviorSubject<any>[]): void {

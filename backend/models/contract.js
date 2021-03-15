@@ -8,6 +8,7 @@ const userPayment = {
 };
 
 const expense = {
+  author: { type: mongoose.ObjectId, ref: 'User', required: true },
   description: { type: String, required: true },
   nf: { type: Boolean, required: true },
   value: { type: String, required: true },
