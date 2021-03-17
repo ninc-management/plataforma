@@ -799,13 +799,28 @@
             <div class="irow row">
               <a
                 (click)="paymentDialog(i, types.EXPENSE)"
-                style="width: 100%; cursor: pointer; display: flex"
+                style="
+                  width: 100%;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                "
               >
-                <div class="col-1">#{{ +i + 1 }}</div>
+                <div class="col-auto">
+                  <nb-user
+                    [onlyPicture]="true"
+                    [name]="userService.idToUser(expense.author).fullName"
+                    [picture]="
+                      userService.idToUser(expense.author).profilePicture
+                    "
+                  >
+                  </nb-user>
+                </div>
+                <div class="col-Auto">#{{ +i + 1 }}</div>
                 <div class="col">
                   {{ expense.description }}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-auto">
                   <nb-icon
                     icon="dollar-sign"
                     pack="fa"
@@ -815,10 +830,20 @@
                     {{ expense.value }}
                   </span>
                 </div>
+                <div class="col-md-auto">
+                  <nb-icon
+                    icon="calendar-alt"
+                    pack="fa"
+                    status="primary"
+                  ></nb-icon>
+                  <span style="vertical-align: 0.1em">
+                    {{ formatDate(expense.created) }}
+                  </span>
+                </div>
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right">
+          <div class="col-2 col-md-auto" style="text-align: right">
             <nb-icon
               class="xIcon"
               status="basic"

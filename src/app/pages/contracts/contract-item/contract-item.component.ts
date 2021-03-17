@@ -57,7 +57,7 @@ export class ContractItemComponent implements OnInit {
     private dialogService: NbDialogService,
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
-    private userService: UserService,
+    public userService: UserService,
     public departmentService: DepartmentService
   ) {}
 
@@ -260,6 +260,12 @@ export class ContractItemComponent implements OnInit {
     this.contract.team.push(Object.assign({}, this.teamMember));
     this.userSearch = undefined;
     this.teamMember = {};
+  }
+
+  formatDate(date): string {
+    if (date !== undefined && typeof date !== 'object') date = parseISO(date);
+    date = format(date, 'dd/MM/yyyy');
+    return date;
   }
 
   trackByIndex(index: number, obj: any): any {

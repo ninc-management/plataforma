@@ -11,6 +11,7 @@ const expense = {
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   description: { type: String, required: true },
   nf: { type: Boolean, required: true },
+  type: { type: String, required: true },
   value: { type: String, required: true },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },
