@@ -7,7 +7,7 @@ import { CompleterData, CompleterService } from 'ng2-completer';
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import * as _ from 'lodash';
-import * as contract_validation from '../../../../shared/payment-validation.json';
+import * as expense_validation from '../../../../shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -18,8 +18,16 @@ export class ExpenseItemComponent implements OnInit {
   @Input() contract: any;
   @Input() contractIndex: number;
   @Input() expenseIndex: number;
-  validation = (contract_validation as any).default;
+  validation = (expense_validation as any).default;
   today = new Date();
+  EXPENSE_TYPES = [
+    'Impostos e Taxas',
+    'Pré-Obra',
+    'Material',
+    'Pagamento de Pessoal',
+    'Transporte e Alimentação',
+    'Outros',
+  ];
   expense: any = {
     paid: false,
     nf: true,
