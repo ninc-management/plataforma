@@ -164,13 +164,13 @@ export class ContractItemComponent implements OnInit {
     let item = '';
     switch (componentType) {
       case ComponentTypes.RECEIPT:
-        item = 'a ordem de empenho #' + index.toString() + '?';
+        item = 'a ordem de empenho #' + (index + 1).toString() + '?';
         break;
       case ComponentTypes.PAYMENT:
-        item = 'a ordem de pagamento #' + index.toString() + '?';
+        item = 'a ordem de pagamento #' + (index + 1).toString() + '?';
         break;
       case ComponentTypes.EXPENSE:
-        item = 'a despesa #' + index.toString() + '?';
+        item = 'a despesa #' + (index + 1).toString() + '?';
         break;
       default:
         break;
