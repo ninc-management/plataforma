@@ -492,7 +492,9 @@ export class PdfService {
         (invoice.contactPlural ? 'ão' : 'á') +
         ' a descrição do serviço com as etapas do ' +
         invoice.invoiceType +
-        ', os prazos, os valores e tudo o que foi pedido por vocês no nosso primeiro contato.',
+        ', os prazos, os valores e tudo o que foi pedido por' +
+        (invoice.contactPlural ? 'ês' : 'ê') +
+        ' no nosso primeiro contato.',
       alignment: 'center',
       style: 'insideText',
     });
