@@ -8,16 +8,16 @@ const sendMail = (user, callback) => {
     port: 587,
     secure: false,
     auth: {
-      user: 'contato@cenaalagoas.com',
+      user: 'dad@cenaalagoas.com',
       pass: process.env.EMAIL_PASSWD,
     },
   });
   const mailOptions = {
-    from: '"Contato Nortan Projetos" <contato@nortanprojetos.com>',
-    to: 'financeiro@nortanprojetos.com',
+    from: '"Diretoria de Administração" <dad@nortanprojetos.com>',
+    to: 'hugocunha@nortanprojetos.com,natanael.filho@nortanprojetos.com',
     subject: 'Novo cadastro na Plataforma! 🎉🎉🎉',
     html:
-      '<h3>🎉 Novo consultor cadastrado 🎉</h3><br>' +
+      '<h3>🎉 Novo consultor cadastrado na lista de espera 🎉</h3><br>' +
       '<ul><li>Nome: ' +
       user.fullName +
       '</li>' +
@@ -75,10 +75,16 @@ router.post('/', (req, res, next) => {
   let user = req.body;
   sendMail(user, (err, info) => {
     if (err) {
-      res.status(400);
-      res.send({ error: 'Failed to send email' });
+      console.log('Erro envio de mail:', err);
+      res.status(201).json({
+        message:
+          'Usuário cadastrado com sucesso, mas email de notificação não enviado!\nAguarde a aprovação do seu cadastro 🙂\nEm breve entraremos em contato com você!',
+      });
     } else {
-      res.status(201).json(req.query);
+      res.status(201).json({
+        message:
+          'Usuário cadastrado com sucesso!\nAguarde a aprovação do seu cadastro 🙂\nEm breve entraremos em contato com você!',
+      });
     }
   });
 });

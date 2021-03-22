@@ -72,11 +72,31 @@ export class AuthService {
     );
   }
 
+  msLogout(): void {
+    //TODO: Use logoutPopout() method when is merged
+    // https://github.com/AzureAD/microsoft-authentication-library-for-js/pull/3044
+    this.msAuthService.logout();
+  }
+
+  register(prospect: any): Observable<any> {
+    return this.http.post('/api/auth/register', prospect).pipe(take(1));
+  }
+
   isUserRegistred(email: string): Observable<boolean> {
     const body = {
       email: email,
     };
     return this.http.post('/api/auth/isRegistered', body).pipe(
+      take(1),
+      map((res) => (res as any).isRegistered)
+    );
+  }
+
+  isUserProspect(email: string): Observable<boolean> {
+    const body = {
+      email: email,
+    };
+    return this.http.post('/api/auth/isProspect', body).pipe(
       take(1),
       map((res) => (res as any).isRegistered)
     );

@@ -9,6 +9,8 @@ import {
 import * as user_validation from '../../shared/user-validation.json';
 import { AuthService } from '../auth.service';
 import { EventMessage, EventType } from '@azure/msal-browser';
+import { combineLatest, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-login',
@@ -18,6 +20,7 @@ export class NgxLoginComponent extends NbLoginComponent {
   validation = (user_validation as any).default;
   myMessages: string[] = [];
   myErrors: string[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     protected service: NbAuthService,
@@ -41,27 +44,41 @@ export class NgxLoginComponent extends NbLoginComponent {
 
   login(): void {
     this.authService.submitted$.next(true);
-    this.authService.msLogin().subscribe((result: EventMessage) => {
-      if (
-        result.eventType === EventType.LOGIN_SUCCESS ||
-        result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
-      ) {
-        delete this.showMessages.error;
-        delete this.showMessages.success;
-        this.showMessages.success = true;
-        this.myMessages = ['Acesso liberado para a plataforma.'];
-        this.authService
-          .isUserRegistred(result.payload.account.username)
-          .subscribe((res) => {
-            if (res) super.login();
-            else this.setupError('Email não cadastrado na plataforma.');
+    this.authService
+      .msLogin()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result: EventMessage) => {
+        if (
+          result.eventType === EventType.LOGIN_SUCCESS ||
+          result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
+        ) {
+          delete this.showMessages.error;
+          delete this.showMessages.success;
+          this.showMessages.success = true;
+          this.myMessages = ['Acesso liberado para a plataforma.'];
+          combineLatest([
+            this.authService.isUserRegistred(result.payload.account.username),
+            this.authService.isUserProspect(result.payload.account.username),
+          ]).subscribe(([isRegistered, isProspect]) => {
+            if (isRegistered != undefined && isProspect != undefined) {
+              if (isRegistered) super.login();
+              else {
+                if (isProspect)
+                  this.setupError(
+                    'Seu cadastro ainda não foi aprovado 😅\nNão se preocupe, em breve entraremos em contato com você!'
+                  );
+                else this.setupError('Email não cadastrado na plataforma.');
+              }
+            }
           });
-      } else if (
-        result.eventType === EventType.LOGIN_FAILURE ||
-        result.eventType === EventType.ACQUIRE_TOKEN_FAILURE
-      ) {
-        this.setupError('Não foi possível autenticar em sua conta Microsoft.');
-      }
-    });
+        } else if (
+          result.eventType === EventType.LOGIN_FAILURE ||
+          result.eventType === EventType.ACQUIRE_TOKEN_FAILURE
+        ) {
+          this.setupError(
+            'Não foi possível autenticar em sua conta Microsoft.'
+          );
+        }
+      });
   }
 }

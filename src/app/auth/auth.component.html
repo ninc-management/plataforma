@@ -1,20 +1,20 @@
 <nb-layout>
   <nb-layout-column>
     <nb-card>
-      <nb-card-body>
+      <nb-card-body id="cardBody">
         <nb-auth-block>
           <img
             src="/assets/images/logo.png"
             class="mx-auto d-block"
             alt="Logo"
-            style="max-height: 200px;"
+            style="max-height: 200px"
             *ngIf="!authService.submitted$.getValue()"
           />
           <img
             src="/assets/images/spinner.svg"
             class="mx-auto d-block"
             alt="Logo"
-            style="height: 340px;"
+            style="height: 340px"
             *ngIf="authService.submitted$.getValue()"
           />
           <router-outlet></router-outlet>

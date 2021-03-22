@@ -5,7 +5,7 @@ import {
   NbAuthService,
   NB_AUTH_OPTIONS,
 } from '@nebular/auth';
-import { MsalService } from '@azure/msal-angular';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'ngx-logout',
@@ -16,7 +16,7 @@ export class NgxLogoutComponent extends NbLogoutComponent {
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected router: Router,
-    private msAuthService: MsalService
+    private authService: AuthService
   ) {
     super(service, options, router);
   }
@@ -27,8 +27,6 @@ export class NgxLogoutComponent extends NbLogoutComponent {
 
   logout(strategy: string): void {
     super.logout(strategy);
-    //TODO: Use logoutPopout() method when is merged
-    // https://github.com/AzureAD/microsoft-authentication-library-for-js/pull/3044
-    this.msAuthService.logout();
+    this.authService.msLogout();
   }
 }

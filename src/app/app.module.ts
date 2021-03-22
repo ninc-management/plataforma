@@ -113,7 +113,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
     interactionType: InteractionType.Popup,
     authRequest: {
       authority: 'https://login.microsoftonline.com/consumers',
-      prompt: 'select_account',
       scopes: [
         'user.read',
         'Files.Read',

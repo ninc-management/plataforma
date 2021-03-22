@@ -15,6 +15,7 @@ import {
   NbLayoutModule,
   NbDatepickerModule,
   NbSelectModule,
+  NbTooltipModule,
 } from '@nebular/theme';
 import { NgxAuthComponent } from './auth.component';
 import { NgxLoginComponent } from './login/login.component';
@@ -36,6 +37,7 @@ import { SharedModule } from '../shared/shared.module';
     NbLayoutModule,
     NbCardModule,
     NbIconModule,
+    NbTooltipModule,
     NgxAuthRoutingModule,
     SharedModule,
     NbAuthModule,

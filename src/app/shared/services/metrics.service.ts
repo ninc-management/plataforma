@@ -239,10 +239,10 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
-    return combineLatest(
+    return combineLatest([
       this.contractService.getContracts(),
-      this.invoiceService.getInvoices()
-    ).pipe(
+      this.invoiceService.getInvoices(),
+    ]).pipe(
       map(([contracts, invoices]) => {
         if (contracts.length > 0 && invoices.length > 0)
           return contracts.reduce(
@@ -308,10 +308,10 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
-    return combineLatest(
+    return combineLatest([
       this.contractService.getContracts(),
-      this.invoiceService.getInvoices()
-    ).pipe(
+      this.invoiceService.getInvoices(),
+    ]).pipe(
       map(([contracts, invoices]) => {
         if (contracts.length > 0 && invoices.length > 0)
           return contracts.reduce(
@@ -815,10 +815,10 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<any> {
-    return combineLatest(
+    return combineLatest([
       this.contractService.getContracts(),
-      this.userService.getUsers()
-    ).pipe(
+      this.userService.getUsers(),
+    ]).pipe(
       map(([contracts, users]) => {
         if (contracts.length > 0 && users.length > 0) {
           const partial = contracts.reduce((received: any, contract) => {
@@ -878,14 +878,14 @@ export class MetricsService implements OnDestroy {
     /* eslint-disable @typescript-eslint/indent */
     const combined$ =
       role == 'manager'
-        ? combineLatest(
+        ? combineLatest([
             this.contractsAsManger(uId, last, number, fromToday),
-            this.invoicesAsManger(uId, last, number, fromToday)
-          )
-        : combineLatest(
+            this.invoicesAsManger(uId, last, number, fromToday),
+          ])
+        : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday)
-          );
+            this.invoicesAsMember(uId, last, number, fromToday),
+          ]);
     /* eslint-enable @typescript-eslint/indent */
     return combined$.pipe(
       map(([contracts, invoices]) => {
@@ -910,14 +910,14 @@ export class MetricsService implements OnDestroy {
     /* eslint-disable @typescript-eslint/indent */
     const combined$ =
       role == 'manager'
-        ? combineLatest(
+        ? combineLatest([
             this.contractsAsManger(uId, last, number, fromToday),
-            this.invoicesAsManger(uId, last, number, fromToday)
-          )
-        : combineLatest(
+            this.invoicesAsManger(uId, last, number, fromToday),
+          ])
+        : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday)
-          );
+            this.invoicesAsMember(uId, last, number, fromToday),
+          ]);
     /* eslint-enable @typescript-eslint/indent */
     return combined$.pipe(
       map(([contracts, invoices]) => {

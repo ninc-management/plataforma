@@ -177,12 +177,12 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /* eslint-disable @typescript-eslint/indent */
   ngOnInit(): void {
-    combineLatest(
+    combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
-      this.userService.currentUser$
-    )
+      this.userService.currentUser$,
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([contracts, invoices, contractors, user]) => {
         if (
@@ -226,11 +226,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
   /* eslint-enable @typescript-eslint/indent */
 
   ngAfterViewInit(): void {
-    combineLatest(
+    combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
-      this.contractorService.getContractors()
-    )
+      this.contractorService.getContractors(),
+    ])
       .pipe(take(4))
       .subscribe(([contracts, invoices, contractors]) => {
         if (

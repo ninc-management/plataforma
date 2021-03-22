@@ -159,11 +159,11 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    combineLatest(
+    combineLatest([
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
-      this.userService.currentUser$
-    )
+      this.userService.currentUser$,
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([invoices, contractors, user]) => {
         if (invoices.length > 0 && contractors.length > 0) {
@@ -192,10 +192,10 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    combineLatest(
+    combineLatest([
       this.invoiceService.getInvoices(),
-      this.contractorService.getContractors()
-    )
+      this.contractorService.getContractors(),
+    ])
       .pipe(take(3))
       .subscribe(([invoices, contractors]) => {
         if (invoices.length > 0 && contractors.length > 0 && !this.isPhone()) {

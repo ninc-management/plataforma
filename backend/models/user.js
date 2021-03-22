@@ -28,7 +28,6 @@ const userSchema = mongoose.Schema({
   ambiental: { type: Boolean },
   hidrico: { type: Boolean },
   adm: { type: Boolean },
-  password: { type: String, required: true },
   more: { type: Boolean },
   meet: { type: String },
   profilePicture: { type: String },
