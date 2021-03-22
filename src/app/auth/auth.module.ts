@@ -38,7 +38,6 @@ import { SharedModule } from '../shared/shared.module';
     NbIconModule,
     NgxAuthRoutingModule,
     SharedModule,
-
     NbAuthModule,
   ],
   declarations: [

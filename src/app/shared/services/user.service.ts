@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { NbAuthService } from '@nebular/auth';
 import { WebSocketService } from './web-socket.service';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take, map } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
+import { AuthService } from 'app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,18 +19,17 @@ export class UserService implements OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: NbAuthService,
+    private authService: AuthService,
     private wsService: WebSocketService,
     private socket: Socket
   ) {
     this.currentUser$ = this.currentUser.asObservable();
-    this.authService
-      .onTokenChange()
+    this.authService.onUserChange$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((token) => {
-        if (token.getPayload())
-          this.getCurrentUser(token.getPayload()['email']);
+      .subscribe(() => {
+        this.getCurrentUser();
       });
+    this.getCurrentUser();
   }
 
   ngOnDestroy() {
@@ -38,7 +37,12 @@ export class UserService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  getCurrentUser(userEmail: string): void {
+  getCurrentUser(): void {
+    const email = this.authService.userEmail();
+    if (email) this.getUser(email);
+  }
+
+  getUser(userEmail: string): void {
     this.getUsers()
       .pipe(take(2))
       .subscribe((users) => {

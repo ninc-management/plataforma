@@ -5,11 +5,7 @@ import {
   SkipSelf,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  NbAuthModule,
-  NbPasswordAuthStrategy,
-  NbAuthJWTToken,
-} from '@nebular/auth';
+import { NbAuthModule, NbDummyAuthStrategy } from '@nebular/auth';
 import { NbSecurityModule, NbRoleProvider } from '@nebular/security';
 import { of as observableOf } from 'rxjs';
 
@@ -56,28 +52,9 @@ export const NB_CORE_PROVIDERS = [
   ...DATA_SERVICES,
   ...NbAuthModule.forRoot({
     strategies: [
-      NbPasswordAuthStrategy.setup({
+      NbDummyAuthStrategy.setup({
         name: 'email',
-        token: {
-          key: 'token',
-          class: NbAuthJWTToken,
-        },
-        login: {
-          defaultErrors: [
-            'Os dados de acesso não estão corretos, por favor tente novamente.',
-          ],
-          defaultMessages: ['Sessão iniciada com sucesso.'],
-        },
-        register: {
-          defaultErrors: [
-            'Email já cadastrado. Faça o acesso ao sistema utilizando este email.',
-          ],
-          defaultMessages: ['Cadastro realizado com sucesso.'],
-        },
-        logout: {
-          defaultErrors: ['Algo deu errado, tente novamente.'],
-          defaultMessages: ['Sessão encerrada com sucesso.'],
-        },
+        delay: 0,
       }),
     ],
     forms: {

@@ -8,6 +8,7 @@ const saltRounds = 12;
 
 const router = express.Router();
 
+//TODO: Fix register route removing token
 router.post('/register', (req, res, next) => {
   bcrypt.hash(req.body.password, saltRounds).then((hash) => {
     const user = new User({
@@ -64,52 +65,12 @@ router.post('/register', (req, res, next) => {
   });
 });
 
-router.post('/login', (req, res, next) => {
-  let fetchedUser;
-  User.findOne({ email: req.body.email })
-    .then((user) => {
-      if (!user) {
-        throw new Error('Email não encontrado!');
-      }
-      fetchedUser = user;
-      return bcrypt.compare(req.body.password, user.password);
-    })
-    .then((result) => {
-      if (!result) {
-        return res.status(401).json({
-          message: 'Senha não confere.',
-        });
-      }
-      const token = jwt.sign(
-        { email: fetchedUser.email, userId: fetchedUser._id },
-        process.env.JWT_SECRET,
-        { expiresIn: req.body.rememberMe ? '30 days' : '1h' }
-      );
-      res.status(200).json({
-        token: token,
-      });
-    })
-    .catch((err) => {
-      return res.status(401).json({
-        message: 'Email não cadastrado.',
-      });
+router.post('/isRegistered', (req, res, next) => {
+  User.findOne({ email: req.body.email }).then((user) => {
+    res.status(200).json({
+      isRegistered: !!user,
     });
-});
-
-router.post('/request-pass', (req, res, next) => {
-  return res.status(200).json({});
-});
-
-router.put('/reset-pass', (req, res, next) => {
-  return res.status(200).json({});
-});
-
-router.delete('/logout', (req, res, next) => {
-  return res.status(204).json({});
-});
-
-router.post('/refresh-token', (req, res, next) => {
-  return res.status(204).json({});
+  });
 });
 
 module.exports = router;

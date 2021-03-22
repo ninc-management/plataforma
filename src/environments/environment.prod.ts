@@ -8,6 +8,8 @@ declare let ENV_VARS: { [key: string]: string };
 
 export const environment = {
   production: true,
+  msalClientId: ENV_VARS.MSAL_CLIENT_ID,
+  msalRedirectUri: ENV_VARS.MSAL_REDIRECT_URI,
   firebaseConfig: {
     apiKey: ENV_VARS.FIREBASE_APIKEY,
     authDomain: 'plataforma-nortan.firebaseapp.com',

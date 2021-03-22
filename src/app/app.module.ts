@@ -8,7 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import ptBr from '@angular/common/locales/pt';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
@@ -26,6 +26,25 @@ import {
 } from '@nebular/theme';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import {
+  MsalModule,
+  MsalInterceptorConfiguration,
+  MsalGuardConfiguration,
+  MsalInterceptor,
+  MSAL_INSTANCE,
+  MSAL_GUARD_CONFIG,
+  MSAL_INTERCEPTOR_CONFIG,
+  MsalService,
+  MsalGuard,
+  MsalBroadcastService,
+} from '@azure/msal-angular';
+import {
+  LogLevel,
+  IPublicClientApplication,
+  PublicClientApplication,
+  BrowserCacheLocation,
+  InteractionType,
+} from '@azure/msal-browser';
 
 const config: SocketIoConfig = {
   url: '',
@@ -34,6 +53,77 @@ const config: SocketIoConfig = {
     transports: ['websocket'],
   },
 };
+
+const isIE =
+  window.navigator.userAgent.indexOf('MSIE ') > -1 ||
+  window.navigator.userAgent.indexOf('Trident/') > -1;
+
+export function loggerCallback(logLevel: LogLevel, message: string): void {
+  console.log(message);
+}
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: environment.msalClientId,
+      redirectUri: environment.msalRedirectUri,
+      postLogoutRedirectUri: 'https://plataforma.nortanprojetos.com',
+      navigateToLoginRequestUrl: false,
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage,
+      storeAuthStateInCookie: isIE, // set to true for IE 11
+    },
+    system: {
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Info,
+        piiLoggingEnabled: false,
+      },
+      allowRedirectInIframe: true,
+    },
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', [
+    'user.read',
+    'Files.Read',
+    'Files.Read.All',
+    'Files.ReadWrite',
+    'Files.ReadWrite.All',
+  ]);
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me/drive/root/*', [
+    'user.read',
+    'Files.Read',
+    'Files.Read.All',
+    'Files.ReadWrite',
+    'Files.ReadWrite.All',
+  ]);
+
+  return {
+    interactionType: InteractionType.Popup,
+    protectedResourceMap,
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Popup,
+    authRequest: {
+      authority: 'https://login.microsoftonline.com/consumers',
+      prompt: 'select_account',
+      scopes: [
+        'user.read',
+        'Files.Read',
+        'Files.Read.All',
+        'Files.ReadWrite',
+        'Files.ReadWrite.All',
+      ],
+    },
+  };
+}
 
 registerLocaleData(ptBr);
 
@@ -58,8 +148,31 @@ registerLocaleData(ptBr);
     ThemeModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     SocketIoModule.forRoot(config),
+    MsalModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'pt' }],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'pt' },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: MsalInterceptor,
+      multi: true,
+    },
+    {
+      provide: MSAL_INSTANCE,
+      useFactory: MSALInstanceFactory,
+    },
+    {
+      provide: MSAL_GUARD_CONFIG,
+      useFactory: MSALGuardConfigFactory,
+    },
+    {
+      provide: MSAL_INTERCEPTOR_CONFIG,
+      useFactory: MSALInterceptorConfigFactory,
+    },
+    MsalService,
+    MsalGuard,
+    MsalBroadcastService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

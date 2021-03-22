@@ -6,7 +6,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { NbProgressBarModule, NbButtonModule } from '@nebular/theme';
 
 import { NbFileUploaderComponent } from './file-uploader.component';
@@ -15,12 +14,7 @@ import { NbUploadQueueItemComponent } from './upload-queue-item.component';
 import { FileDropDirective } from './file-drop.directive';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    NbProgressBarModule,
-    NbButtonModule,
-  ],
+  imports: [CommonModule, NbProgressBarModule, NbButtonModule],
   declarations: [
     NbFileUploaderComponent,
     NbUploadQueueComponent,
