@@ -58,6 +58,17 @@ const isIE =
   window.navigator.userAgent.indexOf('MSIE ') > -1 ||
   window.navigator.userAgent.indexOf('Trident/') > -1;
 
+const authRequest = {
+  authority: 'https://login.microsoftonline.com/consumers',
+  scopes: [
+    'user.read',
+    'Files.Read',
+    'Files.Read.All',
+    'Files.ReadWrite',
+    'Files.ReadWrite.All',
+  ],
+};
+
 export function loggerCallback(logLevel: LogLevel, message: string): void {
   console.log(message);
 }
@@ -104,23 +115,15 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 
   return {
     interactionType: InteractionType.Popup,
-    protectedResourceMap,
+    protectedResourceMap: protectedResourceMap,
+    authRequest: authRequest,
   };
 }
 
 export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   return {
     interactionType: InteractionType.Popup,
-    authRequest: {
-      authority: 'https://login.microsoftonline.com/consumers',
-      scopes: [
-        'user.read',
-        'Files.Read',
-        'Files.Read.All',
-        'Files.ReadWrite',
-        'Files.ReadWrite.All',
-      ],
-    },
+    authRequest: authRequest,
   };
 }
 
