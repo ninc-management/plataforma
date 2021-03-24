@@ -7,6 +7,13 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 
+export const CONTRACT_BALANCE = {
+  _id: '000000000000000000000000',
+  fullName: 'Caixa do contrato',
+  profilePicture:
+    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -93,8 +100,10 @@ export class UserService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)]?.fullName;
   }
 
-  idToUser(id: string): any {
+  idToUser(id: string | 'object'): any {
+    if (typeof id == 'object') return id;
     if (id === undefined) return undefined;
+    if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   NbFileUploaderOptions,
   StorageProvider,
@@ -8,7 +8,10 @@ import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import { ContractService } from '../../../../shared/services/contract.service';
-import { UserService } from '../../../../shared/services/user.service';
+import {
+  UserService,
+  CONTRACT_BALANCE,
+} from '../../../../shared/services/user.service';
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/payment-validation.json';
 
@@ -21,6 +24,7 @@ export class ExpenseItemComponent implements OnInit {
   @Input() contract: any;
   @Input() contractIndex: number;
   @Input() expenseIndex: number;
+  @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   validation = (expense_validation as any).default;
   today = new Date();
   EXPENSE_TYPES = [
@@ -32,7 +36,7 @@ export class ExpenseItemComponent implements OnInit {
     'Outros',
   ];
   expense: any = {
-    paid: false,
+    paid: true,
     nf: true,
     created: this.today,
     lastUpdate: this.today,
@@ -49,10 +53,13 @@ export class ExpenseItemComponent implements OnInit {
   userSearch: string;
   userData: CompleterData;
 
+  sourceSearch: string;
+  sourceData: CompleterData;
+
   constructor(
     private contractService: ContractService,
     private completerService: CompleterService,
-    private userService: UserService
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -93,6 +100,16 @@ export class ExpenseItemComponent implements OnInit {
       )
       .imageField('profilePicture');
 
+    this.sourceData = this.completerService
+      .local(
+        this.contract.team
+          .map((member) => member.user)
+          .concat([CONTRACT_BALANCE]),
+        'fullName',
+        'fullName'
+      )
+      .imageField('profilePicture');
+
     if (this.expenseIndex !== undefined) {
       this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (
@@ -114,12 +131,16 @@ export class ExpenseItemComponent implements OnInit {
       }
       if (this.expense.author?.fullName == undefined)
         this.expense.author = this.userService.idToUser(this.expense.author);
+      if (this.expense.source?.fullName == undefined)
+        this.expense.source = this.userService.idToUser(this.expense.source);
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         this.expense.author = author;
       });
+      this.updatePaidDate();
     }
     this.userSearch = this.expense.author.fullName;
+    this.sourceSearch = this.expense.source?.fullName;
   }
 
   urlReceiver(fileList: BehaviorSubject<any>[]): void {
@@ -144,10 +165,26 @@ export class ExpenseItemComponent implements OnInit {
       this.contract.expenses.push(_.cloneDeep(this.expense));
     }
     this.contractService.editContract(this.contract);
+    this.submit.emit();
   }
 
   updatePaidDate(): void {
     if (!this.expense.paid) this.expense.paidDate = undefined;
     else this.expense.paidDate = new Date();
+  }
+
+  addAndClean(): void {
+    this.contract.expenses.push(_.cloneDeep(this.expense));
+    this.contractService.editContract(this.contract);
+    delete this.sourceSearch;
+    delete this.expense.source;
+    delete this.expense.description;
+    delete this.expense.type;
+    delete this.expense.value;
+    delete this.expense.description;
+    this.expense.created = this.today;
+    this.expense.lastUpdate = this.today;
+    this.expense.paid = true;
+    this.updatePaidDate();
   }
 }
