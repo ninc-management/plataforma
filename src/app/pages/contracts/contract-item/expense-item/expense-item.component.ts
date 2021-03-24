@@ -15,6 +15,11 @@ import {
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/payment-validation.json';
 
+interface UploadedFile {
+  name: string;
+  url: string;
+}
+
 @Component({
   selector: 'ngx-expense-item',
   templateUrl: './expense-item.component.html',
@@ -26,6 +31,7 @@ export class ExpenseItemComponent implements OnInit {
   @Input() expenseIndex: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   validation = (expense_validation as any).default;
+  uploadedFiles: UploadedFile[] = [];
   today = new Date();
   EXPENSE_TYPES = [
     'Impostos e Taxas',
@@ -133,6 +139,9 @@ export class ExpenseItemComponent implements OnInit {
         this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source?.fullName == undefined)
         this.expense.source = this.userService.idToUser(this.expense.source);
+      this.uploadedFiles = _.cloneDeep(
+        this.expense.uploadedFiles
+      ) as UploadedFile[];
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         this.expense.author = author;
@@ -150,14 +159,17 @@ export class ExpenseItemComponent implements OnInit {
         this.urls.push(file$.getValue().url);
       } else {
         const urlIndex = this.urls.push(file$.getValue().url) - 1;
-        file$
-          .pipe(take(2))
-          .subscribe((file) => (this.urls[urlIndex] = file.url));
+        file$.pipe(take(2)).subscribe((file) => {
+          this.urls[urlIndex] = file.url;
+          if (file.url)
+            this.uploadedFiles.push({ name: file.name, url: file.url });
+        });
       }
     }
   }
 
   registerExpense(): void {
+    this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       this.expense.lastUpdate = new Date();
       this.contract.expenses[this.expenseIndex] = _.cloneDeep(this.expense);
@@ -186,5 +198,10 @@ export class ExpenseItemComponent implements OnInit {
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
     this.updatePaidDate();
+  }
+
+  removeFile(index: number): void {
+    //TODO: Remove file on Onedrive
+    this.uploadedFiles.splice(index, 1);
   }
 }

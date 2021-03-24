@@ -1,0 +1,13 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .irow {
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+  }
+
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
+}

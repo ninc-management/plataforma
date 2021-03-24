@@ -17,7 +17,6 @@ import {
   NbFileUploaderOptions,
   NbFileItem,
   FilterFunction,
-  StorageProvider,
 } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
 import { takeUntil, catchError } from 'rxjs/operators';

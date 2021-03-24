@@ -7,6 +7,11 @@ const userPayment = {
   value: { type: String, required: true },
 };
 
+const uploadedFile = {
+  name: { type: String, required: true },
+  url: { type: String, required: true },
+};
+
 const expense = {
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   source: { type: mongoose.ObjectId, ref: 'User', required: true },
@@ -18,6 +23,7 @@ const expense = {
   lastUpdate: { type: Date, required: true },
   paid: { type: Boolean, required: true },
   paidDate: { type: Date },
+  uploadedFiles: [uploadedFile],
 };
 
 const payment = {

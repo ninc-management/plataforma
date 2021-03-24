@@ -162,6 +162,42 @@
         dropAreaFileChooserLabel="escolha um arquivo"
       ></nb-file-uploader>
     </div>
+    <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
+      <div class="form-control-group">
+        <label class="label" for="input-description"
+          >Comprovantes anexados:</label
+        >
+        <nb-list>
+          <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
+            <div class="row irow" style="width: 100%">
+              <div class="col-10 col-md-11">
+                <div class="irow row">
+                  <div class="col-1">#{{ +i + 1 }}</div>
+                  <a
+                    [href]="file.url"
+                    class="col"
+                    target="_blank"
+                    style="width: 100%; cursor: pointer; display: flex"
+                  >
+                    {{ file.name }}
+                  </a>
+                </div>
+              </div>
+              <div class="col-2 col-md-1" style="text-align: right">
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="removeFile(i)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </div>
+    </div>
     <div class="col-md-12">
       <div class="form-control-group">
         <label class="label" for="input-description">Descrição:</label>

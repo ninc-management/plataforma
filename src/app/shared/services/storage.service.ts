@@ -49,11 +49,14 @@ export class StorageService implements OnDestroy {
           fileToUpload
         );
         return {
-          uploadProgress$: uploadTask.percentageChanges(),
           downloadUrl$: this.getDownloadUrl$(uploadTask, filePath),
+          uploadProgress$: uploadTask.percentageChanges(),
         };
       }
       case StorageProvider.ONEDRIVE: {
+        const fileComplete$ = new Subject<number>();
+        const downloadUrl$ = new Subject<string>();
+        fileComplete$.next(1);
         fileToUpload.arrayBuffer().then((f) => {
           this.http
             .put(
@@ -67,13 +70,14 @@ export class StorageService implements OnDestroy {
             )
             .pipe(take(1))
             .subscribe((res) => {
-              console.log(res);
-              return {
-                uploadProgress$: of(1),
-                downloadUrl$: of('asd'),
-              };
+              fileComplete$.next(100);
+              downloadUrl$.next(Object.values(res)[1]);
             });
         });
+        return {
+          downloadUrl$: downloadUrl$.asObservable(),
+          uploadProgress$: fileComplete$.asObservable(),
+        };
       }
     }
   }
