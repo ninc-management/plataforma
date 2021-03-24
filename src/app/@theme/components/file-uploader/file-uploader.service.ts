@@ -17,6 +17,7 @@ import {
   NbFileUploaderOptions,
   NbFileItem,
   FilterFunction,
+  StorageProvider,
 } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
 import { takeUntil, catchError } from 'rxjs/operators';
@@ -71,14 +72,13 @@ export class NbFileUploaderService implements OnDestroy {
     let tempFile = file.getValue();
     tempFile.onBeforeUpload();
 
-    const mediaFolderPath = `profileImages/`;
-
     const {
       downloadUrl$,
       uploadProgress$,
     } = this.storageService.uploadFileAndGetMetadata(
-      mediaFolderPath,
-      tempFile.rawFile
+      options.mediaFolderPath,
+      tempFile.rawFile,
+      options.storageProvider
     );
 
     uploadProgress$

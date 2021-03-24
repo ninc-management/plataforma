@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NbFileUploaderOptions } from '../../../../@theme/components';
+import {
+  NbFileUploaderOptions,
+  StorageProvider,
+} from '../../../../@theme/components';
 import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
@@ -60,6 +63,8 @@ export class ExpenseItemComponent implements OnInit {
       multiple: false,
       directory: false,
       showUploadQueue: true,
+      storageProvider: StorageProvider.ONEDRIVE,
+      mediaFolderPath: 'upload_test',
       allowedFileTypes: this.allowedMimeType,
       filter: {
         fn: (item: File) => {

@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 
 import { NbFileUploaderService } from './file-uploader.service';
-import { NbFileUploaderOptions } from './file-uploader.model';
+import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 
@@ -37,6 +37,8 @@ export class NbFileUploaderComponent implements OnDestroy {
     multiple: false,
     directory: false,
     showUploadQueue: true,
+    storageProvider: StorageProvider.FIREBASE,
+    mediaFolderPath: 'profileImages/',
   };
 
   @Input()

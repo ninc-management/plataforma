@@ -94,7 +94,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
     'Files.ReadWrite',
     'Files.ReadWrite.All',
   ]);
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me/drive/root/*', [
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/drive*', [
     'user.read',
     'Files.Read',
     'Files.Read.All',

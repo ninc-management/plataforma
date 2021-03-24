@@ -8,7 +8,7 @@ import {
   Input,
 } from '@angular/core';
 import { NbFileUploaderService } from './file-uploader.service';
-import { NbFileUploaderOptions } from './file-uploader.model';
+import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 
 @Directive({ selector: '[nbFileDrop]' })
 export class FileDropDirective implements OnInit {
@@ -20,6 +20,8 @@ export class FileDropDirective implements OnInit {
     multiple: false,
     directory: false,
     showUploadQueue: true,
+    storageProvider: StorageProvider.FIREBASE,
+    mediaFolderPath: 'profileImages/',
   };
 
   protected element: ElementRef;

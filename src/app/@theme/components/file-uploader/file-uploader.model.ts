@@ -8,10 +8,17 @@ export declare type FilterFunction = {
   fn: (item?: File) => boolean;
 };
 
+export enum StorageProvider {
+  FIREBASE,
+  ONEDRIVE,
+}
+
 export interface NbFileUploaderOptions {
   multiple?: boolean;
   directory?: boolean;
   showUploadQueue?: boolean;
+  storageProvider: StorageProvider;
+  mediaFolderPath: string;
 
   params?: { [key: string]: string };
   headers?: { [key: string]: string };

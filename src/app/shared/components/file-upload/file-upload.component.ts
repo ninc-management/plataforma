@@ -1,6 +1,9 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { NbFileUploaderOptions } from '../../../@theme/components';
+import {
+  NbFileUploaderOptions,
+  StorageProvider,
+} from '../../../@theme/components';
 import { filter, take, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 
@@ -40,6 +43,8 @@ export class FileUploadDialogComponent implements OnInit {
       multiple: false,
       directory: false,
       showUploadQueue: true,
+      storageProvider: StorageProvider.FIREBASE,
+      mediaFolderPath: 'profileImages/',
       allowedFileTypes: this.allowedMimeType,
       filter: {
         fn: (item: File) => {

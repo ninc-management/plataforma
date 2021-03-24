@@ -2,10 +2,12 @@ import {
   AngularFireStorage,
   AngularFireUploadTask,
 } from '@angular/fire/storage';
-import { from, Observable, Subject } from 'rxjs';
+import { from, Observable, Subject, of } from 'rxjs';
 import { Injectable, OnDestroy } from '@angular/core';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from './user.service';
+import { StorageProvider } from '../../@theme/components/file-uploader/file-uploader.model';
+import { HttpClient } from '@angular/common/http';
 
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
@@ -21,6 +23,7 @@ export class StorageService implements OnDestroy {
 
   constructor(
     private readonly storage: AngularFireStorage,
+    private http: HttpClient,
     private userService: UserService
   ) {
     this.userService.currentUser$
@@ -35,17 +38,44 @@ export class StorageService implements OnDestroy {
 
   uploadFileAndGetMetadata(
     mediaFolderPath: string,
-    fileToUpload: File
+    fileToUpload: File,
+    provider: StorageProvider
   ): FilesUploadMetadata {
-    const filePath = `${mediaFolderPath}/${this.currentUser['_id']}`;
-    const uploadTask: AngularFireUploadTask = this.storage.upload(
-      filePath,
-      fileToUpload
-    );
-    return {
-      uploadProgress$: uploadTask.percentageChanges(),
-      downloadUrl$: this.getDownloadUrl$(uploadTask, filePath),
-    };
+    switch (provider) {
+      case StorageProvider.FIREBASE: {
+        const filePath = `${mediaFolderPath}/${this.currentUser['_id']}`;
+        const uploadTask: AngularFireUploadTask = this.storage.upload(
+          filePath,
+          fileToUpload
+        );
+        return {
+          uploadProgress$: uploadTask.percentageChanges(),
+          downloadUrl$: this.getDownloadUrl$(uploadTask, filePath),
+        };
+      }
+      case StorageProvider.ONEDRIVE: {
+        fileToUpload.arrayBuffer().then((f) => {
+          this.http
+            .put(
+              'https://graph.microsoft.com/v1.0/drive/root:/' +
+                mediaFolderPath +
+                '/' +
+                fileToUpload.name +
+                ':/content?@name.conflictBehavior=rename',
+              f,
+              { headers: { 'Content-Type': fileToUpload.type } }
+            )
+            .pipe(take(1))
+            .subscribe((res) => {
+              console.log(res);
+              return {
+                uploadProgress$: of(1),
+                downloadUrl$: of('asd'),
+              };
+            });
+        });
+      }
+    }
   }
 
   private getDownloadUrl$(
