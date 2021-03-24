@@ -49,11 +49,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', express.static(path.join(__dirname, 'angular')));
-// For all GET requests, send back index.html
-// so that PathLocationStrategy can be used
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, '/angular/index.html'));
-});
 
 // API endpoint routes
 app.use('/api/auth', authRoutes);
@@ -62,6 +57,12 @@ app.use('/api/user', userRoutes);
 app.use('/api/contractor', contractorRoutes);
 app.use('/api/contract', contractRoutes);
 app.use('/api/invoice', invoiceRoutes);
+
+// For all GET requests, send back index.html
+// so that PathLocationStrategy can be used
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, '/angular/index.html'));
+});
 
 module.exports = {
   express: app,
