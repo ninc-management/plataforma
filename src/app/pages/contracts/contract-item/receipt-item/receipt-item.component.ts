@@ -60,6 +60,19 @@ export class ReceiptItemComponent implements OnInit {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
       }
+      this.receipt.notaFiscal = this.nfPercentage();
+    }
+  }
+
+  nfPercentage(): string {
+    if (this.contract.invoice.administration == 'nortan') {
+      if (this.contract.invoice.department == 'DEC') {
+        return '8,5';
+      } else {
+        return '15,5';
+      }
+    } else {
+      return '0';
     }
   }
 

@@ -98,6 +98,7 @@
           [disabled]="receipt.paid"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
+          readonly="true"
         />
       </div>
     </div>
