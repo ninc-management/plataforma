@@ -134,10 +134,8 @@ export class ExpenseItemComponent implements OnInit {
         this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
         this.expense.lastUpdate = format(this.expense.lastUpdate, 'dd/MM/yyyy');
       }
-      if (this.expense.author?.fullName == undefined)
-        this.expense.author = this.userService.idToUser(this.expense.author);
-      if (this.expense.source?.fullName == undefined)
-        this.expense.source = this.userService.idToUser(this.expense.source);
+      this.expense.author = this.userService.idToUser(this.expense.author);
+      this.expense.source = this.userService.idToUser(this.expense.source);
       this.uploadedFiles = _.cloneDeep(
         this.expense.uploadedFiles
       ) as UploadedFile[];
