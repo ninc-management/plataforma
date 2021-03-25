@@ -34,10 +34,9 @@ export class ExpenseItemComponent implements OnInit {
   uploadedFiles: UploadedFile[] = [];
   today = new Date();
   EXPENSE_TYPES = [
-    'Impostos e Taxas',
     'Pré-Obra',
     'Material',
-    'Pagamento de Pessoal',
+    'Folha de Pagamento',
     'Transporte e Alimentação',
     'Outros',
   ];
