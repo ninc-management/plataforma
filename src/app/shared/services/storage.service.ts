@@ -8,6 +8,7 @@ import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { StorageProvider } from '../../@theme/components/file-uploader/file-uploader.model';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
@@ -60,7 +61,7 @@ export class StorageService implements OnDestroy {
         fileToUpload.arrayBuffer().then((f) => {
           this.http
             .put(
-              'https://graph.microsoft.com/v1.0/drive/root:/' +
+              environment.onedriveUri +
                 mediaFolderPath +
                 '/' +
                 fileToUpload.name +

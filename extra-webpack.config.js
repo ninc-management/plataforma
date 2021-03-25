@@ -10,6 +10,7 @@ module.exports = {
         FIREBASE_MID: JSON.stringify(process.env.FIREBASE_MID),
         MSAL_CLIENT_ID: JSON.stringify(process.env.MSAL_CLIENT_ID),
         MSAL_REDIRECT_URI: JSON.stringify(process.env.MSAL_REDIRECT_URI),
+        ONEDRIVE_URI: JSON.stringify(process.env.ONEDRIVE_URI),
       },
     }),
   ],

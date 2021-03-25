@@ -76,7 +76,8 @@ export class ExpenseItemComponent implements OnInit {
       directory: false,
       showUploadQueue: true,
       storageProvider: StorageProvider.ONEDRIVE,
-      mediaFolderPath: 'upload_test',
+      mediaFolderPath:
+        '04-DPC/01-Em Andamento/ORC-000_2020-NOME DO CONTRATO-GESTOR/Recibos', //TODO: Create function to generate this path
       allowedFileTypes: this.allowedMimeType,
       filter: {
         fn: (item: File) => {
