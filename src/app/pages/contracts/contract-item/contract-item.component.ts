@@ -81,9 +81,7 @@ export class ContractItemComponent implements OnInit {
     if (!this.contract.team || this.contract.team?.length == 0) {
       this.contract.team = _.cloneDeep(this.contract.invoice.team);
       this.contract.team = this.contract.team.map((member) => {
-        member.user = member.user?._id
-          ? member.user
-          : this.userService.idToUser(member.user);
+        member.user = this.userService.idToUser(member.user);
         return member;
       });
       this.contract.team.unshift({

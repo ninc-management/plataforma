@@ -61,13 +61,9 @@ export class PaymentItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
-    const team = this.contract.team.map((member) => {
-      const user =
-        member.user?._id == undefined
-          ? this.userService.idToUser(member.user)
-          : member.user;
-      return user;
-    });
+    const team = this.contract.team.map((member) =>
+      this.userService.idToUser(member.user)
+    );
     this.userData = this.completerService
       .local(team, 'fullName', 'fullName')
       .imageField('profilePicture');
