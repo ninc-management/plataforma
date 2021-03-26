@@ -203,10 +203,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           'fullName,document',
           'fullName'
         );
-        if (this.iInvoice && this.tempInvoice.contractorFullName == undefined)
-          this.tempInvoice.contractorFullName = this.contractorService.idToName(
-            this.tempInvoice.contractor
-          );
+        this.tempInvoice.contractorFullName = this.contractorService.idToName(
+          this.tempInvoice.contractor
+        );
       });
 
     this.userData = this.completerService

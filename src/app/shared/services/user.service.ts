@@ -95,9 +95,8 @@ export class UserService implements OnDestroy {
     this.http.post('/api/user/update', body).pipe(take(1)).subscribe();
   }
 
-  idToName(id: string): string {
-    const tmp = this.users$.getValue();
-    return tmp[tmp.findIndex((el) => el._id === id)]?.fullName;
+  idToName(id: string | 'object'): string {
+    return this.idToUser(id).fullName;
   }
 
   idToUser(id: string | 'object'): any {
