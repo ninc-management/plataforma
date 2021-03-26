@@ -83,23 +83,24 @@ export class InvoiceService implements OnDestroy {
     return this.size$;
   }
 
-  idToInvoice(id: string): any {
+  idToInvoice(id: string | 'object'): any {
+    if (typeof id == 'object') return id;
     if (id === undefined) return undefined;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  isInvoiceAuthor(iId: any, uId: string): boolean {
-    const author =
-      iId._id == undefined ? this.idToInvoice(iId).author : iId.author;
-    return (author?._id == undefined ? author : author._id) == uId;
+  isInvoiceAuthor(iId: string | 'object', uId: string | 'object'): boolean {
+    const author = this.idToInvoice(iId).author;
+    return this.userService.idToUser(uId)._id == author._id;
   }
 
-  isInvoiceMember(iId: any, uId: string): boolean {
-    const invoice = iId._id == undefined ? this.idToInvoice(iId) : iId;
+  isInvoiceMember(iId: string | 'object', uId: string | 'object'): boolean {
+    const invoice = this.idToInvoice(iId);
     return invoice.team.filter(
       (member) =>
-        (member.user?._id == undefined ? member.user : member.user._id) == uId
+        this.userService.idToUser(member.user)._id ==
+        this.userService.idToUser(uId)._id
     ).length > 0
       ? true
       : false;

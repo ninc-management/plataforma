@@ -191,10 +191,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           contractors.length > 0
         ) {
           this.contracts = contracts.map((contract: any) => {
-            if (contract.invoice?.author == undefined)
-              contract.invoice = this.invoiceService.idToInvoice(
-                contract.invoice
-              );
+            contract.invoice = this.invoiceService.idToInvoice(
+              contract.invoice
+            );
             contract.invoice.author = this.userService.idToUser(
               contract.invoice.author
             );
@@ -206,9 +205,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             if (!contract.code) contract.code = contract.invoice.code;
             if (!contract.contractor)
-              contract.contractor = contract.invoice.contractor?.fullName
-                ? contract.invoice.contractor.fullName
-                : this.contractorService.idToName(contract.invoice.contractor);
+              contract.contractor = this.contractorService.idToName(
+                contract.invoice.contractor
+              );
             if (!contract.name) contract.name = contract.invoice.name;
             contract.value = contract.invoice.value;
             contract.interests =

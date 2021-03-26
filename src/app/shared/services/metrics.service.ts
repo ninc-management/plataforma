@@ -253,10 +253,9 @@ export class MetricsService implements OnDestroy {
                 this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
                 this.utils.compareDates(created, last, number, fromToday)
               ) {
-                const invoice =
-                  contract.invoice?._id == undefined
-                    ? this.invoiceService.idToInvoice(contract.invoice)
-                    : contract.invoice;
+                const invoice = this.invoiceService.idToInvoice(
+                  contract.invoice
+                );
                 metricInfo.count += 1;
                 metricInfo.value += this.stringUtil.moneyToNumber(
                   invoice.value
@@ -322,10 +321,9 @@ export class MetricsService implements OnDestroy {
                 this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
                 this.utils.compareDates(created, last, number, fromToday)
               ) {
-                const invoice =
-                  contract.invoice?._id == undefined
-                    ? this.invoiceService.idToInvoice(contract.invoice)
-                    : contract.invoice;
+                const invoice = this.invoiceService.idToInvoice(
+                  contract.invoice
+                );
                 metricInfo.count += 1;
                 metricInfo.value += this.stringUtil.moneyToNumber(
                   invoice.value
@@ -833,10 +831,7 @@ export class MetricsService implements OnDestroy {
                   ) {
                     const uCPayments = payment.team.reduce(
                       (upaid: any, member) => {
-                        const author =
-                          member.user._id == undefined
-                            ? this.userService.idToName(member.user)
-                            : member.user.fullName;
+                        const author = this.userService.idToName(member.user);
                         const value = this.stringUtil.moneyToNumber(
                           member.value
                         );
