@@ -2,9 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { ContractService } from './contract.service';
-import { ContractorService } from './contractor.service';
-import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
+import { OnedriveService } from './onedrive.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
@@ -22,7 +21,7 @@ export class InvoiceService implements OnDestroy {
     private http: HttpClient,
     private userService: UserService,
     private contractService: ContractService,
-    private utils: UtilsService,
+    private onedrive: OnedriveService,
     private wsService: WebSocketService,
     private socket: Socket
   ) {}
@@ -41,8 +40,10 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res.invoice;
-        if (savedInvoice.status === 'Fechado')
+        if (savedInvoice.status === 'Fechado') {
           this.contractService.saveContract(savedInvoice);
+          this.onedrive.copyModelFolder(savedInvoice);
+        }
       });
   }
 

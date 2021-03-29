@@ -2,12 +2,12 @@ import {
   AngularFireStorage,
   AngularFireUploadTask,
 } from '@angular/fire/storage';
-import { from, Observable, Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { from, Observable, Subject } from 'rxjs';
 import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { StorageProvider } from '../../@theme/components/file-uploader/file-uploader.model';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 export interface FilesUploadMetadata {
