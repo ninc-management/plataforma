@@ -8,6 +8,7 @@ import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import { ContractService } from '../../../../shared/services/contract.service';
+import { OnedriveService } from '../../../../shared/services/onedrive.service';
 import {
   UserService,
   CONTRACT_BALANCE,
@@ -64,6 +65,7 @@ export class ExpenseItemComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private completerService: CompleterService,
+    private onedrive: OnedriveService,
     public userService: UserService
   ) {}
 
@@ -77,7 +79,7 @@ export class ExpenseItemComponent implements OnInit {
       showUploadQueue: true,
       storageProvider: StorageProvider.ONEDRIVE,
       mediaFolderPath:
-        '04-DPC/01-Em Andamento/ORC-000_2020-NOME DO CONTRATO-GESTOR/Recibos', //TODO: Create function to generate this path
+        this.onedrive.generatePath(this.contract.invoice) + '/Recibos',
       allowedFileTypes: this.allowedMimeType,
       filter: {
         fn: (item: File) => {
