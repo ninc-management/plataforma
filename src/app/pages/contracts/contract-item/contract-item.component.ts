@@ -80,17 +80,19 @@ export class ContractItemComponent implements OnInit {
     }
     if (!this.contract.team || this.contract.team?.length == 0) {
       this.contract.team = _.cloneDeep(this.contract.invoice.team);
-      this.contract.team = this.contract.team.map((member) =>
-        this.userService.idToUser(member.user)
-      );
+      this.contract.team = this.contract.team.map((member) => {
+        member.user = this.userService.idToUser(member.user);
+        return member;
+      });
       this.contract.team.unshift({
         user: this.contract.invoice.author,
         coordination: this.contract.invoice.coordination,
       });
     } else {
-      this.contract.team = this.contract.team.map((member) =>
-        this.userService.idToUser(member.user)
-      );
+      this.contract.team = this.contract.team.map((member) => {
+        member.user = this.userService.idToUser(member.user);
+        return member;
+      });
     }
     this.userData = this.completerService
       .local(this.userService.getUsersList(), 'fullName', 'fullName')

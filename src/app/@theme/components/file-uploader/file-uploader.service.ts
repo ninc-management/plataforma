@@ -24,9 +24,14 @@ import { takeUntil, catchError } from 'rxjs/operators';
 @Injectable()
 export class NbFileUploaderService implements OnDestroy {
   private uploadQueue: BehaviorSubject<NbFileItem>[] = [];
-  destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   constructor(private storageService: StorageService) {}
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   get uploadQueue$(): Observable<BehaviorSubject<NbFileItem>[]> {
     return observableOf(this.uploadQueue);
@@ -101,10 +106,5 @@ export class NbFileUploaderService implements OnDestroy {
         tempFile.onSuccess();
         file.next(tempFile);
       });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }

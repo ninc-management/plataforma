@@ -2,7 +2,7 @@ import {
   AngularFireStorage,
   AngularFireUploadTask,
 } from '@angular/fire/storage';
-import { from, Observable, Subject, of } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { Injectable, OnDestroy } from '@angular/core';
 import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from './user.service';
