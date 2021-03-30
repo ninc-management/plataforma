@@ -4,6 +4,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
+import { OnedriveService } from './onedrive.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class ContractService implements OnDestroy {
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
+    private onedrive: OnedriveService,
     private socket: Socket
   ) {}
 
@@ -48,7 +50,13 @@ export class ContractService implements OnDestroy {
     const req = {
       contract: contract,
     };
-    this.http.post('/api/contract/update', req).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/contract/update', req)
+      .pipe(take(1))
+      .subscribe(() => {
+        if (contract.status === 'Concluído')
+          this.onedrive.moveToConcluded(contract.invoice);
+      });
   }
 
   getContracts(): Observable<any[]> {

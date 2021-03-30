@@ -18,9 +18,9 @@ export class OnedriveService {
 
   constructor(private http: HttpClient, private userService: UserService) {}
 
-  private generateBasePath(invoice: 'object'): string {
+  private generateBasePath(invoice: 'object', concluded = false): string {
     let path = this.departmentPath[invoice['department'].slice(0, 3)];
-    path += '/01-Em Andamento/'; //TODO: Criar um outro argumento para definir se o contrato foi concluido e mover para '02-Concluídos'
+    path += concluded ? '/02-Concluídos/' : '/01-Em Andamento/';
     return path;
   }
 
@@ -45,8 +45,11 @@ export class OnedriveService {
     );
   }
 
-  generatePath(invoice: 'object'): string {
-    return this.generateBasePath(invoice) + this.generateForderName(invoice);
+  generatePath(invoice: 'object', concluded = false): string {
+    return (
+      this.generateBasePath(invoice, concluded) +
+      this.generateForderName(invoice)
+    );
   }
 
   copyModelFolder(invoice: 'object'): void {
@@ -70,4 +73,26 @@ export class OnedriveService {
           .subscribe();
       });
   }
+
+  moveToConcluded(invoice: 'object'): void {
+    const originalPath = this.generatePath(invoice);
+
+    this.http
+      .get(environment.onedriveUri + this.generateBasePath(invoice, true))
+      .pipe(take(1))
+      .subscribe((metadata) => {
+        const body = {
+          parentReference: {
+            id: metadata['id'],
+          },
+          name: this.generateForderName(invoice),
+        };
+        this.http
+          .patch(environment.onedriveUri + originalPath, body)
+          .pipe(take(1))
+          .subscribe();
+      });
+  }
+
+  //webUrl
 }
