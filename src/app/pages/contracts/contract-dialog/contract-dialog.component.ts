@@ -5,6 +5,7 @@ import {
   NB_DOCUMENT,
 } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
+import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -30,12 +31,14 @@ export class ContractDialogComponent implements OnInit {
   @Input() componentType: ComponentTypes;
   isPayable = true;
   types = ComponentTypes;
+  onedriveUrl: string;
 
   constructor(
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
-    private breakpointService: NbMediaBreakpointsService
+    private breakpointService: NbMediaBreakpointsService,
+    private onedrive: OnedriveService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +50,9 @@ export class ContractDialogComponent implements OnInit {
     //   )
     //   .subscribe(() => this.dismiss());
     this.isPayable = this.contract.receipts.length < this.contract.total;
+    this.onedrive
+      .webUrl(this.contract)
+      .subscribe((url) => (this.onedriveUrl = url));
   }
 
   dismiss(): void {

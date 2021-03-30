@@ -49,6 +49,19 @@
         <nb-card-header>
           {{ title }}
           <div class="buttons">
+            <a
+              *ngIf="onedriveUrl"
+              nbButton
+              ghost
+              [href]="onedriveUrl"
+              target="_blank"
+              nbTooltip="Abrir no Onedrive"
+              [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+              nbTooltipPlacement="bottom"
+              nbTooltipStatus="info"
+            >
+              <nb-icon icon="onedrive" pack="fac"></nb-icon>
+            </a>
             <button
               nbButton
               ghost

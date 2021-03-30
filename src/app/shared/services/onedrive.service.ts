@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { environment } from '../../../environments/environment';
-import { take } from 'rxjs/operators';
+import { take, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -94,5 +95,16 @@ export class OnedriveService {
       });
   }
 
-  //webUrl
+  webUrl(contract: 'object'): Observable<string> {
+    const concluded = contract['invoice'].status === 'Concluído';
+    return this.http
+      .get(
+        environment.onedriveUri +
+          this.generatePath(contract['invoice'], concluded)
+      )
+      .pipe(
+        take(1),
+        map((metadata) => metadata['webUrl'])
+      );
+  }
 }
