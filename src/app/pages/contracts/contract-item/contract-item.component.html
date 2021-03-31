@@ -695,6 +695,12 @@
     </form>
   </nb-tab>
   <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Balanço'"
+    [tabIcon]="scaleIcon"
+    responsive
+  >
+  </nb-tab>
+  <nb-tab
     [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"
     [tabIcon]="receiptIcon"
     responsive

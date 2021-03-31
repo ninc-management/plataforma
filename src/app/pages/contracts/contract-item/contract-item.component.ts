@@ -45,6 +45,10 @@ export class ContractItemComponent implements OnInit {
     icon: 'minus',
     pack: 'fac',
   };
+  scaleIcon = {
+    icon: 'scale',
+    pack: 'fac',
+  };
   options = {
     valueType: '%',
   };
