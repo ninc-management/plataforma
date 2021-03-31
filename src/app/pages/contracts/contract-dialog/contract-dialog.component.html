@@ -50,7 +50,7 @@
           {{ title }}
           <div class="buttons">
             <a
-              *ngIf="onedriveUrl"
+              *ngIf="onedriveUrl && componentType == types.CONTRACT"
               nbButton
               ghost
               [href]="onedriveUrl"

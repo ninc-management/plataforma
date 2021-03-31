@@ -47,9 +47,10 @@ export class ContractDialogComponent implements OnInit {
     //   )
     //   .subscribe(() => this.dismiss());
     this.isPayable = this.contract.receipts.length < this.contract.total;
-    this.onedrive
-      .webUrl(this.contract)
-      .subscribe((url) => (this.onedriveUrl = url));
+    if (this.componentType == ComponentTypes.CONTRACT)
+      this.onedrive
+        .webUrl(this.contract)
+        .subscribe((url) => (this.onedriveUrl = url));
   }
 
   dismiss(): void {
