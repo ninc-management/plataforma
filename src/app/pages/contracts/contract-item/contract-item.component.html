@@ -699,6 +699,72 @@
     [tabIcon]="scaleIcon"
     responsive
   >
+    <div class="row">
+      <div class="col-6 col-md-2">
+        <div class="form-control-group">
+          <label class="label" for="input-nf">NF(%):</label>
+          <p>
+            <b>{{ contract.notaFiscal }}</b>
+          </p>
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
+        <div class="form-control-group">
+          <label class="label" for="input-nortan">Nortan(%):</label>
+          <p>
+            <b>{{ contract.nortanPercentage }}</b>
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-liquid">Contrato liquído:</label>
+          <p>
+            <b>{{ contract.liquid }}</b>
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-value">Saldo do contrato:</label>
+          <p>
+            <b>{{ contract.balance }}</b>
+          </p>
+        </div>
+      </div>
+    </div>
+    <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list-item>
+        <div class="row irow">
+          <div class="col-12 col-md"><b>Colaborador</b></div>
+          <div class="col-6 col-md-auto"><b>R$ Líquido</b></div>
+          <div class="col-6 col-md-auto"><b>%</b></div>
+          <div class="col-6 col-md-auto"><b>Recebido</b></div>
+          <div class="col-6 col-md-auto"><b>Saldo</b></div>
+        </div>
+      </nb-list-item>
+      <nb-list-item
+        *ngFor="
+          let member of contract.team;
+          let i = index;
+          trackBy: trackByIndex
+        "
+      >
+        <div class="row irow">
+          <div class="col-12 col">
+            {{ member.user.fullName }}
+          </div>
+          <div class="col-6 col-auto">
+            {{ member.user.coordination }}
+          </div>
+          <div class="col-6 col-auto">
+            {{ member.user.distribution }}
+          </div>
+          <div class="col-6 col-auto">{{ member.user.distribution }}</div>
+          <div class="col-6 col-auto">{{ member.user.distribution }}</div>
+        </div>
+      </nb-list-item>
+    </nb-list>
   </nb-tab>
   <nb-tab
     [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"
