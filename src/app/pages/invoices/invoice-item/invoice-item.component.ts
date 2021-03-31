@@ -10,11 +10,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { CompleterService, CompleterData } from 'ng2-completer';
-import {
-  NbDialogRef,
-  NbDialogService,
-  NbMediaBreakpointsService,
-} from '@nebular/theme';
+import { NbDialogRef, NbDialogService } from '@nebular/theme';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { parseISO } from 'date-fns';
@@ -25,6 +21,7 @@ import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
 
@@ -90,7 +87,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private userService: UserService,
     public stringUtil: StringUtilService,
-    private breakpointService: NbMediaBreakpointsService,
+    public utils: UtilsService,
     public contractorService: ContractorService,
     public completerService: CompleterService
   ) {}
@@ -316,11 +313,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       `\nEndereço: ` +
       contractorItem?.address
     );
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   fixHours(): void {

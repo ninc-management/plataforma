@@ -9,6 +9,7 @@ import {
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject, Observable } from 'rxjs';
 import { UserService } from '../../../shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-header',
@@ -34,7 +35,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private menuService: NbMenuService,
     private themeService: NbThemeService,
     private userService: UserService,
-    private breakpointService: NbMediaBreakpointsService
+    private breakpointService: NbMediaBreakpointsService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit() {
@@ -101,10 +103,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
   navigateHome() {
     this.menuService.navigateHome();
     return false;
-  }
-
-  isPhone(): boolean {
-    const { sm } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= sm;
   }
 }

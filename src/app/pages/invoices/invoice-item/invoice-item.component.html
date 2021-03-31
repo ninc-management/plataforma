@@ -222,7 +222,7 @@
               [matchClass]="'match'"
               [fullWidth]="true"
               [fieldSize]="'large'"
-              [isPhone]="isPhone()"
+              [isPhone]="utils.isPhone()"
               [showAvatar]="false"
               [tooltipFunction]="tooltipText"
               [inputObject]="tempInvoice.contractor"
@@ -251,7 +251,7 @@
               size="large"
               style="margin-top: 28px"
               nbTooltip="Adicionar cliente"
-              [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+              [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
               nbTooltipPlacement="top"
               nbTooltipStatus="info"
               (click)="addContractor()"
@@ -655,7 +655,7 @@
                 pack="eva"
                 [options]="{ animation: { type: 'pulse' } }"
                 nbTooltip="O gestor sempre está no orçamento, sendo o primeiro a aparecer, e seu perfil de atuação será o mesmo da coordenação do orçamento"
-                [nbTooltipTrigger]="isPhone() ? 'noop' : 'hint'"
+                [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
               ></nb-icon
@@ -1536,7 +1536,9 @@
           <div class="row paymentRow">
             <div
               class="col-12 col-md-7"
-              [ngStyle]="{ 'text-align': isPhone() == true ? 'left' : 'right' }"
+              [ngStyle]="{
+                'text-align': utils.isPhone() == true ? 'left' : 'right'
+              }"
             >
               Desconto:
             </div>

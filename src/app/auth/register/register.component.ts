@@ -9,10 +9,10 @@ import * as user_validation from '../../shared/user-validation.json';
 import { StatecityService } from '../../shared/services/statecity.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { NbMediaBreakpointsService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-register',
@@ -32,11 +32,11 @@ export class NgxRegisterComponent
   constructor(
     private statecityService: StatecityService,
     private authService: AuthService,
-    private breakpointService: NbMediaBreakpointsService,
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected cd: ChangeDetectorRef,
-    protected router: Router
+    protected router: Router,
+    public utils: UtilsService
   ) {
     super(service, options, cd, router);
   }
@@ -105,11 +105,6 @@ export class NgxRegisterComponent
   buildCityList(state: string): void {
     this.user.city = undefined;
     this.cities = this.statecityService.buildCityList(state);
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   gotoTop(): void {

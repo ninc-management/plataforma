@@ -1,13 +1,9 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import {
-  NbDialogRef,
-  NbMediaBreakpointsService,
-  NB_DOCUMENT,
-  NbDialogService,
-} from '@nebular/theme';
+import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { UserService } from '../../../shared/services/user.service';
 import { PdfService } from '../pdf.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfDialogComponent } from '../../../shared/components/pdf-dialog/pdf-dialog.component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -27,9 +23,9 @@ export class InvoiceDialogComponent implements OnInit {
     protected ref: NbDialogRef<InvoiceDialogComponent>,
     private dialogService: NbDialogService,
     protected departmentService: DepartmentService,
-    private breakpointService: NbMediaBreakpointsService,
     private userService: UserService,
-    private pdf: PdfService
+    private pdf: PdfService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -98,11 +94,6 @@ export class InvoiceDialogComponent implements OnInit {
       closeOnEsc: false,
       autoFocus: false,
     });
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   windowWidth(): number {

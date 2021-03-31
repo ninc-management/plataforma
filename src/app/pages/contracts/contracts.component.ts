@@ -6,7 +6,7 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { NbDialogService, NbMediaBreakpointsService } from '@nebular/theme';
+import { NbDialogService } from '@nebular/theme';
 import {
   ContractDialogComponent,
   ComponentTypes,
@@ -18,6 +18,7 @@ import { InvoiceService } from '../../shared/services/invoice.service';
 import { UserService } from '../../shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { format, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
@@ -164,7 +165,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractService: ContractService,
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
-    private breakpointService: NbMediaBreakpointsService,
+    public utils: UtilsService,
     private userService: UserService,
     private metricsService: MetricsService,
     private stringUtil: StringUtilService
@@ -233,7 +234,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           contracts.length > 0 &&
           invoices.length > 0 &&
           contractors.length > 0 &&
-          !this.isPhone()
+          !this.utils.isPhone()
         ) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
@@ -270,11 +271,6 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pageWidth(): number {
     return window.innerWidth;
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   statusColor(status: string): string {

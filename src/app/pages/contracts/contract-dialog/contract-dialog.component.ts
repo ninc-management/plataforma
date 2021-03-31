@@ -1,11 +1,8 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import {
-  NbDialogRef,
-  NbMediaBreakpointsService,
-  NB_DOCUMENT,
-} from '@nebular/theme';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -37,8 +34,8 @@ export class ContractDialogComponent implements OnInit {
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
-    private breakpointService: NbMediaBreakpointsService,
-    private onedrive: OnedriveService
+    private onedrive: OnedriveService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -57,11 +54,6 @@ export class ContractDialogComponent implements OnInit {
 
   dismiss(): void {
     this.ref.close();
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   windowWidth(): number {

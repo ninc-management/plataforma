@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NbMediaBreakpointsService } from '@nebular/theme';
 import {
   addMonths,
   addYears,
@@ -17,7 +18,12 @@ import {
   providedIn: 'root',
 })
 export class UtilsService {
-  constructor() {}
+  constructor(private breakpointService: NbMediaBreakpointsService) {}
+
+  isPhone(): boolean {
+    const { sm } = this.breakpointService.getBreakpointsMap();
+    return document.documentElement.clientWidth <= sm;
+  }
 
   // https://stackoverflow.com/a/42488360
   sumObjectsByKey(...objs: any): any {

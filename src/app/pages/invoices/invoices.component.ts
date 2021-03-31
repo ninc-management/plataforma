@@ -6,11 +6,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import {
-  NbDialogService,
-  NbIconLibraries,
-  NbMediaBreakpointsService,
-} from '@nebular/theme';
+import { NbDialogService } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
@@ -19,6 +15,7 @@ import { InvoiceService } from '../../shared/services/invoice.service';
 import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-invoices',
@@ -147,7 +144,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
-    private breakpointService: NbMediaBreakpointsService,
+    private utils: UtilsService,
     private contractorService: ContractorService,
     private userService: UserService,
     private pdf: PdfService
@@ -194,7 +191,11 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     ])
       .pipe(take(3))
       .subscribe(([invoices, contractors]) => {
-        if (invoices.length > 0 && contractors.length > 0 && !this.isPhone()) {
+        if (
+          invoices.length > 0 &&
+          contractors.length > 0 &&
+          !this.utils.isPhone()
+        ) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
@@ -216,7 +217,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       .open(InvoiceDialogComponent, {
         context: {
           title: event.data
-            ? this.isPhone()
+            ? this.utils.isPhone()
               ? 'EDIÇÃO'
               : 'EDIÇÃO DE ORÇAMENTO'
             : 'CADASTRO DE ORÇAMENTO',
@@ -237,11 +238,6 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   pageWidth(): number {
     return window.innerWidth;
-  }
-
-  isPhone(): boolean {
-    const { md } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= md;
   }
 
   statusColor(status: string): string {

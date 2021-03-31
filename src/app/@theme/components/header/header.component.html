@@ -1,7 +1,7 @@
 <div class="header-container">
   <div
     class="logo-container"
-    [ngStyle]="{ 'margin-top.px': isPhone() ? 0 : -7 }"
+    [ngStyle]="{ 'margin-top.px': utils.isPhone() ? 0 : -7 }"
   >
     <a
       class="sidebar-toggle hamburger hamburger--collapse"
@@ -34,7 +34,7 @@
       ><nb-icon
         [icon]="logoIcon"
         pack="fac"
-        *ngIf="!isPhone()"
+        *ngIf="!utils.isPhone()"
         style="width: 30px; height: 30px; margin-bottom: 4px"
       ></nb-icon>
       {{ menuTitle }}</a
