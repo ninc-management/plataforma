@@ -1,5 +1,9 @@
 <nb-tabset fullWidth>
-  <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Dados'"
+    tabIcon="info-outline"
+    responsive
+  >
     <form (ngSubmit)="updateContract()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-md-7">
@@ -690,7 +694,11 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab tabTitle="Ordens de empenho" [tabIcon]="receiptIcon" responsive>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"
+    [tabIcon]="receiptIcon"
+    responsive
+  >
     <nb-list>
       <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
         <div class="row irow" style="width: 100%">
@@ -741,7 +749,11 @@
       Nova Ordem de Empenho
     </button>
   </nb-tab>
-  <nb-tab tabTitle="Ordens de pagamento" [tabIcon]="paymentIcon" responsive>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'"
+    [tabIcon]="paymentIcon"
+    responsive
+  >
     <nb-list>
       <nb-list-item *ngFor="let payment of contract.payments; let i = index">
         <div class="row irow" style="width: 100%">
@@ -791,7 +803,11 @@
       Nova Ordem de Pagamento
     </button>
   </nb-tab>
-  <nb-tab tabTitle="Despesas" [tabIcon]="expenseIcon" responsive>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Despesas'"
+    [tabIcon]="expenseIcon"
+    responsive
+  >
     <nb-list>
       <nb-list-item *ngFor="let expense of contract.expenses; let i = index">
         <div class="row irow" style="width: 100%">

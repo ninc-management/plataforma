@@ -14,6 +14,7 @@ import {
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -58,7 +59,8 @@ export class ContractItemComponent implements OnInit {
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
     public userService: UserService,
-    public departmentService: DepartmentService
+    public departmentService: DepartmentService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
