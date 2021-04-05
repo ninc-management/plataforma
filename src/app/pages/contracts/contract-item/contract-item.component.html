@@ -699,48 +699,48 @@
     [tabIcon]="scaleIcon"
     responsive
   >
-    <div class="row">
-      <div class="col-6 col-md-2">
+    <div class="row" style="text-align: center">
+      <div class="col-6 col-md">
         <div class="form-control-group">
-          <label class="label" for="input-nf">NF(%):</label>
+          <label class="label" for="input-nf">NF(%)</label>
           <p>
             <b>{{ contract.notaFiscal }}</b>
           </p>
         </div>
       </div>
-      <div class="col-6 col-md-2">
+      <div class="col-6 col-md">
         <div class="form-control-group">
-          <label class="label" for="input-nortan">Nortan(%):</label>
+          <label class="label" for="input-nortan">Nortan(%)</label>
           <p>
             <b>{{ contract.nortanPercentage }}</b>
           </p>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md">
         <div class="form-control-group">
-          <label class="label" for="input-liquid">Contrato liquído:</label>
+          <label class="label" for="input-liquid">Contrato liquído</label>
           <p>
             <b>{{ contract.liquid }}</b>
           </p>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md">
         <div class="form-control-group">
-          <label class="label" for="input-value">Saldo do contrato:</label>
+          <label class="label" for="input-value">Saldo do contrato</label>
           <p>
-            <b>{{ contract.balance }}</b>
+            <b>{{ contract.notPaid }}</b>
           </p>
         </div>
       </div>
     </div>
-    <nb-list style="width: 100%; padding: 10px 0">
-      <nb-list-item>
+    <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+      <nb-list-item class="noPadding">
         <div class="row irow">
           <div class="col-12 col-md"><b>Colaborador</b></div>
-          <div class="col-6 col-md-auto"><b>R$ Líquido</b></div>
-          <div class="col-6 col-md-auto"><b>%</b></div>
-          <div class="col-6 col-md-auto"><b>Recebido</b></div>
-          <div class="col-6 col-md-auto"><b>Saldo</b></div>
+          <div class="col-6 col-md-2"><b>R$ Líquido</b></div>
+          <div class="col-6 col-md-1"><b>%</b></div>
+          <div class="col-6 col-md-2"><b>Recebido</b></div>
+          <div class="col-6 col-md-2"><b>Saldo</b></div>
         </div>
       </nb-list-item>
       <nb-list-item
@@ -751,20 +751,57 @@
         "
       >
         <div class="row irow">
-          <div class="col-12 col">
+          <div class="col-12 col-md">
             {{ member.user.fullName }}
           </div>
-          <div class="col-6 col-auto">
-            {{ member.user.coordination }}
+          <div class="col-6 col-md-2">
+            {{ liquidValue(member.distribution) }}
           </div>
-          <div class="col-6 col-auto">
-            {{ member.user.distribution }}
+          <div class="col-6 col-md-1">
+            {{ member.distribution }}
           </div>
-          <div class="col-6 col-auto">{{ member.user.distribution }}</div>
-          <div class="col-6 col-auto">{{ member.user.distribution }}</div>
+          <div class="col-6 col-md-2">
+            {{ receivedValue(member.user) }}
+          </div>
+          <div class="col-6 col-md-2">
+            {{ notPaidValue(member.distribution, member.user) }}
+          </div>
         </div>
       </nb-list-item>
     </nb-list>
+    <div class="row" style="text-align: center">
+      <div class="col-md">
+        <div class="form-control-group">
+          <label class="label" for="input-balance">Caixa:</label>
+          <p
+            [ngClass]="{
+              success: contract.balance[0] != '-',
+              danger: contract.balance[0] == '-'
+            }"
+          >
+            {{ contract.balance }}
+          </p>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="form-control-group">
+          <label class="label" for="input-paid">Valor pago:</label>
+          <p>{{ contract.paid }}</p>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="form-control-group">
+          <label class="label" for="input-interest">Parcelas criadas:</label>
+          <p>{{ contract.interest }}</p>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="form-control-group">
+          <label class="label" for="input-total">Parcelas totais:</label>
+          <p>{{ contract.total }}</p>
+        </div>
+      </div>
+    </div>
   </nb-tab>
   <nb-tab
     [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"

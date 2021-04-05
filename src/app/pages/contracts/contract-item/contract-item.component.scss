@@ -21,6 +21,18 @@
     overflow: unset;
   }
 
+  .danger {
+    color: nb-theme(text-danger-color);
+  }
+
+  .success {
+    color: nb-theme(text-success-color);
+  }
+
+  .noPadding {
+    padding: nb-theme(list-item-padding) 0;
+  }
+
   .irow {
     width: 100%;
     margin-left: 0;

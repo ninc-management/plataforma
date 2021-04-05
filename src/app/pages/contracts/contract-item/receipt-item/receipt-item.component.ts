@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { format, parseISO } from 'date-fns';
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import * as _ from 'lodash';
 
@@ -31,7 +32,8 @@ export class ReceiptItemComponent implements OnInit {
 
   constructor(
     private contractService: ContractService,
-    private stringUtil: StringUtilService
+    private stringUtil: StringUtilService,
+    private utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -60,19 +62,7 @@ export class ReceiptItemComponent implements OnInit {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
       }
-      this.receipt.notaFiscal = this.nfPercentage();
-    }
-  }
-
-  nfPercentage(): string {
-    if (this.contract.invoice.administration == 'nortan') {
-      if (this.contract.invoice.department == 'DEC') {
-        return '8,5';
-      } else {
-        return '15,5';
-      }
-    } else {
-      return '0';
+      this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
     }
   }
 

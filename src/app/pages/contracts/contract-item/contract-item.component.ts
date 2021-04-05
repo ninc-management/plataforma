@@ -70,6 +70,9 @@ export class ContractItemComponent implements OnInit {
   ngOnInit(): void {
     this.contract = _.cloneDeep(this.iContract);
     this.contract.interest = this.contract.receipts.length;
+    this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.contract.nortanPercentage = '15';
+    this.contract.liquid = this.toLiquid(this.contract.value);
     this.calculatePaidValue();
     this.calculateBalance();
     if (
@@ -217,13 +220,19 @@ export class ContractItemComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.contract.interest = this.contract.receipts.length;
-    this.contract.paid = this.stringUtil.numberToMoney(
-      this.contract.receipts.reduce((accumulator: number, recipt: any) => {
-        if (recipt.paid)
-          accumulator =
-            accumulator + this.stringUtil.moneyToNumber(recipt.value);
-        return accumulator;
-      }, 0)
+    this.contract.paid = this.toLiquid(
+      this.stringUtil.numberToMoney(
+        this.contract.receipts.reduce((accumulator: number, recipt: any) => {
+          if (recipt.paid)
+            accumulator =
+              accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          return accumulator;
+        }, 0)
+      )
+    );
+    this.contract.notPaid = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.contract.liquid) -
+        this.stringUtil.moneyToNumber(this.toLiquid(this.contract.paid))
     );
   }
 
@@ -274,5 +283,41 @@ export class ContractItemComponent implements OnInit {
 
   trackByIndex(index: number, obj: any): any {
     return index;
+  }
+
+  toLiquid(value: string): string {
+    const result = this.stringUtil.round(
+      this.stringUtil.moneyToNumber(value) *
+        this.stringUtil.toMutiplyPercentage(this.contract.notaFiscal) *
+        this.stringUtil.toMutiplyPercentage(this.contract.nortanPercentage)
+    );
+    return this.stringUtil.numberToMoney(result);
+  }
+
+  liquidValue(distribution: string): string {
+    const result = this.stringUtil.round(
+      this.stringUtil.moneyToNumber(this.contract.liquid) *
+        (1 - this.stringUtil.toMutiplyPercentage(distribution))
+    );
+    return this.stringUtil.numberToMoney(result);
+  }
+
+  receivedValue(user: 'object'): string {
+    const received = this.contract.payments
+      .map((payment) => payment.team)
+      .flat()
+      .reduce((sum, member) => {
+        if (member.user == user['_id'])
+          sum += this.stringUtil.moneyToNumber(member.value);
+        return sum;
+      }, 0);
+    return this.stringUtil.numberToMoney(received);
+  }
+
+  notPaidValue(distribution: string, user: 'object'): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.liquidValue(distribution)) -
+        this.stringUtil.moneyToNumber(this.receivedValue(user))
+    );
   }
 }

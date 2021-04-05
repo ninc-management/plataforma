@@ -43,7 +43,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid && receiptIndex !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />
@@ -84,7 +84,12 @@
           placeholder="Revisão"
           fullWidth
           fieldSize="large"
-          [brmasker]="{ type: 'num' }"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
           [required]="validation.nf.required"
           [status]="
             nf.dirty
@@ -95,7 +100,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid && receiptIndex !== undefined"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
           readonly="true"
@@ -114,7 +119,12 @@
           placeholder="Revisão"
           fullWidth
           fieldSize="large"
-          [brmasker]="{ type: 'num' }"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: '2'
+          }"
           [required]="validation.nortan.required"
           [status]="
             nortan.dirty
@@ -125,7 +135,7 @@
               ? 'success'
               : 'basic'
           "
-          [disabled]="receipt.paid"
+          [disabled]="receipt.paid && receiptIndex !== undefined"
           [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
           (ngModelChange)="toLiquid(receipt.value)"
         />

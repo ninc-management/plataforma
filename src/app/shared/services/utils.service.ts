@@ -25,6 +25,18 @@ export class UtilsService {
     return document.documentElement.clientWidth <= sm;
   }
 
+  nfPercentage(contract: 'object'): string {
+    if (contract['invoice'].administration == 'nortan') {
+      if (contract['invoice'].department == 'DEC') {
+        return '8,5';
+      } else {
+        return '15,5';
+      }
+    } else {
+      return '0';
+    }
+  }
+
   // https://stackoverflow.com/a/42488360
   sumObjectsByKey(...objs: any): any {
     return objs.reduce((a, b) => {
