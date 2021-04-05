@@ -5,6 +5,8 @@ import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
+import { StringUtilService } from './string-util.service';
+import { UserService, CONTRACT_BALANCE } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +21,8 @@ export class ContractService implements OnDestroy {
     private http: HttpClient,
     private wsService: WebSocketService,
     private onedrive: OnedriveService,
+    private stringUtil: StringUtilService,
+    private userService: UserService,
     private socket: Socket
   ) {}
 
@@ -98,5 +102,79 @@ export class ContractService implements OnDestroy {
   hasPayments(cId: any): boolean {
     const contract = this.idToContract(cId);
     return contract.payments.length != 0;
+  }
+
+  liquidValue(
+    distribution: string,
+    user: 'object',
+    contract: 'object'
+  ): string {
+    const expenses = contract['expenses']
+      .filter((expense) => expense.paid)
+      .map((expense) => {
+        return { source: expense.source, value: expense.value };
+      })
+      .flat()
+      .reduce((sum, member) => {
+        sum += this.stringUtil.moneyToNumber(member.value);
+        return sum;
+      }, 0);
+    const result = this.stringUtil.round(
+      (this.stringUtil.moneyToNumber(contract['liquid']) - expenses) *
+        (1 - this.stringUtil.toMutiplyPercentage(distribution))
+    );
+    // Sum expenses paid by user
+    const paid = contract['expenses']
+      .filter((expense) => expense.paid)
+      .map((expense) => {
+        return { source: expense.source, value: expense.value };
+      })
+      .flat()
+      .reduce((sum, member) => {
+        if (this.userService.idToUser(member.source)._id == user['_id'])
+          sum += this.stringUtil.moneyToNumber(member.value);
+        return sum;
+      }, 0);
+
+    return this.stringUtil.numberToMoney(result + paid);
+  }
+
+  percentageToReceive(
+    distribution: string,
+    user: 'object',
+    contract: 'object'
+  ): string {
+    let sum = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(contract['notPaid']) +
+        this.stringUtil.moneyToNumber(contract['balance'])
+    );
+    if (contract['balance'][0] == '-') sum = contract['notPaid'];
+    return this.stringUtil
+      .toPercentage(this.notPaidValue(distribution, user, contract), sum)
+      .slice(0, -1);
+  }
+
+  receivedValue(user: 'object', contract: 'object'): string {
+    const received = contract['payments']
+      .map((payment) => payment.team)
+      .flat()
+      .reduce((sum, member) => {
+        if (member.user == user['_id'])
+          sum += this.stringUtil.moneyToNumber(member.value);
+        return sum;
+      }, 0);
+    return this.stringUtil.numberToMoney(received);
+  }
+
+  notPaidValue(
+    distribution: string,
+    user: 'object',
+    contract: 'object'
+  ): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(
+        this.liquidValue(distribution, user, contract)
+      ) - this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
+    );
   }
 }

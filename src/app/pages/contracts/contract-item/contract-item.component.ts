@@ -5,8 +5,12 @@ import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
 import { ContractService } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
-import { UserService } from '../../../shared/services/user.service';
+import {
+  UserService,
+  CONTRACT_BALANCE,
+} from '../../../shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import {
   ContractDialogComponent,
   ComponentTypes,
@@ -14,7 +18,6 @@ import {
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
-import { UtilsService } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -58,10 +61,10 @@ export class ContractItemComponent implements OnInit {
   userData: CompleterData;
 
   constructor(
-    private contractService: ContractService,
     private dialogService: NbDialogService,
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
+    public contractService: ContractService,
     public userService: UserService,
     public departmentService: DepartmentService,
     public utils: UtilsService
@@ -199,20 +202,18 @@ export class ContractItemComponent implements OnInit {
           switch (componentType) {
             case ComponentTypes.RECEIPT:
               this.contract.receipts.splice(index, 1);
-              this.calculatePaidValue();
-              this.calculateBalance();
               break;
             case ComponentTypes.PAYMENT:
               this.contract.payments.splice(index, 1);
-              this.calculateBalance();
               break;
             case ComponentTypes.EXPENSE:
               this.contract.expenses.splice(index, 1);
-              this.calculateBalance();
               break;
             default:
               break;
           }
+          this.calculatePaidValue();
+          this.calculateBalance();
           this.updateContract();
         }
       });
@@ -232,7 +233,7 @@ export class ContractItemComponent implements OnInit {
     );
     this.contract.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.contract.liquid) -
-        this.stringUtil.moneyToNumber(this.toLiquid(this.contract.paid))
+        this.stringUtil.moneyToNumber(this.contract.paid)
     );
   }
 
@@ -246,7 +247,11 @@ export class ContractItemComponent implements OnInit {
           return accumulator;
         }, 0) -
         this.contract.expenses.reduce((accumulator: number, expense: any) => {
-          if (expense.paid)
+          if (
+            expense.paid &&
+            this.userService.idToUser(expense.source)._id ==
+              CONTRACT_BALANCE._id
+          )
             accumulator =
               accumulator + this.stringUtil.moneyToNumber(expense.value);
           return accumulator;
@@ -292,32 +297,5 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.toMutiplyPercentage(this.contract.nortanPercentage)
     );
     return this.stringUtil.numberToMoney(result);
-  }
-
-  liquidValue(distribution: string): string {
-    const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(this.contract.liquid) *
-        (1 - this.stringUtil.toMutiplyPercentage(distribution))
-    );
-    return this.stringUtil.numberToMoney(result);
-  }
-
-  receivedValue(user: 'object'): string {
-    const received = this.contract.payments
-      .map((payment) => payment.team)
-      .flat()
-      .reduce((sum, member) => {
-        if (member.user == user['_id'])
-          sum += this.stringUtil.moneyToNumber(member.value);
-        return sum;
-      }, 0);
-    return this.stringUtil.numberToMoney(received);
-  }
-
-  notPaidValue(distribution: string, user: 'object'): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.liquidValue(distribution)) -
-        this.stringUtil.moneyToNumber(this.receivedValue(user))
-    );
   }
 }

@@ -90,10 +90,17 @@ export class PaymentItemComponent implements OnInit {
       }
     } else {
       this.payment.team = _.cloneDeep(this.contract.team).map((member) => {
-        member.user = member.user?._id ? member.user._id : member.user;
+        member.user = this.userService.idToUser(member.user)._id;
         if (member.distribution)
           member.value = this.stringUtil.numberToMoney(
-            1 - this.stringUtil.toMutiplyPercentage(member.distribution)
+            1 -
+              this.stringUtil.toMutiplyPercentage(
+                this.contractService.percentageToReceive(
+                  member.distribution,
+                  member.user,
+                  this.contract
+                )
+              )
           );
         else member.value = '0';
         delete member.distribution;

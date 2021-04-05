@@ -755,16 +755,34 @@
             {{ member.user.fullName }}
           </div>
           <div class="col-6 col-md-2">
-            {{ liquidValue(member.distribution) }}
+            {{
+              contractService.liquidValue(
+                member.distribution,
+                member.user,
+                contract
+              )
+            }}
           </div>
           <div class="col-6 col-md-1">
-            {{ member.distribution }}
+            {{
+              contractService.percentageToReceive(
+                member.distribution,
+                member.user,
+                contract
+              )
+            }}
           </div>
           <div class="col-6 col-md-2">
-            {{ receivedValue(member.user) }}
+            {{ contractService.receivedValue(member.user, contract) }}
           </div>
           <div class="col-6 col-md-2">
-            {{ notPaidValue(member.distribution, member.user) }}
+            {{
+              contractService.notPaidValue(
+                member.distribution,
+                member.user,
+                contract
+              )
+            }}
           </div>
         </div>
       </nb-list-item>
