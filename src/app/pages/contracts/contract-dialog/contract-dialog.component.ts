@@ -3,6 +3,7 @@ import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 import { fromEvent } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -27,6 +28,7 @@ export class ContractDialogComponent implements OnInit {
   @Input() expenseIndex: number;
   @Input() componentType: ComponentTypes;
   isPayable = true;
+  hasBalance = true;
   types = ComponentTypes;
   onedriveUrl: string;
 
@@ -34,6 +36,7 @@ export class ContractDialogComponent implements OnInit {
     @Inject(NB_DOCUMENT) protected document,
     protected ref: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
+    private stringUtil: StringUtilService,
     private onedrive: OnedriveService,
     public utils: UtilsService
   ) {}
@@ -47,6 +50,7 @@ export class ContractDialogComponent implements OnInit {
     //   )
     //   .subscribe(() => this.dismiss());
     this.isPayable = this.contract.receipts.length < this.contract.total;
+    this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == ComponentTypes.CONTRACT)
       this.onedrive
         .webUrl(this.contract)

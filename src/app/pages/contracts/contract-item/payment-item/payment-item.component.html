@@ -29,6 +29,7 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
+          [overPaid]="contract.balance"
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
@@ -48,13 +49,8 @@
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
           <p class="caption status-danger" *ngIf="value.errors?.overpaid">
-            O valor do empenho é superior ao valor restante a ser pago (R$
-            {{ notPaid() }})!
-          </p>
-          <p class="caption status-danger" *ngIf="value.errors?.lastpayment">
-            O valor do empenho da última parcela deve ser igual ao valor
-            restante a ser pago (R$
-            {{ notPaid() }})!
+            O valor do empenho é superior ao valor em caixa no contrato (R$
+            {{ contract.balance }})!
           </p>
           <p class="caption status-danger" *ngIf="value.errors?.required">
             O valor do empenho é obrigatório!

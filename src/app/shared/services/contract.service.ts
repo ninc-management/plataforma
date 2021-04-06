@@ -109,6 +109,7 @@ export class ContractService implements OnDestroy {
     user: 'object',
     contract: 'object'
   ): string {
+    if (distribution == undefined) return '0,00';
     const expenses = contract['expenses']
       .filter((expense) => expense.paid)
       .map((expense) => {
@@ -159,7 +160,7 @@ export class ContractService implements OnDestroy {
       .map((payment) => payment.team)
       .flat()
       .reduce((sum, member) => {
-        if (member.user == user['_id'])
+        if (this.userService.idToUser(member.user)._id == user['_id'])
           sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);

@@ -37,6 +37,7 @@ export class ReceiptItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
     if (this.receiptIndex !== undefined) {
       this.receipt = _.cloneDeep(this.contract.receipts[this.receiptIndex]);
       if (
@@ -62,7 +63,6 @@ export class ReceiptItemComponent implements OnInit {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
       }
-      this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
     }
   }
 
@@ -84,8 +84,10 @@ export class ReceiptItemComponent implements OnInit {
   notPaid(): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.contract.value) -
-        this.stringUtil.moneyToNumber(
-          this.contract.paid ? this.contract.paid : '0,00'
+        this.contract.receipts.reduce(
+          (sum, receipt) =>
+            (sum += this.stringUtil.moneyToNumber(receipt.value)),
+          0
         )
     );
   }

@@ -18,6 +18,10 @@ export class StringUtilService {
     return +result;
   }
 
+  numberToString(number: number): string {
+    return number.toFixed(4).toString().replace('.', ',');
+  }
+
   numberToMoney(value: number): string {
     const result = this.brMask.writeValueMoney(
       value.toFixed(2).toString().replace('.', ','),
