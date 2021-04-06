@@ -19,7 +19,7 @@ export class ReceiptItemComponent implements OnInit {
   today = new Date();
   receipt: any = {
     notaFiscal: '15.5', // Porcentagem da nota fiscal
-    nortanPercentage: '15', // TODO: Pegar este valor do cargo do autor do contrato
+    nortanPercentage: '15',
     paid: false,
     created: this.today,
     lastUpdate: this.today,
@@ -38,6 +38,7 @@ export class ReceiptItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.receipt.nortanPercentage = this.utils.nortanPercentage(this.contract);
     if (this.receiptIndex !== undefined) {
       this.receipt = _.cloneDeep(this.contract.receipts[this.receiptIndex]);
       if (

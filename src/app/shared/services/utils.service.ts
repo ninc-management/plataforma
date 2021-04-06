@@ -37,6 +37,11 @@ export class UtilsService {
     }
   }
 
+  nortanPercentage(contract: 'object'): string {
+    if (contract['invoice'].administration == 'nortan') return '15';
+    return '17';
+  }
+
   // https://stackoverflow.com/a/42488360
   sumObjectsByKey(...objs: any): any {
     return objs.reduce((a, b) => {
