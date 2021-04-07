@@ -57,8 +57,12 @@ export class NgxLoginComponent extends NbLoginComponent {
           this.showMessages.success = true;
           this.myMessages = ['Acesso liberado para a plataforma.'];
           combineLatest([
-            this.authService.isUserRegistred(result.payload.account.username),
-            this.authService.isUserProspect(result.payload.account.username),
+            this.authService.isUserRegistred(
+              (result.payload as any).account.username
+            ),
+            this.authService.isUserProspect(
+              (result.payload as any).account.username
+            ),
           ]).subscribe(([isRegistered, isProspect]) => {
             if (isRegistered != undefined && isProspect != undefined) {
               if (isRegistered) super.login();

@@ -53,7 +53,7 @@ export class NgxRegisterComponent
           result.eventType === EventType.LOGIN_SUCCESS ||
           result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
         ) {
-          this.user.email = result.payload.account.username;
+          this.user.email = (result.payload as any).account.username;
         } else if (
           result.eventType === EventType.LOGIN_FAILURE ||
           result.eventType === EventType.ACQUIRE_TOKEN_FAILURE

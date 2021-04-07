@@ -37,7 +37,9 @@ export class AuthService {
       )
       .subscribe((msg: EventMessage) => {
         this.onUserChange$.next();
-        this.msAuthService.instance.setActiveAccount(msg.payload.account);
+        this.msAuthService.instance.setActiveAccount(
+          (msg.payload as any).account
+        );
       });
   }
 
@@ -56,7 +58,6 @@ export class AuthService {
   }
 
   msLogin(): Observable<EventMessage> {
-    console.log('Ambiente', environment);
     this.msAuthService
       .loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
       .subscribe();
@@ -73,9 +74,9 @@ export class AuthService {
   }
 
   msLogout(): void {
-    //TODO: Use logoutPopout() method when is merged
-    // https://github.com/AzureAD/microsoft-authentication-library-for-js/pull/3044
-    this.msAuthService.logout();
+    this.msAuthService.logoutPopup({
+      ...this.msalGuardConfig.authRequest,
+    } as PopupRequest);
   }
 
   register(prospect: any): Observable<any> {
