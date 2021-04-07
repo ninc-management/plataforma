@@ -1231,7 +1231,7 @@ export class PdfService {
         },
         {
           text:
-            'Rua Hamilton de Barros Soutinho, 1866. Sala 12. Jatiúca. Maceió-AL. CEP 57035-690.',
+            'Av. Comendador Gustavo Paiva, Sala 28, Mezanino, Norcon Empresarial. 2789, Mangabeiras. Maceió-AL. CEP 57037-532.',
           fontSize: 10,
         },
       ],
