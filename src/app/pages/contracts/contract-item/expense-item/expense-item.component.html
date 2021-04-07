@@ -127,7 +127,7 @@
           [status]="type.value ? 'success' : 'basic'"
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
         >
-          <nb-option *ngFor="let eType of EXPENSE_TYPES" [value]="eType">{{
+          <nb-option *ngFor="let eType of types" [value]="eType">{{
             eType
           }}</nb-option>
         </nb-select>

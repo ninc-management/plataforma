@@ -21,6 +21,15 @@ interface UploadedFile {
   url: string;
 }
 
+export enum EXPENSE_TYPES {
+  PRE_OBRA = 'Pré-Obra',
+  MATERIAL = 'Material',
+  FOLHA = 'Folha de Pagamento',
+  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
+  APORTE = 'Aporte',
+  OUTROS = 'Outros',
+}
+
 @Component({
   selector: 'ngx-expense-item',
   templateUrl: './expense-item.component.html',
@@ -34,13 +43,7 @@ export class ExpenseItemComponent implements OnInit {
   validation = (expense_validation as any).default;
   uploadedFiles: UploadedFile[] = [];
   today = new Date();
-  EXPENSE_TYPES = [
-    'Pré-Obra',
-    'Material',
-    'Folha de Pagamento',
-    'Transporte e Alimentação',
-    'Outros',
-  ];
+  types = Object.values(EXPENSE_TYPES);
   expense: any = {
     paid: true,
     nf: true,

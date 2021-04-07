@@ -9,12 +9,13 @@ import {
   UserService,
   CONTRACT_BALANCE,
 } from '../../../shared/services/user.service';
-import { DepartmentService } from 'app/shared/services/department.service';
-import { UtilsService } from 'app/shared/services/utils.service';
+import { DepartmentService } from '../../../shared/services/department.service';
+import { UtilsService } from '../../../shared/services/utils.service';
 import {
   ContractDialogComponent,
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
+import { EXPENSE_TYPES } from './expense-item/expense-item.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
@@ -238,24 +239,33 @@ export class ContractItemComponent implements OnInit {
   }
 
   calculateBalance(): void {
+    const expenseContribution = this.contract.expenses.reduce(
+      (accumulator, expense: any) => {
+        if (
+          expense.paid &&
+          this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id
+        )
+          accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
+        if (expense.type == EXPENSE_TYPES.APORTE)
+          accumulator.contribution += this.stringUtil.moneyToNumber(
+            expense.value
+          );
+        return accumulator;
+      },
+      { expense: 0, contribution: 0 }
+    );
     this.contract.balance = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.contract.paid) -
-        this.contract.payments.reduce((accumulator: number, payment: any) => {
-          if (payment.paid)
-            accumulator =
-              accumulator + this.stringUtil.moneyToNumber(payment.value);
-          return accumulator;
-        }, 0) -
-        this.contract.expenses.reduce((accumulator: number, expense: any) => {
-          if (
-            expense.paid &&
-            this.userService.idToUser(expense.source)._id ==
-              CONTRACT_BALANCE._id
-          )
-            accumulator =
-              accumulator + this.stringUtil.moneyToNumber(expense.value);
-          return accumulator;
-        }, 0)
+      this.stringUtil.round(
+        this.stringUtil.moneyToNumber(this.contract.paid) -
+          this.contract.payments.reduce((accumulator: number, payment: any) => {
+            if (payment.paid)
+              accumulator =
+                accumulator + this.stringUtil.moneyToNumber(payment.value);
+            return accumulator;
+          }, 0) -
+          expenseContribution.expense +
+          expenseContribution.contribution
+      )
     );
   }
 

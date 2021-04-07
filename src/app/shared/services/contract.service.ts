@@ -6,7 +6,8 @@ import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
-import { UserService, CONTRACT_BALANCE } from './user.service';
+import { UserService } from './user.service';
+import { EXPENSE_TYPES } from '../../pages/contracts/contract-item/expense-item/expense-item.component';
 
 @Injectable({
   providedIn: 'root',
@@ -110,18 +111,28 @@ export class ContractService implements OnDestroy {
     contract: 'object'
   ): string {
     if (distribution == undefined) return '0,00';
-    const expenses = contract['expenses']
+    const expenseContribution = contract['expenses']
       .filter((expense) => expense.paid)
       .map((expense) => {
-        return { source: expense.source, value: expense.value };
+        return {
+          value: expense.value,
+          type: expense.type,
+        };
       })
       .flat()
-      .reduce((sum, member) => {
-        sum += this.stringUtil.moneyToNumber(member.value);
-        return sum;
-      }, 0);
+      .reduce(
+        (sum, expense) => {
+          if (expense.type == EXPENSE_TYPES.APORTE)
+            sum.contribution += this.stringUtil.moneyToNumber(expense.value);
+          sum.expense += this.stringUtil.moneyToNumber(expense.value);
+          return sum;
+        },
+        { expense: 0, contribution: 0 }
+      );
     const result = this.stringUtil.round(
-      (this.stringUtil.moneyToNumber(contract['liquid']) - expenses) *
+      (this.stringUtil.moneyToNumber(contract['liquid']) -
+        expenseContribution.expense +
+        expenseContribution.contribution) *
         (1 - this.stringUtil.toMutiplyPercentage(distribution))
     );
     // Sum expenses paid by user
