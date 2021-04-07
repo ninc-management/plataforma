@@ -126,6 +126,7 @@
           [required]="validation.type.required"
           [status]="type.value ? 'success' : 'basic'"
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
+          (selectedChange)="handleContractMember()"
         >
           <nb-option *ngFor="let eType of types" [value]="eType">{{
             eType

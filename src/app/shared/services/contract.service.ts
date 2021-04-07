@@ -168,6 +168,7 @@ export class ContractService implements OnDestroy {
 
   receivedValue(user: 'object', contract: 'object'): string {
     const received = contract['payments']
+      .filter((payment) => payment.paid)
       .map((payment) => payment.team)
       .flat()
       .reduce((sum, member) => {

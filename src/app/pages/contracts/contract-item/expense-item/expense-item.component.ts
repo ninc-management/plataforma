@@ -64,6 +64,8 @@ export class ExpenseItemComponent implements OnInit {
 
   sourceSearch: string;
   sourceData: CompleterData;
+  private sourceArray = new BehaviorSubject<any[]>([]);
+  lastType: EXPENSE_TYPES;
 
   constructor(
     private contractService: ContractService,
@@ -110,16 +112,9 @@ export class ExpenseItemComponent implements OnInit {
         'fullName'
       )
       .imageField('profilePicture');
-
-    this.sourceData = this.completerService
-      .local(
-        this.contract.team
-          .map((member) => member.user)
-          .concat([CONTRACT_BALANCE]),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    let tmp = this.contract.team.map((member) => member.user);
+    tmp.unshift(CONTRACT_BALANCE);
+    this.sourceArray.next(tmp);
 
     if (this.expenseIndex !== undefined) {
       this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
@@ -145,14 +140,52 @@ export class ExpenseItemComponent implements OnInit {
       this.uploadedFiles = _.cloneDeep(
         this.expense.uploadedFiles
       ) as UploadedFile[];
+      if (this.expense.type === EXPENSE_TYPES.APORTE)
+        this.removeContractBalanceMember();
+      this.lastType = this.expense.type;
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         this.expense.author = author;
       });
       this.updatePaidDate();
     }
+    this.sourceData = this.completerService
+      .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
+      .imageField('profilePicture');
     this.userSearch = this.expense.author.fullName;
     this.sourceSearch = this.expense.source?.fullName;
+  }
+
+  addContractBalanceMember(): void {
+    let tmp = this.sourceArray.value;
+    tmp.unshift(CONTRACT_BALANCE);
+    this.sourceArray.next(tmp);
+  }
+
+  removeContractBalanceMember(): void {
+    let tmp = this.sourceArray.value;
+    tmp.shift();
+    this.sourceArray.next(tmp);
+  }
+
+  handleContractMember(): void {
+    if (
+      this.expense.type === EXPENSE_TYPES.APORTE &&
+      this.lastType !== EXPENSE_TYPES.APORTE
+    ) {
+      this.removeContractBalanceMember();
+      if (this.expense.source._id === CONTRACT_BALANCE._id) {
+        this.sourceSearch = '';
+        this.expense.source = undefined;
+      }
+    }
+    if (
+      this.expense.type !== EXPENSE_TYPES.APORTE &&
+      this.lastType === EXPENSE_TYPES.APORTE
+    ) {
+      this.addContractBalanceMember();
+    }
+    this.lastType = this.expense.type;
   }
 
   urlReceiver(fileList: BehaviorSubject<any>[]): void {

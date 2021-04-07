@@ -283,7 +283,7 @@ export class ContractItemComponent implements OnInit {
   addColaborator(): void {
     if (this.options.valueType == '$')
       this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.distribution, this.contract.total)
+        .toPercentage(this.teamMember.distribution, this.contract.value)
         .slice(0, -1);
     this.contract.team.push(Object.assign({}, this.teamMember));
     this.userSearch = undefined;
