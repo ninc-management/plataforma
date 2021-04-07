@@ -7,7 +7,10 @@ import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
-import { ContractService } from '../../../../shared/services/contract.service';
+import {
+  ContractService,
+  EXPENSE_TYPES,
+} from '../../../../shared/services/contract.service';
 import { OnedriveService } from '../../../../shared/services/onedrive.service';
 import {
   UserService,
@@ -19,15 +22,6 @@ import * as expense_validation from '../../../../shared/payment-validation.json'
 interface UploadedFile {
   name: string;
   url: string;
-}
-
-export enum EXPENSE_TYPES {
-  PRE_OBRA = 'Pré-Obra',
-  MATERIAL = 'Material',
-  FOLHA = 'Folha de Pagamento',
-  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
-  APORTE = 'Aporte',
-  OUTROS = 'Outros',
 }
 
 @Component({

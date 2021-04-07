@@ -3,7 +3,10 @@ import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { format, parseISO } from 'date-fns';
 import { take } from 'rxjs/operators';
-import { ContractService } from '../../../shared/services/contract.service';
+import {
+  ContractService,
+  EXPENSE_TYPES,
+} from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import {
   UserService,
@@ -15,7 +18,6 @@ import {
   ContractDialogComponent,
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
-import { EXPENSE_TYPES } from './expense-item/expense-item.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';

@@ -7,7 +7,15 @@ import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
-import { EXPENSE_TYPES } from '../../pages/contracts/contract-item/expense-item/expense-item.component';
+
+export enum EXPENSE_TYPES {
+  PRE_OBRA = 'Pré-Obra',
+  MATERIAL = 'Material',
+  FOLHA = 'Folha de Pagamento',
+  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
+  APORTE = 'Aporte',
+  OUTROS = 'Outros',
+}
 
 @Injectable({
   providedIn: 'root',
