@@ -289,7 +289,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
   forceValidatorUpdate(model: NgModel, time = 1): void {
     setTimeout(() => {
-      model.control.updateValueAndValidity({ onlySelf: true });
+      model.control.updateValueAndValidity();
     }, time);
   }
 }
