@@ -75,6 +75,8 @@ export class NbFileUploaderService implements OnDestroy {
   ) {
     let tempFile = file.getValue();
     tempFile.onBeforeUpload();
+    if (options.name != undefined)
+      tempFile.name = options.name.fn(tempFile.name);
 
     const {
       downloadUrl$,
@@ -82,6 +84,7 @@ export class NbFileUploaderService implements OnDestroy {
     } = this.storageService.uploadFileAndGetMetadata(
       options.mediaFolderPath,
       tempFile.rawFile,
+      tempFile.name,
       options.storageProvider
     );
 

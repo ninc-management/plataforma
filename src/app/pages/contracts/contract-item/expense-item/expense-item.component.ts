@@ -1,12 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
+import { NgModel, NgForm } from '@angular/forms';
 import {
   NbFileUploaderOptions,
   StorageProvider,
 } from '../../../../@theme/components';
 import { format, parseISO } from 'date-fns';
-import { take } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { take, takeUntil, skip } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
@@ -31,11 +39,15 @@ interface UploadedFile {
   templateUrl: './expense-item.component.html',
   styleUrls: ['./expense-item.component.scss'],
 })
-export class ExpenseItemComponent implements OnInit {
-  @Input() contract: any;
+export class ExpenseItemComponent implements OnInit, OnDestroy {
+  @ViewChild('form', { static: true })
+  formRef: NgForm;
+  @Input()
+  contract: any;
   @Input() contractIndex: number;
   @Input() expenseIndex: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
+  private destroy$ = new Subject<void>();
   validation = (expense_validation as any).default;
   uploadedFiles: UploadedFile[] = [];
   today = new Date();
@@ -53,7 +65,7 @@ export class ExpenseItemComponent implements OnInit {
   urls: string[] = [];
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg'];
   fileTypesAllowed: string[];
-  maxFileSize = 5;
+  maxFileSize = 4;
 
   userSearch: string;
   userData: CompleterData;
@@ -71,36 +83,16 @@ export class ExpenseItemComponent implements OnInit {
     public userService: UserService
   ) {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
       fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
     );
-    this.uploaderOptions = {
-      multiple: false,
-      directory: false,
-      showUploadQueue: true,
-      storageProvider: StorageProvider.ONEDRIVE,
-      mediaFolderPath:
-        this.onedrive.generatePath(this.contract.invoice) + '/Recibos',
-      allowedFileTypes: this.allowedMimeType,
-      filter: {
-        fn: (item: File) => {
-          // Verifica se arquivo é maior que maxFileSize mb
-          if (item.size / 1024 / 1024 > this.maxFileSize) {
-            return false;
-          }
-          const itemType =
-            item.name.substring(
-              item.name.lastIndexOf('.') + 1,
-              item.name.length
-            ) || item.name;
-          if (!this.fileTypesAllowed.includes(itemType)) {
-            return false;
-          }
-          return true;
-        },
-      },
-    };
+    this.updateUploaderOptions();
 
     this.userData = this.completerService
       .local(
@@ -151,6 +143,56 @@ export class ExpenseItemComponent implements OnInit {
       .imageField('profilePicture');
     this.userSearch = this.expense.author.fullName;
     this.sourceSearch = this.expense.source?.fullName;
+
+    this.formRef.control.statusChanges
+      .pipe(skip(1), takeUntil(this.destroy$))
+      .subscribe((status) => {
+        if (status === 'VALID' && this.expense.nf === true)
+          this.updateUploaderOptions();
+      });
+  }
+
+  updateUploaderOptions(): void {
+    this.uploaderOptions = {
+      multiple: false,
+      directory: false,
+      showUploadQueue: true,
+      storageProvider: StorageProvider.ONEDRIVE,
+      mediaFolderPath:
+        this.onedrive.generatePath(this.contract.invoice) + '/Recibos',
+      allowedFileTypes: this.allowedMimeType,
+      filter: {
+        fn: (item: File) => {
+          // Verifica se arquivo é maior que maxFileSize mb
+          if (item.size / 1024 / 1024 > this.maxFileSize) {
+            return false;
+          }
+          const itemType =
+            item.name.substring(
+              item.name.lastIndexOf('.') + 1,
+              item.name.length
+            ) || item.name;
+          if (!this.fileTypesAllowed.includes(itemType)) {
+            return false;
+          }
+          return true;
+        },
+      },
+      name: {
+        fn: (name: string) => {
+          const item = (this.expenseIndex !== undefined
+            ? this.expenseIndex + 1
+            : this.contract.expenses.length + 1
+          ).toString();
+          const type = this.expense.type;
+          const value = this.expense.value.replace('.', '');
+          const date = format(new Date(), 'dd-MM-yy');
+          const extension = name.match('[.].+');
+          console.log(name, extension);
+          return item + '-' + type + '-' + value + '-' + date + extension;
+        },
+      },
+    };
   }
 
   addContractBalanceMember(): void {

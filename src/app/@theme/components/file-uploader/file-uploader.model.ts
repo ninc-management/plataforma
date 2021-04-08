@@ -8,6 +8,10 @@ export declare type FilterFunction = {
   fn: (item?: File) => boolean;
 };
 
+export declare type NameFunction = {
+  fn: (name: string) => string;
+};
+
 export enum StorageProvider {
   FIREBASE,
   ONEDRIVE,
@@ -25,6 +29,7 @@ export interface NbFileUploaderOptions {
 
   allowedFileTypes?: string[];
   filter?: FilterFunction;
+  name?: NameFunction;
 }
 
 export class NbFileItem {

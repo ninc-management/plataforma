@@ -40,6 +40,7 @@ export class StorageService implements OnDestroy {
   uploadFileAndGetMetadata(
     mediaFolderPath: string,
     fileToUpload: File,
+    fileName: string,
     provider: StorageProvider
   ): FilesUploadMetadata {
     switch (provider) {
@@ -64,7 +65,7 @@ export class StorageService implements OnDestroy {
               environment.onedriveUri +
                 mediaFolderPath +
                 '/' +
-                fileToUpload.name +
+                fileName +
                 ':/content?@name.conflictBehavior=rename',
               f,
               { headers: { 'Content-Type': fileToUpload.type } }
