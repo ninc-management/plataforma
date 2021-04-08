@@ -338,7 +338,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   addMaterial(): void {
-    if (this.tempInvoice.productListType == '1') {
+    if (this.tempInvoice.materialListType == '1') {
       this.options.material.value = '0,00';
       this.options.material.total = '0,00';
     }
