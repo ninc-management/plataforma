@@ -7,6 +7,12 @@ import { BrMaskDirective } from '../directives/br-mask.directive';
 export class StringUtilService {
   constructor(private brMask: BrMaskDirective) {}
 
+  sumMoney(value1: string, value2: string): string {
+    return this.numberToMoney(
+      this.moneyToNumber(value1) + this.moneyToNumber(value2)
+    );
+  }
+
   moneyToNumber(money: string): number {
     if (!money) return 0;
     const result = money.replace('.', '').replace(',', '.');

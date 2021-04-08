@@ -99,6 +99,12 @@ export class UserService implements OnDestroy {
     return this.idToUser(id).fullName;
   }
 
+  idToShortName(id: string | 'object'): string {
+    return this.idToUser(id)?.exibitionName
+      ? this.idToUser(id).exibitionName
+      : this.idToUser(id).fullName;
+  }
+
   idToUser(id: string | 'object'): any {
     if (typeof id == 'object') return id;
     if (id === undefined) return undefined;

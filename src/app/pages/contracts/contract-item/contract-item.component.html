@@ -699,6 +699,14 @@
     [tabIcon]="scaleIcon"
     responsive
   >
+    <div class="row">
+      <div class="col-auto">
+        <label class="label-divider">Geral</label>
+      </div>
+      <div class="col">
+        <hr />
+      </div>
+    </div>
     <div class="row" style="text-align: center">
       <div class="col-6 col-md">
         <div class="form-control-group">
@@ -817,6 +825,60 @@
         <div class="form-control-group">
           <label class="label" for="input-total">Parcelas totais:</label>
           <p>{{ contract.total }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-auto">
+        <label class="label-divider">Despesas</label>
+      </div>
+      <div class="col">
+        <hr />
+      </div>
+    </div>
+    <div class="row" style="text-align: center">
+      <div class="col-md-6">
+        <div class="form-control-group">
+          <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+            <nb-list-item
+              *ngFor="
+                let expense of expenseTypesSum();
+                let i = index;
+                trackBy: trackByIndex
+              "
+            >
+              <div class="row irow">
+                <div class="col-md-6">
+                  <b>{{ expense.type }}</b>
+                </div>
+                <div class="col-md-6">
+                  {{ expense.value }}
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-control-group">
+          <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+            <nb-list-item
+              *ngFor="
+                let expense of expenseSourceSum();
+                let i = index;
+                trackBy: trackByIndex
+              "
+            >
+              <div class="row irow">
+                <div class="col-md-6">
+                  <b>{{ expense.user }}</b>
+                </div>
+                <div class="col-md-6">
+                  {{ expense.value }}
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
         </div>
       </div>
     </div>

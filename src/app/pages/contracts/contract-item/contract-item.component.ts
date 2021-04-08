@@ -38,6 +38,7 @@ export class ContractItemComponent implements OnInit {
   validation = (contract_validation as any).default;
   STATOOS = ['Em andamento', 'A receber', 'Concluído', 'Arquivado'];
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
+  EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
   USER_COORDINATIONS = [];
   paymentIcon = {
     icon: 'dollar-sign',
@@ -309,5 +310,50 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.toMutiplyPercentage(this.contract.nortanPercentage)
     );
     return this.stringUtil.numberToMoney(result);
+  }
+
+  expenseTypesSum(): any[] {
+    let result = this.contract.expenses.reduce(
+      (sum: any[], expense) => {
+        const idx = sum.findIndex((el) => el.type == expense.type);
+        sum[idx].value = this.stringUtil.sumMoney(
+          sum[idx].value,
+          expense.value
+        );
+        return sum;
+      },
+      this.EXPENSE_OPTIONS.map((type) => ({ type: type, value: '0,00' }))
+    );
+    const total = result.reduce(
+      (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
+      '0,00'
+    );
+    result.push({ type: 'TOTAL', value: total });
+    return result;
+  }
+
+  expenseSourceSum(): any[] {
+    let result = this.contract.expenses.reduce(
+      (sum: any[], expense) => {
+        const idx = sum.findIndex(
+          (el) => el.user == this.userService.idToShortName(expense.source)
+        );
+        sum[idx].value = this.stringUtil.sumMoney(
+          sum[idx].value,
+          expense.value
+        );
+        return sum;
+      },
+      this.contract.team
+        .map((member) => this.userService.idToShortName(member.user))
+        .concat([CONTRACT_BALANCE.fullName])
+        .map((name) => ({ user: name, value: '0,00' }))
+    );
+    const total = result.reduce(
+      (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
+      '0,00'
+    );
+    result.push({ user: 'TOTAL', value: total });
+    return result;
   }
 }

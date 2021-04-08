@@ -21,6 +21,13 @@
     overflow: unset;
   }
 
+  hr {
+    margin-top: nb-theme(text-label-line-height);
+    margin-bottom: 0;
+    border: 0;
+    border-top: 1px solid nb-theme(text-hint-color);
+  }
+
   .danger {
     color: nb-theme(text-danger-color);
   }
@@ -41,6 +48,14 @@
 
   .xIcon:hover {
     color: nb-theme(icon-danger-color) !important;
+  }
+
+  .label-divider {
+    color: nb-theme(text-hint-color);
+    font-family: nb-theme(text-label-font-family);
+    font-size: nb-theme(text-basic-font-size);
+    font-weight: nb-theme(text-label-font-weight);
+    line-height: nb-theme(text-label-line-height);
   }
 }
 
