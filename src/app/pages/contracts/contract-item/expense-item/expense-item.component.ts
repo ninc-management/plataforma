@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import {
   NbFileUploaderOptions,
   StorageProvider,
@@ -16,6 +17,7 @@ import {
   UserService,
   CONTRACT_BALANCE,
 } from '../../../../shared/services/user.service';
+import { StringUtilService } from '../../../../shared/services/string-util.service';
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/payment-validation.json';
 
@@ -63,6 +65,7 @@ export class ExpenseItemComponent implements OnInit {
 
   constructor(
     private contractService: ContractService,
+    private stringUtil: StringUtilService,
     private completerService: CompleterService,
     private onedrive: OnedriveService,
     public userService: UserService
@@ -233,5 +236,18 @@ export class ExpenseItemComponent implements OnInit {
   removeFile(index: number): void {
     //TODO: Remove file on Onedrive
     this.uploadedFiles.splice(index, 1);
+  }
+
+  overPaid(): string {
+    if (this.expense.source?._id === CONTRACT_BALANCE._id) {
+      return this.contract.balance;
+    }
+    return this.stringUtil.numberToMoney(Number.MAX_VALUE);
+  }
+
+  forceValidatorUpdate(model: NgModel, time = 1): void {
+    setTimeout(() => {
+      model.control.updateValueAndValidity({ onlySelf: true });
+    }, time);
   }
 }

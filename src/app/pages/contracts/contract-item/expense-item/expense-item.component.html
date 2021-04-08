@@ -53,6 +53,7 @@
           placeholder="Valor da despesa"
           fullWidth
           fieldSize="large"
+          [overPaid]="overPaid()"
           [brmasker]="{
             money: true,
             thousand: '.',
@@ -62,11 +63,21 @@
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
-          [status]="expense.value !== undefined ? 'success' : 'basic'"
+          [status]="
+            expense.value !== undefined
+              ? value.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
           [disabled]="expense.paid && expenseIndex !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
         />
         <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
+          <p class="caption status-danger" *ngIf="value.errors?.overpaid">
+            O valor do empenho é superior ao valor em caixa no contrato (R$
+            {{ overPaid() }})!
+          </p>
           <p class="caption status-danger" *ngIf="value.errors?.required">
             O valor da despesa é obrigatório!
           </p>
@@ -88,7 +99,9 @@
         <nb-completer
           [(ngModel)]="sourceSearch"
           [inputName]="'sourceListCompleter'"
-          (selected)="expense.source = $event.originalObject"
+          (selected)="
+            expense.source = $event.originalObject; forceValidatorUpdate(value)
+          "
           #sourceList="ngModel"
           id="input-source"
           name="sourceList"
