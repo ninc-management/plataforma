@@ -26,6 +26,10 @@
         }
       }
 
+      table tr th a {
+        color: var(--smart-table-header-fg) !important;
+      }
+
       .form-control {
         background-color: nb-theme(input-basic-background-color);
         border-color: nb-theme(input-basic-border-color);
