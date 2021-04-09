@@ -17,6 +17,7 @@ import { LayoutService } from '../@core/utils';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
+import { NbAccessChecker } from '@nebular/security';
 
 @Component({
   selector: 'ngx-pages',
@@ -39,8 +40,25 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
     private iconsLibrary: NbIconLibraries,
     private layoutService: LayoutService,
     private sidebarService: NbSidebarService,
-    private menuService: NbMenuService
+    private menuService: NbMenuService,
+    private accessChecker: NbAccessChecker
   ) {
+    this.accessChecker
+      .isGranted('admin', 'view-users')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAdmin) => {
+        if (isAdmin)
+          this.menu.push({
+            title: 'Associados',
+            icon: {
+              icon: 'users',
+              pack: 'fac',
+            },
+            link: '/pages/users',
+            pathMatch: 'full',
+          });
+      });
+
     iconsLibrary.registerFontPack('fa', {
       packClass: 'fa',
       iconClassPrefix: 'fa',

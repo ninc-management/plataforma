@@ -38,13 +38,4 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/contractors',
     pathMatch: 'full',
   },
-  {
-    title: 'Usuários',
-    icon: {
-      icon: 'users',
-      pack: 'fac',
-    },
-    link: '/pages/users',
-    pathMatch: 'full',
-  },
 ];
