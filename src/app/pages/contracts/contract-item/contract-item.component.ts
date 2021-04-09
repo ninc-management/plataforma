@@ -344,9 +344,12 @@ export class ContractItemComponent implements OnInit {
         );
         return sum;
       },
-      this.contract.team
-        .map((member) => this.userService.idToShortName(member.user))
-        .concat([CONTRACT_BALANCE.fullName])
+      [CONTRACT_BALANCE.fullName]
+        .concat(
+          this.contract.team.map((member) =>
+            this.userService.idToShortName(member.user)
+          )
+        )
         .map((name) => ({ user: name, value: '0,00' }))
     );
     const total = result.reduce(
