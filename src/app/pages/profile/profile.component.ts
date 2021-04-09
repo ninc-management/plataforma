@@ -1,13 +1,11 @@
 import {
   Component,
   OnInit,
-  Type,
-  OnDestroy,
   DoCheck,
   ViewChildren,
-  QueryList,
   ElementRef,
   ViewChild,
+  Input,
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { take } from 'rxjs/operators';
@@ -27,6 +25,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('expertise', { read: ElementRef }) expertiseRefs;
   @ViewChildren('shortExpertise', { read: ElementRef }) shortExpertiseRefs;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
+  @Input() user;
   currentUser: any = {};
   tmpUser;
   cities: string[] = [];
@@ -73,20 +72,19 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-      this.currentUser = user;
-      if (this.currentUser.state)
-        this.cities = this.statecityService.buildCityList(
-          this.currentUser.state
-        );
-      if (this.currentUser.expertise == undefined)
-        this.currentUser.expertise = [];
-      if (this.currentUser.theme == undefined)
-        this.currentUser.theme = 'default';
-      this.buildPositionsList();
-      this.buildLevelList();
-      this.refreshExpertises();
-    });
+    if (this.user !== undefined) this.currentUser = this.user;
+    else
+      this.userService.currentUser$
+        .pipe(take(2))
+        .subscribe((user) => (this.currentUser = user));
+    if (this.currentUser.state)
+      this.cities = this.statecityService.buildCityList(this.currentUser.state);
+    if (this.currentUser.expertise == undefined)
+      this.currentUser.expertise = [];
+    if (this.currentUser.theme == undefined) this.currentUser.theme = 'default';
+    this.buildPositionsList();
+    this.buildLevelList();
+    this.refreshExpertises();
   }
 
   ngDoCheck(): void {
@@ -252,9 +250,12 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.LEVELS.push('Associad' + this.currentUser.article + ' Líder');
   }
 
-  changeTheme() {
-    this.themeService.changeTheme(
-      this.currentUser?.theme == undefined ? 'default' : this.currentUser.theme
-    );
+  changeTheme(): void {
+    if (this.user === undefined)
+      this.themeService.changeTheme(
+        this.currentUser?.theme == undefined
+          ? 'default'
+          : this.currentUser.theme
+      );
   }
 }
