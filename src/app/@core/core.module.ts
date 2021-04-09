@@ -19,6 +19,7 @@ import {
 import { UserData } from './data/users';
 import { UserService } from './mock/users.service';
 import { MockDataModule } from './mock/mock-data.module';
+import { RoleProvider } from '../shared/providers/role.provider';
 
 const socialLinks = [
   {
@@ -68,16 +69,22 @@ export const NB_CORE_PROVIDERS = [
     },
   }).providers,
 
+  // Parceiro
+  // Cliente
+  // Associado
+  // Diretor Financeiro
+  // Diretor Administrativo
+  // Elo Principal
+  // Assessor Executivo Remoto
+  // Diretor de T.I
   NbSecurityModule.forRoot({
     accessControl: {
-      guest: {
-        view: '*',
-      },
       user: {
-        parent: 'guest',
-        create: '*',
-        edit: '*',
-        remove: '*',
+        user: '*',
+      },
+      admin: {
+        parent: 'user',
+        admin: '*',
       },
     },
   }).providers,
@@ -107,7 +114,10 @@ export class CoreModule {
   static forRoot(): ModuleWithProviders<CoreModule> {
     return {
       ngModule: CoreModule,
-      providers: [...NB_CORE_PROVIDERS],
+      providers: [
+        ...NB_CORE_PROVIDERS,
+        { provide: NbRoleProvider, useClass: RoleProvider },
+      ],
     };
   }
 }

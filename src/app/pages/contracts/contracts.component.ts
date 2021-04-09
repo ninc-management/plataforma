@@ -24,6 +24,7 @@ import { ptBR } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
+import { NbAccessChecker } from '@nebular/security';
 
 @Component({
   selector: 'ngx-contracts',
@@ -165,10 +166,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractService: ContractService,
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
-    public utils: UtilsService,
     private userService: UserService,
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService
+    private stringUtil: StringUtilService,
+    private accessChecker: NbAccessChecker,
+    public utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -219,6 +221,10 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           this.source.load(this.contracts);
         }
       });
+    this.accessChecker
+      .isGranted('admin', 'export-csv')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isAdmin) => (this.settings.actions.add = isAdmin));
   }
   /* eslint-enable @typescript-eslint/indent */
 
