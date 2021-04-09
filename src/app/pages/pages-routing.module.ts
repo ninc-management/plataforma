@@ -7,6 +7,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { ContractorsComponent } from './contractors/contractors.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,10 @@ const routes: Routes = [
       {
         path: 'contractors',
         component: ContractorsComponent,
+      },
+      {
+        path: 'users',
+        component: UsersComponent,
       },
       {
         path: '',

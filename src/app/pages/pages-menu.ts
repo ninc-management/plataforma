@@ -32,10 +32,19 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Clientes',
     icon: {
-      icon: 'client',
+      icon: 'clients',
       pack: 'fac',
     },
     link: '/pages/contractors',
+    pathMatch: 'full',
+  },
+  {
+    title: 'Usuários',
+    icon: {
+      icon: 'users',
+      pack: 'fac',
+    },
+    link: '/pages/users',
     pathMatch: 'full',
   },
 ];
