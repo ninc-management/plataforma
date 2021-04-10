@@ -1233,7 +1233,7 @@ export class PdfService {
         },
         {
           text:
-            'Av. Comendador Gustavo Paiva, Sala 28, Mezanino, Norcon Empresarial. 2789, Mangabeiras. Maceió-AL. CEP 57037-532.',
+            'Av. Comendador Gustavo Paiva, Sala 28, Mezanino, Norcon Empresarial.\n2789, Mangabeiras. Maceió-AL. CEP 57037-532.',
           fontSize: 10,
         },
       ],
