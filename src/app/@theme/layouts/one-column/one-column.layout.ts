@@ -26,7 +26,8 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
         ]"
         #sidebar
       >
-        <ng-content select="nb-menu"></ng-content>
+        <ng-content select="[slot=main]"></ng-content>
+        <ng-content select="[slot=social]"></ng-content>
       </nb-sidebar>
 
       <nb-layout-column>

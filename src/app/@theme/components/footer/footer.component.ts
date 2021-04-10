@@ -13,23 +13,6 @@ import { Component } from '@angular/core';
         >Akveo</a
       >.
     </span>
-    <div class="socials">
-      <a
-        href="https://www.instagram.com/nortanprojetos/"
-        target="_blank"
-        class="ion ion-social-instagram"
-      ></a>
-      <a
-        href="https://www.linkedin.com/company/nortan-solução-integrada-em-projetos/"
-        target="_blank"
-        class="ion ion-social-linkedin"
-      ></a>
-      <a
-        href="https://www.youtube.com/channel/UCyHRkfO7rtMiBUCkcXw5Rcw"
-        target="_blank"
-        class="ion ion-social-youtube"
-      ></a>
-    </div>
   `,
 })
 export class FooterComponent {

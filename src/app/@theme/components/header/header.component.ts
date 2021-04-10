@@ -62,7 +62,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
-        if (document.documentElement.clientWidth <= sm) {
+        if (
+          document.documentElement.clientWidth <= sm &&
+          event.tag === 'main'
+        ) {
           this.menuTitle =
             event.item.title === 'Início' ? 'Nortan' : event.item.title;
         }
