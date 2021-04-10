@@ -53,6 +53,17 @@ export const SOCIAL_ITEMS: NbMenuItem[] = [
     selected: false,
   },
   {
+    title: 'Gather Town',
+    icon: {
+      icon: 'gtown',
+      pack: 'fac',
+    },
+    url: 'https://gather.town/app/CzwGbYHrwlxlllet/N-Work',
+    target: '_blank,',
+    pathMatch: 'full',
+    selected: false,
+  },
+  {
     title: 'Universidade Nortan',
     icon: {
       icon: 'social-youtube',
