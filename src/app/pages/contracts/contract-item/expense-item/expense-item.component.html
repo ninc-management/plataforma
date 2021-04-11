@@ -21,7 +21,7 @@
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="
-            userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'
+            userSearch ? (userList.invalid ? 'danger' : 'success') : 'danger'
           "
           [attr.aria-invalid]="
             userList.invalid && userList.touched ? true : null
@@ -68,7 +68,7 @@
               ? value.invalid
                 ? 'danger'
                 : 'success'
-              : 'basic'
+              : 'danger'
           "
           [disabled]="expense.paid && expenseIndex !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
@@ -137,7 +137,11 @@
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="
-            sourceSearch ? (sourceList.invalid ? 'danger' : 'success') : 'basic'
+            sourceSearch
+              ? sourceList.invalid
+                ? 'danger'
+                : 'success'
+              : 'danger'
           "
           [attr.aria-invalid]="
             sourceList.invalid && sourceList.touched ? true : null
@@ -158,7 +162,7 @@
           fullWidth
           size="large"
           [required]="validation.type.required"
-          [status]="type.value ? 'success' : 'basic'"
+          [status]="type.value ? 'success' : 'danger'"
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
           (selectedChange)="handleContractMember()"
         >
@@ -170,7 +174,17 @@
     </div>
     <div class="col-md-2">
       <div class="form-control-group">
-        <label class="label" for="input-nf">Com nota fiscal?</label>
+        <label class="label" for="input-nf"
+          >Com nota fiscal?<nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar despesa. Esse arquivo deve ter no máximo 4mb."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon
+        ></label>
         <nb-select
           [(ngModel)]="expense.nf"
           #nf="ngModel"
@@ -180,57 +194,12 @@
           fullWidth
           size="large"
           [required]="validation.nf.required"
-          [status]="nf.value === undefined ? 'basic' : 'success'"
+          [status]="nf.value === undefined ? 'danger' : 'success'"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
         >
           <nb-option [value]="false">NÃO</nb-option>
           <nb-option [value]="true">SIM</nb-option>
         </nb-select>
-      </div>
-    </div>
-    <div class="col-md-12" *ngIf="expense.nf">
-      <nb-file-uploader
-        [options]="uploaderOptions"
-        [isFileDrop]="true"
-        (filesList)="urlReceiver($event)"
-        dropAreaLabel="Arraste seu comprovante aqui ou"
-        dropAreaFileChooserLabel="escolha um arquivo"
-      ></nb-file-uploader>
-    </div>
-    <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
-      <div class="form-control-group">
-        <label class="label" for="input-description"
-          >Comprovantes anexados:</label
-        >
-        <nb-list>
-          <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
-            <div class="row irow" style="width: 100%">
-              <div class="col-10 col-md-11">
-                <div class="irow row">
-                  <div class="col-1">#{{ +i + 1 }}</div>
-                  <a
-                    [href]="file.url"
-                    class="col"
-                    target="_blank"
-                    style="width: 100%; cursor: pointer; display: flex"
-                  >
-                    {{ file.name }}
-                  </a>
-                </div>
-              </div>
-              <div class="col-2 col-md-1" style="text-align: right">
-                <nb-icon
-                  class="xIcon"
-                  status="basic"
-                  icon="trash-2-outline"
-                  pack="eva"
-                  (click)="removeFile(i)"
-                  [options]="{ animation: { type: 'shake' } }"
-                ></nb-icon>
-              </div>
-            </div>
-          </nb-list-item>
-        </nb-list>
       </div>
     </div>
     <div class="col-md-12">
@@ -255,7 +224,7 @@
                 : 'success'
               : expense.description !== undefined
               ? 'success'
-              : 'basic'
+              : 'danger'
           "
           [attr.aria-invalid]="
             description.invalid && description.touched ? true : null
@@ -292,7 +261,7 @@
           size="large"
           (ngModelChange)="updatePaidDate()"
           [required]="validation.paidCheck.required"
-          [status]="paidCheck.value ? 'success' : 'basic'"
+          [status]="paidCheck.value ? 'success' : 'danger'"
           [attr.aria-invalid]="
             paidCheck.invalid && paidCheck.touched ? true : null
           "
@@ -325,7 +294,7 @@
                 : 'success'
               : expense.paidDate !== undefined
               ? 'success'
-              : 'basic'
+              : 'danger'
           "
           [attr.aria-invalid]="
             paidDate.invalid && paidDate.touched ? true : null
@@ -351,7 +320,7 @@
                   : 'success'
                 : expense.paidDate !== undefined
                 ? 'success'
-                : 'basic'
+                : 'danger'
             "
             [attr.aria-invalid]="
               paidDate.invalid && paidDate.touched ? true : null
@@ -383,7 +352,7 @@
                 : 'success'
               : expense.created !== undefined
               ? 'success'
-              : 'basic'
+              : 'danger'
           "
           [attr.aria-invalid]="created.invalid && created.touched ? true : null"
         />
@@ -411,11 +380,56 @@
                 : 'success'
               : options.lastUpdateDate !== undefined
               ? 'success'
-              : 'basic'
+              : 'danger'
           "
           [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
         />
       </div>
+    </div>
+    <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
+      <div class="form-control-group">
+        <label class="label" for="input-description"
+          >Comprovantes anexados:</label
+        >
+        <nb-list>
+          <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
+            <div class="row irow" style="width: 100%">
+              <div class="col-10 col-md-11">
+                <div class="irow row">
+                  <div class="col-1">#{{ +i + 1 }}</div>
+                  <a
+                    [href]="file.url"
+                    class="col"
+                    target="_blank"
+                    style="width: 100%; cursor: pointer; display: flex"
+                  >
+                    {{ file.name }}
+                  </a>
+                </div>
+              </div>
+              <div class="col-2 col-md-1" style="text-align: right">
+                <nb-icon
+                  class="xIcon"
+                  status="danger"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="removeFile(i)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </div>
+    </div>
+    <div class="col-md-12" *ngIf="expense.nf && form.valid">
+      <nb-file-uploader
+        [options]="uploaderOptions"
+        [isFileDrop]="true"
+        (filesList)="urlReceiver($event)"
+        dropAreaLabel="Arraste seu comprovante aqui ou"
+        dropAreaFileChooserLabel="escolha um arquivo"
+      ></nb-file-uploader>
     </div>
   </div>
 </form>
@@ -431,7 +445,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="!form.valid"
+      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
       (click)="registerExpense()"
     >
       {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
@@ -443,7 +457,7 @@
       fullWidth
       status="success"
       size="large"
-      [disabled]="!form.valid"
+      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
       (click)="addAndClean()"
     >
       Adicionar Outro

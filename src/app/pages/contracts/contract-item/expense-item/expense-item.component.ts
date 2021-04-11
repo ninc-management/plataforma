@@ -63,7 +63,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   };
   uploaderOptions: NbFileUploaderOptions;
   urls: string[] = [];
-  allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg'];
+  allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
   fileTypesAllowed: string[];
   maxFileSize = 4;
 
@@ -261,6 +261,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   addAndClean(): void {
+    this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
     this.contract.expenses.push(_.cloneDeep(this.expense));
     this.contractService.editContract(this.contract);
     delete this.sourceSearch;
@@ -269,6 +270,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     delete this.expense.type;
     delete this.expense.value;
     delete this.expense.description;
+    this.uploadedFiles = [];
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
