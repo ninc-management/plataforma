@@ -47,17 +47,38 @@
           (focus)="updateLastValues()"
           (focusout)="updateLastValues()"
         />
-        <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
-          <p class="caption status-danger" *ngIf="value.errors?.overpaid">
-            O valor do empenho é superior ao valor em caixa no contrato (R$
-            {{ contract.balance }})!
+        <ng-container>
+          <p class="caption">
+            Valor em caixa: R$
+            {{ contract.balance }}
           </p>
-          <p class="caption status-danger" *ngIf="value.errors?.required">
+          <p
+            class="caption status-danger"
+            *ngIf="
+              value.errors?.overpaid &&
+              value.invalid &&
+              (value.dirty || value.touched)
+            "
+          >
+            O valor do empenho é superior ao valor em caixa no contrato!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="
+              value.errors?.required &&
+              value.invalid &&
+              (value.dirty || value.touched)
+            "
+          >
             O valor do empenho é obrigatório!
           </p>
           <p
             class="caption status-danger"
-            *ngIf="value.errors?.minlength || value.errors?.maxlength"
+            *ngIf="
+              (value.errors?.minlength || value.errors?.maxlength) &&
+              value.invalid &&
+              (value.dirty || value.touched)
+            "
           >
             O valor do empenho deve conter entre
             {{ validation.value.minLength }} a
