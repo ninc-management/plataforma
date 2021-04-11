@@ -78,7 +78,12 @@ export class ContractItemComponent implements OnInit {
     this.contract = _.cloneDeep(this.iContract);
     this.contract.interest = this.contract.receipts.length;
     this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.contract.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    if (this.contract.receipts.length > 0)
+      this.contract.nortanPercentage = this.contract.receipts[0].nortanPercentage;
+    else
+      this.contract.nortanPercentage = this.utils.nortanPercentage(
+        this.contract
+      );
     this.contract.liquid = this.toLiquid(this.contract.value);
     this.calculatePaidValue();
     this.calculateBalance();
