@@ -51,7 +51,15 @@ export class InvoiceService implements OnDestroy {
     const req = {
       invoice: invoice,
     };
-    this.http.post('/api/invoice/update', req).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/invoice/update', req)
+      .pipe(take(1))
+      .subscribe((res: any) => {
+        if (invoice.status === 'Fechado') {
+          this.contractService.saveContract(invoice);
+          this.onedrive.copyModelFolder(invoice);
+        }
+      });
   }
 
   getInvoices(): Observable<any[]> {
