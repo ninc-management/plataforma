@@ -8,11 +8,12 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  Inject,
 } from '@angular/core';
 import { CompleterService, CompleterData } from 'ng2-completer';
-import { NbDialogRef, NbDialogService } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { parseISO } from 'date-fns';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { DepartmentService } from '../../../shared/services/department.service';
@@ -24,6 +25,7 @@ import { UserService } from '../../../shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -33,6 +35,7 @@ import * as _ from 'lodash';
 export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Input() iInvoice: any;
   @Input() tempInvoice: any;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
   teamMember: any = {};
   options = {
@@ -296,15 +299,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   addContractor(): void {
-    this.dialogService.open(ContractorDialogComponent, {
-      context: {
-        title: 'CADASTRO DE CLIENTE',
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+    this.isDialogBlocked.next(true);
+    this.dialogService
+      .open(ContractorDialogComponent, {
+        context: {
+          title: 'CADASTRO DE CLIENTE',
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => this.isDialogBlocked.next(false));
   }
 
   tooltipText(contractorItem: any): string {
@@ -425,6 +432,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   addSubproduct(product): void {
+    this.isDialogBlocked.next(true);
     this.dialogService
       .open(TextInputDialog, {
         dialogClass: 'my-dialog',
@@ -433,9 +441,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe(
-        (name) => name && product.subproducts.push(name.toUpperCase())
-      );
+      .subscribe((name) => {
+        console.log(name);
+        if (name) product.subproducts.push(name.toUpperCase());
+        this.isDialogBlocked.next(false);
+      });
   }
 
   updateDiscountPercentage(): void {
@@ -559,12 +569,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     </nb-card>
   `,
 })
-export class TextInputDialog implements AfterViewInit {
+export class TextInputDialog
+  extends BaseDialogComponent
+  implements AfterViewInit {
   @ViewChild('name', { read: ElementRef }) inputRef;
-  constructor(protected ref: NbDialogRef<TextInputDialog>) {}
+  constructor(
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<TextInputDialog>
+  ) {
+    super(derivedDocument, derivedRef);
+  }
 
   dismiss(name: string): void {
-    this.ref.close(name);
+    this.derivedRef.close(name);
   }
 
   ngAfterViewInit(): void {

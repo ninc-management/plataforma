@@ -15,6 +15,7 @@ import { LastPaymentDirective } from './directives/last-payment.directive';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     LastPaymentDirective,
     PdfDialogComponent,
     ConfirmationDialogComponent,
+    BaseDialogComponent,
   ],
 })
 export class SharedModule {}

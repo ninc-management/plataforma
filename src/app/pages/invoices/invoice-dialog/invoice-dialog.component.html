@@ -65,6 +65,7 @@
         <ngx-invoice-item
           [iInvoice]="invoice"
           [tempInvoice]="tempInvoice"
+          [isDialogBlocked]="isBlocked"
           (submit)="dismiss()"
         ></ngx-invoice-item>
       </nb-card-body>
