@@ -29,7 +29,7 @@ import { NbAccessChecker } from '@nebular/security';
         [items]="social"
         tag="social"
         slot="social"
-        style="position: absolute; bottom: 0;"
+        style="position: absolute; bottom: 0;width: 100%;"
       ></nb-menu>
       <router-outlet></router-outlet>
     </ngx-one-column-layout>
