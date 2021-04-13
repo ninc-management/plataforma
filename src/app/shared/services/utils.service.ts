@@ -28,7 +28,7 @@ export class UtilsService {
   nfPercentage(contract: 'object'): string {
     if (contract['invoice'].administration == 'nortan') {
       if (contract['invoice'].department == 'DEC') {
-        return '8,5';
+        return '8';
       } else {
         return '15,5';
       }
