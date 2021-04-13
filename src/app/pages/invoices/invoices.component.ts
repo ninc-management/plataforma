@@ -169,9 +169,10 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
             invoice.contractor = this.contractorService.idToContractor(
               invoice.contractor
             );
-            invoice.team.map((member) =>
-              this.userService.idToUser(member.user)
-            );
+            invoice.team.map((member) => {
+              member.user = this.userService.idToUser(member.user);
+              return member;
+            });
             invoice.fullName = invoice.author.exibitionName
               ? invoice.author.exibitionName
               : invoice.author.fullName;

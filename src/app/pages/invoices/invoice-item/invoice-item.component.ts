@@ -135,10 +135,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.productListType = '1';
       if (this.tempInvoice.invoiceType == undefined)
         this.tempInvoice.invoiceType = 'projeto';
-      this.tempInvoice.team = this.tempInvoice.team.map((member) => {
-        member.user = this.userService.idToUser(member.user);
-        return member;
-      });
       this.updateDiscountPercentage();
       this.updateTotal('product');
       this.updateTotal('stage');
