@@ -10,6 +10,8 @@
   "created": { "required": true },
   "lastUpdate": { "required": true },
   "version": { "required": false },
+  "hasISS": { "required": true },
+  "ISS": { "required": true },
   "contractor": {
     "required": false,
     "minLength": 3,

@@ -60,6 +60,7 @@ const contractSchema = mongoose.Schema({
   expenses: [expense],
   status: { type: String, required: true },
   version: { type: String, required: true },
+  ISS: { type: String, required: true },
   total: { type: String },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },

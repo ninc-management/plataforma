@@ -13,6 +13,12 @@ export class StringUtilService {
     );
   }
 
+  applyPercentage(value: string, percentage: string): string {
+    return this.numberToMoney(
+      this.moneyToNumber(value) * this.toMutiplyPercentage(percentage)
+    );
+  }
+
   moneyToNumber(money: string): number {
     if (!money) return 0;
     const result = money.replace('.', '').replace(',', '.');

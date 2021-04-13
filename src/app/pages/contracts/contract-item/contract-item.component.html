@@ -572,6 +572,63 @@
             </div>
           </nb-list-item>
         </nb-list>
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-hasISS"
+              >Houve retenção de ISS?:</label
+            >
+            <nb-select
+              [(ngModel)]="contract.hasISS"
+              #hasISS="ngModel"
+              id="input-hasISS"
+              name="hasISS"
+              placeholder="hasISS"
+              fullWidth
+              size="large"
+              [required]="validation.hasISS?.required"
+              [status]="
+                hasISS.dirty ? (hasISS.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="
+                hasISS.invalid && hasISS.touched ? true : null
+              "
+              (selectedChange)="
+                contract.ISS = hasISS.value ? iss.value : '0,00'; updateLiquid()
+              "
+            >
+              <nb-option [value]="true">Sim</nb-option>
+              <nb-option [value]="false">Não</nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-iss">Alíquota do ISS:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.ISS"
+              #iss="ngModel"
+              id="input-iss"
+              name="iss"
+              placeholder="Alíquota"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [disabled]="!hasISS.value"
+              [required]="validation.ISS?.required"
+              [status]="
+                iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
+              (ngModelChange)="updateLiquid()"
+            />
+          </div>
+        </div>
         <div class="col-6 col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-balance">Caixa:</label>

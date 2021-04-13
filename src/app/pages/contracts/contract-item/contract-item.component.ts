@@ -76,6 +76,14 @@ export class ContractItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.contract = _.cloneDeep(this.iContract);
+    if (this.contract.ISS) {
+      if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0)
+        this.contract.hasISS = false;
+      else this.contract.hasISS = true;
+    } else {
+      this.contract.ISS = '0,00';
+      this.contract.hasISS = false;
+    }
     this.contract.interest = this.contract.receipts.length;
     this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
     if (this.contract.receipts.length > 0)
@@ -84,7 +92,7 @@ export class ContractItemComponent implements OnInit {
       this.contract.nortanPercentage = this.utils.nortanPercentage(
         this.contract
       );
-    this.contract.liquid = this.toLiquid(this.contract.value);
+    this.updateLiquid();
     this.calculatePaidValue();
     this.calculateBalance();
     if (
@@ -363,5 +371,11 @@ export class ContractItemComponent implements OnInit {
     );
     result.push({ user: 'TOTAL', value: total });
     return result;
+  }
+
+  updateLiquid(): void {
+    this.contract.liquid = this.toLiquid(
+      this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS)
+    );
   }
 }
