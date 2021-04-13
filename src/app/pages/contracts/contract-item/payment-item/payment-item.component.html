@@ -29,6 +29,7 @@
             decimalCaracter: ',',
             decimal: '2'
           }"
+          [disabled]="paymentIndex != undefined"
           [overPaid]="contract.balance"
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"

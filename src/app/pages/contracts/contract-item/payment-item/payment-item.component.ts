@@ -13,6 +13,7 @@ import { DepartmentService } from '../../../../shared/services/department.servic
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
+import { BrMaskDirective } from '../../../../shared/directives/br-mask.directive';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import * as _ from 'lodash';
 
@@ -55,6 +56,7 @@ export class PaymentItemComponent implements OnInit {
     public departmentService: DepartmentService,
     private contractService: ContractService,
     private completerService: CompleterService,
+    private brMask: BrMaskDirective,
     public userService: UserService,
     public stringUtil: StringUtilService
   ) {}
@@ -69,6 +71,12 @@ export class PaymentItemComponent implements OnInit {
       .imageField('profilePicture');
     if (this.paymentIndex !== undefined) {
       this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
+      this.payment.value = this.brMask.writeValueMoney(this.payment.value, {
+        money: true,
+        thousand: '.',
+        decimalCaracter: ',',
+        decimal: 2,
+      });
       this.updateLastValues();
       this.calculateTeamValues(false);
       if (
