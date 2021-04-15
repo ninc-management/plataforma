@@ -1,38 +1,39 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import {
   NbFileUploaderOptions,
   StorageProvider,
+  NbFileItem,
 } from '../../../@theme/components';
-import { filter, take, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, fromEvent } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { UploadedFile } from '../../../@theme/components/file-uploader/file-uploader.service';
 
 @Component({
   selector: 'ngx-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.scss'],
 })
-export class FileUploadDialogComponent implements OnInit {
+export class FileUploadDialogComponent extends BaseDialogComponent {
   @Input() title: string;
   @Input() allowedMimeType: string[];
   @Input() maxFileSize: number;
   fileTypesAllowed: string[];
   hasBaseDropZoneOver: boolean;
   options: NbFileUploaderOptions;
-  urls: string[] = [];
+  urls: UploadedFile[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
-    @Inject(NB_DOCUMENT) protected document,
-    protected ref: NbDialogRef<FileUploadDialogComponent>
-  ) {}
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<FileUploadDialogComponent>
+  ) {
+    super(derivedDocument, derivedRef);
+  }
 
-  ngOnInit() {
-    fromEvent(this.document, 'keyup')
-      .pipe(
-        filter((event: KeyboardEvent) => event.keyCode === 27),
-        takeUntil(this.ref.onClose)
-      )
-      .subscribe(() => this.dismiss());
+  ngOnInit(): void {
+    super.ngOnInit();
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
       fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
     );
@@ -70,25 +71,19 @@ export class FileUploadDialogComponent implements OnInit {
     this.hasBaseDropZoneOver = e;
   }
 
-  urlReceiver(fileList: BehaviorSubject<any>[]): void {
-    this.urls = [];
-    for (const file$ of fileList) {
-      if (file$.getValue().isSuccess || file$.getValue().isError) {
-        this.urls.push(file$.getValue().url);
-      } else {
-        const urlIndex = this.urls.push(file$.getValue().url) - 1;
-        file$
-          .pipe(take(2))
-          .subscribe((file) => (this.urls[urlIndex] = file.url));
-      }
-    }
+  urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
+    uploadedFile$.pipe(takeUntil(this.destroy$)).subscribe((file$) => {
+      if (file$)
+        file$.pipe(take(2)).subscribe((file) => {
+          if (file$.getValue().isSuccess) {
+            this.urls.push({ name: file.name, url: file.url });
+            this.dismiss();
+          }
+        });
+    });
   }
 
   dismiss(): void {
-    this.ref.close(this.urls);
-  }
-
-  windowWidth(): number {
-    return window.innerWidth;
+    this.derivedRef.close(this.urls);
   }
 }

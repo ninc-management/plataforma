@@ -13,8 +13,6 @@ import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 @Directive({ selector: '[nbFileDrop]' })
 export class FileDropDirective implements OnInit {
   @Output() public fileOver: EventEmitter<any> = new EventEmitter();
-  @Output()
-  public onFileDrop: EventEmitter<File[]> = new EventEmitter<File[]>();
   @Input()
   options: NbFileUploaderOptions = {
     multiple: false,
@@ -33,7 +31,7 @@ export class FileDropDirective implements OnInit {
     this.element = element;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     window.addEventListener(
       'dragover',
       (e) => {
@@ -52,19 +50,18 @@ export class FileDropDirective implements OnInit {
 
   @HostListener('drop', ['$event'])
   public onDrop(event: any): void {
-    let transfer = this._getTransfer(event);
+    const transfer = this._getTransfer(event);
     if (!transfer) {
       return;
     }
     this._preventAndStop(event);
     this.uploader.uploadAll(transfer.files, this.options);
     this.fileOver.emit(false);
-    this.onFileDrop.emit(transfer.files);
   }
 
   @HostListener('dragover', ['$event'])
   public onDragOver(event: any): void {
-    let transfer = this._getTransfer(event);
+    const transfer = this._getTransfer(event);
     if (!this._haveFiles(transfer.types)) {
       return;
     }

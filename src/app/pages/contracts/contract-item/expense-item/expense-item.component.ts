@@ -11,10 +11,11 @@ import { NgModel, NgForm } from '@angular/forms';
 import {
   NbFileUploaderOptions,
   StorageProvider,
+  NbFileItem,
 } from '../../../../@theme/components';
 import { format, parseISO } from 'date-fns';
 import { take, takeUntil, skip } from 'rxjs/operators';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
@@ -26,13 +27,9 @@ import {
   CONTRACT_BALANCE,
 } from '../../../../shared/services/user.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
+import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/payment-validation.json';
-
-interface UploadedFile {
-  name: string;
-  url: string;
-}
 
 @Component({
   selector: 'ngx-expense-item',
@@ -48,6 +45,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   @Input() expenseIndex: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   private destroy$ = new Subject<void>();
+  private newExpense$ = new Subject<void>();
   validation = (expense_validation as any).default;
   uploadedFiles: UploadedFile[] = [];
   today = new Date();
@@ -62,7 +60,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
   };
   uploaderOptions: NbFileUploaderOptions;
-  urls: string[] = [];
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
   fileTypesAllowed: string[];
   maxFileSize = 4;
@@ -86,6 +83,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.newExpense$.next();
+    this.newExpense$.complete();
   }
 
   ngOnInit(): void {
@@ -154,7 +153,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
   updateUploaderOptions(): void {
     this.uploaderOptions = {
-      multiple: false,
+      multiple: true,
       directory: false,
       showUploadQueue: true,
       storageProvider: StorageProvider.ONEDRIVE,
@@ -188,7 +187,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
           const value = this.expense.value.replace('.', '');
           const date = format(new Date(), 'dd-MM-yy');
           const extension = name.match('[.].+');
-          console.log(name, extension);
           return item + '-' + type + '-' + value + '-' + date + extension;
         },
       },
@@ -227,20 +225,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.lastType = this.expense.type;
   }
 
-  urlReceiver(fileList: BehaviorSubject<any>[]): void {
-    this.urls = [];
-    for (const file$ of fileList) {
-      if (file$.getValue().isSuccess || file$.getValue().isError) {
-        this.urls.push(file$.getValue().url);
-      } else {
-        const urlIndex = this.urls.push(file$.getValue().url) - 1;
+  urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
+    uploadedFile$.pipe(takeUntil(this.newExpense$)).subscribe((file$) => {
+      if (file$)
         file$.pipe(take(2)).subscribe((file) => {
-          this.urls[urlIndex] = file.url;
-          if (file.url)
+          if (file$.getValue().isSuccess)
             this.uploadedFiles.push({ name: file.name, url: file.url });
         });
-      }
-    }
+    });
   }
 
   registerExpense(): void {
@@ -261,15 +253,15 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   addAndClean(): void {
+    this.newExpense$.next();
     this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
     this.contract.expenses.push(_.cloneDeep(this.expense));
     this.contractService.editContract(this.contract);
-    delete this.sourceSearch;
-    delete this.expense.source;
-    delete this.expense.description;
-    delete this.expense.type;
-    delete this.expense.value;
-    delete this.expense.description;
+    this.sourceSearch = undefined;
+    this.expense.source = undefined;
+    this.expense.description = undefined;
+    this.expense.value = undefined;
+    this.expense.description = undefined;
     this.uploadedFiles = [];
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;

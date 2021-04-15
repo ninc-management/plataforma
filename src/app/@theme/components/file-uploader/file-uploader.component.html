@@ -59,6 +59,6 @@
 </div>
 
 <nb-upload-queue
-  *ngIf="(uploader.uploadQueue$ | async).length && options.showUploadQueue"
-  [items]="uploader.uploadQueue$ | async"
+  *ngIf="uploader.uploadQueue$.value.length && options.showUploadQueue"
+  [items]="uploader.uploadQueue$.value"
 ></nb-upload-queue>

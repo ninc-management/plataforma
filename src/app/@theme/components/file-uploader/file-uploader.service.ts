@@ -5,13 +5,7 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import {
-  Observable,
-  of as observableOf,
-  Subject,
-  EMPTY,
-  BehaviorSubject,
-} from 'rxjs';
+import { Observable, Subject, EMPTY, BehaviorSubject } from 'rxjs';
 
 import {
   NbFileUploaderOptions,
@@ -19,12 +13,17 @@ import {
   FilterFunction,
 } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
-import { takeUntil, catchError } from 'rxjs/operators';
+import { takeUntil, catchError, map } from 'rxjs/operators';
+
+export interface UploadedFile {
+  name: string;
+  url: string;
+}
 
 @Injectable()
 export class NbFileUploaderService implements OnDestroy {
-  private uploadQueue: BehaviorSubject<NbFileItem>[] = [];
   private destroy$ = new Subject<void>();
+  uploadQueue$ = new BehaviorSubject<BehaviorSubject<NbFileItem>[]>([]);
 
   constructor(private storageService: StorageService) {}
 
@@ -33,8 +32,10 @@ export class NbFileUploaderService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  get uploadQueue$(): Observable<BehaviorSubject<NbFileItem>[]> {
-    return observableOf(this.uploadQueue);
+  get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
+    return this.uploadQueue$.pipe(
+      map((fileList: BehaviorSubject<NbFileItem>[]) => fileList.slice(-1).pop())
+    );
   }
 
   getPreparedFiles(
@@ -66,7 +67,11 @@ export class NbFileUploaderService implements OnDestroy {
   }
 
   private addToQueue(files: BehaviorSubject<NbFileItem>[]) {
-    this.uploadQueue.push(...files);
+    files.forEach((file) => {
+      let tmp = this.uploadQueue$.value;
+      tmp.push(file);
+      this.uploadQueue$.next(tmp);
+    });
   }
 
   private upload(

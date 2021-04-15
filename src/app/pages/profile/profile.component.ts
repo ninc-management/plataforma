@@ -8,6 +8,7 @@ import {
   Input,
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
+import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
 import { DepartmentService } from '../../shared/services/department.service';
@@ -26,6 +27,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('shortExpertise', { read: ElementRef }) shortExpertiseRefs;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
   @Input() user;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   currentUser: any = {};
   tmpUser;
   cities: string[] = [];
@@ -195,6 +197,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   }
 
   uploadDialog(): void {
+    this.isDialogBlocked.next(true);
     this.dialogService
       .open(FileUploadDialogComponent, {
         context: {
@@ -208,8 +211,9 @@ export class ProfileComponent implements OnInit, DoCheck {
       })
       .onClose.pipe(take(1))
       .subscribe((urls) => {
+        this.isDialogBlocked.next(false);
         if (urls.length > 0) {
-          this.currentUser.profilePicture = urls[0];
+          this.currentUser.profilePicture = urls[0].url;
           this.userService.updateCurrentUser(this.currentUser);
         }
       });

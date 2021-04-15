@@ -12,12 +12,16 @@ import {
   ElementRef,
   ViewChild,
   OnDestroy,
+  OnInit,
 } from '@angular/core';
 
 import { NbFileUploaderService } from './file-uploader.service';
-import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
-import { takeUntil } from 'rxjs/operators';
-import { Subject, BehaviorSubject } from 'rxjs';
+import {
+  NbFileUploaderOptions,
+  StorageProvider,
+  NbFileItem,
+} from './file-uploader.model';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'nb-file-uploader',
@@ -25,7 +29,7 @@ import { Subject, BehaviorSubject } from 'rxjs';
   styleUrls: ['./file-uploader.component.scss'],
   providers: [NbFileUploaderService],
 })
-export class NbFileUploaderComponent implements OnDestroy {
+export class NbFileUploaderComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   hasBaseDropZoneOver: boolean;
 
@@ -53,8 +57,10 @@ export class NbFileUploaderComponent implements OnDestroy {
   @Input()
   dropAreaFileChooserLabel = 'browse';
 
+  /* eslint-disable @typescript-eslint/indent */
   @Output()
-  filesList = new EventEmitter<BehaviorSubject<any>[]>();
+  filesList = new EventEmitter<Observable<BehaviorSubject<NbFileItem>>>();
+  /* eslint-enable @typescript-eslint/indent */
 
   get accept(): string {
     return this.options.allowedFileTypes.join(',');
@@ -67,6 +73,10 @@ export class NbFileUploaderComponent implements OnDestroy {
     this.destroy$.complete();
   }
 
+  ngOnInit() {
+    this.filesList.emit(this.uploader.uploadedFiles$);
+  }
+
   browse() {
     this.inputEl.nativeElement.click();
   }
@@ -74,11 +84,6 @@ export class NbFileUploaderComponent implements OnDestroy {
   onChange() {
     const files = this.inputEl.nativeElement.files;
     this.uploader.uploadAll(files, this.options);
-    this.uploader.uploadQueue$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((fileList) => {
-        this.filesList.emit(fileList);
-      });
   }
 
   fileOverBase(e: any): void {
