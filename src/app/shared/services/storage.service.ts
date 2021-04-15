@@ -9,10 +9,11 @@ import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { StorageProvider } from '../../@theme/components/file-uploader/file-uploader.model';
 import { environment } from '../../../environments/environment';
+import { UploadedFile } from '../../@theme/components/file-uploader/file-uploader.service';
 
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
-  downloadUrl$: Observable<string>;
+  downloadUrl$: Observable<UploadedFile | string>;
 }
 
 @Injectable({
@@ -57,7 +58,7 @@ export class StorageService implements OnDestroy {
       }
       case StorageProvider.ONEDRIVE: {
         const fileComplete$ = new Subject<number>();
-        const downloadUrl$ = new Subject<string>();
+        const downloadUrl$ = new Subject<UploadedFile>();
         fileComplete$.next(1);
         fileToUpload.arrayBuffer().then((f) => {
           this.http
@@ -73,7 +74,10 @@ export class StorageService implements OnDestroy {
             .pipe(take(1))
             .subscribe((res) => {
               fileComplete$.next(100);
-              downloadUrl$.next(Object.values(res)[1]);
+              downloadUrl$.next({
+                name: res['name'],
+                url: res['@microsoft.graph.downloadUrl'],
+              });
             });
         });
         return {

@@ -38,6 +38,10 @@ export class NbFileUploaderService implements OnDestroy {
     );
   }
 
+  private isUploadedFile(obj: any): obj is UploadedFile {
+    return obj.name !== undefined;
+  }
+
   getPreparedFiles(
     files: FileList,
     filter: FilterFunction
@@ -109,8 +113,11 @@ export class NbFileUploaderService implements OnDestroy {
           return EMPTY;
         })
       )
-      .subscribe((downloadUrl) => {
-        tempFile.url = downloadUrl;
+      .subscribe((downloadUrl: UploadedFile | string) => {
+        if (this.isUploadedFile(downloadUrl)) {
+          tempFile.url = downloadUrl.url;
+          tempFile.name = downloadUrl.name;
+        } else tempFile.url = downloadUrl;
         tempFile.onSuccess();
         file.next(tempFile);
       });
