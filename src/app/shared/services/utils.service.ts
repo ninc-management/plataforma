@@ -26,9 +26,12 @@ export class UtilsService {
   }
 
   nfPercentage(contract: 'object'): string {
+    if (contract['receipts'].length > 0)
+      return contract['receipts'][0].notaFiscal;
     if (contract['invoice'].administration == 'nortan') {
       if (contract['invoice'].department == 'DEC') {
-        return '8';
+        if (contract['invoice'].administration == 'nortan') return '8,5';
+        else return '10,5';
       } else {
         return '15,5';
       }
@@ -38,6 +41,8 @@ export class UtilsService {
   }
 
   nortanPercentage(contract: 'object'): string {
+    if (contract['receipts']?.length > 0)
+      return contract['receipts'][0].nortanPercentage;
     if (contract['invoice'].administration == 'nortan') return '15';
     return '17';
   }
