@@ -50,6 +50,7 @@ export class ContractService implements OnDestroy {
       total: '1',
       created: currentTime,
       lastUpdate: currentTime,
+      ISS: '0,00',
     };
     const req = {
       contract: contract,
