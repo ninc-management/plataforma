@@ -4,8 +4,7 @@ import { DepartmentService } from '../../../shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { fromEvent } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 export enum ComponentTypes {
   CONTRACT,
@@ -51,14 +50,34 @@ export class ContractDialogComponent implements OnInit {
     //   .subscribe(() => this.dismiss());
     this.isPayable = this.contract.receipts.length < this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
-    if (this.componentType == ComponentTypes.CONTRACT)
-      this.onedrive
-        .webUrl(this.contract)
-        .subscribe((url) => (this.onedriveUrl = url));
+    if (this.componentType == ComponentTypes.CONTRACT) this.getOnedriveUrl();
   }
 
   dismiss(): void {
     this.ref.close();
+  }
+
+  getOnedriveUrl(): void {
+    this.onedrive.webUrl(this.contract).subscribe(
+      (url) => {
+        this.onedriveUrl = url;
+      },
+      (error) => {
+        this.onedriveUrl = '';
+      }
+    );
+  }
+
+  addToOnedrive(): void {
+    this.onedrive
+      .copyModelFolder(this.contract.invoice)
+      .pipe(take(1))
+      .subscribe((isComplete) => {
+        if (isComplete)
+          setTimeout(() => {
+            this.getOnedriveUrl();
+          }, 4000); // Tempo para a cópia da pasta ser realizada
+      });
   }
 
   windowWidth(): number {

@@ -80,7 +80,9 @@
             {{ title }}
             <div class="buttons">
               <a
-                *ngIf="onedriveUrl && componentType == types.CONTRACT"
+                *ngIf="
+                  onedriveUrl?.length > 0 && componentType == types.CONTRACT
+                "
                 nbButton
                 ghost
                 [href]="onedriveUrl"
@@ -92,6 +94,20 @@
               >
                 <nb-icon icon="onedrive" pack="fac"></nb-icon>
               </a>
+              <button
+                *ngIf="
+                  onedriveUrl?.length === 0 && componentType == types.CONTRACT
+                "
+                nbButton
+                ghost
+                nbTooltip="Criar pasta no Onedrive"
+                [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+                nbTooltipPlacement="bottom"
+                nbTooltipStatus="info"
+                (click)="addToOnedrive()"
+              >
+                <nb-icon icon="onedrive-add" pack="fac"></nb-icon>
+              </button>
               <button
                 nbButton
                 ghost

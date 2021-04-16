@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { environment } from '../../../environments/environment';
 import { take, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -53,9 +53,10 @@ export class OnedriveService {
     );
   }
 
-  copyModelFolder(invoice: 'object'): void {
+  copyModelFolder(invoice: 'object'): Observable<boolean> {
     const modelFolder = 'ORC-000_ANO-NOME DO CONTRATO-GESTOR';
     const path = this.generateBasePath(invoice) + modelFolder;
+    let isComplete$ = new Subject<boolean>();
 
     this.http
       .get(environment.onedriveUri + path)
@@ -71,8 +72,9 @@ export class OnedriveService {
         this.http
           .post(environment.onedriveUri + path + ':/copy', body)
           .pipe(take(1))
-          .subscribe();
+          .subscribe(() => isComplete$.next(true));
       });
+    return isComplete$;
   }
 
   moveToConcluded(invoice: 'object'): void {
