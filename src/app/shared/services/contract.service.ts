@@ -55,7 +55,10 @@ export class ContractService implements OnDestroy {
     const req = {
       contract: contract,
     };
-    this.http.post('/api/contract/', req).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/contract/', req)
+      .pipe(take(1))
+      .subscribe(() => this.onedrive.copyModelFolder(invoice));
   }
 
   editContract(contract: any): void {

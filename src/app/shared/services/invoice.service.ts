@@ -40,10 +40,8 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res.invoice;
-        if (savedInvoice.status === 'Fechado') {
+        if (savedInvoice.status === 'Fechado')
           this.contractService.saveContract(savedInvoice);
-          this.onedrive.copyModelFolder(savedInvoice);
-        }
       });
   }
 
@@ -51,15 +49,7 @@ export class InvoiceService implements OnDestroy {
     const req = {
       invoice: invoice,
     };
-    this.http
-      .post('/api/invoice/update', req)
-      .pipe(take(1))
-      .subscribe((res: any) => {
-        if (invoice.status === 'Fechado') {
-          this.contractService.saveContract(invoice);
-          this.onedrive.copyModelFolder(invoice);
-        }
-      });
+    this.http.post('/api/invoice/update', req).pipe(take(1)).subscribe();
   }
 
   getInvoices(): Observable<any[]> {
