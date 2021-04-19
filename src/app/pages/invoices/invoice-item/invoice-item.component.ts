@@ -26,6 +26,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -308,6 +309,29 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe(() => this.isDialogBlocked.next(false));
+  }
+
+  confirmationDialog(): void {
+    if (this.tempInvoice.status === 'Fechado') {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Realmente deseja fechar o orçamento',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response) => {
+          if (response) {
+            this.registerInvoice();
+          }
+        });
+    } else {
+      this.registerInvoice();
+    }
   }
 
   tooltipText(contractorItem: any): string {

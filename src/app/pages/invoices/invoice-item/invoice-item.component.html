@@ -2106,15 +2106,15 @@
       </nb-list>
     </nb-tab>
   </nb-tabset>
-
-  <button
-    nbButton
-    fullWidth
-    status="primary"
-    size="large"
-    [disabled]="submitted || !form.valid"
-    [class.btn-pulse]="submitted"
-  >
-    {{ editing ? 'Atualizar' : 'Cadastrar' }}
-  </button>
 </form>
+<button
+  (click)="editing ? confirmationDialog() : registerInvoice()"
+  nbButton
+  fullWidth
+  status="primary"
+  size="large"
+  [disabled]="submitted || !form.valid"
+  [class.btn-pulse]="submitted"
+>
+  {{ editing ? 'Atualizar' : 'Cadastrar' }}
+</button>
