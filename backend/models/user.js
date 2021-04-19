@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
   meet: { type: String },
   profilePicture: { type: String },
   mainDepartment: { type: String, required: true },
-  position: { type: String, required: true },
+  position: [{ type: String }],
   level: { type: String, required: true },
   document: { type: String, unique: true },
   expertise: [userExpertise],

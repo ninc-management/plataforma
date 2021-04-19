@@ -8,8 +8,9 @@ import {
   Input,
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
-import { BehaviorSubject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { NbAccessChecker } from '@nebular/security';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { take, map } from 'rxjs/operators';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
 import { DepartmentService } from '../../shared/services/department.service';
 import { StatecityService } from '../../shared/services/statecity.service';
@@ -63,7 +64,8 @@ export class ProfileComponent implements OnInit, DoCheck {
     private statecityService: StatecityService,
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
@@ -261,5 +263,9 @@ export class ProfileComponent implements OnInit, DoCheck {
           ? 'default'
           : this.currentUser.theme
       );
+  }
+
+  NOT(o$: Observable<boolean>): Observable<boolean> {
+    return o$.pipe(map((result: boolean) => !result));
   }
 }

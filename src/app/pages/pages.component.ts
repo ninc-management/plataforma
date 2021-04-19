@@ -14,7 +14,7 @@ import {
   NbMenuService,
 } from '@nebular/theme';
 import { LayoutService } from '../@core/utils';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
@@ -52,7 +52,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
   ) {
     this.accessChecker
       .isGranted('admin', 'view-users')
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(2))
       .subscribe((isAdmin) => {
         if (isAdmin)
           this.menu.push({
@@ -111,12 +111,12 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.menuService
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
