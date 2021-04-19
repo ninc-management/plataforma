@@ -19,10 +19,16 @@ export const CONTRACT_BALANCE = {
 })
 export class UserService implements OnDestroy {
   private requested = false;
-  private currentUser = new BehaviorSubject({});
+  private _currentUser$ = new BehaviorSubject<any>({});
   private destroy$ = new Subject<void>();
   private users$ = new BehaviorSubject<any[]>([]);
-  currentUser$: Observable<any>;
+
+  get currentUser$(): Observable<any> {
+    if (this._currentUser$.value?.fullName == undefined) {
+      this.getCurrentUser();
+    }
+    return this._currentUser$;
+  }
 
   constructor(
     private http: HttpClient,
@@ -30,7 +36,6 @@ export class UserService implements OnDestroy {
     private wsService: WebSocketService,
     private socket: Socket
   ) {
-    this.currentUser$ = this.currentUser.asObservable();
     this.authService.onUserChange$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -39,23 +44,30 @@ export class UserService implements OnDestroy {
     this.getCurrentUser();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   getCurrentUser(): void {
     const email = this.authService.userEmail();
-    if (email) this.getUser(email);
+    if (email) {
+      this.getUser(email)
+        .pipe(take(1))
+        .subscribe((user) => this._currentUser$.next(user));
+    }
   }
 
-  getUser(userEmail: string): void {
+  getUser(userEmail: string): Observable<any> {
+    let user$ = new Subject<any>();
     this.getUsers()
       .pipe(take(2))
       .subscribe((users) => {
         const user = users.filter((user) => user.email == userEmail)[0];
-        if (user != undefined) this.currentUser.next(user);
+        if (user != undefined) user$.next(user);
+        user$.next(undefined);
       });
+    return user$;
   }
 
   getUsers(): Observable<any[]> {

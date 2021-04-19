@@ -17,26 +17,50 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        data: {
+          resource: 'view-dashboard',
+          permission: 'associado',
+        },
       },
       {
         path: 'profile',
         component: ProfileComponent,
+        data: {
+          resource: 'view-profile',
+          permission: 'associado',
+        },
       },
       {
         path: 'invoices',
         component: InvoicesComponent,
+        data: {
+          resource: 'view-invoices',
+          permission: 'associado',
+        },
       },
       {
         path: 'contracts',
         component: ContractsComponent,
+        data: {
+          resource: 'view-contracts',
+          permission: 'associado',
+        },
       },
       {
         path: 'contractors',
         component: ContractorsComponent,
+        data: {
+          resource: 'view-contractors',
+          permission: 'associado',
+        },
       },
       {
         path: 'users',
         component: UsersComponent,
+        data: {
+          resource: 'view-users',
+          permission: 'elo-principal',
+        },
       },
       {
         path: '',

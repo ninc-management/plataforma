@@ -10,6 +10,10 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./pages/pages.module').then((m) => m.PagesModule),
+    data: {
+      resource: 'view-dashboard',
+      permission: 'associado',
+    },
   },
   {
     path: 'auth',

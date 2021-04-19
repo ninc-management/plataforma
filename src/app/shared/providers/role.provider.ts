@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators/map';
 
 import { NbRoleProvider } from '@nebular/security';
 import { UserService } from '../services/user.service';
+import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class RoleProvider implements NbRoleProvider {
@@ -11,8 +12,9 @@ export class RoleProvider implements NbRoleProvider {
 
   getRole(): Observable<string> {
     return this.userService.currentUser$.pipe(
+      filter((user: 'object') => user['fullName'] != undefined),
       map((user: 'object') => {
-        return user['role'] ? user['role'] : 'user'; //TODO: Remover fallback para user
+        return user['position']?.length > 0 ? user['position'] : 'associado';
       })
     );
   }

@@ -8,8 +8,9 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { NbAuthService } from '@nebular/auth';
-import { tap } from 'rxjs/operators';
+import { NbAccessChecker } from '@nebular/security';
 import { MsalService } from '@azure/msal-angular';
+import { tap, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private authService: NbAuthService,
     private router: Router,
-    private msAuthService: MsalService
+    private msAuthService: MsalService,
+    private accessChecker: NbAccessChecker
   ) {}
 
   canActivate(
@@ -37,6 +39,13 @@ export class AuthGuard implements CanActivate {
           this.msAuthService.instance.getAllAccounts().length === 0
         ) {
           this.router.navigate(['auth/login']);
+        } else {
+          this.accessChecker
+            .isGranted(next.data.permission, next.data.resource)
+            .pipe(take(2))
+            .subscribe((isGranted) => {
+              if (!isGranted) this.router.navigate(['pages/dashboard']);
+            });
         }
       })
     );
