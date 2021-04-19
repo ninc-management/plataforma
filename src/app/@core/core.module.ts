@@ -92,7 +92,7 @@ export const NB_CORE_PROVIDERS = [
         associado: '*',
       },
       'Diretor de T.I': {
-        parent: 'associado',
+        parent: 'Associado',
         'elo-principal': '*',
       },
       'Diretora de T.I': {

@@ -5,17 +5,19 @@ import {
   RouterStateSnapshot,
   UrlTree,
   Router,
+  CanActivateChild,
 } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker } from '@nebular/security';
 import { MsalService } from '@azure/msal-angular';
-import { tap, take } from 'rxjs/operators';
+import { tap, take, skip } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanActivateChild {
   constructor(
     private authService: NbAuthService,
     private router: Router,
@@ -39,15 +41,26 @@ export class AuthGuard implements CanActivate {
           this.msAuthService.instance.getAllAccounts().length === 0
         ) {
           this.router.navigate(['auth/login']);
-        } else {
-          this.accessChecker
-            .isGranted(next.data.permission, next.data.resource)
-            .pipe(take(2))
-            .subscribe((isGranted) => {
-              if (!isGranted) this.router.navigate(['pages/dashboard']);
-            });
         }
       })
     );
+  }
+
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    if (childRoute.data?.permission == undefined) return true;
+    return this.accessChecker
+      .isGranted(childRoute.data.permission, childRoute.data.resource)
+      .pipe(
+        tap((isGranted) => {
+          if (!isGranted) this.router.navigate(['pages/dashboard']);
+        })
+      );
   }
 }
