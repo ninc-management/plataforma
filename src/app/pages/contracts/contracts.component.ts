@@ -222,9 +222,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     this.accessChecker
-      .isGranted('admin', 'export-csv')
+      .isGranted('elo-principal', 'export-csv')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((isAdmin) => (this.settings.actions.add = isAdmin));
+      .subscribe((isGranted) => (this.settings.actions.add = isGranted));
   }
   /* eslint-enable @typescript-eslint/indent */
 

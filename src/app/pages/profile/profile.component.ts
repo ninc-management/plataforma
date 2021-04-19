@@ -224,28 +224,39 @@ export class ProfileComponent implements OnInit, DoCheck {
   buildPositionsList(): void {
     this.POSITIONS = [];
     this.POSITIONS.push(
-      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de operações'
+      'Parceir' + (this.currentUser.article == 'a' ? 'a' : 'o')
     );
+    this.POSITIONS.push('Cliente');
     this.POSITIONS.push(
-      'Co-Diretor' +
-        (this.currentUser.article == 'a' ? 'a' : '') +
-        ' de operações'
-    );
-    this.POSITIONS.push(
-      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' Executivo'
+      'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o')
     );
     this.departmentService.buildDepartmentList().map((dp: string) => {
-      this.POSITIONS.push(
-        'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + dp.slice(15)
-      );
+      this.POSITIONS.push('Elo Principal ' + dp.slice(15));
     });
-    this.departmentService.buildAllCoordinationsList().map((cd: string) => {
-      this.POSITIONS.push(
-        'Coordenador' +
-          (this.currentUser.article == 'a' ? 'a' : '') +
-          cd.split('Coordenação')[1]
-      );
-    });
+    this.POSITIONS.push(
+      'Diretor' +
+        (this.currentUser.article == 'a' ? 'a' : '') +
+        ' Financeir' +
+        (this.currentUser.article == 'a' ? 'a' : 'o')
+    );
+    this.POSITIONS.push(
+      'Diretor' +
+        (this.currentUser.article == 'a' ? 'a' : '') +
+        ' Administrativ' +
+        (this.currentUser.article == 'a' ? 'a' : 'o')
+    );
+    this.POSITIONS.push(
+      'Assessor' +
+        (this.currentUser.article == 'a' ? 'a' : '') +
+        ' Executiv' +
+        (this.currentUser.article == 'a' ? 'a' : 'o') +
+        ' Remot' +
+        (this.currentUser.article == 'a' ? 'a' : 'o')
+    );
+    this.POSITIONS.push('Elo Principal Nortan');
+    this.POSITIONS.push(
+      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de T.I'
+    );
   }
 
   buildLevelList(): void {

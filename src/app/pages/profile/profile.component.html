@@ -510,9 +510,11 @@
                         position.invalid && position.touched ? true : null
                       "
                       [disabled]="
-                        accessChecker.isGranted(
-                          'elo-principal',
-                          'edit-position'
+                        NOT(
+                          accessChecker.isGranted(
+                            'elo-principal',
+                            'edit-position'
+                          )
                         ) | async
                       "
                     >
@@ -567,8 +569,9 @@
                         level.invalid && level.touched ? true : null
                       "
                       [disabled]="
-                        accessChecker.isGranted('elo-principal', 'edit-level')
-                          | async
+                        NOT(
+                          accessChecker.isGranted('elo-principal', 'edit-level')
+                        ) | async
                       "
                     >
                       <nb-option *ngFor="let level of LEVELS" [value]="level">

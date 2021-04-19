@@ -51,10 +51,10 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
     private accessChecker: NbAccessChecker
   ) {
     this.accessChecker
-      .isGranted('admin', 'view-users')
-      .pipe(take(2))
-      .subscribe((isAdmin) => {
-        if (isAdmin)
+      .isGranted('elo-principal', 'view-users')
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        if (isGranted)
           this.menu.push({
             title: 'Associados',
             icon: {

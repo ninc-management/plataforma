@@ -91,9 +91,12 @@ export const NB_CORE_PROVIDERS = [
       Associado: {
         associado: '*',
       },
-      'Diretor de Administração': {
+      'Diretor de T.I': {
         parent: 'associado',
         'elo-principal': '*',
+      },
+      'Diretora de T.I': {
+        parent: 'Diretor de T.I',
       },
     },
   }).providers,
