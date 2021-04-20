@@ -15,6 +15,7 @@ import { FileUploadDialogComponent } from '../../shared/components/file-upload/f
 import { DepartmentService } from '../../shared/services/department.service';
 import { StatecityService } from '../../shared/services/statecity.service';
 import { UserService } from '../../shared/services/user.service';
+import { UtilsService } from '../../shared/services/utils.service';
 import * as user_validation from '../../shared/user-validation.json';
 import * as _ from 'lodash';
 
@@ -29,8 +30,8 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
   @Input() user;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  isCurrentUser = false;
   currentUser: any = {};
-  tmpUser;
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
@@ -65,7 +66,8 @@ export class ProfileComponent implements OnInit, DoCheck {
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
-    public accessChecker: NbAccessChecker
+    public accessChecker: NbAccessChecker,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -76,11 +78,13 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    if (this.user !== undefined) this.currentUser = this.user;
+    if (this.user !== undefined) this.currentUser = _.cloneDeep(this.user);
     else
-      this.userService.currentUser$
-        .pipe(take(2))
-        .subscribe((user) => (this.currentUser = user));
+      this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
+        this.user = user;
+        this.currentUser = _.cloneDeep(this.user);
+        this.isCurrentUser = true;
+      });
     if (this.currentUser.state)
       this.cities = this.statecityService.buildCityList(this.currentUser.state);
     if (this.currentUser.expertise == undefined)
@@ -179,17 +183,17 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   updateUser(): void {
     this.isEditing = false;
+    this.user = _.cloneDeep(this.currentUser);
     this.userService.updateCurrentUser(this.currentUser);
   }
 
   enableEditing(): void {
     this.isEditing = true;
-    this.tmpUser = _.cloneDeep(this.currentUser);
   }
 
   revert(): void {
     this.isEditing = false;
-    this.currentUser = _.cloneDeep(this.tmpUser);
+    this.currentUser = _.cloneDeep(this.user);
     this.refreshExpertises();
     this.changeTheme();
   }
@@ -269,7 +273,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   }
 
   changeTheme(): void {
-    if (this.user === undefined)
+    if (this.isCurrentUser)
       this.themeService.changeTheme(
         this.currentUser?.theme == undefined
           ? 'default'
@@ -279,5 +283,15 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   NOT(o$: Observable<boolean>): Observable<boolean> {
     return o$.pipe(map((result: boolean) => !result));
+  }
+
+  positionMessage(o$: Observable<boolean>): Observable<string> {
+    return o$.pipe(
+      map((result: boolean) =>
+        result
+          ? 'Quando não exibir os papeis selecionados é necessário apertar no botão de limpar'
+          : 'Somente o elo principal pode alterar os papeis dos associados.'
+      )
+    );
   }
 }

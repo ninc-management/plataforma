@@ -371,8 +371,25 @@
                 <div class="col-md-4">
                   <div class="form-control-group">
                     <label class="label" for="input-article"
-                      >Artigo de tratamento:</label
-                    >
+                      >Artigo de tratamento:
+                      <nb-icon
+                        *ngIf="
+                          NOT(
+                            accessChecker.isGranted(
+                              'elo-principal',
+                              'edit-level'
+                            )
+                          ) | async
+                        "
+                        status="info"
+                        icon="info"
+                        pack="eva"
+                        [options]="{ animation: { type: 'pulse' } }"
+                        nbTooltip="Ao trocar de artigo, avise ao seu elo principal para alterar seu enquadramento e papel para representar melhor o uso do artigo."
+                        nbTooltipPlacement="top"
+                        nbTooltipStatus="info"
+                      ></nb-icon
+                    ></label>
                     <nb-select
                       [(ngModel)]="currentUser.article"
                       #article="ngModel"
@@ -467,24 +484,23 @@
               </div>
 
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md">
                   <div class="form-control-group">
                     <label class="label" for="input-position"
                       >Papeis:
                       <nb-icon
-                        *ngIf="
-                          NOT(
+                        status="info"
+                        icon="info"
+                        pack="eva"
+                        [options]="{ animation: { type: 'pulse' } }"
+                        [nbTooltip]="
+                          positionMessage(
                             accessChecker.isGranted(
                               'elo-principal',
                               'edit-level'
                             )
                           ) | async
                         "
-                        status="info"
-                        icon="info"
-                        pack="eva"
-                        [options]="{ animation: { type: 'pulse' } }"
-                        nbTooltip="Somente o elo principal pode alterar os papeis dos associados."
                         nbTooltipPlacement="top"
                         nbTooltipStatus="info"
                       ></nb-icon
@@ -527,7 +543,34 @@
                     </nb-select>
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-auto col-md-auto">
+                  <div class="form-control-group">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      nbTooltip="Apagar lista de papeis"
+                      [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                      [disabled]="
+                        NOT(
+                          accessChecker.isGranted(
+                            'elo-principal',
+                            'edit-position'
+                          )
+                        ) | async
+                      "
+                      (click)="currentUser.position = []"
+                    >
+                      <nb-icon icon="backspace" pack="fac"></nb-icon>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
                   <div class="form-control-group">
                     <label class="label" for="input-level"
                       >Enquadramento:
