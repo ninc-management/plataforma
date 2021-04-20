@@ -326,9 +326,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           })
           .onClose.pipe(take(1))
           .subscribe((response) => {
-            if (response) {
-              this.registerInvoice();
-            }
+            if (response) this.registerInvoice();
           });
       } else {
         this.registerInvoice();
