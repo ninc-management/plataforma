@@ -14,7 +14,7 @@ export class RoleProvider implements NbRoleProvider {
     return this.userService.currentUser$.pipe(
       filter((user: 'object') => user['fullName'] != undefined),
       map((user: 'object') => {
-        return user['position']?.length > 0 ? user['position'] : 'associado';
+        return user['position']?.length > 0 ? user['position'] : 'Associado';
       })
     );
   }
