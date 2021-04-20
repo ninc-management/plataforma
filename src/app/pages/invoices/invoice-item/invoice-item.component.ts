@@ -312,23 +312,27 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   confirmationDialog(): void {
-    if (this.tempInvoice.status === 'Fechado') {
-      this.dialogService
-        .open(ConfirmationDialogComponent, {
-          context: {
-            question: 'Realmente deseja fechar o orçamento',
-          },
-          dialogClass: 'my-dialog',
-          closeOnBackdropClick: false,
-          closeOnEsc: false,
-          autoFocus: false,
-        })
-        .onClose.pipe(take(1))
-        .subscribe((response) => {
-          if (response) {
-            this.registerInvoice();
-          }
-        });
+    if (this.oldStatus !== this.tempInvoice.status) {
+      if (this.tempInvoice.status === 'Fechado') {
+        this.dialogService
+          .open(ConfirmationDialogComponent, {
+            context: {
+              question: 'Realmente deseja fechar o orçamento',
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          })
+          .onClose.pipe(take(1))
+          .subscribe((response) => {
+            if (response) {
+              this.registerInvoice();
+            }
+          });
+      } else {
+        this.registerInvoice();
+      }
     } else {
       this.registerInvoice();
     }
