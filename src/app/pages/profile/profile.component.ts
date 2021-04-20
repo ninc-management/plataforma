@@ -262,9 +262,10 @@ export class ProfileComponent implements OnInit, DoCheck {
   buildLevelList(): void {
     this.LEVELS = [];
     this.LEVELS.push('Freelancer');
-    this.LEVELS.push('Associad' + this.currentUser.article + ' Júnior');
-    this.LEVELS.push('Associad' + this.currentUser.article);
+    this.LEVELS.push('Associad' + this.currentUser.article + ' Trainee');
+    this.LEVELS.push('Associad' + this.currentUser.article + ' Equipe');
     this.LEVELS.push('Associad' + this.currentUser.article + ' Líder');
+    this.LEVELS.push('Associad' + this.currentUser.article + ' Gestor');
   }
 
   changeTheme(): void {
