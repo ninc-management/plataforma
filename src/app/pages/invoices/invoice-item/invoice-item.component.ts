@@ -66,7 +66,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   };
   destroy$ = new Subject<void>();
   editing = false;
-  submitted = false;
   today = new Date();
   invoiceNumber: number;
   revision: number = 0;
@@ -223,10 +222,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   registerInvoice(): void {
+    const department = this.tempInvoice.department;
     this.tempInvoice.department = this.departmentService.extractAbreviation(
       this.tempInvoice.department
     );
-    this.submitted = true;
     this.tempInvoice.lastUpdate = new Date();
     if (this.editing) {
       this.updateRevision();
@@ -239,10 +238,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.contractor
       );
       this.iInvoice = _.cloneDeep(this.tempInvoice);
+      this.tempInvoice.department = department;
     } else {
       this.invoiceService.saveInvoice(this.tempInvoice);
+      this.submit.emit();
     }
-    this.submit.emit();
   }
 
   onDepartmentChange() {
