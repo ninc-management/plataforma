@@ -12,10 +12,13 @@ import {
 } from '@angular/core';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { NbAccessChecker } from '@nebular/security';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { parseISO } from 'date-fns';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
+import { BaseDialogComponent } from '../../../shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { InvoiceService } from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
@@ -25,8 +28,6 @@ import { UserService } from '../../../shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -77,6 +78,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   contractorData: CompleterData;
   userSearch: string;
   userData: CompleterData;
+  authorSearch: string;
 
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
@@ -90,10 +92,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private departmentService: DepartmentService,
     private contractService: ContractService,
     private userService: UserService,
+    private completerService: CompleterService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
     public contractorService: ContractorService,
-    public completerService: CompleterService
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnDestroy(): void {
@@ -245,12 +248,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.submit.emit();
   }
 
-  onDepartmentChange() {
+  onDepartmentChange(): void {
     this.updateCode();
     this.updateCoordination();
   }
 
-  updateCoordination() {
+  updateCoordination(): void {
     this.tempInvoice.coordination = undefined;
     this.COORDINATIONS = this.departmentService.buildCoordinationsList(
       this.departmentService.extractAbreviation(this.tempInvoice.department)

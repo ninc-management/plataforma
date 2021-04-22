@@ -22,6 +22,9 @@
   "state": {
     "required": true
   },
+  "author": {
+    "required": true
+  },
   "city": {
     "required": true
   },
