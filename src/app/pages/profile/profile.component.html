@@ -8,6 +8,7 @@
         <div class="row">
           <div class="col-md-2">
             <nb-user
+              class="profile"
               [onlyPicture]="true"
               [picture]="currentUser?.profilePicture"
               [name]="currentUser?.fullName"
@@ -657,6 +658,83 @@
                     {{ department }}
                   </nb-option>
                 </nb-select>
+              </div>
+
+              <div
+                class="row"
+                *ngIf="
+                  isCurrentUser && accessChecker.isGranted('aer', 'aer-users')
+                "
+              >
+                <div class="col">
+                  <div class="form-control-group">
+                    <label class="label" for="input-user"
+                      >Colaboradores assessorados:</label
+                    >
+                    <nb-completer
+                      [(ngModel)]="userSearch"
+                      [inputName]="'userListCompleter'"
+                      (selected)="userAER = $event.originalObject"
+                      #userList="ngModel"
+                      id="input-user"
+                      name="userList"
+                      [selectedText]="userAER?.fullName"
+                      [dataService]="userData"
+                      [minSearchLength]="0"
+                      [placeholder]="'Digite e selecione o nome do colaborador'"
+                      [textNoResults]="
+                        'Não foi possível achar um colaborador com o nome digitado'
+                      "
+                      [matchClass]="'match'"
+                      [fullWidth]="true"
+                      [fieldSize]="'large'"
+                      [status]="
+                        userList.dirty && userSearch
+                          ? userList.invalid
+                            ? 'danger'
+                            : 'success'
+                          : 'basic'
+                      "
+                      [attr.aria-invalid]="
+                        userList.invalid && userList.touched ? true : null
+                      "
+                    >
+                    </nb-completer>
+                  </div>
+                </div>
+                <div class="col-auto">
+                  <button
+                    nbButton
+                    type="button"
+                    fullWidth
+                    status="primary"
+                    size="large"
+                    style="margin-top: 28px"
+                    [disabled]="!userList.value"
+                    (click)="addToAER()"
+                  >
+                    +
+                  </button>
+                </div>
+                <nb-list style="width: 100%; padding: 10px 0">
+                  <nb-list-item *ngFor="let user of currentUser.AER">
+                    <div class="row irow">
+                      <div class="col">
+                        {{ user.fullName }}
+                      </div>
+                      <div class="col-auto" style="text-align: right">
+                        <nb-icon
+                          class="xIcon"
+                          status="basic"
+                          icon="trash-2-outline"
+                          pack="eva"
+                          (click)="currentUser.AER.splice(i, 1)"
+                          [options]="{ animation: { type: 'shake' } }"
+                        ></nb-icon>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                </nb-list>
               </div>
 
               <div class="form-control-group">

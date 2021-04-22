@@ -14,6 +14,16 @@
     overflow: unset;
     padding-top: 16px !important;
   }
+
+  .irow {
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+  }
+
+  .xIcon:hover {
+    color: nb-theme(icon-danger-color) !important;
+  }
 }
 
 :host ::ng-deep {
@@ -33,14 +43,18 @@
     width: 100%;
   }
 
-  .user-picture {
-    background-size: contain;
-    background-repeat: no-repeat;
-    padding-top: 100%;
-  }
-
   .initials {
     padding-top: 0 !important;
+  }
+
+  nb-user.profile {
+    .user-container {
+      .user-picture {
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding-top: 100%;
+      }
+    }
   }
 
   .initials::before {

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
+import { CompleterData, CompleterService } from 'ng2-completer';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
@@ -60,12 +61,17 @@ export class ProfileComponent implements OnInit, DoCheck {
     },
   ];
 
+  userAER: any = undefined;
+  userSearch: string;
+  userData: CompleterData;
+
   constructor(
     private userService: UserService,
     private statecityService: StatecityService,
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
+    private completerService: CompleterService,
     public accessChecker: NbAccessChecker,
     public utils: UtilsService
   ) {}
@@ -84,6 +90,10 @@ export class ProfileComponent implements OnInit, DoCheck {
         this.user = user;
         this.currentUser = _.cloneDeep(this.user);
         this.isCurrentUser = true;
+        if (this.currentUser.AER.length > 0)
+          this.currentUser.AER = this.currentUser.AER.map((user) =>
+            this.userService.idToUser(user)
+          );
       });
     if (this.currentUser.state)
       this.cities = this.statecityService.buildCityList(this.currentUser.state);
@@ -93,6 +103,16 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.buildPositionsList();
     this.buildLevelList();
     this.refreshExpertises();
+    this.userData = this.completerService
+      .local(
+        this.userService.getUsersList().filter((user) => {
+          if (user._id != this.currentUser._id) return true;
+          return false;
+        }),
+        'fullName',
+        'fullName'
+      )
+      .imageField('profilePicture');
   }
 
   ngDoCheck(): void {
@@ -279,6 +299,12 @@ export class ProfileComponent implements OnInit, DoCheck {
           ? 'default'
           : this.currentUser.theme
       );
+  }
+
+  addToAER(): void {
+    this.currentUser.AER.push(_.cloneDeep(this.userAER));
+    this.userAER = undefined;
+    this.userSearch = undefined;
   }
 
   NOT(o$: Observable<boolean>): Observable<boolean> {
