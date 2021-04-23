@@ -144,8 +144,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.tempInvoice.invoiceType == undefined)
         this.tempInvoice.invoiceType = 'projeto';
       this.updateDiscountPercentage();
-      this.updateTotal('product');
-      this.updateTotal('stage');
+      this.updateLastValues();
+      this.updateDependentValues(this.tempInvoice.products, 'product');
+      this.updateDependentValues(this.tempInvoice.stages, 'stage');
       this.updateTotal('material');
     } else {
       this.tempInvoice = {
@@ -292,6 +293,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           this.stringUtil.moneyToNumber(this.tempInvoice.value) *
             (1 - this.stringUtil.toMutiplyPercentage(p))
         );
+
+        item.percentage = p;
 
         return item;
       });
@@ -613,6 +616,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         break;
       }
     }
+  }
+
+  updateValue(array: any[], idx: number): void {
+    array[idx].value = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.tempInvoice.value) *
+        (1 - this.stringUtil.toMutiplyPercentage(array[idx].percentage))
+    );
+  }
+
+  updatePercentage(array: any[], idx: number): void {
+    array[idx].percentage = this.stringUtil
+      .toPercentage(array[idx].value, this.tempInvoice.value)
+      .slice(0, -1);
   }
 
   trackByIndex(index: number, obj: any): any {

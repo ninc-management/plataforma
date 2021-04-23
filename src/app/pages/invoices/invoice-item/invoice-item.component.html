@@ -1756,7 +1756,7 @@
           "
         >
           <div class="row paymentRow">
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-7">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.stages[i].name"
@@ -1770,10 +1770,48 @@
               />
             </div>
             <div class="col-5 col-md-2">
-              {{ stage.value }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.stages[i].value"
+                (ngModelChange)="
+                  updatePercentage(tempInvoice.stages, i); updateTotal('stage')
+                "
+                id="input-stageValue-{{ i }}"
+                name="stageValue-{{ i }}"
+                placeholder="Valor"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
+              />
             </div>
-            <div class="col-5 col-md-1">
-              {{ stringUtil.toPercentage(stage.value, tempInvoice.value) }}
+            <div
+              class="col-5 col-md-2"
+              style="display: flex; align-items: center"
+            >
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.stages[i].percentage"
+                (ngModelChange)="
+                  updateValue(tempInvoice.stages, i); updateTotal('stage')
+                "
+                id="input-stagePercentage-{{ i }}"
+                name="stagePercentage-{{ i }}"
+                placeholder="Porcentagem"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
+              />
+              %
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
