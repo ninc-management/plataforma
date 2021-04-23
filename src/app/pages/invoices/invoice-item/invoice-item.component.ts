@@ -64,6 +64,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     stageTotal: '0',
     materialTotal: '0,00',
     materialTotalWithDiscount: '0,00',
+    lastValue: '',
+    lastProducts: [],
+    lastStages: [],
   };
   destroy$ = new Subject<void>();
   editing = false;
@@ -266,6 +269,34 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.invoiceService.saveInvoice(this.tempInvoice);
     }
     this.submit.emit();
+  }
+
+  updateLastValues(): void {
+    this.options.lastValue = this.tempInvoice.value
+      ? this.tempInvoice.value.slice()
+      : '0';
+    this.options.lastProducts = _.cloneDeep(this.tempInvoice.products);
+    this.options.lastStages = _.cloneDeep(this.tempInvoice.stages);
+  }
+
+  updateDependentValues(array: any[], type: 'stage' | 'product'): void {
+    if (type === 'product' && this.tempInvoice.productListType == 2) return;
+    if (this.tempInvoice.value !== '0') {
+      const lastArray =
+        type == 'stage' ? this.options.lastStages : this.options.lastProducts;
+      array.map((item, index) => {
+        const p = this.stringUtil
+          .toPercentage(lastArray[index].value, this.options.lastValue)
+          .slice(0, -1);
+        item.value = this.stringUtil.numberToMoney(
+          this.stringUtil.moneyToNumber(this.tempInvoice.value) *
+            (1 - this.stringUtil.toMutiplyPercentage(p))
+        );
+
+        return item;
+      });
+    }
+    this.updateTotal(type);
   }
 
   onDepartmentChange(): void {

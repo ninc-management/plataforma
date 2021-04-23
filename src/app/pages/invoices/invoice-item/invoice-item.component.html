@@ -363,6 +363,12 @@
           "
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           [disabled]="false"
+          (focus)="updateLastValues()"
+          (focusout)="updateLastValues()"
+          (ngModelChange)="
+            updateDependentValues(tempInvoice.products, 'product');
+            updateDependentValues(tempInvoice.stages, 'stage')
+          "
         />
         <ng-container *ngIf="value.invalid && value.touched">
           <p class="caption status-danger" *ngIf="value.errors?.required">
