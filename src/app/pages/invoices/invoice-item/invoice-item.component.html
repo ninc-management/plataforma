@@ -2206,13 +2206,53 @@
                 'col-md-5': tempInvoice.materialListType == 1
               }"
             >
-              {{ material.amount }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.materials[i].amount"
+                (ngModelChange)="
+                  tempInvoice.materialListType == 1
+                    ? ''
+                    : updateItemTotal(tempInvoice.materials, i);
+                  tempInvoice.materialListType == 1
+                    ? ''
+                    : updateTotal('material')
+                "
+                id="input-materialAmount-{{ i }}"
+                name="materialAmount-{{ i }}"
+                placeholder="Quantidade"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.materials[i].amount ? 'success' : 'basic'"
+              />
             </div>
             <div
               class="col-3 col-md-2"
               *ngIf="tempInvoice.materialListType == 2"
             >
-              {{ material.value }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.materials[i].value"
+                (ngModelChange)="
+                  updateItemTotal(tempInvoice.materials, i);
+                  updateTotal('material')
+                "
+                id="input-materialValue-{{ i }}"
+                name="materialValue-{{ i }}"
+                placeholder="Valor"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.materials[i].value ? 'success' : 'basic'"
+              />
             </div>
             <div
               class="col-4 col-md-3"
