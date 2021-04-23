@@ -575,7 +575,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateTotal(base: string): void {
+  updateTotal(base: 'product' | 'stage' | 'material'): void {
     switch (base) {
       case 'product': {
         this.options.total = this.stringUtil.numberToMoney(
@@ -629,6 +629,21 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     array[idx].percentage = this.stringUtil
       .toPercentage(array[idx].value, this.tempInvoice.value)
       .slice(0, -1);
+  }
+
+  updateItemTotal(array: any[], idx: number): void {
+    if (
+      array[idx].value == undefined ||
+      array[idx].value.length == 0 ||
+      array[idx].amount == undefined ||
+      array[idx].amount.length == 0
+    )
+      array[idx].total = '0,00';
+    else
+      array[idx].total = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(array[idx].value) *
+          this.stringUtil.moneyToNumber(array[idx].amount)
+      );
   }
 
   trackByIndex(index: number, obj: any): any {

@@ -1325,7 +1325,7 @@
           [ngClass]="{
             'col-12': true,
             'col-md-5': tempInvoice.productListType == '2',
-            'col-md-8': tempInvoice.productListType == '1'
+            'col-md-7': tempInvoice.productListType == '1'
           }"
         >
           <div class="form-control-group">
@@ -1377,7 +1377,7 @@
             'col-6': tempInvoice.productListType == '2',
             'col-10': tempInvoice.productListType == '1',
             'col-md-2': tempInvoice.productListType == '2',
-            'col-md-3': tempInvoice.productListType == '1'
+            'col-md-4': tempInvoice.productListType == '1'
           }"
         >
           <div class="form-control-group">
@@ -1474,7 +1474,7 @@
               [ngClass]="{
                 'col-12': true,
                 'col-md-5': tempInvoice.productListType == '2',
-                'col-md-8': tempInvoice.productListType == '1'
+                'col-md-7': tempInvoice.productListType == '1'
               }"
             >
               <input
@@ -1533,7 +1533,25 @@
               class="col-3 col-md-2"
               *ngIf="tempInvoice.productListType == '2'"
             >
-              {{ product.amount }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.products[i].amount"
+                (ngModelChange)="
+                  updateItemTotal(tempInvoice.products, i);
+                  updateTotal('product')
+                "
+                id="input-productAmount-{{ i }}"
+                name="productAmount-{{ i }}"
+                placeholder="Quantidade"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.products[i].amount ? 'success' : 'basic'"
+              />
             </div>
             <div
               [ngClass]="{
@@ -1542,13 +1560,52 @@
                 'col-md-2': true
               }"
             >
-              {{ product.value }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.products[i].value"
+                (ngModelChange)="
+                  tempInvoice.productListType == '2'
+                    ? updateItemTotal(tempInvoice.products, i)
+                    : updatePercentage(tempInvoice.products, i);
+                  updateTotal('product')
+                "
+                id="input-productValue-{{ i }}"
+                name="productValue-{{ i }}"
+                placeholder="Valor"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.products[i].value ? 'success' : 'basic'"
+              />
             </div>
             <div
-              class="col-4 col-md-1"
               *ngIf="tempInvoice.productListType == '1'"
+              class="col-4 col-md-2"
+              style="display: flex; align-items: center"
             >
-              {{ stringUtil.toPercentage(product.value, tempInvoice.value) }}
+              <input
+                nbInput
+                [(ngModel)]="tempInvoice.products[i].percentage"
+                (ngModelChange)="
+                  updateValue(tempInvoice.products, i); updateTotal('product')
+                "
+                id="input-productPercentage-{{ i }}"
+                name="productPercentage-{{ i }}"
+                placeholder="Porcentagem"
+                fullWidth
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: '2'
+                }"
+                [status]="tempInvoice.products[i].value ? 'success' : 'basic'"
+              />
+              %
             </div>
             <div
               class="col-3 col-md-2"
@@ -1674,7 +1731,7 @@
         </nb-list-item>
       </nb-list>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-7">
           <div class="form-control-group">
             <label class="label" for="input-stage">Parcelamentos:</label>
             <input
@@ -1691,7 +1748,7 @@
             />
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <div class="form-control-group">
             <label
               class="label"
