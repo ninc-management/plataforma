@@ -69,23 +69,6 @@ export const NB_CORE_PROVIDERS = [
     },
   }).providers,
 
-  // # PAPEIS
-  // Parceiro
-  // Cliente
-  // Associado
-  // Diretor Financeiro
-  // Diretor Administrativo
-  // Elo Principal Nortan
-  // Elo Principal para circulo
-  // Assessor Executivo Remoto
-  // Diretor de T.I
-
-  // # ENQUADRAMENTO
-  // Freelancer
-  // Associado Trainee
-  // Associado Equipe
-  // Associado Líder
-  // Associado Gestor
   NbSecurityModule.forRoot({
     accessControl: {
       Paceiro: {
