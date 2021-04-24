@@ -37,6 +37,8 @@ export class ProfileComponent implements OnInit, DoCheck {
   states: string[] = [];
   validation = (user_validation as any).default;
   isEditing = false;
+  isAER = false;
+  isEloPrincipal = false;
   COORDINATIONS: string[] = [];
   ACTIVE_EXPERTISE: number[] = [];
   DEPARTMENTS: string[] = [];
@@ -113,6 +115,16 @@ export class ProfileComponent implements OnInit, DoCheck {
         'fullName'
       )
       .imageField('profilePicture');
+
+    this.accessChecker
+      .isGranted('aer', 'aer')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isAER = isGranted));
+
+    this.accessChecker
+      .isGranted('elo-principal', 'edit-level-position')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isEloPrincipal = isGranted));
   }
 
   ngDoCheck(): void {

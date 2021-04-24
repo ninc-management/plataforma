@@ -485,90 +485,81 @@
               </div>
 
               <div class="row">
-                <div class="col-md">
-                  <div class="form-control-group">
-                    <label class="label" for="input-position"
-                      >Papeis:
-                      <nb-icon
-                        status="info"
-                        icon="info"
-                        pack="eva"
-                        [options]="{ animation: { type: 'pulse' } }"
-                        [nbTooltip]="
-                          positionMessage(
-                            accessChecker.isGranted(
-                              'elo-principal',
-                              'edit-level'
-                            )
-                          ) | async
+                <div
+                  class="col-12 col-md-6"
+                  style="display: flex; padding: 0 0"
+                >
+                  <div class="col" style="max-width: calc(100% - 78px)">
+                    <div class="form-control-group">
+                      <label class="label" for="input-position"
+                        >Papeis:
+                        <nb-icon
+                          status="info"
+                          icon="info"
+                          pack="eva"
+                          [options]="{ animation: { type: 'pulse' } }"
+                          [nbTooltip]="
+                            positionMessage(
+                              accessChecker.isGranted(
+                                'elo-principal',
+                                'edit-level'
+                              )
+                            ) | async
+                          "
+                          nbTooltipPlacement="top"
+                          nbTooltipStatus="info"
+                        ></nb-icon
+                      ></label>
+                      <nb-select
+                        [(ngModel)]="currentUser.position"
+                        #position="ngModel"
+                        id="input-position"
+                        name="position"
+                        placeholder="Selecione os seus papeis"
+                        fullWidth
+                        multiple
+                        size="large"
+                        [required]="validation.position.required"
+                        [status]="
+                          position.dirty
+                            ? position.invalid
+                              ? 'danger'
+                              : 'success'
+                            : 'basic'
                         "
+                        [attr.aria-invalid]="
+                          position.invalid && position.touched ? true : null
+                        "
+                        [disabled]="!isEditing || !isEloPrincipal"
+                      >
+                        <nb-option
+                          *ngFor="let position of POSITIONS"
+                          [value]="position"
+                        >
+                          {{ position }}
+                        </nb-option>
+                      </nb-select>
+                    </div>
+                  </div>
+                  <div class="col-auto" style="width: 78px">
+                    <div class="form-control-group">
+                      <button
+                        nbButton
+                        type="button"
+                        fullWidth
+                        status="primary"
+                        size="large"
+                        style="margin-top: 28px"
+                        nbTooltip="Apagar lista de papeis"
+                        [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
                         nbTooltipPlacement="top"
                         nbTooltipStatus="info"
-                      ></nb-icon
-                    ></label>
-                    <nb-select
-                      [(ngModel)]="currentUser.position"
-                      #position="ngModel"
-                      id="input-position"
-                      name="position"
-                      placeholder="Selecione os seus papeis"
-                      fullWidth
-                      multiple
-                      size="large"
-                      [required]="validation.position.required"
-                      [status]="
-                        position.dirty
-                          ? position.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        position.invalid && position.touched ? true : null
-                      "
-                      [disabled]="
-                        NOT(
-                          accessChecker.isGranted(
-                            'elo-principal',
-                            'edit-position'
-                          )
-                        ) | async
-                      "
-                    >
-                      <nb-option
-                        *ngFor="let position of POSITIONS"
-                        [value]="position"
+                        [disabled]="!isEditing || !isEloPrincipal"
+                        (click)="currentUser.position = []"
                       >
-                        {{ position }}
-                      </nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-                <div class="col-auto col-md-auto">
-                  <div class="form-control-group">
-                    <button
-                      nbButton
-                      type="button"
-                      fullWidth
-                      status="primary"
-                      size="large"
-                      style="margin-top: 28px"
-                      nbTooltip="Apagar lista de papeis"
-                      [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
-                      nbTooltipPlacement="top"
-                      nbTooltipStatus="info"
-                      [disabled]="
-                        NOT(
-                          accessChecker.isGranted(
-                            'elo-principal',
-                            'edit-position'
-                          )
-                        ) | async
-                      "
-                      (click)="currentUser.position = []"
-                    >
-                      <nb-icon icon="backspace" pack="fac"></nb-icon>
-                    </button>
+                        <nb-icon icon="backspace" pack="fac"></nb-icon>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="col-12 col-md-6">
@@ -612,11 +603,7 @@
                       [attr.aria-invalid]="
                         level.invalid && level.touched ? true : null
                       "
-                      [disabled]="
-                        NOT(
-                          accessChecker.isGranted('elo-principal', 'edit-level')
-                        ) | async
-                      "
+                      [disabled]="!isEditing || !isEloPrincipal"
                     >
                       <nb-option *ngFor="let level of LEVELS" [value]="level">
                         {{ level }}
@@ -660,12 +647,7 @@
                 </nb-select>
               </div>
 
-              <div
-                class="row"
-                *ngIf="
-                  isCurrentUser && accessChecker.isGranted('aer', 'aer-users')
-                "
-              >
+              <div class="row" *ngIf="isCurrentUser && isAER">
                 <div class="col">
                   <div class="form-control-group">
                     <label class="label" for="input-user"
