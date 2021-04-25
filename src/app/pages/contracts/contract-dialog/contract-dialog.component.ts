@@ -5,6 +5,7 @@ import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { take } from 'rxjs/operators';
+import { PdfService } from 'app/pages/invoices/pdf.service';
 
 export enum ComponentTypes {
   CONTRACT,
@@ -37,6 +38,7 @@ export class ContractDialogComponent implements OnInit {
     protected departmentService: DepartmentService,
     private stringUtil: StringUtilService,
     private onedrive: OnedriveService,
+    private pdf: PdfService,
     public utils: UtilsService
   ) {}
 
@@ -79,7 +81,9 @@ export class ContractDialogComponent implements OnInit {
           }, 4000); // Tempo para a cópia da pasta ser realizada
       });
   }
-
+  openPDFnewtab(): void {
+    this.pdf.generate(this.contract.invoice);
+  }
   windowWidth(): number {
     return window.innerWidth;
   }

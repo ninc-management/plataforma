@@ -111,6 +111,17 @@
               <button
                 nbButton
                 ghost
+                nbTooltip="Visualizar PDF"
+                [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+                nbTooltipPlacement="bottom"
+                nbTooltipStatus="info"
+                (click)="openPDFnewtab()"
+              >
+                <nb-icon icon="file-invoice" pack="fac"></nb-icon>
+              </button>
+              <button
+                nbButton
+                ghost
                 nbTooltip="Fechar"
                 [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
                 nbTooltipPlacement="bottom"
