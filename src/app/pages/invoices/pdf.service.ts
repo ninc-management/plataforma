@@ -202,7 +202,7 @@ export class PdfService {
     };
   }
 
-  async generate(invoice: any, preview = false): Promise<void> {
+  async generate(invoice: any, preview = false, openPdf = true): Promise<void> {
     const pdf = new PdfMakeWrapper();
 
     // Metadata definition
@@ -1262,6 +1262,9 @@ export class PdfService {
       pdf.create().getDataUrl((dataURL: any) => {
         this.pdfData$.next(dataURL);
       });
+    }
+    if (openPdf) {
+      pdf.create().open();
     } else
       pdf
         .create()
