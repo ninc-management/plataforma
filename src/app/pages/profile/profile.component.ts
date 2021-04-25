@@ -177,6 +177,61 @@ export class ProfileComponent implements OnInit, DoCheck {
     }
   }
 
+  fixPositionAndLevel(): void {
+    this.currentUser.position = this.currentUser.position.map((position) => {
+      switch (position) {
+        case (position.match(/Parceir[o,a]/) || {}).input:
+          return 'Parceir' + (this.currentUser.article == 'a' ? 'a' : 'o');
+        case (position.match(/Associad[o,a]/) || {}).input:
+          return 'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o');
+        case (position.match(/Direto(r|ra) Financeir[oa]/) || {}).input:
+          return (
+            'Diretor' +
+            (this.currentUser.article == 'a' ? 'a' : '') +
+            ' Financeir' +
+            (this.currentUser.article == 'a' ? 'a' : 'o')
+          );
+        case (position.match(/Direto(r|ra) Administrativ[oa]/) || {}).input:
+          return (
+            'Diretor' +
+            (this.currentUser.article == 'a' ? 'a' : '') +
+            ' Administrativ' +
+            (this.currentUser.article == 'a' ? 'a' : 'o')
+          );
+        case (position.match(/Assesso(r|ra) Executiv[oa] Remot[oa]/) || {})
+          .input:
+          return 'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o');
+        case (position.match(/Direto(r|ra) de T.I/) || {}).input:
+          return (
+            'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de T.I'
+          );
+        default:
+          return position;
+      }
+    });
+
+    switch (this.currentUser.level) {
+      case (this.currentUser.level.match(/Associad[o,a] Trainee/) || {}).input:
+        this.currentUser.level =
+          'Associad' + this.currentUser.article + ' Trainee';
+        break;
+      case (this.currentUser.level.match(/Associad[o,a] Equipe/) || {}).input:
+        this.currentUser.level =
+          'Associad' + this.currentUser.article + ' Equipe';
+        break;
+      case (this.currentUser.level.match(/Associad[o,a] Líder/) || {}).input:
+        this.currentUser.level =
+          'Associad' + this.currentUser.article + ' Líder';
+        break;
+      case (this.currentUser.level.match(/Associad[o,a] Gestor/) || {}).input:
+        this.currentUser.level =
+          'Associad' + this.currentUser.article + ' Gestor';
+        break;
+      default:
+        break;
+    }
+  }
+
   refreshExpertises(): void {
     const active: boolean[] = [
       this.currentUser.adm,
