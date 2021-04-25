@@ -36,6 +36,18 @@
   <i class="fab fa-windows fa-2x" style="margin-right: 10px"></i>
   Entrar com conta Microsoft
 </button>
+<div style="text-align: center">
+  ou
+  <a
+    class="text-link"
+    (click)="logoutMicrosoft()"
+    style="
+      color: var(--text-hint-color);
+      text-decoration: var(--link-text-decoration);
+    "
+    >sair contas Microsoft</a
+  >
+</div>
 
 <section
   *ngIf="socialLinks && socialLinks.length > 0"

@@ -42,6 +42,10 @@ export class NgxLoginComponent extends NbLoginComponent {
     this.myErrors = [msg];
   }
 
+  logoutMicrosoft(): void {
+    this.authService.msLogout();
+  }
+
   login(): void {
     this.authService.submitted$.next(true);
     this.authService
