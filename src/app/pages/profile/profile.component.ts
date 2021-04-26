@@ -211,19 +211,19 @@ export class ProfileComponent implements OnInit, DoCheck {
     });
 
     switch (this.currentUser.level) {
-      case (this.currentUser.level.match(/Associad[o,a] Trainee/) || {}).input:
+      case (this.currentUser.level.match(/Associad[oa] Trainee/) || {}).input:
         this.currentUser.level =
           'Associad' + this.currentUser.article + ' Trainee';
         break;
-      case (this.currentUser.level.match(/Associad[o,a] Equipe/) || {}).input:
+      case (this.currentUser.level.match(/Associad[oa] Equipe/) || {}).input:
         this.currentUser.level =
           'Associad' + this.currentUser.article + ' Equipe';
         break;
-      case (this.currentUser.level.match(/Associad[o,a] Líder/) || {}).input:
+      case (this.currentUser.level.match(/Associad[oa] Líder/) || {}).input:
         this.currentUser.level =
           'Associad' + this.currentUser.article + ' Líder';
         break;
-      case (this.currentUser.level.match(/Associad[o,a] Gestor/) || {}).input:
+      case (this.currentUser.level.match(/Associad[oa] Gestor/) || {}).input:
         this.currentUser.level =
           'Associad' + this.currentUser.article + ' Gestor';
         break;
