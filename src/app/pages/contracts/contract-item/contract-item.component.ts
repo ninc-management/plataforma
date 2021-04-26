@@ -22,6 +22,13 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
 
+export enum CONTRACT_STATOOS {
+  EM_ANDAMENTO = 'Em andamento',
+  A_RECEBER = 'A receber',
+  CONCLUIDO = 'Concluído',
+  ARQUIVADO = 'Arquivado',
+}
+
 @Component({
   selector: 'ngx-contract-item',
   templateUrl: './contract-item.component.html',
@@ -36,7 +43,7 @@ export class ContractItemComponent implements OnInit {
   today = new Date();
   todayDate = format(this.today, 'dd/MM/yyyy');
   validation = (contract_validation as any).default;
-  STATOOS = ['Em andamento', 'A receber', 'Concluído', 'Arquivado'];
+  STATOOS = Object.values(CONTRACT_STATOOS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
   USER_COORDINATIONS = [];

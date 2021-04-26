@@ -3,6 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { CONTRACT_STATOOS } from '../contract-item.component';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import * as _ from 'lodash';
 
@@ -68,31 +69,57 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   registerReceipt(): void {
+    let isOtherPaid = true;
+    if (
+      (this.contract.receipts.length >= 2 && this.receiptIndex != undefined) ||
+      (this.contract.receipts.length >= 1 && this.receiptIndex == undefined)
+    ) {
+      isOtherPaid = this.contract.receipts
+        .filter((receipt, idx) => this.receiptIndex != idx)
+        .every((receipt) => receipt.paid);
+    }
+
     if (this.receiptIndex !== undefined) {
       this.receipt.lastUpdate = new Date();
       this.contract.receipts[this.receiptIndex] = _.cloneDeep(this.receipt);
     } else {
       this.contract.receipts.push(_.cloneDeep(this.receipt));
     }
-    this.contract.status = this.receipt.paid
-      ? this.contract.total == this.contract.receipts.length
-        ? 'Concluído'
-        : 'Em andamento'
-      : 'A receber';
+
+    if (
+      isOtherPaid &&
+      this.receipt.paid &&
+      this.contract.total == this.contract.receipts.length
+    )
+      this.contract.status = CONTRACT_STATOOS.CONCLUIDO;
+    if (
+      isOtherPaid &&
+      this.receipt.paid &&
+      this.contract.total != this.contract.receipts.length
+    )
+      this.contract.status = CONTRACT_STATOOS.EM_ANDAMENTO;
+    if (!isOtherPaid || !this.receipt.paid)
+      this.contract.status = CONTRACT_STATOOS.A_RECEBER;
+
     this.contractService.editContract(this.contract);
   }
 
   notPaid(): string {
-    return this.stringUtil.numberToMoney(
+    let result =
       this.stringUtil.moneyToNumber(
         this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS)
       ) -
-        this.contract.receipts.reduce(
-          (sum, receipt) =>
-            (sum += this.stringUtil.moneyToNumber(receipt.value)),
-          0
-        )
-    );
+      this.contract.receipts.reduce(
+        (sum, receipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
+        0
+      );
+
+    if (this.receiptIndex != undefined)
+      result += this.stringUtil.moneyToNumber(
+        this.contract.receipts[this.receiptIndex].value
+      );
+
+    return this.stringUtil.numberToMoney(result);
   }
 
   lastPayment(): string {
