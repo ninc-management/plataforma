@@ -240,6 +240,8 @@ export class ContractItemComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.contract.interest = this.contract.receipts.length;
+    this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.contract.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.contract.paid = this.toLiquid(
       this.stringUtil.numberToMoney(
         this.contract.receipts.reduce((accumulator: number, recipt: any) => {
