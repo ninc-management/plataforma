@@ -227,21 +227,26 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .imageField('profilePicture');
 
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      if (this.accessChecker.isGranted('aer', 'invoice-author')) {
-        this.authorData = this.completerService
-          .local(
-            user.AER.map((u) => this.userService.idToUser(u)),
-            'fullName',
-            'fullName'
-          )
-          .imageField('profilePicture');
-        if (user.AER.includes(this.tempInvoice.author._id))
-          this.authorSearch = this.tempInvoice.author.fullName;
-        else {
-          this.authorSearch = undefined;
-          this.tempInvoice.author = undefined;
-        }
-      }
+      this.accessChecker
+        .isGranted('aer', 'invoice-author')
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          if (isGranted) {
+            this.authorData = this.completerService
+              .local(
+                user.AER.map((u) => this.userService.idToUser(u)),
+                'fullName',
+                'fullName'
+              )
+              .imageField('profilePicture');
+            if (user.AER.includes(this.tempInvoice.author._id))
+              this.authorSearch = this.tempInvoice.author.fullName;
+            else {
+              this.authorSearch = undefined;
+              this.tempInvoice.author = undefined;
+            }
+          }
+        });
     });
 
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
