@@ -84,6 +84,9 @@ export const NB_CORE_PROVIDERS = [
       Associado: {
         associado: '*',
       },
+      Associada: {
+        parent: 'Associado',
+      },
       'Elo Principal': {
         parent: 'Associado',
         'elo-principal': '*',

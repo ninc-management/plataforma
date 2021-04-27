@@ -321,9 +321,9 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.POSITIONS.push(
       'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o')
     );
-    this.departmentService.buildDepartmentList().map((dp: string) => {
-      this.POSITIONS.push('Elo Principal ' + dp.slice(15));
-    });
+    this.departmentService
+      .buildDepartmentList()
+      .map((dp: string) => this.POSITIONS.push('Elo Principal' + dp.slice(15)));
     this.POSITIONS.push(
       'Diretor' +
         (this.currentUser.article == 'a' ? 'a' : '') +
