@@ -371,7 +371,7 @@
             />
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-3">
           <div class="form-control-group">
             <label class="label" for="input-user"
               >Colaborador:
@@ -422,7 +422,7 @@
             </nb-completer>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-6 col-md-2">
           <div class="form-control-group">
             <label class="label" for="input-memberCoordination"
               >Coordenação:</label
@@ -446,37 +446,66 @@
                 *ngFor="let coordination of USER_COORDINATIONS"
                 [value]="coordination"
               >
-                {{ coordination }}
+                {{ coordination.split(' ')[0] }}
               </nb-option>
             </nb-select>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-2">
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-paid"
-              style="display: flex; margin-top: 4px"
-            >
-              <span style="margin-right: 10px">Distribuição:</span>
-              <nb-radio-group
-                [(ngModel)]="options.valueType"
-                #valueType="ngModel"
-                id="input-value-type"
-                name="valueType"
-                style="height: 16px"
-              >
-                <nb-radio value="$" style="height: 16px">R$</nb-radio>
-                <nb-radio value="%" style="height: 16px">%</nb-radio>
-              </nb-radio-group>
-            </label>
+            <label class="label" for="input-gross-value">R$ Bruto:</label>
+            <input
+              nbInput
+              [ngModel]="teamMember.grossValue"
+              #grossValue="ngModel"
+              id="input-grossValue"
+              name="grossValue"
+              placeholder="Valor bruto"
+              fullWidth
+              fieldSize="large"
+              readonly="true"
+              [status]="grossValue.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                grossValue.invalid && grossValue.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-net-value">R$ Líquido:</label>
+            <input
+              nbInput
+              [(ngModel)]="teamMember.netValue"
+              #netValue="ngModel"
+              id="input-netValue"
+              name="netValue"
+              placeholder="Valor líquido"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [status]="netValue.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                netValue.invalid && netValue.touched ? true : null
+              "
+            />
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-paid">Distribuição:</label>
             <input
               nbInput
               [(ngModel)]="teamMember.distribution"
               #distribution="ngModel"
               id="input-distribution"
               name="distribution"
-              placeholder="Valor distribuido"
+              placeholder="Porcentagem distribuida"
               fullWidth
               fieldSize="large"
               [brmasker]="{
@@ -492,7 +521,7 @@
             />
           </div>
         </div>
-        <div class="col-md-1">
+        <div class="col-12 col-md-1">
           <button
             nbButton
             type="button"
@@ -515,10 +544,10 @@
             "
           >
             <div class="row irow">
-              <div class="col-12 col-md-4">
-                {{ member.user.fullName }}
+              <div class="col-12 col-md-3 list-name">
+                {{ userService.idToShortName(member.user) }}
               </div>
-              <div class="col-12 col-md-4">
+              <div class="col-6 col-md-2">
                 <nb-select
                   [(ngModel)]="contract.team[i].coordination"
                   id="input-memberCoordination-{{ i }}"
@@ -534,12 +563,41 @@
                     "
                     [value]="coordination"
                   >
-                    {{ coordination }}
+                    {{ coordination.split(' ')[0] }}
                   </nb-option>
                 </nb-select>
               </div>
+              <div class="col-6 col-md-2">
+                <input
+                  nbInput
+                  [ngModel]="contract.team[i].grossValue"
+                  id="input-gross-value-{{ i }}"
+                  name="gross-value-{{ i }}"
+                  placeholder="Valor bruto"
+                  fullWidth
+                  readonly="true"
+                  [status]="contract.team[i].grossValue ? 'basic' : 'danger'"
+                />
+              </div>
+              <div class="col-6 col-md-2">
+                <input
+                  nbInput
+                  [(ngModel)]="contract.team[i].netValue"
+                  id="input-net-value-{{ i }}"
+                  name="net-value-{{ i }}"
+                  placeholder="Valor líquido"
+                  fullWidth
+                  [brmasker]="{
+                    money: true,
+                    thousand: '.',
+                    decimalCaracter: ',',
+                    decimal: '2'
+                  }"
+                  [status]="contract.team[i].netValue ? 'basic' : 'danger'"
+                />
+              </div>
               <div
-                class="col-10 col-md-3"
+                class="col-6 col-md-2"
                 style="display: flex; align-items: center"
               >
                 <input
@@ -559,7 +617,7 @@
                 />
                 %
               </div>
-              <div class="col-2 col-md-1" style="text-align: right">
+              <div class="col-12 col-md-1 list-erase">
                 <nb-icon
                   class="xIcon"
                   status="basic"

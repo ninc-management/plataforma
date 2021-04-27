@@ -1,4 +1,6 @@
 @import '../../../@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
   --tabset-content-padding: 0;
@@ -44,6 +46,11 @@
     width: 100%;
     margin-left: 0;
     align-items: center;
+    div:not(:first-of-type) {
+      @include media-breakpoint-down(md) {
+        padding-top: 10px;
+      }
+    }
   }
 
   .xIcon:hover {
@@ -56,6 +63,20 @@
     font-size: nb-theme(text-basic-font-size);
     font-weight: nb-theme(text-label-font-weight);
     line-height: nb-theme(text-label-line-height);
+  }
+
+  .list-erase {
+    text-align: right;
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
+  }
+
+  .list-name {
+    text-align: left;
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
   }
 }
 
