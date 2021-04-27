@@ -28,7 +28,9 @@
     "jakewilson.vscode-placeholder-images",
     "mrmlnc.vscode-scss",
     "equinusocio.vsc-material-theme",
-    "github.vscode-pull-request-github"
+    "github.vscode-pull-request-github",
+    "rangav.vscode-thunder-client",
+    "mongodb.mongodb-vscode"
   ],
 
   // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
