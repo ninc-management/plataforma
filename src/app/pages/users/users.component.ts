@@ -111,7 +111,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
-      closeOnEsc: true,
+      closeOnEsc: false,
       autoFocus: false,
     });
   }
