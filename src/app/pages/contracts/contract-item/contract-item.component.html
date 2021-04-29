@@ -583,6 +583,7 @@
                 <input
                   nbInput
                   [(ngModel)]="contract.team[i].netValue"
+                  (ngModelChange)="updatePercentage(i)"
                   id="input-net-value-{{ i }}"
                   name="net-value-{{ i }}"
                   placeholder="Valor líquido"
@@ -603,6 +604,7 @@
                 <input
                   nbInput
                   [(ngModel)]="contract.team[i].distribution"
+                  (ngModelChange)="updateValue(i)"
                   id="input-distribution-{{ i }}"
                   name="distribution-{{ i }}"
                   placeholder="Porcentagem distribuida"

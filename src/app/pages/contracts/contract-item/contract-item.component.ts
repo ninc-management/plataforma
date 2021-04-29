@@ -120,8 +120,12 @@ export class ContractItemComponent implements OnInit {
         coordination: this.contract.invoice.coordination,
       });
     } else {
-      this.contract.team = this.contract.team.map((member) => {
+      this.contract.team = this.contract.team.map((member, idx) => {
         member.user = this.userService.idToUser(member.user);
+        member.netValue = this.stringUtil.numberToMoney(
+          this.stringUtil.moneyToNumber(this.contract.liquid) *
+            (1 - this.stringUtil.toMutiplyPercentage(member.distribution))
+        );
         return member;
       });
     }
@@ -381,5 +385,21 @@ export class ContractItemComponent implements OnInit {
     this.contract.liquid = this.toLiquid(
       this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS)
     );
+  }
+
+  updateValue(idx: number): void {
+    this.contract.team[idx].netValue = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.contract.liquid) *
+        (1 -
+          this.stringUtil.toMutiplyPercentage(
+            this.contract.team[idx].distribution
+          ))
+    );
+  }
+
+  updatePercentage(idx: number): void {
+    this.contract.team[idx].distribution = this.stringUtil
+      .toPercentage(this.contract.team[idx].netValue, this.contract.liquid)
+      .slice(0, -1);
   }
 }
