@@ -479,6 +479,7 @@
             <input
               nbInput
               [(ngModel)]="teamMember.netValue"
+              (ngModelChange)="updatePercentage()"
               #netValue="ngModel"
               id="input-netValue"
               name="netValue"
@@ -504,6 +505,7 @@
             <input
               nbInput
               [(ngModel)]="teamMember.distribution"
+              (ngModelChange)="updateValue()"
               #distribution="ngModel"
               id="input-distribution"
               name="distribution"
@@ -531,7 +533,9 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="!paid.value || !userList.value"
+            [disabled]="
+              !memberCoordination.value || !userList.value || !netValue.value
+            "
             (click)="addColaborator()"
           >
             +
@@ -627,10 +631,55 @@
                   status="basic"
                   icon="trash-2-outline"
                   pack="eva"
-                  (click)="contract.team.splice(i, 1)"
+                  (click)="contract.team.splice(i, 1); updateTeamTotal()"
                   [options]="{ animation: { type: 'shake' } }"
                 ></nb-icon>
               </div>
+            </div>
+          </nb-list-item>
+          <nb-list-item *ngIf="!utils.isPhone()">
+            <div class="row irow totalRow">
+              <div class="col-5" style="text-align: right">Total:</div>
+              <div
+                class="col-2"
+                [ngClass]="{
+                  danger:
+                    teamTotal.grossValue !== contract.value &&
+                    teamTotal.grossValue !== '0,00',
+                  success:
+                    teamTotal.grossValue === contract.value &&
+                    teamTotal.grossValue !== '0,00'
+                }"
+              >
+                R$ {{ teamTotal.grossValue }}
+              </div>
+              <div
+                class="col-2"
+                [ngClass]="{
+                  danger:
+                    teamTotal.netValue !== contract.liquid &&
+                    teamTotal.netValue !== '0,00',
+                  success:
+                    teamTotal.netValue === contract.liquid &&
+                    teamTotal.netValue !== '0,00'
+                }"
+              >
+                R$ {{ teamTotal.netValue }}
+              </div>
+              <div
+                class="col-2"
+                [ngClass]="{
+                  danger:
+                    teamTotal.distribution !== '100,00' &&
+                    teamTotal.distribution !== '0,00',
+                  success:
+                    teamTotal.distribution === '100,00' &&
+                    teamTotal.distribution !== '0,00'
+                }"
+              >
+                {{ teamTotal.distribution }}%
+              </div>
+              <div class="col-1"></div>
             </div>
           </nb-list-item>
         </nb-list>

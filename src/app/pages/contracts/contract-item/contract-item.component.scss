@@ -53,6 +53,12 @@
     }
   }
 
+  .totalRow {
+    div:not(:first-of-type) {
+      text-align: center;
+    }
+  }
+
   .xIcon:hover {
     color: nb-theme(icon-danger-color) !important;
   }

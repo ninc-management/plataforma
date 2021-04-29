@@ -63,8 +63,10 @@ export class ContractItemComponent implements OnInit {
     icon: 'scale',
     pack: 'fac',
   };
-  options = {
-    valueType: '%',
+  teamTotal = {
+    grossValue: '0,00',
+    netValue: '0,00',
+    distribution: '0,00',
   };
 
   teamMember: any = {};
@@ -134,6 +136,7 @@ export class ContractItemComponent implements OnInit {
         return member;
       });
     }
+    this.updateTeamTotal();
     this.userData = this.completerService
       .local(this.userService.getUsersList(), 'fullName', 'fullName')
       .imageField('profilePicture');
@@ -311,13 +314,32 @@ export class ContractItemComponent implements OnInit {
   }
 
   addColaborator(): void {
-    if (this.options.valueType == '$')
-      this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.distribution, this.contract.value)
-        .slice(0, -1);
     this.contract.team.push(Object.assign({}, this.teamMember));
     this.userSearch = undefined;
     this.teamMember = {};
+    this.updateTeamTotal();
+  }
+
+  updateTeamTotal(): void {
+    this.teamTotal = this.contract.team.reduce(
+      (sum, member) => {
+        sum.grossValue = this.stringUtil.sumMoney(
+          sum.grossValue,
+          member.grossValue
+        );
+        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.netValue);
+        sum.distribution = this.stringUtil.sumMoney(
+          sum.distribution,
+          member.distribution
+        );
+        return sum;
+      },
+      {
+        grossValue: '0,00',
+        netValue: '0,00',
+        distribution: '0,00',
+      }
+    );
   }
 
   formatDate(date): string {
@@ -393,19 +415,55 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  updateValue(idx: number): void {
-    this.contract.team[idx].netValue = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.contract.liquid) *
-        (1 -
-          this.stringUtil.toMutiplyPercentage(
-            this.contract.team[idx].distribution
-          ))
-    );
+  updateValue(idx?: number): void {
+    if (idx != undefined) {
+      this.contract.team[idx].netValue = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.contract.liquid) *
+          (1 -
+            this.stringUtil.toMutiplyPercentage(
+              this.contract.team[idx].distribution
+            ))
+      );
+      this.contract.team[idx].grossValue = this.contractService.toGrossValue(
+        this.contract.team[idx].netValue,
+        this.contract.notaFiscal,
+        this.contract.nortanPercentage
+      );
+      this.updateTeamTotal();
+    } else {
+      this.teamMember.netValue = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.contract.liquid) *
+          (1 -
+            this.stringUtil.toMutiplyPercentage(this.teamMember.distribution))
+      );
+      this.teamMember.grossValue = this.contractService.toGrossValue(
+        this.teamMember.netValue,
+        this.contract.notaFiscal,
+        this.contract.nortanPercentage
+      );
+    }
   }
 
-  updatePercentage(idx: number): void {
-    this.contract.team[idx].distribution = this.stringUtil
-      .toPercentage(this.contract.team[idx].netValue, this.contract.liquid)
-      .slice(0, -1);
+  updatePercentage(idx?: number): void {
+    if (idx != undefined) {
+      this.contract.team[idx].distribution = this.stringUtil
+        .toPercentage(this.contract.team[idx].netValue, this.contract.liquid)
+        .slice(0, -1);
+      this.contract.team[idx].grossValue = this.contractService.toGrossValue(
+        this.contract.team[idx].netValue,
+        this.contract.notaFiscal,
+        this.contract.nortanPercentage
+      );
+      this.updateTeamTotal();
+    } else {
+      this.teamMember.distribution = this.stringUtil
+        .toPercentage(this.teamMember.netValue, this.contract.liquid)
+        .slice(0, -1);
+      this.teamMember.grossValue = this.contractService.toGrossValue(
+        this.teamMember.netValue,
+        this.contract.notaFiscal,
+        this.contract.nortanPercentage
+      );
+    }
   }
 }
