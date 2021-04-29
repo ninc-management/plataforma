@@ -29,6 +29,13 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
 
+export enum INVOICE_STATOOS {
+  EM_ANALISE = 'Em análise',
+  FECHADO = 'Fechado',
+  NEGADO = 'Negado',
+  INVALIDADO = 'Invalidado',
+}
+
 @Component({
   selector: 'ngx-invoice-item',
   templateUrl: './invoice-item.component.html',
@@ -87,7 +94,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   COORDINATIONS: string[] = [];
   ALL_COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
-  STATOOS = ['Em análise', 'Fechado', 'Negado'];
+  STATOOS = Object.values(INVOICE_STATOOS);
 
   constructor(
     private dialogService: NbDialogService,
