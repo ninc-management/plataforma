@@ -273,48 +273,50 @@
         </ng-container>
       </div>
       <div class="row">
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
           <div class="form-control-group">
             <label class="label" for="input-value">Valor do contrato:</label>
             <input
               nbInput
-              [(ngModel)]="contract.value"
+              [ngModel]="contract.value"
               #value="ngModel"
               id="input-value"
               name="value"
               placeholder="Valor do contrato"
               fullWidth
               fieldSize="large"
-              [brmasker]="{
-                money: true,
-                thousand: '.',
-                decimalCaracter: ',',
-                decimal: '2'
-              }"
-              [required]="validation.value.required"
-              [status]="
-                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
-              "
-              [attr.aria-invalid]="value.invalid && value.touched ? true : null"
               [readonly]="true"
             />
-            <ng-container *ngIf="value.invalid && value.touched">
-              <p class="caption status-danger" *ngIf="value.errors?.required">
-                O valor do contrato é obrigatório!
-              </p>
-              <p
-                class="caption status-danger"
-                *ngIf="value.errors?.minlength || value.errors?.maxlength"
-              >
-                O valor do contrato deve conter entre
-                {{ validation.value.minLength }} a
-                {{ validation.value.maxLength }}
-                numeros
-              </p>
-            </ng-container>
           </div>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-liquid"
+              >Valor liquido:
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="As porcentagens da NF e Nortan são calculadas automaticamente como exibido no balanço. Para alterar a porcentagem da Nortan é necessário criar uma OE com a porcentagem alterada."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon
+            ></label>
+            <input
+              nbInput
+              [ngModel]="contract.liquid"
+              #liquid="ngModel"
+              id="input-liquid"
+              name="liquid"
+              placeholder="Valor do contrato"
+              fullWidth
+              fieldSize="large"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
           <div class="form-control-group">
             <label class="label" for="input-created">Data de criação:</label>
             <input
@@ -344,7 +346,7 @@
             <nb-datepicker #datepicker [max]="today"></nb-datepicker>
           </div>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
           <div class="form-control-group">
             <label class="label" for="input-updated">Última atualização:</label>
             <input
