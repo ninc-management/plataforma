@@ -132,6 +132,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
               { value: 'Em análise', title: 'Em análise' },
               { value: 'Fechado', title: 'Fechado' },
               { value: 'Negado', title: 'Negado' },
+              { value: 'Invalidado', title: 'Invalidado' },
             ],
           },
         },

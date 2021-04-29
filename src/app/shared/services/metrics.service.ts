@@ -279,23 +279,25 @@ export class MetricsService implements OnDestroy {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
-          return invoices.reduce(
-            (metricInfo: MetricInfo, invoice) => {
-              let created = invoice.created;
-              if (typeof created !== 'object') created = parseISO(created);
-              if (
-                this.invoiceService.isInvoiceAuthor(invoice, uId) &&
-                this.utils.compareDates(created, last, number, fromToday)
-              ) {
-                metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(
-                  invoice.value
-                );
-              }
-              return metricInfo;
-            },
-            { count: 0, value: 0 }
-          );
+          return invoices
+            .filter((invoices) => invoices.status != 'Invalidado')
+            .reduce(
+              (metricInfo: MetricInfo, invoice) => {
+                let created = invoice.created;
+                if (typeof created !== 'object') created = parseISO(created);
+                if (
+                  this.invoiceService.isInvoiceAuthor(invoice, uId) &&
+                  this.utils.compareDates(created, last, number, fromToday)
+                ) {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(
+                    invoice.value
+                  );
+                }
+                return metricInfo;
+              },
+              { count: 0, value: 0 }
+            );
       }),
       takeUntil(this.destroy$)
     );
@@ -347,23 +349,25 @@ export class MetricsService implements OnDestroy {
     return this.invoiceService.getInvoices().pipe(
       map((invoices) => {
         if (invoices.length > 0)
-          return invoices.reduce(
-            (metricInfo: MetricInfo, invoice) => {
-              let created = invoice.created;
-              if (typeof created !== 'object') created = parseISO(created);
-              if (
-                this.invoiceService.isInvoiceMember(invoice, uId) &&
-                this.utils.compareDates(created, last, number, fromToday)
-              ) {
-                metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(
-                  invoice.value
-                );
-              }
-              return metricInfo;
-            },
-            { count: 0, value: 0 }
-          );
+          return invoices
+            .filter((invoices) => invoices.status != 'Invalidado')
+            .reduce(
+              (metricInfo: MetricInfo, invoice) => {
+                let created = invoice.created;
+                if (typeof created !== 'object') created = parseISO(created);
+                if (
+                  this.invoiceService.isInvoiceMember(invoice, uId) &&
+                  this.utils.compareDates(created, last, number, fromToday)
+                ) {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(
+                    invoice.value
+                  );
+                }
+                return metricInfo;
+              },
+              { count: 0, value: 0 }
+            );
       }),
       takeUntil(this.destroy$)
     );
