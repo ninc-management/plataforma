@@ -24,6 +24,7 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 import { ContractExpense } from '../../../../../backend/src/models/contract';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
+import { BehaviorSubject } from 'rxjs';
 
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -40,6 +41,7 @@ export enum CONTRACT_STATOOS {
 export class ContractItemComponent implements OnInit {
   @Input() iContract: any;
   @Input() index: number;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: any;
   contractNumber: number;
   types = ComponentTypes;
@@ -263,6 +265,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   paymentDialog(index: number, componentType: ComponentTypes): void {
+    this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     let title = '';
     switch (componentType) {
@@ -309,6 +312,7 @@ export class ContractItemComponent implements OnInit {
         this.calculatePaidValue();
         this.calculateBalance();
         if (componentType === ComponentTypes.EXPENSE) this.loadTableExpenses();
+        this.isDialogBlocked.next(false);
       });
   }
 

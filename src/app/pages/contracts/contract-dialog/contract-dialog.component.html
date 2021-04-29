@@ -146,6 +146,7 @@
           </nb-card-header>
           <nb-card-body>
             <ngx-contract-item
+              [isDialogBlocked]="isBlocked"
               [iContract]="contract"
               [index]="contractIndex"
               *ngIf="componentType == types.CONTRACT"

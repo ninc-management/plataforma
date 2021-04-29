@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { take } from 'rxjs/operators';
 import { PdfService } from 'app/pages/invoices/pdf.service';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 
 export enum ComponentTypes {
   CONTRACT,
@@ -19,7 +20,9 @@ export enum ComponentTypes {
   templateUrl: './contract-dialog.component.html',
   styleUrls: ['./contract-dialog.component.scss'],
 })
-export class ContractDialogComponent implements OnInit {
+export class ContractDialogComponent
+  extends BaseDialogComponent
+  implements OnInit {
   @Input() title: string;
   @Input() contract: any;
   @Input() contractIndex: number;
@@ -40,16 +43,12 @@ export class ContractDialogComponent implements OnInit {
     private onedrive: OnedriveService,
     private pdf: PdfService,
     public utils: UtilsService
-  ) {}
+  ) {
+    super(document, ref);
+  }
 
   ngOnInit(): void {
-    // TODO: Pensar num tratamento melhor para dialogos aninhados, ao invés de fechar os 2
-    // fromEvent(this.document, 'keyup')
-    //   .pipe(
-    //     filter((event: KeyboardEvent) => event.keyCode === 27),
-    //     takeUntil(this.ref.onClose)
-    //   )
-    //   .subscribe(() => this.dismiss());
+    super.ngOnInit();
     this.isPayable = this.contract.receipts.length < this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == ComponentTypes.CONTRACT) this.getOnedriveUrl();
