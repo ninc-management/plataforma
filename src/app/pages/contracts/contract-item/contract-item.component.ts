@@ -126,6 +126,11 @@ export class ContractItemComponent implements OnInit {
           this.stringUtil.moneyToNumber(this.contract.liquid) *
             (1 - this.stringUtil.toMutiplyPercentage(member.distribution))
         );
+        member.grossValue = this.contractService.toGrossValue(
+          member.netValue,
+          this.contract.notaFiscal,
+          this.contract.nortanPercentage
+        );
         return member;
       });
     }

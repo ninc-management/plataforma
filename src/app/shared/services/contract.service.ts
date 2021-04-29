@@ -202,4 +202,14 @@ export class ContractService implements OnDestroy {
       ) - this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
     );
   }
+
+  toGrossValue(netValue: string, NF: string, nortanPercentage: string): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.round(
+        this.stringUtil.moneyToNumber(netValue) /
+          (this.stringUtil.toMutiplyPercentage(NF) *
+            this.stringUtil.toMutiplyPercentage(nortanPercentage))
+      )
+    );
+  }
 }
