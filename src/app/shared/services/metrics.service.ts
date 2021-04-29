@@ -10,6 +10,7 @@ import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
 import * as _ from 'lodash';
+import { INVOICE_STATOOS } from 'app/pages/invoices/invoice-item/invoice-item.component';
 
 interface MetricInfo {
   count: number;
@@ -280,7 +281,7 @@ export class MetricsService implements OnDestroy {
       map((invoices) => {
         if (invoices.length > 0)
           return invoices
-            .filter((invoices) => invoices.status != 'Invalidado')
+            .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
             .reduce(
               (metricInfo: MetricInfo, invoice) => {
                 let created = invoice.created;
@@ -350,7 +351,7 @@ export class MetricsService implements OnDestroy {
       map((invoices) => {
         if (invoices.length > 0)
           return invoices
-            .filter((invoices) => invoices.status != 'Invalidado')
+            .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
             .reduce(
               (metricInfo: MetricInfo, invoice) => {
                 let created = invoice.created;

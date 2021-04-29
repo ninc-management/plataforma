@@ -16,6 +16,7 @@ import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { INVOICE_STATOOS } from './invoice-item/invoice-item.component';
 
 @Component({
   selector: 'ngx-invoices',
@@ -129,10 +130,10 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
           config: {
             selectText: 'Todos',
             list: [
-              { value: 'Em análise', title: 'Em análise' },
-              { value: 'Fechado', title: 'Fechado' },
-              { value: 'Negado', title: 'Negado' },
-              { value: 'Invalidado', title: 'Invalidado' },
+              { value: INVOICE_STATOOS.EM_ANALISE, title: 'Em análise' },
+              { value: INVOICE_STATOOS.FECHADO, title: 'Fechado' },
+              { value: INVOICE_STATOOS.NEGADO, title: 'Negado' },
+              { value: INVOICE_STATOOS.INVALIDADO, title: 'Invalidado' },
             ],
           },
         },
