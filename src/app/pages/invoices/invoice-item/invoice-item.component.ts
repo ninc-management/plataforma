@@ -211,9 +211,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           'fullName,document',
           'fullName'
         );
-        this.tempInvoice.contractorFullName = this.tempInvoice.contractor
-          ? this.contractorService.idToName(this.tempInvoice.contractor)
-          : undefined;
       });
 
     this.userData = this.completerService
@@ -292,7 +289,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         type == 'stage' ? this.options.lastStages : this.options.lastProducts;
       array.map((item, index) => {
         const p = this.stringUtil
-          .toPercentage(lastArray[index].value, this.options.lastValue)
+          .toPercentage(lastArray[index].value, this.options.lastValue, 20)
           .slice(0, -1);
         item.value = this.stringUtil.numberToMoney(
           this.stringUtil.moneyToNumber(this.tempInvoice.value) *
@@ -505,6 +502,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
+    let lastItem = this.tempInvoice.products[
+      this.tempInvoice.products.length - 1
+    ];
+    lastItem.percentage = this.stringUtil
+      .toPercentage(lastItem.value, this.tempInvoice.value, 20)
+      .slice(0, -1);
     this.options.product = {
       value: '',
       name: '',
@@ -566,6 +569,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
     this.options.stage.name = this.options.stage.name;
     this.tempInvoice.stages.push(this.options.stage);
+    let lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
+    lastItem.percentage = this.stringUtil
+      .toPercentage(lastItem.value, this.tempInvoice.value, 20)
+      .slice(0, -1);
     this.options.stage = { value: '', name: '' };
     this.updateTotal('stage');
   }

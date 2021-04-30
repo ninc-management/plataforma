@@ -34,14 +34,14 @@ export class StringUtilService {
     return number.toFixed(4).toString().replace('.', ',');
   }
 
-  numberToMoney(value: number): string {
+  numberToMoney(value: number, decimals = 2): string {
     const result = this.brMask.writeValueMoney(
-      value.toFixed(2).toString().replace('.', ','),
+      value.toFixed(decimals).toString().replace('.', ','),
       {
         money: true,
         thousand: '.',
         decimalCaracter: ',',
-        decimal: 2,
+        decimal: decimals,
       }
     );
     return value < 0 ? '-' + result : result;
@@ -55,7 +55,7 @@ export class StringUtilService {
     return (100 - this.numberToNumber(percentage)) / 100;
   }
 
-  toPercentage(value: string, base: string): string {
+  toPercentage(value: string, base: string, decimals = 2): string {
     if (
       +base === 0 ||
       value === '0,00' ||
@@ -66,7 +66,8 @@ export class StringUtilService {
       return '0,00%';
     return (
       this.numberToMoney(
-        (this.moneyToNumber(value) / this.moneyToNumber(base)) * 100
+        (this.moneyToNumber(value) / this.moneyToNumber(base)) * 100,
+        decimals
       ) + '%'
     );
   }
