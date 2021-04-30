@@ -78,7 +78,7 @@ export class PaymentItemComponent implements OnInit {
         decimal: 2,
       });
       this.updateLastValues();
-      this.calculateTeamValues(false);
+      this.calculateTeamValues();
       if (
         this.payment.paidDate !== undefined &&
         typeof this.payment.paidDate !== 'object'
@@ -106,9 +106,11 @@ export class PaymentItemComponent implements OnInit {
                 this.contractService.percentageToReceive(
                   member.distribution,
                   this.userService.idToUser(member.user),
-                  this.contract
+                  this.contract,
+                  20
                 )
-              )
+              ),
+            20
           );
         else member.value = '0';
         delete member.distribution;
@@ -143,7 +145,7 @@ export class PaymentItemComponent implements OnInit {
       );
     } else
       this.userPayment.percentage = this.stringUtil
-        .toPercentage(this.userPayment.value, this.payment.value)
+        .toPercentage(this.userPayment.value, this.payment.value, 20)
         .slice(0, -1);
 
     this.userPayment.user = this.userPayment.user._id;
@@ -165,7 +167,7 @@ export class PaymentItemComponent implements OnInit {
 
   updatePercentage(idx: number): void {
     this.payment.team[idx].percentage = this.stringUtil
-      .toPercentage(this.payment.team[idx].value, this.payment.value)
+      .toPercentage(this.payment.team[idx].value, this.payment.value, 20)
       .slice(0, -1);
   }
 
@@ -225,7 +227,7 @@ export class PaymentItemComponent implements OnInit {
     this.userPayment.coordination = undefined;
   }
 
-  calculateTeamValues(calculateValue = true): void {
+  calculateTeamValues(): void {
     if (this.payment.value !== '0') {
       this.payment.team.map((member, index) => {
         if (
@@ -235,11 +237,12 @@ export class PaymentItemComponent implements OnInit {
             this.stringUtil.moneyToNumber(this.payment.value) *
               this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );
-        else if (calculateValue) {
+        else {
           const p = this.stringUtil
             .toPercentage(
               this.options.lastTeam[index].value,
-              this.options.lastValue
+              this.options.lastValue,
+              20
             )
             .slice(0, -1);
           member.value = this.stringUtil.numberToMoney(
@@ -248,7 +251,7 @@ export class PaymentItemComponent implements OnInit {
           );
         }
         member.percentage = this.stringUtil
-          .toPercentage(member.value, this.payment.value)
+          .toPercentage(member.value, this.payment.value, 20)
           .slice(0, -1);
         return member;
       });

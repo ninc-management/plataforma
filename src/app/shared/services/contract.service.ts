@@ -166,7 +166,8 @@ export class ContractService implements OnDestroy {
   percentageToReceive(
     distribution: string,
     user: 'object',
-    contract: 'object'
+    contract: 'object',
+    decimals = 2
   ): string {
     let sum = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(contract['notPaid']) +
@@ -174,7 +175,11 @@ export class ContractService implements OnDestroy {
     );
     if (contract['balance'][0] == '-') sum = contract['notPaid'];
     return this.stringUtil
-      .toPercentage(this.notPaidValue(distribution, user, contract), sum)
+      .toPercentage(
+        this.notPaidValue(distribution, user, contract),
+        sum,
+        decimals
+      )
       .slice(0, -1);
   }
 

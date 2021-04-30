@@ -30,8 +30,8 @@ export class StringUtilService {
     return +result;
   }
 
-  numberToString(number: number): string {
-    return number.toFixed(4).toString().replace('.', ',');
+  numberToString(number: number, decimals = 4): string {
+    return number.toFixed(decimals).toString().replace('.', ',');
   }
 
   numberToMoney(value: number, decimals = 2): string {
