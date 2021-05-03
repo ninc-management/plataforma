@@ -912,11 +912,12 @@
     <nb-list style="width: 100%; padding: 10px 0; text-align: center">
       <nb-list-item class="noPadding">
         <div class="row irow">
-          <div class="col-12 col-md"><b>Colaborador</b></div>
+          <div class="col-12 col-md-3"><b>Colaborador</b></div>
+          <div class="col-6 col-md-2"><b>R$ Bruto</b></div>
           <div class="col-6 col-md-2"><b>R$ Líquido</b></div>
-          <div class="col-6 col-md-1"><b>%</b></div>
-          <div class="col-6 col-md-2"><b>Recebido</b></div>
-          <div class="col-6 col-md-2"><b>Saldo</b></div>
+          <div class="col-4 col-md-1"><b>%</b></div>
+          <div class="col-4 col-md-2"><b>Recebido</b></div>
+          <div class="col-4 col-md-2"><b>Saldo</b></div>
         </div>
       </nb-list-item>
       <nb-list-item
@@ -927,9 +928,10 @@
         "
       >
         <div class="row irow">
-          <div class="col-12 col-md">
+          <div class="col-12 col-md-3">
             {{ member.user.fullName }}
           </div>
+          <div class="col-6 col-md-2"></div>
           <div class="col-6 col-md-2">
             {{
               contractService.liquidValue(
@@ -939,7 +941,7 @@
               )
             }}
           </div>
-          <div class="col-6 col-md-1">
+          <div class="col-4 col-md-1">
             {{
               contractService.percentageToReceive(
                 member.distribution,
@@ -948,10 +950,10 @@
               )
             }}
           </div>
-          <div class="col-6 col-md-2">
+          <div class="col-4 col-md-2">
             {{ contractService.receivedValue(member.user, contract) }}
           </div>
-          <div class="col-6 col-md-2">
+          <div class="col-4 col-md-2">
             {{
               contractService.notPaidValue(
                 member.distribution,
