@@ -1,6 +1,6 @@
 <form #form="ngForm" aria-labelledby="title">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
       <div class="form-control-group">
         <label class="label" for="input-user">Autor: </label>
         <nb-completer
@@ -114,6 +114,36 @@
         </ng-container>
       </div>
     </div>
+    <div class="col-md-2">
+      <div class="form-control-group">
+        <label class="label" for="input-nf"
+          >Com nota fiscal?<nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar despesa. Esse arquivo deve ter no máximo 4mb."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon
+        ></label>
+        <nb-select
+          [(ngModel)]="expense.nf"
+          #nf="ngModel"
+          id="input-nf"
+          name="nf"
+          placeholder="nota fiscal?"
+          fullWidth
+          size="large"
+          [required]="validation.nf.required"
+          [status]="nf.value === undefined ? 'danger' : 'success'"
+          [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+        >
+          <nb-option [value]="false">NÃO</nb-option>
+          <nb-option [value]="true">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
     <div class="col-md-6">
       <div class="form-control-group">
         <label class="label" for="input-source">Fonte de pagamento: </label>
@@ -121,7 +151,12 @@
           [(ngModel)]="sourceSearch"
           [inputName]="'sourceListCompleter'"
           (selected)="
-            expense.source = $event.originalObject; forceValidatorUpdate(value)
+            expense.source = $event.originalObject;
+            forceValidatorUpdate(value);
+            USER_COORDINATIONS = departmentService.userCoordinations(
+              expense.source
+            );
+            selectDefaultCoordination()
           "
           #sourceList="ngModel"
           id="input-source"
@@ -150,7 +185,12 @@
         </nb-completer>
       </div>
     </div>
-    <div class="col-md-4">
+    <div
+      [ngClass]="{
+        'col-md-3': expense.source && expense.source._id != balanceID,
+        'col-md-6': !expense.source || expense.source._id == balanceID
+      }"
+    >
       <div class="form-control-group">
         <label class="label" for="input-type">Tipo da despesa:</label>
         <nb-select
@@ -172,33 +212,34 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-md-2">
+    <div
+      class="col-md-3"
+      *ngIf="expense.source && expense.source._id != balanceID"
+    >
       <div class="form-control-group">
-        <label class="label" for="input-nf"
-          >Com nota fiscal?<nb-icon
-            status="info"
-            icon="info"
-            pack="eva"
-            [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar despesa. Esse arquivo deve ter no máximo 4mb."
-            nbTooltipPlacement="top"
-            nbTooltipStatus="info"
-          ></nb-icon
-        ></label>
+        <label class="label" for="input-memberCoordination">Coordenação:</label>
         <nb-select
-          [(ngModel)]="expense.nf"
-          #nf="ngModel"
-          id="input-nf"
-          name="nf"
-          placeholder="nota fiscal?"
+          [(ngModel)]="expense.coordination"
+          #memberCoordination="ngModel"
+          id="input-memberCoordination"
+          name="memberCoordination"
+          placeholder="Coordenação"
           fullWidth
           size="large"
-          [required]="validation.nf.required"
-          [status]="nf.value === undefined ? 'danger' : 'success'"
-          [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+          [required]="validation.coordination.required"
+          [status]="memberCoordination.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            memberCoordination.invalid && memberCoordination.touched
+              ? true
+              : null
+          "
         >
-          <nb-option [value]="false">NÃO</nb-option>
-          <nb-option [value]="true">SIM</nb-option>
+          <nb-option
+            *ngFor="let coordination of USER_COORDINATIONS"
+            [value]="coordination"
+          >
+            {{ coordination.split(' ')[0] }}
+          </nb-option>
         </nb-select>
       </div>
     </div>

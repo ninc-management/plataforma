@@ -16,6 +16,7 @@ const expense = {
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   source: { type: mongoose.ObjectId, ref: 'User', required: true },
   description: { type: String, required: true },
+  coordination: { type: String },
   nf: { type: Boolean, required: true },
   type: { type: String, required: true },
   value: { type: String, required: true },

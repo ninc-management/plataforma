@@ -1,0 +1,19 @@
+{
+  "nf": { "required": true },
+  "type": { "required": true },
+  "coordination": { "required": true },
+  "paidCheck": { "required": true },
+  "paidDate": { "required": true },
+  "created": { "required": true },
+  "lastUpdate": { "required": true },
+  "service": {
+    "required": true,
+    "minLength": 4,
+    "maxLength": 500
+  },
+  "value": {
+    "required": true,
+    "minLength": 1,
+    "maxLength": 30
+  }
+}

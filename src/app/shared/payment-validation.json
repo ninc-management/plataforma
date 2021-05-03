@@ -1,7 +1,6 @@
 {
   "nortan": { "required": true },
   "nf": { "required": true },
-  "type": { "required": true },
   "liquid": { "required": true },
   "user": { "required": false },
   "created": { "required": true },

@@ -26,10 +26,11 @@ import {
   UserService,
   CONTRACT_BALANCE,
 } from '../../../../shared/services/user.service';
+import { DepartmentService } from 'app/shared/services/department.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
 import * as _ from 'lodash';
-import * as expense_validation from '../../../../shared/payment-validation.json';
+import * as expense_validation from '../../../../shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -48,8 +49,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   private newExpense$ = new Subject<void>();
   validation = (expense_validation as any).default;
   uploadedFiles: UploadedFile[] = [];
+  USER_COORDINATIONS: string[] = [];
   today = new Date();
   types = Object.values(EXPENSE_TYPES);
+  balanceID = CONTRACT_BALANCE._id;
   expense: any = {
     paid: true,
     nf: true,
@@ -77,7 +80,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
     private onedrive: OnedriveService,
-    public userService: UserService
+    public userService: UserService,
+    public departmentService: DepartmentService
   ) {}
 
   ngOnDestroy(): void {
@@ -285,5 +289,12 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       model.control.updateValueAndValidity();
     }, time);
+  }
+
+  selectDefaultCoordination(): void {
+    const el = this.contract.team.find(
+      (el) => el.user._id == this.expense.source._id
+    );
+    if (el) this.expense.coordination = el.coordination;
   }
 }
