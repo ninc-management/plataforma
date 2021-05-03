@@ -47,7 +47,7 @@ export class ContractService implements OnDestroy {
       payments: [],
       status: 'Em andamento',
       version: '00',
-      total: '1',
+      total: invoice.stages.length,
       created: currentTime,
       lastUpdate: currentTime,
       ISS: '0,00',
