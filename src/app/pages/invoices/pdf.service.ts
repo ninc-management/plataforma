@@ -202,7 +202,11 @@ export class PdfService {
     };
   }
 
-  async generate(invoice: any, preview = false, openPdf = true): Promise<void> {
+  async generate(
+    invoice: any,
+    preview = false,
+    openPdf = false
+  ): Promise<void> {
     const pdf = new PdfMakeWrapper();
 
     // Metadata definition
@@ -1262,12 +1266,13 @@ export class PdfService {
       pdf.create().getDataUrl((dataURL: any) => {
         this.pdfData$.next(dataURL);
       });
+    } else {
+      if (openPdf) {
+        pdf.create().open();
+      } else
+        pdf
+          .create()
+          .download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
     }
-    if (openPdf) {
-      pdf.create().open();
-    } else
-      pdf
-        .create()
-        .download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
   }
 }

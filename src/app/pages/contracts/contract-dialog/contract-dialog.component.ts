@@ -82,7 +82,7 @@ export class ContractDialogComponent implements OnInit {
       });
   }
   openPDFnewtab(): void {
-    this.pdf.generate(this.contract.invoice);
+    this.pdf.generate(this.contract.invoice, false, true);
   }
   windowWidth(): number {
     return window.innerWidth;
