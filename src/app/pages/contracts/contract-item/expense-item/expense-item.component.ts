@@ -129,6 +129,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       }
       this.expense.author = this.userService.idToUser(this.expense.author);
       this.expense.source = this.userService.idToUser(this.expense.source);
+      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+        this.expense.source
+      );
       this.uploadedFiles = _.cloneDeep(
         this.expense.uploadedFiles
       ) as UploadedFile[];
