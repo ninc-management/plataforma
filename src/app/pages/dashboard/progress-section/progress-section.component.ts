@@ -34,9 +34,9 @@ export class ProgressSectionComponent implements OnInit {
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       if (user._id != undefined) {
         this.METRICS.push({
-          title: 'Valor recebido',
+          title: 'Balanço do mês',
           tooltip:
-            'Soma de todos os valores recebidos pelo associado no mês corrente',
+            'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
           value: this.metricsService
             .receivedValueNortan(user._id)
             .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),

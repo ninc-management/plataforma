@@ -5,7 +5,7 @@ import { takeUntil, map } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
-import { UserService } from './user.service';
+import { UserService, CONTRACT_BALANCE } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
@@ -531,6 +531,131 @@ export class MetricsService implements OnDestroy {
                   received.global,
                   value.global
                 );
+              }
+              if (this.contractService.hasExpenses(contract._id)) {
+                for (const expense of contract.expenses) {
+                  if (expense.paid) {
+                    let paidDate = expense.paidDate;
+                    const source = this.userService.idToUser(expense.source);
+                    if (typeof paidDate !== 'object')
+                      paidDate = parseISO(paidDate);
+                    if (
+                      this.utils.compareDates(
+                        paidDate,
+                        last,
+                        number,
+                        fromToday
+                      ) &&
+                      source._id != CONTRACT_BALANCE._id
+                    ) {
+                      const coords = this.departmentService.buildAllCoordinationsList();
+
+                      switch (expense.coordination) {
+                        case coords[0]:
+                          received.global.CADM -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source._id == uId)
+                            received.user.CADM -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[1]:
+                          received.global.CDI -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CDI -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[2]:
+                          received.global.CGO -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CGO -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[3]:
+                          received.global.CIMP -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CIMP -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[4]:
+                          received.global.CINST -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CINST -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[5]:
+                          received.global.CMA -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CMA -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[6]:
+                          received.global.CPA -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CPA -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[7]:
+                          received.global.CRH -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CRH -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[8]:
+                          received.global.CRH -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CRH -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[9]:
+                          received.global.CSEST -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CSEST -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        case coords[10]:
+                          received.global.CSH -= this.stringUtil.moneyToNumber(
+                            expense.value
+                          );
+                          if (source == uId)
+                            received.user.CSH -= this.stringUtil.moneyToNumber(
+                              expense.value
+                            );
+                          break;
+                        default:
+                          break;
+                      }
+                    }
+                  }
+                }
               }
               return received;
             },
