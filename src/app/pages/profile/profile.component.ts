@@ -116,15 +116,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       )
       .imageField('profilePicture');
 
-    this.accessChecker
-      .isGranted('aer', 'aer')
-      .pipe(take(1))
-      .subscribe((isGranted) => (this.isAER = isGranted));
-
-    this.accessChecker
-      .isGranted('elo-principal', 'edit-level-position')
-      .pipe(take(1))
-      .subscribe((isGranted) => (this.isEloPrincipal = isGranted));
+    this.checkPrivileges();
   }
 
   ngDoCheck(): void {
@@ -268,10 +260,24 @@ export class ProfileComponent implements OnInit, DoCheck {
     });
   }
 
+  checkPrivileges(): void {
+    this.accessChecker
+      .isGranted('aer', 'aer')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isAER = isGranted));
+
+    this.accessChecker
+      .isGranted('elo-principal', 'edit-level-position')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isEloPrincipal = isGranted));
+  }
+
   updateUser(): void {
     this.isEditing = false;
     this.user = _.cloneDeep(this.currentUser);
-    this.userService.updateCurrentUser(this.currentUser);
+    this.userService.updateCurrentUser(this.currentUser, () =>
+      this.checkPrivileges()
+    );
   }
 
   enableEditing(): void {

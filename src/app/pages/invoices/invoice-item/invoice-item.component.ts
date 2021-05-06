@@ -229,14 +229,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((isGranted) => {
           if (isGranted) {
+            const u = _.cloneDeep(user);
+            u.AER.unshift(u._id);
             this.authorData = this.completerService
               .local(
-                user.AER.map((u) => this.userService.idToUser(u)),
+                u.AER.map((u) => this.userService.idToUser(u)),
                 'fullName',
                 'fullName'
               )
               .imageField('profilePicture');
-            if (user.AER.includes(this.tempInvoice.author._id))
+            if (u.AER.includes(this.tempInvoice.author._id))
               this.authorSearch = this.tempInvoice.author.fullName;
             else {
               this.authorSearch = undefined;

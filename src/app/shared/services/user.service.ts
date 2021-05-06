@@ -100,11 +100,17 @@ export class UserService implements OnDestroy {
     return this.users$.getValue();
   }
 
-  updateCurrentUser(currentUser: any): void {
+  updateCurrentUser(currentUser: any, callback?: () => void): void {
     const body = {
       user: currentUser,
     };
-    this.http.post('/api/user/update', body).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/user/update', body)
+      .pipe(take(1))
+      .subscribe(() => {
+        this._currentUser$.next(currentUser);
+        if (callback) callback();
+      });
   }
 
   idToName(id: string | 'object'): string {
