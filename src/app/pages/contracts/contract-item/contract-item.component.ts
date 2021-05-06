@@ -461,4 +461,12 @@ export class ContractItemComponent implements OnInit {
       );
     }
   }
+
+  sumOfComissions(): number {
+    return this.contract.expenses.reduce((sum, expense) => {
+      if (expense.type == EXPENSE_TYPES.COMISSAO)
+        sum += this.stringUtil.moneyToNumber(expense.value);
+      return sum;
+    }, 0);
+  }
 }
