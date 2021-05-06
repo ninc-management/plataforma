@@ -9,12 +9,12 @@ import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 
 export enum EXPENSE_TYPES {
-  PRE_OBRA = 'Pré-Obra',
-  MATERIAL = 'Material',
-  FOLHA = 'Folha de Pagamento',
-  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
   APORTE = 'Aporte',
   COMISSAO = 'Comissão',
+  FOLHA = 'Folha de Pagamento',
+  MATERIAL = 'Material',
+  PRE_OBRA = 'Pré-Obra',
+  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
   OUTROS = 'Outros',
 }
 
@@ -236,6 +236,18 @@ export class ContractService implements OnDestroy {
           this.stringUtil.toMutiplyPercentage(NF) *
           this.stringUtil.toMutiplyPercentage(nortanPercentage)
       )
+    );
+  }
+
+  subtractComissions(contractValue: string, contract: 'object'): string {
+    const comissions = contract['expenses'].reduce((sum, expense) => {
+      if (expense.type == EXPENSE_TYPES.COMISSAO)
+        sum += this.stringUtil.moneyToNumber(expense.value);
+      return sum;
+    }, 0);
+
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(contractValue) - comissions
     );
   }
 }

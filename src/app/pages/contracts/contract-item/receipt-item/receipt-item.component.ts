@@ -107,7 +107,13 @@ export class ReceiptItemComponent implements OnInit {
   notPaid(): string {
     let result =
       this.stringUtil.moneyToNumber(
-        this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS)
+        this.contractService.subtractComissions(
+          this.stringUtil.applyPercentage(
+            this.contract.value,
+            this.contract.ISS
+          ),
+          this.contract
+        )
       ) -
       this.contract.receipts.reduce(
         (sum, receipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),

@@ -75,8 +75,8 @@ export class ContractItemComponent implements OnInit {
 
   constructor(
     private dialogService: NbDialogService,
-    private stringUtil: StringUtilService,
     private completerService: CompleterService,
+    public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService,
     public departmentService: DepartmentService,
@@ -404,7 +404,10 @@ export class ContractItemComponent implements OnInit {
 
   updateLiquid(): void {
     this.contract.liquid = this.contractService.toNetValue(
-      this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS),
+      this.contractService.subtractComissions(
+        this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS),
+        this.contract
+      ),
       this.contract.notaFiscal,
       this.contract.nortanPercentage
     );
@@ -460,13 +463,5 @@ export class ContractItemComponent implements OnInit {
         this.contract.nortanPercentage
       );
     }
-  }
-
-  sumOfComissions(): number {
-    return this.contract.expenses.reduce((sum, expense) => {
-      if (expense.type == EXPENSE_TYPES.COMISSAO)
-        sum += this.stringUtil.moneyToNumber(expense.value);
-      return sum;
-    }, 0);
   }
 }

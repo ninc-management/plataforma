@@ -897,10 +897,9 @@
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
             <b>{{
-              contractService.toGrossValue(
-                contract.liquid,
-                contract.notaFiscal,
-                contract.nortanPercentage
+              contractService.subtractComissions(
+                stringUtil.applyPercentage(contract.value, contract.ISS),
+                contract
               )
             }}</b>
           </p>
