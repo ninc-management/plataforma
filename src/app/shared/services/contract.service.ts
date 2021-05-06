@@ -14,6 +14,7 @@ export enum EXPENSE_TYPES {
   FOLHA = 'Folha de Pagamento',
   TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
   APORTE = 'Aporte',
+  COMISSAO = 'Comissão',
   OUTROS = 'Outros',
 }
 
