@@ -1051,4 +1051,38 @@ export class MetricsService implements OnDestroy {
       takeUntil(this.destroy$)
     );
   }
+
+  impulses(
+    uId: string = undefined,
+    last = 'Hoje',
+    number = 1,
+    fromToday = false
+  ): Observable<number> {
+    return this.contractService.getContracts().pipe(
+      map((contracts) => {
+        if (contracts.length > 0) {
+          return contracts.reduce((sum, contract) => {
+            if (this.contractService.hasReceipts(contract._id)) {
+              sum += contract.receipts.reduce((acc, receipt) => {
+                let paidDate = receipt.paidDate;
+                if (typeof paidDate !== 'object') paidDate = parseISO(paidDate);
+                if (this.utils.compareDates(paidDate, last, number, fromToday))
+                  acc += this.stringUtil.moneyToNumber(
+                    this.contractService.toNetValue(
+                      receipt.value,
+                      this.utils.nfPercentage(contract),
+                      this.utils.nortanPercentage(contract)
+                    )
+                  );
+                return acc;
+              }, 0.0);
+            }
+            return sum;
+          }, 0.0);
+        }
+        return 0.0;
+      }),
+      map((sumNetValue) => Math.trunc(sumNetValue / 1000))
+    );
+  }
 }

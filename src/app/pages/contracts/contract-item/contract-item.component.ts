@@ -255,7 +255,7 @@ export class ContractItemComponent implements OnInit {
     this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
     this.contract.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
-    this.contract.paid = this.toLiquid(
+    this.contract.paid = this.contractService.toNetValue(
       this.stringUtil.numberToMoney(
         this.contract.receipts.reduce((accumulator: number, recipt: any) => {
           if (recipt.paid)
@@ -263,7 +263,9 @@ export class ContractItemComponent implements OnInit {
               accumulator + this.stringUtil.moneyToNumber(recipt.value);
           return accumulator;
         }, 0)
-      )
+      ),
+      this.contract.notaFiscal,
+      this.contract.nortanPercentage
     );
     this.contract.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.contract.liquid) -
@@ -352,15 +354,6 @@ export class ContractItemComponent implements OnInit {
     return index;
   }
 
-  toLiquid(value: string): string {
-    const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(value) *
-        this.stringUtil.toMutiplyPercentage(this.contract.notaFiscal) *
-        this.stringUtil.toMutiplyPercentage(this.contract.nortanPercentage)
-    );
-    return this.stringUtil.numberToMoney(result);
-  }
-
   expenseTypesSum(): any[] {
     let result = this.contract.expenses.reduce(
       (sum: any[], expense) => {
@@ -410,8 +403,10 @@ export class ContractItemComponent implements OnInit {
   }
 
   updateLiquid(): void {
-    this.contract.liquid = this.toLiquid(
-      this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS)
+    this.contract.liquid = this.contractService.toNetValue(
+      this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS),
+      this.contract.notaFiscal,
+      this.contract.nortanPercentage
     );
   }
 

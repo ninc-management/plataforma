@@ -57,23 +57,22 @@ export class ProgressSectionComponent implements OnInit {
         });
         this.METRICS.push({
           title: 'Nº de IMPUL$$O$',
-          tooltip: 'Soma do valor pago pela nortan para todos os associados',
+          tooltip:
+            'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
           value: this.metricsService
-            .receivedValueNortan(user._id)
-            .pipe(map((x) => this.stringUtil.numberToMoney(x.global))),
-          description: this.metricsService
-            .receivedValueNortan(user._id, 'Mês')
-            .pipe(
-              map((pastPayments) => {
-                return (
-                  this.metricsService.plural('Mês', 1) +
-                  ' a houveram ' +
-                  this.stringUtil.numberToMoney(pastPayments.global)
-                );
-              })
-            ),
+            .impulses(user._id)
+            .pipe(map((x) => x.toString())),
+          description: this.metricsService.impulses(user._id, 'Mês').pipe(
+            map((pastImpulses) => {
+              return (
+                this.metricsService.plural('Mês', 1) +
+                ' a houveram ' +
+                pastImpulses.toString()
+              );
+            })
+          ),
           loading: this.metricsService
-            .receivedValueNortan(user._id)
+            .impulses(user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({

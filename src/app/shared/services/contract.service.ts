@@ -127,7 +127,7 @@ export class ContractService implements OnDestroy {
     return contract.expenses.length != 0;
   }
 
-  liquidValue(
+  netValueBalance(
     distribution: string,
     user: 'object',
     contract: 'object'
@@ -213,7 +213,7 @@ export class ContractService implements OnDestroy {
   ): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
-        this.liquidValue(distribution, user, contract)
+        this.netValueBalance(distribution, user, contract)
       ) - this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
     );
   }
@@ -224,6 +224,16 @@ export class ContractService implements OnDestroy {
         this.stringUtil.moneyToNumber(netValue) /
           (this.stringUtil.toMutiplyPercentage(NF) *
             this.stringUtil.toMutiplyPercentage(nortanPercentage))
+      )
+    );
+  }
+
+  toNetValue(grossValue: string, NF: string, nortanPercentage: string): string {
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.round(
+        this.stringUtil.moneyToNumber(grossValue) *
+          this.stringUtil.toMutiplyPercentage(NF) *
+          this.stringUtil.toMutiplyPercentage(nortanPercentage)
       )
     );
   }

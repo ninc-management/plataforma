@@ -948,7 +948,7 @@
           <div class="col-6 col-md-2">
             {{
               contractService.toGrossValue(
-                contractService.liquidValue(
+                contractService.netValueBalance(
                   member.distribution,
                   member.user,
                   contract
@@ -960,7 +960,7 @@
           </div>
           <div class="col-6 col-md-2">
             {{
-              contractService.liquidValue(
+              contractService.netValueBalance(
                 member.distribution,
                 member.user,
                 contract
