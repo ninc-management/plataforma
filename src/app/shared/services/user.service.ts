@@ -100,16 +100,18 @@ export class UserService implements OnDestroy {
     return this.users$.getValue();
   }
 
-  updateCurrentUser(currentUser: any, callback?: () => void): void {
+  updateUser(user: any, callback?: () => void, isCurrentUser = false): void {
     const body = {
-      user: currentUser,
+      user: user,
     };
     this.http
       .post('/api/user/update', body)
       .pipe(take(1))
       .subscribe(() => {
-        this._currentUser$.next(currentUser);
-        if (callback) callback();
+        if (isCurrentUser) {
+          this._currentUser$.next(user);
+          if (callback) callback();
+        }
       });
   }
 

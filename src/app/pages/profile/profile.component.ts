@@ -275,8 +275,10 @@ export class ProfileComponent implements OnInit, DoCheck {
   updateUser(): void {
     this.isEditing = false;
     this.user = _.cloneDeep(this.currentUser);
-    this.userService.updateCurrentUser(this.currentUser, () =>
-      this.checkPrivileges()
+    this.userService.updateUser(
+      this.currentUser,
+      () => this.checkPrivileges(),
+      this.isCurrentUser
     );
   }
 
@@ -313,7 +315,11 @@ export class ProfileComponent implements OnInit, DoCheck {
         this.isDialogBlocked.next(false);
         if (urls.length > 0) {
           this.currentUser.profilePicture = urls[0].url;
-          this.userService.updateCurrentUser(this.currentUser);
+          this.userService.updateUser(
+            this.currentUser,
+            undefined,
+            this.isCurrentUser
+          );
         }
       });
   }
