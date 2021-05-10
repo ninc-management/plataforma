@@ -1207,7 +1207,7 @@ export class PdfService {
 
     pdf.add({
       text:
-        'Estamos à disposição para esclarecimento de possíveis dúvidas sobre a proposta ou contratações.',
+        'Estamos disponíveis para negociação a qualquer momento, afim de que possamos fechar negócio e empreender juntos.',
       style: 'insideText',
     });
 
