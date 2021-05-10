@@ -7,6 +7,7 @@ import { OnedriveService } from './onedrive.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
+import { INVOICE_STATOOS } from 'app/pages/invoices/invoice-item/invoice-item.component';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +41,7 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res.invoice;
-        if (savedInvoice.status === 'Fechado')
+        if (savedInvoice.status === INVOICE_STATOOS.FECHADO)
           this.contractService.saveContract(savedInvoice);
       });
   }

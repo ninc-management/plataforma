@@ -410,7 +410,7 @@
               [attr.aria-invalid]="
                 status.invalid && status.touched ? true : null
               "
-              [disabled]="oldStatus == 'Fechado'"
+              [disabled]="oldStatus == tStatus.FECHADO"
             >
               <nb-option *ngFor="let status of STATOOS" [value]="status">
                 {{ status }}
