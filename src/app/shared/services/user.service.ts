@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { WebSocketService } from './web-socket.service';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil, take, filter } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 
@@ -53,24 +53,27 @@ export class UserService implements OnDestroy {
     const email = this.authService.userEmail();
     if (email) {
       this.getUser(email)
-        .pipe(take(1))
+        .pipe(
+          take(2),
+          filter((user) => user !== undefined)
+        )
         .subscribe((user) => this._currentUser$.next(user));
     }
   }
 
-  getUser(userEmail: string): Observable<any> {
-    let user$ = new Subject<any>();
+  getUser(userEmail: string): BehaviorSubject<any> {
+    let user$ = new BehaviorSubject<any>(undefined);
     this.getUsers()
       .pipe(take(2))
       .subscribe((users) => {
         const user = users.filter((user) => user.email == userEmail)[0];
         if (user != undefined) user$.next(user);
-        user$.next(undefined);
+        else user$.next(undefined);
       });
     return user$;
   }
 
-  getUsers(): Observable<any[]> {
+  getUsers(): BehaviorSubject<any[]> {
     if (!this.requested) {
       this.requested = true;
       this.http
