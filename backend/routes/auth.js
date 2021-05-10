@@ -29,7 +29,6 @@ router.post('/register', (req, res, next) => {
       ? req.body.emailNortanortan
       : 'não definido',
     article: req.body.article ? req.body.article : 'a',
-    position: req.body.position ? req.body.position : 'a',
     level: req.body.level ? req.body.level : 'a',
     mainDepartment: req.body.mainDepartment ? req.body.mainDepartment : 'a',
   });
