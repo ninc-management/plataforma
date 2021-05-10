@@ -94,6 +94,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   COORDINATIONS: string[] = [];
   ALL_COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
+  tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
 
   constructor(
@@ -269,7 +270,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.updateRevision();
       this.invoiceService.editInvoice(this.tempInvoice);
       if (this.oldStatus !== this.tempInvoice.status) {
-        if (this.tempInvoice.status === 'Fechado')
+        if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
           this.contractService.saveContract(this.tempInvoice);
       }
       this.tempInvoice.contractorName = this.contractorService.idToName(
