@@ -1206,6 +1206,8 @@
         [settings]="settings"
         [source]="source"
         (create)="paymentDialog(undefined, types.EXPENSE)"
+        (edit)="paymentDialog(+$event.index, types.EXPENSE)"
+        (delete)="confirmationDialog(+$event.index, types.EXPENSE)"
       >
       </ng2-smart-table>
     </ng-template>

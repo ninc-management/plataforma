@@ -88,7 +88,7 @@ export class ContractItemComponent implements OnInit {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="eva trash-2-outline"></i>',
+      deleteButtonContent: '<i class="nb-trash"></i>',
       confirmDelete: false,
     },
     actions: {
@@ -262,7 +262,7 @@ export class ContractItemComponent implements OnInit {
     this.dialogService
       .open(ConfirmationDialogComponent, {
         context: {
-          question: 'Realmente deseja exlucir ' + item,
+          question: 'Realmente deseja excluir ' + item,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -281,6 +281,7 @@ export class ContractItemComponent implements OnInit {
               break;
             case ComponentTypes.EXPENSE:
               this.contract.expenses.splice(index, 1);
+              this.source.load(this.contract.expenses);
               break;
             default:
               break;
