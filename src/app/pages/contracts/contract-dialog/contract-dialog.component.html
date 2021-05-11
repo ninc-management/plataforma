@@ -10,7 +10,12 @@
         : windowWidth()
   }"
 >
-  <div class="col-md-8">
+  <div
+    [ngClass]="{
+      'col-md-8': componentType !== types.CONTRACT,
+      'col-md-11': componentType === types.CONTRACT
+    }"
+  >
     <nb-card
       *ngIf="
         !this.isPayable &&
