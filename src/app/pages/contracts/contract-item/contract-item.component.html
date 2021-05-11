@@ -1205,6 +1205,7 @@
         *ngIf="!utils.isPhone(); else phone"
         [settings]="settings"
         [source]="source"
+        (create)="paymentDialog(undefined, types.EXPENSE)"
       >
       </ng2-smart-table>
     </ng-template>

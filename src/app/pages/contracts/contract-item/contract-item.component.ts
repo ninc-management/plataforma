@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { format, parseISO } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { take } from 'rxjs/operators';
 import {
   ContractService,
@@ -21,7 +22,6 @@ import {
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
-import { LocalDataSource } from 'ng2-smart-table';
 
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
