@@ -179,6 +179,7 @@ export class ContractItemComponent implements OnInit {
     this.userData = this.completerService
       .local(this.userService.getUsersList(), 'fullName', 'fullName')
       .imageField('profilePicture');
+    this.source.load(this.contract.expenses);
   }
 
   updateContract(): void {
@@ -237,6 +238,8 @@ export class ContractItemComponent implements OnInit {
       .subscribe(() => {
         this.calculatePaidValue();
         this.calculateBalance();
+        if (componentType === ComponentTypes.EXPENSE)
+          this.source.load(this.contract.expenses);
       });
   }
 
