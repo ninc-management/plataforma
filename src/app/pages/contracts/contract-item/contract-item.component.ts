@@ -98,6 +98,10 @@ export class ContractItemComponent implements OnInit {
       delete: true,
     },
     columns: {
+      source: {
+        title: 'Fonte',
+        type: 'string',
+      },
       description: {
         title: 'Descrição',
         type: 'string',
@@ -106,6 +110,24 @@ export class ContractItemComponent implements OnInit {
         title: 'Valor',
         type: 'string',
         compareFunction: this.valueSort,
+      },
+      type: {
+        title: 'Tipo',
+        type: 'string',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: this.EXPENSE_OPTIONS.map((type) => ({
+              value: type,
+              title: type,
+            })),
+          },
+        },
+      },
+      created: {
+        title: 'Data',
+        type: 'string',
       },
     },
   };
@@ -179,7 +201,7 @@ export class ContractItemComponent implements OnInit {
     this.userData = this.completerService
       .local(this.userService.getUsersList(), 'fullName', 'fullName')
       .imageField('profilePicture');
-    this.source.load(this.contract.expenses);
+    this.loadTableExpenses();
   }
 
   updateContract(): void {
@@ -238,8 +260,7 @@ export class ContractItemComponent implements OnInit {
       .subscribe(() => {
         this.calculatePaidValue();
         this.calculateBalance();
-        if (componentType === ComponentTypes.EXPENSE)
-          this.source.load(this.contract.expenses);
+        if (componentType === ComponentTypes.EXPENSE) this.loadTableExpenses();
       });
   }
 
@@ -281,7 +302,7 @@ export class ContractItemComponent implements OnInit {
               break;
             case ComponentTypes.EXPENSE:
               this.contract.expenses.splice(index, 1);
-              this.source.load(this.contract.expenses);
+              this.loadTableExpenses();
               break;
             default:
               break;
@@ -519,5 +540,16 @@ export class ContractItemComponent implements OnInit {
       return direction;
     }
     return 0;
+  }
+
+  loadTableExpenses(): void {
+    this.source.load(
+      this.contract.expenses.map((expense) => {
+        let tmp = _.cloneDeep(expense);
+        tmp.source = this.userService.idToShortName(tmp.source);
+        tmp.created = format(parseISO(tmp.created), 'dd/MM/yyyy');
+        return tmp;
+      })
+    );
   }
 }
