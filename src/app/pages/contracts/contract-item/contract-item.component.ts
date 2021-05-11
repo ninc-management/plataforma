@@ -21,6 +21,7 @@ import {
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
+import { LocalDataSource } from 'ng2-smart-table';
 
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -72,6 +73,44 @@ export class ContractItemComponent implements OnInit {
   teamMember: any = {};
   userSearch: string;
   userData: CompleterData;
+
+  settings = {
+    mode: 'external',
+    noDataMessage: 'Não encontramos nenhuma despesa para o filtro selecionado.',
+    add: {
+      addButtonContent: '<i class="nb-plus"></i>',
+      createButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    edit: {
+      editButtonContent: '<i class="nb-edit"></i>',
+      saveButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    delete: {
+      deleteButtonContent: '<i class="eva trash-2-outline"></i>',
+      confirmDelete: false,
+    },
+    actions: {
+      columnTitle: 'Ações',
+      add: true,
+      edit: true,
+      delete: true,
+    },
+    columns: {
+      description: {
+        title: 'Descrição',
+        type: 'string',
+      },
+      value: {
+        title: 'Valor',
+        type: 'string',
+        compareFunction: this.valueSort,
+      },
+    },
+  };
+
+  source: LocalDataSource = new LocalDataSource();
 
   constructor(
     private dialogService: NbDialogService,
@@ -463,5 +502,18 @@ export class ContractItemComponent implements OnInit {
         this.contract.nortanPercentage
       );
     }
+  }
+
+  valueSort(direction: any, a: string, b: string): number {
+    const first = +a.replace(/[,.]/g, '');
+    const second = +b.replace(/[,.]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
   }
 }

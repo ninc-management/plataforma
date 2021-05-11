@@ -1192,78 +1192,96 @@
     [tabIcon]="expenseIcon"
     responsive
   >
-    <nb-list>
-      <nb-list-item *ngFor="let expense of contract.expenses; let i = index">
-        <div class="row irow" style="width: 100%">
-          <div class="col-10 col-md-11">
-            <div class="irow row">
-              <a
-                (click)="paymentDialog(i, types.EXPENSE)"
-                style="
-                  width: 100%;
-                  cursor: pointer;
-                  display: flex;
-                  align-items: center;
-                "
-              >
-                <div class="col-auto">
-                  <nb-user
-                    [onlyPicture]="true"
-                    [name]="userService.idToUser(expense.author).fullName"
-                    [picture]="
-                      userService.idToUser(expense.author).profilePicture
-                    "
-                  >
-                  </nb-user>
-                </div>
-                <div class="col-Auto">#{{ +i + 1 }}</div>
-                <div class="col">
-                  {{ expense.description }}
-                </div>
-                <div class="col-md-auto">
-                  <nb-icon
-                    icon="dollar-sign"
-                    pack="fa"
-                    status="success"
-                  ></nb-icon>
-                  <span style="vertical-align: 0.1em">
-                    {{ expense.value }}
-                  </span>
-                </div>
-                <div class="col-md-auto">
-                  <nb-icon
-                    icon="calendar-alt"
-                    pack="fa"
-                    status="primary"
-                  ></nb-icon>
-                  <span style="vertical-align: 0.1em">
-                    {{ formatDate(expense.created) }}
-                  </span>
-                </div>
-              </a>
+    <div
+      *ngIf="contract.expenses.length == 0; else table"
+      [nbSpinner]="true"
+      nbSpinnerStatus="primary"
+      nbSpinnerSize="giant"
+      style="width: 100%; height: 654px"
+    ></div>
+    <ng-template #table>
+      <ng2-smart-table
+        #smartTable
+        *ngIf="!utils.isPhone(); else phone"
+        [settings]="settings"
+        [source]="source"
+      >
+      </ng2-smart-table>
+    </ng-template>
+    <ng-template #phone>
+      <nb-list>
+        <nb-list-item *ngFor="let expense of contract.expenses; let i = index">
+          <div class="row irow" style="width: 100%">
+            <div class="col-10 col-md-11">
+              <div class="irow row">
+                <a
+                  (click)="paymentDialog(i, types.EXPENSE)"
+                  style="
+                    width: 100%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                  "
+                >
+                  <div class="col-auto">
+                    <nb-user
+                      [onlyPicture]="true"
+                      [name]="userService.idToUser(expense.author).fullName"
+                      [picture]="
+                        userService.idToUser(expense.author).profilePicture
+                      "
+                    >
+                    </nb-user>
+                  </div>
+                  <div class="col-Auto">#{{ +i + 1 }}</div>
+                  <div class="col">
+                    {{ expense.description }}
+                  </div>
+                  <div class="col-md-auto">
+                    <nb-icon
+                      icon="dollar-sign"
+                      pack="fa"
+                      status="success"
+                    ></nb-icon>
+                    <span style="vertical-align: 0.1em">
+                      {{ expense.value }}
+                    </span>
+                  </div>
+                  <div class="col-md-auto">
+                    <nb-icon
+                      icon="calendar-alt"
+                      pack="fa"
+                      status="primary"
+                    ></nb-icon>
+                    <span style="vertical-align: 0.1em">
+                      {{ formatDate(expense.created) }}
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="col-2 col-md-auto" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="confirmationDialog(i, types.EXPENSE)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
             </div>
           </div>
-          <div class="col-2 col-md-auto" style="text-align: right">
-            <nb-icon
-              class="xIcon"
-              status="basic"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="confirmationDialog(i, types.EXPENSE)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
-        </div>
-      </nb-list-item>
-    </nb-list>
-    <button
-      nbButton
-      fullWidth
-      status="primary"
-      size="large"
-      (click)="paymentDialog(undefined, types.EXPENSE)"
-    >
-      Nova Despesa
-    </button>
+        </nb-list-item>
+      </nb-list>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        (click)="paymentDialog(undefined, types.EXPENSE)"
+      >
+        Nova Despesa
+      </button>
+    </ng-template>
   </nb-tab>
 </nb-tabset>

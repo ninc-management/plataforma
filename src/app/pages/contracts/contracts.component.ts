@@ -291,8 +291,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   valueSort(direction: any, a: string, b: string): number {
-    let first = +a.replace(/[,.]/g, '');
-    let second = +b.replace(/[,.]/g, '');
+    const first = +a.replace(/[,.]/g, '');
+    const second = +b.replace(/[,.]/g, '');
 
     if (first < second) {
       return -1 * direction;
