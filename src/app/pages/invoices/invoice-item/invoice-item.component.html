@@ -1493,9 +1493,8 @@
                   tempInvoice.products[i].length == 0 ? 'danger' : 'basic'
                 "
                 (focusout)="
-                  tempInvoice.products[i].name = tempInvoice.products[
-                    i
-                  ].name.toUpperCase()
+                  tempInvoice.products[i].name =
+                    tempInvoice.products[i].name.toUpperCase()
                 "
               />
               <nb-list
@@ -1524,9 +1523,8 @@
                             : 'basic'
                         "
                         (focusout)="
-                          product.subproducts[j] = product.subproducts[
-                            j
-                          ].toUpperCase()
+                          product.subproducts[j] =
+                            product.subproducts[j].toUpperCase()
                         "
                       />
                     </div>
@@ -1652,6 +1650,17 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
+            <div class="col-4 col-md-7" style="text-align: right">
+              Subtotal:
+            </div>
+            <div class="col-4 col-md-2">
+              {{ options.subtotal }}
+            </div>
+            <div class="col-md-3"></div>
+          </div>
+        </nb-list-item>
+        <nb-list-item>
+          <div class="row paymentRow">
             <div
               class="col-12 col-md-7"
               [ngStyle]="{
@@ -1685,7 +1694,7 @@
               />
             </div>
             <div
-              class="col-6 col-md-3"
+              class="col-6 col-md-2"
               style="display: flex; align-items: center"
             >
               <input
@@ -1709,16 +1718,18 @@
                     ? true
                     : null
                 "
-              /><b style="margin-left: 5px">%</b>
+              />%
             </div>
+            <div class="col-1"></div>
           </div>
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-12 col-md-4">
+            <div class="col-6 col-md-3">Contrato: {{ tempInvoice.value }}</div>
+            <div class="col-6 col-md-3">
               Restante: {{ remainingBalance('product') }}
             </div>
-            <div class="col-4 col-md-3" style="text-align: right">Total:</div>
+            <div class="col-4 col-md-1" style="text-align: right">Total:</div>
             <div
               class="col-4 col-md-2"
               [ngClass]="{

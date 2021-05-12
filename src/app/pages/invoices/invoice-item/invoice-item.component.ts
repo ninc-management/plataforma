@@ -67,6 +67,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       name: '',
     },
     total: '0',
+    subtotal: '0',
     discountPercentage: '',
     stageTotal: '0',
     materialTotal: '0,00',
@@ -512,9 +513,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
-    let lastItem = this.tempInvoice.products[
-      this.tempInvoice.products.length - 1
-    ];
+    let lastItem =
+      this.tempInvoice.products[this.tempInvoice.products.length - 1];
     lastItem.percentage = this.stringUtil
       .toPercentage(lastItem.value, this.tempInvoice.value, 20)
       .slice(0, -1);
@@ -600,18 +600,20 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   updateTotal(base: 'product' | 'stage' | 'material'): void {
     switch (base) {
       case 'product': {
-        this.options.total = this.stringUtil.numberToMoney(
-          this.tempInvoice.products.reduce(
-            (accumulator: number, product: any) =>
-              accumulator +
-              this.stringUtil.moneyToNumber(
-                this.tempInvoice.productListType == '1'
-                  ? product.value
-                  : product.total
-              ),
-            0
-          ) - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
+        const subtotal = this.tempInvoice.products.reduce(
+          (accumulator: number, product: any) =>
+            accumulator +
+            this.stringUtil.moneyToNumber(
+              this.tempInvoice.productListType == '1'
+                ? product.value
+                : product.total
+            ),
+          0
         );
+        this.options.total = this.stringUtil.numberToMoney(
+          subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
+        );
+        this.options.subtotal = this.stringUtil.numberToMoney(subtotal);
         break;
       }
       case 'stage': {
@@ -700,7 +702,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 })
 export class TextInputDialog
   extends BaseDialogComponent
-  implements AfterViewInit {
+  implements AfterViewInit
+{
   @ViewChild('name', { read: ElementRef }) inputRef;
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
