@@ -74,6 +74,32 @@ export class ContractItemComponent implements OnInit {
   userSearch: string;
   userData: CompleterData;
 
+  searchQuery = '';
+  get filtredExpenses(): any[] {
+    if (this.searchQuery !== '')
+      return this.contract.expenses.filter((expense) => {
+        return (
+          expense.description
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.value
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          expense.author
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.source
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.coordination
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.created.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      });
+    return this.contract.expenses;
+  }
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhuma despesa para o filtro selecionado.',

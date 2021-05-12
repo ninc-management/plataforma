@@ -1192,28 +1192,44 @@
     [tabIcon]="expenseIcon"
     responsive
   >
-    <div
-      *ngIf="contract.expenses.length == 0; else table"
-      [nbSpinner]="true"
-      nbSpinnerStatus="primary"
-      nbSpinnerSize="giant"
-      style="width: 100%; height: 654px"
-    ></div>
-    <ng-template #table>
-      <ng2-smart-table
-        #smartTable
-        *ngIf="!utils.isPhone(); else phone"
-        [settings]="settings"
-        [source]="source"
-        (create)="paymentDialog(undefined, types.EXPENSE)"
-        (edit)="paymentDialog(+$event.index, types.EXPENSE)"
-        (delete)="confirmationDialog(+$event.index, types.EXPENSE)"
-      >
-      </ng2-smart-table>
-    </ng-template>
+    <ng2-smart-table
+      #smartTable
+      *ngIf="!utils.isPhone(); else phone"
+      [settings]="settings"
+      [source]="source"
+      (create)="paymentDialog(undefined, types.EXPENSE)"
+      (edit)="paymentDialog(+$event.index, types.EXPENSE)"
+      (delete)="confirmationDialog(+$event.index, types.EXPENSE)"
+    >
+    </ng2-smart-table>
     <ng-template #phone>
+      <div class="row">
+        <div class="col-2" style="padding-left: 0; padding-right: 0">
+          <button
+            nbButton
+            fullWidth
+            status="primary"
+            style="height: 100%"
+            (click)="paymentDialog(undefined, types.EXPENSE)"
+          >
+            <i class="nb-plus" style="font-size: 1.5rem"></i>
+          </button>
+        </div>
+        <div class="col-10">
+          <input
+            nbInput
+            [(ngModel)]="searchQuery"
+            #search="ngModel"
+            id="input-search"
+            name="search"
+            placeholder="Busque aqui..."
+            fullWidth
+            fieldSize="large"
+          />
+        </div>
+      </div>
       <nb-list>
-        <nb-list-item *ngFor="let expense of contract.expenses; let i = index">
+        <nb-list-item *ngFor="let expense of filtredExpenses; let i = index">
           <div class="row irow" style="width: 100%">
             <div class="col-10 col-md-11">
               <div class="irow row">
@@ -1276,15 +1292,6 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <button
-        nbButton
-        fullWidth
-        status="primary"
-        size="large"
-        (click)="paymentDialog(undefined, types.EXPENSE)"
-      >
-        Nova Despesa
-      </button>
     </ng-template>
   </nb-tab>
 </nb-tabset>
