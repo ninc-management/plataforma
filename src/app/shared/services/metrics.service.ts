@@ -402,110 +402,89 @@ export class MetricsService implements OnDestroy {
                       ) {
                         const uCPayments = payment.team.reduce(
                           (upaid: UserAndCoordinations, member) => {
-                            const coords = this.departmentService.buildAllCoordinationsList();
+                            const coords =
+                              this.departmentService.buildAllCoordinationsList();
                             const author =
                               member.user._id == undefined
                                 ? member.user
                                 : member.user._id;
                             switch (member.coordination) {
                               case coords[0]:
-                                upaid.global.CADM += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CADM +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CADM += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CADM +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[1]:
-                                upaid.global.CDI += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CDI +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CDI += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CDI +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[2]:
-                                upaid.global.CGO += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CGO +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CGO += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CGO +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[3]:
-                                upaid.global.CIMP += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CIMP +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CIMP += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CIMP +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[4]:
-                                upaid.global.CINST += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CINST +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CINST += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CINST +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[5]:
-                                upaid.global.CMA += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CMA +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CMA += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CMA +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[6]:
-                                upaid.global.CPA += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CPA +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CPA += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CPA +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[7]:
-                                upaid.global.CRH += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CRH +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CRH += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CRH +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[8]:
-                                upaid.global.CRH += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CRH +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CRH += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CRH +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[9]:
-                                upaid.global.CSEST += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CSEST +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CSEST += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CSEST +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               case coords[10]:
-                                upaid.global.CSH += this.stringUtil.moneyToNumber(
-                                  member.value
-                                );
+                                upaid.global.CSH +=
+                                  this.stringUtil.moneyToNumber(member.value);
                                 if (author == uId)
-                                  upaid.user.CSH += this.stringUtil.moneyToNumber(
-                                    member.value
-                                  );
+                                  upaid.user.CSH +=
+                                    this.stringUtil.moneyToNumber(member.value);
                                 break;
                               default:
                                 break;
@@ -553,7 +532,8 @@ export class MetricsService implements OnDestroy {
                       ) &&
                       source._id != CONTRACT_BALANCE._id
                     ) {
-                      const coords = this.departmentService.buildAllCoordinationsList();
+                      const coords =
+                        this.departmentService.buildAllCoordinationsList();
 
                       switch (expense.coordination) {
                         case coords[0]:
@@ -593,13 +573,11 @@ export class MetricsService implements OnDestroy {
                             );
                           break;
                         case coords[4]:
-                          received.global.CINST -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
+                          received.global.CINST -=
+                            this.stringUtil.moneyToNumber(expense.value);
                           if (source == uId)
-                            received.user.CINST -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
+                            received.user.CINST -=
+                              this.stringUtil.moneyToNumber(expense.value);
                           break;
                         case coords[5]:
                           received.global.CMA -= this.stringUtil.moneyToNumber(
@@ -638,13 +616,11 @@ export class MetricsService implements OnDestroy {
                             );
                           break;
                         case coords[9]:
-                          received.global.CSEST -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
+                          received.global.CSEST -=
+                            this.stringUtil.moneyToNumber(expense.value);
                           if (source == uId)
-                            received.user.CSEST -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
+                            received.user.CSEST -=
+                              this.stringUtil.moneyToNumber(expense.value);
                           break;
                         case coords[10]:
                           received.global.CSH -= this.stringUtil.moneyToNumber(
@@ -1068,19 +1044,24 @@ export class MetricsService implements OnDestroy {
         if (contracts.length > 0) {
           return contracts.reduce((sum, contract) => {
             if (this.contractService.hasReceipts(contract._id)) {
-              sum += contract.receipts.reduce((acc, receipt) => {
-                let paidDate = receipt.paidDate;
-                if (typeof paidDate !== 'object') paidDate = parseISO(paidDate);
-                if (this.utils.compareDates(paidDate, last, number, fromToday))
-                  acc += this.stringUtil.moneyToNumber(
-                    this.contractService.toNetValue(
-                      receipt.value,
-                      this.utils.nfPercentage(contract),
-                      this.utils.nortanPercentage(contract)
-                    )
-                  );
-                return acc;
-              }, 0.0);
+              sum += contract.receipts
+                .filter((r) => r.paid)
+                .reduce((acc, receipt) => {
+                  let paidDate = receipt.paidDate;
+                  if (typeof paidDate !== 'object')
+                    paidDate = parseISO(paidDate);
+                  if (
+                    this.utils.compareDates(paidDate, last, number, fromToday)
+                  )
+                    acc += this.stringUtil.moneyToNumber(
+                      this.contractService.toNetValue(
+                        receipt.value,
+                        this.utils.nfPercentage(contract),
+                        this.utils.nortanPercentage(contract)
+                      )
+                    );
+                  return acc;
+                }, 0.0);
             }
             return sum;
           }, 0.0);

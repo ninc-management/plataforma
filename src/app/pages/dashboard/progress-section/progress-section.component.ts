@@ -60,19 +60,21 @@ export class ProgressSectionComponent implements OnInit {
           tooltip:
             'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
           value: this.metricsService
-            .impulses(user._id)
-            .pipe(map((x) => x.toString())),
-          description: this.metricsService.impulses(user._id, 'Mês').pipe(
-            map((pastImpulses) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' a houveram ' +
-                pastImpulses.toString()
-              );
-            })
-          ),
+            .receivedValueNortan(user._id)
+            .pipe(map((x) => Math.trunc(x.global / 1000).toString())),
+          description: this.metricsService
+            .receivedValueNortan(user._id, 'Mês')
+            .pipe(
+              map((pastImpulses) => {
+                return (
+                  this.metricsService.plural('Mês', 1) +
+                  ' a houveram ' +
+                  Math.trunc(pastImpulses.global / 1000).toString()
+                );
+              })
+            ),
           loading: this.metricsService
-            .impulses(user._id)
+            .receivedValueNortan(user._id)
             .pipe(map((x) => x == undefined)),
         });
         this.METRICS.push({
