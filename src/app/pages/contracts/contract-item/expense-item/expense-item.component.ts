@@ -140,14 +140,16 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       this.lastType = this.expense.type;
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
-        this.expense.author = author;
+        this.expense.author = this.contract.team.find(
+          (member) => member.user._id == author._id
+        );
       });
       this.updatePaidDate();
     }
     this.sourceData = this.completerService
       .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
       .imageField('profilePicture');
-    this.userSearch = this.expense.author.fullName;
+    this.userSearch = this.expense.author?.fullName;
     this.sourceSearch = this.expense.source?.fullName;
 
     this.formRef.control.statusChanges
@@ -186,9 +188,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       },
       name: {
         fn: (name: string) => {
-          const item = (this.expenseIndex !== undefined
-            ? this.expenseIndex + 1
-            : this.contract.expenses.length + 1
+          const item = (
+            this.expenseIndex !== undefined
+              ? this.expenseIndex + 1
+              : this.contract.expenses.length + 1
           ).toString();
           const type = this.expense.type;
           const value = this.expense.value.replace('.', '');
