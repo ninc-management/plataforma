@@ -108,4 +108,8 @@ export class UtilsService {
       }
     }
   }
+
+  trackByIndex(index: number, obj: any): any {
+    return index;
+  }
 }

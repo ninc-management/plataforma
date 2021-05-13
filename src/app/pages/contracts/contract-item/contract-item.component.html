@@ -546,7 +546,7 @@
             *ngFor="
               let member of contract.team;
               let i = index;
-              trackBy: trackByIndex
+              trackBy: utils.trackByIndex
             "
           >
             <div class="row irow">
@@ -937,7 +937,7 @@
         *ngFor="
           let member of contract.team;
           let i = index;
-          trackBy: trackByIndex
+          trackBy: utils.trackByIndex
         "
       >
         <div class="row irow">
@@ -1039,7 +1039,7 @@
               *ngFor="
                 let expense of expenseTypesSum();
                 let i = index;
-                trackBy: trackByIndex
+                trackBy: utils.trackByIndex
               "
             >
               <div class="row irow">
@@ -1061,7 +1061,7 @@
               *ngFor="
                 let expense of expenseSourceSum();
                 let i = index;
-                trackBy: trackByIndex
+                trackBy: utils.trackByIndex
               "
             >
               <div class="row irow">

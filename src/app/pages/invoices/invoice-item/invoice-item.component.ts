@@ -669,10 +669,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           this.stringUtil.moneyToNumber(array[idx].amount)
       );
   }
-
-  trackByIndex(index: number, obj: any): any {
-    return index;
-  }
 }
 
 @Component({

@@ -440,10 +440,6 @@ export class ContractItemComponent implements OnInit {
     return date;
   }
 
-  trackByIndex(index: number, obj: any): any {
-    return index;
-  }
-
   expenseTypesSum(): any[] {
     let result = this.contract.expenses.reduce(
       (sum: any[], expense) => {

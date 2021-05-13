@@ -12,6 +12,7 @@ import { CompleterService, CompleterData } from 'ng2-completer';
 import { DepartmentService } from '../../../../shared/services/department.service';
 import { ContractService } from '../../../../shared/services/contract.service';
 import { UserService } from '../../../../shared/services/user.service';
+import { UtilsService } from '../../../../shared/services/utils.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { BrMaskDirective } from '../../../../shared/directives/br-mask.directive';
 import * as contract_validation from '../../../../shared/payment-validation.json';
@@ -58,7 +59,8 @@ export class PaymentItemComponent implements OnInit {
     private completerService: CompleterService,
     private brMask: BrMaskDirective,
     public userService: UserService,
-    public stringUtil: StringUtilService
+    public stringUtil: StringUtilService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -264,9 +266,5 @@ export class PaymentItemComponent implements OnInit {
       ? this.payment.value.slice()
       : '0';
     this.options.lastTeam = _.cloneDeep(this.payment.team);
-  }
-
-  trackByIndex(index: number, obj: any): any {
-    return index;
   }
 }
