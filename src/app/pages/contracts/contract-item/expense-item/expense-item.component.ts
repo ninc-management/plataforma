@@ -55,6 +55,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   today = new Date();
   types = Object.values(EXPENSE_TYPES);
   sTypes = Object.values(SPLIT_TYPES);
+  splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
   expense: any = {
     paid: true,
@@ -112,10 +113,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     tmp.unshift(CONTRACT_BALANCE);
     this.sourceArray.next(tmp);
 
-    this.expense.splitType = this.expense.splitType
-      ? this.expense.splitType
-      : SPLIT_TYPES.PROPORCIONAL;
-
     if (this.expenseIndex !== undefined) {
       this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (
@@ -154,6 +151,17 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       });
       this.updatePaidDate();
     }
+
+    if (!this.expense.splitType)
+      this.expense.splitType = SPLIT_TYPES.PROPORCIONAL;
+
+    if (!this.expense.team || this.expense.team.length == 0)
+      this.expense.team = this.contract.team.map((member) => ({
+        user: member.user,
+        value: '0,00',
+        percentage: member.distribution,
+      }));
+
     this.sourceData = this.completerService
       .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
       .imageField('profilePicture');

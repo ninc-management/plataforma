@@ -12,6 +12,12 @@ const uploadedFile = {
   url: { type: String, required: true },
 };
 
+const expenseTeamMember = {
+  user: { type: mongoose.ObjectId, ref: 'User', required: true },
+  value: { type: String, required: true },
+  percentage: { type: String, required: true },
+};
+
 const expense = {
   author: { type: mongoose.ObjectId, ref: 'User', required: true },
   source: { type: mongoose.ObjectId, ref: 'User', required: true },
@@ -25,6 +31,7 @@ const expense = {
   paid: { type: Boolean, required: true },
   paidDate: { type: Date },
   uploadedFiles: [uploadedFile],
+  team: [expenseTeamMember],
 };
 
 const payment = {
