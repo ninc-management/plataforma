@@ -192,13 +192,13 @@
       }"
     >
       <div class="form-control-group">
-        <label class="label" for="input-type">Tipo da despesa:</label>
+        <label class="label" for="input-type">Categoria da despesa:</label>
         <nb-select
           [(ngModel)]="expense.type"
           #type="ngModel"
           id="input-type"
           name="type"
-          placeholder="Tipo da despesa"
+          placeholder="Categoria da despesa"
           fullWidth
           size="large"
           [required]="validation.type.required"
@@ -243,7 +243,41 @@
         </nb-select>
       </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-12">
+      <div
+        class="form-control-group"
+        [ngStyle]="{
+          'align-items': 'center',
+          'margin-top.px': 5,
+          display: utils.isPhone() ? 'contents' : 'flex'
+        }"
+      >
+        <label
+          class="label"
+          for="input-split-type"
+          style="margin-bottom: 0; margin-right: 10px"
+          >Tipo da despesa:</label
+        >
+        <nb-radio-group
+          [(ngModel)]="expense.splitType"
+          #splitType="ngModel"
+          id="input-split-type"
+          name="splitType"
+          [ngStyle]="{
+            'height.px': 16,
+            display: utils.isPhone() ? 'contents' : 'flex'
+          }"
+        >
+          <nb-radio
+            *ngFor="let type of sTypes"
+            value="type"
+            style="height: 16px"
+            >{{ type }}</nb-radio
+          >
+        </nb-radio-group>
+      </div>
+    </div>
+    <div class="col-12">
       <div class="form-control-group">
         <label class="label" for="input-description">Descrição:</label>
         <textarea

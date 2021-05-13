@@ -20,6 +20,7 @@ import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
   EXPENSE_TYPES,
+  SPLIT_TYPES,
 } from '../../../../shared/services/contract.service';
 import { OnedriveService } from '../../../../shared/services/onedrive.service';
 import {
@@ -28,6 +29,7 @@ import {
 } from '../../../../shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
+import { UtilsService } from '../../../../shared/services/utils.service';
 import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/expense-validation.json';
@@ -52,6 +54,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   USER_COORDINATIONS: string[] = [];
   today = new Date();
   types = Object.values(EXPENSE_TYPES);
+  sTypes = Object.values(SPLIT_TYPES);
   balanceID = CONTRACT_BALANCE._id;
   expense: any = {
     paid: true,
@@ -81,7 +84,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     private completerService: CompleterService,
     private onedrive: OnedriveService,
     public userService: UserService,
-    public departmentService: DepartmentService
+    public departmentService: DepartmentService,
+    public utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -107,6 +111,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     let tmp = this.contract.team.map((member) => member.user);
     tmp.unshift(CONTRACT_BALANCE);
     this.sourceArray.next(tmp);
+
+    this.expense.splitType = this.expense.splitType
+      ? this.expense.splitType
+      : SPLIT_TYPES.PROPORCIONAL;
 
     if (this.expenseIndex !== undefined) {
       this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);

@@ -18,6 +18,12 @@ export enum EXPENSE_TYPES {
   OUTROS = 'Outros',
 }
 
+export enum SPLIT_TYPES {
+  INDIVIDUAL = 'Individual',
+  PERSONALIZADO = 'Personalizado',
+  PROPORCIONAL = 'Proporcional',
+}
+
 @Injectable({
   providedIn: 'root',
 })
