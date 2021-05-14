@@ -279,8 +279,33 @@
         </nb-radio-group>
       </div>
     </div>
+    <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-12">
+      <div class="form-group">
+        <label class="label" for="input-selected-member"
+          >Selecione o associado:
+        </label>
+        <nb-select
+          [(ngModel)]="options.selectedMember"
+          #selectedMember="ngModel"
+          id="input-selected-member"
+          name="selectedMember"
+          placeholder="Selecione..."
+          fullWidth
+          size="large"
+          [required]="validation.selectedMember.required"
+          [status]="selectedMember.value === undefined ? 'danger' : 'success'"
+          [attr.aria-invalid]="
+            selectedMember.invalid && selectedMember.touched ? true : null
+          "
+        >
+          <nb-option *ngFor="let name of teamNames" [value]="name">{{
+            name
+          }}</nb-option>
+        </nb-select>
+      </div>
+    </div>
     <nb-list
-      *ngIf="expense.splitType !== splitTypes.PROPORCIONAL"
+      *ngIf="expense.splitType === splitTypes.PERSONALIZADO"
       style="width: 100%; padding: 10px 0"
     >
       <nb-list-item

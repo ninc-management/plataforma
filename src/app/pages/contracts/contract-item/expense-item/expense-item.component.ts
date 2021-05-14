@@ -67,6 +67,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
     lastTeam: [],
+    selectedMember: '',
   };
   uploaderOptions: NbFileUploaderOptions;
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
@@ -80,6 +81,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   sourceData: CompleterData;
   private sourceArray = new BehaviorSubject<any[]>([]);
   lastType: EXPENSE_TYPES;
+
+  get teamNames(): string[] {
+    return this.expense.team.map((m) => this.userService.idToName(m.user));
+  }
 
   constructor(
     private contractService: ContractService,
@@ -145,6 +150,12 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       if (this.expense.type === EXPENSE_TYPES.APORTE)
         this.removeContractBalanceMember();
       this.lastType = this.expense.type;
+      if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
+        let sMember = this.expense.team.find(
+          (member) => member.percentage === '100,00'
+        );
+        this.options.selectedMember = this.userService.idToName(sMember.user);
+      }
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         this.expense.author = this.contract.team.find(
@@ -264,6 +275,18 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   registerExpense(): void {
+    if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
+      for (let member of this.expense.team) {
+        member.value = '0,00';
+        member.percentage = '0,00';
+      }
+      let sMember = this.expense.team.find(
+        (member) =>
+          this.userService.idToName(member.user) === this.options.selectedMember
+      );
+      sMember.value = this.expense.value;
+      sMember.percentage = '100,00';
+    }
     this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       this.expense.lastUpdate = new Date();
