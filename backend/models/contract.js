@@ -25,6 +25,7 @@ const expense = {
   coordination: { type: String },
   nf: { type: Boolean, required: true },
   type: { type: String, required: true },
+  splitType: { type: String, required: true },
   value: { type: String, required: true },
   created: { type: Date, required: true },
   lastUpdate: { type: Date, required: true },

@@ -7,6 +7,7 @@ import { take } from 'rxjs/operators';
 import {
   ContractService,
   EXPENSE_TYPES,
+  SPLIT_TYPES,
 } from '../../../shared/services/contract.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import {
@@ -138,13 +139,27 @@ export class ContractItemComponent implements OnInit {
         compareFunction: this.valueSort,
       },
       type: {
-        title: 'Tipo',
+        title: 'Categoria',
         type: 'string',
         filter: {
           type: 'list',
           config: {
             selectText: 'Todos',
             list: this.EXPENSE_OPTIONS.map((type) => ({
+              value: type,
+              title: type,
+            })),
+          },
+        },
+      },
+      splitType: {
+        title: 'Tipo',
+        type: 'string',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: Object.values(SPLIT_TYPES).map((type) => ({
               value: type,
               title: type,
             })),
