@@ -72,6 +72,8 @@
           "
           [disabled]="expense.paid && expenseIndex !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+          (ngModelChange)="calculateTeamValues()"
+          (focus)="updateLastValues()"
         />
         <ng-container>
           <p class="caption">

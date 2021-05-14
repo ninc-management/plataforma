@@ -65,6 +65,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   };
   options = {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
+    lastValue: '0',
+    lastTeam: [],
   };
   uploaderOptions: NbFileUploaderOptions;
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
@@ -318,5 +320,40 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       (el) => el.user._id == this.expense.source._id
     );
     if (el) this.expense.coordination = el.coordination;
+  }
+
+  updateValue(idx: number): void {
+    this.expense.team[idx].value = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(this.expense.value) *
+        (1 -
+          this.stringUtil.toMutiplyPercentage(
+            this.expense.team[idx].percentage
+          ))
+    );
+  }
+
+  updatePercentage(idx: number): void {
+    this.expense.team[idx].percentage = this.stringUtil
+      .toPercentage(this.expense.team[idx].value, this.expense.value, 20)
+      .slice(0, -1);
+  }
+
+  updateLastValues(): void {
+    this.options.lastValue = this.expense.value
+      ? this.expense.value.slice()
+      : '0';
+    this.options.lastTeam = _.cloneDeep(this.expense.team);
+  }
+
+  calculateTeamValues(): void {
+    if (this.expense.value !== '0') {
+      this.expense.team.map((member) => {
+        member.value = this.stringUtil.numberToMoney(
+          this.stringUtil.moneyToNumber(this.expense.value) *
+            (1 - this.stringUtil.toMutiplyPercentage(member.percentage))
+        );
+        return member;
+      });
+    }
   }
 }
