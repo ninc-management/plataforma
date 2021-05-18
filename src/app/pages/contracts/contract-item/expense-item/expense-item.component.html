@@ -262,6 +262,7 @@
         >
         <nb-radio-group
           [(ngModel)]="expense.splitType"
+          (ngModelChange)="updateTeamValues()"
           #splitType="ngModel"
           id="input-split-type"
           name="splitType"
@@ -286,6 +287,7 @@
         </label>
         <nb-select
           [(ngModel)]="options.selectedMember"
+          (selectedChange)="updateTeamValues()"
           #selectedMember="ngModel"
           id="input-selected-member"
           name="selectedMember"
@@ -293,7 +295,7 @@
           fullWidth
           size="large"
           [required]="validation.selectedMember.required"
-          [status]="selectedMember.value === undefined ? 'danger' : 'success'"
+          [status]="selectedMember.value ? 'success' : 'danger'"
           [attr.aria-invalid]="
             selectedMember.invalid && selectedMember.touched ? true : null
           "
@@ -334,7 +336,7 @@
                 decimalCaracter: ',',
                 decimal: '2'
               }"
-              [status]="expense.team[i].value ? 'basic' : 'danger'"
+              [status]="is100 ? 'success' : 'danger'"
             />
           </div>
           <div
@@ -355,7 +357,7 @@
                 decimalCaracter: ',',
                 decimal: '2'
               }"
-              [status]="expense.team[i].percentage ? 'basic' : 'danger'"
+              [status]="is100 ? 'success' : 'danger'"
             />
             %
           </div>
@@ -605,7 +607,9 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
+      [disabled]="
+        !form.valid || (expense.nf && uploadedFiles.length == 0) || !is100
+      "
       (click)="registerExpense()"
     >
       {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
@@ -617,7 +621,9 @@
       fullWidth
       status="success"
       size="large"
-      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
+      [disabled]="
+        !form.valid || (expense.nf && uploadedFiles.length == 0) || !is100
+      "
       (click)="addAndClean()"
     >
       Adicionar Outro

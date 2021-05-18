@@ -584,7 +584,9 @@ export class ContractItemComponent implements OnInit {
       this.contract.expenses.map((expense) => {
         let tmp = _.cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
-        tmp.created = format(parseISO(tmp.created), 'dd/MM/yyyy');
+        if (typeof tmp.created !== 'object')
+          tmp.created = parseISO(tmp.created);
+        tmp.created = format(tmp.created, 'dd/MM/yyyy');
         return tmp;
       })
     );

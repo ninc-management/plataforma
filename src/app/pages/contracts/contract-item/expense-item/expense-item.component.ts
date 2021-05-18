@@ -85,6 +85,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   get teamNames(): string[] {
     return this.expense.team.map((m) => this.userService.idToName(m.user));
   }
+  get is100(): boolean {
+    return (
+      this.expense.team.reduce(
+        (sum, m) => (sum += this.stringUtil.moneyToNumber(m.percentage)),
+        0
+      ) === 100
+    );
+  }
 
   constructor(
     private contractService: ContractService,
@@ -275,18 +283,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   registerExpense(): void {
-    if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
-      for (let member of this.expense.team) {
-        member.value = '0,00';
-        member.percentage = '0,00';
-      }
-      let sMember = this.expense.team.find(
-        (member) =>
-          this.userService.idToName(member.user) === this.options.selectedMember
-      );
-      sMember.value = this.expense.value;
-      sMember.percentage = '100,00';
-    }
     this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       this.expense.lastUpdate = new Date();
@@ -377,6 +373,50 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         );
         return member;
       });
+    }
+  }
+
+  updateTeamValues(): void {
+    switch (this.expense.splitType) {
+      case SPLIT_TYPES.INDIVIDUAL: {
+        for (let member of this.expense.team) {
+          member.value = '0,00';
+          member.percentage = '0,00';
+        }
+        let sMember = this.expense.team.find(
+          (member) =>
+            this.userService.idToName(member.user) ===
+            this.options.selectedMember
+        );
+        if (sMember) {
+          sMember.value = this.expense.value;
+          sMember.percentage = '100,00';
+        }
+        break;
+      }
+      case SPLIT_TYPES.PERSONALIZADO: {
+        for (let member of this.expense.team) {
+          member.value = '0,00';
+          member.percentage = '0,00';
+        }
+        break;
+      }
+      case SPLIT_TYPES.PROPORCIONAL: {
+        for (const index in this.expense.team) {
+          this.expense.team[index].percentage =
+            this.contract.team[index].distribution;
+          this.expense.team[index].value = this.stringUtil.numberToMoney(
+            this.stringUtil.moneyToNumber(this.expense.value) *
+              (1 -
+                this.stringUtil.toMutiplyPercentage(
+                  this.expense.team[index].percentage
+                ))
+          );
+        }
+        break;
+      }
+      default:
+        break;
     }
   }
 }
