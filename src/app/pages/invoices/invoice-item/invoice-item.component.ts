@@ -20,7 +20,10 @@ import { ContractorDialogComponent } from '../../contractors/contractor-dialog/c
 import { BaseDialogComponent } from '../../../shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DepartmentService } from '../../../shared/services/department.service';
-import { InvoiceService } from '../../../shared/services/invoice.service';
+import {
+  InvoiceService,
+  INVOICE_STATOOS,
+} from '../../../shared/services/invoice.service';
 import { ContractService } from '../../../shared/services/contract.service';
 import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
@@ -28,13 +31,6 @@ import { UserService } from '../../../shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
 import * as _ from 'lodash';
-
-export enum INVOICE_STATOOS {
-  EM_ANALISE = 'Em análise',
-  FECHADO = 'Fechado',
-  NEGADO = 'Negado',
-  INVALIDADO = 'Invalidado',
-}
 
 @Component({
   selector: 'ngx-invoice-item',

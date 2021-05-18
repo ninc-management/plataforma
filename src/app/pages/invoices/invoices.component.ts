@@ -11,12 +11,14 @@ import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.componen
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
-import { InvoiceService } from '../../shared/services/invoice.service';
+import {
+  InvoiceService,
+  INVOICE_STATOOS,
+} from '../../shared/services/invoice.service';
 import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { INVOICE_STATOOS } from './invoice-item/invoice-item.component';
 
 @Component({
   selector: 'ngx-invoices',

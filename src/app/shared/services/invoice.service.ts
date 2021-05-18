@@ -7,7 +7,13 @@ import { OnedriveService } from './onedrive.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { INVOICE_STATOOS } from 'app/pages/invoices/invoice-item/invoice-item.component';
+
+export enum INVOICE_STATOOS {
+  EM_ANALISE = 'Em análise',
+  FECHADO = 'Fechado',
+  NEGADO = 'Negado',
+  INVALIDADO = 'Invalidado',
+}
 
 @Injectable({
   providedIn: 'root',

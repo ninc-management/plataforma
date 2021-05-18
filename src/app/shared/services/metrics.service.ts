@@ -4,13 +4,12 @@ import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
-import { InvoiceService } from './invoice.service';
+import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
 import { UserService, CONTRACT_BALANCE } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
 import * as _ from 'lodash';
-import { INVOICE_STATOOS } from 'app/pages/invoices/invoice-item/invoice-item.component';
 
 interface MetricInfo {
   count: number;
