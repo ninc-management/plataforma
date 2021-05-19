@@ -142,42 +142,34 @@ export class ContractService implements OnDestroy {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract['expenses']
       .filter((expense) => expense.paid)
-      .map((expense) => {
-        return {
-          value: expense.value,
-          type: expense.type,
-        };
-      })
-      .flat()
       .reduce(
         (sum, expense) => {
-          if (expense.type == EXPENSE_TYPES.APORTE)
+          if (
+            expense.type == EXPENSE_TYPES.APORTE &&
+            this.userService.idToUser(expense.source)._id == user['_id']
+          )
             sum.contribution += this.stringUtil.moneyToNumber(expense.value);
-          sum.expense += this.stringUtil.moneyToNumber(expense.value);
+          else {
+            if (this.userService.idToUser(expense.source)._id == user['_id'])
+              sum.expense += this.stringUtil.moneyToNumber(expense.value);
+            for (const member of expense.team) {
+              if (this.userService.idToUser(member.user)._id == user['_id'])
+                sum.contract += this.stringUtil.moneyToNumber(member.value);
+            }
+          }
           return sum;
         },
-        { expense: 0, contribution: 0 }
+        { expense: 0, contribution: 0, contract: 0 }
       );
     const result = this.stringUtil.round(
-      (this.stringUtil.moneyToNumber(contract['liquid']) -
+      this.stringUtil.moneyToNumber(contract['liquid']) *
+        (1 - this.stringUtil.toMutiplyPercentage(distribution)) -
+        expenseContribution.contract +
         expenseContribution.expense +
-        expenseContribution.contribution) *
-        (1 - this.stringUtil.toMutiplyPercentage(distribution))
+        expenseContribution.contribution
     );
-    // Sum expenses paid by user
-    const paid = contract['expenses']
-      .filter((expense) => expense.paid)
-      .map((expense) => {
-        return { source: expense.source, value: expense.value };
-      })
-      .flat()
-      .reduce((sum, member) => {
-        if (this.userService.idToUser(member.source)._id == user['_id'])
-          sum += this.stringUtil.moneyToNumber(member.value);
-        return sum;
-      }, 0);
 
-    return this.stringUtil.numberToMoney(result + paid);
+    return this.stringUtil.numberToMoney(result);
   }
 
   percentageToReceive(

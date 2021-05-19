@@ -381,15 +381,18 @@ export class ContractItemComponent implements OnInit {
   calculateBalance(): void {
     const expenseContribution = this.contract.expenses.reduce(
       (accumulator, expense: any) => {
-        if (
-          expense.paid &&
-          this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id
-        )
-          accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
-        if (expense.type == EXPENSE_TYPES.APORTE)
-          accumulator.contribution += this.stringUtil.moneyToNumber(
-            expense.value
-          );
+        if (expense.paid) {
+          if (
+            this.userService.idToUser(expense.source)._id ==
+            CONTRACT_BALANCE._id
+          )
+            accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
+
+          if (expense.type == EXPENSE_TYPES.APORTE)
+            accumulator.contribution += this.stringUtil.moneyToNumber(
+              expense.value
+            );
+        }
         return accumulator;
       },
       { expense: 0, contribution: 0 }
