@@ -2,9 +2,7 @@
   "extends": "./src/tsconfig.app.json",
   "include": [
     "./server.js",
-    "./backend/app.js",
-    "./backend/models/*.js",
-    "./backend/routes/*.js",
+    "./backend/src/**/*.js",
     "./src/**/*.ts",
     "./src/**/*.tsx",
     "./test/**/*.ts"

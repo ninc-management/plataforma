@@ -1,7 +1,7 @@
-const express = require('express');
+import * as express from 'express';
 
-const Prospect = require('../models/prospect');
-const User = require('../models/user');
+import Prospect from '../models/prospect';
+import User from '../models/user';
 
 const router = express.Router();
 
@@ -68,4 +68,4 @@ router.post('/isProspect', (req, res, next) => {
   });
 });
 
-module.exports = router;
+export default router;

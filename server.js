@@ -1,8 +1,8 @@
 // server.js
-const app = require('./backend/app');
+const app = require('./backend/app').default;
 const debug = require('debug')('node-angular');
 const http = require('http');
-const util = require('./backend/shared/util');
+const util = require('./backend/shared/util').default;
 
 const onError = (error) => {
   if (error.syscall !== 'listen') {
@@ -29,7 +29,7 @@ const onListening = () => {
   debug('Listening on ' + bind);
 };
 
-const port = util.normalizePort(process.env.PORT || '8080');
+const port = util.normalizePort(process.env.PORT);
 console.log('App now running on port', port);
 app.express.set('port', port);
 

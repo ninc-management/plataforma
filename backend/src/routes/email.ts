@@ -1,8 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const nodemailer = require('nodemailer');
+import * as express from 'express';
+import nodemailer from 'nodemailer';
 
-const sendMail = (user, callback) => {
+import { User } from '../models/user';
+
+const router = express.Router();
+
+function sendMail(user: User, callback: any): void {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -69,10 +72,10 @@ const sendMail = (user, callback) => {
       '</li></ul>',
   };
   transporter.sendMail(mailOptions, callback);
-};
+}
 
 router.post('/', (req, res, next) => {
-  let user = req.body;
+  const user = req.body as User;
   sendMail(user, (err, info) => {
     if (err) {
       console.log('Erro envio de mail:', err);
@@ -89,4 +92,4 @@ router.post('/', (req, res, next) => {
   });
 });
 
-module.exports = router;
+export default router;

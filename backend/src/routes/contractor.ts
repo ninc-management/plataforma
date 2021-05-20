@@ -1,6 +1,5 @@
-const express = require('express');
-
-const Contractor = require('../models/contractor');
+import * as express from 'express';
+import Contractor from '../models/contractor';
 
 const router = express.Router();
 
@@ -32,8 +31,8 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  contracotrs = await Contractor.find({});
+  const contracotrs = await Contractor.find({});
   return res.status(200).json(contracotrs);
 });
 
-module.exports = router;
+export default router;

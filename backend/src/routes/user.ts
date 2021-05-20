@@ -1,6 +1,5 @@
-const express = require('express');
-
-const User = require('../models/user');
+import * as express from 'express';
+import User from '../models/user';
 
 const router = express.Router();
 
@@ -22,8 +21,8 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  users = await User.find({}).populate('expertise');
+  const users = await User.find({}).populate('expertise');
   return res.status(200).json(users);
 });
 
-module.exports = router;
+export default router;

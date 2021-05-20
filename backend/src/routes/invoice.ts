@@ -1,9 +1,5 @@
-const express = require('express');
-
-const Contractor = require('../models/contractor');
-const Contract = require('../models/contract');
-const Invoice = require('../models/invoice');
-const User = require('../models/user');
+import * as express from 'express';
+import Invoice from '../models/invoice';
 
 const router = express.Router();
 
@@ -69,8 +65,8 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  invoices = await Invoice.find({});
+  const invoices = await Invoice.find({});
   return res.status(200).json(invoices);
 });
 
-module.exports = router;
+export default router;
