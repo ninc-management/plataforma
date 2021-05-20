@@ -1,6 +1,10 @@
 # compiled output
 /dist
 /backend/angular
+/backend/models
+/backend/routes
+/backend/shared
+/backend/app.j*
 /tmp
 /out-tsc
 
