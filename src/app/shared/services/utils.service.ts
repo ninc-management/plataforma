@@ -49,7 +49,7 @@ export class UtilsService {
   }
 
   // https://stackoverflow.com/a/42488360
-  sumObjectsByKey(...objs: any): any {
+  sumObjectsByKey<T>(...objs: any): any {
     return objs.reduce((a, b) => {
       for (const k in b) {
         if (b.hasOwnProperty(k)) a[k] = (a[k] || 0) + b[k];
@@ -66,7 +66,7 @@ export class UtilsService {
   }
 
   compareDates(
-    date: any,
+    date: number | Date,
     last = 'Hoje',
     number = 1,
     fromToday = false
@@ -110,7 +110,7 @@ export class UtilsService {
     }
   }
 
-  trackByIndex(index: number, obj: any): any {
+  trackByIndex<T>(index: number, obj: T): number {
     return index;
   }
 
