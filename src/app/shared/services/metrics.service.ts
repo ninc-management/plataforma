@@ -403,10 +403,9 @@ export class MetricsService implements OnDestroy {
                           (upaid: UserAndCoordinations, member) => {
                             const coords =
                               this.departmentService.buildAllCoordinationsList();
-                            const author =
-                              member.user._id == undefined
-                                ? member.user
-                                : member.user._id;
+                            const author = this.userService.idToUser(
+                              member.user
+                            )._id;
                             switch (member.coordination) {
                               case coords[0]:
                                 upaid.global.CADM +=
@@ -533,105 +532,91 @@ export class MetricsService implements OnDestroy {
                     ) {
                       const coords =
                         this.departmentService.buildAllCoordinationsList();
-
-                      switch (expense.coordination) {
-                        case coords[0]:
-                          received.global.CADM -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CADM -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[1]:
-                          received.global.CDI -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CDI -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[2]:
-                          received.global.CGO -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CGO -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[3]:
-                          received.global.CIMP -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CIMP -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[4]:
-                          received.global.CINST -=
-                            this.stringUtil.moneyToNumber(expense.value);
-                          if (source._id == uId)
-                            received.user.CINST -=
-                              this.stringUtil.moneyToNumber(expense.value);
-                          break;
-                        case coords[5]:
-                          received.global.CMA -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CMA -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[6]:
-                          received.global.CPA -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CPA -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[7]:
-                          received.global.CRH -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CRH -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[8]:
-                          received.global.CRH -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CRH -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        case coords[9]:
-                          received.global.CSEST -=
-                            this.stringUtil.moneyToNumber(expense.value);
-                          if (source._id == uId)
-                            received.user.CSEST -=
-                              this.stringUtil.moneyToNumber(expense.value);
-                          break;
-                        case coords[10]:
-                          received.global.CSH -= this.stringUtil.moneyToNumber(
-                            expense.value
-                          );
-                          if (source._id == uId)
-                            received.user.CSH -= this.stringUtil.moneyToNumber(
-                              expense.value
-                            );
-                          break;
-                        default:
-                          break;
+                      for (const member of expense.team) {
+                        const author = this.userService.idToUser(
+                          member.user
+                        )._id;
+                        switch (member.coordination) {
+                          case coords[0]:
+                            received.global.CADM -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CADM -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[1]:
+                            received.global.CDI -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CDI -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[2]:
+                            received.global.CGO -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CGO -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[3]:
+                            received.global.CIMP -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CIMP -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[4]:
+                            received.global.CINST -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CINST -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[5]:
+                            received.global.CMA -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CMA -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[6]:
+                            received.global.CPA -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CPA -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[7]:
+                            received.global.CRH -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CRH -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[8]:
+                            received.global.CRH -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CRH -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[9]:
+                            received.global.CSEST -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CSEST -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          case coords[10]:
+                            received.global.CSH -=
+                              this.stringUtil.moneyToNumber(member.value);
+                            if (author == uId)
+                              received.user.CSH -=
+                                this.stringUtil.moneyToNumber(member.value);
+                            break;
+                          default:
+                            break;
+                        }
                       }
                     }
                   }
@@ -655,7 +640,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return userCoord;
-        let filtered: UserAndCoordinations = { user: {}, global: {} };
+        const filtered: UserAndCoordinations = { user: {}, global: {} };
         for (const coord of this.departmentService.userCoordinations(uId)) {
           const coords = this.departmentService.buildAllCoordinationsList();
           switch (coord) {
@@ -721,7 +706,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return undefined;
-        let userDepartment = _.cloneDeep(this.defaultUserDepartmentValue);
+        const userDepartment = _.cloneDeep(this.defaultUserDepartmentValue);
         userDepartment.user.DAD += userCoord.user.CADM;
         userDepartment.global.DAD += userCoord.global.CADM;
 
@@ -769,7 +754,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
       map((userDepartment: UserAndDepartments) => {
         if (userDepartment == undefined) return undefined;
-        let filtered: UserAndDepartments = { user: {}, global: {} };
+        const filtered: UserAndDepartments = { user: {}, global: {} };
         for (const coord of this.departmentService.userCoordinations(uId)) {
           const coords = this.departmentService.buildAllCoordinationsList();
           switch (coord) {
@@ -901,7 +886,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
       map((userDepartment: UserAndDepartments) => {
         if (userDepartment == undefined) return undefined;
-        let result: UserAndGlobalMetric = { user: 0, global: 0 };
+        const result: UserAndGlobalMetric = { user: 0, global: 0 };
         result.user = Object.values(userDepartment.user).reduce(
           (acc, value) => acc + value
         );
