@@ -15,6 +15,10 @@ import {
 } from 'date-fns';
 import * as _ from 'lodash';
 
+type NonOptionalKeys<T> = {
+  [K in keyof T]-?: T extends { [K1 in K]: any } ? K : never;
+}[keyof T];
+
 @Injectable({
   providedIn: 'root',
 })
@@ -114,7 +118,7 @@ export class UtilsService {
     return index;
   }
 
-  isOfType<T>(obj: unknown, properties: (keyof T)[]): obj is T {
+  isOfType<T>(obj: unknown, properties: NonOptionalKeys<T>[]): obj is T {
     const values = _.at(obj, properties);
     return !values.includes(undefined);
   }
