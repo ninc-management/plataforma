@@ -116,7 +116,6 @@ export class UtilsService {
 
   isOfType<T>(obj: unknown, properties: (keyof T)[]): obj is T {
     const values = _.at(obj, properties);
-    console.log(values);
     return !values.includes(undefined);
   }
 }

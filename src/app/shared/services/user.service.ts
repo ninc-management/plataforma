@@ -131,7 +131,7 @@ export class UserService implements OnDestroy {
   }
 
   idToName(id: string | User): string {
-    return this.idToUser(id).fullName;
+    return this.idToUser(id)?.fullName;
   }
 
   idToShortName(id: string | User): string {

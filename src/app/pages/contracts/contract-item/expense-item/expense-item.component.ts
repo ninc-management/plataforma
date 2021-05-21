@@ -33,6 +33,12 @@ import { UtilsService } from '../../../../shared/services/utils.service';
 import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
 import * as _ from 'lodash';
 import * as expense_validation from '../../../../shared/expense-validation.json';
+import {
+  ContractTeamMember,
+  ContractExpense,
+  ContractExpenseTeamMember,
+} from '../../../../../../backend/src/models/contract';
+import { User } from '../../../../../../backend/src/models/user';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -57,17 +63,23 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   sTypes = Object.values(SPLIT_TYPES);
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
-  expense: any = {
-    paid: true,
+  expense: ContractExpense = {
+    author: undefined,
+    source: undefined,
+    description: undefined,
     nf: true,
+    type: undefined,
+    splitType: undefined,
+    value: undefined,
     created: this.today,
     lastUpdate: this.today,
+    paid: true,
   };
   options = {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
     lastTeam: [],
-    selectedMember: '',
+    selectedMember: undefined as User,
   };
   uploaderOptions: NbFileUploaderOptions;
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
@@ -82,15 +94,20 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   private sourceArray = new BehaviorSubject<any[]>([]);
   lastType: EXPENSE_TYPES;
 
-  get teamNames(): string[] {
-    return this.expense.team.map((m) => this.userService.idToName(m.user));
-  }
   get is100(): boolean {
     return (
       this.expense.team.reduce(
         (sum, m) => (sum += this.stringUtil.moneyToNumber(m.percentage)),
         0
       ) === 100
+    );
+  }
+
+  get sMemberIndex(): number {
+    return this.expense.team.findIndex(
+      (member: ContractExpenseTeamMember) =>
+        this.userService.idToUser(member.user)?._id ==
+        this.options.selectedMember?._id
     );
   }
 
@@ -145,24 +162,23 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         typeof this.expense.lastUpdate !== 'object'
       ) {
         this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
-        this.expense.lastUpdate = format(this.expense.lastUpdate, 'dd/MM/yyyy');
       }
       this.expense.author = this.userService.idToUser(this.expense.author);
       this.expense.source = this.userService.idToUser(this.expense.source);
       this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-        this.expense.source
+        this.expense.source._id
       );
       this.uploadedFiles = _.cloneDeep(
         this.expense.uploadedFiles
       ) as UploadedFile[];
       if (this.expense.type === EXPENSE_TYPES.APORTE)
         this.removeContractBalanceMember();
-      this.lastType = this.expense.type;
+      this.lastType = this.expense.type as EXPENSE_TYPES;
       if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
-        let sMember = this.expense.team.find(
+        const sMember = this.expense.team.find(
           (member) => member.percentage === '100,00'
         );
-        this.options.selectedMember = this.userService.idToName(sMember.user);
+        this.options.selectedMember = this.userService.idToUser(sMember.user);
       }
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
@@ -177,17 +193,22 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       this.expense.splitType = SPLIT_TYPES.PROPORCIONAL;
 
     if (!this.expense.team || this.expense.team.length == 0)
-      this.expense.team = this.contract.team.map((member) => ({
-        user: member.user,
-        value: '0,00',
-        percentage: member.distribution,
-      }));
+      this.expense.team = this.contract.team.map(
+        (member: ContractTeamMember) => ({
+          user: member.user,
+          value: '0,00',
+          percentage: member.distribution,
+          coordination: member.coordination,
+        })
+      );
 
     this.sourceData = this.completerService
       .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
       .imageField('profilePicture');
-    this.userSearch = this.expense.author?.fullName;
-    this.sourceSearch = this.expense.source?.fullName;
+    this.userSearch = this.userService.idToUser(this.expense.author)?.fullName;
+    this.sourceSearch = this.userService.idToUser(
+      this.expense.source
+    )?.fullName;
 
     this.formRef.control.statusChanges
       .pipe(skip(1), takeUntil(this.destroy$))
@@ -195,6 +216,13 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         if (status === 'VALID' && this.expense.nf === true)
           this.updateUploaderOptions();
       });
+
+    this.options.selectedMember = this.userService.idToUser(
+      this.expense.team[0].user
+    );
+    this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+      this.options.selectedMember._id
+    );
   }
 
   updateUploaderOptions(): void {
@@ -258,7 +286,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       this.lastType !== EXPENSE_TYPES.APORTE
     ) {
       this.removeContractBalanceMember();
-      if (this.expense.source._id === CONTRACT_BALANCE._id) {
+      if (
+        this.userService.idToUser(this.expense.source)._id ===
+        CONTRACT_BALANCE._id
+      ) {
         this.sourceSearch = '';
         this.expense.source = undefined;
       }
@@ -269,7 +300,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     ) {
       this.addContractBalanceMember();
     }
-    this.lastType = this.expense.type;
+    this.lastType = this.expense.type as EXPENSE_TYPES;
   }
 
   urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
@@ -322,7 +353,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   overPaid(): string {
-    if (this.expense.source?._id === CONTRACT_BALANCE._id) {
+    if (
+      this.userService.idToUser(this.expense.source)?._id ===
+      CONTRACT_BALANCE._id
+    ) {
       return this.contract.balance;
     }
     return this.stringUtil.numberToMoney(Number.MAX_VALUE);
@@ -332,13 +366,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       model.control.updateValueAndValidity();
     }, time);
-  }
-
-  selectDefaultCoordination(): void {
-    const el = this.contract.team.find(
-      (el) => el.user._id == this.expense.source._id
-    );
-    if (el) this.expense.coordination = el.coordination;
   }
 
   updateValue(idx: number): void {
@@ -383,14 +410,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
           member.value = '0,00';
           member.percentage = '0,00';
         }
-        let sMember = this.expense.team.find(
-          (member) =>
-            this.userService.idToName(member.user) ===
-            this.options.selectedMember
-        );
-        if (sMember) {
-          sMember.value = this.expense.value;
-          sMember.percentage = '100,00';
+        if (this.sMemberIndex >= 0) {
+          this.expense.team[this.sMemberIndex].value = this.expense.value;
+          this.expense.team[this.sMemberIndex].percentage = '100,00';
         }
         break;
       }

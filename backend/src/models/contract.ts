@@ -21,6 +21,9 @@ export class ContractExpenseTeamMember {
 
   @prop({ required: true })
   percentage!: string;
+
+  @prop({ required: true })
+  coordination!: string;
 }
 
 export class ContractExpense {
@@ -33,11 +36,8 @@ export class ContractExpense {
   @prop({ required: true })
   description!: string;
 
-  @prop()
-  coordination?: string;
-
   @prop({ required: true })
-  nf!: string;
+  nf!: boolean;
 
   @prop({ required: true })
   type!: string;
@@ -61,10 +61,10 @@ export class ContractExpense {
   paidDate?: Date;
 
   @prop({ type: () => ContractUploadedFile })
-  uploadedFiles: ContractUploadedFile[];
+  uploadedFiles?: ContractUploadedFile[];
 
   @prop({ type: () => ContractExpenseTeamMember })
-  team: ContractExpenseTeamMember[];
+  team?: ContractExpenseTeamMember[];
 }
 
 export class ContractUserPayment {
@@ -86,7 +86,7 @@ export class ContractPayment {
   value!: string;
 
   @prop({ type: () => ContractUserPayment })
-  team: ContractUserPayment[];
+  team?: ContractUserPayment[];
 
   @prop({ required: true })
   created!: Date;

@@ -10,7 +10,7 @@
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="expense.author?.fullName"
+          [selectedText]="userService.idToName(expense.author)"
           [dataService]="userData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"
@@ -153,17 +153,12 @@
           [(ngModel)]="sourceSearch"
           [inputName]="'sourceListCompleter'"
           (selected)="
-            expense.source = $event.originalObject;
-            forceValidatorUpdate(value);
-            USER_COORDINATIONS = departmentService.userCoordinations(
-              expense.source
-            );
-            selectDefaultCoordination()
+            expense.source = $event.originalObject; forceValidatorUpdate(value)
           "
           #sourceList="ngModel"
           id="input-source"
           name="sourceList"
-          [selectedText]="expense.source?.fullName"
+          [selectedText]="userService.idToName(expense.source)"
           [dataService]="sourceData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"
@@ -187,12 +182,7 @@
         </nb-completer>
       </div>
     </div>
-    <div
-      [ngClass]="{
-        'col-md-3': expense.source && expense.source._id != balanceID,
-        'col-md-6': !expense.source || expense.source._id == balanceID
-      }"
-    >
+    <div class="col-md-6">
       <div class="form-control-group">
         <label class="label" for="input-type">Categoria da despesa:</label>
         <nb-select
@@ -211,37 +201,6 @@
           <nb-option *ngFor="let eType of types" [value]="eType">{{
             eType
           }}</nb-option>
-        </nb-select>
-      </div>
-    </div>
-    <div
-      class="col-md-3"
-      *ngIf="expense.source && expense.source._id != balanceID"
-    >
-      <div class="form-control-group">
-        <label class="label" for="input-memberCoordination">Coordenação:</label>
-        <nb-select
-          [(ngModel)]="expense.coordination"
-          #memberCoordination="ngModel"
-          id="input-memberCoordination"
-          name="memberCoordination"
-          placeholder="Coordenação"
-          fullWidth
-          size="large"
-          [required]="validation.coordination.required"
-          [status]="memberCoordination.value ? 'success' : 'basic'"
-          [attr.aria-invalid]="
-            memberCoordination.invalid && memberCoordination.touched
-              ? true
-              : null
-          "
-        >
-          <nb-option
-            *ngFor="let coordination of USER_COORDINATIONS"
-            [value]="coordination"
-          >
-            {{ coordination.split(' ')[0] }}
-          </nb-option>
         </nb-select>
       </div>
     </div>
@@ -280,14 +239,19 @@
         </nb-radio-group>
       </div>
     </div>
-    <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-12">
+    <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-6">
       <div class="form-group">
         <label class="label" for="input-selected-member"
           >Selecione o associado:
         </label>
         <nb-select
           [(ngModel)]="options.selectedMember"
-          (selectedChange)="updateTeamValues()"
+          (selectedChange)="
+            updateTeamValues();
+            USER_COORDINATIONS = departmentService.userCoordinations(
+              options.selectedMember._id
+            )
+          "
           #selectedMember="ngModel"
           id="input-selected-member"
           name="selectedMember"
@@ -300,9 +264,39 @@
             selectedMember.invalid && selectedMember.touched ? true : null
           "
         >
-          <nb-option *ngFor="let name of teamNames" [value]="name">{{
-            name
-          }}</nb-option>
+          <nb-option
+            *ngFor="let member of this.expense.team"
+            [value]="userService.idToUser(member.user)"
+            >{{ userService.idToName(member.user) }}</nb-option
+          >
+        </nb-select>
+      </div>
+    </div>
+    <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-6">
+      <div class="form-control-group">
+        <label class="label" for="input-memberCoordination">Coordenação:</label>
+        <nb-select
+          [(ngModel)]="this.expense.team[this.sMemberIndex].coordination"
+          #memberCoordination="ngModel"
+          id="input-memberCoordination"
+          name="memberCoordination"
+          placeholder="Coordenação"
+          fullWidth
+          size="large"
+          [required]="validation.coordination.required"
+          [status]="memberCoordination.value ? 'success' : 'basic'"
+          [attr.aria-invalid]="
+            memberCoordination.invalid && memberCoordination.touched
+              ? true
+              : null
+          "
+        >
+          <nb-option
+            *ngFor="let coordination of USER_COORDINATIONS"
+            [value]="coordination"
+          >
+            {{ coordination.split(' ')[0] }}
+          </nb-option>
         </nb-select>
       </div>
     </div>
@@ -318,8 +312,30 @@
         "
       >
         <div class="row irow">
-          <div class="col-12 col-md-6 list-name">
+          <div class="col-12 col-md-4 list-name">
             {{ userService.idToShortName(member.user) }}
+          </div>
+          <div class="col-md-2">
+            <nb-select
+              [(ngModel)]="expense.team[i].coordination"
+              id="input-memberCoordination-{{ i }}"
+              name="memberCoordination-{{ i }}"
+              placeholder="Coordenação"
+              fullWidth
+              size="large"
+              [status]="expense.team[i].coordination ? 'success' : 'danger'"
+            >
+              <nb-option
+                *ngFor="
+                  let coordination of departmentService.userCoordinations(
+                    expense.team[i].user._id
+                  )
+                "
+                [value]="coordination"
+              >
+                {{ coordination.split(' ')[0] }}
+              </nb-option>
+            </nb-select>
           </div>
           <div class="col-6 col-md-3">
             <input
