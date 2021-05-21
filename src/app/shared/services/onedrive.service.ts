@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
+import { UtilsService } from './utils.service';
 import { environment } from '../../../environments/environment';
+import { Invoice } from '../../../../backend/src/models/invoice';
+import { Contract } from '../../../../backend/src/models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 
@@ -17,15 +20,19 @@ export class OnedriveService {
     DRM: '05-DRM',
   };
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private utils: UtilsService
+  ) {}
 
-  private generateBasePath(invoice: 'object', concluded = false): string {
+  private generateBasePath(invoice: Invoice, concluded = false): string {
     let path = this.departmentPath[invoice['department'].slice(0, 3)];
     path += concluded ? '/02-Concluídos/' : '/01-Em Andamento/';
     return path;
   }
 
-  private generateForderName(invoice: 'object'): string {
+  private generateForderName(invoice: Invoice): string {
     const slices = invoice['code'].replace('/', '_').split('-');
     const numberSlices = slices[1].split('_');
     const author = this.userService.idToUser(invoice['author']);
@@ -46,17 +53,17 @@ export class OnedriveService {
     );
   }
 
-  generatePath(invoice: 'object', concluded = false): string {
+  generatePath(invoice: Invoice, concluded = false): string {
     return (
       this.generateBasePath(invoice, concluded) +
       this.generateForderName(invoice)
     );
   }
 
-  copyModelFolder(invoice: 'object'): Observable<boolean> {
+  copyModelFolder(invoice: Invoice): Observable<boolean> {
     const modelFolder = 'ORC-000_ANO-NOME DO CONTRATO-GESTOR';
     const path = this.generateBasePath(invoice) + modelFolder;
-    let isComplete$ = new Subject<boolean>();
+    const isComplete$ = new Subject<boolean>();
 
     this.http
       .get(environment.onedriveUri + path)
@@ -77,7 +84,7 @@ export class OnedriveService {
     return isComplete$;
   }
 
-  moveToConcluded(invoice: 'object'): void {
+  moveToConcluded(invoice: Invoice): void {
     const originalPath = this.generatePath(invoice);
 
     this.http
@@ -97,16 +104,26 @@ export class OnedriveService {
       });
   }
 
-  webUrl(contract: 'object'): Observable<string> {
-    const concluded = contract['invoice'].status === 'Concluído';
-    return this.http
-      .get(
-        environment.onedriveUri +
-          this.generatePath(contract['invoice'], concluded)
-      )
-      .pipe(
-        take(1),
-        map((metadata) => metadata['webUrl'])
-      );
+  webUrl(contract: Contract): Observable<string> {
+    if (
+      this.utils.isOfType<Invoice>(contract.invoice, [
+        '_id',
+        'author',
+        'department',
+        'coordination',
+        'code',
+        'type',
+        'contractor',
+      ])
+    ) {
+      const invoice = contract.invoice;
+      const concluded = invoice.status === 'Concluído';
+      return this.http
+        .get(environment.onedriveUri + this.generatePath(invoice, concluded))
+        .pipe(
+          take(1),
+          map((metadata) => metadata['webUrl'])
+        );
+    }
   }
 }

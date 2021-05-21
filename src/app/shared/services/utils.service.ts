@@ -13,6 +13,8 @@ import {
   subMonths,
   subYears,
 } from 'date-fns';
+import { Contract } from '../../../../backend/src/models/contract';
+import { Invoice } from '../../../../backend/src/models/invoice';
 import * as _ from 'lodash';
 
 type NonOptionalKeys<T> = {
@@ -30,25 +32,47 @@ export class UtilsService {
     return document.documentElement.clientWidth <= sm;
   }
 
-  nfPercentage(contract: 'object'): string {
-    if (contract['receipts'].length > 0)
-      return contract['receipts'][0].notaFiscal;
-    if (contract['invoice'].administration == 'nortan') {
-      if (contract['invoice'].department == 'DEC') {
-        if (contract['invoice'].administration == 'nortan') return '8,5';
-        else return '10,5';
-      } else {
-        return '15,5';
+  nfPercentage(contract: Contract): string {
+    if (contract.receipts.length > 0) return contract.receipts[0].notaFiscal;
+    if (
+      this.isOfType<Invoice>(contract.invoice, [
+        '_id',
+        'author',
+        'department',
+        'coordination',
+        'code',
+        'type',
+        'contractor',
+      ])
+    ) {
+      if (contract.invoice.administration == 'nortan') {
+        if (contract.invoice.department == 'DEC') {
+          if (contract.invoice.administration == 'nortan') return '8,5';
+          else return '10,5';
+        } else {
+          return '15,5';
+        }
       }
     } else {
       return '0';
     }
   }
 
-  nortanPercentage(contract: 'object'): string {
-    if (contract['receipts']?.length > 0)
-      return contract['receipts'][0].nortanPercentage;
-    if (contract['invoice'].administration == 'nortan') return '15';
+  nortanPercentage(contract: Contract): string {
+    if (contract.receipts?.length > 0)
+      return contract.receipts[0].nortanPercentage;
+    if (
+      this.isOfType<Invoice>(contract.invoice, [
+        '_id',
+        'author',
+        'department',
+        'coordination',
+        'code',
+        'type',
+        'contractor',
+      ])
+    )
+      if (contract.invoice.administration == 'nortan') return '15';
     return '17';
   }
 

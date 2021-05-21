@@ -1,9 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from './web-socket.service';
+import { UtilsService } from './utils.service';
+import { Contractor } from '../../../../backend/src/models/contractor';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take, map } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 
 @Injectable({
@@ -12,27 +14,28 @@ import { Socket } from 'ngx-socket-io';
 export class ContractorService implements OnDestroy {
   private requested = false;
   private destroy$ = new Subject<void>();
-  private contractors$ = new BehaviorSubject<any[]>([]);
+  private contractors$ = new BehaviorSubject<Contractor[]>([]);
 
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
-    private socket: Socket
+    private socket: Socket,
+    private utils: UtilsService
   ) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  saveContractor(contractor: any): void {
+  saveContractor(contractor: Contractor): void {
     const req = {
       contractor: contractor,
     };
     this.http.post('/api/contractor/', req).pipe(take(1)).subscribe();
   }
 
-  editContractor(contractor: any): void {
+  editContractor(contractor: Contractor): void {
     const req = {
       contractor: contractor,
     };
@@ -40,19 +43,19 @@ export class ContractorService implements OnDestroy {
       .post('/api/contractor/update', req)
       .pipe(take(1))
       .subscribe(() => {
-        let tmp = this.contractors$.getValue();
+        const tmp = this.contractors$.getValue();
         tmp[tmp.findIndex((el) => el._id === contractor._id)] = contractor;
         this.contractors$.next(tmp);
       });
   }
 
-  getContractors(): Observable<any[]> {
+  getContractors(): Observable<Contractor[]> {
     if (!this.requested) {
       this.requested = true;
       this.http
         .post('/api/contractor/all', {})
         .pipe(take(1))
-        .subscribe((contractors: any[]) => {
+        .subscribe((contractors: Contractor[]) => {
           this.contractors$.next(
             contractors.sort((a, b) => {
               return a.fullName
@@ -67,19 +70,28 @@ export class ContractorService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) =>
+        .subscribe((data: 'object') =>
           this.wsService.handle(data, this.contractors$, 'contractors')
         );
     }
     return this.contractors$;
   }
 
-  idToName(id: string | 'object'): string {
+  idToName(id: string | Contractor): string {
     return this.idToContractor(id).fullName;
   }
 
-  idToContractor(id: string | 'object'): any {
-    if (typeof id == 'object') return id;
+  idToContractor(id: string | Contractor): Contractor {
+    if (
+      this.utils.isOfType<Contractor>(id, [
+        '_id',
+        'fullName',
+        'document',
+        'email',
+        'address',
+      ])
+    )
+      return id;
     if (id === undefined) return undefined;
     const tmp = this.contractors$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];

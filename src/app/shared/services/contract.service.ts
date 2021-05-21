@@ -5,9 +5,12 @@ import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
+import { UtilsService } from './utils.service';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { User } from '../../../../backend/src/models/user';
+import { Contract } from '../../../../backend/src/models/contract';
+import { Invoice } from '../../../../backend/src/models/invoice';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -32,7 +35,7 @@ export class ContractService implements OnDestroy {
   private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
-  private contracts$ = new BehaviorSubject<any[]>([]);
+  private contracts$ = new BehaviorSubject<Contract[]>([]);
 
   constructor(
     private http: HttpClient,
@@ -40,7 +43,8 @@ export class ContractService implements OnDestroy {
     private onedrive: OnedriveService,
     private stringUtil: StringUtilService,
     private userService: UserService,
-    private socket: Socket
+    private socket: Socket,
+    private utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -48,7 +52,7 @@ export class ContractService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  saveContract(invoice: any): void {
+  saveContract(invoice: Invoice): void {
     const currentTime = new Date();
     const contract = {
       invoice: invoice._id,
@@ -69,7 +73,7 @@ export class ContractService implements OnDestroy {
       .subscribe(() => this.onedrive.copyModelFolder(invoice));
   }
 
-  editContract(contract: any): void {
+  editContract(contract: Contract): void {
     const currentTime = new Date();
     contract.lastUpdate = currentTime;
     const req = {
@@ -79,24 +83,35 @@ export class ContractService implements OnDestroy {
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
-        if (contract.status === 'Concluído')
+        if (
+          contract.status === 'Concluído' &&
+          this.utils.isOfType<Invoice>(contract.invoice, [
+            '_id',
+            'author',
+            'department',
+            'coordination',
+            'code',
+            'type',
+            'contractor',
+          ])
+        )
           this.onedrive.moveToConcluded(contract.invoice);
       });
   }
 
-  getContracts(): Observable<any[]> {
+  getContracts(): Observable<Contract[]> {
     if (!this.requested) {
       this.requested = true;
       this.http
         .post('/api/contract/all', {})
         .pipe(take(1))
-        .subscribe((contracts: any[]) => {
+        .subscribe((contracts: Contract[]) => {
           this.contracts$.next(contracts);
         });
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) =>
+        .subscribe((data: 'object') =>
           this.wsService.handle(data, this.contracts$, 'contracts')
         );
     }
@@ -113,24 +128,25 @@ export class ContractService implements OnDestroy {
     return this.size$;
   }
 
-  idToContract(id: string | 'object'): any {
-    if (typeof id == 'object') return id;
+  idToContract(id: string | Contract): Contract {
+    if (this.utils.isOfType<Contract>(id, ['_id', 'invoice', 'status']))
+      return id;
     if (id === undefined) return undefined;
     const tmp = this.contracts$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  hasReceipts(cId: string | 'object'): boolean {
+  hasReceipts(cId: string | Contract): boolean {
     const contract = this.idToContract(cId);
     return contract.receipts.length != 0;
   }
 
-  hasPayments(cId: string | 'object'): boolean {
+  hasPayments(cId: string | Contract): boolean {
     const contract = this.idToContract(cId);
     return contract.payments.length != 0;
   }
 
-  hasExpenses(cId: string | 'object'): boolean {
+  hasExpenses(cId: string | Contract): boolean {
     const contract = this.idToContract(cId);
     return contract.expenses.length != 0;
   }
@@ -138,7 +154,7 @@ export class ContractService implements OnDestroy {
   netValueBalance(
     distribution: string,
     user: User,
-    contract: 'object'
+    contract: Contract
   ): string {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract['expenses']
@@ -176,7 +192,7 @@ export class ContractService implements OnDestroy {
   percentageToReceive(
     distribution: string,
     user: User,
-    contract: 'object',
+    contract: Contract,
     decimals = 2
   ): string {
     let sum = this.stringUtil.numberToMoney(
@@ -193,8 +209,8 @@ export class ContractService implements OnDestroy {
       .slice(0, -1);
   }
 
-  receivedValue(user: User, contract: 'object'): string {
-    const received = contract['payments']
+  receivedValue(user: User, contract: Contract): string {
+    const received = contract.payments
       .filter((payment) => payment.paid)
       .map((payment) => payment.team)
       .flat()
@@ -206,7 +222,7 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(received);
   }
 
-  notPaidValue(distribution: string, user: User, contract: 'object'): string {
+  notPaidValue(distribution: string, user: User, contract: Contract): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.netValueBalance(distribution, user, contract)
@@ -234,7 +250,7 @@ export class ContractService implements OnDestroy {
     );
   }
 
-  subtractComissions(contractValue: string, contract: 'object'): string {
+  subtractComissions(contractValue: string, contract: Contract): string {
     const comissions = contract['expenses'].reduce((sum, expense) => {
       if (expense.type == EXPENSE_TYPES.COMISSAO)
         sum += this.stringUtil.moneyToNumber(expense.value);

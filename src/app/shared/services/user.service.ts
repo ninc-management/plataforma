@@ -106,7 +106,9 @@ export class UserService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data) => this.wsService.handle(data, this.users$, 'users'));
+        .subscribe((data: 'object') =>
+          this.wsService.handle(data, this.users$, 'users')
+        );
     }
     return this.users$;
   }

@@ -1,34 +1,45 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { UtilsService } from './utils.service';
+
+interface IdWise {
+  _id: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  constructor() {}
+  constructor(private utils: UtilsService) {}
 
-  handle(data: any, oArray$: BehaviorSubject<any[]>, coll: string): void {
-    if (data == {}) return;
-    if (data.ns.coll != coll) return;
-    switch (data.operationType) {
+  handle<T extends IdWise>(
+    data: 'object',
+    oArray$: BehaviorSubject<T[]>,
+    coll: string
+  ): void {
+    if (data == new Object()) return;
+    if (data['ns'].coll != coll) return;
+    switch (data['operationType']) {
       case 'update': {
-        let tmpArray = oArray$.getValue();
-        let idx = tmpArray.findIndex((el) => el._id === data.documentKey._id);
-        if (data.updateDescription.updatedFields)
+        const tmpArray = oArray$.getValue();
+        const idx = tmpArray.findIndex(
+          (el: T) => el._id === data['documentKey']._id
+        );
+        if (data['updateDescription'].updatedFields)
           tmpArray[idx] = Object.assign(
             tmpArray[idx],
-            data.updateDescription.updatedFields
+            data['updateDescription'].updatedFields
           );
-        if (data.updateDescription.removedFields.length > 0)
-          for (const f of data.updateDescription.removedFields)
+        if (data['updateDescription'].removedFields.length > 0)
+          for (const f of data['updateDescription'].removedFields)
             delete tmpArray[idx][f];
         oArray$.next(tmpArray);
         break;
       }
 
       case 'insert': {
-        let tmpArray = oArray$.getValue();
-        tmpArray.push(data.fullDocument);
+        const tmpArray = oArray$.getValue();
+        tmpArray.push(data['fullDocument']);
         oArray$.next(tmpArray);
         break;
       }
