@@ -141,7 +141,8 @@ export class UserService implements OnDestroy {
   }
 
   idToUser(id: string | User): User {
-    if (this.utils.isIdOrType<User>(id)) return id;
+    if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone']))
+      return id;
     if (id === undefined) return undefined;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     const tmp = this.users$.getValue();

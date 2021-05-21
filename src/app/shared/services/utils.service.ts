@@ -13,6 +13,7 @@ import {
   subMonths,
   subYears,
 } from 'date-fns';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -113,7 +114,9 @@ export class UtilsService {
     return index;
   }
 
-  isIdOrType<T>(obj: any): obj is T {
-    return typeof obj === 'object';
+  isOfType<T>(obj: unknown, properties: (keyof T)[]): obj is T {
+    const values = _.at(obj, properties);
+    console.log(values);
+    return !values.includes(undefined);
   }
 }
