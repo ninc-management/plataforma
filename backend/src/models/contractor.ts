@@ -1,10 +1,9 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
+import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import * as mongoose from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
 @plugin(uniqueValidator)
-export class Contractor extends Base<typeof mongoose.Schema.Types.String> {
+export class Contractor extends Base<string> {
   @prop({ required: true })
   fullName!: string;
 

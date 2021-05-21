@@ -1,6 +1,5 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import * as mongoose from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
 export class UserExpertise {
@@ -15,7 +14,7 @@ export class UserExpertise {
 }
 
 @plugin(uniqueValidator)
-export class User extends Base<typeof mongoose.Schema.Types.String> {
+export class User extends Base<string> {
   @prop({ required: true })
   public fullName!: string;
 

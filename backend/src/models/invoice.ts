@@ -2,7 +2,6 @@ import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Contractor } from './contractor';
 import { User } from './user';
-import * as mongoose from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 
 export class InvoiceProduct {
@@ -53,7 +52,7 @@ export class InvoiceTeamMember {
 }
 
 @plugin(uniqueValidator)
-export class Invoice extends Base<typeof mongoose.Schema.Types.String> {
+export class Invoice extends Base<string> {
   @prop({ required: true, ref: () => User })
   author!: Ref<User>;
 

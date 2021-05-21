@@ -2,19 +2,7 @@ import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from './user';
 import { Invoice } from './invoice';
-import * as mongoose from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
-
-export class ContractUserPayment {
-  @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
-
-  @prop({ required: true })
-  coordination!: string;
-
-  @prop({ required: true })
-  value!: string;
-}
 
 export class ContractUploadedFile {
   @prop({ required: true })
@@ -79,6 +67,17 @@ export class ContractExpense {
   team: ContractExpenseTeamMember[];
 }
 
+export class ContractUserPayment {
+  @prop({ required: true, ref: () => User })
+  user!: Ref<User>;
+
+  @prop({ required: true })
+  coordination!: string;
+
+  @prop({ required: true })
+  value!: string;
+}
+
 export class ContractPayment {
   @prop({ required: true })
   service!: string;
@@ -140,7 +139,7 @@ export class ContractTeamMember {
 }
 
 @plugin(uniqueValidator)
-export class Contract extends Base<typeof mongoose.Schema.Types.String> {
+export class Contract extends Base<string> {
   @prop({ required: true, ref: () => Invoice })
   invoice!: Ref<Invoice>;
 
