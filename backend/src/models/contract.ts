@@ -124,7 +124,7 @@ export class ContractReceipt {
   paid!: boolean;
 
   @prop()
-  paidDate?: boolean;
+  paidDate?: Date;
 }
 
 export class ContractTeamMember {
