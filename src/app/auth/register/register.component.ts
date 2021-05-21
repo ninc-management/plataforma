@@ -21,7 +21,8 @@ import { Subject } from 'rxjs';
 })
 export class NgxRegisterComponent
   extends NbRegisterComponent
-  implements OnInit {
+  implements OnInit
+{
   cities: string[] = [];
   states: string[] = [];
   myMessages: string[] = [];
@@ -108,10 +109,12 @@ export class NgxRegisterComponent
   }
 
   gotoTop(): void {
-    document.querySelector('#cardBody').scroll({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    });
+    const cardBody = document.querySelector('#cardBody');
+    if (cardBody)
+      cardBody.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      });
   }
 }

@@ -7,6 +7,7 @@ import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
+import { User } from '../../../../backend/src/models/user';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -42,7 +43,7 @@ export class ContractService implements OnDestroy {
     private socket: Socket
   ) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -136,7 +137,7 @@ export class ContractService implements OnDestroy {
 
   netValueBalance(
     distribution: string,
-    user: 'object',
+    user: User,
     contract: 'object'
   ): string {
     if (distribution == undefined) return '0,00';
@@ -174,7 +175,7 @@ export class ContractService implements OnDestroy {
 
   percentageToReceive(
     distribution: string,
-    user: 'object',
+    user: User,
     contract: 'object',
     decimals = 2
   ): string {
@@ -192,7 +193,7 @@ export class ContractService implements OnDestroy {
       .slice(0, -1);
   }
 
-  receivedValue(user: 'object', contract: 'object'): string {
+  receivedValue(user: User, contract: 'object'): string {
     const received = contract['payments']
       .filter((payment) => payment.paid)
       .map((payment) => payment.team)
@@ -205,11 +206,7 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(received);
   }
 
-  notPaidValue(
-    distribution: string,
-    user: 'object',
-    contract: 'object'
-  ): string {
+  notPaidValue(distribution: string, user: User, contract: 'object'): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.netValueBalance(distribution, user, contract)

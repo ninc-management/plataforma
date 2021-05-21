@@ -15,6 +15,10 @@ import { UserService } from '../../../../shared/services/user.service';
 import { UtilsService } from '../../../../shared/services/utils.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { BrMaskDirective } from '../../../../shared/directives/br-mask.directive';
+import {
+  ContractTeamMember,
+  ContractUserPayment,
+} from '../../../../../../backend/src/models/contract';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import * as _ from 'lodash';
 
@@ -99,25 +103,28 @@ export class PaymentItemComponent implements OnInit {
         this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
       }
     } else {
-      this.payment.team = _.cloneDeep(this.contract.team).map((member) => {
-        member.user = this.userService.idToUser(member.user)._id;
-        if (member.distribution)
-          member.value = this.stringUtil.numberToString(
-            1 -
-              this.stringUtil.toMutiplyPercentage(
-                this.contractService.percentageToReceive(
-                  member.distribution,
-                  this.userService.idToUser(member.user),
-                  this.contract,
-                  20
-                )
-              ),
-            20
-          );
-        else member.value = '0';
-        delete member.distribution;
-        return member;
-      });
+      this.payment.team = _.cloneDeep(this.contract.team).map(
+        (member: ContractTeamMember) => {
+          let payment: ContractUserPayment;
+          payment.coordination = member.coordination;
+          payment.user = this.userService.idToUser(member.user)._id;
+          if (member.distribution)
+            payment.value = this.stringUtil.numberToString(
+              1 -
+                this.stringUtil.toMutiplyPercentage(
+                  this.contractService.percentageToReceive(
+                    member.distribution,
+                    this.userService.idToUser(member.user),
+                    this.contract,
+                    20
+                  )
+                ),
+              20
+            );
+          else payment.value = '0';
+          return member;
+        }
+      );
       // if (this.contract.payments.length === this.contract.total - 1) {
       //   this.payment.value = this.notPaid();
       //   this.updateLastValues();

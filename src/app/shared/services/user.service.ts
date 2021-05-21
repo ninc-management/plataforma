@@ -6,24 +6,35 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take, filter } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
+import { UtilsService } from './utils.service';
+import { User } from '../../../../backend/src/models/user';
 
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
   fullName: 'Caixa do contrato',
+  email: '',
+  emailNortan: '',
+  phone: '',
+  article: '',
+  state: '',
+  city: '',
+  mainDepartment: '',
+  level: '',
+  document: '',
   profilePicture:
     'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
-};
+} as User;
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
   private requested = false;
-  private _currentUser$ = new BehaviorSubject<any>({});
+  private _currentUser$ = new BehaviorSubject<User>(undefined);
   private destroy$ = new Subject<void>();
-  private users$ = new BehaviorSubject<any[]>([]);
+  private users$ = new BehaviorSubject<User[]>([]);
 
-  get currentUser$(): Observable<any> {
+  get currentUser$(): Observable<User> {
     if (this._currentUser$.value?.fullName == undefined) {
       this.getCurrentUser();
     }
@@ -34,7 +45,8 @@ export class UserService implements OnDestroy {
     private http: HttpClient,
     private authService: AuthService,
     private wsService: WebSocketService,
-    private socket: Socket
+    private socket: Socket,
+    private utils: UtilsService
   ) {
     this.authService.onUserChange$
       .pipe(takeUntil(this.destroy$))
@@ -61,8 +73,8 @@ export class UserService implements OnDestroy {
     }
   }
 
-  getUser(userEmail: string): BehaviorSubject<any> {
-    let user$ = new BehaviorSubject<any>(undefined);
+  getUser(userEmail: string): BehaviorSubject<User> {
+    let user$ = new BehaviorSubject<User>(undefined);
     this.getUsers()
       .pipe(take(2))
       .subscribe((users) => {
@@ -73,13 +85,13 @@ export class UserService implements OnDestroy {
     return user$;
   }
 
-  getUsers(): BehaviorSubject<any[]> {
+  getUsers(): BehaviorSubject<User[]> {
     if (!this.requested) {
       this.requested = true;
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))
-        .subscribe((users: any[]) => {
+        .subscribe((users: User[]) => {
           this.users$.next(
             users.sort((a, b) => {
               return a.fullName
@@ -99,11 +111,11 @@ export class UserService implements OnDestroy {
     return this.users$;
   }
 
-  getUsersList(): any[] {
+  getUsersList(): User[] {
     return this.users$.getValue();
   }
 
-  updateUser(user: any, callback?: () => void, isCurrentUser = false): void {
+  updateUser(user: User, callback?: () => void, isCurrentUser = false): void {
     const body = {
       user: user,
     };
@@ -118,20 +130,20 @@ export class UserService implements OnDestroy {
       });
   }
 
-  idToName(id: string | 'object'): string {
+  idToName(id: string | User): string {
     return this.idToUser(id).fullName;
   }
 
-  idToShortName(id: string | 'object'): string {
+  idToShortName(id: string | User): string {
     return this.idToUser(id)?.exibitionName
       ? this.idToUser(id).exibitionName
       : this.idToUser(id).fullName;
   }
 
-  idToUser(id: string | 'object'): any {
-    if (typeof id == 'object') return id;
+  idToUser(id: string | User): User {
+    if (this.utils.isIdOrType<User>(id)) return id;
     if (id === undefined) return undefined;
-    if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE;
+    if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
