@@ -9,9 +9,18 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2018",
+    "target": "es2015",
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2020", "dom"],
-    "plugins": [{ "name": "typescript-eslint-language-service" }]
+    "plugins": [{ "name": "typescript-eslint-language-service" }],
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "strictINputAccessModifiers": true,
+    "strictInjectionParameters": true
   }
 }
