@@ -15,12 +15,15 @@ import { UserService } from '../../../../shared/services/user.service';
 import { UtilsService } from '../../../../shared/services/utils.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { BrMaskDirective } from '../../../../shared/directives/br-mask.directive';
+import { cloneDeep } from 'lodash';
 import {
   ContractTeamMember,
   ContractUserPayment,
+  ContractPayment,
+  Contract,
 } from '../../../../../../backend/src/models/contract';
+import { User } from '../../../../../../backend/src/models/user';
 import * as contract_validation from '../../../../shared/payment-validation.json';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -28,34 +31,41 @@ import * as _ from 'lodash';
   styleUrls: ['./payment-item.component.scss'],
 })
 export class PaymentItemComponent implements OnInit {
-  @Input() contract: any;
-  @Input() contractIndex: number;
-  @Input() paymentIndex: number;
+  @Input() contract!: Contract;
+  @Input() contractIndex!: number;
+  @Input() paymentIndex!: number;
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
-  valueInputRef: ElementRef<HTMLInputElement>;
+  valueInputRef!: ElementRef<HTMLInputElement>;
   validation = (contract_validation as any).default;
-  ALL_COORDINATIONS: string[];
-  USER_COORDINATIONS: string[];
+  ALL_COORDINATIONS: string[] = [];
+  USER_COORDINATIONS: string[] = [];
   total = '0';
   today = new Date();
   submitted = false;
-  payment: any = {
+  payment: ContractPayment = {
     team: [],
     paid: false,
     created: this.today,
     lastUpdate: this.today,
+    service: '',
+    value: '0,00',
   };
-  userPayment: any = {};
+  userPayment: ContractUserPayment = {
+    user: undefined,
+    value: '',
+    percentage: '',
+    coordination: '',
+  };
   options = {
     valueType: '$',
     lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
-    lastTeam: [],
+    lastTeam: [] as ContractUserPayment[],
   };
 
-  userSearch: string;
-  userData: CompleterData;
+  userSearch = '';
+  userData: CompleterData = this.completerService.local([]);
 
   constructor(
     public departmentService: DepartmentService,
@@ -69,14 +79,17 @@ export class PaymentItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
-    const team = this.contract.team.map((member) =>
-      this.userService.idToUser(member.user)
-    );
+    const teamUsers = this.contract.team
+      .map((member) => {
+        if (member.user) return this.userService.idToUser(member.user);
+        return;
+      })
+      .filter((user): user is User => user !== undefined);
     this.userData = this.completerService
-      .local(team, 'fullName', 'fullName')
+      .local(teamUsers, 'fullName', 'fullName')
       .imageField('profilePicture');
     if (this.paymentIndex !== undefined) {
-      this.payment = _.cloneDeep(this.contract.payments[this.paymentIndex]);
+      this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
       this.payment.value = this.brMask.writeValueMoney(this.payment.value, {
         money: true,
         thousand: '.',
@@ -100,15 +113,17 @@ export class PaymentItemComponent implements OnInit {
         typeof this.payment.lastUpdate !== 'object'
       ) {
         this.payment.lastUpdate = parseISO(this.payment.lastUpdate);
-        this.payment.lastUpdate = format(this.payment.lastUpdate, 'dd/MM/yyyy');
       }
     } else {
-      this.payment.team = _.cloneDeep(this.contract.team).map(
-        (member: ContractTeamMember) => {
-          let payment: ContractUserPayment;
-          payment.coordination = member.coordination;
-          payment.user = this.userService.idToUser(member.user)._id;
-          if (member.distribution)
+      this.payment.team = cloneDeep(this.contract.team).map(
+        (member: ContractTeamMember): ContractUserPayment => {
+          const payment: ContractUserPayment = {
+            coordination: member.coordination,
+            user: member.user,
+            value: '0',
+            percentage: '0',
+          };
+          if (member.distribution && member.user)
             payment.value = this.stringUtil.numberToString(
               1 -
                 this.stringUtil.toMutiplyPercentage(
@@ -121,15 +136,9 @@ export class PaymentItemComponent implements OnInit {
                 ),
               20
             );
-          else payment.value = '0';
-          return member;
+          return payment;
         }
       );
-      // if (this.contract.payments.length === this.contract.total - 1) {
-      //   this.payment.value = this.notPaid();
-      //   this.updateLastValues();
-      //   this.calculateTeamValues();
-      // }
     }
   }
 
@@ -137,9 +146,9 @@ export class PaymentItemComponent implements OnInit {
     this.submitted = true;
     if (this.paymentIndex !== undefined) {
       this.payment.lastUpdate = new Date();
-      this.contract.payments[this.paymentIndex] = _.cloneDeep(this.payment);
+      this.contract.payments[this.paymentIndex] = cloneDeep(this.payment);
     } else {
-      this.contract.payments.push(_.cloneDeep(this.payment));
+      this.contract.payments.push(cloneDeep(this.payment));
     }
     this.contractService.editContract(this.contract);
     this.submit.emit();
@@ -157,10 +166,14 @@ export class PaymentItemComponent implements OnInit {
         .toPercentage(this.userPayment.value, this.payment.value, 20)
         .slice(0, -1);
 
-    this.userPayment.user = this.userPayment.user._id;
     this.payment.team.push(Object.assign({}, this.userPayment));
-    this.userPayment = {};
-    this.userSearch = undefined;
+    this.userPayment = {
+      user: undefined,
+      value: '',
+      percentage: '',
+      coordination: '',
+    };
+    this.userSearch = '';
     this.updateTotal();
   }
 
@@ -194,33 +207,11 @@ export class PaymentItemComponent implements OnInit {
     );
   }
 
-  notPaid(): string {
-    // return this.stringUtil.numberToMoney(
-    //   this.stringUtil.moneyToNumber(this.contract.value) -
-    //     this.stringUtil.moneyToNumber(
-    //       this.contract.paid ? this.contract.paid : '0,00'
-    //     )
-    // );
-    return '';
-  }
-
   remainingBalance(): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.payment.value) -
         this.stringUtil.moneyToNumber(this.total)
     );
-  }
-
-  lastPayment(): string {
-    // if (
-    //   (this.paymentIndex === undefined &&
-    //     this.contract.payments.length != this.contract.total - 1) ||
-    //   (this.paymentIndex !== undefined &&
-    //     this.contract.payments.length - 1 != this.contract.total - 1)
-    // )
-    //   return undefined;
-    // return this.notPaid();
-    return '';
   }
 
   updatePaidDate(): void {
@@ -229,11 +220,13 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateUserCoordinations(): void {
-    const selectedUser = this.userPayment.user;
-    this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-      selectedUser._id
-    );
-    this.userPayment.coordination = undefined;
+    if(this.userPayment.user){
+      const selectedUser = this.userService.idToUser(this.userPayment.user);
+      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+        selectedUser._id
+      );
+      this.userPayment.coordination = '';
+    }
   }
 
   calculateTeamValues(): void {
@@ -272,6 +265,6 @@ export class PaymentItemComponent implements OnInit {
     this.options.lastValue = this.payment.value
       ? this.payment.value.slice()
       : '0';
-    this.options.lastTeam = _.cloneDeep(this.payment.team);
+    this.options.lastTeam = cloneDeep(this.payment.team);
   }
 }

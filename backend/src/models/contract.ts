@@ -61,10 +61,10 @@ export class ContractExpense {
   paidDate?: Date;
 
   @prop({ type: () => ContractUploadedFile })
-  uploadedFiles?: ContractUploadedFile[];
+  uploadedFiles!: ContractUploadedFile[];
 
   @prop({ type: () => ContractExpenseTeamMember })
-  team?: ContractExpenseTeamMember[];
+  team!: ContractExpenseTeamMember[];
 }
 
 export class ContractUserPayment {
@@ -76,6 +76,8 @@ export class ContractUserPayment {
 
   @prop({ required: true })
   value!: string;
+
+  percentage!: string;
 }
 
 export class ContractPayment {
@@ -86,7 +88,7 @@ export class ContractPayment {
   value!: string;
 
   @prop({ type: () => ContractUserPayment })
-  team?: ContractUserPayment[];
+  team!: ContractUserPayment[];
 
   @prop({ required: true })
   created!: Date;
@@ -144,13 +146,13 @@ export class Contract extends Base<string> {
   invoice!: Ref<Invoice>;
 
   @prop({ type: () => ContractPayment })
-  payments?: ContractPayment[];
+  payments!: ContractPayment[];
 
   @prop({ type: () => ContractReceipt })
-  receipts?: ContractReceipt[];
+  receipts!: ContractReceipt[];
 
   @prop({ type: () => ContractExpense })
-  expenses?: ContractExpense[];
+  expenses!: ContractExpense[];
 
   @prop({ required: true })
   status!: string;
@@ -171,7 +173,10 @@ export class Contract extends Base<string> {
   lastUpdate!: Date;
 
   @prop({ type: () => ContractTeamMember })
-  team?: ContractTeamMember[];
+  team!: ContractTeamMember[];
+
+  balance = '';
+  value = '';
 }
 
 export default getModelForClass(Contract);
