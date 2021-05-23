@@ -28,17 +28,19 @@ import {
   CONTRACT_BALANCE,
 } from '../../../../shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from '../../../../shared/services/string-util.service';
 import { UtilsService } from '../../../../shared/services/utils.service';
 import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
-import * as _ from 'lodash';
-import * as expense_validation from '../../../../shared/expense-validation.json';
+import { cloneDeep } from 'lodash';
 import {
   ContractTeamMember,
   ContractExpense,
   ContractExpenseTeamMember,
+  Contract,
 } from '../../../../../../backend/src/models/contract';
 import { User } from '../../../../../../backend/src/models/user';
+import * as expense_validation from '../../../../shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -47,11 +49,11 @@ import { User } from '../../../../../../backend/src/models/user';
 })
 export class ExpenseItemComponent implements OnInit, OnDestroy {
   @ViewChild('form', { static: true })
-  formRef: NgForm;
+  formRef!: NgForm;
   @Input()
-  contract: any;
-  @Input() contractIndex: number;
-  @Input() expenseIndex: number;
+  contract!: Contract;
+  @Input() contractIndex!: number;
+  @Input() expenseIndex!: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   private destroy$ = new Subject<void>();
   private newExpense$ = new Subject<void>();
@@ -64,35 +66,37 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
   expense: ContractExpense = {
-    author: undefined,
-    source: undefined,
-    description: undefined,
+    author: '',
+    source: '',
+    description: '',
     nf: true,
-    type: undefined,
-    splitType: undefined,
-    value: undefined,
+    type: '',
+    splitType: '',
+    value: '',
     created: this.today,
     lastUpdate: this.today,
     paid: true,
+    team: [],
+    uploadedFiles: [],
   };
   options = {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
-    lastTeam: [],
-    selectedMember: undefined as User,
+    lastTeam: [] as ContractExpenseTeamMember[],
   };
-  uploaderOptions: NbFileUploaderOptions;
+  splitSelectedMember!: User;
+  uploaderOptions!: NbFileUploaderOptions;
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
-  fileTypesAllowed: string[];
+  fileTypesAllowed: string[] = [];
   maxFileSize = 4;
 
-  userSearch: string;
-  userData: CompleterData;
+  userSearch = '';
+  userData: CompleterData = this.completerService.local([]);
 
-  sourceSearch: string;
-  sourceData: CompleterData;
-  private sourceArray = new BehaviorSubject<any[]>([]);
-  lastType: EXPENSE_TYPES;
+  sourceSearch = '';
+  sourceData: CompleterData = this.completerService.local([]);
+  private sourceArray = new BehaviorSubject<User[]>([]);
+  lastType = EXPENSE_TYPES.MATERIAL;
 
   get is100(): boolean {
     return (
@@ -103,16 +107,27 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     );
   }
 
+  get teamUsers(): User[] {
+    return this.expense.team
+      .map((member: ContractExpenseTeamMember): User | undefined => {
+        if (member.user) return this.userService.idToUser(member.user);
+        return;
+      })
+      .filter((user: User | undefined): user is User => user !== undefined);
+  }
+
   get sMemberIndex(): number {
     return this.expense.team.findIndex(
       (member: ContractExpenseTeamMember) =>
+        member.user &&
         this.userService.idToUser(member.user)?._id ==
-        this.options.selectedMember?._id
+          this.splitSelectedMember?._id
     );
   }
 
   constructor(
     private contractService: ContractService,
+    private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
     private completerService: CompleterService,
     private onedrive: OnedriveService,
@@ -136,17 +151,22 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
     this.userData = this.completerService
       .local(
-        this.contract.team.map((member) => member.user),
+        this.contract.team.map((member: ContractTeamMember) => member.user),
         'fullName',
         'fullName'
       )
       .imageField('profilePicture');
-    let tmp = this.contract.team.map((member) => member.user);
+    const tmp = this.contract.team
+      .map((member: ContractTeamMember): User | undefined => {
+        if (member.user) return this.userService.idToUser(member.user);
+        return;
+      })
+      .filter((user: User | undefined): user is User => user !== undefined);
     tmp.unshift(CONTRACT_BALANCE);
     this.sourceArray.next(tmp);
 
     if (this.expenseIndex !== undefined) {
-      this.expense = _.cloneDeep(this.contract.expenses[this.expenseIndex]);
+      this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (
         this.expense.paidDate !== undefined &&
         typeof this.expense.paidDate !== 'object'
@@ -163,12 +183,15 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       ) {
         this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
       }
-      this.expense.author = this.userService.idToUser(this.expense.author);
-      this.expense.source = this.userService.idToUser(this.expense.source);
-      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-        this.expense.source._id
-      );
-      this.uploadedFiles = _.cloneDeep(
+      if (this.expense.author)
+        this.expense.author = this.userService.idToUser(this.expense.author);
+      if (this.expense.source) {
+        this.expense.source = this.userService.idToUser(this.expense.source);
+        this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+          this.expense.source._id
+        );
+      }
+      this.uploadedFiles = cloneDeep(
         this.expense.uploadedFiles
       ) as UploadedFile[];
       if (this.expense.type === EXPENSE_TYPES.APORTE)
@@ -178,13 +201,17 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         const sMember = this.expense.team.find(
           (member) => member.percentage === '100,00'
         );
-        this.options.selectedMember = this.userService.idToUser(sMember.user);
+        if (sMember && sMember.user)
+          this.splitSelectedMember = this.userService.idToUser(sMember.user);
       }
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
-        this.expense.author = this.contract.team.find(
-          (member) => member.user._id == author._id
+        const member = this.contract.team.find(
+          (member: ContractTeamMember) =>
+            member.user &&
+            this.userService.idToUser(member.user)._id == author._id
         );
+        if (member) this.expense.author = member.user;
       });
       this.updatePaidDate();
     }
@@ -205,10 +232,12 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.sourceData = this.completerService
       .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
       .imageField('profilePicture');
-    this.userSearch = this.userService.idToUser(this.expense.author)?.fullName;
-    this.sourceSearch = this.userService.idToUser(
-      this.expense.source
-    )?.fullName;
+    this.userSearch = this.expense.author
+      ? this.userService.idToUser(this.expense.author)?.fullName
+      : '';
+    this.sourceSearch = this.expense.source
+      ? this.userService.idToUser(this.expense.source)?.fullName
+      : '';
 
     this.formRef.control.statusChanges
       .pipe(skip(1), takeUntil(this.destroy$))
@@ -217,11 +246,12 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
           this.updateUploaderOptions();
       });
 
-    this.options.selectedMember = this.userService.idToUser(
-      this.expense.team[0].user
-    );
+    if (this.expense.team[0].user)
+      this.splitSelectedMember = this.userService.idToUser(
+        this.expense.team[0].user
+      );
     this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-      this.options.selectedMember._id
+      this.splitSelectedMember._id
     );
   }
 
@@ -232,10 +262,13 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       showUploadQueue: true,
       storageProvider: StorageProvider.ONEDRIVE,
       mediaFolderPath:
-        this.onedrive.generatePath(this.contract.invoice) + '/Recibos',
+        this.onedrive.generatePath(
+          this.invoiceService.idToInvoice(this.contract.invoice)
+        ) + '/Recibos',
       allowedFileTypes: this.allowedMimeType,
       filter: {
-        fn: (item: File) => {
+        fn: (item?: File) => {
+          if (!item) return false;
           // Verifica se arquivo é maior que maxFileSize mb
           if (item.size / 1024 / 1024 > this.maxFileSize) {
             return false;
@@ -269,13 +302,13 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   addContractBalanceMember(): void {
-    let tmp = this.sourceArray.value;
+    const tmp = this.sourceArray.value;
     tmp.unshift(CONTRACT_BALANCE);
     this.sourceArray.next(tmp);
   }
 
   removeContractBalanceMember(): void {
-    let tmp = this.sourceArray.value;
+    const tmp = this.sourceArray.value;
     tmp.shift();
     this.sourceArray.next(tmp);
   }
@@ -287,8 +320,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     ) {
       this.removeContractBalanceMember();
       if (
+        this.expense.source &&
         this.userService.idToUser(this.expense.source)._id ===
-        CONTRACT_BALANCE._id
+          CONTRACT_BALANCE._id
       ) {
         this.sourceSearch = '';
         this.expense.source = undefined;
@@ -314,12 +348,12 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   registerExpense(): void {
-    this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
+    this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       this.expense.lastUpdate = new Date();
-      this.contract.expenses[this.expenseIndex] = _.cloneDeep(this.expense);
+      this.contract.expenses[this.expenseIndex] = cloneDeep(this.expense);
     } else {
-      this.contract.expenses.push(_.cloneDeep(this.expense));
+      this.contract.expenses.push(cloneDeep(this.expense));
     }
     this.contractService.editContract(this.contract);
     this.submit.emit();
@@ -332,14 +366,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
   addAndClean(): void {
     this.newExpense$.next();
-    this.expense.uploadedFiles = _.cloneDeep(this.uploadedFiles);
-    this.contract.expenses.push(_.cloneDeep(this.expense));
+    this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
+    this.contract.expenses.push(cloneDeep(this.expense));
     this.contractService.editContract(this.contract);
-    this.sourceSearch = undefined;
-    this.expense.source = undefined;
-    this.expense.description = undefined;
-    this.expense.value = undefined;
-    this.expense.description = undefined;
+    this.sourceSearch = '';
+    this.expense.source = '';
+    this.expense.description = '';
+    this.expense.value = '';
+    this.expense.description = '';
     this.uploadedFiles = [];
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
@@ -354,8 +388,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
   overPaid(): string {
     if (
+      this.expense.source &&
       this.userService.idToUser(this.expense.source)?._id ===
-      CONTRACT_BALANCE._id
+        CONTRACT_BALANCE._id
     ) {
       return this.contract.balance;
     }
@@ -388,7 +423,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.options.lastValue = this.expense.value
       ? this.expense.value.slice()
       : '0';
-    this.options.lastTeam = _.cloneDeep(this.expense.team);
+    this.options.lastTeam = cloneDeep(this.expense.team);
   }
 
   calculateTeamValues(): void {
@@ -406,7 +441,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   updateTeamValues(): void {
     switch (this.expense.splitType) {
       case SPLIT_TYPES.INDIVIDUAL: {
-        for (let member of this.expense.team) {
+        for (const member of this.expense.team) {
           member.value = '0,00';
           member.percentage = '0,00';
         }
@@ -417,14 +452,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         break;
       }
       case SPLIT_TYPES.PERSONALIZADO: {
-        for (let member of this.expense.team) {
+        for (const member of this.expense.team) {
           member.value = '0,00';
           member.percentage = '0,00';
         }
         break;
       }
       case SPLIT_TYPES.PROPORCIONAL: {
-        for (const index in this.expense.team) {
+        for (let index = 0; index < this.expense.team.length; index++) {
           this.expense.team[index].percentage =
             this.contract.team[index].distribution;
           this.expense.team[index].value = this.stringUtil.numberToMoney(

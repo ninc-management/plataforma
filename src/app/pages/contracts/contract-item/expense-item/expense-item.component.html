@@ -10,7 +10,9 @@
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="userService.idToName(expense.author)"
+          [selectedText]="
+            expense.author ? userService.idToName(expense.author) : ''
+          "
           [dataService]="userData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"
@@ -58,7 +60,7 @@
             money: true,
             thousand: '.',
             decimalCaracter: ',',
-            decimal: '2'
+            decimal: 2
           }"
           [required]="validation.value.required"
           [minLength]="validation.value.minLength"
@@ -158,7 +160,9 @@
           #sourceList="ngModel"
           id="input-source"
           name="sourceList"
-          [selectedText]="userService.idToName(expense.source)"
+          [selectedText]="
+            expense.source ? userService.idToName(expense.source) : ''
+          "
           [dataService]="sourceData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"
@@ -245,11 +249,11 @@
           >Selecione o associado:
         </label>
         <nb-select
-          [(ngModel)]="options.selectedMember"
+          [(ngModel)]="splitSelectedMember"
           (selectedChange)="
             updateTeamValues();
             USER_COORDINATIONS = departmentService.userCoordinations(
-              options.selectedMember._id
+              splitSelectedMember._id
             )
           "
           #selectedMember="ngModel"
@@ -264,11 +268,9 @@
             selectedMember.invalid && selectedMember.touched ? true : null
           "
         >
-          <nb-option
-            *ngFor="let member of this.expense.team"
-            [value]="userService.idToUser(member.user)"
-            >{{ userService.idToName(member.user) }}</nb-option
-          >
+          <nb-option *ngFor="let user of teamUsers" [value]="user">{{
+            user.fullName
+          }}</nb-option>
         </nb-select>
       </div>
     </div>
@@ -313,7 +315,7 @@
       >
         <div class="row irow">
           <div class="col-12 col-md-4 list-name">
-            {{ userService.idToShortName(member.user) }}
+            {{ userService.idToShortName(teamUsers[i]) }}
           </div>
           <div class="col-md-2">
             <nb-select
@@ -328,7 +330,7 @@
               <nb-option
                 *ngFor="
                   let coordination of departmentService.userCoordinations(
-                    expense.team[i].user._id
+                    teamUsers[i]._id
                   )
                 "
                 [value]="coordination"
@@ -350,7 +352,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [status]="is100 ? 'success' : 'danger'"
             />
@@ -371,7 +373,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [status]="is100 ? 'success' : 'danger'"
             />
