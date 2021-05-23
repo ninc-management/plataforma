@@ -4,8 +4,12 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { CONTRACT_STATOOS } from '../contract-item.component';
+import { cloneDeep } from 'lodash';
 import * as contract_validation from '../../../../shared/payment-validation.json';
-import * as _ from 'lodash';
+import {
+  ContractReceipt,
+  Contract,
+} from '../../../../../../backend/src/models/contract';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -13,17 +17,19 @@ import * as _ from 'lodash';
   styleUrls: ['./receipt-item.component.scss'],
 })
 export class ReceiptItemComponent implements OnInit {
-  @Input() contract: any;
-  @Input() contractIndex: number;
-  @Input() receiptIndex: number;
+  @Input() contract!: Contract;
+  @Input() contractIndex!: number;
+  @Input() receiptIndex!: number;
   validation = (contract_validation as any).default;
   today = new Date();
-  receipt: any = {
+  receipt: ContractReceipt = {
     notaFiscal: '15.5', // Porcentagem da nota fiscal
     nortanPercentage: '15',
     paid: false,
     created: this.today,
     lastUpdate: this.today,
+    description: '',
+    value: '',
   };
   options = {
     valueType: '$',
@@ -41,7 +47,7 @@ export class ReceiptItemComponent implements OnInit {
     this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
     this.receipt.nortanPercentage = this.utils.nortanPercentage(this.contract);
     if (this.receiptIndex !== undefined) {
-      this.receipt = _.cloneDeep(this.contract.receipts[this.receiptIndex]);
+      this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
       if (
         this.receipt.paidDate !== undefined &&
         typeof this.receipt.paidDate !== 'object'
@@ -57,11 +63,13 @@ export class ReceiptItemComponent implements OnInit {
         typeof this.receipt.lastUpdate !== 'object'
       ) {
         this.receipt.lastUpdate = parseISO(this.receipt.lastUpdate);
-        this.receipt.lastUpdate = format(this.receipt.lastUpdate, 'dd/MM/yyyy');
       }
       this.toLiquid(this.receipt.value);
     } else {
-      if (this.contract.receipts.length === this.contract.total - 1) {
+      if (
+        this.contract.total &&
+        this.contract.receipts.length === +this.contract.total - 1
+      ) {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
       }
@@ -75,27 +83,29 @@ export class ReceiptItemComponent implements OnInit {
       (this.contract.receipts.length >= 1 && this.receiptIndex == undefined)
     ) {
       isOtherPaid = this.contract.receipts
-        .filter((receipt, idx) => this.receiptIndex != idx)
-        .every((receipt) => receipt.paid);
+        .filter(
+          (receipt: ContractReceipt, idx: number) => this.receiptIndex != idx
+        )
+        .every((receipt: ContractReceipt) => receipt.paid);
     }
 
     if (this.receiptIndex !== undefined) {
       this.receipt.lastUpdate = new Date();
-      this.contract.receipts[this.receiptIndex] = _.cloneDeep(this.receipt);
+      this.contract.receipts[this.receiptIndex] = cloneDeep(this.receipt);
     } else {
-      this.contract.receipts.push(_.cloneDeep(this.receipt));
+      this.contract.receipts.push(cloneDeep(this.receipt));
     }
 
     if (
       isOtherPaid &&
       this.receipt.paid &&
-      this.contract.total == this.contract.receipts.length
+      this.contract.total == this.contract.receipts.length.toString()
     )
       this.contract.status = CONTRACT_STATOOS.CONCLUIDO;
     if (
       isOtherPaid &&
       this.receipt.paid &&
-      this.contract.total != this.contract.receipts.length
+      this.contract.total != this.contract.receipts.length.toString()
     )
       this.contract.status = CONTRACT_STATOOS.EM_ANDAMENTO;
     if (!isOtherPaid || !this.receipt.paid)
@@ -116,7 +126,8 @@ export class ReceiptItemComponent implements OnInit {
         )
       ) -
       this.contract.receipts.reduce(
-        (sum, receipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
+        (sum: number, receipt: ContractReceipt) =>
+          (sum += this.stringUtil.moneyToNumber(receipt.value)),
         0
       );
 
@@ -130,12 +141,13 @@ export class ReceiptItemComponent implements OnInit {
 
   lastPayment(): string {
     if (
-      (this.receiptIndex === undefined &&
-        this.contract.receipts.length != this.contract.total - 1) ||
-      (this.receiptIndex !== undefined &&
-        this.contract.receipts.length - 1 != this.contract.total - 1)
+      this.contract.total &&
+      ((this.receiptIndex === undefined &&
+        this.contract.receipts.length != +this.contract.total - 1) ||
+        (this.receiptIndex !== undefined &&
+          this.contract.receipts.length - 1 != +this.contract.total - 1))
     )
-      return undefined;
+      return '';
     return this.notPaid();
   }
 
