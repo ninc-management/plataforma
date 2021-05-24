@@ -16,12 +16,12 @@ import { StringUtilService } from '../services/string-util.service';
   providedIn: 'root',
 })
 export class LastPaymentDirective implements Validator {
-  @Input('lastPayment') lastPaymentMoney: string;
+  @Input('lastPayment') lastPaymentMoney = '';
 
   constructor(private stringUtilService: StringUtilService) {}
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    if (!control.value || !this.lastPaymentMoney) return null;
+    if (!control.value || this.lastPaymentMoney.length == 0) return null;
     const forbidden =
       this.stringUtilService.moneyToNumber(control.value) !==
       this.stringUtilService.moneyToNumber(this.lastPaymentMoney);

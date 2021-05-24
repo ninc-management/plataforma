@@ -294,7 +294,9 @@
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="userPayment.user?.fullName"
+          [selectedText]="
+            userPayment.user ? userService.idToName(userPayment.user) : ''
+          "
           [dataService]="userData"
           [minSearchLength]="0"
           [placeholder]="'Digite o nome do colaborador'"

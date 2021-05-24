@@ -142,7 +142,7 @@ export class UtilsService {
     return index;
   }
 
-  isOfType<T>(obj: unknown, properties: NonOptionalKeys<T>[]): obj is T {
+  isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is T {
     const values = _.at(obj, properties);
     return !values.includes(undefined);
   }

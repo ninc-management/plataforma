@@ -137,15 +137,15 @@ export class UserService implements OnDestroy {
   }
 
   idToShortName(id: string | User): string {
-    return this.idToUser(id)?.exibitionName
-      ? this.idToUser(id).exibitionName
-      : this.idToUser(id).fullName;
+    const exibitionName = this.idToUser(id).exibitionName;
+    if(exibitionName)
+      return exibitionName;
+    return this.idToUser(id).fullName;
   }
 
   idToUser(id: string | User): User {
     if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone']))
       return id;
-    if (id === undefined) return undefined;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
