@@ -51,7 +51,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
   @Input()
-  contract!: any;
+  contract!: Contract;
   @Input() contractIndex!: number;
   @Input() expenseIndex!: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();

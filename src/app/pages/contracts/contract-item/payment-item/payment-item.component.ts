@@ -31,7 +31,7 @@ import * as contract_validation from '../../../../shared/payment-validation.json
   styleUrls: ['./payment-item.component.scss'],
 })
 export class PaymentItemComponent implements OnInit {
-  @Input() contract!: any;
+  @Input() contract!: Contract;
   @Input() contractIndex!: number;
   @Input() paymentIndex!: number;
   @Output() submit = new EventEmitter<void>();
