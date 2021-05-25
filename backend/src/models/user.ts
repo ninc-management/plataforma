@@ -87,7 +87,7 @@ export class User extends Base<string> {
   @prop({ required: true })
   public mainDepartment!: string;
 
-  @prop({ type: () => [String] })
+  @prop({ default: [], type: () => [String] })
   public position?: string[];
 
   @prop({ required: true })
@@ -96,10 +96,10 @@ export class User extends Base<string> {
   @prop({ unique: true })
   public document!: string;
 
-  @prop({ type: () => UserExpertise })
+  @prop({ default: [], type: () => UserExpertise })
   public expertise?: UserExpertise[];
 
-  @prop({ ref: () => User })
+  @prop({ default: [], ref: () => User })
   public AER?: Ref<User>[];
 
   @prop()

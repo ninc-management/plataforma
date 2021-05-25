@@ -60,10 +60,10 @@ export class ContractExpense {
   @prop()
   paidDate?: Date;
 
-  @prop({ type: () => ContractUploadedFile })
+  @prop({ default: [], type: () => ContractUploadedFile })
   uploadedFiles!: ContractUploadedFile[];
 
-  @prop({ type: () => ContractExpenseTeamMember })
+  @prop({ default: [], type: () => ContractExpenseTeamMember })
   team!: ContractExpenseTeamMember[];
 }
 
@@ -87,7 +87,7 @@ export class ContractPayment {
   @prop({ required: true })
   value!: string;
 
-  @prop({ type: () => ContractUserPayment })
+  @prop({ default: [], type: () => ContractUserPayment })
   team!: ContractUserPayment[];
 
   @prop({ required: true })
@@ -145,13 +145,13 @@ export class Contract extends Base<string> {
   @prop({ required: true, ref: () => Invoice })
   invoice!: Ref<Invoice>;
 
-  @prop({ type: () => ContractPayment })
+  @prop({ default: [], type: () => ContractPayment })
   payments!: ContractPayment[];
 
-  @prop({ type: () => ContractReceipt })
+  @prop({ default: [], type: () => ContractReceipt })
   receipts!: ContractReceipt[];
 
-  @prop({ type: () => ContractExpense })
+  @prop({ default: [], type: () => ContractExpense })
   expenses!: ContractExpense[];
 
   @prop({ required: true })
@@ -172,7 +172,7 @@ export class Contract extends Base<string> {
   @prop({ required: true })
   lastUpdate!: Date;
 
-  @prop({ type: () => ContractTeamMember })
+  @prop({ default: [], type: () => ContractTeamMember })
   team!: ContractTeamMember[];
 
   balance = '';

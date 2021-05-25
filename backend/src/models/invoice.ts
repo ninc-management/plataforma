@@ -17,7 +17,7 @@ export class InvoiceProduct {
   @prop({ required: true })
   total!: string;
 
-  @prop({ required: true, type: () => [String] })
+  @prop({ required: true, default: [], type: () => [String] })
   subproducts: string[];
 }
 
@@ -86,7 +86,7 @@ export class Invoice extends Base<string> {
   @prop({ required: true })
   status!: string;
 
-  @prop({ type: () => InvoiceTeamMember })
+  @prop({ default: [], type: () => InvoiceTeamMember })
   team?: InvoiceTeamMember[];
 
   @prop()
@@ -119,7 +119,7 @@ export class Invoice extends Base<string> {
   @prop()
   peep?: string;
 
-  @prop({ type: () => [String] })
+  @prop({ default: [], type: () => [String] })
   laep?: string[];
 
   @prop()
@@ -128,7 +128,7 @@ export class Invoice extends Base<string> {
   @prop()
   peee?: string;
 
-  @prop({ type: () => [String] })
+  @prop({ default: [], type: () => [String] })
   laee?: string[];
 
   @prop()
@@ -137,7 +137,7 @@ export class Invoice extends Base<string> {
   @prop()
   peec?: string;
 
-  @prop({ type: () => [String] })
+  @prop({ default: [], type: () => [String] })
   laec?: string[];
 
   @prop()
@@ -155,16 +155,16 @@ export class Invoice extends Base<string> {
   @prop()
   invoiceType?: string;
 
-  @prop({ ref: () => InvoiceProduct })
+  @prop({ default: [], ref: () => InvoiceProduct })
   products: Ref<InvoiceProduct>[];
 
-  @prop({ ref: () => InvoiceStage })
+  @prop({ default: [], ref: () => InvoiceStage })
   stages: InvoiceStage[];
 
-  @prop({ ref: () => InvoiceMaterial })
+  @prop({ default: [], ref: () => InvoiceMaterial })
   materials: InvoiceMaterial[];
 
-  @prop({ type: () => [String] })
+  @prop({ default: [], type: () => [String] })
   importants: string[];
 }
 
