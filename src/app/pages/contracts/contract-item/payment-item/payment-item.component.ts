@@ -31,7 +31,7 @@ import * as contract_validation from '../../../../shared/payment-validation.json
   styleUrls: ['./payment-item.component.scss'],
 })
 export class PaymentItemComponent implements OnInit {
-  @Input() contract!: Contract;
+  @Input() contract!: any;
   @Input() contractIndex!: number;
   @Input() paymentIndex!: number;
   @Output() submit = new EventEmitter<void>();
@@ -220,7 +220,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateUserCoordinations(): void {
-    if(this.userPayment.user){
+    if (this.userPayment.user) {
       const selectedUser = this.userService.idToUser(this.userPayment.user);
       this.USER_COORDINATIONS = this.departmentService.userCoordinations(
         selectedUser._id

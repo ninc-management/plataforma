@@ -51,7 +51,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
   @Input()
-  contract!: Contract;
+  contract!: any;
   @Input() contractIndex!: number;
   @Input() expenseIndex!: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
@@ -63,6 +63,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   today = new Date();
   types = Object.values(EXPENSE_TYPES);
   sTypes = Object.values(SPLIT_TYPES);
+  expenseTypes = EXPENSE_TYPES;
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
   expense: ContractExpense = {
@@ -334,6 +335,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     ) {
       this.addContractBalanceMember();
     }
+    if (this.expense.type === EXPENSE_TYPES.APORTE)
+      this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
     this.lastType = this.expense.type as EXPENSE_TYPES;
   }
 
