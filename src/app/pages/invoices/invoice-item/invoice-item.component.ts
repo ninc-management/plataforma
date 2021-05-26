@@ -94,6 +94,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
 
+  get netValue(): string {
+    if (!this.tempInvoice.value && !this.tempInvoice.administration)
+      return '0,00';
+    return this.contractService.toNetValue(
+      this.tempInvoice.value,
+      this.utils.nfPercentage(this.tempInvoice),
+      this.utils.nortanPercentage(this.tempInvoice)
+    );
+  }
+
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
@@ -167,6 +177,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         materialListType: '1',
         productListType: '1',
         invoiceType: 'projeto',
+        administration: 'nortan',
       };
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         this.tempInvoice.author = user;

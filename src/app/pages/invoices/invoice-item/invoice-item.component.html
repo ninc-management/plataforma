@@ -343,52 +343,77 @@
         </ng-container>
       </div>
 
-      <div class="form-control-group">
-        <label class="label" for="input-value">Valor do contrato:</label>
-        <input
-          nbInput
-          [(ngModel)]="tempInvoice.value"
-          #value="ngModel"
-          id="input-value"
-          name="value"
-          placeholder="Valor do contrato"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: '2'
-          }"
-          [required]="validation.value.required"
-          [minlength]="validation.value.minLength"
-          [maxlength]="validation.value.maxLength"
-          [status]="
-            value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
-          "
-          [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          [disabled]="false"
-          (focus)="updateLastValues()"
-          (focusout)="updateLastValues()"
-          (ngModelChange)="
-            updateDependentValues(tempInvoice.products, 'product');
-            updateDependentValues(tempInvoice.stages, 'stage')
-          "
-        />
-        <ng-container *ngIf="value.invalid && value.touched">
-          <p class="caption status-danger" *ngIf="value.errors?.required">
-            O valor do contrato é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="value.errors?.minlength || value.errors?.maxlength"
-          >
-            O valor do contrato deve conter entre
-            {{ validation.value.minLength }} a
-            {{ validation.value.maxLength }}
-            numeros
-          </p>
-        </ng-container>
+      <div class="row">
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-value"
+              >Valor bruto do contrato:</label
+            >
+            <input
+              nbInput
+              [(ngModel)]="tempInvoice.value"
+              #value="ngModel"
+              id="input-value"
+              name="value"
+              placeholder="Valor do contrato"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: '2'
+              }"
+              [required]="validation.value.required"
+              [minlength]="validation.value.minLength"
+              [maxlength]="validation.value.maxLength"
+              [status]="
+                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+              [disabled]="false"
+              (focus)="updateLastValues()"
+              (focusout)="updateLastValues()"
+              (ngModelChange)="
+                updateDependentValues(tempInvoice.products, 'product');
+                updateDependentValues(tempInvoice.stages, 'stage')
+              "
+            />
+            <ng-container *ngIf="value.invalid && value.touched">
+              <p class="caption status-danger" *ngIf="value.errors?.required">
+                O valor do contrato é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.minlength || value.errors?.maxlength"
+              >
+                O valor do contrato deve conter entre
+                {{ validation.value.minLength }} a
+                {{ validation.value.maxLength }}
+                numeros
+              </p>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-net-value"
+              >Valor líquido do contrato:</label
+            >
+            <input
+              nbInput
+              [ngModel]="netValue"
+              id="input-net-value"
+              name="netValue"
+              placeholder="Valor liquido do contrato"
+              fullWidth
+              fieldSize="large"
+              [status]="value.invalid ? 'basic' : 'success'"
+              [readonly]="true"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="row">
