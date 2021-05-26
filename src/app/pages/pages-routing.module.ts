@@ -8,6 +8,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 import { ContractorsComponent } from './contractors/contractors.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { UsersComponent } from './users/users.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 
 const routes: Routes = [
   {
@@ -60,6 +61,14 @@ const routes: Routes = [
         data: {
           resource: 'view-users',
           permission: 'elo-principal',
+        },
+      },
+      {
+        path: 'promotions',
+        component: PromotionsComponent,
+        data: {
+          resource: 'view-promotions',
+          permission: 'associado',
         },
       },
       {

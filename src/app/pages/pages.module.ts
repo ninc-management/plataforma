@@ -43,6 +43,7 @@ import { ReceiptItemComponent } from './contracts/contract-item/receipt-item/rec
 import { ExpenseItemComponent } from './contracts/contract-item/expense-item/expense-item.component';
 import { UsersComponent } from './users/users.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
+import { PromotionsComponent } from './promotions/promotions.component';
 
 @NgModule({
   imports: [
@@ -88,6 +89,7 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
     ExpenseItemComponent,
     UsersComponent,
     UserDialogComponent,
+    PromotionsComponent,
   ],
 })
 export class PagesModule {}

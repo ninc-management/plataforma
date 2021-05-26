@@ -38,6 +38,15 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/contractors',
     pathMatch: 'full',
   },
+  {
+    title: 'Promoções',
+    icon: {
+      icon: 'file',
+      pack: 'fa',
+    },
+    link: '/pages/promotions',
+    pathMatch: 'full',
+  },
 ];
 
 export const SOCIAL_ITEMS: NbMenuItem[] = [
@@ -80,8 +89,7 @@ export const SOCIAL_ITEMS: NbMenuItem[] = [
       icon: 'social-linkedin',
       pack: 'ion',
     },
-    url:
-      'https://www.linkedin.com/company/nortan-solução-integrada-em-projetos/',
+    url: 'https://www.linkedin.com/company/nortan-solução-integrada-em-projetos/',
     target: '_blank,',
     pathMatch: 'full',
     selected: false,
