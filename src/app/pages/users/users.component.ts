@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
@@ -17,18 +18,16 @@ export class UsersComponent implements OnInit, OnDestroy {
   searchQuery = '';
   get filtredUsers(): any[] {
     if (this.searchQuery !== '')
-      return this.users.filter((contract) => {
+      return this.users.filter((user) => {
         return (
-          contract.fullName
+          user.fullName
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
-          contract.document
+          user.document
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
-          contract.phone
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contract.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+          user.phone.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.users.sort((a, b) => {
@@ -40,7 +39,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
   settings = {
     mode: 'external',
-    noDataMessage: 'Não encontramos nenhum cliente para o filtro selecionado.',
+    noDataMessage: 'Não encontramos nenhum usuário para o filtro selecionado.',
     add: {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
@@ -52,7 +51,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="fa fa-dollar-sign payment"></i>',
+      deleteButtonContent: '<i class="fa fa-dollar-sign"></i>',
       confirmDelete: false,
     },
     actions: {
@@ -85,7 +84,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private userService: UserService
+    private userService: UserService,
+    public utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -114,9 +114,5 @@ export class UsersComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
-  }
-
-  pageWidth(): number {
-    return window.innerWidth;
   }
 }
