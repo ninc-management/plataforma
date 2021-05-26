@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
-import { DepartmentService } from '../../../shared/services/department.service';
-import { UserService } from '../../../shared/services/user.service';
+import { DepartmentService } from 'app/shared/services/department.service';
+import { UserService } from 'app/shared/services/user.service';
 import { PdfService } from '../pdf.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { PdfDialogComponent } from '../../../shared/components/pdf-dialog/pdf-dialog.component';
-import { BaseDialogComponent } from '../../../shared/components/base-dialog/base-dialog.component';
+import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { take } from 'rxjs/operators';
 import * as _ from 'lodash';
 
@@ -16,7 +16,8 @@ import * as _ from 'lodash';
 })
 export class InvoiceDialogComponent
   extends BaseDialogComponent
-  implements OnInit {
+  implements OnInit
+{
   @Input() title: string;
   @Input() invoice: any;
   tempInvoice: any;

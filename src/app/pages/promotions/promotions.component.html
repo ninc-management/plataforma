@@ -40,7 +40,8 @@
         *ngIf="!utils.isPhone(); else phone"
         [settings]="settings"
         [source]="source"
-        (edit)="userDialog($event)"
+        (edit)="promotionDialog($event)"
+        (create)="promotionDialog({})"
       >
       </ng2-smart-table>
       <!-- </ng-template> -->

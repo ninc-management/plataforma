@@ -19,6 +19,7 @@ import { ContractorService } from '../../shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { Invoice } from '../../../../backend/src/models/invoice';
 
 @Component({
   selector: 'ngx-invoices',
@@ -217,7 +218,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  invoiceDialog(event): void {
+  invoiceDialog(event: { data: Invoice }): void {
     this.dialogService
       .open(InvoiceDialogComponent, {
         context: {

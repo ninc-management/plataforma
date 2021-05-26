@@ -4,6 +4,7 @@ import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs/operators';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
 
 @Component({
   selector: 'ngx-promotions',
@@ -51,7 +52,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
     },
     actions: {
       columnTitle: 'Ações',
-      add: false,
+      add: true,
       edit: true,
       delete: false,
     },
@@ -63,7 +64,10 @@ export class PromotionsComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(public utils: UtilsService) {}
+  constructor(
+    private dialogService: NbDialogService,
+    public utils: UtilsService
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -73,15 +77,19 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   promotionDialog(event): void {
-    // this.dialogService.open(UserDialogComponent, {
-    //   context: {
-    //     title: 'EDIÇÃO DE ASSOCIADO',
-    //     user: event.data,
-    //   },
-    //   dialogClass: 'my-dialog',
-    //   closeOnBackdropClick: false,
-    //   closeOnEsc: false,
-    //   autoFocus: false,
-    // });
+    this.dialogService.open(PromotionDialogComponent, {
+      context: {
+        title: event.data
+          ? this.utils.isPhone()
+            ? 'EDIÇÃO'
+            : 'EDIÇÃO DE PROMOÇÃO'
+          : 'CADASTRO DE PROMOÇÃO',
+        promotion: event.data,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }
