@@ -2,7 +2,7 @@ FROM node:12
 
 # Instala a versão mais recente do Git
 RUN apt-get update && \
-    apt-get install -y make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip make wget less && \
+    apt-get install -y make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip make wget vim less && \
     wget https://github.com/git/git/archive/v2.30.0.zip -O git.zip && \
     unzip git.zip && \
     cd git-* && \
