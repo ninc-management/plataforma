@@ -155,13 +155,13 @@ export class Invoice extends Base<string> {
   @prop()
   invoiceType?: string;
 
-  @prop({ default: [], ref: () => InvoiceProduct })
-  products: Ref<InvoiceProduct>[];
+  @prop({ default: [], type: () => InvoiceProduct })
+  products: InvoiceProduct[];
 
-  @prop({ default: [], ref: () => InvoiceStage })
+  @prop({ default: [], type: () => InvoiceStage })
   stages: InvoiceStage[];
 
-  @prop({ default: [], ref: () => InvoiceMaterial })
+  @prop({ default: [], type: () => InvoiceMaterial })
   materials: InvoiceMaterial[];
 
   @prop({ default: [], type: () => [String] })
