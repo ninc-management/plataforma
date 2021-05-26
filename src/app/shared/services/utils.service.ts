@@ -32,48 +32,64 @@ export class UtilsService {
     return document.documentElement.clientWidth <= sm;
   }
 
-  nfPercentage(contract: Contract): string {
-    if (contract.receipts.length > 0) return contract.receipts[0].notaFiscal;
-    if (
-      this.isOfType<Invoice>(contract.invoice, [
-        '_id',
-        'author',
-        'department',
-        'coordination',
-        'code',
-        'type',
-        'contractor',
-      ])
-    ) {
-      if (contract.invoice.administration == 'nortan') {
-        if (contract.invoice.department == 'DEC') {
-          if (contract.invoice.administration == 'nortan') return '8,5';
-          else return '10,5';
-        } else {
-          return '15,5';
-        }
-      }
+  nfPercentage(document: Contract | Invoice): string {
+    let invoice!: Invoice;
+    if (this.isOfType<Invoice>(document, ['administration'])) {
+      invoice = document;
     } else {
-      return '0';
+      if (document.receipts.length > 0) return document.receipts[0].notaFiscal;
+      if (
+        this.isOfType<Invoice>(document.invoice, [
+          '_id',
+          'author',
+          'department',
+          'coordination',
+          'code',
+          'type',
+          'contractor',
+        ])
+      )
+        invoice = document.invoice;
+      else return '0';
     }
+
+    if (
+      invoice.department == 'DEC' ||
+      invoice.department == 'DEC - Diretoria de Engenharia Civil' ||
+      invoice.department == 'DAD' ||
+      invoice.department == 'DAD - Diretoria de Administração'
+    )
+      return '8,5';
+    else return '15,5';
   }
 
-  nortanPercentage(contract: Contract): string {
-    if (contract.receipts?.length > 0)
-      return contract.receipts[0].nortanPercentage;
+  nortanPercentage(document: Contract | Invoice): string {
+    let invoice!: Invoice;
+    if (this.isOfType<Invoice>(document, ['administration'])) {
+      invoice = document;
+    } else {
+      if (document.receipts?.length > 0)
+        return document.receipts[0].nortanPercentage;
+      if (
+        this.isOfType<Invoice>(document.invoice, [
+          '_id',
+          'author',
+          'department',
+          'coordination',
+          'code',
+          'type',
+          'contractor',
+        ])
+      )
+        invoice = document.invoice;
+      else return '0';
+    }
     if (
-      this.isOfType<Invoice>(contract.invoice, [
-        '_id',
-        'author',
-        'department',
-        'coordination',
-        'code',
-        'type',
-        'contractor',
-      ])
+      invoice.department == 'DAD' ||
+      invoice.department == 'DAD - Diretoria de Administração'
     )
-      if (contract.invoice.administration == 'nortan') return '15';
-    return '17';
+      return '0';
+    return invoice.administration == 'nortan' ? '15' : '17';
   }
 
   // https://stackoverflow.com/a/42488360
