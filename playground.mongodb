@@ -1,0 +1,152 @@
+// Select the database to use.
+use('mongodbVSCodePlaygroundDB');
+
+// Functions
+
+function round(num) {
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}
+
+function toLiquid(value, nf, nortan) {
+  const result = round(
+    moneyToNumber(value) *
+    toMutiplyPercentage(nf) *
+    toMutiplyPercentage(nortan)
+  );
+  return numberToMoney(result);
+};
+
+function toMutiplyPercentage(percentage) {
+  return (100 - numberToNumber(percentage)) / 100;
+}
+
+function numberToNumber(money) {
+  const result = money.replace(',', '.');
+  return +result;
+}
+
+function numberToMoney(number) {
+  return moneyMask(Number(number).toFixed(2).toString());
+}
+
+function moneyToNumber(money) {
+  if (!money) return 0;
+  const result = money.replace('.', '').replace(',', '.');
+  return +result;
+}
+
+function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
+  value = value
+    .replace(/\D/gi, '')
+    .replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), decimalCaracter + '$1');
+  if (value.length === 1 && !this.brmasker.moneyInitHasInt) {
+    const dec = Array(decimal - 1).fill(0);
+    return `0${decimalCaracter}${dec.join('')}${value}`;
+  }
+  if (value.length === decimal + 1) {
+    return '0' + value;
+  } else if (value.length > decimal + 2 && value.charAt(0) === '0') {
+    return value.substr(1);
+  }
+  if (thousand && value.length > Number(4) + Number(decimal)) {
+    const valueOne = `([0-9]{3})${decimalCaracter}([0-9]{${decimal}}$)`;
+    value = value.replace(new RegExp(`${valueOne}`, `g`), `${thousand}$1${decimalCaracter}$2`);
+  }
+  if (thousand && value.length > Number(8) + Number(decimal)) {
+    const valueTwo = `([0-9]{3})${thousand}([0-9]{3})${decimalCaracter}([0-9]{${decimal}}$)`;
+    value = value.replace(
+      new RegExp(`${valueTwo}`, `g`),
+      `${thousand}$1${thousand}$2${decimalCaracter}$3`
+    );
+  }
+
+  return value;
+}
+
+// Update Mongo contracts db
+
+db.contracts.find().forEach(function(c) {
+  c.payments.forEach(function(pid, i) {
+    c.payments[i] = db.payments.findOne({_id: pid},{ contract: 0 });
+    c.payments[i].team.forEach(function(tid, j) {
+      c.payments[i].team[j] = db.userpayments.findOne({_id: tid},{ payment: 0 });
+    })
+  })
+  db.contracts.replaceOne({_id: c._id}, c);
+})
+
+db.contracts.find().pretty();
+
+// Update author by code
+
+["168","186"].forEach(function(n) {
+  let code = "ORC-"+n+"/.*";
+  db.invoices.findOneAndUpdate({code: {$regex : code}}, {$set: {author: ObjectId("5f109c11a1a385001710104a")}});
+})
+
+// Update expense coordination
+
+db.contracts.find().forEach(function (c) {
+  if(c.expenses && c.expenses.length > 0) {
+    c.expenses = c.expenses.map((expense)=>{
+      expense.splitType = 'Proporcional';
+      expense.team = [];
+      for(const member of c.team) {
+        expense.team.push({
+          user: member.user,
+          value: numberToMoney(numberToMoney(expense.value) * toMutiplyPercentage(member.distribution)),
+          percentage: member.distribution,
+          coordination: member.coordination,
+        });
+        print('member added');
+      }
+      return expense;
+    });
+  }
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
+
+// Update position to array
+
+db.users.find().forEach(function(u) {
+  u.position = [u.position];
+  db.users.replaceOne({_id: u._id}, u);
+})
+
+// Split OE on to OE and OP
+
+db.invoices.find().forEach(function(i) {
+  i.administration = "nortan"
+  db.invoices.replaceOne({_id: i._id}, i);
+})
+
+db.contracts.find().forEach(function (c) {
+  c.receipts = [];
+  c.payments.forEach(function (pid, i) {
+    var original = c.payments[i];
+    if (original.notaFiscal == '0' || original.notaFiscal == undefined)
+      db.invoices.updateOne({ _id: c.invoice }, { $set: { administration: 'pessoal' } });
+    c.receipts.push({
+      _id: original._id,
+      description: original.service,
+      value: original.value,
+      notaFiscal: original.notaFiscal,
+      nortanPercentage: original.nortanPercentage,
+      created: original.created,
+      lastUpdate: original.lastUpdate,
+      paid: original.paid == 'sim' ? true : false,
+      paidDate: original.paidDate,
+    });
+    c.payments[i] = {
+      _id: original._id,
+      service: original.service,
+      value: toLiquid(original.value, original.notaFiscal, original.nortanPercentage),
+      team: original.team,
+      created: original.created,
+      lastUpdate: original.lastUpdate,
+      paid: original.paid == 'sim' ? true : false,
+      paidDate: original.paidDate,
+    };
+  });
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
