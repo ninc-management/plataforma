@@ -41,8 +41,8 @@ export const MENU_ITEMS: NbMenuItem[] = [
   {
     title: 'Promoções',
     icon: {
-      icon: 'file',
-      pack: 'fa',
+      icon: 'trophy',
+      pack: 'fac',
     },
     link: '/pages/promotions',
     pathMatch: 'full',
