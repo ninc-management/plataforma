@@ -21,6 +21,7 @@ import {
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ContractExpense } from '../../../../../backend/src/models/contract';
 import * as contract_validation from '../../../shared/contract-validation.json';
 import * as _ from 'lodash';
 
@@ -125,6 +126,13 @@ export class ContractItemComponent implements OnInit {
       delete: true,
     },
     columns: {
+      number: {
+        title: '#',
+        type: 'string',
+        sortDirection: 'desc',
+        width: '5%',
+        compareFunction: this.itemSort,
+      },
       source: {
         title: 'Fonte',
         type: 'string',
@@ -582,18 +590,30 @@ export class ContractItemComponent implements OnInit {
     return 0;
   }
 
+  itemSort(direction: any, a: string, b: string): number {
+    const first = +a.replace(/[#]/g, '');
+    const second = +b.replace(/[#]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
+  }
+
   loadTableExpenses(): void {
     this.source.load(
-      this.contract.expenses
-        .map((expense) => {
-          const tmp = _.cloneDeep(expense);
-          tmp.source = this.userService.idToShortName(tmp.source);
-          if (typeof tmp.created !== 'object')
-            tmp.created = parseISO(tmp.created);
-          tmp.created = format(tmp.created, 'dd/MM/yyyy');
-          return tmp;
-        })
-        .reverse()
+      this.contract.expenses.map((expense: ContractExpense, index: number) => {
+        const tmp = _.cloneDeep(expense);
+        tmp.number = '#' + (index + 1).toString();
+        tmp.source = this.userService.idToShortName(tmp.source);
+        if (typeof tmp.created !== 'object')
+          tmp.created = parseISO(tmp.created);
+        tmp.created = format(tmp.created, 'dd/MM/yyyy');
+        return tmp;
+      })
     );
   }
 }
