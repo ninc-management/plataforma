@@ -52,6 +52,7 @@ export class StringUtilService {
   }
 
   toMutiplyPercentage(percentage: string): number {
+    if (!percentage || percentage.length == 0) return 1;
     return (100 - this.numberToNumber(percentage)) / 100;
   }
 
