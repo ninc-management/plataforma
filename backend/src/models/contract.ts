@@ -65,6 +65,8 @@ export class ContractExpense {
 
   @prop({ default: [], type: () => ContractExpenseTeamMember })
   team!: ContractExpenseTeamMember[];
+
+  number = '#0';
 }
 
 export class ContractUserPayment {

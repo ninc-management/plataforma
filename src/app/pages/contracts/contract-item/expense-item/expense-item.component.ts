@@ -79,6 +79,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     paid: true,
     team: [],
     uploadedFiles: [],
+    number: '#0',
   };
   options = {
     lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),

@@ -219,7 +219,6 @@ export class ContractItemComponent implements OnInit {
       typeof this.contract.lastUpdate !== 'object'
     ) {
       this.contract.lastUpdate = parseISO(this.contract.lastUpdate);
-      this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
     }
     if (!this.contract.team || this.contract.team?.length == 0) {
       this.contract.team = _.cloneDeep(this.contract.invoice.team);
@@ -605,7 +604,7 @@ export class ContractItemComponent implements OnInit {
 
   loadTableExpenses(): void {
     this.source.load(
-      this.contract.expenses.map((expense: ContractExpense, index: number) => {
+      this.contract.expenses.map((expense: any, index: number) => {
         const tmp = _.cloneDeep(expense);
         tmp.number = '#' + (index + 1).toString();
         tmp.source = this.userService.idToShortName(tmp.source);
