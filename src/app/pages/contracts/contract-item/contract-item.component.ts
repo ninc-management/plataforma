@@ -556,7 +556,11 @@ export class ContractItemComponent implements OnInit {
   updatePercentage(idx?: number): void {
     if (idx != undefined) {
       this.contract.team[idx].distribution = this.stringUtil
-        .toPercentage(this.contract.team[idx].netValue, this.contract.liquid)
+        .toPercentage(
+          this.contract.team[idx].netValue,
+          this.contract.liquid,
+          20
+        )
         .slice(0, -1);
       this.contract.team[idx].grossValue = this.contractService.toGrossValue(
         this.contract.team[idx].netValue,
@@ -566,7 +570,7 @@ export class ContractItemComponent implements OnInit {
       this.updateTeamTotal();
     } else {
       this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.netValue, this.contract.liquid)
+        .toPercentage(this.teamMember.netValue, this.contract.liquid, 20)
         .slice(0, -1);
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,

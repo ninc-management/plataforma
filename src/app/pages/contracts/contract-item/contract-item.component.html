@@ -639,7 +639,13 @@
           </nb-list-item>
           <nb-list-item *ngIf="!utils.isPhone()">
             <div class="row irow totalRow">
-              <div class="col-5" style="text-align: right">Total:</div>
+              <div class="col-2">
+                Restante:
+                {{
+                  stringUtil.subtractMoney(contract.liquid, teamTotal.netValue)
+                }}
+              </div>
+              <div class="col-3" style="text-align: right">Total:</div>
               <div
                 class="col-2"
                 [ngClass]="{
@@ -1198,8 +1204,10 @@
       [settings]="settings"
       [source]="source"
       (create)="paymentDialog(undefined, types.EXPENSE)"
-      (edit)="paymentDialog(+$event.index, types.EXPENSE)"
-      (delete)="confirmationDialog(+$event.index, types.EXPENSE)"
+      (edit)="paymentDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)"
+      (delete)="
+        confirmationDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)
+      "
     >
     </ng2-smart-table>
     <ng-template #phone>

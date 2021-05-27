@@ -13,6 +13,12 @@ export class StringUtilService {
     );
   }
 
+  subtractMoney(value1: string, value2: string): string {
+    return this.numberToMoney(
+      this.moneyToNumber(value1) - this.moneyToNumber(value2)
+    );
+  }
+
   applyPercentage(value: string, percentage: string): string {
     return this.numberToMoney(
       this.moneyToNumber(value) * this.toMutiplyPercentage(percentage)
