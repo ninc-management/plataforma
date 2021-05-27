@@ -161,12 +161,10 @@ export class ContractService implements OnDestroy {
       .filter((expense) => expense.paid)
       .reduce(
         (sum, expense) => {
-          if (
-            expense.type == EXPENSE_TYPES.APORTE &&
-            this.userService.idToUser(expense.source)._id == user['_id']
-          )
-            sum.contribution += this.stringUtil.moneyToNumber(expense.value);
-          else {
+          if (expense.type == EXPENSE_TYPES.APORTE) {
+            if (this.userService.idToUser(expense.source)._id == user['_id'])
+              sum.contribution += this.stringUtil.moneyToNumber(expense.value);
+          } else {
             if (this.userService.idToUser(expense.source)._id == user['_id'])
               sum.expense += this.stringUtil.moneyToNumber(expense.value);
             for (const member of expense.team) {
