@@ -746,7 +746,9 @@
               #userList="ngModel"
               id="input-user"
               name="userList"
-              [selectedText]="teamMember.user?.fullName"
+              [selectedText]="
+                teamMember.user ? userService.idToName(teamMember.user) : ''
+              "
               [dataService]="userData"
               [minSearchLength]="0"
               [placeholder]="
@@ -785,7 +787,9 @@
               placeholder="Coordenação"
               fullWidth
               size="large"
-              [status]="memberCoordination.value ? 'success' : 'basic'"
+              [status]="
+                memberCoordination.value?.length > 0 ? 'success' : 'basic'
+              "
               [attr.aria-invalid]="
                 memberCoordination.invalid && memberCoordination.touched
                   ? true
@@ -810,7 +814,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!memberCoordination.value || !userList.value"
-            (click)="addColaborator(); memberCoordination.reset()"
+            (click)="addColaborator()"
           >
             +
           </button>

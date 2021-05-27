@@ -16,6 +16,7 @@ import { NbAccessChecker } from '@nebular/security';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { parseISO } from 'date-fns';
+import { cloneDeep } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { BaseDialogComponent } from '../../../shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -29,8 +30,8 @@ import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { InvoiceTeamMember } from '../../../../../backend/src/models/invoice';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -42,7 +43,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   @Input() tempInvoice: any;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
-  teamMember: any = {};
+  teamMember: InvoiceTeamMember = {
+    user: undefined,
+    coordination: '',
+  };
   options = {
     aep: '',
     aee: '',
@@ -109,10 +113,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private departmentService: DepartmentService,
     private contractService: ContractService,
-    private userService: UserService,
     private completerService: CompleterService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
+    public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker
   ) {}
@@ -245,7 +249,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         .pipe(take(1))
         .subscribe((isGranted) => {
           if (isGranted) {
-            const u = _.cloneDeep(user);
+            const u = cloneDeep(user);
             u.AER.unshift(u._id);
             this.authorData = this.completerService
               .local(
@@ -284,7 +288,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.contractorName = this.contractorService.idToName(
         this.tempInvoice.contractor
       );
-      this.iInvoice = _.cloneDeep(this.tempInvoice);
+      this.iInvoice = cloneDeep(this.tempInvoice);
       this.tempInvoice.department = department;
     } else {
       this.invoiceService.saveInvoice(this.tempInvoice);
@@ -296,8 +300,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.options.lastValue = this.tempInvoice.value
       ? this.tempInvoice.value.slice()
       : '0';
-    this.options.lastProducts = _.cloneDeep(this.tempInvoice.products);
-    this.options.lastStages = _.cloneDeep(this.tempInvoice.stages);
+    this.options.lastProducts = cloneDeep(this.tempInvoice.products);
+    this.options.lastStages = cloneDeep(this.tempInvoice.stages);
   }
 
   updateDependentValues(array: any[], type: 'stage' | 'product'): void {
@@ -335,14 +339,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   addColaborator(): void {
-    this.tempInvoice.team.push(Object.assign({}, this.teamMember));
+    this.tempInvoice.team.push(cloneDeep(this.teamMember));
     this.userSearch = undefined;
-    this.teamMember = {};
-    this.USER_COORDINATIONS = [];
+    this.USER_COORDINATIONS = this.updateUserCoordinations();
   }
 
   updateUserCoordinations(user: any = undefined): string[] {
-    if (user == undefined) this.teamMember.coordination = undefined;
+    this.teamMember.coordination = '';
     const selectedUser = user == undefined ? this.teamMember.user : user;
     return this.departmentService.userCoordinations(selectedUser._id);
   }
