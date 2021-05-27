@@ -38,7 +38,7 @@ jobs:
           git remote add umbler ${{ secrets.UMBLER_REMOTE }}
           git config --global user.email "contact@augustoicaro.com"
           git config --global user.name "Augusto Icaro Farias da Cunha"
-          git cherry-pick c21861694602973e0b8a010ebd363e8670332bf7
+          git cherry-pick cad8f074a5c8627a28e48ea30ebc9021ee823249
       - name: Parser Firebase API key
         uses: jwsi/secret-parser@v1
         with:
