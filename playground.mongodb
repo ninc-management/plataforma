@@ -1,5 +1,5 @@
 // Select the database to use.
-use('mongodbVSCodePlaygroundDB');
+use('nortan-prod');
 
 // Functions
 
@@ -21,6 +21,7 @@ function toMutiplyPercentage(percentage) {
 }
 
 function numberToNumber(money) {
+  if (!money) return 0;
   const result = money.replace(',', '.');
   return +result;
 }
@@ -39,7 +40,7 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   value = value
     .replace(/\D/gi, '')
     .replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), decimalCaracter + '$1');
-  if (value.length === 1 && !this.brmasker.moneyInitHasInt) {
+  if (value.length === 1) {
     const dec = Array(decimal - 1).fill(0);
     return `0${decimalCaracter}${dec.join('')}${value}`;
   }
@@ -94,7 +95,7 @@ db.contracts.find().forEach(function (c) {
       for(const member of c.team) {
         expense.team.push({
           user: member.user,
-          value: numberToMoney(numberToMoney(expense.value) * toMutiplyPercentage(member.distribution)),
+          value: numberToMoney(moneyToNumber(expense.value) * toMutiplyPercentage(member.distribution)),
           percentage: member.distribution,
           coordination: member.coordination,
         });
