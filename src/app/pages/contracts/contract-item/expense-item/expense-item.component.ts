@@ -102,10 +102,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
   get is100(): boolean {
     return (
-      this.expense.team.reduce(
-        (sum, m) => (sum += this.stringUtil.moneyToNumber(m.percentage)),
-        0
-      ) === 100
+      this.expense.team.reduce((sum, m) => {
+        sum = this.stringUtil.sumMoney(sum, m.percentage);
+        return sum;
+      }, '0,00') === '100,00'
     );
   }
 

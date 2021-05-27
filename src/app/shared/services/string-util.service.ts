@@ -7,15 +7,17 @@ import { BrMaskDirective } from '../directives/br-mask.directive';
 export class StringUtilService {
   constructor(private brMask: BrMaskDirective) {}
 
-  sumMoney(value1: string, value2: string): string {
+  sumMoney(value1: string, value2: string, decimals = 2): string {
     return this.numberToMoney(
-      this.moneyToNumber(value1) + this.moneyToNumber(value2)
+      this.moneyToNumber(value1) + this.moneyToNumber(value2),
+      decimals
     );
   }
 
-  subtractMoney(value1: string, value2: string): string {
+  subtractMoney(value1: string, value2: string, decimals = 2): string {
     return this.numberToMoney(
-      this.moneyToNumber(value1) - this.moneyToNumber(value2)
+      this.moneyToNumber(value1) - this.moneyToNumber(value2),
+      decimals
     );
   }
 
