@@ -53,14 +53,16 @@ export class UtilsService {
       else return '0';
     }
 
-    if (
-      invoice.department == 'DEC' ||
-      invoice.department == 'DEC - Diretoria de Engenharia Civil' ||
-      invoice.department == 'DAD' ||
-      invoice.department == 'DAD - Diretoria de Administração'
-    )
-      return '8,5';
-    else return '15,5';
+    if (invoice.administration == 'nortan') {
+      if (
+        invoice.department == 'DEC' ||
+        invoice.department == 'DEC - Diretoria de Engenharia Civil' ||
+        invoice.department == 'DAD' ||
+        invoice.department == 'DAD - Diretoria de Administração'
+      )
+        return '8,5';
+      else return '15,5';
+    } else return '0';
   }
 
   nortanPercentage(document: Contract | Invoice): string {
