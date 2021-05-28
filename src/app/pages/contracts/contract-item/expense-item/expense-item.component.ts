@@ -258,49 +258,50 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   updateUploaderOptions(): void {
-    this.uploaderOptions = {
-      multiple: true,
-      directory: false,
-      showUploadQueue: true,
-      storageProvider: StorageProvider.ONEDRIVE,
-      mediaFolderPath:
-        this.onedrive.generatePath(
-          this.invoiceService.idToInvoice(this.contract.invoice)
-        ) + '/Recibos',
-      allowedFileTypes: this.allowedMimeType,
-      filter: {
-        fn: (item?: File) => {
-          if (!item) return false;
-          // Verifica se arquivo é maior que maxFileSize mb
-          if (item.size / 1024 / 1024 > this.maxFileSize) {
-            return false;
-          }
-          const itemType =
-            item.name.substring(
-              item.name.lastIndexOf('.') + 1,
-              item.name.length
-            ) || item.name;
-          if (!this.fileTypesAllowed.includes(itemType)) {
-            return false;
-          }
-          return true;
+    if (this.contract.invoice)
+      this.uploaderOptions = {
+        multiple: true,
+        directory: false,
+        showUploadQueue: true,
+        storageProvider: StorageProvider.ONEDRIVE,
+        mediaFolderPath:
+          this.onedrive.generatePath(
+            this.invoiceService.idToInvoice(this.contract.invoice)
+          ) + '/Recibos',
+        allowedFileTypes: this.allowedMimeType,
+        filter: {
+          fn: (item?: File) => {
+            if (!item) return false;
+            // Verifica se arquivo é maior que maxFileSize mb
+            if (item.size / 1024 / 1024 > this.maxFileSize) {
+              return false;
+            }
+            const itemType =
+              item.name.substring(
+                item.name.lastIndexOf('.') + 1,
+                item.name.length
+              ) || item.name;
+            if (!this.fileTypesAllowed.includes(itemType)) {
+              return false;
+            }
+            return true;
+          },
         },
-      },
-      name: {
-        fn: (name: string) => {
-          const item = (
-            this.expenseIndex !== undefined
-              ? this.expenseIndex + 1
-              : this.contract.expenses.length + 1
-          ).toString();
-          const type = this.expense.type;
-          const value = this.expense.value.replace('.', '');
-          const date = format(new Date(), 'dd-MM-yy');
-          const extension = name.match('[.].+');
-          return item + '-' + type + '-' + value + '-' + date + extension;
+        name: {
+          fn: (name: string) => {
+            const item = (
+              this.expenseIndex !== undefined
+                ? this.expenseIndex + 1
+                : this.contract.expenses.length + 1
+            ).toString();
+            const type = this.expense.type;
+            const value = this.expense.value.replace('.', '');
+            const date = format(new Date(), 'dd-MM-yy');
+            const extension = name.match('[.].+');
+            return item + '-' + type + '-' + value + '-' + date + extension;
+          },
         },
-      },
-    };
+      };
   }
 
   addContractBalanceMember(): void {

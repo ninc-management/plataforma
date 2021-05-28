@@ -19,6 +19,8 @@ export class InvoiceProduct {
 
   @prop({ required: true, default: [], type: () => [String] })
   subproducts: string[];
+
+  percentage = '';
 }
 
 export class InvoiceMaterial {
@@ -41,6 +43,8 @@ export class InvoiceStage {
 
   @prop({ required: true })
   value!: string;
+
+  percentage = '';
 }
 
 export class InvoiceTeamMember {
@@ -166,6 +170,39 @@ export class Invoice extends Base<string> {
 
   @prop({ default: [], type: () => [String] })
   importants: string[];
+
+  model = false;
+  contractorName = '';
+
+  constructor() {
+    super();
+    this.author = undefined;
+    this.contractor = undefined;
+    this.name = '';
+    this.status = '';
+    this.value = '';
+    this.model = false;
+    this.department = '';
+    this.coordination = '';
+    this.code = '';
+    this.type = '';
+    this.service = '';
+    this.created = new Date();
+    this.lastUpdate = new Date();
+    this.importants = [];
+    this.stages = [];
+    this.products = [];
+    this.laec = [];
+    this.laee = [];
+    this.laep = [];
+    this.team = [];
+    this.materials = [];
+    this.materialListType = '1';
+    this.productListType = '1';
+    this.invoiceType = 'projeto';
+    this.administration = 'nortan';
+    this.contractorName = '';
+  }
 }
 
 export default getModelForClass(Invoice);

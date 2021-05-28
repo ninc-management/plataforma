@@ -30,8 +30,16 @@ import { ContractorService } from '../../../shared/services/contractor.service';
 import { StringUtilService } from '../../../shared/services/string-util.service';
 import { UserService } from '../../../shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { InvoiceTeamMember } from '../../../../../backend/src/models/invoice';
+import {
+  Invoice,
+  InvoiceTeamMember,
+  InvoiceMaterial,
+  InvoiceProduct,
+  InvoiceStage,
+} from '../../../../../backend/src/models/invoice';
 import * as invoice_validation from '../../../shared/invoice-validation.json';
+import { User } from '../../../../../backend/src/models/user';
+import { Contractor } from '../../../../../backend/src/models/contractor';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -39,8 +47,8 @@ import * as invoice_validation from '../../../shared/invoice-validation.json';
   styleUrls: ['./invoice-item.component.scss'],
 })
 export class InvoiceItemComponent implements OnInit, OnDestroy {
-  @Input() iInvoice: any;
-  @Input() tempInvoice: any;
+  @Input() iInvoice!: Invoice;
+  @Input() tempInvoice!: Invoice;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
   teamMember: InvoiceTeamMember = {
@@ -54,18 +62,23 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     important: '',
     valueType: '$',
     stageValueType: '$',
-    material: { name: '', amount: '', value: '', total: '0,00' },
+    material: {
+      name: '',
+      amount: '',
+      value: '',
+      total: '0,00',
+    } as InvoiceMaterial,
     product: {
       value: '',
       amount: '',
       total: '0,00',
       name: '',
-      subproducts: [],
-    },
+      subproducts: [] as string[],
+    } as InvoiceProduct,
     stage: {
       value: '',
       name: '',
-    },
+    } as InvoiceStage,
     total: '0',
     subtotal: '0',
     discountPercentage: '',
@@ -73,23 +86,23 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     materialTotal: '0,00',
     materialTotalWithDiscount: '0,00',
     lastValue: '',
-    lastProducts: [],
-    lastStages: [],
+    lastProducts: [] as InvoiceProduct[],
+    lastStages: [] as InvoiceStage[],
   };
   destroy$ = new Subject<void>();
   editing = false;
   today = new Date();
-  invoiceNumber: number;
-  revision: number = 0;
+  invoiceNumber = 0;
+  revision = 0;
   validation = (invoice_validation as any).default;
-  oldStatus: string;
+  oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
-  contractorSearch: string;
-  contractorData: CompleterData;
-  userSearch: string;
-  userData: CompleterData;
-  authorSearch: string;
-  authorData: CompleterData;
+  contractorSearch = '';
+  contractorData: CompleterData = this.completerService.local([]);
+  userSearch = '';
+  userData: CompleterData = this.completerService.local([]);
+  authorSearch = '';
+  authorData: CompleterData = this.completerService.local([]);
 
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
@@ -139,12 +152,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.department = this.departmentService.composedName(
         this.tempInvoice.department
       );
-      this.contractorSearch = this.tempInvoice.contractor.fullName;
+      this.contractorSearch = this.tempInvoice.contractor
+        ? this.contractorService.idToName(this.tempInvoice.contractor)
+        : '';
       this.revision = +this.tempInvoice.code.slice(
         this.tempInvoice.code.length - 2
       );
       this.revision += 1;
-      this.oldStatus = this.tempInvoice.status;
+      this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
       if (
         this.tempInvoice.created !== undefined &&
         typeof this.tempInvoice.created !== 'object'
@@ -167,22 +182,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.updateDependentValues(this.tempInvoice.stages, 'stage');
       this.updateTotal('material');
     } else {
-      this.tempInvoice = {
-        created: new Date(),
-        lastUpdate: new Date(),
-        importants: [],
-        stages: [],
-        products: [],
-        laec: [],
-        laee: [],
-        laep: [],
-        team: [],
-        materials: [],
-        materialListType: '1',
-        productListType: '1',
-        invoiceType: 'projeto',
-        administration: 'nortan',
-      };
+      this.tempInvoice = new Invoice();
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         this.tempInvoice.author = user;
       });
@@ -235,9 +235,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
     this.userData = this.completerService
       .local(
-        this.userService
-          .getUsersList()
-          .filter((user) => user._id != this.tempInvoice.author._id),
+        this.userService.getUsersList().filter((user) => {
+          if (this.tempInvoice.author)
+            return (
+              user._id != this.userService.idToUser(this.tempInvoice.author)._id
+            );
+          return false;
+        }),
         'fullName',
         'fullName'
       )
@@ -248,21 +252,32 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         .isGranted('aer', 'invoice-author')
         .pipe(take(1))
         .subscribe((isGranted) => {
-          if (isGranted) {
+          if (isGranted && user.AER) {
             const u = cloneDeep(user);
-            u.AER.unshift(u._id);
-            this.authorData = this.completerService
-              .local(
-                u.AER.map((u) => this.userService.idToUser(u)),
-                'fullName',
-                'fullName'
+            if (u.AER) {
+              u.AER.unshift(u._id);
+              this.authorData = this.completerService
+                .local(
+                  u.AER.filter((u): u is User | string => u != undefined).map(
+                    (u) => this.userService.idToUser(u)
+                  ),
+                  'fullName',
+                  'fullName'
+                )
+                .imageField('profilePicture');
+              if (
+                this.tempInvoice.author &&
+                u.AER.includes(
+                  this.userService.idToUser(this.tempInvoice.author)._id
+                )
               )
-              .imageField('profilePicture');
-            if (u.AER.includes(this.tempInvoice.author._id))
-              this.authorSearch = this.tempInvoice.author.fullName;
-            else {
-              this.authorSearch = undefined;
-              this.tempInvoice.author = undefined;
+                this.authorSearch = this.userService.idToName(
+                  this.tempInvoice.author
+                );
+              else {
+                this.authorSearch = '';
+                this.tempInvoice.author = undefined;
+              }
             }
           }
         });
@@ -285,9 +300,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
           this.contractService.saveContract(this.tempInvoice);
       }
-      this.tempInvoice.contractorName = this.contractorService.idToName(
-        this.tempInvoice.contractor
-      );
+      this.tempInvoice.contractorName = this.tempInvoice.contractor
+        ? this.contractorService.idToName(this.tempInvoice.contractor)
+        : '';
       this.iInvoice = cloneDeep(this.tempInvoice);
       this.tempInvoice.department = department;
     } else {
@@ -305,7 +320,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateDependentValues(array: any[], type: 'stage' | 'product'): void {
-    if (type === 'product' && this.tempInvoice.productListType == 2) return;
+    if (type === 'product' && this.tempInvoice.productListType == '2') return;
     if (this.tempInvoice.value !== '0') {
       const lastArray =
         type == 'stage' ? this.options.lastStages : this.options.lastProducts;
@@ -332,16 +347,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateCoordination(): void {
-    this.tempInvoice.coordination = undefined;
+    this.tempInvoice.coordination = '';
     this.COORDINATIONS = this.departmentService.buildCoordinationsList(
       this.departmentService.extractAbreviation(this.tempInvoice.department)
     );
   }
 
   addColaborator(): void {
-    this.tempInvoice.team.push(cloneDeep(this.teamMember));
-    this.userSearch = undefined;
-    this.USER_COORDINATIONS = this.updateUserCoordinations();
+    if (this.tempInvoice.team) {
+      this.tempInvoice.team.push(cloneDeep(this.teamMember));
+      this.userSearch = '';
+      this.USER_COORDINATIONS = this.updateUserCoordinations();
+    }
   }
 
   updateUserCoordinations(user: any = undefined): string[] {
@@ -420,15 +437,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  tooltipText(contractorItem: any): string {
-    if (contractorItem === undefined) return undefined;
+  tooltipText(contractorItem: Contractor | string | undefined): string {
+    if (contractorItem === undefined) return '';
     return (
       `CPF/CNPJ: ` +
-      contractorItem?.document +
+      this.contractorService.idToContractor(contractorItem).document +
       `\nEmail: ` +
-      contractorItem?.email +
+      this.contractorService.idToContractor(contractorItem).email +
       `\nEndereço: ` +
-      contractorItem?.address
+      this.contractorService.idToContractor(contractorItem).address
     );
   }
 
@@ -527,22 +544,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
-    let lastItem =
+    const lastItem =
       this.tempInvoice.products[this.tempInvoice.products.length - 1];
     lastItem.percentage = this.stringUtil
       .toPercentage(lastItem.value, this.tempInvoice.value, 20)
       .slice(0, -1);
-    this.options.product = {
-      value: '',
-      name: '',
-      amount: '',
-      total: '0,00',
-      subproducts: [],
-    };
+    this.options.product = new InvoiceProduct();
     this.updateTotal('product');
   }
 
-  addSubproduct(product): void {
+  addSubproduct(product: InvoiceProduct): void {
     this.isDialogBlocked.next(true);
     this.dialogService
       .open(TextInputDialog, {
@@ -560,16 +571,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateDiscountPercentage(): void {
-    this.options.discountPercentage = this.stringUtil
-      .toPercentageNumber(
-        this.stringUtil.moneyToNumber(this.tempInvoice.discount),
-        this.tempInvoice.products.reduce(
-          (accumulator: number, product: any) =>
-            accumulator + this.stringUtil.moneyToNumber(product.value),
-          0
+    if (this.tempInvoice.discount)
+      this.options.discountPercentage = this.stringUtil
+        .toPercentageNumber(
+          this.stringUtil.moneyToNumber(this.tempInvoice.discount),
+          this.tempInvoice.products.reduce(
+            (accumulator: number, product: any) =>
+              accumulator + this.stringUtil.moneyToNumber(product.value),
+            0
+          )
         )
-      )
-      .slice(0, -1);
+        .slice(0, -1);
   }
 
   updateDiscountValue(): void {
@@ -593,11 +605,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
     this.options.stage.name = this.options.stage.name;
     this.tempInvoice.stages.push(this.options.stage);
-    let lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
+    const lastItem =
+      this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
     lastItem.percentage = this.stringUtil
       .toPercentage(lastItem.value, this.tempInvoice.value, 20)
       .slice(0, -1);
-    this.options.stage = { value: '', name: '' };
+    this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
   }
 
@@ -624,9 +637,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
             ),
           0
         );
-        this.options.total = this.stringUtil.numberToMoney(
-          subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
-        );
+        if (this.tempInvoice.discount)
+          this.options.total = this.stringUtil.numberToMoney(
+            subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
+          );
+        else this.options.total = '0,00';
         this.options.subtotal = this.stringUtil.numberToMoney(subtotal);
         break;
       }
@@ -714,7 +729,7 @@ export class TextInputDialog
   extends BaseDialogComponent
   implements AfterViewInit
 {
-  @ViewChild('name', { read: ElementRef }) inputRef;
+  @ViewChild('name', { read: ElementRef }) inputRef!: ElementRef;
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     protected derivedRef: NbDialogRef<TextInputDialog>
