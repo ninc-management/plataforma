@@ -1,7 +1,5 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { Subject, fromEvent, BehaviorSubject } from 'rxjs';
-import { take, filter, takeUntil } from 'rxjs/operators';
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
 @Component({
