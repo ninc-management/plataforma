@@ -392,6 +392,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   confirmationDialog(): void {
+    this.isDialogBlocked.next(true);
     if (
       this.oldStatus !== this.tempInvoice.status &&
       this.tempInvoice.status === 'Fechado'
@@ -412,6 +413,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
             this.registerInvoice();
             this.submit.emit();
           }
+          this.isDialogBlocked.next(false);
         });
     } else {
       this.registerInvoice();
