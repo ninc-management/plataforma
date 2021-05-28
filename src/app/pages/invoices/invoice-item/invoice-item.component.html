@@ -255,7 +255,11 @@
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
-              [selectedText]="tempInvoice.contractor?.fullName"
+              [selectedText]="
+                tempInvoice.contractor
+                  ? contractorService.idToName(tempInvoice.contractor)
+                  : ''
+              "
               [dataService]="contractorData"
               [minSearchLength]="0"
               [placeholder]="
