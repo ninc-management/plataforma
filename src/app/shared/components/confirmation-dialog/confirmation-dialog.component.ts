@@ -1,32 +1,32 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Subject, fromEvent, BehaviorSubject } from 'rxjs';
+import { take, filter, takeUntil } from 'rxjs/operators';
+import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
 @Component({
   selector: 'ngx-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
 })
-export class ConfirmationDialogComponent implements OnInit {
+export class ConfirmationDialogComponent
+  extends BaseDialogComponent
+  implements OnInit
+{
   @Input() question: string;
 
   constructor(
-    @Inject(NB_DOCUMENT) protected document,
-    protected ref: NbDialogRef<ConfirmationDialogComponent>
-  ) {}
-
-  ngOnInit(): void {}
-
-  dismiss(response: boolean): void {
-    this.ref.close(response);
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<ConfirmationDialogComponent>
+  ) {
+    super(derivedDocument, derivedRef);
   }
 
-  windowWidth(): number {
-    return window.innerWidth;
+  ngOnInit(): void {
+    super.ngOnInit();
   }
 
-  windowHeight(): number {
-    return window.innerHeight * 0.99;
+  dismiss(response: boolean | any = ''): void {
+    this.derivedRef.close(response);
   }
 }

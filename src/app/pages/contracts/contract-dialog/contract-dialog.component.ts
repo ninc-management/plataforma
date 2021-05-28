@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -22,7 +22,8 @@ export enum ComponentTypes {
 })
 export class ContractDialogComponent
   extends BaseDialogComponent
-  implements OnInit {
+  implements OnInit
+{
   @Input() title: string;
   @Input() contract: any;
   @Input() contractIndex: number;
@@ -36,15 +37,15 @@ export class ContractDialogComponent
   onedriveUrl: string;
 
   constructor(
-    @Inject(NB_DOCUMENT) protected document,
-    protected ref: NbDialogRef<ContractDialogComponent>,
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
     private stringUtil: StringUtilService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
     public utils: UtilsService
   ) {
-    super(document, ref);
+    super(derivedDocument, derivedRef);
   }
 
   ngOnInit(): void {
@@ -55,7 +56,7 @@ export class ContractDialogComponent
   }
 
   dismiss(): void {
-    this.ref.close();
+    super.dismiss();
   }
 
   getOnedriveUrl(): void {

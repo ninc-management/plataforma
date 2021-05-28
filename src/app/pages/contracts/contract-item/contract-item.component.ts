@@ -317,6 +317,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   confirmationDialog(index: number, componentType: ComponentTypes): void {
+    this.isDialogBlocked.next(true);
     let item = '';
     switch (componentType) {
       case ComponentTypes.RECEIPT:
@@ -363,6 +364,7 @@ export class ContractItemComponent implements OnInit {
           this.calculateBalance();
           this.updateContract();
         }
+        this.isDialogBlocked.next(false);
       });
   }
 
