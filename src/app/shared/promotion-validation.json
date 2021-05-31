@@ -1,0 +1,12 @@
+{
+  "status": { "required": true },
+  "start": { "required": true },
+  "end": { "required": true },
+  "created": { "required": true },
+  "lastUpdate": { "required": true },
+  "name": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 60
+  }
+}

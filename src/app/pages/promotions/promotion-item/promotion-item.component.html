@@ -1,1 +1,270 @@
-<p>promotion-item works!</p>
+<form #form="ngForm" aria-labelledby="title" style="margin-bottom: 5px">
+  <div class="row">
+    <div class="col-6">
+      <div class="form-control-group">
+        <label class="label" for="input-name">Nome da promoção:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.name"
+          #name="ngModel"
+          id="input-name"
+          name="name"
+          placeholder="Nome da promoção"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.name.required"
+          [minlength]="validation.name.minLength"
+          [maxlength]="validation.name.maxLength"
+          [status]="
+            name.touched ? (name.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+        />
+        <ng-container *ngIf="name.invalid && name.touched">
+          <p class="caption status-danger" *ngIf="name.errors?.required">
+            O nome da promoção é obrigatório!
+          </p>
+          <p
+            class="caption status-danger"
+            *ngIf="name.errors?.minlength || name.errors?.maxlength"
+          >
+            O nome da promoção deve conter entre
+            {{ validation.name.minLength }} a
+            {{ validation.name.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-control-group">
+        <label class="label" for="input-status">Status:</label>
+        <nb-select
+          [(ngModel)]="promotion.status"
+          #status="ngModel"
+          id="input-status"
+          name="status"
+          placeholder="Status"
+          fullWidth
+          size="large"
+          [required]="validation.status.required"
+          [status]="
+            status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="status.invalid && status.touched ? true : null"
+        >
+          <nb-option *ngFor="let status of pTypes" [value]="status">
+            {{ status }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-start">Início da promoção:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.start"
+          #start="ngModel"
+          id="input-start"
+          name="start"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="startDatePicker"
+          [required]="validation.start.required"
+          [status]="
+            start.dirty ? (start.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="start.invalid && start.touched ? true : null"
+          [readonly]="true"
+        />
+        <nb-datepicker #startDatePicker></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-end">Fim da promoção:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.end"
+          #end="ngModel"
+          id="input-end"
+          name="end"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="endDatePicker"
+          [required]="validation.end.required"
+          [status]="end.dirty ? (end.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="end.invalid && end.touched ? true : null"
+          [readonly]="true"
+        />
+        <nb-datepicker #endDatePicker [min]="promotion.start"></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-created">Data de criação:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.created"
+          #created="ngModel"
+          id="input-created"
+          name="created"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="createdDatePicker"
+          [required]="validation.created.required"
+          [status]="created.invalid ? 'danger' : 'success'"
+          [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+          [readonly]="true"
+        />
+        <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="form-control-group">
+        <label class="label" for="input-lastUpdate">Última atualização:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.lastUpdate"
+          #lastUpdate="ngModel"
+          id="input-lastUpdate"
+          name="lastUpdate"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="lastUpdateDatePicker"
+          [required]="validation.lastUpdate.required"
+          [status]="lastUpdate.invalid ? 'danger' : 'success'"
+          [attr.aria-invalid]="
+            lastUpdate.invalid && lastUpdate.touched ? true : null
+          "
+          [readonly]="true"
+        />
+        <nb-datepicker #lastUpdateDatePicker [max]="today"></nb-datepicker>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-auto">
+      <label class="label-divider">Regra da promoção:</label>
+    </div>
+    <div class="col">
+      <hr />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="form-control-group">
+        <label class="label" for="input-rule-objetct">Objeto:</label>
+        <nb-select
+          [(ngModel)]="promotion.rules[0].container"
+          (ngModelChange)="loadTableSettings()"
+          #ruleObject="ngModel"
+          id="input-rule-objetct"
+          name="ruleObject"
+          placeholder="Selecione o objeto"
+          fullWidth
+          size="large"
+          [status]="
+            status.dirty ? (ruleObject.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="
+            ruleObject.invalid && ruleObject.touched ? true : null
+          "
+        >
+          <nb-option *ngFor="let ruleObject of pObjTypes" [value]="ruleObject">
+            {{ ruleObject }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="form-control-group">
+        <label class="label" for="input-rule-operator">Operador:</label>
+        <nb-select
+          [(ngModel)]="promotion.rules[0].operator"
+          #ruleOperator="ngModel"
+          id="input-rule-operator"
+          name="ruleOperator"
+          placeholder="Selecione a operação"
+          fullWidth
+          size="large"
+          [status]="
+            status.dirty
+              ? ruleOperator.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            ruleOperator.invalid && ruleOperator.touched ? true : null
+          "
+        >
+          <nb-option
+            *ngFor="let ruleOperator of pOpTypes"
+            [value]="ruleOperator"
+          >
+            {{ ruleOperator }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="form-control-group">
+        <label class="label" for="input-rule-value">Valor:</label>
+        <input
+          nbInput
+          [(ngModel)]="promotion.rules[0].value"
+          #ruleValue="ngModel"
+          id="input-rule-value"
+          name="ruleValue"
+          placeholder="Digite um valor"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: 2
+          }"
+          [status]="
+            status.dirty ? (ruleValue.invalid ? 'danger' : 'success') : 'basic'
+          "
+          [attr.aria-invalid]="
+            ruleValue.invalid && ruleValue.touched ? true : null
+          "
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-auto">
+      <label class="label-divider">Status dos associados:</label>
+    </div>
+    <div class="col">
+      <hr />
+    </div>
+  </div>
+  <ng2-smart-table
+    #smartTable
+    *ngIf="!utils.isPhone(); else phone"
+    [settings]="settings"
+    [source]="source"
+  >
+  </ng2-smart-table>
+  <ng-template #phone></ng-template>
+</form>
+<button
+  (click)="registerPromotion()"
+  nbButton
+  fullWidth
+  status="primary"
+  size="large"
+  [disabled]="form.invalid"
+>
+  {{ editing ? 'Atualizar' : 'Cadastrar' }}
+</button>

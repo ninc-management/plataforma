@@ -27,7 +27,10 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-promotion-item [promotion]="promotion"></ngx-promotion-item>
+        <ngx-promotion-item
+          [promotion]="promotion"
+          (submit)="dismiss()"
+        ></ngx-promotion-item>
       </nb-card-body>
     </nb-card>
   </div>
