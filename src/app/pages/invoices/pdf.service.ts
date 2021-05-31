@@ -5,7 +5,7 @@ import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
 import { StringUtilService } from '../../shared/services/string-util.service';
 import { Subject } from 'rxjs';
 import extenso from 'extenso';
-import pdfMake from 'pdfmake';
+import pdfMake from 'pdfmake/build/pdfmake';
 import { UserService } from 'app/shared/services/user.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 
