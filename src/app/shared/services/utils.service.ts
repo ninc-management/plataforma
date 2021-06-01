@@ -156,6 +156,13 @@ export class UtilsService {
     }
   }
 
+  isWithinInterval(date: Date, start: Date, end: Date): boolean {
+    return isWithinInterval(date, {
+      start: start,
+      end: end,
+    });
+  }
+
   trackByIndex<T>(index: number, obj: T): number {
     return index;
   }

@@ -18,3 +18,9 @@
     line-height: nb-theme(text-label-line-height);
   }
 }
+
+::ng-deep {
+  table {
+    text-align: center;
+  }
+}

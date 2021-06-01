@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { parseISO } from 'date-fns';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, take, filter } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
@@ -1053,6 +1053,85 @@ export class MetricsService implements OnDestroy {
         return 0.0;
       }),
       map((sumNetValue) => Math.trunc(sumNetValue / 1000))
+    );
+  }
+
+  contracts(uId: string, start: Date, end: Date): Observable<MetricInfo> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+    ]).pipe(
+      filter(
+        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
+      ),
+      map(([contracts, invoices]) => {
+        return contracts.reduce(
+          (metricInfo: MetricInfo, contract) => {
+            let created = contract.created;
+            if (typeof created !== 'object') created = parseISO(created);
+            if (
+              this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
+              this.utils.isWithinInterval(created, start, end)
+            ) {
+              const invoice = this.invoiceService.idToInvoice(contract.invoice);
+              metricInfo.count += 1;
+              metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+            }
+            return metricInfo;
+          },
+          { count: 0, value: 0 }
+        );
+      }),
+      take(1)
+    );
+  }
+
+  receivedValue(uId: string, start: Date, end: Date): Observable<MetricInfo> {
+    return this.contractService.getContracts().pipe(
+      filter((contracts) => contracts.length > 0),
+      map((contracts) => {
+        return contracts.reduce(
+          (metricInfo: MetricInfo, contract) => {
+            if (this.contractService.hasPayments(contract._id)) {
+              const value = contract.payments.reduce(
+                (paid: MetricInfo, payment) => {
+                  if (payment.paid) {
+                    let paidDate = payment.paidDate;
+                    if (typeof paidDate !== 'object')
+                      paidDate = parseISO(paidDate);
+                    if (this.utils.isWithinInterval(paidDate, start, end)) {
+                      const uPayments = payment.team.reduce(
+                        (upaid: MetricInfo, member) => {
+                          const author = this.userService.idToUser(
+                            member.user
+                          )._id;
+                          if (author == uId) {
+                            upaid.count += 1;
+                            upaid.value += this.stringUtil.moneyToNumber(
+                              member.value
+                            );
+                          }
+                          return upaid;
+                        },
+                        { count: 0, value: 0 }
+                      );
+                      paid.count += uPayments.count;
+                      paid.value += uPayments.value;
+                    }
+                  }
+                  return paid;
+                },
+                { count: 0, value: 0 }
+              );
+              metricInfo.count = value.count;
+              metricInfo.value = value.value;
+            }
+            return metricInfo;
+          },
+          { count: 0, value: 0 }
+        );
+      }),
+      take(1)
     );
   }
 }

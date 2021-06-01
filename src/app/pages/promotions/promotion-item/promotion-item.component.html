@@ -65,6 +65,7 @@
         <input
           nbInput
           [(ngModel)]="promotion.start"
+          (ngModelChange)="updateTableItems()"
           #start="ngModel"
           id="input-start"
           name="start"
@@ -88,6 +89,7 @@
         <input
           nbInput
           [(ngModel)]="promotion.end"
+          (ngModelChange)="updateTableItems()"
           #end="ngModel"
           id="input-end"
           name="end"
@@ -162,7 +164,7 @@
         <label class="label" for="input-rule-objetct">Objeto:</label>
         <nb-select
           [(ngModel)]="promotion.rules[0].container"
-          (ngModelChange)="loadTableSettings()"
+          (ngModelChange)="loadTableSettings(); updateTableItems()"
           #ruleObject="ngModel"
           id="input-rule-objetct"
           name="ruleObject"
@@ -187,6 +189,7 @@
         <label class="label" for="input-rule-operator">Operador:</label>
         <nb-select
           [(ngModel)]="promotion.rules[0].operator"
+          (ngModelChange)="updateTableItems()"
           #ruleOperator="ngModel"
           id="input-rule-operator"
           name="ruleOperator"
@@ -219,6 +222,7 @@
         <input
           nbInput
           [(ngModel)]="promotion.rules[0].value"
+          (ngModelChange)="updateTableItems()"
           #ruleValue="ngModel"
           id="input-rule-value"
           name="ruleValue"
