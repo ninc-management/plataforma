@@ -26,10 +26,10 @@ export class Promotion extends Base<string> {
   end!: Date;
 
   @prop({ required: true })
-  created!: Date;
+  created = new Date();
 
   @prop({ required: true })
-  lastUpdate!: Date;
+  lastUpdate = new Date();
 
   @prop({ default: [], type: () => PromotionRule })
   rules!: PromotionRule[];

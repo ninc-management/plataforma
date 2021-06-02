@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
+import { parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,7 @@ export class PromotionService implements OnDestroy {
     const req = {
       promotion: promotion,
     };
-    this.http.post('/api/contractor/', req).pipe(take(1)).subscribe();
+    this.http.post('/api/promotion/', req).pipe(take(1)).subscribe();
   }
 
   editPromotion(promotion: Promotion): void {
@@ -55,13 +56,18 @@ export class PromotionService implements OnDestroy {
       this.http
         .post('/api/promotion/all', {})
         .pipe(take(1))
-        .subscribe((promotions: Promotion[]) => {
-          this.promotions$.next(promotions);
+        .subscribe((promotions: any) => {
+          const tmp = JSON.parse(JSON.stringify(promotions), (k, v) => {
+            if (['created', 'lastUpdate', 'start', 'end'].includes(k))
+              return parseISO(v);
+            return v;
+          });
+          this.promotions$.next(tmp as Promotion[]);
         });
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: 'object') =>
+        .subscribe((data: any) =>
           this.wsService.handle(data, this.promotions$, 'promotions')
         );
     }

@@ -4,7 +4,9 @@ import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs/operators';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { PromotionService } from 'app/shared/services/promotion.service';
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
+import { Promotion } from '../../../../backend/src/models/promotion';
 
 @Component({
   selector: 'ngx-promotions',
@@ -13,11 +15,11 @@ import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.co
 })
 export class PromotionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  promotions: any[] = [];
+  promotions: Promotion[] = [];
   source: LocalDataSource = new LocalDataSource();
 
   searchQuery = '';
-  get filtredPromotions(): any[] {
+  get filtredPromotions(): Promotion[] {
     if (this.searchQuery !== '')
       return this.promotions.filter((promotion) => {
         return promotion.name
@@ -66,6 +68,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
+    private promotionService: PromotionService,
     public utils: UtilsService
   ) {}
 
@@ -74,7 +77,15 @@ export class PromotionsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.promotionService
+      .getPromotions()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((promotions) => {
+        this.promotions = promotions;
+        this.source.load(this.promotions);
+      });
+  }
 
   promotionDialog(event): void {
     this.dialogService.open(PromotionDialogComponent, {

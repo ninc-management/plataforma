@@ -10,11 +10,13 @@ import {
 import * as promotion_validation from 'app/shared/promotion-validation.json';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { BehaviorSubject, Subject, Observable, of, forkJoin } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { BehaviorSubject, Subject, Observable, of, forkJoin } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { PromotionService } from 'app/shared/services/promotion.service';
+import { Promotion } from '../../../../../backend/src/models/promotion';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -51,9 +53,9 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject();
 
   @ViewChild(Ng2SmartTableComponent)
-  table: Ng2SmartTableComponent;
+  table!: Ng2SmartTableComponent;
   @Input()
-  promotion: any = {};
+  promotion!: Promotion;
   @Output() submit: EventEmitter<void> = new EventEmitter();
   validation = (promotion_validation as any).default;
   pTypes = Object.values(PROMOTION_STATOOS);
@@ -71,6 +73,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
+    private promotionService: PromotionService,
     public utils: UtilsService
   ) {}
 
@@ -83,11 +86,8 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     if (this.promotion) {
       this.editing = true;
     } else {
-      this.promotion = {
-        created: this.today,
-        lastUpdate: this.today,
-        rules: [{ container: '', operator: '', value: '' }],
-      };
+      this.promotion = new Promotion();
+      this.promotion.rules = [{ container: '', operator: '', value: '' }];
     }
     this.userTableItems.next(
       this.userService.getUsersList().map(
@@ -106,7 +106,12 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   }
 
   registerPromotion(): void {
-    if (!this.editing) this.submit.emit();
+    if (this.editing) {
+      this.promotionService.editPromotion(this.promotion);
+    } else {
+      this.promotionService.savePromotion(this.promotion);
+      this.submit.emit();
+    }
   }
 
   updateTableItems(): void {
@@ -211,6 +216,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
         object: {
           title: this.promotion.rules[0].container,
           type: 'string',
+          sortDirection: 'desc',
           compareFunction: this.numberSort,
         },
         isValid: {
