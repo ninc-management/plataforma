@@ -846,7 +846,7 @@
               >
                 <nb-option
                   *ngFor="
-                    let coordination of updateUserCoordinations(
+                    let coordination of departmentService.userCoordinations(
                       tempInvoice.team[i].user
                     )
                   "

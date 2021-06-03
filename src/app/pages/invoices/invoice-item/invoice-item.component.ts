@@ -124,9 +124,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
-    private departmentService: DepartmentService,
     private contractService: ContractService,
     private completerService: CompleterService,
+    public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
     public userService: UserService,
@@ -361,10 +361,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateUserCoordinations(user: any = undefined): string[] {
+  updateUserCoordinations(): string[] {
     this.teamMember.coordination = '';
-    const selectedUser = user == undefined ? this.teamMember.user : user;
-    return this.departmentService.userCoordinations(selectedUser._id);
+    return this.departmentService.userCoordinations(this.teamMember.user);
   }
 
   /* eslint-disable @typescript-eslint/indent */

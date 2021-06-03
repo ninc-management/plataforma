@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
+import { User } from '../../../../backend/src/models/user';
 import * as json_department_coordination from '../department-coordination.json';
 
 @Injectable({
@@ -42,7 +43,7 @@ export class DepartmentService {
     return composedName.substr(0, 3);
   }
 
-  userCoordinations(uId: string): string[] {
+  userCoordinations(uId: string | User): string[] {
     if (uId == undefined) return [];
     const user = this.userService.idToUser(uId);
     const active: boolean[] = [
