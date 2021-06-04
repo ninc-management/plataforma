@@ -9,6 +9,7 @@ import { ContractorsComponent } from './contractors/contractors.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { UsersComponent } from './users/users.component';
 import { PromotionsComponent } from './promotions/promotions.component';
+import { Permissions } from 'app/shared/services/utils.service';
 
 const routes: Routes = [
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
         component: DashboardComponent,
         data: {
           resource: 'view-dashboard',
-          permission: 'associado',
+          permission: Permissions.ASSOCIADO,
         },
       },
       {
@@ -28,7 +29,7 @@ const routes: Routes = [
         component: ProfileComponent,
         data: {
           resource: 'view-profile',
-          permission: 'associado',
+          permission: Permissions.ASSOCIADO,
         },
       },
       {
@@ -36,7 +37,7 @@ const routes: Routes = [
         component: InvoicesComponent,
         data: {
           resource: 'view-invoices',
-          permission: 'associado',
+          permission: Permissions.ASSOCIADO,
         },
       },
       {
@@ -44,7 +45,7 @@ const routes: Routes = [
         component: ContractsComponent,
         data: {
           resource: 'view-contracts',
-          permission: 'associado',
+          permission: Permissions.ASSOCIADO,
         },
       },
       {
@@ -52,7 +53,7 @@ const routes: Routes = [
         component: ContractorsComponent,
         data: {
           resource: 'view-contractors',
-          permission: 'associado',
+          permission: Permissions.ASSOCIADO,
         },
       },
       {
@@ -60,7 +61,7 @@ const routes: Routes = [
         component: UsersComponent,
         data: {
           resource: 'view-users',
-          permission: 'elo-principal',
+          permission: Permissions.ELO_PRINCIPAL,
         },
       },
       {
@@ -68,7 +69,7 @@ const routes: Routes = [
         component: PromotionsComponent,
         data: {
           resource: 'view-promotions',
-          permission: 'associado',
+          permission: Permissions.ELO_PRINCIPAL,
         },
       },
       {

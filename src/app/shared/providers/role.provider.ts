@@ -4,6 +4,7 @@ import { UserService } from '../services/user.service';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { User } from '../../../../backend/src/models/user';
+import { Permissions } from 'app/shared/services/utils.service';
 
 @Injectable()
 export class RoleProvider implements NbRoleProvider {
@@ -13,7 +14,9 @@ export class RoleProvider implements NbRoleProvider {
     return this.userService.currentUser$.pipe(
       filter((user: User) => user?.fullName != undefined),
       map((user: User): string | string[] => {
-        return user.position?.length > 0 ? user.position : 'Associado';
+        return user.position?.length > 0
+          ? user.position
+          : Permissions.ASSOCIADO;
       })
     );
   }

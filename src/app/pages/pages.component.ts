@@ -18,6 +18,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
+import { Permissions } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-pages',
@@ -51,10 +52,10 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
     private accessChecker: NbAccessChecker
   ) {
     this.accessChecker
-      .isGranted('elo-principal', 'view-users')
+      .isGranted(Permissions.ELO_PRINCIPAL, 'view-users')
       .pipe(take(1))
       .subscribe((isGranted) => {
-        if (isGranted)
+        if (isGranted) {
           this.menu.push({
             title: 'Associados',
             icon: {
@@ -64,7 +65,18 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
             link: '/pages/users',
             pathMatch: 'full',
           });
+          this.menu.push({
+            title: 'Promoções',
+            icon: {
+              icon: 'trophy',
+              pack: 'fac',
+            },
+            link: '/pages/promotions',
+            pathMatch: 'full',
+          });
+        }
       });
+
     iconsLibrary.registerFontPack('ion', {
       packClass: 'ion',
       iconClassPrefix: 'ion',

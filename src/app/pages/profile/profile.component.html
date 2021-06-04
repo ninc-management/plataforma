@@ -484,7 +484,7 @@
                         [nbTooltip]="
                           positionMessage(
                             accessChecker.isGranted(
-                              'elo-principal',
+                              permissions.ELO_PRINCIPAL,
                               'edit-level'
                             )
                           ) | async
@@ -532,7 +532,7 @@
                         *ngIf="
                           NOT(
                             accessChecker.isGranted(
-                              'elo-principal',
+                              permissions.ELO_PRINCIPAL,
                               'edit-level'
                             )
                           ) | async

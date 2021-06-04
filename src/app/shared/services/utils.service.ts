@@ -17,6 +17,18 @@ import { Contract } from '../../../../backend/src/models/contract';
 import { Invoice } from '../../../../backend/src/models/invoice';
 import * as _ from 'lodash';
 
+export enum Permissions {
+  PARCEIRO = 'parceiro',
+  CLIENTE = 'cliente',
+  ASSOCIADO = 'associado',
+  ELO_PRINCIPAL = 'elo-principal',
+  DIRETOR_FINANCEIRO = 'df',
+  DIRETOR_ADMINISTRATIVO = 'da',
+  AER = 'aer',
+  ELO_NORTAN = 'elo-nortan',
+  DIRETOR_TI = 'dti',
+}
+
 type NonOptionalKeys<T> = {
   [K in keyof T]-?: T extends { [K1 in K]: any } ? K : never;
 }[keyof T];

@@ -18,7 +18,7 @@ import { InvoiceService } from '../../shared/services/invoice.service';
 import { UserService } from '../../shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
+import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { format, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
@@ -222,7 +222,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     this.accessChecker
-      .isGranted('elo-principal', 'export-csv')
+      .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
   }

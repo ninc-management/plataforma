@@ -71,15 +71,15 @@ export const NB_CORE_PROVIDERS = [
 
   NbSecurityModule.forRoot({
     accessControl: {
-      Paceiro: {
+      Parceiro: {
         parceiro: '*',
       },
-      Paceira: {
+      Parceira: {
         parent: 'Parceiro',
       },
       Cliente: {
         parent: 'Parceiro',
-        parceiro: '*',
+        cliente: '*',
       },
       Associado: {
         associado: '*',

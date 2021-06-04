@@ -16,7 +16,7 @@ import { FileUploadDialogComponent } from '../../shared/components/file-upload/f
 import { DepartmentService } from '../../shared/services/department.service';
 import { StatecityService } from '../../shared/services/statecity.service';
 import { UserService } from '../../shared/services/user.service';
-import { UtilsService } from '../../shared/services/utils.service';
+import { UtilsService, Permissions } from '../../shared/services/utils.service';
 import * as user_validation from '../../shared/user-validation.json';
 import * as _ from 'lodash';
 
@@ -44,6 +44,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   DEPARTMENTS: string[] = [];
   POSITIONS: string[] = [];
   LEVELS: string[] = [];
+  permissions = Permissions;
   THEMES = [
     {
       value: 'default',
@@ -148,9 +149,8 @@ export class ProfileComponent implements OnInit, DoCheck {
           el.nativeElement.value !=
           this.currentUser.expertise[idx].shortExpertise
         )
-          el.nativeElement.value = this.currentUser.expertise[
-            idx
-          ].shortExpertise;
+          el.nativeElement.value =
+            this.currentUser.expertise[idx].shortExpertise;
       });
     }
   }
@@ -267,7 +267,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       .subscribe((isGranted) => (this.isAER = isGranted));
 
     this.accessChecker
-      .isGranted('elo-principal', 'edit-level-position')
+      .isGranted(Permissions.ELO_PRINCIPAL, 'edit-level-position')
       .pipe(take(1))
       .subscribe((isGranted) => (this.isEloPrincipal = isGranted));
   }

@@ -38,15 +38,6 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/contractors',
     pathMatch: 'full',
   },
-  {
-    title: 'Promoções',
-    icon: {
-      icon: 'trophy',
-      pack: 'fac',
-    },
-    link: '/pages/promotions',
-    pathMatch: 'full',
-  },
 ];
 
 export const SOCIAL_ITEMS: NbMenuItem[] = [
