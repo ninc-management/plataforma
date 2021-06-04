@@ -1,6 +1,6 @@
 <form #form="ngForm" aria-labelledby="title" style="margin-bottom: 5px">
   <div class="row">
-    <div class="col-6">
+    <div class="col-4">
       <div class="form-control-group">
         <label class="label" for="input-name">Nome da promoção:</label>
         <input
@@ -36,7 +36,46 @@
         </ng-container>
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-4">
+      <div class="form-control-group">
+        <label class="label" for="input-cashback"
+          >Porcentagem de cashback:</label
+        >
+        <input
+          nbInput
+          [(ngModel)]="promotion.cashback"
+          #cashback="ngModel"
+          id="input-cashback"
+          name="cashback"
+          placeholder="% de cashback"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.cashback.required"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: 2
+          }"
+          [status]="
+            cashback.touched
+              ? cashback.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            cashback.invalid && cashback.touched ? true : null
+          "
+        />
+        <ng-container *ngIf="cashback.invalid && cashback.touched">
+          <p class="caption status-danger" *ngIf="cashback.errors?.required">
+            O cashback da promoção é obrigatório!
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-4">
       <div class="form-control-group">
         <label class="label" for="input-status">Status:</label>
         <nb-select

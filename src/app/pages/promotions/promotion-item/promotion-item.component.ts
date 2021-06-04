@@ -10,7 +10,14 @@ import {
 import * as promotion_validation from 'app/shared/promotion-validation.json';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BehaviorSubject, Subject, Observable, of, forkJoin } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  Observable,
+  of,
+  forkJoin,
+  combineLatest,
+} from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
@@ -42,6 +49,7 @@ interface UserTableItem {
   name: string;
   object: string;
   isValid: string;
+  cashbackValue: string;
 }
 
 @Component({
@@ -95,6 +103,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
           name: this.userService.idToShortName(u),
           object: '',
           isValid: '',
+          cashbackValue: '',
         })
       )
     );
@@ -115,19 +124,36 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   }
 
   updateTableItems(): void {
-    const tmp = this.userService
+    const { obj, cashback } = this.userService
       .getUsersList()
-      .map((u) => this.objectRule(u._id));
-    forkJoin(...tmp).subscribe((objCount: string[]) => {
-      const objArray = this.userTableItems.value;
-      this.userTableItems.next(
-        objArray.map((item, i) => {
-          item.object = objCount[i];
-          item.isValid = this.isValidRule(item.object) ? 'Sim' : 'Não';
-          return item;
-        })
+      .map((u) => ({
+        obj: this.objectRule(u._id),
+        cashback: this.cashbackRule(u._id),
+      }))
+      .reduce(
+        (final, o) => {
+          final.obj.push(o.obj);
+          final.cashback.push(o.cashback);
+          return final;
+        },
+        {
+          obj: [] as Observable<string>[],
+          cashback: [] as Observable<string>[],
+        }
       );
-    });
+    combineLatest(forkJoin(...obj), forkJoin(...cashback)).subscribe(
+      ([objCount, cashbackValue]) => {
+        const objArray = this.userTableItems.value;
+        this.userTableItems.next(
+          objArray.map((item, i) => {
+            item.object = objCount[i];
+            item.isValid = this.isValidRule(item.object) ? 'Sim' : 'Não';
+            item.cashbackValue = cashbackValue[i];
+            return item;
+          })
+        );
+      }
+    );
   }
 
   objectRule(uId: string): Observable<string> {
@@ -147,6 +173,17 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
         break;
     }
     return objCount;
+  }
+
+  cashbackRule(uId: string): Observable<string> {
+    return this.metricsService
+      .cashbackValue(
+        uId,
+        this.promotion.cashback,
+        this.promotion.start,
+        this.promotion.end
+      )
+      .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
   }
 
   isValidRule(value: string): boolean {
@@ -232,6 +269,11 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
               ],
             },
           },
+        },
+        cashbackValue: {
+          title: 'Cashback',
+          type: 'string',
+          compareFunction: this.numberSort,
         },
       },
     };

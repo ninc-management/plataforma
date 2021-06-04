@@ -1134,4 +1134,61 @@ export class MetricsService implements OnDestroy {
       take(1)
     );
   }
+
+  cashbackValue(
+    uId: string,
+    percentage: string,
+    start: Date,
+    end: Date
+  ): Observable<MetricInfo> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+    ]).pipe(
+      filter(
+        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
+      ),
+      map(([contracts, invoices]) => {
+        return contracts.reduce(
+          (metricInfo: MetricInfo, contract) => {
+            if (this.contractService.hasReceipts(contract._id)) {
+              const value = contract.receipts
+                .filter(
+                  (receipt) =>
+                    receipt.paid &&
+                    this.invoiceService.isInvoiceAuthor(contract.invoice, uId)
+                )
+                .reduce(
+                  (paid: MetricInfo, receipt) => {
+                    let paidDate = receipt.paidDate;
+                    if (typeof paidDate !== 'object')
+                      paidDate = parseISO(paidDate);
+                    if (this.utils.isWithinInterval(paidDate, start, end)) {
+                      paid.count += 1;
+                      paid.value +=
+                        this.stringUtil.moneyToNumber(receipt.value) *
+                        (1 -
+                          this.stringUtil.toMutiplyPercentage(
+                            receipt.nortanPercentage
+                          ));
+                    }
+                    return paid;
+                  },
+                  { count: 0, value: 0 }
+                );
+              metricInfo.count = value.count;
+              metricInfo.value = value.value;
+            }
+            return metricInfo;
+          },
+          { count: 0, value: 0 }
+        );
+      }),
+      map((metricInfo) => {
+        metricInfo.value *= 1 - this.stringUtil.toMutiplyPercentage(percentage);
+        return metricInfo;
+      }),
+      take(1)
+    );
+  }
 }

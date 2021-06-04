@@ -17,6 +17,9 @@ export class Promotion extends Base<string> {
   name!: string;
 
   @prop({ required: true })
+  cashback!: string;
+
+  @prop({ required: true })
   status!: string;
 
   @prop({ required: true })

@@ -1,5 +1,6 @@
 {
   "status": { "required": true },
+  "cashback": { "required": true },
   "start": { "required": true },
   "end": { "required": true },
   "created": { "required": true },
