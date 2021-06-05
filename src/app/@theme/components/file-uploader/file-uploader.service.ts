@@ -13,7 +13,7 @@ import {
   FilterFunction,
 } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
-import { takeUntil, catchError, map } from 'rxjs/operators';
+import { takeUntil, catchError, map, filter } from 'rxjs/operators';
 
 export interface UploadedFile {
   name: string;
@@ -27,16 +27,21 @@ export class NbFileUploaderService implements OnDestroy {
 
   constructor(private storageService: StorageService) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  /* eslint-disable @typescript-eslint/indent */
   get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
     return this.uploadQueue$.pipe(
-      map((fileList: BehaviorSubject<NbFileItem>[]) => fileList.slice(-1).pop())
+      map((fileList: BehaviorSubject<NbFileItem>[]):
+        | BehaviorSubject<NbFileItem>
+        | undefined => fileList.slice(-1).pop()),
+      filter((file): file is BehaviorSubject<NbFileItem> => file != undefined)
     );
   }
+  /* eslint-enble @typescript-eslint/indent */
 
   private isUploadedFile(obj: any): obj is UploadedFile {
     return obj.name !== undefined;
@@ -57,13 +62,12 @@ export class NbFileUploaderService implements OnDestroy {
   }
 
   uploadAll(fileList: FileList, options: NbFileUploaderOptions): void {
+    if (!options.filter) return;
     const files: BehaviorSubject<NbFileItem>[] = this.getPreparedFiles(
       fileList,
       options.filter
     );
-    if (!files) {
-      return;
-    }
+    if (!files) return;
     this.addToQueue(files);
     files.forEach((file: BehaviorSubject<NbFileItem>) =>
       this.upload(file, options)
@@ -72,7 +76,7 @@ export class NbFileUploaderService implements OnDestroy {
 
   private addToQueue(files: BehaviorSubject<NbFileItem>[]) {
     files.forEach((file) => {
-      let tmp = this.uploadQueue$.value;
+      const tmp = this.uploadQueue$.value;
       tmp.push(file);
       this.uploadQueue$.next(tmp);
     });
@@ -82,20 +86,18 @@ export class NbFileUploaderService implements OnDestroy {
     file: BehaviorSubject<NbFileItem>,
     options: NbFileUploaderOptions
   ) {
-    let tempFile = file.getValue();
+    const tempFile = file.getValue();
     tempFile.onBeforeUpload();
     if (options.name != undefined)
       tempFile.name = options.name.fn(tempFile.name);
 
-    const {
-      downloadUrl$,
-      uploadProgress$,
-    } = this.storageService.uploadFileAndGetMetadata(
-      options.mediaFolderPath,
-      tempFile.rawFile,
-      tempFile.name,
-      options.storageProvider
-    );
+    const { downloadUrl$, uploadProgress$ } =
+      this.storageService.uploadFileAndGetMetadata(
+        options.mediaFolderPath,
+        tempFile.rawFile,
+        tempFile.name,
+        options.storageProvider
+      );
 
     uploadProgress$
       .pipe(takeUntil(this.destroy$))
@@ -107,7 +109,7 @@ export class NbFileUploaderService implements OnDestroy {
     downloadUrl$
       .pipe(
         takeUntil(this.destroy$),
-        catchError((error) => {
+        catchError((error: any) => {
           tempFile.onError();
           file.next(tempFile);
           return EMPTY;

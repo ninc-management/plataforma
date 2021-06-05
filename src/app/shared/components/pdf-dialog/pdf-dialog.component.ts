@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -10,11 +9,11 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./pdf-dialog.component.scss'],
 })
 export class PdfDialogComponent implements OnInit {
-  @Input() dataUrl$: Subject<string>;
-  data: string;
+  @Input() dataUrl$!: Subject<string>;
+  data = '';
 
   constructor(
-    @Inject(NB_DOCUMENT) protected document,
+    @Inject(NB_DOCUMENT) protected document: Document,
     protected ref: NbDialogRef<PdfDialogComponent>
   ) {}
 

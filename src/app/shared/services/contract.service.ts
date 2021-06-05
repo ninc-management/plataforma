@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { User } from '../../../../backend/src/models/user';
 import { Contract } from '../../../../backend/src/models/contract';
 import { Invoice } from '../../../../backend/src/models/invoice';
+import { parseISO } from 'date-fns';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -105,13 +106,18 @@ export class ContractService implements OnDestroy {
       this.http
         .post('/api/contract/all', {})
         .pipe(take(1))
-        .subscribe((contracts: Contract[]) => {
-          this.contracts$.next(contracts);
+        .subscribe((contracts: any) => {
+          const tmp = JSON.parse(JSON.stringify(contracts), (k, v) => {
+            if (['created', 'lastUpdate', 'paidDate'].includes(k))
+              return parseISO(v);
+            return v;
+          });
+          this.contracts$.next(tmp as Contract[]);
         });
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: 'object') =>
+        .subscribe((data: any) =>
           this.wsService.handle(data, this.contracts$, 'contracts')
         );
     }
@@ -122,7 +128,7 @@ export class ContractService implements OnDestroy {
     this.http
       .post('/api/contract/count', {})
       .pipe(take(1))
-      .subscribe((numberJson) => {
+      .subscribe((numberJson: any) => {
         this.size$.next(+numberJson['size'] + 1);
       });
     return this.size$;
@@ -131,7 +137,6 @@ export class ContractService implements OnDestroy {
   idToContract(id: string | Contract): Contract {
     if (this.utils.isOfType<Contract>(id, ['_id', 'invoice', 'status']))
       return id;
-    if (id === undefined) return undefined;
     const tmp = this.contracts$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
@@ -153,8 +158,8 @@ export class ContractService implements OnDestroy {
 
   netValueBalance(
     distribution: string,
-    user: User,
-    contract: Contract
+    contract: Contract,
+    user?: User | string
   ): string {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract['expenses']
@@ -162,13 +167,13 @@ export class ContractService implements OnDestroy {
       .reduce(
         (sum, expense) => {
           if (expense.type == EXPENSE_TYPES.APORTE) {
-            if (this.userService.idToUser(expense.source)._id == user['_id'])
+            if (this.userService.isEqual(expense.source, user))
               sum.contribution += this.stringUtil.moneyToNumber(expense.value);
           } else {
-            if (this.userService.idToUser(expense.source)._id == user['_id'])
+            if (this.userService.isEqual(expense.source, user))
               sum.expense += this.stringUtil.moneyToNumber(expense.value);
             for (const member of expense.team) {
-              if (this.userService.idToUser(member.user)._id == user['_id'])
+              if (this.userService.isEqual(member.user, user))
                 sum.contract += this.stringUtil.moneyToNumber(member.value);
             }
           }
@@ -177,7 +182,7 @@ export class ContractService implements OnDestroy {
         { expense: 0, contribution: 0, contract: 0 }
       );
     const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(contract['liquid']) *
+      this.stringUtil.moneyToNumber(contract.liquid) *
         (1 - this.stringUtil.toMutiplyPercentage(distribution)) -
         expenseContribution.contract +
         expenseContribution.expense +
@@ -189,15 +194,15 @@ export class ContractService implements OnDestroy {
 
   percentageToReceive(
     distribution: string,
-    user: User,
+    user: User | string | undefined,
     contract: Contract,
     decimals = 2
   ): string {
     let sum = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(contract['notPaid']) +
-        this.stringUtil.moneyToNumber(contract['balance'])
+      this.stringUtil.moneyToNumber(contract.notPaid) +
+        this.stringUtil.moneyToNumber(contract.balance)
     );
-    if (contract['balance'][0] == '-') sum = contract['notPaid'];
+    if (contract.balance[0] == '-') sum = contract.notPaid;
     return this.stringUtil
       .toPercentage(
         this.notPaidValue(distribution, user, contract),
@@ -207,23 +212,27 @@ export class ContractService implements OnDestroy {
       .slice(0, -1);
   }
 
-  receivedValue(user: User, contract: Contract): string {
+  receivedValue(user: User | string | undefined, contract: Contract): string {
     const received = contract.payments
       .filter((payment) => payment.paid)
       .map((payment) => payment.team)
       .flat()
       .reduce((sum, member) => {
-        if (this.userService.idToUser(member.user)._id == user['_id'])
+        if (this.userService.isEqual(member.user, user))
           sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);
     return this.stringUtil.numberToMoney(received);
   }
 
-  notPaidValue(distribution: string, user: User, contract: Contract): string {
+  notPaidValue(
+    distribution: string,
+    user: User | string | undefined,
+    contract: Contract
+  ): string {
     return this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
-        this.netValueBalance(distribution, user, contract)
+        this.netValueBalance(distribution, contract, user)
       ) - this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
     );
   }

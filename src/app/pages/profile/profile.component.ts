@@ -6,19 +6,21 @@ import {
   ElementRef,
   ViewChild,
   Input,
+  QueryList,
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
-import { FileUploadDialogComponent } from '../../shared/components/file-upload/file-upload.component';
-import { DepartmentService } from '../../shared/services/department.service';
-import { StatecityService } from '../../shared/services/statecity.service';
-import { UserService } from '../../shared/services/user.service';
-import { UtilsService, Permissions } from '../../shared/services/utils.service';
-import * as user_validation from '../../shared/user-validation.json';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
+import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { DepartmentService } from 'app/shared/services/department.service';
+import { StatecityService } from 'app/shared/services/statecity.service';
+import { UserService } from 'app/shared/services/user.service';
+import { UtilsService, Permissions } from 'app/shared/services/utils.service';
+import { User } from '../../../../backend/src/models/user';
+import * as user_validation from 'app/shared/user-validation.json';
 
 @Component({
   selector: 'ngx-profile',
@@ -26,13 +28,15 @@ import * as _ from 'lodash';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit, DoCheck {
-  @ViewChildren('expertise', { read: ElementRef }) expertiseRefs;
-  @ViewChildren('shortExpertise', { read: ElementRef }) shortExpertiseRefs;
-  @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef;
-  @Input() user;
+  @ViewChildren('expertise', { read: ElementRef })
+  expertiseRefs!: QueryList<ElementRef>;
+  @ViewChildren('shortExpertise', { read: ElementRef })
+  shortExpertiseRefs!: QueryList<ElementRef>;
+  @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
+  @Input() user!: User;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   isCurrentUser = false;
-  currentUser: any = {};
+  currentUser = new User();
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
@@ -64,17 +68,31 @@ export class ProfileComponent implements OnInit, DoCheck {
     },
   ];
 
-  userAER: any = undefined;
-  userSearch: string;
-  userData: CompleterData;
+  userAER = new User();
+  userSearch = '';
+  userData: CompleterData = this.completerService.local([]);
+
+  get positionMessage(): string {
+    let response = '';
+    this.accessChecker
+      .isGranted(Permissions.ELO_PRINCIPAL, 'edit-level')
+      .pipe(take(1))
+      .subscribe(
+        (result: boolean) =>
+          (response = result
+            ? 'Quando não exibir os papeis selecionados é necessário apertar no botão de limpar'
+            : 'Somente o elo principal pode alterar os papeis dos associados.')
+      );
+    return response;
+  }
 
   constructor(
-    private userService: UserService,
     private statecityService: StatecityService,
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
     private completerService: CompleterService,
+    public userService: UserService,
     public accessChecker: NbAccessChecker,
     public utils: UtilsService
   ) {}
@@ -87,16 +105,12 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    if (this.user !== undefined) this.currentUser = _.cloneDeep(this.user);
+    if (this.user !== undefined) this.currentUser = cloneDeep(this.user);
     else
       this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
         this.user = user;
-        this.currentUser = _.cloneDeep(this.user);
+        this.currentUser = cloneDeep(this.user);
         this.isCurrentUser = true;
-        if (this.currentUser.AER.length > 0)
-          this.currentUser.AER = this.currentUser.AER.map((user) =>
-            this.userService.idToUser(user)
-          );
       });
     if (this.currentUser.state)
       this.cities = this.statecityService.buildCityList(this.currentUser.state);
@@ -130,7 +144,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       this.expertiseRefs != undefined &&
       this.shortExpertiseRefs != undefined
     ) {
-      this.expertiseRefs.toArray().forEach((el) => {
+      this.expertiseRefs.toArray().forEach((el: any) => {
         const idx = this.currentUser.expertise.findIndex(
           (ael) =>
             ael.coordination ===
@@ -139,7 +153,7 @@ export class ProfileComponent implements OnInit, DoCheck {
         if (el.nativeElement.value != this.currentUser.expertise[idx].text)
           el.nativeElement.value = this.currentUser.expertise[idx].text;
       });
-      this.shortExpertiseRefs.toArray().forEach((el) => {
+      this.shortExpertiseRefs.toArray().forEach((el: any) => {
         const idx = this.currentUser.expertise.findIndex(
           (ael) =>
             ael.coordination ===
@@ -226,17 +240,19 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   refreshExpertises(): void {
     const active: boolean[] = [
-      this.currentUser.adm,
-      this.currentUser.design,
-      this.currentUser.obras,
-      this.currentUser.impermeabilizacao,
-      this.currentUser.instalacoes,
-      this.currentUser.ambiental,
-      this.currentUser.arquitetura,
-      this.currentUser.hidrico,
-      this.currentUser.eletrica,
-      this.currentUser.civil,
-      this.currentUser.sanitaria,
+      this.currentUser.adm ? this.currentUser.adm : false,
+      this.currentUser.design ? this.currentUser.design : false,
+      this.currentUser.obras ? this.currentUser.obras : false,
+      this.currentUser.impermeabilizacao
+        ? this.currentUser.impermeabilizacao
+        : false,
+      this.currentUser.instalacoes ? this.currentUser.instalacoes : false,
+      this.currentUser.ambiental ? this.currentUser.ambiental : false,
+      this.currentUser.arquitetura ? this.currentUser.arquitetura : false,
+      this.currentUser.hidrico ? this.currentUser.hidrico : false,
+      this.currentUser.eletrica ? this.currentUser.eletrica : false,
+      this.currentUser.civil ? this.currentUser.civil : false,
+      this.currentUser.sanitaria ? this.currentUser.sanitaria : false,
     ];
     this.ACTIVE_EXPERTISE = [];
     this.COORDINATIONS.filter((cd: string, idx: number) => {
@@ -274,7 +290,7 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   updateUser(): void {
     this.isEditing = false;
-    this.user = _.cloneDeep(this.currentUser);
+    this.user = cloneDeep(this.currentUser);
     this.userService.updateUser(
       this.currentUser,
       () => this.checkPrivileges(),
@@ -288,7 +304,7 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   revert(): void {
     this.isEditing = false;
-    this.currentUser = _.cloneDeep(this.user);
+    this.currentUser = cloneDeep(this.user);
     this.refreshExpertises();
     this.changeTheme();
   }
@@ -381,22 +397,13 @@ export class ProfileComponent implements OnInit, DoCheck {
   }
 
   addToAER(): void {
-    this.currentUser.AER.push(_.cloneDeep(this.userAER));
-    this.userAER = undefined;
-    this.userSearch = undefined;
+    if (this.currentUser.AER)
+      this.currentUser.AER.push(cloneDeep(this.userAER));
+    this.userAER = new User();
+    this.userSearch = '';
   }
 
   NOT(o$: Observable<boolean>): Observable<boolean> {
     return o$.pipe(map((result: boolean) => !result));
-  }
-
-  positionMessage(o$: Observable<boolean>): Observable<string> {
-    return o$.pipe(
-      map((result: boolean) =>
-        result
-          ? 'Quando não exibir os papeis selecionados é necessário apertar no botão de limpar'
-          : 'Somente o elo principal pode alterar os papeis dos associados.'
-      )
-    );
   }
 }

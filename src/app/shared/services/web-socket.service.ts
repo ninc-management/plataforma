@@ -13,26 +13,26 @@ export class WebSocketService {
   constructor(private utils: UtilsService) {}
 
   handle<T extends IdWise>(
-    data: 'object',
+    data: any,
     oArray$: BehaviorSubject<T[]>,
     coll: string
   ): void {
     if (data == new Object()) return;
-    if (data['ns'].coll != coll) return;
-    switch (data['operationType']) {
+    if (data.ns.coll != coll) return;
+    switch (data.operationType) {
       case 'update': {
         const tmpArray = oArray$.getValue();
         const idx = tmpArray.findIndex(
-          (el: T) => el._id === data['documentKey']._id
+          (el: T) => el._id === data.documentKey._id
         );
-        if (data['updateDescription'].updatedFields)
+        if (data.updateDescription.updatedFields)
           tmpArray[idx] = Object.assign(
             tmpArray[idx],
-            data['updateDescription'].updatedFields
+            data.updateDescription.updatedFields
           );
-        if (data['updateDescription'].removedFields.length > 0)
-          for (const f of data['updateDescription'].removedFields)
-            delete tmpArray[idx][f];
+        if (data.updateDescription.removedFields.length > 0)
+          for (const f of data.updateDescription.removedFields)
+            delete (tmpArray[idx] as any)[f];
         oArray$.next(tmpArray);
         break;
       }

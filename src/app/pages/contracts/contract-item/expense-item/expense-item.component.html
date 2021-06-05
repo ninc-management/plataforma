@@ -10,9 +10,7 @@
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="
-            expense.author ? userService.idToName(expense.author) : ''
-          "
+          [selectedText]="userService.idToName(expense.author)"
           [dataService]="userData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"
@@ -160,9 +158,7 @@
           #sourceList="ngModel"
           id="input-source"
           name="sourceList"
-          [selectedText]="
-            expense.source ? userService.idToName(expense.source) : ''
-          "
+          [selectedText]="userService.idToName(expense.source)"
           [dataService]="sourceData"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do colaborador'"

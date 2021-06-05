@@ -7,9 +7,10 @@ import {
 } from '@nebular/theme';
 
 import { map, takeUntil } from 'rxjs/operators';
-import { Subject, Observable } from 'rxjs';
-import { UserService } from '../../../shared/services/user.service';
+import { Subject } from 'rxjs';
+import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { User } from '../../../../../backend/src/models/user';
 
 @Component({
   selector: 'ngx-header',
@@ -18,12 +19,11 @@ import { UtilsService } from 'app/shared/services/utils.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
-  public readonly materialTheme$: Observable<boolean>;
   menuButtonClicked = false;
   menuTitle = 'Nortan';
-  userPictureOnly: boolean = false;
-  user: any;
-  logoIcon: string = 'logo';
+  userPictureOnly = false;
+  user = new User();
+  logoIcon = 'logo';
 
   userMenu = [
     { title: 'Perfil', link: 'pages/profile' },
@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public utils: UtilsService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.userService.currentUser$
       .pipe(takeUntil(this.destroy$))
       .subscribe((user: any) => {
@@ -86,12 +86,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  changeTheme() {
+  changeTheme(): void {
     this.themeService.changeTheme(
       this.user.theme == undefined ? 'default' : this.user.theme
     );
@@ -103,7 +103,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  navigateHome() {
+  navigateHome(): boolean {
     this.menuService.navigateHome();
     return false;
   }

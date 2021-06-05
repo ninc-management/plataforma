@@ -15,7 +15,7 @@
               #authorList="ngModel"
               id="input-author"
               name="authorList"
-              [selectedText]="tempInvoice.author?.fullName"
+              [selectedText]="userService.idToName(tempInvoice.author)"
               [dataService]="authorData"
               [minSearchLength]="0"
               [placeholder]="
@@ -248,9 +248,9 @@
               [inputName]="'contractorCompleter'"
               (selected)="
                 tempInvoice.contractor = $event.originalObject;
-                tempInvoice.contractorFullName = contractorService.idToName(
-                  tempInvoice.contractor
-                )
+                tempInvoice.contractorFullName = tempInvoice.contractor
+                  ? contractorService.idToName(tempInvoice.contractor)
+                  : ''
               "
               #contractor="ngModel"
               id="input-contractor"
@@ -300,7 +300,11 @@
               size="large"
               style="margin-top: 28px"
               nbTooltip="Adicionar cliente"
-              [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+              [nbTooltipTrigger]="
+                utils.isPhone()
+                  ? utils.tooltipTriggers.NOOP
+                  : utils.tooltipTriggers.HINT
+              "
               nbTooltipPlacement="top"
               nbTooltipStatus="info"
               (click)="addContractor()"
@@ -366,7 +370,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [required]="validation.value.required"
               [minlength]="validation.value.minLength"
@@ -735,7 +739,11 @@
                 pack="eva"
                 [options]="{ animation: { type: 'pulse' } }"
                 nbTooltip="O gestor sempre está no orçamento, sendo o primeiro a aparecer, e seu perfil de atuação será o mesmo da coordenação do orçamento"
-                [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+                [nbTooltipTrigger]="
+                  utils.isPhone()
+                    ? utils.tooltipTriggers.NOOP
+                    : utils.tooltipTriggers.HINT
+                "
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
               ></nb-icon
@@ -750,9 +758,7 @@
               #userList="ngModel"
               id="input-user"
               name="userList"
-              [selectedText]="
-                teamMember.user ? userService.idToName(teamMember.user) : ''
-              "
+              [selectedText]="userService.idToName(teamMember.user)"
               [dataService]="userData"
               [minSearchLength]="0"
               [placeholder]="
@@ -834,7 +840,7 @@
         >
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{ member.user.fullName }}
+              {{ userService.idToName(member.user) }}
             </div>
             <div class="col-10 col-md-5">
               <nb-select
@@ -1267,7 +1273,7 @@
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="
-            let activity of tempInvoice.laec;
+            let activity of tempInvoice.laec ? tempInvoice.laec : [];
             let i = index;
             trackBy: utils.trackByIndex
           "

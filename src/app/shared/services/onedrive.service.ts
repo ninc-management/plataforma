@@ -6,13 +6,13 @@ import { environment } from '../../../environments/environment';
 import { Invoice } from '../../../../backend/src/models/invoice';
 import { Contract } from '../../../../backend/src/models/contract';
 import { take, map } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnedriveService {
-  private readonly departmentPath = {
+  private readonly departmentPath: any = {
     DAD: '01-DAD',
     DAQ: '02-DAQ',
     DEC: '03-DEC',
@@ -33,12 +33,11 @@ export class OnedriveService {
   }
 
   private generateForderName(invoice: Invoice): string {
-    const slices = invoice['code'].replace('/', '_').split('-');
+    const slices = invoice.code.replace('/', '_').split('-');
     const numberSlices = slices[1].split('_');
-    const author = this.userService.idToUser(invoice['author']);
-    const authorName = author?.exibitionName
-      ? author.exibitionName
-      : author.fullName;
+    const authorName = invoice.author
+      ? this.userService.idToShortName(invoice.author)
+      : '';
 
     return (
       slices[0] +
@@ -68,11 +67,11 @@ export class OnedriveService {
     this.http
       .get(environment.onedriveUri + path)
       .pipe(take(1))
-      .subscribe((metadata) => {
+      .subscribe((metadata: any) => {
         const body = {
           parentReference: {
-            driveId: metadata['parentReference'].driveId,
-            id: metadata['parentReference'].id,
+            driveId: metadata.parentReference.driveId,
+            id: metadata.parentReference.id,
           },
           name: this.generateForderName(invoice),
         };
@@ -90,10 +89,10 @@ export class OnedriveService {
     this.http
       .get(environment.onedriveUri + this.generateBasePath(invoice, true))
       .pipe(take(1))
-      .subscribe((metadata) => {
+      .subscribe((metadata: any) => {
         const body = {
           parentReference: {
-            id: metadata['id'],
+            id: metadata.id,
           },
           name: this.generateForderName(invoice),
         };
@@ -122,8 +121,9 @@ export class OnedriveService {
         .get(environment.onedriveUri + this.generatePath(invoice, concluded))
         .pipe(
           take(1),
-          map((metadata) => metadata['webUrl'])
+          map((metadata: any): string => metadata.webUrl)
         );
     }
+    return of('');
   }
 }

@@ -31,10 +31,10 @@ import { Subject, BehaviorSubject, Observable } from 'rxjs';
 })
 export class NbFileUploaderComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
-  hasBaseDropZoneOver: boolean;
+  hasBaseDropZoneOver = false;
 
   @ViewChild('inputEl')
-  inputEl: ElementRef;
+  inputEl!: ElementRef;
 
   @Input()
   options: NbFileUploaderOptions = {
@@ -46,7 +46,7 @@ export class NbFileUploaderComponent implements OnInit, OnDestroy {
   };
 
   @Input()
-  isFileDrop: boolean;
+  isFileDrop = false;
 
   @Input()
   buttonLabel = 'Browse';
@@ -63,30 +63,32 @@ export class NbFileUploaderComponent implements OnInit, OnDestroy {
   /* eslint-enable @typescript-eslint/indent */
 
   get accept(): string {
-    return this.options.allowedFileTypes.join(',');
+    if (this.options.allowedFileTypes)
+      return this.options.allowedFileTypes.join(',');
+    return '';
   }
 
   constructor(public uploader: NbFileUploaderService) {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.filesList.emit(this.uploader.uploadedFiles$);
   }
 
-  browse() {
+  browse(): void {
     this.inputEl.nativeElement.click();
   }
 
-  onChange() {
+  onChange(): void {
     const files = this.inputEl.nativeElement.files;
     this.uploader.uploadAll(files, this.options);
   }
 
-  fileOverBase(e: any): void {
+  fileOverBase(e: boolean): void {
     this.hasBaseDropZoneOver = e;
   }
 }

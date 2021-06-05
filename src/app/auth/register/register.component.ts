@@ -5,14 +5,14 @@ import {
   NB_AUTH_OPTIONS,
 } from '@nebular/auth';
 
-import * as user_validation from '../../shared/user-validation.json';
-import { StatecityService } from '../../shared/services/statecity.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { EventMessage, EventType } from '@azure/msal-browser';
+import { AuthService } from '../auth.service';
+import { StatecityService } from 'app/shared/services/statecity.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import * as user_validation from 'app/shared/user-validation.json';
 
 @Component({
   selector: 'ngx-register',

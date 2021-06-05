@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
-import { StringUtilService } from '../../shared/services/string-util.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Subject } from 'rxjs';
-import extenso from 'extenso';
-import pdfMake from 'pdfmake/build/pdfmake';
 import { UserService } from 'app/shared/services/user.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
+import extenso from 'extenso';
+import pdfMake from 'pdfmake/build/pdfmake';
+import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
+import { Invoice } from '../../../../backend/src/models/invoice';
+import { User } from '../../../../backend/src/models/user';
 
 pdfMake.fonts = {
   Sans: {
@@ -35,102 +38,113 @@ export class PdfService {
   ) {}
 
   private applyVerticalAlignment(
-    node: any,
+    node: ContentTable,
     rowIndex: number,
     align: string
   ): void {
     const allCellHeights = node.table.body[rowIndex].map(
       (innerNode, columnIndex) => {
-        const findInlineHeight = this.findInlineHeight(
-          innerNode,
-          node.table.widths[columnIndex]._calcWidth
-        );
-        return findInlineHeight.height;
+        let width = 0;
+        if (node.table.widths != undefined)
+          width = (node.table.widths[columnIndex] as any)._calcWidth;
+        return this.findInlineHeight(innerNode, width).height;
       }
     );
     const maxRowHeight = Math.max(...allCellHeights);
     node.table.body[rowIndex].forEach((cell, ci) => {
       if (allCellHeights[ci] && maxRowHeight > allCellHeights[ci]) {
         let topMargin;
+        let cellAlign = align;
+        if (Array.isArray(align)) {
+          cellAlign = align[ci];
+        }
         if (align === 'bottom') {
           topMargin = maxRowHeight - allCellHeights[ci];
         } else if (align === 'center') {
           topMargin = (maxRowHeight - allCellHeights[ci]) / 2;
         }
-        if (cell._margin) {
-          cell._margin[1] = topMargin;
-        } else {
-          cell._margin = [0, topMargin, 0, 0];
+        if (topMargin) {
+          if ((cell as any)._margin) {
+            (cell as any)._margin[1] = topMargin;
+          } else {
+            (cell as any)._margin = [0, topMargin, 0, 0];
+          }
         }
       }
     });
   }
 
   private findInlineHeight(
-    cell: any,
+    cell: TableCell,
     maxWidth: number,
-    usedWidth: number = 0
+    usedWidth = 0
   ): any {
-    const calcLines = (inlines) => {
+    const calcLines = (
+      inlines: { height: number; width: number; lineEnd: any }[]
+    ) => {
       if (inlines == undefined)
         return {
           height: 0,
           width: 0,
         };
       let currentMaxHeight = 0;
+      let lastHadLineEnd = false;
       for (const currentNode of inlines) {
         usedWidth += currentNode.width;
-        if (usedWidth > maxWidth) {
+        if (usedWidth > maxWidth || lastHadLineEnd) {
           currentMaxHeight += currentNode.height;
           usedWidth = currentNode.width;
         } else {
           currentMaxHeight = Math.max(currentNode.height, currentMaxHeight);
         }
+        lastHadLineEnd = !!currentNode.lineEnd;
       }
       return {
         height: currentMaxHeight,
         width: usedWidth,
       };
     };
-    if (cell._offsets) {
-      usedWidth += cell._offsets.total;
+    if ((cell as any)._offsets) {
+      usedWidth += (cell as any)._offsets.total;
     }
-    if (cell._inlines && cell._inlines.length) {
-      return calcLines(cell._inlines);
-    } else if (cell.stack && cell.stack[0]) {
-      return cell.stack
-        .map((item) => {
-          return calcLines(item._inlines);
+    if ((cell as any)._inlines && (cell as any)._inlines.length) {
+      return calcLines((cell as any)._inlines);
+    } else if ((cell as any).stack && (cell as any).stack[0]) {
+      return (cell as any).stack
+        .map((item: TableCell) => {
+          return this.findInlineHeight(item, maxWidth);
         })
-        .reduce((prev, next) => {
+        .reduce((prev: ContextPageSize, next: ContextPageSize) => {
           return {
             height: prev.height + next.height,
             width: Math.max(prev.width + next.width),
           };
         });
-    } else if (cell.table) {
+    } else if ((cell as any).table) {
       let currentMaxHeight = 0;
-      for (const currentTableBodies of cell.table.body) {
-        const innerTableHeights = currentTableBodies.map((innerTableCell) => {
-          const findInlineHeight = this.findInlineHeight(
-            innerTableCell,
-            maxWidth,
-            usedWidth
-          );
+      for (const currentTableBodies of (cell as any).table.body) {
+        const innerTableHeights = currentTableBodies.map(
+          (innerTableCell: TableCell) => {
+            const findInlineHeight = this.findInlineHeight(
+              innerTableCell,
+              maxWidth,
+              usedWidth
+            );
 
-          usedWidth = findInlineHeight.width;
-          return findInlineHeight.height;
-        });
+            usedWidth = findInlineHeight.width;
+            return findInlineHeight.height;
+          }
+        );
         currentMaxHeight = Math.max(...innerTableHeights, currentMaxHeight);
       }
       return {
         height: currentMaxHeight,
         width: usedWidth,
       };
-    } else if (cell._height) {
-      usedWidth += cell._width;
+    } else if ((cell as any)._height) {
+      usedWidth += (cell as any)._width;
       return {
-        height: cell._height,
+        height: (cell as any)._height,
         width: usedWidth,
       };
     }
@@ -143,38 +157,42 @@ export class PdfService {
 
   noBorderTable(color: string): any {
     return {
-      hLineWidth: function (i, node) {
+      hLineWidth: function (i: number, node: ContentTable) {
         return 0;
       },
-      vLineWidth: function (i, node) {
+      vLineWidth: function (i: number, node: ContentTable) {
         return 0;
       },
-      // hLineColor: function (i, node) {
+      // hLineColor: function (i: number, node: ContentTable) {
       //   return i === 0 || i === node.table.body.length ? 'black' : 'gray';
       // },
-      // vLineColor: function (i, node) {
+      // vLineColor: function (i: number, node: ContentTable) {
       //   return i === 0 || i === node.table.widths.length ? 'black' : 'gray';
       // },
-      // hLineStyle: function (i, node) {
+      // hLineStyle: function (i: number, node: ContentTable) {
       //   return { dash: { length: 10, space: 4 } };
       // },
-      // vLineStyle: function (i, node) {
+      // vLineStyle: function (i: number, node: ContentTable) {
       //   return { dash: { length: 10, space: 4 } };
       // },
-      paddingLeft: function (i, node) {
+      paddingLeft: function (i: number, node: ContentTable) {
         return 10;
       },
-      paddingRight: function (i, node) {
+      paddingRight: function (i: number, node: ContentTable) {
         return 10;
       },
-      paddingTop: (i: number, node: any) => {
+      paddingTop: (i: number, node: ContentTable) => {
         this.applyVerticalAlignment(node, i, 'center');
         return i == 0 ? 10 : 0;
       },
-      paddingBottom: function (i, node) {
+      paddingBottom: function (i: number, node: ContentTable) {
         return i == node.table.body.length - 1 ? 10 : 0;
       },
-      fillColor: function (rowIndex, node, columnIndex) {
+      fillColor: function (
+        rowIndex: number,
+        node: ContentTable,
+        columnIndex: number
+      ) {
         return color;
       },
     };
@@ -182,33 +200,37 @@ export class PdfService {
 
   noSideBorderTable(tableColor: string, lineColor: string = 'black'): any {
     return {
-      paddingLeft: function (i, node) {
+      paddingLeft: function (i: number, node: ContentTable) {
         return 10;
       },
-      paddingRight: function (i, node) {
+      paddingRight: function (i: number, node: ContentTable) {
         return 10;
       },
-      paddingTop: (i: number, node: any) => {
+      paddingTop: (i: number, node: ContentTable) => {
         this.applyVerticalAlignment(node, i, 'center');
         return 3;
       },
-      paddingBottom: function (i, node) {
+      paddingBottom: function (i: number, node: ContentTable) {
         return 3;
       },
-      hLineColor: function (i, node) {
+      hLineColor: function (i: number, node: ContentTable) {
         return lineColor;
       },
-      vLineColor: function (i, node) {
+      vLineColor: function (i: number, node: ContentTable) {
         return lineColor;
       },
-      fillColor: function (rowIndex, node, columnIndex) {
+      fillColor: function (
+        rowIndex: number,
+        node: ContentTable,
+        columnIndex: number
+      ) {
         return tableColor;
       },
     };
   }
 
   async generate(
-    invoice: any,
+    invoice: Invoice,
     preview = false,
     openPdf = false
   ): Promise<void> {
@@ -228,7 +250,7 @@ export class PdfService {
     pdf.pageMargins([30, 30, 30, 30]);
 
     // background definition
-    pdf.background(function (currentPage, pageSize) {
+    pdf.background(function (currentPage: number, pageSize: ContextPageSize) {
       return [
         {
           canvas: [
@@ -329,54 +351,56 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
+    const author = invoice.author
+      ? this.userService.idToUser(invoice.author)
+      : new User();
+
+    /* eslint-disable @typescript-eslint/indent*/
     pdf.add({
       text:
         'Nós da Nortan nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
-        this.userService.idToUser(invoice.author).article +
+        author.article +
         ' Associad' +
-        this.userService.idToUser(invoice.author).article +
+        author.article +
         ' Nortan ' +
-        this.userService.idToName(invoice.author) +
+        author.fullName +
         ', ' +
-        invoice.author.expertise[
-          invoice.author.expertise.findIndex(
-            (el) => el.coordination == invoice.coordination.split(' ')[0]
-          )
-        ]?.shortExpertise +
+        (author.expertise
+          ? author.expertise[
+              author.expertise.findIndex(
+                (el) => el.coordination == invoice.coordination.split(' ')[0]
+              )
+            ]?.shortExpertise
+          : '') +
         ', será ' +
-        (this.userService.idToUser(invoice.author).article == 'a'
-          ? 'sua'
-          : 'seu') +
+        (author.article == 'a' ? 'sua' : 'seu') +
         ' Consulto' +
-        (this.userService.idToUser(invoice.author).article == 'a'
-          ? 'ra'
-          : 'r') +
+        (author.article == 'a' ? 'ra' : 'r') +
         ' Técnic' +
-        (this.userService.idToUser(invoice.author).article == 'a' ? 'a' : 'o') +
+        (author.article == 'a' ? 'a' : 'o') +
         ' Exclusiv' +
-        (this.userService.idToUser(invoice.author).article == 'a' ? 'a' : 'o') +
+        (author.article == 'a' ? 'a' : 'o') +
         ' e gesto' +
-        (this.userService.idToUser(invoice.author).article == 'a'
-          ? 'ra'
-          : 'r') +
+        (author.article == 'a' ? 'ra' : 'r') +
         ' do contrato, te guiando para solução mais eficiente.',
       alignment: 'center',
       style: 'insideText',
     });
+    /* eslint-enable @typescript-eslint/indent*/
 
     // Body - Author
     pdf.add(pdf.ln(1));
 
+    /* eslint-disable @typescript-eslint/indent*/
     pdf.add({
       columns: [
         {
           width: 70,
           columns: [
             await new Img(
-              this.userService.idToUser(invoice.author).profilePicture ==
-              undefined
+              author.profilePicture == undefined
                 ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
-                : this.userService.idToUser(invoice.author).profilePicture
+                : author.profilePicture
             )
               .width(60)
               .height(60)
@@ -391,23 +415,25 @@ export class PdfService {
         {
           width: '*',
           text:
-            this.userService.idToShortName(invoice.author) +
+            this.userService.idToShortName(author) +
             ' é ' +
-            this.userService.idToUser(invoice.author).level +
+            author.level +
             ', ' +
-            this.userService.idToUser(invoice.author).expertise[
-              this.userService
-                .idToUser(invoice.author)
-                .expertise.findIndex(
-                  (el) => el.coordination == invoice.coordination.split(' ')[0]
-                )
-            ]?.text,
+            (author.expertise
+              ? author.expertise[
+                  author.expertise.findIndex(
+                    (el) =>
+                      el.coordination == invoice.coordination.split(' ')[0]
+                  )
+                ]?.text
+              : ''),
           alignment: 'left',
           fontSize: 8,
         },
       ],
       style: 'insideText',
     });
+    /* eslint-enable @typescript-eslint/indent*/
 
     // Body - Team
     pdf.add(pdf.ln(1));
@@ -420,49 +446,58 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    for (let [index, member] of invoice.team.entries()) {
-      const user = this.userService.idToUser(member.user);
-      pdf.add({
-        columns: [
-          {
-            width: 70,
-            columns: [
-              await new Img(
-                user.profilePicture == undefined
-                  ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
-                  : user.profilePicture
-              )
-                .width(60)
-                .height(60)
-                .build(),
-              {
-                svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-                fit: [62, 62],
-                relativePosition: { x: -61, y: -1 },
-              },
-            ],
-          },
-          {
-            width: '*',
-            text:
-              user.exibitionName +
-              ' é ' +
-              user.level +
-              ', ' +
-              user.expertise[
-                user.expertise.findIndex(
-                  (el) => el.coordination == member.coordination.split(' ')[0]
+    if (invoice.team) {
+      for (const [index, member] of invoice.team.entries()) {
+        const user = member.user
+          ? this.userService.idToUser(member.user)
+          : new User();
+        /* eslint-disable @typescript-eslint/indent*/
+        pdf.add({
+          columns: [
+            {
+              width: 70,
+              columns: [
+                await new Img(
+                  user.profilePicture == undefined
+                    ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
+                    : user.profilePicture
                 )
-              ]?.text,
-            alignment: 'left',
-            fontSize: 8,
-          },
-        ],
-        pageBreak: index == 5 ? 'after' : 'none',
-        style: 'insideText',
-      });
+                  .width(60)
+                  .height(60)
+                  .build(),
+                {
+                  svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                  fit: [62, 62],
+                  relativePosition: { x: -61, y: -1 },
+                },
+              ],
+            },
+            {
+              width: '*',
+              text:
+                user.exibitionName +
+                ' é ' +
+                user.level +
+                ', ' +
+                (user.expertise
+                  ? user.expertise[
+                      user.expertise.findIndex(
+                        (el) =>
+                          el.coordination == member.coordination.split(' ')[0]
+                      )
+                    ]?.text
+                  : ''),
+              alignment: 'left',
+              fontSize: 8,
+            },
+          ],
+          pageBreak: index == 5 ? 'after' : 'none',
+          style: 'insideText',
+        });
+        /* eslint-enable @typescript-eslint/indent*/
 
-      pdf.add(pdf.ln(1));
+        pdf.add(pdf.ln(1));
+      }
     }
 
     // Body - Teams - Support
@@ -491,7 +526,11 @@ export class PdfService {
           fontSize: 8,
         },
       ],
-      pageBreak: invoice.team.length == 5 ? 'after' : 'none',
+      pageBreak: invoice.team
+        ? invoice.team.length == 5
+          ? 'after'
+          : 'none'
+        : 'none',
       style: 'insideText',
     });
 
@@ -527,10 +566,11 @@ export class PdfService {
           color: '#79BA9E',
         },
       ],
-      pageBreak:
-        invoice.team.length == 3 || invoice.team.length == 4
+      pageBreak: invoice.team
+        ? invoice.team.length == 3 || invoice.team.length == 4
           ? 'before'
-          : 'none',
+          : 'none'
+        : 'none',
     });
 
     pdf.add(pdf.ln(1));
@@ -553,13 +593,17 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
+    /* eslint-disable @typescript-eslint/indent*/
     pdf.add({
       text:
         invoice.contractorFullName != undefined
           ? invoice.contractorFullName
-          : this.contractorService.idToName(invoice.contractor),
+          : invoice.contractor
+          ? this.contractorService.idToName(invoice.contractor)
+          : '',
       style: 'insideText',
     });
+    /* eslint-enable @typescript-eslint/indent*/
 
     pdf.add(pdf.ln(1));
 
@@ -571,10 +615,10 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    let subject = [];
+    const subject = [];
     if (invoice.subject != undefined) {
       for (let t of invoice.subject.split('*')) {
-        let bold = t.charAt(0) == '!';
+        const bold = t.charAt(0) == '!';
         if (bold) t = t.slice(1);
         subject.push({
           text: t,
@@ -586,7 +630,11 @@ export class PdfService {
       text: subject,
       style: 'insideText',
       alignment: 'justify',
-      pageBreak: invoice.team.length > 2 ? 'none' : 'after',
+      pageBreak: invoice.team
+        ? invoice.team.length > 2
+          ? 'none'
+          : 'after'
+        : 'after',
     });
 
     // Body - Invoice Info Early Stage - Page 2
@@ -598,9 +646,14 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    const laep = invoice.laep.map((activity, index) => {
-      return activity + (index == invoice.laep.length - 1 ? '.' : ';');
-    });
+    const leapLength = invoice.laep ? invoice.laep.length : 0;
+    /* eslint-disable @typescript-eslint/indent*/
+    const laep = invoice.laep
+      ? invoice.laep.map((activity, index) => {
+          return activity + (index == leapLength - 1 ? '.' : ';');
+        })
+      : [];
+    /* eslint-enable @typescript-eslint/indent*/
     pdf.add({
       style: 'insideText',
       table: {
@@ -610,7 +663,11 @@ export class PdfService {
           [{ text: 'ETAPA PRELIMINAR' }],
           [
             {
-              text: invoice.peep?.length > 0 ? '(' + invoice.peep + ')' : '',
+              text: invoice.peep
+                ? invoice.peep.length > 0
+                  ? '(' + invoice.peep + ')'
+                  : ''
+                : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -636,9 +693,14 @@ export class PdfService {
     // Body - Invoice Info Mid Stage - Page 2
     pdf.add(pdf.ln(1));
 
-    const laee = invoice.laee.map((activity, index) => {
-      return activity + (index == invoice.laee.length - 1 ? '.' : ';');
-    });
+    const laeeLength = invoice.laee ? invoice.laee.length : 0;
+    /* eslint-disable @typescript-eslint/indent*/
+    const laee = invoice.laee
+      ? invoice.laee.map((activity, index) => {
+          return activity + (index == laeeLength - 1 ? '.' : ';');
+        })
+      : [];
+    /* eslint-enable @typescript-eslint/indent*/
     pdf.add({
       style: 'insideText',
       table: {
@@ -648,7 +710,11 @@ export class PdfService {
           [{ text: 'ETAPA EXECUTIVA' }],
           [
             {
-              text: invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '',
+              text: invoice.peee
+                ? invoice.peee?.length > 0
+                  ? '(' + invoice.peee + ')'
+                  : ''
+                : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -673,15 +739,20 @@ export class PdfService {
 
     // Body - Invoice Info Final Stage - Page 2
     if (
-      invoice.peec?.length > 0 ||
-      invoice.laec.length > 0 ||
-      invoice.dec?.length > 0
+      (invoice.peec && invoice.peec?.length > 0) ||
+      (invoice.laec && invoice.laec.length > 0) ||
+      (invoice.dec && invoice.dec?.length > 0)
     ) {
       pdf.add(pdf.ln(1));
 
-      const laec = invoice.laec.map((activity, index) => {
-        return activity + (index == invoice.laec.length - 1 ? '.' : ';');
-      });
+      const laecLength = invoice.laec ? invoice.laec.length : 0;
+      /* eslint-disable @typescript-eslint/indent*/
+      const laec = invoice.laec
+        ? invoice.laec.map((activity, index) => {
+            return activity + (index == laecLength - 1 ? '.' : ';');
+          })
+        : [];
+      /* eslint-enable @typescript-eslint/indent*/
       pdf.add({
         style: 'insideText',
         table: {
@@ -691,7 +762,11 @@ export class PdfService {
             [{ text: 'ETAPA COMPLEMENTAR' }],
             [
               {
-                text: invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '',
+                text: invoice.peec
+                  ? invoice.peec?.length > 0
+                    ? '(' + invoice.peec + ')'
+                    : ''
+                  : '',
                 fontSize: 8,
                 alignment: 'justify',
               },
@@ -821,8 +896,8 @@ export class PdfService {
       ];
     };
 
-    let products = invoice.products.map((product) => {
-      let name: any[] = [
+    const products = invoice.products.map((product) => {
+      const name: any[] = [
         {
           fontSize: 8,
           text: product.name,
@@ -877,7 +952,7 @@ export class PdfService {
     });
     // if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
     const footer = () => {
-      let result: any[] = [];
+      const result: any[] = [];
       if (invoice.discount) {
         const discount: any[] = [
           {
@@ -1045,16 +1120,18 @@ export class PdfService {
     });
 
     if (invoice.materials.length > 0) {
-      let materials = invoice.materials.map((material) => {
+      const materials = invoice.materials.map((material) => {
         if (invoice.materialListType == '1')
           return [
             {
               text: material.name,
+              bold: false,
               alignment: 'center',
               border: [false, true, true, true],
             },
             {
               text: material.amount,
+              bold: false,
               alignment: 'center',
               border: [true, true, false, true],
             },
@@ -1062,21 +1139,25 @@ export class PdfService {
         return [
           {
             text: material.name,
+            bold: false,
             alignment: 'center',
             border: [false, true, true, true],
           },
           {
             text: material.amount,
+            bold: false,
             alignment: 'center',
             border: [true, true, true, true],
           },
           {
             text: material.value,
+            bold: false,
             alignment: 'center',
             border: [true, true, true, true],
           },
           {
             text: 'R$ ' + material.total,
+            bold: false,
             alignment: 'center',
             border: [true, true, false, true],
           },
@@ -1241,7 +1322,7 @@ export class PdfService {
       stack: [
         { text: 'Mais informações:', bold: true, color: '#79BA9E' },
         {
-          text: invoice.author.emailNortan + ' • ' + invoice.author.phone,
+          text: author.emailNortan + ' • ' + author.phone,
           fontSize: 10,
         },
         {

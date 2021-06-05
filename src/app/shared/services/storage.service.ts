@@ -5,11 +5,12 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
-import { takeUntil, switchMap, take } from 'rxjs/operators';
+import { takeUntil, switchMap, take, filter } from 'rxjs/operators';
 import { UserService } from './user.service';
-import { StorageProvider } from '../../@theme/components/file-uploader/file-uploader.model';
+import { StorageProvider } from 'app/@theme/components/file-uploader/file-uploader.model';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { environment } from '../../../environments/environment';
-import { UploadedFile } from '../../@theme/components/file-uploader/file-uploader.service';
+import { User } from '../../../../backend/src/models/user';
 
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
@@ -20,7 +21,7 @@ export interface FilesUploadMetadata {
   providedIn: 'root',
 })
 export class StorageService implements OnDestroy {
-  currentUser = {};
+  currentUser = new User();
   destroy$: Subject<null> = new Subject();
 
   constructor(
@@ -46,14 +47,16 @@ export class StorageService implements OnDestroy {
   ): FilesUploadMetadata {
     switch (provider) {
       case StorageProvider.FIREBASE: {
-        const filePath = `${mediaFolderPath}/${this.currentUser['_id']}`;
+        const filePath = `${mediaFolderPath}/${this.currentUser._id}`;
         const uploadTask: AngularFireUploadTask = this.storage.upload(
           filePath,
           fileToUpload
         );
         return {
           downloadUrl$: this.getDownloadUrl$(uploadTask, filePath),
-          uploadProgress$: uploadTask.percentageChanges(),
+          uploadProgress$: uploadTask
+            .percentageChanges()
+            .pipe(filter((p): p is number => p != undefined)),
         };
       }
       case StorageProvider.ONEDRIVE: {
@@ -72,7 +75,7 @@ export class StorageService implements OnDestroy {
               { headers: { 'Content-Type': fileToUpload.type } }
             )
             .pipe(take(1))
-            .subscribe((res) => {
+            .subscribe((res: any) => {
               fileComplete$.next(100);
               downloadUrl$.next({
                 name: res['name'],

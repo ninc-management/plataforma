@@ -6,6 +6,7 @@
 
 import { Component, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { NbComponentStatus } from '@nebular/theme';
 
 @Component({
   selector: 'nb-upload-queue-item',
@@ -23,9 +24,9 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class NbUploadQueueItemComponent {
   @Input()
-  item: BehaviorSubject<any>;
+  item = new BehaviorSubject<any>('');
 
-  get status(): string {
+  get status(): NbComponentStatus {
     if (this.item.getValue().progress <= 25) {
       return 'danger';
     }

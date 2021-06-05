@@ -80,6 +80,13 @@ const PIPES = [
   NumberWithCommasPipe,
 ];
 
+const themeProviders = NbThemeModule.forRoot(
+  {
+    name: 'default',
+  },
+  [DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME]
+).providers;
+
 @NgModule({
   imports: [CommonModule, MatRippleModule, ...NB_MODULES],
   exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
@@ -92,14 +99,7 @@ export class ThemeModule {
   static forRoot(): ModuleWithProviders<ThemeModule> {
     return {
       ngModule: ThemeModule,
-      providers: [
-        ...NbThemeModule.forRoot(
-          {
-            name: 'default',
-          },
-          [DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME]
-        ).providers,
-      ],
+      providers: [...(themeProviders ? themeProviders : [])],
     };
   }
 }

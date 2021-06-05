@@ -15,20 +15,19 @@ import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { parseISO } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
-import { BaseDialogComponent } from '../../../shared/components/base-dialog/base-dialog.component';
-import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { DepartmentService } from '../../../shared/services/department.service';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { DepartmentService } from 'app/shared/services/department.service';
 import {
   InvoiceService,
   INVOICE_STATOOS,
-} from '../../../shared/services/invoice.service';
-import { ContractService } from '../../../shared/services/contract.service';
-import { ContractorService } from '../../../shared/services/contractor.service';
-import { StringUtilService } from '../../../shared/services/string-util.service';
-import { UserService } from '../../../shared/services/user.service';
+} from 'app/shared/services/invoice.service';
+import { ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import {
   Invoice,
@@ -37,9 +36,9 @@ import {
   InvoiceProduct,
   InvoiceStage,
 } from '../../../../../backend/src/models/invoice';
-import * as invoice_validation from '../../../shared/invoice-validation.json';
 import { User } from '../../../../../backend/src/models/user';
 import { Contractor } from '../../../../../backend/src/models/contractor';
+import * as invoice_validation from 'app/shared/invoice-validation.json';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -160,16 +159,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       );
       this.revision += 1;
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
-      if (
-        this.tempInvoice.created !== undefined &&
-        typeof this.tempInvoice.created !== 'object'
-      )
-        this.tempInvoice.created = parseISO(this.tempInvoice.created);
-      if (
-        this.tempInvoice.lastUpdate !== undefined &&
-        typeof this.tempInvoice.lastUpdate !== 'object'
-      )
-        this.tempInvoice.lastUpdate = parseISO(this.tempInvoice.lastUpdate);
       if (this.tempInvoice.materialListType == undefined)
         this.tempInvoice.materialListType = '1';
       if (this.tempInvoice.productListType == undefined)
@@ -363,7 +352,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateUserCoordinations(): string[] {
     this.teamMember.coordination = '';
-    return this.departmentService.userCoordinations(this.teamMember.user);
+    if (this.teamMember.user)
+      return this.departmentService.userCoordinations(this.teamMember.user);
+    return [];
   }
 
   /* eslint-disable @typescript-eslint/indent */
@@ -436,7 +427,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  tooltipText(contractorItem: Contractor | string | undefined): string {
+  tooltipText = (contractorItem: Contractor | string | undefined): string => {
     if (contractorItem === undefined) return '';
     return (
       `CPF/CNPJ: ` +
@@ -446,7 +437,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       `\nEndereço: ` +
       this.contractorService.idToContractor(contractorItem).address
     );
-  }
+  };
 
   fixHours(): void {
     const currentTime = new Date();

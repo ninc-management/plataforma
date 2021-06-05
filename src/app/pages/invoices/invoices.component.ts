@@ -6,7 +6,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
@@ -14,8 +14,8 @@ import { Subject, combineLatest } from 'rxjs';
 import {
   InvoiceService,
   INVOICE_STATOOS,
-} from '../../shared/services/invoice.service';
-import { ContractorService } from '../../shared/services/contractor.service';
+} from 'app/shared/services/invoice.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -27,7 +27,7 @@ import { Invoice } from '../../../../backend/src/models/invoice';
   styleUrls: ['./invoices.component.scss'],
 })
 export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('smartTable', { read: ElementRef }) tableRef;
+  @ViewChild('smartTable', { read: ElementRef }) tableRef!: ElementRef;
   private destroy$ = new Subject<void>();
   invoices: any[] = [];
   searchQuery = '';
@@ -113,8 +113,8 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
             ],
           },
         },
-        filterFunction(cell: any, search?: string): boolean {
-          if (search.includes(cell)) return true;
+        filterFunction(cell: string, search?: string): boolean {
+          if (search && search.includes(cell)) return true;
           return false;
         },
       },
@@ -169,19 +169,13 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe(([invoices, contractors, user]) => {
         if (invoices.length > 0 && contractors.length > 0) {
-          this.invoices = invoices.map((invoice: any) => {
-            invoice.author = this.userService.idToUser(invoice.author);
-            invoice.contractor = this.contractorService.idToContractor(
-              invoice.contractor
-            );
-            invoice.team.map((member) => {
-              member.user = this.userService.idToUser(member.user);
-              return member;
-            });
-            invoice.fullName = invoice.author.exibitionName
-              ? invoice.author.exibitionName
-              : invoice.author.fullName;
-            invoice.contractorName = invoice.contractor.fullName;
+          this.invoices = invoices.map((invoice: Invoice) => {
+            if (invoice.author)
+              invoice.fullName = this.userService.idToShortName(invoice.author);
+            if (invoice.contractor)
+              invoice.contractorName = this.contractorService.idToName(
+                invoice.contractor
+              );
             invoice.role = this.invoiceService.role(invoice, user);
             return invoice;
           });
@@ -218,7 +212,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  invoiceDialog(event: { data: Invoice }): void {
+  invoiceDialog(event: { data?: Invoice }): void {
     this.dialogService
       .open(InvoiceDialogComponent, {
         context: {
@@ -238,7 +232,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((invoice) => invoice && this.invoiceDialog({ data: invoice }));
   }
 
-  async generatePDF(event): Promise<void> {
+  async generatePDF(event: { data: Invoice }): Promise<void> {
     this.pdf.generate(event.data);
   }
 
@@ -246,7 +240,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     return window.innerWidth;
   }
 
-  statusColor(status: string): string {
+  statusColor(status: string): NbComponentStatus {
     switch (status) {
       case 'Em análise':
         return 'warning';
@@ -254,12 +248,14 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         return 'success';
       case 'Negado':
         return 'danger';
+      default:
+        return 'warning';
     }
   }
 
-  valueSort(direction: any, a: string, b: string): number {
-    let first = +a.replace(/[,.]/g, '');
-    let second = +b.replace(/[,.]/g, '');
+  valueSort(direction: number, a: string, b: string): number {
+    const first = +a.replace(/[,.]/g, '');
+    const second = +b.replace(/[,.]/g, '');
 
     if (first < second) {
       return -1 * direction;
@@ -270,9 +266,15 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     return 0;
   }
 
-  codeSort(direction: any, a: string, b: string): number {
-    let first = +a.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
-    let second = +b.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
+  codeSort(direction: number, a: string, b: string): number {
+    let first = 0;
+    let second = 0;
+    let tmp = a.match(/-(\d+)\//g);
+    if (tmp) tmp = tmp[0].match(/\d+/g);
+    if (tmp) first = +tmp[0];
+    tmp = b.match(/-(\d+)\//g);
+    if (tmp) tmp = tmp[0].match(/\d+/g);
+    if (tmp) second = +tmp[0];
 
     if (first < second) {
       return -1 * direction;

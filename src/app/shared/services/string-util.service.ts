@@ -27,8 +27,8 @@ export class StringUtilService {
     );
   }
 
-  moneyToNumber(money: string): number {
-    if (!money) return 0;
+  moneyToNumber(money: string | undefined): number {
+    if (money === undefined || money === '') return 0;
     const result = money.replace('.', '').replace(',', '.');
     return +result;
   }
@@ -59,18 +59,22 @@ export class StringUtilService {
     return Math.round((num + Number.EPSILON) * 100) / 100;
   }
 
-  toMutiplyPercentage(percentage: string): number {
+  toMutiplyPercentage(percentage: string | undefined): number {
     if (!percentage || percentage.length == 0) return 1;
     return (100 - this.numberToNumber(percentage)) / 100;
   }
 
-  toPercentage(value: string, base: string, decimals = 2): string {
+  toPercentage(
+    value: string | undefined,
+    base: string | undefined,
+    decimals = 2
+  ): string {
     if (
+      value == undefined ||
+      base == undefined ||
       +base === 0 ||
       value === '0,00' ||
-      base === '0,00' ||
-      value == undefined ||
-      base == undefined
+      base === '0,00'
     )
       return '0,00%';
     return (
@@ -81,8 +85,11 @@ export class StringUtilService {
     );
   }
 
-  toPercentageNumber(value: number, base: number): string {
-    if (+base === 0 || value == undefined || base == undefined) return '0,00%';
+  toPercentageNumber(
+    value: number | undefined,
+    base: number | undefined
+  ): string {
+    if (base == undefined || +base === 0 || value == undefined) return '0,00%';
     return this.numberToMoney((value / base) * 100) + '%';
   }
 

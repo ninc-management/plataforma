@@ -11,7 +11,7 @@ export class ConfirmationDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() question: string;
+  @Input() question = '';
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -24,7 +24,7 @@ export class ConfirmationDialogComponent
     super.ngOnInit();
   }
 
-  dismiss(response: boolean | any = ''): void {
+  dismiss(response: boolean): void {
     this.derivedRef.close(response);
   }
 }

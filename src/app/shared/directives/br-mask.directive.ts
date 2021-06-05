@@ -45,9 +45,13 @@ export class BrMaskDirective implements OnInit {
    * @constant {string} value
    */
   @HostListener('keyup', ['$event'])
-  inputKeyup(event: any): void {
-    const value: string = this.returnValue(event.target.value);
-    this.setValue(value);
+  inputKeyup(event: KeyboardEvent): void {
+    if (event.target) {
+      const value: string = this.returnValue(
+        (event.target as HTMLInputElement).value
+      );
+      this.setValue(value);
+    }
   }
   // @HostListener('ngModelChange', ['$event']) onNgModelChange(e: any) {
   //   const value: string = this.returnValue(e);
@@ -246,7 +250,7 @@ export class BrMaskDirective implements OnInit {
     }
   }
 
-  applyCpfMask(formValue: string) {
+  applyCpfMask(formValue: string): string {
     formValue = formValue.replace(/\D/gi, '');
     formValue = formValue.replace(/(\d{3})(\d)/gi, '$1.$2');
     formValue = formValue.replace(/(\d{3})(\d)/gi, '$1.$2');
@@ -254,7 +258,7 @@ export class BrMaskDirective implements OnInit {
     return formValue;
   }
 
-  applyCnpjMask(formValue: string) {
+  applyCnpjMask(formValue: string): string {
     formValue = formValue.replace(/\D/gi, '');
     formValue = formValue.replace(/(\d{2})(\d)/gi, '$1.$2');
     formValue = formValue.replace(/(\d{3})(\d)/gi, '$1.$2');
@@ -366,7 +370,7 @@ export class BrMaskDirective implements OnInit {
    * @returns {string} string money
    */
   private moneyMask(value: any, config: BrMaskModel): string {
-    const decimal = config.decimal || this.brmasker.decimal;
+    const decimal = config.decimal || this.brmasker.decimal || 2;
 
     value = value
       .replace(/\D/gi, '')
@@ -423,11 +427,14 @@ export class BrMaskDirective implements OnInit {
    */
   private usingSpecialCharacters(
     field: string,
-    mask: string,
-    size: number
+    mask?: string,
+    size?: number
   ): string {
     if (!size) {
       size = 99999999999;
+    }
+    if (!mask) {
+      mask = '';
     }
     let boleanoMascara;
     const exp = /\-|\.|\,| /gi;
@@ -460,7 +467,7 @@ export class BrMaskDirective implements OnInit {
    * @param {string} value
    */
   private thousand(value: string): string {
-    let val = value.replace(/\D/gi, '');
+    const val = value.replace(/\D/gi, '');
     const reverse = val.toString().split('').reverse().join('');
     const thousands = reverse.match(/\d{1,3}/g);
     if (thousands) {
@@ -470,6 +477,7 @@ export class BrMaskDirective implements OnInit {
         .reverse()
         .join('');
     }
+    return value;
   }
 
   /**
@@ -481,9 +489,12 @@ export class BrMaskDirective implements OnInit {
    * @param {number} size
    * @returns {string} value
    */
-  private formatField(field: string, mask: string, size: number): any {
+  private formatField(field: string, mask?: string, size?: number): any {
     if (!size) {
       size = 99999999999;
+    }
+    if (!mask) {
+      mask = '';
     }
     let boleanoMascara;
     const exp = /\_|\-|\.|\/|\(|\)|\,|\*|\+|\@|\#|\$|\&|\%|\:| /gi;

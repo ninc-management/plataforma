@@ -1,30 +1,36 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { cloneDeep } from 'lodash';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { DepartmentService } from 'app/shared/services/department.service';
+import { UtilsService } from 'app/shared/services/utils.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 import {
   ContractService,
   EXPENSE_TYPES,
   SPLIT_TYPES,
-} from '../../../shared/services/contract.service';
-import { StringUtilService } from '../../../shared/services/string-util.service';
+} from 'app/shared/services/contract.service';
 import {
   UserService,
   CONTRACT_BALANCE,
-} from '../../../shared/services/user.service';
-import { DepartmentService } from '../../../shared/services/department.service';
-import { UtilsService } from '../../../shared/services/utils.service';
+} from 'app/shared/services/user.service';
 import {
   ContractDialogComponent,
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
-import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
-import { ContractExpense } from '../../../../../backend/src/models/contract';
-import * as contract_validation from '../../../shared/contract-validation.json';
-import * as _ from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import {
+  ContractExpense,
+  Contract,
+} from '../../../../../backend/src/models/contract';
+import { User } from '../../../../../backend/src/models/user';
+import * as contract_validation from 'app/shared/contract-validation.json';
 
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -33,53 +39,68 @@ export enum CONTRACT_STATOOS {
   ARQUIVADO = 'Arquivado',
 }
 
+interface ExpenseTypesSum {
+  type: string;
+  value: string;
+}
+
+interface ExpenseSourceSum {
+  user: string;
+  value: string;
+}
+
 @Component({
   selector: 'ngx-contract-item',
   templateUrl: './contract-item.component.html',
   styleUrls: ['./contract-item.component.scss'],
 })
 export class ContractItemComponent implements OnInit {
-  @Input() iContract: any;
-  @Input() index: number;
+  @Input() iContract!: Contract;
+  @Input() index?: number;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  contract: any;
-  contractNumber: number;
+  contract: Contract = new Contract();
   types = ComponentTypes;
   today = new Date();
-  todayDate = format(this.today, 'dd/MM/yyyy');
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
-  USER_COORDINATIONS = [];
-  paymentIcon = {
-    icon: 'dollar-sign',
-    pack: 'fa',
+  USER_COORDINATIONS = [] as string[];
+  options = {
+    liquid: '0,00',
+    paid: '0,00',
+    hasISS: false,
+    interest: 0,
+    notaFiscal: '0',
+    nortanPercentage: '0',
   };
-  receiptIcon = {
-    icon: 'receipt',
-    pack: 'fac',
-  };
-  expenseIcon = {
-    icon: 'minus',
-    pack: 'fac',
-  };
-  scaleIcon = {
-    icon: 'scale',
-    pack: 'fac',
-  };
-  teamTotal = {
-    grossValue: '0,00',
-    netValue: '0,00',
-    distribution: '0,00',
-  };
+
+  get invoiceAdministration(): string {
+    if (this.contract.invoice)
+      return this.invoiceService.idToInvoice(this.contract.invoice)
+        .administration;
+    return '';
+  }
+
+  get invoiceCoordination(): string {
+    if (this.contract.invoice)
+      return this.invoiceService.idToInvoice(this.contract.invoice)
+        .coordination;
+    return '';
+  }
+
+  get invoiceDepartment(): string {
+    if (this.contract.invoice)
+      return this.invoiceService.idToInvoice(this.contract.invoice).department;
+    return '';
+  }
 
   teamMember: any = {};
-  userSearch: string;
-  userData: CompleterData;
+  userSearch = '';
+  userData: CompleterData = this.completerService.local([]);
 
   searchQuery = '';
-  get filtredExpenses(): any[] {
+  get filtredExpenses(): ContractExpense[] {
     if (this.searchQuery !== '')
       return this.contract.expenses.filter((expense) => {
         return (
@@ -90,20 +111,25 @@ export class ContractItemComponent implements OnInit {
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          expense.author
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          expense.source
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          expense.coordination
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          expense.created.toLowerCase().includes(this.searchQuery.toLowerCase())
+          (expense.author &&
+            this.userService
+              .idToName(expense.author)
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          (expense.source &&
+            this.userService
+              .idToName(expense.source)
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          format(expense.created, 'dd/MM/yyyy').includes(
+            this.searchQuery.toLowerCase()
+          )
         );
       });
     return this.contract.expenses;
   }
+
+  source: LocalDataSource = new LocalDataSource();
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhuma despesa para o filtro selecionado.',
@@ -183,11 +209,33 @@ export class ContractItemComponent implements OnInit {
     },
   };
 
-  source: LocalDataSource = new LocalDataSource();
+  paymentIcon = {
+    icon: 'dollar-sign',
+    pack: 'fa',
+  };
+  receiptIcon = {
+    icon: 'receipt',
+    pack: 'fac',
+  };
+  expenseIcon = {
+    icon: 'minus',
+    pack: 'fac',
+  };
+  scaleIcon = {
+    icon: 'scale',
+    pack: 'fac',
+  };
+  teamTotal = {
+    grossValue: '0,00',
+    netValue: '0,00',
+    distribution: '0,00',
+  };
 
   constructor(
     private dialogService: NbDialogService,
     private completerService: CompleterService,
+    private invoiceService: InvoiceService,
+    private contractorService: ContractorService,
     public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService,
@@ -196,53 +244,52 @@ export class ContractItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.contract = _.cloneDeep(this.iContract);
+    this.contract = cloneDeep(this.iContract);
     if (this.contract.ISS) {
       if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0)
-        this.contract.hasISS = false;
-      else this.contract.hasISS = true;
+        this.options.hasISS = false;
+      else this.options.hasISS = true;
     } else {
       this.contract.ISS = '0,00';
-      this.contract.hasISS = false;
+      this.options.hasISS = false;
     }
-    this.contract.interest = this.contract.receipts.length;
-    this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.contract.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    this.options.interest = this.contract.receipts.length;
+    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
     this.calculatePaidValue();
     this.calculateBalance();
     if (
-      this.contract.created !== undefined &&
-      typeof this.contract.created !== 'object'
-    )
-      this.contract.created = parseISO(this.contract.created);
-    if (
-      this.contract.lastUpdate !== undefined &&
-      typeof this.contract.lastUpdate !== 'object'
+      this.contract.invoice &&
+      (!this.contract.team || this.contract.team?.length == 0)
     ) {
-      this.contract.lastUpdate = parseISO(this.contract.lastUpdate);
-    }
-    if (!this.contract.team || this.contract.team?.length == 0) {
-      this.contract.team = _.cloneDeep(this.contract.invoice.team);
-      this.contract.team = this.contract.team.map((member) => {
-        member.user = this.userService.idToUser(member.user);
-        return member;
-      });
-      this.contract.team.unshift({
-        user: this.contract.invoice.author,
-        coordination: this.contract.invoice.coordination,
-      });
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      if (invoice.team) {
+        this.contract.team = cloneDeep(invoice.team).map((member) => ({
+          user: member.user,
+          coordination: member.coordination,
+          distribution: '',
+          netValue: '0,00',
+          grossValue: '0,00',
+        }));
+        this.contract.team.unshift({
+          user: invoice.author,
+          coordination: invoice.coordination,
+          distribution: '',
+          netValue: '0,00',
+          grossValue: '0,00',
+        });
+      }
     } else {
       this.contract.team = this.contract.team.map((member, idx) => {
-        member.user = this.userService.idToUser(member.user);
         member.netValue = this.stringUtil.numberToMoney(
           this.stringUtil.moneyToNumber(this.contract.liquid) *
             (1 - this.stringUtil.toMutiplyPercentage(member.distribution))
         );
         member.grossValue = this.contractService.toGrossValue(
           member.netValue,
-          this.contract.notaFiscal,
-          this.contract.nortanPercentage
+          this.options.notaFiscal,
+          this.options.nortanPercentage
         );
         return member;
       });
@@ -259,12 +306,11 @@ export class ContractItemComponent implements OnInit {
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
     this.contract.lastUpdate = new Date();
-    this.iContract = _.cloneDeep(this.contract);
+    this.iContract = cloneDeep(this.contract);
     this.contractService.editContract(this.iContract);
-    this.contract.lastUpdate = format(this.contract.lastUpdate, 'dd/MM/yyyy');
   }
 
-  paymentDialog(index: number, componentType: ComponentTypes): void {
+  paymentDialog(componentType: ComponentTypes, index?: number): void {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     let title = '';
@@ -369,11 +415,11 @@ export class ContractItemComponent implements OnInit {
   }
 
   calculatePaidValue(): void {
-    this.contract.interest = this.contract.receipts.length;
-    this.contract.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.contract.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    this.options.interest = this.contract.receipts.length;
+    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
-    this.contract.paid = this.contractService.toNetValue(
+    this.options.paid = this.contractService.toNetValue(
       this.stringUtil.numberToMoney(
         this.contract.receipts.reduce((accumulator: number, recipt: any) => {
           if (recipt.paid)
@@ -382,12 +428,12 @@ export class ContractItemComponent implements OnInit {
           return accumulator;
         }, 0)
       ),
-      this.contract.notaFiscal,
-      this.contract.nortanPercentage
+      this.options.notaFiscal,
+      this.options.nortanPercentage
     );
     this.contract.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(this.contract.liquid) -
-        this.stringUtil.moneyToNumber(this.contract.paid)
+        this.stringUtil.moneyToNumber(this.options.paid)
     );
   }
 
@@ -412,7 +458,7 @@ export class ContractItemComponent implements OnInit {
     );
     this.contract.balance = this.stringUtil.numberToMoney(
       this.stringUtil.round(
-        this.stringUtil.moneyToNumber(this.contract.paid) -
+        this.stringUtil.moneyToNumber(this.options.paid) -
           this.contract.payments.reduce((accumulator: number, payment: any) => {
             if (payment.paid)
               accumulator =
@@ -426,19 +472,24 @@ export class ContractItemComponent implements OnInit {
   }
 
   tooltipText(): string {
-    return (
-      `CPF/CNPJ: ` +
-      this.contract.invoice.contractor.document +
-      `\nEmail: ` +
-      this.contract.invoice.contractor.email +
-      `\nEndereço: ` +
-      this.contract.invoice.contractor.address
-    );
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      if (invoice.contractor)
+        return (
+          `CPF/CNPJ: ` +
+          this.contractorService.idToContractor(invoice.contractor).document +
+          `\nEmail: ` +
+          this.contractorService.idToContractor(invoice.contractor).email +
+          `\nEndereço: ` +
+          this.contractorService.idToContractor(invoice.contractor).address
+        );
+    }
+    return '';
   }
 
   addColaborator(): void {
     this.contract.team.push(Object.assign({}, this.teamMember));
-    this.userSearch = undefined;
+    this.userSearch = '';
     this.teamMember = {};
     this.updateTeamTotal();
   }
@@ -465,15 +516,13 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  formatDate(date): string {
-    if (date !== undefined && typeof date !== 'object') date = parseISO(date);
-    date = format(date, 'dd/MM/yyyy');
-    return date;
+  formatDate(date: Date): string {
+    return format(date, 'dd/MM/yyyy');
   }
 
-  expenseTypesSum(): any[] {
-    let result = this.contract.expenses.reduce(
-      (sum: any[], expense) => {
+  expenseTypesSum(): ExpenseTypesSum[] {
+    const result = this.contract.expenses.reduce(
+      (sum: ExpenseTypesSum[], expense) => {
         const idx = sum.findIndex((el) => el.type == expense.type);
         sum[idx].value = this.stringUtil.sumMoney(
           sum[idx].value,
@@ -481,7 +530,10 @@ export class ContractItemComponent implements OnInit {
         );
         return sum;
       },
-      this.EXPENSE_OPTIONS.map((type) => ({ type: type, value: '0,00' }))
+      this.EXPENSE_OPTIONS.map((type) => ({
+        type: type,
+        value: '0,00',
+      }))
     );
     const total = result.reduce(
       (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
@@ -491,23 +543,29 @@ export class ContractItemComponent implements OnInit {
     return result;
   }
 
-  expenseSourceSum(): any[] {
-    let result = this.contract.expenses.reduce(
-      (sum: any[], expense) => {
-        const idx = sum.findIndex(
-          (el) => el.user == this.userService.idToShortName(expense.source)
-        );
-        sum[idx].value = this.stringUtil.sumMoney(
-          sum[idx].value,
-          expense.value
-        );
+  expenseSourceSum(): ExpenseSourceSum[] {
+    const result = this.contract.expenses.reduce(
+      (sum: ExpenseSourceSum[], expense) => {
+        if (expense.source != undefined) {
+          const source = this.userService.idToShortName(expense.source);
+          const idx = sum.findIndex((el) => el.user == source);
+          if (idx != -1)
+            sum[idx].value = this.stringUtil.sumMoney(
+              sum[idx].value,
+              expense.value
+            );
+        }
         return sum;
       },
       [CONTRACT_BALANCE.fullName]
         .concat(
-          this.contract.team.map((member) =>
-            this.userService.idToShortName(member.user)
-          )
+          this.contract.team
+            .map((member) => {
+              if (member.user)
+                return this.userService.idToShortName(member.user);
+              return '';
+            })
+            .filter((n) => n.length > 0)
         )
         .map((name) => ({ user: name, value: '0,00' }))
     );
@@ -525,8 +583,8 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS),
         this.contract
       ),
-      this.contract.notaFiscal,
-      this.contract.nortanPercentage
+      this.options.notaFiscal,
+      this.options.nortanPercentage
     );
   }
 
@@ -541,8 +599,8 @@ export class ContractItemComponent implements OnInit {
       );
       this.contract.team[idx].grossValue = this.contractService.toGrossValue(
         this.contract.team[idx].netValue,
-        this.contract.notaFiscal,
-        this.contract.nortanPercentage
+        this.options.notaFiscal,
+        this.options.nortanPercentage
       );
       this.updateTeamTotal();
     } else {
@@ -553,8 +611,8 @@ export class ContractItemComponent implements OnInit {
       );
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,
-        this.contract.notaFiscal,
-        this.contract.nortanPercentage
+        this.options.notaFiscal,
+        this.options.nortanPercentage
       );
     }
   }
@@ -570,8 +628,8 @@ export class ContractItemComponent implements OnInit {
         .slice(0, -1);
       this.contract.team[idx].grossValue = this.contractService.toGrossValue(
         this.contract.team[idx].netValue,
-        this.contract.notaFiscal,
-        this.contract.nortanPercentage
+        this.options.notaFiscal,
+        this.options.nortanPercentage
       );
       this.updateTeamTotal();
     } else {
@@ -580,13 +638,13 @@ export class ContractItemComponent implements OnInit {
         .slice(0, -1);
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,
-        this.contract.notaFiscal,
-        this.contract.nortanPercentage
+        this.options.notaFiscal,
+        this.options.nortanPercentage
       );
     }
   }
 
-  valueSort(direction: any, a: string, b: string): number {
+  valueSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[,.]/g, '');
     const second = +b.replace(/[,.]/g, '');
 
@@ -599,7 +657,7 @@ export class ContractItemComponent implements OnInit {
     return 0;
   }
 
-  itemSort(direction: any, a: string, b: string): number {
+  itemSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[#]/g, '');
     const second = +b.replace(/[#]/g, '');
 
@@ -615,14 +673,19 @@ export class ContractItemComponent implements OnInit {
   loadTableExpenses(): void {
     this.source.load(
       this.contract.expenses.map((expense: any, index: number) => {
-        const tmp = _.cloneDeep(expense);
+        const tmp = cloneDeep(expense);
         tmp.number = '#' + (index + 1).toString();
         tmp.source = this.userService.idToShortName(tmp.source);
-        if (typeof tmp.created !== 'object')
-          tmp.created = parseISO(tmp.created);
         tmp.created = format(tmp.created, 'dd/MM/yyyy');
         return tmp;
       })
     );
+  }
+
+  profilePicture(uId: string | User | undefined): string {
+    if (uId === undefined) return '';
+    const author = this.userService.idToUser(uId);
+    if (author.profilePicture === undefined) return '';
+    return author.profilePicture;
   }
 }

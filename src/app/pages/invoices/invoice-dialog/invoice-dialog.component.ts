@@ -7,7 +7,8 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { take } from 'rxjs/operators';
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
+import { Invoice } from '../../../../../backend/src/models/invoice';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -18,9 +19,9 @@ export class InvoiceDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() title: string;
-  @Input() invoice: any;
-  tempInvoice: any;
+  @Input() title = '';
+  @Input() invoice!: Invoice;
+  tempInvoice: Invoice = new Invoice();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -36,7 +37,7 @@ export class InvoiceDialogComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    if (this.invoice) this.tempInvoice = _.cloneDeep(this.invoice);
+    if (this.invoice) this.tempInvoice = cloneDeep(this.invoice);
   }
 
   dismiss(): void {
@@ -49,7 +50,7 @@ export class InvoiceDialogComponent
   }
 
   useAsModel(): void {
-    let oInvoice = _.cloneDeep(this.invoice);
+    const oInvoice = cloneDeep(this.invoice);
     if (oInvoice.department.length > 3)
       oInvoice.department = this.departmentService.extractAbreviation(
         oInvoice.department

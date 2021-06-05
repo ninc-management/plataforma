@@ -16,12 +16,12 @@ import { UploadedFile } from '../../../@theme/components/file-uploader/file-uplo
   styleUrls: ['./file-upload.component.scss'],
 })
 export class FileUploadDialogComponent extends BaseDialogComponent {
-  @Input() title: string;
-  @Input() allowedMimeType: string[];
-  @Input() maxFileSize: number;
-  fileTypesAllowed: string[];
-  hasBaseDropZoneOver: boolean;
-  options: NbFileUploaderOptions;
+  @Input() title = '';
+  @Input() allowedMimeType: string[] = [];
+  @Input() maxFileSize = 0;
+  fileTypesAllowed: string[] = [];
+  hasBaseDropZoneOver = false;
+  options!: NbFileUploaderOptions;
   urls: UploadedFile[] = [];
   private destroy$ = new Subject<void>();
 
@@ -48,7 +48,8 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
       mediaFolderPath: 'profileImages/',
       allowedFileTypes: this.allowedMimeType,
       filter: {
-        fn: (item: File) => {
+        fn: (item?: File) => {
+          if (!item) return false;
           // Verifica se arquivo é maior que maxFileSize mb
           if (item.size / 1024 / 1024 > this.maxFileSize) {
             return false;
@@ -81,6 +82,10 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
           }
         });
     });
+  }
+
+  blur(event: FocusEvent): void {
+    if (event.srcElement) (event.srcElement as HTMLInputElement).blur();
   }
 
   dismiss(): void {

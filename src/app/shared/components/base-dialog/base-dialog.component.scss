@@ -1,4 +1,4 @@
-@import '../../../@theme/styles/themes';
+@import 'app/@theme/styles/themes';
 
 @include nb-install-component() {
   --card-margin-bottom: 0;

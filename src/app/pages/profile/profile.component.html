@@ -10,8 +10,10 @@
             <nb-user
               class="profile"
               [onlyPicture]="true"
-              [picture]="currentUser?.profilePicture"
-              [name]="currentUser?.fullName"
+              [picture]="
+                currentUser.profilePicture ? currentUser.profilePicture : ''
+              "
+              [name]="currentUser.fullName"
               size="giant"
             >
             </nb-user>
@@ -481,14 +483,7 @@
                         icon="info"
                         pack="eva"
                         [options]="{ animation: { type: 'pulse' } }"
-                        [nbTooltip]="
-                          positionMessage(
-                            accessChecker.isGranted(
-                              permissions.ELO_PRINCIPAL,
-                              'edit-level'
-                            )
-                          ) | async
-                        "
+                        [nbTooltip]="positionMessage"
                         nbTooltipPlacement="top"
                         nbTooltipStatus="info"
                       ></nb-icon
@@ -662,10 +657,16 @@
                   </button>
                 </div>
                 <nb-list style="width: 100%; padding: 10px 0">
-                  <nb-list-item *ngFor="let user of currentUser.AER">
+                  <nb-list-item
+                    *ngFor="
+                      let user of currentUser.AER;
+                      let i = index;
+                      trackBy: utils.trackByIndex
+                    "
+                  >
                     <div class="row irow">
                       <div class="col">
-                        {{ user.fullName }}
+                        {{ userService.idToName(user) }}
                       </div>
                       <div class="col-auto" style="text-align: right">
                         <nb-icon

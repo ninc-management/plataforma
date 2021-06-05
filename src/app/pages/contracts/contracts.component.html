@@ -52,14 +52,18 @@
           <nb-list-item
             *ngFor="let contract of filtredContracts; let i = index"
           >
-            <a (click)="contractDialog({ data: contract, index: i }, true)">
+            <a
+              (click)="
+                contractDialog({ data: contract, index: i.toString() }, true)
+              "
+            >
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
                   <nb-user
                     size="giant"
                     [name]="contract.name"
                     [title]="contract.code"
-                    [picture]="contract.invoice.author?.profilePicture"
+                    [picture]="invoiceAuthorPic(contract.invoice)"
                   >
                   </nb-user>
                 </div>

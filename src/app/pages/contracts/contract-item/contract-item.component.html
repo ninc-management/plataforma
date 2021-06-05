@@ -109,7 +109,7 @@
             <label class="label" for="input-department">Diretoria:</label>
             <input
               nbInput
-              [(ngModel)]="contract.invoice.department"
+              [ngModel]="invoiceDepartment"
               #department="ngModel"
               id="input-department"
               name="department"
@@ -136,7 +136,7 @@
             <label class="label" for="input-coordination">Coordenação:</label>
             <input
               nbInput
-              [(ngModel)]="contract.invoice.coordination"
+              [ngModel]="invoiceCoordination"
               #coordination="ngModel"
               id="input-coordination"
               name="coordination"
@@ -213,7 +213,7 @@
               >Administração do contrato:</label
             >
             <nb-select
-              [(ngModel)]="contract.invoice.administration"
+              [ngModel]="invoiceAdministration"
               #administration="ngModel"
               id="input-administration"
               name="administration"
@@ -328,7 +328,7 @@
               placeholder="Escolha uma data"
               fullWidth
               fieldSize="large"
-              (ngModelChange)="contract.lastUpdate = todayDate"
+              (ngModelChange)="contract.lastUpdate = today"
               [nbDatepicker]="datepicker"
               [required]="validation.created.required"
               [status]="
@@ -490,7 +490,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [status]="netValue.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
@@ -516,7 +516,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [status]="distribution.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
@@ -551,7 +551,7 @@
           >
             <div class="row irow">
               <div class="col-12 col-md-3 list-name">
-                {{ userService.idToShortName(member.user) }}
+                {{ member.user ? userService.idToShortName(member.user) : '' }}
               </div>
               <div class="col-6 col-md-2">
                 <nb-select
@@ -564,7 +564,7 @@
                   <nb-option
                     *ngFor="
                       let coordination of departmentService.userCoordinations(
-                        contract.team[i].user._id
+                        contract.team[i].user
                       )
                     "
                     [value]="coordination"
@@ -598,7 +598,7 @@
                     money: true,
                     thousand: '.',
                     decimalCaracter: ',',
-                    decimal: '2'
+                    decimal: 2
                   }"
                   [status]="contract.team[i].netValue ? 'basic' : 'danger'"
                 />
@@ -619,7 +619,7 @@
                     money: true,
                     thousand: '.',
                     decimalCaracter: ',',
-                    decimal: '2'
+                    decimal: 2
                   }"
                   [status]="contract.team[i].distribution ? 'basic' : 'danger'"
                 />
@@ -675,12 +675,8 @@
               <div
                 class="col-2"
                 [ngClass]="{
-                  danger:
-                    teamTotal.distribution !== '100,00' &&
-                    teamTotal.distribution !== '0,00',
-                  success:
-                    teamTotal.distribution === '100,00' &&
-                    teamTotal.distribution !== '0,00'
+                  danger: teamTotal.distribution != '0,00',
+                  success: teamTotal.distribution == '100,00'
                 }"
               >
                 {{ teamTotal.distribution }}%
@@ -695,7 +691,7 @@
               >Houve retenção de ISS?:</label
             >
             <nb-select
-              [(ngModel)]="contract.hasISS"
+              [(ngModel)]="options.hasISS"
               #hasISS="ngModel"
               id="input-hasISS"
               name="hasISS"
@@ -734,7 +730,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [disabled]="!hasISS.value"
               [required]="validation.ISS?.required"
@@ -762,7 +758,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [required]="validation.balance?.required"
               [status]="
@@ -782,7 +778,7 @@
             <label class="label" for="input-paid">Valor pago:</label>
             <input
               nbInput
-              [(ngModel)]="contract.paid"
+              [(ngModel)]="options.paid"
               #paid="ngModel"
               id="input-paid"
               name="paid"
@@ -793,7 +789,7 @@
                 money: true,
                 thousand: '.',
                 decimalCaracter: ',',
-                decimal: '2'
+                decimal: 2
               }"
               [required]="validation.paid?.required"
               [status]="
@@ -809,7 +805,7 @@
             <label class="label" for="input-interest">Parcelas criadas:</label>
             <input
               nbInput
-              [(ngModel)]="contract.interest"
+              [(ngModel)]="options.interest"
               #interest="ngModel"
               id="input-interest"
               name="interest"
@@ -886,7 +882,7 @@
         <div class="form-control-group">
           <label class="label" for="input-nf">NF(%)</label>
           <p>
-            <b>{{ contract.notaFiscal }}</b>
+            <b>{{ options.notaFiscal }}</b>
           </p>
         </div>
       </div>
@@ -894,7 +890,7 @@
         <div class="form-control-group">
           <label class="label" for="input-nortan">Nortan(%)</label>
           <p>
-            <b>{{ contract.nortanPercentage }}</b>
+            <b>{{ options.nortanPercentage }}</b>
           </p>
         </div>
       </div>
@@ -948,18 +944,18 @@
       >
         <div class="row irow">
           <div class="col-12 col-md-3">
-            {{ member.user.fullName }}
+            {{ userService.idToName(member.user) }}
           </div>
           <div class="col-6 col-md-2">
             {{
               contractService.toGrossValue(
                 contractService.netValueBalance(
                   member.distribution,
-                  member.user,
-                  contract
+                  contract,
+                  member.user
                 ),
-                contract.notaFiscal,
-                contract.nortanPercentage
+                options.notaFiscal,
+                options.nortanPercentage
               )
             }}
           </div>
@@ -967,8 +963,8 @@
             {{
               contractService.netValueBalance(
                 member.distribution,
-                member.user,
-                contract
+                contract,
+                member.user
               )
             }}
           </div>
@@ -1013,13 +1009,13 @@
       <div class="col-md">
         <div class="form-control-group">
           <label class="label" for="input-paid">Valor pago:</label>
-          <p>{{ contract.paid }}</p>
+          <p>{{ options.paid }}</p>
         </div>
       </div>
       <div class="col-md">
         <div class="form-control-group">
           <label class="label" for="input-interest">Parcelas criadas:</label>
-          <p>{{ contract.interest }}</p>
+          <p>{{ options.interest }}</p>
         </div>
       </div>
       <div class="col-md">
@@ -1095,7 +1091,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i, types.RECEIPT)"
+                (click)="paymentDialog(types.RECEIPT, i)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -1133,8 +1129,8 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="contract.receipts.length == contract.total"
-      (click)="paymentDialog(undefined, types.RECEIPT)"
+      [disabled]="contract.receipts.length == +contract.total"
+      (click)="paymentDialog(types.RECEIPT)"
     >
       Nova Ordem de Empenho
     </button>
@@ -1150,7 +1146,7 @@
           <div class="col-10 col-md-11">
             <div class="irow row">
               <a
-                (click)="paymentDialog(i, types.PAYMENT)"
+                (click)="paymentDialog(types.PAYMENT, i)"
                 style="width: 100%; cursor: pointer; display: flex"
               >
                 <div class="col-1">#{{ +i + 1 }}</div>
@@ -1188,7 +1184,7 @@
       fullWidth
       status="primary"
       size="large"
-      (click)="paymentDialog(undefined, types.PAYMENT)"
+      (click)="paymentDialog(types.PAYMENT)"
     >
       Nova Ordem de Pagamento
     </button>
@@ -1203,8 +1199,8 @@
       *ngIf="!utils.isPhone(); else phone"
       [settings]="settings"
       [source]="source"
-      (create)="paymentDialog(undefined, types.EXPENSE)"
-      (edit)="paymentDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)"
+      (create)="paymentDialog(types.EXPENSE)"
+      (edit)="paymentDialog(types.EXPENSE, +$event.data.number.slice(1) - 1)"
       (delete)="
         confirmationDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)
       "
@@ -1218,7 +1214,7 @@
             fullWidth
             status="primary"
             style="height: 100%"
-            (click)="paymentDialog(undefined, types.EXPENSE)"
+            (click)="paymentDialog(types.EXPENSE)"
           >
             <i class="nb-plus" style="font-size: 1.5rem"></i>
           </button>
@@ -1242,7 +1238,7 @@
             <div class="col-10 col-md-11">
               <div class="irow row">
                 <a
-                  (click)="paymentDialog(i, types.EXPENSE)"
+                  (click)="paymentDialog(types.EXPENSE, i)"
                   style="
                     width: 100%;
                     cursor: pointer;
@@ -1253,10 +1249,8 @@
                   <div class="col-auto">
                     <nb-user
                       [onlyPicture]="true"
-                      [name]="userService.idToUser(expense.author).fullName"
-                      [picture]="
-                        userService.idToUser(expense.author).profilePicture
-                      "
+                      [name]="userService.idToName(expense.author)"
+                      [picture]="profilePicture(expense.author)"
                     >
                     </nb-user>
                   </div>
