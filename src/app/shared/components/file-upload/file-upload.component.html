@@ -7,12 +7,7 @@
       <nb-card-header>
         {{ title }}
         <div class="buttons">
-          <button
-            nbButton
-            ghost
-            (click)="dismiss()"
-            (focus)="$event.srcElement.blur()"
-          >
+          <button nbButton ghost (click)="dismiss()" (focus)="blur($event)">
             <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
           </button></div
       ></nb-card-header>

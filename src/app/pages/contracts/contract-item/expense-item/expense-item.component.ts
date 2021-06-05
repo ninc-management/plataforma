@@ -12,8 +12,8 @@ import {
   NbFileUploaderOptions,
   StorageProvider,
   NbFileItem,
-} from '../../../../@theme/components';
-import { format, parseISO } from 'date-fns';
+} from 'app/@theme/components';
+import { format } from 'date-fns';
 import { take, takeUntil, skip } from 'rxjs/operators';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
@@ -21,17 +21,17 @@ import {
   ContractService,
   EXPENSE_TYPES,
   SPLIT_TYPES,
-} from '../../../../shared/services/contract.service';
-import { OnedriveService } from '../../../../shared/services/onedrive.service';
+} from 'app/shared/services/contract.service';
+import { OnedriveService } from 'app/shared/services/onedrive.service';
 import {
   UserService,
   CONTRACT_BALANCE,
-} from '../../../../shared/services/user.service';
+} from 'app/shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from '../../../../shared/services/string-util.service';
-import { UtilsService } from '../../../../shared/services/utils.service';
-import { UploadedFile } from '../../../../@theme/components/file-uploader/file-uploader.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UtilsService } from 'app/shared/services/utils.service';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { cloneDeep } from 'lodash';
 import {
   ContractTeamMember,
@@ -40,7 +40,7 @@ import {
   Contract,
 } from '../../../../../../backend/src/models/contract';
 import { User } from '../../../../../../backend/src/models/user';
-import * as expense_validation from '../../../../shared/expense-validation.json';
+import * as expense_validation from 'app//shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -52,8 +52,8 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   formRef!: NgForm;
   @Input()
   contract!: Contract;
-  @Input() contractIndex!: number;
-  @Input() expenseIndex!: number;
+  @Input() contractIndex?: number;
+  @Input() expenseIndex?: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   private destroy$ = new Subject<void>();
   private newExpense$ = new Subject<void>();
@@ -169,22 +169,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
 
     if (this.expenseIndex !== undefined) {
       this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
-      if (
-        this.expense.paidDate !== undefined &&
-        typeof this.expense.paidDate !== 'object'
-      )
-        this.expense.paidDate = parseISO(this.expense.paidDate);
-      if (
-        this.expense.created !== undefined &&
-        typeof this.expense.created !== 'object'
-      )
-        this.expense.created = parseISO(this.expense.created);
-      if (
-        this.expense.lastUpdate !== undefined &&
-        typeof this.expense.lastUpdate !== 'object'
-      ) {
-        this.expense.lastUpdate = parseISO(this.expense.lastUpdate);
-      }
       if (this.expense.author)
         this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) {

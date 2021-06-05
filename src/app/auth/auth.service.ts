@@ -9,7 +9,6 @@ import {
 import { filter, take, map, takeUntil } from 'rxjs/operators';
 import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -43,15 +42,16 @@ export class AuthService {
       });
   }
 
-  userEmail(): string {
-    if (!!this.msAuthService.instance.getActiveAccount())
-      return this.msAuthService.instance.getActiveAccount().username;
+  userEmail(): string | undefined {
+    let acc = this.msAuthService.instance.getActiveAccount();
+    if (acc) return acc.username;
     else {
       if (this.msAuthService.instance.getAllAccounts().length > 0) {
         this.msAuthService.instance.setActiveAccount(
           this.msAuthService.instance.getAllAccounts()[0]
         );
-        return this.msAuthService.instance.getActiveAccount().username;
+        acc = this.msAuthService.instance.getActiveAccount();
+        if (acc) return acc.username;
       }
     }
     return undefined;

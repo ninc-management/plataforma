@@ -10,7 +10,7 @@
       [ngClass]="{ 'is-active': menuButtonClicked }"
       [matRippleUnbounded]="false"
       [matRippleCentered]="true"
-      matRippleRadius="20"
+      [matRippleRadius]="20"
       (click)="toggleSidebar()"
     >
       <span class="hamburger-box">
@@ -50,7 +50,7 @@
         matRipple
         [matRippleUnbounded]="true"
         [matRippleCentered]="true"
-        matRippleRadius="20"
+        [matRippleRadius]="20"
       ></nb-search
     ></nb-action>
     <nb-action
@@ -59,7 +59,7 @@
       matRipple
       [matRippleUnbounded]="true"
       [matRippleCentered]="true"
-      matRippleRadius="20"
+      [matRippleRadius]="20"
     ></nb-action> -->
     <nb-action
       class="control-item"
@@ -67,7 +67,7 @@
       matRipple
       [matRippleUnbounded]="true"
       [matRippleCentered]="true"
-      matRippleRadius="20"
+      [matRippleRadius]="20"
     ></nb-action>
     <nb-action
       class="user-action"
@@ -79,8 +79,8 @@
       <nb-user
         [nbContextMenu]="userMenu"
         [onlyPicture]="userPictureOnly"
-        [name]="user?.exibitionName ? user?.exibitionName : user?.fullName"
-        [picture]="user?.profilePicture"
+        [name]="user.exibitionName ? user.exibitionName : user.fullName"
+        [picture]="user.profilePicture ? user.profilePicture : ''"
       >
       </nb-user>
     </nb-action>

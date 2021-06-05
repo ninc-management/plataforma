@@ -2,7 +2,7 @@ import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Contractor } from './contractor';
 import { User } from './user';
-import * as uniqueValidator from 'mongoose-unique-validator';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class InvoiceProduct {
   @prop({ required: true })
@@ -17,8 +17,8 @@ export class InvoiceProduct {
   @prop({ required: true })
   total!: string;
 
-  @prop({ required: true, default: [], type: () => [String] })
-  subproducts: string[];
+  @prop({ required: true, type: () => [String] })
+  subproducts: string[] = [];
 
   percentage = '';
 }
@@ -55,7 +55,7 @@ export class InvoiceTeamMember {
   coordination!: string;
 }
 
-@plugin(uniqueValidator)
+@plugin(mongooseUniqueValidator)
 export class Invoice extends Base<string> {
   @prop({ required: true, ref: () => User })
   author!: Ref<User>;
@@ -66,7 +66,7 @@ export class Invoice extends Base<string> {
   @prop({ required: true })
   coordination!: string;
 
-  @prop({ required: true })
+  @prop({ default: 'nortan', required: true })
   administration!: string;
 
   @prop({ required: true, unique: true })
@@ -90,17 +90,17 @@ export class Invoice extends Base<string> {
   @prop({ required: true })
   status!: string;
 
-  @prop({ default: [], type: () => InvoiceTeamMember })
-  team?: InvoiceTeamMember[];
+  @prop({ type: () => [InvoiceTeamMember] })
+  team: InvoiceTeamMember[] = [];
 
   @prop()
   trello?: boolean;
 
-  @prop({ required: true })
-  created!: Date;
+  @prop({ default: new Date(), required: true })
+  created: Date = new Date();
 
-  @prop({ required: true })
-  lastUpdate!: Date;
+  @prop({ default: new Date(), required: true })
+  lastUpdate: Date = new Date();
 
   @prop()
   subtitle1?: string;
@@ -123,8 +123,8 @@ export class Invoice extends Base<string> {
   @prop()
   peep?: string;
 
-  @prop({ default: [], type: () => [String] })
-  laep?: string[];
+  @prop({ type: () => [String] })
+  laep: string[] = [];
 
   @prop()
   dep?: string;
@@ -132,8 +132,8 @@ export class Invoice extends Base<string> {
   @prop()
   peee?: string;
 
-  @prop({ default: [], type: () => [String] })
-  laee?: string[];
+  @prop({ type: () => [String] })
+  laee: string[] = [];
 
   @prop()
   dee?: string;
@@ -141,8 +141,8 @@ export class Invoice extends Base<string> {
   @prop()
   peec?: string;
 
-  @prop({ default: [], type: () => [String] })
-  laec?: string[];
+  @prop({ type: () => [String] })
+  laec: string[] = [];
 
   @prop()
   dec?: string;
@@ -150,59 +150,31 @@ export class Invoice extends Base<string> {
   @prop()
   discount?: string;
 
-  @prop()
+  @prop({ default: '1' })
   materialListType?: string;
 
-  @prop()
+  @prop({ default: '1' })
   productListType?: string;
 
-  @prop()
-  invoiceType?: string;
+  @prop({ default: 'projeto' })
+  invoiceType: string = 'projeto';
 
-  @prop({ default: [], type: () => InvoiceProduct })
-  products: InvoiceProduct[];
+  @prop({ type: () => [InvoiceProduct] })
+  products: InvoiceProduct[] = [];
 
-  @prop({ default: [], type: () => InvoiceStage })
-  stages: InvoiceStage[];
+  @prop({ type: () => [InvoiceStage] })
+  stages: InvoiceStage[] = [];
 
-  @prop({ default: [], type: () => InvoiceMaterial })
-  materials: InvoiceMaterial[];
+  @prop({ type: () => [InvoiceMaterial] })
+  materials: InvoiceMaterial[] = [];
 
-  @prop({ default: [], type: () => [String] })
-  importants: string[];
+  @prop({ type: () => [String] })
+  importants: string[] = [];
 
   model = false;
   contractorName = '';
-
-  constructor() {
-    super();
-    this.author = undefined;
-    this.contractor = undefined;
-    this.name = '';
-    this.status = '';
-    this.value = '';
-    this.model = false;
-    this.department = '';
-    this.coordination = '';
-    this.code = '';
-    this.type = '';
-    this.service = '';
-    this.created = new Date();
-    this.lastUpdate = new Date();
-    this.importants = [];
-    this.stages = [];
-    this.products = [];
-    this.laec = [];
-    this.laee = [];
-    this.laep = [];
-    this.team = [];
-    this.materials = [];
-    this.materialListType = '1';
-    this.productListType = '1';
-    this.invoiceType = 'projeto';
-    this.administration = 'nortan';
-    this.contractorName = '';
-  }
+  fullName = '';
+  role = 'Nenhum';
 }
 
 export default getModelForClass(Invoice);

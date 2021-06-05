@@ -19,5 +19,5 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class NbUploadQueueComponent {
   @Input()
-  items: BehaviorSubject<any>[];
+  items: BehaviorSubject<any>[] = [];
 }

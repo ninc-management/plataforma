@@ -36,16 +36,16 @@ export class NbFileItem {
   rawFile: File;
   name: string;
   lastModified: number;
-  progress: number = 0;
+  progress = 0;
   size: number;
   type: string;
   url: string;
 
-  isUploading: boolean = false;
-  isUploaded: boolean = false;
-  isSuccess: boolean = false;
-  isCancel: boolean = false;
-  isError: boolean = false;
+  isUploading = false;
+  isUploaded = false;
+  isSuccess = false;
+  isCancel = false;
+  isError = false;
 
   constructor(file: File) {
     this.rawFile = file;
@@ -53,14 +53,14 @@ export class NbFileItem {
     this.lastModified = file.lastModified;
     this.size = file.size;
     this.type = file.type;
-    this.url = undefined;
+    this.url = '';
   }
 
-  onProgress(progress: number) {
+  onProgress(progress: number): void {
     this.progress = Math.round(progress);
   }
 
-  onBeforeUpload() {
+  onBeforeUpload(): void {
     this.isUploading = true;
     this.isUploading = false;
     this.isCancel = false;
@@ -69,7 +69,7 @@ export class NbFileItem {
     this.progress = 0;
   }
 
-  onSuccess() {
+  onSuccess(): void {
     this.isUploading = false;
     this.isUploaded = true;
     this.isCancel = false;
@@ -78,7 +78,7 @@ export class NbFileItem {
     this.progress = 100;
   }
 
-  onCancel() {
+  onCancel(): void {
     this.isUploading = false;
     this.isUploaded = false;
     this.isCancel = true;
@@ -87,7 +87,7 @@ export class NbFileItem {
     this.progress = 0;
   }
 
-  onError() {
+  onError(): void {
     this.isUploading = false;
     this.isUploaded = false;
     this.isCancel = false;

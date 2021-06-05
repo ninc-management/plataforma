@@ -12,7 +12,7 @@ export class PromotionDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() title: string;
+  @Input() title = '';
   @Input() promotion: any;
 
   constructor(

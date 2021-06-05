@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NbMediaBreakpointsService } from '@nebular/theme';
+import { NbMediaBreakpointsService, NbTrigger } from '@nebular/theme';
 import {
   addMonths,
   addYears,
@@ -15,7 +15,7 @@ import {
 } from 'date-fns';
 import { Contract } from '../../../../backend/src/models/contract';
 import { Invoice } from '../../../../backend/src/models/invoice';
-import * as _ from 'lodash';
+import { at } from 'lodash';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -37,6 +37,8 @@ type NonOptionalKeys<T> = {
   providedIn: 'root',
 })
 export class UtilsService {
+  tooltipTriggers = NbTrigger;
+
   constructor(private breakpointService: NbMediaBreakpointsService) {}
 
   isPhone(): boolean {
@@ -106,16 +108,6 @@ export class UtilsService {
     return invoice.administration == 'nortan' ? '15' : '17';
   }
 
-  // https://stackoverflow.com/a/42488360
-  sumObjectsByKey<T>(...objs: any): any {
-    return objs.reduce((a, b) => {
-      for (const k in b) {
-        if (b.hasOwnProperty(k)) a[k] = (a[k] || 0) + b[k];
-      }
-      return a;
-    }, {});
-  }
-
   assingOrIncrement(base: number, increment: number): number {
     let result = 0;
     if (base != undefined) result += base;
@@ -164,6 +156,7 @@ export class UtilsService {
         });
       }
       default: {
+        return false;
       }
     }
   }
@@ -180,7 +173,7 @@ export class UtilsService {
   }
 
   isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is T {
-    const values = _.at(obj, properties);
+    const values = at(obj, properties);
     return !values.includes(undefined);
   }
 }

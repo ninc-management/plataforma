@@ -6,7 +6,7 @@ import {
   NB_AUTH_OPTIONS,
 } from '@nebular/auth';
 
-import * as user_validation from '../../shared/user-validation.json';
+import * as user_validation from 'app/shared/user-validation.json';
 import { AuthService } from '../auth.service';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { combineLatest, Subject } from 'rxjs';

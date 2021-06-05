@@ -27,7 +27,7 @@
             money: true,
             thousand: '.',
             decimalCaracter: ',',
-            decimal: '2'
+            decimal: 2
           }"
           [disabled]="paymentIndex != undefined"
           [overPaid]="contract.balance"
@@ -295,7 +295,7 @@
           id="input-user"
           name="userList"
           [selectedText]="
-            userPayment.user ? userService.idToName(userPayment.user) : ''
+            userService.idToName(userPayment.user)
           "
           [dataService]="userData"
           [minSearchLength]="0"
@@ -377,7 +377,7 @@
             money: true,
             thousand: '.',
             decimalCaracter: ',',
-            decimal: '2'
+            decimal: 2
           }"
           [status]="paid.value ? 'success' : 'basic'"
           [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
@@ -445,7 +445,7 @@
               money: true,
               thousand: '.',
               decimalCaracter: ',',
-              decimal: '2'
+              decimal: 2
             }"
             [status]="payment.team[i].value ? 'success' : 'basic'"
           />
@@ -463,7 +463,7 @@
               money: true,
               thousand: '.',
               decimalCaracter: ',',
-              decimal: '2'
+              decimal: 2
             }"
             [status]="payment.team[i].value ? 'success' : 'basic'"
           />

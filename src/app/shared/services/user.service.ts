@@ -30,12 +30,12 @@ export const CONTRACT_BALANCE = {
 })
 export class UserService implements OnDestroy {
   private requested = false;
-  private _currentUser$ = new BehaviorSubject<User>(undefined);
+  private _currentUser$ = new BehaviorSubject<User>(new User());
   private destroy$ = new Subject<void>();
   private users$ = new BehaviorSubject<User[]>([]);
 
   get currentUser$(): Observable<User> {
-    if (this._currentUser$.value?.fullName == undefined) {
+    if (this._currentUser$.value.fullName == '') {
       this.getCurrentUser();
     }
     return this._currentUser$;
@@ -74,13 +74,12 @@ export class UserService implements OnDestroy {
   }
 
   getUser(userEmail: string): BehaviorSubject<User> {
-    let user$ = new BehaviorSubject<User>(undefined);
+    const user$ = new BehaviorSubject<User>(new User());
     this.getUsers()
       .pipe(take(2))
       .subscribe((users) => {
-        const user = users.filter((user) => user.email == userEmail)[0];
-        if (user != undefined) user$.next(user);
-        else user$.next(undefined);
+        const matchedUsers = users.filter((user) => user.email == userEmail);
+        if (matchedUsers.length > 0) user$.next(matchedUsers[0]);
       });
     return user$;
   }
@@ -91,9 +90,9 @@ export class UserService implements OnDestroy {
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))
-        .subscribe((users: User[]) => {
+        .subscribe((users: any) => {
           this.users$.next(
-            users.sort((a, b) => {
+            (users as User[]).sort((a, b) => {
               return a.fullName
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '') <
@@ -106,7 +105,7 @@ export class UserService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: 'object') =>
+        .subscribe((data: any) =>
           this.wsService.handle(data, this.users$, 'users')
         );
     }
@@ -132,14 +131,14 @@ export class UserService implements OnDestroy {
       });
   }
 
-  idToName(id: string | User): string {
+  idToName(id: string | User | undefined): string {
+    if (id === undefined) return '';
     return this.idToUser(id)?.fullName;
   }
 
   idToShortName(id: string | User): string {
     const exibitionName = this.idToUser(id).exibitionName;
-    if(exibitionName)
-      return exibitionName;
+    if (exibitionName) return exibitionName;
     return this.idToUser(id).fullName;
   }
 
@@ -149,5 +148,10 @@ export class UserService implements OnDestroy {
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
+  }
+
+  isEqual(u1?: string | User, u2?: string | User): boolean {
+    if (u1 == undefined || u2 == undefined) return false;
+    return this.idToUser(u1)._id == this.idToUser(u2)._id;
   }
 }

@@ -12,7 +12,6 @@ import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker } from '@nebular/security';
 import { MsalService } from '@azure/msal-angular';
 import { tap, take, skip } from 'rxjs/operators';
-import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root',

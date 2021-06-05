@@ -13,7 +13,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { CtrCompleter, CompleterData, CompleterItem } from 'ng2-completer';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
+import { NbTrigger, NbComponentStatus, NbComponentSize } from '@nebular/theme';
 
 const MAX_CHARS = 524288; // the default max length per the html maxlength attribute
 const MIN_SEARCH_LENGTH = 3;
@@ -43,8 +44,9 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
 })
 /* eslint-disable @typescript-eslint/indent */
 export class NbCompleterComponent
-  implements OnInit, OnDestroy, ControlValueAccessor {
-  @Input() public dataService: CompleterData | undefined;
+  implements OnInit, OnDestroy, ControlValueAccessor
+{
+  @Input() public dataService!: CompleterData;
   @Input() public inputName = '';
   @Input() public pause = PAUSE;
   @Input() public minSearchLength = MIN_SEARCH_LENGTH;
@@ -57,7 +59,7 @@ export class NbCompleterComponent
   @Input() public selectOnClick = false;
   @Input() public selectOnFocus = true;
   @Input() public placeholder = '';
-  @Input() public selectedText: string = undefined;
+  @Input() public selectedText: string | undefined;
   @Input() public matchClass: string | undefined;
   @Input() public textSearching = TEXT_SEARCHING;
   @Input() public textNoResults = TEXT_NO_RESULTS;
@@ -65,15 +67,14 @@ export class NbCompleterComponent
   @Input() public autoMatch = false;
   @Input() public disableInput = false;
   @Input() public fullWidth = false;
-  @Input() public fieldSize = 'normal';
-  @Input() public status = 'basic';
+  @Input() public fieldSize = 'normal' as NbComponentSize;
+  @Input() public status = 'basic' as NbComponentStatus;
   @Input() public isPhone = false;
   @Input() public showAvatar = true;
   @Input() public inputObject: any | undefined;
   @Input() public tooltipFunction: (args: any) => string = function (
     args: any
   ) {
-    this.isPhone = true;
     return '';
   };
   @Output() public selected = new EventEmitter<CompleterItem>();
@@ -83,6 +84,7 @@ export class NbCompleterComponent
   public displaySearching = true;
   public searchStr = '';
   public focused = false;
+  public tooltipTriggers = NbTrigger;
 
   @ViewChild(CtrCompleter, { static: true }) private completer:
     | CtrCompleter
@@ -92,7 +94,7 @@ export class NbCompleterComponent
   private destroy$ = new Subject<void>();
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
-  private lastSelected: CompleterItem;
+  private lastSelected: CompleterItem | undefined;
 
   get value(): any {
     return this.searchStr;
@@ -127,7 +129,10 @@ export class NbCompleterComponent
     }
 
     this.completer.selected
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter((c): c is CompleterItem => c != null),
+        takeUntil(this.destroy$)
+      )
       .subscribe((item: CompleterItem) => {
         if (item) {
           this.selected.emit(item);
@@ -136,7 +141,10 @@ export class NbCompleterComponent
         }
       });
     this.completer.highlighted
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter((c): c is CompleterItem => c != null),
+        takeUntil(this.destroy$)
+      )
       .subscribe((item: CompleterItem) => {
         this.highlighted.emit(item);
       });
@@ -155,7 +163,7 @@ export class NbCompleterComponent
     this.blur.emit();
     setTimeout(() => {
       this.focused = false;
-      this.searchStr = this.selectedText;
+      this.searchStr = this.selectedText ? this.selectedText : '';
     }, 500);
     this.onTouched();
   }

@@ -1,12 +1,14 @@
 import { Component, OnInit, Input, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { DepartmentService } from '../../../shared/services/department.service';
+import { DepartmentService } from 'app//shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { take } from 'rxjs/operators';
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { Contract } from '../../../../../backend/src/models/contract';
 
 export enum ComponentTypes {
   CONTRACT,
@@ -24,22 +26,23 @@ export class ContractDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() title: string;
-  @Input() contract: any;
-  @Input() contractIndex: number;
-  @Input() paymentIndex: number;
-  @Input() receiptIndex: number;
-  @Input() expenseIndex: number;
-  @Input() componentType: ComponentTypes;
+  @Input() title = '';
+  @Input() contract!: Contract;
+  @Input() contractIndex?: number;
+  @Input() paymentIndex?: number;
+  @Input() receiptIndex?: number;
+  @Input() expenseIndex?: number;
+  @Input() componentType = ComponentTypes.CONTRACT;
   isPayable = true;
   hasBalance = true;
   types = ComponentTypes;
-  onedriveUrl: string;
+  onedriveUrl = '';
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     protected derivedRef: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
+    protected invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
@@ -50,7 +53,9 @@ export class ContractDialogComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.isPayable = this.contract.receipts.length < this.contract.total;
+    this.isPayable =
+      this.contract.total != undefined &&
+      this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == ComponentTypes.CONTRACT) this.getOnedriveUrl();
   }
@@ -71,18 +76,24 @@ export class ContractDialogComponent
   }
 
   addToOnedrive(): void {
-    this.onedrive
-      .copyModelFolder(this.contract.invoice)
-      .pipe(take(1))
-      .subscribe((isComplete) => {
-        if (isComplete)
-          setTimeout(() => {
-            this.getOnedriveUrl();
-          }, 4000); // Tempo para a cópia da pasta ser realizada
-      });
+    if (this.contract.invoice)
+      this.onedrive
+        .copyModelFolder(this.invoiceService.idToInvoice(this.contract.invoice))
+        .pipe(take(1))
+        .subscribe((isComplete) => {
+          if (isComplete)
+            setTimeout(() => {
+              this.getOnedriveUrl();
+            }, 4000); // Tempo para a cópia da pasta ser realizada
+        });
   }
   openPDFnewtab(): void {
-    this.pdf.generate(this.contract.invoice, false, true);
+    if (this.contract.invoice)
+      this.pdf.generate(
+        this.invoiceService.idToInvoice(this.contract.invoice),
+        false,
+        true
+      );
   }
   windowWidth(): number {
     return window.innerWidth;

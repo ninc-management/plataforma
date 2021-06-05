@@ -87,7 +87,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
       });
   }
 
-  promotionDialog(event): void {
+  promotionDialog(event: { data?: any }): void {
     this.dialogService.open(PromotionDialogComponent, {
       context: {
         title: event.data

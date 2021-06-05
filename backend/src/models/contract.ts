@@ -2,7 +2,7 @@ import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from './user';
 import { Invoice } from './invoice';
-import * as uniqueValidator from 'mongoose-unique-validator';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class ContractUploadedFile {
   @prop({ required: true })
@@ -49,10 +49,10 @@ export class ContractExpense {
   value!: string;
 
   @prop({ required: true })
-  created!: Date;
+  created: Date = new Date();
 
   @prop({ required: true })
-  lastUpdate!: Date;
+  lastUpdate: Date = new Date();
 
   @prop({ required: true })
   paid!: boolean;
@@ -60,11 +60,11 @@ export class ContractExpense {
   @prop()
   paidDate?: Date;
 
-  @prop({ default: [], type: () => ContractUploadedFile })
-  uploadedFiles!: ContractUploadedFile[];
+  @prop({ type: () => [ContractUploadedFile] })
+  uploadedFiles: ContractUploadedFile[] = [];
 
-  @prop({ default: [], type: () => ContractExpenseTeamMember })
-  team!: ContractExpenseTeamMember[];
+  @prop({ type: () => [ContractExpenseTeamMember] })
+  team: ContractExpenseTeamMember[] = [];
 
   number = '#0';
 }
@@ -89,14 +89,14 @@ export class ContractPayment {
   @prop({ required: true })
   value!: string;
 
-  @prop({ default: [], type: () => ContractUserPayment })
-  team!: ContractUserPayment[];
+  @prop({ type: () => [ContractUserPayment] })
+  team: ContractUserPayment[] = [];
 
   @prop({ required: true })
-  created!: Date;
+  created: Date = new Date();
 
   @prop({ required: true })
-  lastUpdate!: Date;
+  lastUpdate: Date = new Date();
 
   @prop({ required: true })
   paid!: boolean;
@@ -119,10 +119,10 @@ export class ContractReceipt {
   nortanPercentage!: string;
 
   @prop({ required: true })
-  created!: Date;
+  created: Date = new Date();
 
   @prop({ required: true })
-  lastUpdate!: Date;
+  lastUpdate: Date = new Date();
 
   @prop({ required: true })
   paid!: boolean;
@@ -140,21 +140,24 @@ export class ContractTeamMember {
 
   @prop({ required: true })
   distribution!: string;
+
+  netValue = '0,00';
+  grossValue = '0,00';
 }
 
-@plugin(uniqueValidator)
+@plugin(mongooseUniqueValidator)
 export class Contract extends Base<string> {
   @prop({ required: true, ref: () => Invoice })
   invoice!: Ref<Invoice>;
 
-  @prop({ default: [], type: () => ContractPayment })
-  payments!: ContractPayment[];
+  @prop({ type: () => [ContractPayment] })
+  payments: ContractPayment[] = [];
 
-  @prop({ default: [], type: () => ContractReceipt })
-  receipts!: ContractReceipt[];
+  @prop({ type: () => [ContractReceipt] })
+  receipts: ContractReceipt[] = [];
 
-  @prop({ default: [], type: () => ContractExpense })
-  expenses!: ContractExpense[];
+  @prop({ type: () => [ContractExpense] })
+  expenses: ContractExpense[] = [];
 
   @prop({ required: true })
   status!: string;
@@ -166,19 +169,27 @@ export class Contract extends Base<string> {
   ISS!: string;
 
   @prop({ required: true })
-  total?: string;
+  total!: string;
 
   @prop({ required: true })
-  created!: Date;
+  created: Date = new Date();
 
   @prop({ required: true })
-  lastUpdate!: Date;
+  lastUpdate: Date = new Date();
 
-  @prop({ default: [], type: () => ContractTeamMember })
-  team!: ContractTeamMember[];
+  @prop({ type: () => [ContractTeamMember] })
+  team: ContractTeamMember[] = [];
 
   balance = '';
   value = '';
+  fullName = '';
+  code = '';
+  contractor = '';
+  name = '';
+  interests = '';
+  role = '';
+  notPaid = '';
+  liquid = '';
 }
 
 export default getModelForClass(Contract);

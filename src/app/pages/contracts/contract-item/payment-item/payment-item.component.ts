@@ -7,14 +7,14 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { CompleterService, CompleterData } from 'ng2-completer';
-import { DepartmentService } from '../../../../shared/services/department.service';
-import { ContractService } from '../../../../shared/services/contract.service';
-import { UserService } from '../../../../shared/services/user.service';
-import { UtilsService } from '../../../../shared/services/utils.service';
-import { StringUtilService } from '../../../../shared/services/string-util.service';
-import { BrMaskDirective } from '../../../../shared/directives/br-mask.directive';
+import { DepartmentService } from 'app/shared/services/department.service';
+import { ContractService } from 'app/shared/services/contract.service';
+import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { cloneDeep } from 'lodash';
 import {
   ContractTeamMember,
@@ -32,8 +32,8 @@ import * as contract_validation from '../../../../shared/payment-validation.json
 })
 export class PaymentItemComponent implements OnInit {
   @Input() contract!: Contract;
-  @Input() contractIndex!: number;
-  @Input() paymentIndex!: number;
+  @Input() contractIndex?: number;
+  @Input() paymentIndex?: number;
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
   valueInputRef!: ElementRef<HTMLInputElement>;
@@ -98,22 +98,6 @@ export class PaymentItemComponent implements OnInit {
       });
       this.updateLastValues();
       this.calculateTeamValues();
-      if (
-        this.payment.paidDate !== undefined &&
-        typeof this.payment.paidDate !== 'object'
-      )
-        this.payment.paidDate = parseISO(this.payment.paidDate);
-      if (
-        this.payment.created !== undefined &&
-        typeof this.payment.created !== 'object'
-      )
-        this.payment.created = parseISO(this.payment.created);
-      if (
-        this.payment.lastUpdate !== undefined &&
-        typeof this.payment.lastUpdate !== 'object'
-      ) {
-        this.payment.lastUpdate = parseISO(this.payment.lastUpdate);
-      }
     } else {
       this.payment.team = cloneDeep(this.contract.team).map(
         (member: ContractTeamMember): ContractUserPayment => {

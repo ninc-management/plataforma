@@ -42,5 +42,5 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 })
 export class OneColumnLayoutComponent {
   @ViewChild('sidebar', { static: false, read: ElementRef })
-  sidebarRef: ElementRef<HTMLElement>;
+  sidebarRef!: ElementRef<HTMLElement>;
 }

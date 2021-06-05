@@ -6,16 +6,16 @@ import {
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import {
   ContractDialogComponent,
   ComponentTypes,
 } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ContractService } from '../../shared/services/contract.service';
-import { ContractorService } from '../../shared/services/contractor.service';
-import { InvoiceService } from '../../shared/services/invoice.service';
-import { UserService } from '../../shared/services/user.service';
+import { ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
@@ -25,6 +25,8 @@ import { saveAs } from 'file-saver';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 import { NbAccessChecker } from '@nebular/security';
+import { Contract } from '../../../../backend/src/models/contract';
+import { Invoice } from '../../../../backend/src/models/invoice';
 
 @Component({
   selector: 'ngx-contracts',
@@ -32,11 +34,11 @@ import { NbAccessChecker } from '@nebular/security';
   styleUrls: ['./contracts.component.scss'],
 })
 export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('smartTable', { read: ElementRef }) tableRef;
+  @ViewChild('smartTable', { read: ElementRef }) tableRef!: ElementRef;
   private destroy$ = new Subject<void>();
-  contracts: any[] = [];
+  contracts: Contract[] = [];
   searchQuery = '';
-  get filtredContracts(): any[] {
+  get filtredContracts(): Contract[] {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
         return (
@@ -118,8 +120,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             ],
           },
         },
-        filterFunction(cell: any, search?: string): boolean {
-          if (search.includes(cell)) return true;
+        filterFunction(cell: string, search?: string): boolean {
+          if (search && search.includes(cell)) return true;
           return false;
         },
       },
@@ -151,8 +153,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             ],
           },
         },
-        filterFunction(cell: any, search?: string): boolean {
-          if (search.includes(cell)) return true;
+        filterFunction(cell: string, search?: string): boolean {
+          if (search && search.includes(cell)) return true;
           return false;
         },
       },
@@ -193,29 +195,28 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           invoices.length > 0 &&
           contractors.length > 0
         ) {
-          this.contracts = contracts.map((contract: any) => {
-            contract.invoice = this.invoiceService.idToInvoice(
-              contract.invoice
-            );
-            contract.invoice.author = this.userService.idToUser(
-              contract.invoice.author
-            );
-            if (!contract.fullName) {
-              const author = this.userService.idToUser(contract.invoice.author);
-              contract.fullName = author.exibitionName
-                ? author.exibitionName
-                : author.fullName;
+          this.contracts = contracts.map((contract: Contract) => {
+            if (contract.invoice) {
+              const invoice = this.invoiceService.idToInvoice(contract.invoice);
+              if (invoice.author) {
+                contract.fullName = this.userService.idToShortName(
+                  invoice.author
+                );
+              }
+              if (invoice.contractor) {
+                contract.contractor = this.contractorService.idToName(
+                  invoice.contractor
+                );
+              }
+              contract.code = this.invoiceService.idToInvoice(
+                contract.invoice
+              ).code;
+              contract.name = invoice.name;
+              contract.value = invoice.value;
+              contract.interests =
+                contract.receipts.length.toString() + '/' + contract.total;
+              contract.role = this.invoiceService.role(invoice, user);
             }
-            if (!contract.code) contract.code = contract.invoice.code;
-            if (!contract.contractor)
-              contract.contractor = this.contractorService.idToName(
-                contract.invoice.contractor
-              );
-            if (!contract.name) contract.name = contract.invoice.name;
-            contract.value = contract.invoice.value;
-            contract.interests =
-              contract.receipts.length.toString() + '/' + contract.total;
-            contract.role = this.invoiceService.role(contract.invoice, user);
             return contract;
           });
           this.source.load(this.contracts);
@@ -258,7 +259,10 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  contractDialog(event, isEditing: boolean): void {
+  contractDialog(
+    event: { data: any; index: string },
+    isEditing: boolean
+  ): void {
     this.dialogService.open(ContractDialogComponent, {
       context: {
         title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
@@ -279,7 +283,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     return window.innerWidth;
   }
 
-  statusColor(status: string): string {
+  statusColor(status: string): NbComponentStatus {
     switch (status) {
       case 'Em andamento':
         return 'warning';
@@ -287,10 +291,12 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         return 'success';
       case 'Arquivado':
         return 'danger';
+      default:
+        return 'warning';
     }
   }
 
-  valueSort(direction: any, a: string, b: string): number {
+  valueSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[,.]/g, '');
     const second = +b.replace(/[,.]/g, '');
 
@@ -303,9 +309,15 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     return 0;
   }
 
-  codeSort(direction: any, a: string, b: string): number {
-    let first = +a.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
-    let second = +b.match(/-(\d+)\//g)[0].match(/\d+/g)[0];
+  codeSort(direction: number, a: string, b: string): number {
+    let first = 0;
+    let second = 0;
+    let tmp = a.match(/-(\d+)\//g);
+    if (tmp) tmp = tmp[0].match(/\d+/g);
+    if (tmp) first = +tmp[0];
+    tmp = b.match(/-(\d+)\//g);
+    if (tmp) tmp = tmp[0].match(/\d+/g);
+    if (tmp) second = +tmp[0];
 
     if (first < second) {
       return -1 * direction;
@@ -316,7 +328,16 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     return 0;
   }
 
-  downloadReport() {
+  invoiceAuthorPic(iId: string | Invoice | undefined): string {
+    if (iId === undefined) return '';
+    const invoice = this.invoiceService.idToInvoice(iId);
+    if (invoice.author === undefined) return '';
+    const pic = this.userService.idToUser(invoice.author).profilePicture;
+    if (pic === undefined) return '';
+    return pic;
+  }
+
+  downloadReport(): void {
     this.metricsService
       .receivedValueList('Mês')
       .pipe(take(1))
@@ -330,7 +351,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
         const csvArray = csv.join('\r\n');
 
-        var blob = new Blob([csvArray], { type: 'text/csv' });
+        const blob = new Blob([csvArray], { type: 'text/csv' });
         saveAs(blob, 'valoresRecebidos-' + lastMonth + '.csv');
       });
   }

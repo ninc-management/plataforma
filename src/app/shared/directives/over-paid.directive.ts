@@ -16,7 +16,7 @@ import { StringUtilService } from '../services/string-util.service';
   providedIn: 'root',
 })
 export class OverPaidDirective implements Validator {
-  @Input('overPaid') maxMoney: string;
+  @Input('overPaid') maxMoney = '0,00';
 
   constructor(private stringUtilService: StringUtilService) {}
 

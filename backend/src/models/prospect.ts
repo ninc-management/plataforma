@@ -1,8 +1,8 @@
 import { getModelForClass, plugin } from '@typegoose/typegoose';
 import { User } from './user';
-import * as uniqueValidator from 'mongoose-unique-validator';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
-@plugin(uniqueValidator)
+@plugin(mongooseUniqueValidator)
 export class Prospect extends User {}
 
 export default getModelForClass(Prospect);

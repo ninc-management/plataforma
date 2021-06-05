@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { filter, takeUntil } from 'rxjs/operators';
 import { fromEvent, BehaviorSubject } from 'rxjs';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'ngx-base-dialog',
@@ -18,7 +17,7 @@ export class BaseDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    fromEvent(this.document, 'keyup')
+    fromEvent<KeyboardEvent>(this.document, 'keyup')
       .pipe(
         filter(() => !this.isBlocked.value),
         filter((event: KeyboardEvent) => event.keyCode === 27),

@@ -17,8 +17,6 @@ import {
   RemoteDataFactory,
 } from 'ng2-completer';
 import { UserData } from './data/users';
-import { UserService } from './mock/users.service';
-import { MockDataModule } from './mock/mock-data.module';
 import { RoleProvider } from '../shared/providers/role.provider';
 
 const socialLinks = [
@@ -39,8 +37,6 @@ const socialLinks = [
   },
 ];
 
-const DATA_SERVICES = [{ provide: UserData, useClass: UserService }];
-
 export class NbSimpleRoleProvider extends NbRoleProvider {
   getRole() {
     // here you could provide any role based on any auth flow
@@ -48,99 +44,99 @@ export class NbSimpleRoleProvider extends NbRoleProvider {
   }
 }
 
+const authProviders = NbAuthModule.forRoot({
+  strategies: [
+    NbDummyAuthStrategy.setup({
+      name: 'email',
+      delay: 0,
+    }),
+  ],
+  forms: {
+    login: {
+      socialLinks: [],
+    },
+    register: {
+      terms: false,
+      socialLinks: [],
+    },
+  },
+}).providers;
+
+const securityProviders = NbSecurityModule.forRoot({
+  accessControl: {
+    Parceiro: {
+      parceiro: '*',
+    },
+    Parceira: {
+      parent: 'Parceiro',
+    },
+    Cliente: {
+      parent: 'Parceiro',
+      cliente: '*',
+    },
+    Associado: {
+      associado: '*',
+    },
+    Associada: {
+      parent: 'Associado',
+    },
+    'Elo Principal': {
+      parent: 'Associado',
+      'elo-principal': '*',
+    },
+    'Elo Principal de Administração': {
+      parent: 'Elo Principal',
+    },
+    'Elo Principal de Arquitetura': {
+      parent: 'Elo Principal',
+    },
+    'Elo Principal de Projetos Complementares': {
+      parent: 'Elo Principal',
+    },
+    'Elo Principal de Recursos Hídricos e Meio Ambiente': {
+      parent: 'Elo Principal',
+    },
+    'Elo Principal de Engenharia Civil': {
+      parent: 'Elo Principal',
+    },
+    'Diretor Financeiro': {
+      parent: 'Elo Principal',
+      df: '*',
+    },
+    'Diretora Financeira': {
+      parent: 'Diretor Financeiro',
+    },
+    'Diretor Administrativo': {
+      parent: 'Elo Principal',
+      da: '*',
+    },
+    'Diretora Administrativa': {
+      parent: 'Diretor Administrativo',
+    },
+    'Assessor Executivo Remoto': {
+      parent: 'Elo Principal',
+      aer: '*',
+    },
+    'Assessora Executiva Remota': {
+      parent: 'Assessor Executivo Remoto',
+    },
+    'Elo Principal Nortan': {
+      parent: 'Diretor Financeiro',
+      'elo-nortan': '*',
+    },
+    'Diretor de T.I': {
+      parent: 'Elo Principal Nortan',
+      dti: '*',
+    },
+    'Diretora de T.I': {
+      parent: 'Diretor de T.I',
+    },
+  },
+}).providers;
+
 export const NB_CORE_PROVIDERS = [
-  ...MockDataModule.forRoot().providers,
-  ...DATA_SERVICES,
-  ...NbAuthModule.forRoot({
-    strategies: [
-      NbDummyAuthStrategy.setup({
-        name: 'email',
-        delay: 0,
-      }),
-    ],
-    forms: {
-      login: {
-        socialLinks: [],
-      },
-      register: {
-        terms: false,
-        socialLinks: [],
-      },
-    },
-  }).providers,
-
-  NbSecurityModule.forRoot({
-    accessControl: {
-      Parceiro: {
-        parceiro: '*',
-      },
-      Parceira: {
-        parent: 'Parceiro',
-      },
-      Cliente: {
-        parent: 'Parceiro',
-        cliente: '*',
-      },
-      Associado: {
-        associado: '*',
-      },
-      Associada: {
-        parent: 'Associado',
-      },
-      'Elo Principal': {
-        parent: 'Associado',
-        'elo-principal': '*',
-      },
-      'Elo Principal de Administração': {
-        parent: 'Elo Principal',
-      },
-      'Elo Principal de Arquitetura': {
-        parent: 'Elo Principal',
-      },
-      'Elo Principal de Projetos Complementares': {
-        parent: 'Elo Principal',
-      },
-      'Elo Principal de Recursos Hídricos e Meio Ambiente': {
-        parent: 'Elo Principal',
-      },
-      'Elo Principal de Engenharia Civil': {
-        parent: 'Elo Principal',
-      },
-      'Diretor Financeiro': {
-        parent: 'Elo Principal',
-        df: '*',
-      },
-      'Diretora Financeira': {
-        parent: 'Diretor Financeiro',
-      },
-      'Diretor Administrativo': {
-        parent: 'Elo Principal',
-        da: '*',
-      },
-      'Diretora Administrativa': {
-        parent: 'Diretor Administrativo',
-      },
-      'Assessor Executivo Remoto': {
-        parent: 'Elo Principal',
-        aer: '*',
-      },
-      'Assessora Executiva Remota': {
-        parent: 'Assessor Executivo Remoto',
-      },
-      'Elo Principal Nortan': {
-        parent: 'Diretor Financeiro',
-        'elo-nortan': '*',
-      },
-      'Diretor de T.I': {
-        parent: 'Elo Principal Nortan',
-        dti: '*',
-      },
-      'Diretora de T.I': {
-        parent: 'Diretor de T.I',
-      },
-    },
-  }).providers,
-
+  ...(authProviders ? authProviders : []),
+  ...(securityProviders ? securityProviders : []),
   {
     provide: NbRoleProvider,
     useClass: NbSimpleRoleProvider,

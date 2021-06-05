@@ -3,8 +3,9 @@ import { NbDialogService } from '@nebular/theme';
 import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Contractor } from '../../../../backend/src/models/contractor';
 
 @Component({
   selector: 'ngx-contractors',
@@ -13,22 +14,24 @@ import { Subject } from 'rxjs';
 })
 export class ContractorsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  contractors: any[] = [];
+  contractors: Contractor[] = [];
   searchQuery = '';
-  get filtredContractors(): any[] {
+  get filtredContractors(): Contractor[] {
     if (this.searchQuery !== '')
-      return this.contractors.filter((contract) => {
+      return this.contractors.filter((contractor) => {
         return (
-          contract.fullName
+          contractor.fullName
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
-          contract.document
+          contractor.document
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
-          contract.phone
+          contractor.address
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
-          contract.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+          contractor.email
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase())
         );
       });
     return this.contractors.sort((a, b) => {
@@ -99,7 +102,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
       });
   }
 
-  contractorDialog(event): void {
+  contractorDialog(event: { data?: any }): void {
     this.dialogService.open(ContractorDialogComponent, {
       context: {
         title: event.data ? 'EDIÇÃO DE CLIENTE' : 'CADASTRO DE CLIENTE',

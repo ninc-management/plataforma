@@ -1,6 +1,6 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import * as uniqueValidator from 'mongoose-unique-validator';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class UserExpertise {
   @prop({ required: true })
@@ -13,7 +13,7 @@ export class UserExpertise {
   public shortExpertise!: string;
 }
 
-@plugin(uniqueValidator)
+@plugin(mongooseUniqueValidator)
 export class User extends Base<string> {
   @prop({ required: true })
   public fullName!: string;
@@ -87,8 +87,8 @@ export class User extends Base<string> {
   @prop({ required: true })
   public mainDepartment!: string;
 
-  @prop({ default: [], type: () => [String] })
-  public position?: string[];
+  @prop({ type: () => [String] })
+  public position: string[] = [];
 
   @prop({ required: true })
   public level!: string;
@@ -96,11 +96,11 @@ export class User extends Base<string> {
   @prop({ unique: true })
   public document!: string;
 
-  @prop({ default: [], type: () => UserExpertise })
-  public expertise?: UserExpertise[];
+  @prop({ type: () => [UserExpertise] })
+  public expertise: UserExpertise[] = [];
 
-  @prop({ default: [], ref: () => User })
-  public AER?: Ref<User>[];
+  @prop({ ref: () => User })
+  public AER: Ref<User>[] = [];
 
   @prop()
   public theme?: string;

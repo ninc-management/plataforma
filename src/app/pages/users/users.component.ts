@@ -6,6 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
 import { takeUntil } from 'rxjs/operators';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
+import { User } from '../../../../backend/src/models/user';
 
 @Component({
   selector: 'ngx-users',
@@ -14,9 +15,9 @@ import { UserDialogComponent } from './user-dialog/user-dialog.component';
 })
 export class UsersComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  users: any[] = [];
+  users: User[] = [];
   searchQuery = '';
-  get filtredUsers(): any[] {
+  get filtredUsers(): User[] {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
         return (
@@ -97,13 +98,13 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userService
       .getUsers()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any[]) => {
+      .subscribe((users: User[]) => {
         this.users = users;
         this.source.load(this.users);
       });
   }
 
-  userDialog(event): void {
+  userDialog(event: { data?: User }): void {
     this.dialogService.open(UserDialogComponent, {
       context: {
         title: 'EDIÇÃO DE ASSOCIADO',

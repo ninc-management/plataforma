@@ -39,7 +39,7 @@ import { Permissions } from 'app/shared/services/utils.service';
 export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
   private destroy$ = new Subject<void>();
   @ViewChild(OneColumnLayoutComponent, { static: false })
-  private layout: OneColumnLayoutComponent;
+  private layout!: OneColumnLayoutComponent;
   menu = MENU_ITEMS;
   social = SOCIAL_ITEMS;
 

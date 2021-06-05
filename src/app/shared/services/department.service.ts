@@ -10,7 +10,7 @@ export class DepartmentService {
   constructor(private userService: UserService) {}
 
   buildDepartmentList(): string[] {
-    let departments: string[] = [];
+    const departments: string[] = [];
     for (const department of json_department_coordination.departments) {
       departments.push(this.composedName(department.abrev));
     }
@@ -18,14 +18,15 @@ export class DepartmentService {
   }
 
   buildCoordinationsList(departmentAbrev: string): string[] {
-    let entry = json_department_coordination.departments.find(
+    const entry = json_department_coordination.departments.find(
       (el) => el.abrev === departmentAbrev
     );
-    return entry.coordinations;
+    if (entry) return entry.coordinations;
+    return [];
   }
 
   buildAllCoordinationsList(): string[] {
-    let coordinations: string[] = [];
+    const coordinations: string[] = [];
     for (const department of json_department_coordination.departments) {
       coordinations.push(...department.coordinations);
     }
@@ -33,17 +34,18 @@ export class DepartmentService {
   }
 
   composedName(abrev: string): string {
-    let entry = json_department_coordination.departments.find(
+    const entry = json_department_coordination.departments.find(
       (el) => el.abrev === abrev
     );
-    return entry.abrev + ' - ' + entry.name;
+    if (entry) return entry.abrev + ' - ' + entry.name;
+    return '';
   }
 
   extractAbreviation(composedName: string): string {
     return composedName.substr(0, 3);
   }
 
-  userCoordinations(uId: string | User): string[] {
+  userCoordinations(uId: string | User | undefined): string[] {
     if (uId == undefined) return [];
     const user = this.userService.idToUser(uId);
     const active: boolean[] = [
@@ -72,7 +74,7 @@ export class DepartmentService {
     const departmentsAbrevs = this.buildDepartmentList().map((d) =>
       d.slice(0, 3)
     ); // DAD DEC DAQ DPC DRM
-    let uDepartments: string[] = [];
+    const uDepartments: string[] = [];
 
     for (const coord of uCoords) {
       switch (coord) {

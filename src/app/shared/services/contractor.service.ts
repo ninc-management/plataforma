@@ -55,9 +55,9 @@ export class ContractorService implements OnDestroy {
       this.http
         .post('/api/contractor/all', {})
         .pipe(take(1))
-        .subscribe((contractors: Contractor[]) => {
+        .subscribe((contractors: any) => {
           this.contractors$.next(
-            contractors.sort((a, b) => {
+            (contractors as Contractor[]).sort((a, b) => {
               return a.fullName
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '') <
@@ -70,7 +70,7 @@ export class ContractorService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: 'object') =>
+        .subscribe((data: any) =>
           this.wsService.handle(data, this.contractors$, 'contractors')
         );
     }
@@ -92,7 +92,6 @@ export class ContractorService implements OnDestroy {
       ])
     )
       return id;
-    if (id === undefined) return undefined;
     const tmp = this.contractors$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

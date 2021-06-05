@@ -29,13 +29,13 @@ export class Promotion extends Base<string> {
   end!: Date;
 
   @prop({ required: true })
-  created = new Date();
+  created: Date = new Date();
 
   @prop({ required: true })
-  lastUpdate = new Date();
+  lastUpdate: Date = new Date();
 
-  @prop({ default: [], type: () => PromotionRule })
-  rules!: PromotionRule[];
+  @prop({ type: () => [PromotionRule] })
+  rules: PromotionRule[] = [];
 }
 
 export default getModelForClass(Promotion);

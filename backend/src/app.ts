@@ -1,9 +1,9 @@
-import * as compression from 'compression';
-import * as cors from 'cors';
-import * as express from 'express';
-import * as path from 'path';
-import * as mongoose from 'mongoose';
-import * as helmet from 'helmet';
+import compression from 'compression';
+import cors from 'cors';
+import express from 'express';
+import path from 'path';
+import mongoose from 'mongoose';
+import helmet from 'helmet';
 
 // import logger from 'morgan';
 // Import API endpoint routes

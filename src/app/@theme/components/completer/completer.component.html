@@ -25,7 +25,7 @@
     autocorrect="off"
     autocapitalize="off"
     [nbTooltip]="tooltipFunction(this.inputObject)"
-    [nbTooltipTrigger]="isPhone ? 'noop' : 'hint'"
+    [nbTooltipTrigger]="isPhone ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
     nbTooltipPlacement="top"
     nbTooltipStatus="primary"
     nbTooltipAdjustment="noop"
@@ -62,7 +62,9 @@
         class="completer-row-wrapper"
         *ngFor="let item of items; let rowIndex = index"
         [nbTooltip]="tooltipFunction(item.originalObject)"
-        [nbTooltipTrigger]="isPhone ? 'noop' : 'hint'"
+        [nbTooltipTrigger]="
+          isPhone ? tooltipTriggers.NOOP : tooltipTriggers.HINT
+        "
         nbTooltipPlacement="top"
         nbTooltipStatus="primary"
         nbTooltipAdjustment="noop"
@@ -81,7 +83,7 @@
             <completer-list-item
               class="completer-title"
               [text]="item.title"
-              [matchClass]="matchClass"
+              [matchClass]="matchClass ? matchClass : ''"
               [searchStr]="searchStr"
               [type]="'title'"
             ></completer-list-item>
@@ -89,7 +91,7 @@
               *ngIf="item.description && item.description != ''"
               class="completer-description"
               [text]="item.description"
-              [matchClass]="matchClass"
+              [matchClass]="matchClass ? matchClass : ''"
               [searchStr]="searchStr"
               [type]="'description'"
             >

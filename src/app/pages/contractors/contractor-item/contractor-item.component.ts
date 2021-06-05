@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ContractorService } from '../../../shared/services/contractor.service';
-import * as contractor_validation from '../../../shared/contractor-validation.json';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import * as contractor_validation from 'app/shared/contractor-validation.json';
 
 @Component({
   selector: 'ngx-contractor-item',

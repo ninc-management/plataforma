@@ -41,7 +41,11 @@
             ghost
             *ngIf="invoice && !invoice.model"
             nbTooltip="Usar como modelo"
-            [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+            [nbTooltipTrigger]="
+              utils.isPhone()
+                ? utils.tooltipTriggers.NOOP
+                : utils.tooltipTriggers.HINT
+            "
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="useAsModel()"
@@ -52,7 +56,11 @@
             nbButton
             ghost
             nbTooltip="Fechar"
-            [nbTooltipTrigger]="utils.isPhone() ? 'noop' : 'hint'"
+            [nbTooltipTrigger]="
+              utils.isPhone()
+                ? utils.tooltipTriggers.NOOP
+                : utils.tooltipTriggers.HINT
+            "
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="dismiss()"

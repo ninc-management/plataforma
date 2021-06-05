@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -18,8 +18,8 @@ import {
 })
 export class ReceiptItemComponent implements OnInit {
   @Input() contract!: Contract;
-  @Input() contractIndex!: number;
-  @Input() receiptIndex!: number;
+  @Input() contractIndex?: number;
+  @Input() receiptIndex?: number;
   validation = (contract_validation as any).default;
   today = new Date();
   receipt: ContractReceipt = {
@@ -48,22 +48,6 @@ export class ReceiptItemComponent implements OnInit {
     this.receipt.nortanPercentage = this.utils.nortanPercentage(this.contract);
     if (this.receiptIndex !== undefined) {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
-      if (
-        this.receipt.paidDate !== undefined &&
-        typeof this.receipt.paidDate !== 'object'
-      )
-        this.receipt.paidDate = parseISO(this.receipt.paidDate);
-      if (
-        this.receipt.created !== undefined &&
-        typeof this.receipt.created !== 'object'
-      )
-        this.receipt.created = parseISO(this.receipt.created);
-      if (
-        this.receipt.lastUpdate !== undefined &&
-        typeof this.receipt.lastUpdate !== 'object'
-      ) {
-        this.receipt.lastUpdate = parseISO(this.receipt.lastUpdate);
-      }
       this.toLiquid(this.receipt.value);
     } else {
       if (
