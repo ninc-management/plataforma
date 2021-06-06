@@ -22,6 +22,13 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": ["src/assets", "src/favicon.ico", "src/favicon.png"],
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "mongoose-unique-validator",
+              "@typegoose/typegoose/lib/defaultClasses",
+              "ng2-pdf-viewer",
+              "file-saver"
+            ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/typeface-exo/index.css",
@@ -42,12 +49,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb",
-                  "maximumError": "18kb"
+                  "maximumError": "30kb"
                 }
               ],
               "optimization": true,
