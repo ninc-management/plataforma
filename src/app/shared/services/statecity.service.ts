@@ -14,7 +14,7 @@ export class StatecityService {
   }
 
   buildCityList(state: string): string[] {
-    const entry = json_state_city.estados.find((el) => el.sigla === state);
+    const entry = json_state_city.estados.find((el: any) => el.sigla === state);
     if (entry) return entry.cidades;
     return [];
   }

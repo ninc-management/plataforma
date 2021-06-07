@@ -1,16 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ContractItemComponent } from './contract-item.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('ContractItemComponent', () => {
   let component: ContractItemComponent;
   let fixture: ComponentFixture<ContractItemComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ContractItemComponent],
-    }).compileComponents();
-  }));
+  CommonTestingModule.setUpTestBed(ContractItemComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ContractItemComponent);

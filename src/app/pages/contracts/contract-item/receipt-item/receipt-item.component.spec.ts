@@ -1,16 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReceiptItemComponent } from './receipt-item.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('ReceiptItemComponent', () => {
   let component: ReceiptItemComponent;
   let fixture: ComponentFixture<ReceiptItemComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ReceiptItemComponent],
-    }).compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(ReceiptItemComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ReceiptItemComponent);

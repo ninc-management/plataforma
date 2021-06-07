@@ -1,13 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { InvoiceService } from './invoice.service';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
 
+  CommonTestingModule.setUpTestBedService(InvoiceService);
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(InvoiceService);
+    service = TestBed.get(InvoiceService);
   });
 
   it('should be created', () => {

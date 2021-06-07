@@ -1,16 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BaseDialogComponent } from './base-dialog.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('BaseDialogComponent', () => {
   let component: BaseDialogComponent;
   let fixture: ComponentFixture<BaseDialogComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [BaseDialogComponent],
-    }).compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(BaseDialogComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BaseDialogComponent);

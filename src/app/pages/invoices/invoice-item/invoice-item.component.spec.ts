@@ -1,16 +1,13 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InvoiceItemComponent } from './invoice-item.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('InvoiceItemComponent', () => {
   let component: InvoiceItemComponent;
   let fixture: ComponentFixture<InvoiceItemComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [InvoiceItemComponent],
-    }).compileComponents();
-  }));
+  CommonTestingModule.setUpTestBed(InvoiceItemComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InvoiceItemComponent);

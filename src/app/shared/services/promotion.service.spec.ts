@@ -1,13 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 
 import { PromotionService } from './promotion.service';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
-describe('ContractorService', () => {
+describe('PromotionService', () => {
   let service: PromotionService;
 
+  CommonTestingModule.setUpTestBedService(PromotionService);
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(v);
+    service = TestBed.get(PromotionService);
   });
 
   it('should be created', () => {

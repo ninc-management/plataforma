@@ -1,17 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PromotionItemComponent } from './promotion-item.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('PromotionItemComponent', () => {
   let component: PromotionItemComponent;
   let fixture: ComponentFixture<PromotionItemComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ PromotionItemComponent ]
-    })
-    .compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(PromotionItemComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PromotionItemComponent);

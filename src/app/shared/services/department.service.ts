@@ -35,7 +35,7 @@ export class DepartmentService {
 
   composedName(abrev: string): string {
     const entry = json_department_coordination.departments.find(
-      (el) => el.abrev === abrev
+      (el: any) => el.abrev === abrev
     );
     if (entry) return entry.abrev + ' - ' + entry.name;
     return '';

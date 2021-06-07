@@ -1,16 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExpenseItemComponent } from './expense-item.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('ExpenseItemComponent', () => {
   let component: ExpenseItemComponent;
   let fixture: ComponentFixture<ExpenseItemComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ExpenseItemComponent],
-    }).compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(ExpenseItemComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ExpenseItemComponent);

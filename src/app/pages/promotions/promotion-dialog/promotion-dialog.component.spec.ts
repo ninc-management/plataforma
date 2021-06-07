@@ -1,16 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PromotionDialogComponent } from './promotion-dialog.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('PromotionDialogComponent', () => {
   let component: PromotionDialogComponent;
   let fixture: ComponentFixture<PromotionDialogComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [PromotionDialogComponent],
-    }).compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(PromotionDialogComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PromotionDialogComponent);

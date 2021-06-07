@@ -1,16 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PdfDialogComponent } from './pdf-dialog.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('PdfDialogComponent', () => {
   let component: PdfDialogComponent;
   let fixture: ComponentFixture<PdfDialogComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [PdfDialogComponent],
-    }).compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(PdfDialogComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PdfDialogComponent);

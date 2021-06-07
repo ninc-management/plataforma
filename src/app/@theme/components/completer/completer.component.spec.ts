@@ -1,20 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CompleterComponent } from './completer.component';
+import { NbCompleterComponent } from './completer.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
-describe('CompleterComponent', () => {
-  let component: CompleterComponent;
-  let fixture: ComponentFixture<CompleterComponent>;
+describe('NbCompleterComponent', () => {
+  let component: NbCompleterComponent;
+  let fixture: ComponentFixture<NbCompleterComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ CompleterComponent ]
-    })
-    .compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(NbCompleterComponent);
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CompleterComponent);
+    fixture = TestBed.createComponent(NbCompleterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

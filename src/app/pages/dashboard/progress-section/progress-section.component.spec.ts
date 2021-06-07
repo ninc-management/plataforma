@@ -1,17 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProgressSectionComponent } from './progress-section.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('ProgressSectionComponent', () => {
   let component: ProgressSectionComponent;
   let fixture: ComponentFixture<ProgressSectionComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ProgressSectionComponent ]
-    })
-    .compileComponents();
-  });
+  CommonTestingModule.setUpTestBed(ProgressSectionComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgressSectionComponent);

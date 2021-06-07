@@ -10,6 +10,9 @@ RUN apt-get update && \
     make prefix=/usr/local install && \
     cd - && rm -rf git*
 
+# Instala o chromium para os testes
+RUN apt-get install -y chromium
+
 # Define pasta padrão
 WORKDIR /root/nortan
 
@@ -21,6 +24,8 @@ COPY .bashrc /root
 
 # Define variáveis de ambiente
 ENV  TZ Brazil/East
+ENV  CHROME_BIN /usr/bin/chromium
+
 
 # Corrige permissões da pasta
 # RUN chmod -Rf 775 /home/node && chown -Rf node:node /home/node
