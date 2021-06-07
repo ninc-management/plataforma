@@ -15,9 +15,7 @@
           [required]="validation.name.required"
           [minlength]="validation.name.minLength"
           [maxlength]="validation.name.maxLength"
-          [status]="
-            name.touched ? (name.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="validateStatus(name)"
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
         />
         <ng-container *ngIf="name.invalid && name.touched">
@@ -44,6 +42,7 @@
         <input
           nbInput
           [(ngModel)]="promotion.cashback"
+          (ngModelChange)="updateTableItems()"
           #cashback="ngModel"
           id="input-cashback"
           name="cashback"
@@ -57,13 +56,7 @@
             decimalCaracter: ',',
             decimal: 2
           }"
-          [status]="
-            cashback.touched
-              ? cashback.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
+          [status]="validateStatus(cashback)"
           [attr.aria-invalid]="
             cashback.invalid && cashback.touched ? true : null
           "
@@ -87,9 +80,7 @@
           fullWidth
           size="large"
           [required]="validation.status.required"
-          [status]="
-            status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="validateStatus(status)"
           [attr.aria-invalid]="status.invalid && status.touched ? true : null"
         >
           <nb-option *ngFor="let status of pTypes" [value]="status">
@@ -113,9 +104,7 @@
           fieldSize="large"
           [nbDatepicker]="startDatePicker"
           [required]="validation.start.required"
-          [status]="
-            start.dirty ? (start.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="validateStatus(start)"
           [attr.aria-invalid]="start.invalid && start.touched ? true : null"
           [readonly]="true"
         />
@@ -137,7 +126,7 @@
           fieldSize="large"
           [nbDatepicker]="endDatePicker"
           [required]="validation.end.required"
-          [status]="end.dirty ? (end.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="validateStatus(end)"
           [attr.aria-invalid]="end.invalid && end.touched ? true : null"
           [readonly]="true"
         />
@@ -158,7 +147,7 @@
           fieldSize="large"
           [nbDatepicker]="createdDatePicker"
           [required]="validation.created.required"
-          [status]="created.invalid ? 'danger' : 'success'"
+          [status]="validateStatus(created)"
           [attr.aria-invalid]="created.invalid && created.touched ? true : null"
           [readonly]="true"
         />
@@ -179,7 +168,7 @@
           fieldSize="large"
           [nbDatepicker]="lastUpdateDatePicker"
           [required]="validation.lastUpdate.required"
-          [status]="lastUpdate.invalid ? 'danger' : 'success'"
+          [status]="validateStatus(lastUpdate)"
           [attr.aria-invalid]="
             lastUpdate.invalid && lastUpdate.touched ? true : null
           "
@@ -210,9 +199,8 @@
           placeholder="Selecione o objeto"
           fullWidth
           size="large"
-          [status]="
-            status.dirty ? (ruleObject.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [required]="validation.ruleObject"
+          [status]="validateStatus(ruleObject)"
           [attr.aria-invalid]="
             ruleObject.invalid && ruleObject.touched ? true : null
           "
@@ -235,13 +223,8 @@
           placeholder="Selecione a operação"
           fullWidth
           size="large"
-          [status]="
-            status.dirty
-              ? ruleOperator.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
+          [required]="validation.ruleOperator"
+          [status]="validateStatus(ruleOperator)"
           [attr.aria-invalid]="
             ruleOperator.invalid && ruleOperator.touched ? true : null
           "
@@ -268,15 +251,14 @@
           placeholder="Digite um valor"
           fullWidth
           fieldSize="large"
+          [required]="validation.ruleValue"
           [brmasker]="{
             money: true,
             thousand: '.',
             decimalCaracter: ',',
             decimal: 2
           }"
-          [status]="
-            status.dirty ? (ruleValue.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="validateStatus(ruleValue)"
           [attr.aria-invalid]="
             ruleValue.invalid && ruleValue.touched ? true : null
           "

@@ -24,6 +24,8 @@ import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { Promotion } from '../../../../../backend/src/models/promotion';
+import { NbComponentStatus } from '@nebular/theme';
+import { NgModel } from '@angular/forms';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -127,8 +129,14 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     const { obj, cashback } = this.userService
       .getUsersList()
       .map((u) => ({
-        obj: this.objectRule(u._id),
-        cashback: this.cashbackRule(u._id),
+        obj:
+          this.promotion.start && this.promotion.end
+            ? this.objectRule(u._id)
+            : of('0'),
+        cashback:
+          this.promotion.start && this.promotion.end
+            ? this.cashbackRule(u._id)
+            : of('0,00'),
       }))
       .reduce(
         (final, o) => {
@@ -292,5 +300,11 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
       return direction;
     }
     return 0;
+  }
+
+  validateStatus(model: NgModel): NbComponentStatus {
+    if (model.touched || (model.value != '' && model.value != undefined))
+      return model.invalid || model.value == '' ? 'danger' : 'success';
+    return 'basic';
   }
 }

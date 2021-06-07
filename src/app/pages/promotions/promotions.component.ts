@@ -7,6 +7,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
 import { Promotion } from '../../../../backend/src/models/promotion';
+import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
 
 @Component({
   selector: 'ngx-promotions',
@@ -62,6 +63,20 @@ export class PromotionsComponent implements OnInit, OnDestroy {
       name: {
         title: 'Nome',
         type: 'string',
+      },
+      status: {
+        title: 'Status',
+        type: 'string',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: Object.values(PROMOTION_STATOOS).map((status) => ({
+              value: status,
+              title: status,
+            })),
+          },
+        },
       },
     },
   };

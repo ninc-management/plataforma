@@ -5,6 +5,9 @@
   "end": { "required": true },
   "created": { "required": true },
   "lastUpdate": { "required": true },
+  "ruleObject": { "required": true },
+  "ruleOperator": { "required": true },
+  "ruleValue": { "required": true },
   "name": {
     "required": true,
     "minLength": 3,
