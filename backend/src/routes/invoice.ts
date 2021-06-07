@@ -19,7 +19,7 @@ router.post('/', (req, res, next) => {
           error: err,
         });
       } else {
-        const count = result + 1;
+        const count = result + 1 - 375; //TODO: Get this value automatically, also change in frontend
         invoice.code = invoice.code.replace(/-(\d+)\//g, '-' + count.toString() + '/');
         invoice
           .save()

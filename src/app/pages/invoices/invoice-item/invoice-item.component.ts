@@ -98,6 +98,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   today = new Date();
   invoiceNumber = 0;
   revision = 0;
+  accumulatedLastYears = 375; //TODO: Get this value automatically, also change in backend
   validation = (invoice_validation as any).default;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
@@ -203,7 +204,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       .invoicesSize()
       .pipe(take(2))
       .subscribe((size: number) => {
-        this.invoiceNumber = size;
+        this.invoiceNumber = size - this.accumulatedLastYears;
         this.updateCode();
       });
 
