@@ -124,6 +124,7 @@
     "@typescript-eslint/eslint-plugin": "^4.7.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.7.0",
     "@typescript-eslint/parser": "^4.7.0",
+    "codecov": "^3.8.2",
     "codelyzer": "^6.0.0",
     "conventional-changelog-cli": "^2.1.1",
     "eslint": "^7.13.0",
