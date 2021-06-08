@@ -8,15 +8,24 @@ import {
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RedirectGuard implements CanActivate {
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+  windowObj = window as Window;
 
-    window.location.href = next.queryParams['url'];
-    return true;
+  useWindow(customWindow: Window): void {
+    this.windowObj = customWindow;
   }
 
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    this.windowObj.location.href = next.queryParams['url'];
+    return true;
+  }
 }
