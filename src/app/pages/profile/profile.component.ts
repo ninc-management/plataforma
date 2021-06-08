@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('shortExpertise', { read: ElementRef })
   shortExpertiseRefs!: QueryList<ElementRef>;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
-  @Input() user!: User;
+  @Input() user = new User();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   isCurrentUser = false;
   currentUser = new User();

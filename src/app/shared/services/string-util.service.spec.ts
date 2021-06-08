@@ -6,10 +6,10 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 describe('StringUtilService', () => {
   let service: StringUtilService;
 
-  CommonTestingModule.setUpTestBedService(StringUtilService);
+  CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    service = TestBed.get(StringUtilService);
+    service = TestBed.inject(StringUtilService);
   });
 
   it('should be created', () => {

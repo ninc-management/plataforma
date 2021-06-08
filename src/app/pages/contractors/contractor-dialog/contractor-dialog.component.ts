@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, OnInit, Inject, Input, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -14,12 +14,12 @@ export class ContractorDialogComponent
   implements OnInit
 {
   @Input() title = '';
-  @Input() contractor!: Contractor;
+  @Input() contractor = new Contractor();
   @Input() contractorIndex?: number;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<ContractorDialogComponent>,
+    @Optional() protected derivedRef: NbDialogRef<ContractorDialogComponent>,
     public utils: UtilsService
   ) {
     super(derivedDocument, derivedRef);

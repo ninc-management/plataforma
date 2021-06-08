@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import {
   NbFileUploaderOptions,
@@ -23,11 +23,10 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
   hasBaseDropZoneOver = false;
   options!: NbFileUploaderOptions;
   urls: UploadedFile[] = [];
-  private destroy$ = new Subject<void>();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<FileUploadDialogComponent>
+    @Optional() protected derivedRef: NbDialogRef<FileUploadDialogComponent>
   ) {
     super(derivedDocument, derivedRef);
   }

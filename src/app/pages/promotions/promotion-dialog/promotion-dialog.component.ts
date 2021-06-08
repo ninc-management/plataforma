@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -17,7 +17,7 @@ export class PromotionDialogComponent
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<PromotionDialogComponent>,
+    @Optional() protected derivedRef: NbDialogRef<PromotionDialogComponent>,
     public utils: UtilsService
   ) {
     super(derivedDocument, derivedRef);

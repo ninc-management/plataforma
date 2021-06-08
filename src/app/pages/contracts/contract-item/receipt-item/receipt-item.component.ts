@@ -17,7 +17,7 @@ import {
   styleUrls: ['./receipt-item.component.scss'],
 })
 export class ReceiptItemComponent implements OnInit {
-  @Input() contract!: Contract;
+  @Input() contract = new Contract();
   @Input() contractIndex?: number;
   @Input() receiptIndex?: number;
   validation = (contract_validation as any).default;

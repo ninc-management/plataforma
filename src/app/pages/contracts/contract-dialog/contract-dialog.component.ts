@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { DepartmentService } from 'app//shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -27,7 +27,7 @@ export class ContractDialogComponent
   implements OnInit
 {
   @Input() title = '';
-  @Input() contract!: Contract;
+  @Input() contract = new Contract();
   @Input() contractIndex?: number;
   @Input() paymentIndex?: number;
   @Input() receiptIndex?: number;
@@ -40,7 +40,7 @@ export class ContractDialogComponent
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<ContractDialogComponent>,
+    @Optional() protected derivedRef: NbDialogRef<ContractDialogComponent>,
     protected departmentService: DepartmentService,
     protected invoiceService: InvoiceService,
     private stringUtil: StringUtilService,

@@ -9,6 +9,7 @@ import {
   ElementRef,
   AfterViewInit,
   Inject,
+  Optional,
 } from '@angular/core';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
@@ -46,8 +47,8 @@ import * as invoice_validation from 'app/shared/invoice-validation.json';
   styleUrls: ['./invoice-item.component.scss'],
 })
 export class InvoiceItemComponent implements OnInit, OnDestroy {
-  @Input() iInvoice!: Invoice;
-  @Input() tempInvoice!: Invoice;
+  @Input() iInvoice = new Invoice();
+  @Input() tempInvoice = new Invoice();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
   teamMember: InvoiceTeamMember = {
@@ -154,7 +155,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.contractorSearch = this.tempInvoice.contractor
         ? this.contractorService.idToName(this.tempInvoice.contractor)
         : '';
-      this.revision = +this.tempInvoice.code.slice(
+      this.revision = +this.tempInvoice.code?.slice(
         this.tempInvoice.code.length - 2
       );
       this.revision += 1;
@@ -722,7 +723,7 @@ export class TextInputDialog
   @ViewChild('name', { read: ElementRef }) inputRef!: ElementRef;
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<TextInputDialog>
+    @Optional() protected derivedRef: NbDialogRef<TextInputDialog>
   ) {
     super(derivedDocument, derivedRef);
   }

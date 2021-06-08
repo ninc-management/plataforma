@@ -6,10 +6,10 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 describe('OnedriveService', () => {
   let service: OnedriveService;
 
-  CommonTestingModule.setUpTestBedService(OnedriveService);
+  CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    service = TestBed.get(OnedriveService);
+    service = TestBed.inject(OnedriveService);
   });
 
   it('should be created', () => {

@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { filter, takeUntil } from 'rxjs/operators';
-import { fromEvent, BehaviorSubject } from 'rxjs';
+import { fromEvent, BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'ngx-base-dialog',
@@ -9,11 +9,12 @@ import { fromEvent, BehaviorSubject } from 'rxjs';
   styleUrls: ['./base-dialog.component.scss'],
 })
 export class BaseDialogComponent implements OnInit {
+  protected destroy$ = new Subject<void>();
   isBlocked = new BehaviorSubject<boolean>(false);
 
   constructor(
     @Inject(NB_DOCUMENT) protected document: Document,
-    protected ref: NbDialogRef<any>
+    @Optional() protected ref: NbDialogRef<any>
   ) {}
 
   ngOnInit(): void {
@@ -21,13 +22,15 @@ export class BaseDialogComponent implements OnInit {
       .pipe(
         filter(() => !this.isBlocked.value),
         filter((event: KeyboardEvent) => event.keyCode === 27),
-        takeUntil(this.ref.onClose)
+        takeUntil(this.destroy$)
       )
       .subscribe(() => this.dismiss());
   }
 
   dismiss(res: any = ''): void {
-    this.ref.close();
+    this.ref?.close();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   windowWidth(): number {

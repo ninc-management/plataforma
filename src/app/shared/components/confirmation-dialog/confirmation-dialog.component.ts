@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
@@ -15,7 +15,7 @@ export class ConfirmationDialogComponent
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<ConfirmationDialogComponent>
+    @Optional() protected derivedRef: NbDialogRef<ConfirmationDialogComponent>
   ) {
     super(derivedDocument, derivedRef);
   }

@@ -55,7 +55,7 @@ interface ExpenseSourceSum {
   styleUrls: ['./contract-item.component.scss'],
 })
 export class ContractItemComponent implements OnInit {
-  @Input() iContract!: Contract;
+  @Input() iContract = new Contract();
   @Input() index?: number;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();

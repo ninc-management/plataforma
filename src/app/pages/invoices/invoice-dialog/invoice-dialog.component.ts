@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -20,12 +20,12 @@ export class InvoiceDialogComponent
   implements OnInit
 {
   @Input() title = '';
-  @Input() invoice!: Invoice;
+  @Input() invoice = new Invoice();
   tempInvoice: Invoice = new Invoice();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<InvoiceDialogComponent>,
+    @Optional() protected derivedRef: NbDialogRef<InvoiceDialogComponent>,
     private dialogService: NbDialogService,
     protected departmentService: DepartmentService,
     private userService: UserService,

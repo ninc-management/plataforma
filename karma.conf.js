@@ -27,7 +27,7 @@ module.exports = function (config) {
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: false,
+    autoWatch: true,
     browsers: ['Chrome_ci'],
     customLaunchers: {
       Chrome_ci: {
@@ -35,12 +35,7 @@ module.exports = function (config) {
         flags: ['--no-sandbox', '--disable-gpu'],
       },
     },
-    singleRun: true,
-    failOnEmptyTestSuite: false,
-    captureTimeout: 210000,
-    browserDisconnectTolerance: 1,
-    browserDisconnectTimeout: 210000,
-    browserNoActivityTimeout: 210000,
+    singleRun: false,
   };
 
   config.set(configuration);

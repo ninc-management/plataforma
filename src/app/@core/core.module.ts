@@ -16,7 +16,6 @@ import {
   LocalDataFactory,
   RemoteDataFactory,
 } from 'ng2-completer';
-import { UserData } from './data/users';
 import { RoleProvider } from '../shared/providers/role.provider';
 
 const socialLinks = [

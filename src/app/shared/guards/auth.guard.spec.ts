@@ -6,10 +6,10 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 describe('AuthGuard', () => {
   let guard: AuthGuard;
 
-  CommonTestingModule.setUpTestBedService(AuthGuard);
+  CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    guard = TestBed.get(AuthGuard);
+    guard = TestBed.inject(AuthGuard);
   });
 
   it('should be created', () => {

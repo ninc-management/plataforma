@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -11,12 +11,12 @@ import { User } from '../../../../../backend/src/models/user';
 })
 export class UserDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
-  @Input() user!: User;
+  @Input() user = new User();
   @Input() userIndex?: number;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<UserDialogComponent>,
+    @Optional() protected derivedRef: NbDialogRef<UserDialogComponent>,
     public utils: UtilsService
   ) {
     super(derivedDocument, derivedRef);

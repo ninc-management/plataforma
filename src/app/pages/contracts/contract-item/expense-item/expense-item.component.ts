@@ -51,7 +51,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
   @Input()
-  contract!: Contract;
+  contract = new Contract();
   @Input() contractIndex?: number;
   @Input() expenseIndex?: number;
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
@@ -86,8 +86,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     lastValue: '0',
     lastTeam: [] as ContractExpenseTeamMember[],
   };
-  splitSelectedMember!: User;
-  uploaderOptions!: NbFileUploaderOptions;
+  splitSelectedMember = new User();
+  uploaderOptions: NbFileUploaderOptions = {
+    multiple: true,
+    directory: false,
+    showUploadQueue: true,
+    storageProvider: StorageProvider.ONEDRIVE,
+    mediaFolderPath: 'profileImages/',
+  };
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
   fileTypesAllowed: string[] = [];
   maxFileSize = 4;
@@ -232,13 +238,14 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
           this.updateUploaderOptions();
       });
 
-    if (this.expense.team[0].user)
+    if (this.expense.team.length > 0 && this.expense.team[0].user) {
       this.splitSelectedMember = this.userService.idToUser(
         this.expense.team[0].user
       );
-    this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-      this.splitSelectedMember._id
-    );
+      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
+        this.splitSelectedMember._id
+      );
+    }
   }
 
   updateUploaderOptions(): void {

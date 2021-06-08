@@ -6,10 +6,10 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 describe('WebSocketService', () => {
   let service: WebSocketService;
 
-  CommonTestingModule.setUpTestBedService(WebSocketService);
+  CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    service = TestBed.get(WebSocketService);
+    service = TestBed.inject(WebSocketService);
   });
 
   it('should be created', () => {
