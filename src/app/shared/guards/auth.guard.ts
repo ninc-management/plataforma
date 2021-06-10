@@ -24,6 +24,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     private accessChecker: NbAccessChecker
   ) {}
 
+  setRouter(customRouter: Router): void {
+    this.router = customRouter;
+  }
+
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot

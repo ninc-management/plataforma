@@ -78,11 +78,11 @@ import { Permissions } from 'app/shared/services/utils.service';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
 import { AngularFireModule } from '@angular/fire';
 import { environment } from 'environments/environment';
-import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
-import { OverPaidDirective } from 'app/shared/directives/over-paid.directive';
-import { LastPaymentDirective } from 'app/shared/directives/last-payment.directive';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
+import { routes } from 'app/app-routing.module';
+import { SharedModule } from 'app/shared/shared.module';
+import { PagesModule } from 'app/pages/pages.module';
 
 const roles = Object.values(Permissions);
 
@@ -113,6 +113,7 @@ const authProviders = NbAuthModule.forRoot({
 }).providers;
 
 const socketProviders = SocketIoModule.forRoot(config).providers;
+const routerProviders = RouterTestingModule.withRoutes(routes).providers;
 
 const msalInstance = new PublicClientApplication({
   auth: {
@@ -176,15 +177,18 @@ const IMPORTS = [
   NbTooltipModule,
   NbUserModule,
   Ng2CompleterModule,
+  PagesModule,
   PdfViewerModule,
   ReactiveFormsModule,
-  RouterTestingModule,
+  RouterTestingModule.withRoutes(routes),
+  SharedModule,
   SocketIoModule.forRoot(config),
 ];
 
 const PROVIDERS = [
   ...(authProviders ? authProviders : []),
   ...(socketProviders ? socketProviders : []),
+  ...(routerProviders ? routerProviders : []),
   {
     provide: MSAL_GUARD_CONFIG,
     useFactory: MSALGuardConfigFactory,
@@ -202,7 +206,7 @@ const PROVIDERS = [
     provide: NbAclService,
     useValue: {
       can: (role: any, permission: any, resource: any) => {
-        return true; // this is a simple mocked ACL implementation
+        return (role as string[]).includes(permission); // this is a simple mocked ACL implementation
       },
     },
   },
@@ -234,8 +238,6 @@ const PROVIDERS = [
   WebSocketService,
 ];
 
-const DIRECTIVES = [BrMaskDirective, OverPaidDirective, LastPaymentDirective];
-
 @NgModule({
   declarations: [],
 })
@@ -245,10 +247,7 @@ export class CommonTestingModule {
       TestBed.configureTestingModule({
         imports: IMPORTS,
         providers: PROVIDERS,
-        declarations: [
-          ...(TestingComponent ? [TestingComponent] : []),
-          ...DIRECTIVES,
-        ],
+        declarations: TestingComponent ? [TestingComponent] : [],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
       });
     });
