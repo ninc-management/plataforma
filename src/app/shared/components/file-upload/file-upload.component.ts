@@ -19,6 +19,28 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
   @Input() title = '';
   @Input() allowedMimeType: string[] = [];
   @Input() maxFileSize = 0;
+  @Input() multiple = false;
+  @Input() directory = false;
+  @Input() showUploadQueue = true;
+  @Input() storageProvider = StorageProvider.FIREBASE;
+  @Input() mediaFolderPath = 'profileImages/';
+  @Input() filter = {
+    fn: (item?: File) => {
+      if (!item) return false;
+      // Verifica se arquivo é maior que maxFileSize mb
+      if (item.size / 1024 / 1024 > this.maxFileSize) {
+        return false;
+      }
+      const itemType =
+        item.name.substring(item.name.lastIndexOf('.') + 1, item.name.length) ||
+        item.name;
+      if (!this.fileTypesAllowed.includes(itemType)) {
+        return false;
+      }
+      return true;
+    },
+  };
+  @Input() name: any = undefined;
   fileTypesAllowed: string[] = [];
   hasBaseDropZoneOver = false;
   options!: NbFileUploaderOptions;
@@ -40,30 +62,14 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
     this.hasBaseDropZoneOver = false;
 
     this.options = {
-      multiple: false,
-      directory: false,
-      showUploadQueue: true,
-      storageProvider: StorageProvider.FIREBASE,
-      mediaFolderPath: 'profileImages/',
+      multiple: this.multiple,
+      directory: this.directory,
+      showUploadQueue: this.showUploadQueue,
+      storageProvider: this.storageProvider,
+      mediaFolderPath: this.mediaFolderPath,
       allowedFileTypes: this.allowedMimeType,
-      filter: {
-        fn: (item?: File) => {
-          if (!item) return false;
-          // Verifica se arquivo é maior que maxFileSize mb
-          if (item.size / 1024 / 1024 > this.maxFileSize) {
-            return false;
-          }
-          const itemType =
-            item.name.substring(
-              item.name.lastIndexOf('.') + 1,
-              item.name.length
-            ) || item.name;
-          if (!this.fileTypesAllowed.includes(itemType)) {
-            return false;
-          }
-          return true;
-        },
-      },
+      filter: this.filter,
+      name: this.name,
     };
   }
 

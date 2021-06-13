@@ -321,6 +321,11 @@ export class ProfileComponent implements OnInit, DoCheck {
           title: 'Envio de foto de perfil',
           allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg'],
           maxFileSize: 2,
+          name: {
+            fn: (name: string) => {
+              return this.currentUser._id;
+            },
+          },
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

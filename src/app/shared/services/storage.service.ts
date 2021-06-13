@@ -5,13 +5,10 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
-import { takeUntil, switchMap, take, filter } from 'rxjs/operators';
-import { UserService } from './user.service';
+import { switchMap, take, filter } from 'rxjs/operators';
 import { StorageProvider } from 'app/@theme/components/file-uploader/file-uploader.model';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { environment } from '../../../environments/environment';
-import { User } from '../../../../backend/src/models/user';
-
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
   downloadUrl$: Observable<UploadedFile | string>;
@@ -21,18 +18,12 @@ export interface FilesUploadMetadata {
   providedIn: 'root',
 })
 export class StorageService implements OnDestroy {
-  currentUser = new User();
   destroy$: Subject<null> = new Subject();
 
   constructor(
     private readonly storage: AngularFireStorage,
-    private http: HttpClient,
-    private userService: UserService
-  ) {
-    this.userService.currentUser$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => (this.currentUser = user));
-  }
+    private http: HttpClient
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -47,7 +38,7 @@ export class StorageService implements OnDestroy {
   ): FilesUploadMetadata {
     switch (provider) {
       case StorageProvider.FIREBASE: {
-        const filePath = `${mediaFolderPath}/${this.currentUser._id}`;
+        const filePath = `${mediaFolderPath}/${fileName}`;
         const uploadTask: AngularFireUploadTask = this.storage.upload(
           filePath,
           fileToUpload
