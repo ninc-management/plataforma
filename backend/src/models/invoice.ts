@@ -6,16 +6,16 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class InvoiceProduct {
   @prop({ required: true })
-  name!: string;
+  name: string = '';
 
   @prop({ required: true })
-  amount!: string;
+  amount: string = '';
 
   @prop({ required: true })
-  value!: string;
+  value: string = '';
 
   @prop({ required: true })
-  total!: string;
+  total: string = '';
 
   @prop({ required: true, type: () => [String] })
   subproducts: string[] = [];

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { take, map, startWith } from 'rxjs/operators';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -51,9 +51,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .receivedValueNortan(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.receivedValueNortan(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Nº de IMPUL$$O$',
@@ -73,9 +74,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .receivedValueNortan(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.receivedValueNortan(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Contratos como gestor',
@@ -96,9 +98,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .contractsAsManger(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.contractsAsManger(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Contratos como equipe',
@@ -119,9 +122,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .contractsAsMember(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.contractsAsMember(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Orçamentos como gestor',
@@ -142,9 +146,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .invoicesAsManger(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.invoicesAsManger(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Orçamentos como equipe',
@@ -165,9 +170,10 @@ export class ProgressSectionComponent implements OnInit {
                 );
               })
             ),
-          loading: this.metricsService
-            .invoicesAsMember(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.invoicesAsMember(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
         this.METRICS.push({
           title: 'Taxa de conversão (Gestor):\nOrçamento → Contrato',
@@ -189,7 +195,10 @@ export class ProgressSectionComponent implements OnInit {
             ),
           loading: this.metricsService
             .invoicesToContracts('manager', user._id)
-            .pipe(map((x) => x == undefined)),
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         this.METRICS.push({
           title: 'Taxa de conversão (Membro):\nOrçamento → Contrato',
@@ -211,7 +220,10 @@ export class ProgressSectionComponent implements OnInit {
             ),
           loading: this.metricsService
             .invoicesToContracts('member', user._id)
-            .pipe(map((x) => x == undefined)),
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         this.METRICS.push({
           title:
@@ -234,7 +246,10 @@ export class ProgressSectionComponent implements OnInit {
             ),
           loading: this.metricsService
             .invoicesToContractsValue('manager', user._id)
-            .pipe(map((x) => x == undefined)),
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         this.METRICS.push({
           title:
@@ -257,7 +272,10 @@ export class ProgressSectionComponent implements OnInit {
             ),
           loading: this.metricsService
             .invoicesToContractsValue('member', user._id)
-            .pipe(map((x) => x == undefined)),
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         for (const coord of this.departmentService.userCoordinations(
           user._id
@@ -290,7 +308,10 @@ export class ProgressSectionComponent implements OnInit {
               ),
             loading: this.metricsService
               .receivedValueByCoordinationsFiltered(user._id)
-              .pipe(map((x) => x == undefined)),
+              .pipe(
+                map((x) => x == undefined),
+                startWith(true)
+              ),
           });
         }
         for (const department of this.departmentService.userDepartments(
@@ -327,7 +348,10 @@ export class ProgressSectionComponent implements OnInit {
               ),
             loading: this.metricsService
               .receivedValueByCoordinationsFiltered(user._id)
-              .pipe(map((x) => x == undefined)),
+              .pipe(
+                map((x) => x == undefined),
+                startWith(true)
+              ),
           });
         }
         this.METRICS.push({
@@ -357,9 +381,10 @@ export class ProgressSectionComponent implements OnInit {
                   )
               )
             ),
-          loading: this.metricsService
-            .receivedValueNortan(user._id)
-            .pipe(map((x) => x == undefined)),
+          loading: this.metricsService.receivedValueNortan(user._id).pipe(
+            map((x) => x == undefined),
+            startWith(true)
+          ),
         });
       }
     });

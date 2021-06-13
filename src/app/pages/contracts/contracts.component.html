@@ -44,8 +44,7 @@
           (create)="downloadReport()"
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"
-        >
-        </ng2-smart-table>
+        ></ng2-smart-table>
       </ng-template>
       <ng-template #phone>
         <nb-list>
@@ -64,8 +63,7 @@
                     [name]="contract.name"
                     [title]="contract.code"
                     [picture]="invoiceAuthorPic(contract.invoice)"
-                  >
-                  </nb-user>
+                  ></nb-user>
                 </div>
                 <div class="col-6">
                   <p>

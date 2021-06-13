@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-control-group">
-        <label class="label" for="input-user">Autor: </label>
+        <label class="label" for="input-user">Autor:</label>
         <nb-completer
           [(ngModel)]="userSearch"
           [inputName]="'userListCompleter'"
@@ -21,19 +21,24 @@
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="
-            userSearch ? (userList.invalid ? 'danger' : 'success') : 'danger'
+            userList.dirty
+              ? userList.invalid
+                ? 'danger'
+                : 'success'
+              : expenseIndex === undefined && userSearch !== ''
+              ? 'success'
+              : 'basic'
           "
           [attr.aria-invalid]="
             userList.invalid && userList.touched ? true : null
           "
-        >
-        </nb-completer>
+        ></nb-completer>
       </div>
     </div>
     <div class="col-md-4">
       <div class="form-control-group">
-        <label class="label" for="input-value"
-          >Valor:
+        <label class="label" for="input-value">
+          Valor:
           <nb-icon
             status="info"
             icon="info"
@@ -42,8 +47,8 @@
             nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
-          ></nb-icon
-        ></label>
+          ></nb-icon>
+        </label>
         <input
           nbInput
           [(ngModel)]="expense.value"
@@ -64,11 +69,13 @@
           [minLength]="validation.value.minLength"
           [maxLength]="validation.value.maxLength"
           [status]="
-            expense.value !== undefined
+            value.dirty
               ? value.invalid
                 ? 'danger'
                 : 'success'
-              : 'danger'
+              : expense.value !== '' && expenseIndex === undefined
+              ? 'success'
+              : 'basic'
           "
           [disabled]="expense.paid && expenseIndex !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
@@ -118,8 +125,9 @@
     </div>
     <div class="col-md-2">
       <div class="form-control-group">
-        <label class="label" for="input-nf"
-          >Com nota fiscal?<nb-icon
+        <label class="label" for="input-nf">
+          Com nota fiscal?
+          <nb-icon
             status="info"
             icon="info"
             pack="eva"
@@ -127,8 +135,8 @@
             nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar despesa. Esse arquivo deve ter no máximo 4mb."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
-          ></nb-icon
-        ></label>
+          ></nb-icon>
+        </label>
         <nb-select
           [(ngModel)]="expense.nf"
           #nf="ngModel"
@@ -138,7 +146,13 @@
           fullWidth
           size="large"
           [required]="validation.nf.required"
-          [status]="nf.value === undefined ? 'danger' : 'success'"
+          [status]="
+            nf.dirty
+              ? 'success'
+              : expenseIndex === undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
         >
           <nb-option [value]="false">NÃO</nb-option>
@@ -148,7 +162,7 @@
     </div>
     <div class="col-md-6">
       <div class="form-control-group">
-        <label class="label" for="input-source">Fonte de pagamento: </label>
+        <label class="label" for="input-source">Fonte de pagamento:</label>
         <nb-completer
           [(ngModel)]="sourceSearch"
           [inputName]="'sourceListCompleter'"
@@ -169,17 +183,18 @@
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="
-            sourceSearch
+            sourceList.dirty
               ? sourceList.invalid
                 ? 'danger'
                 : 'success'
-              : 'danger'
+              : expenseIndex === undefined && sourceSearch !== ''
+              ? 'success'
+              : 'basic'
           "
           [attr.aria-invalid]="
             sourceList.invalid && sourceList.touched ? true : null
           "
-        >
-        </nb-completer>
+        ></nb-completer>
       </div>
     </div>
     <div class="col-md-6">
@@ -194,13 +209,19 @@
           fullWidth
           size="large"
           [required]="validation.type.required"
-          [status]="type.value ? 'success' : 'danger'"
+          [status]="
+            type.dirty
+              ? 'success'
+              : expenseIndex === undefined && type.value !== ''
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
           (selectedChange)="handleContractMember()"
         >
-          <nb-option *ngFor="let eType of types" [value]="eType">{{
-            eType
-          }}</nb-option>
+          <nb-option *ngFor="let eType of types" [value]="eType">
+            {{ eType }}
+          </nb-option>
         </nb-select>
       </div>
     </div>
@@ -217,8 +238,9 @@
           class="label"
           for="input-split-type"
           style="margin-bottom: 0; margin-right: 10px"
-          >Tipo da despesa:</label
         >
+          Tipo da despesa:
+        </label>
         <nb-radio-group
           [(ngModel)]="expense.splitType"
           (ngModelChange)="updateTeamValues()"
@@ -235,15 +257,16 @@
             *ngFor="let type of sTypes"
             [value]="type"
             style="height: 16px"
-            >{{ type }}</nb-radio
           >
+            {{ type }}
+          </nb-radio>
         </nb-radio-group>
       </div>
     </div>
     <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-6">
       <div class="form-group">
-        <label class="label" for="input-selected-member"
-          >Selecione o associado:
+        <label class="label" for="input-selected-member">
+          Selecione o associado:
         </label>
         <nb-select
           [(ngModel)]="splitSelectedMember"
@@ -260,14 +283,20 @@
           fullWidth
           size="large"
           [required]="validation.selectedMember.required"
-          [status]="selectedMember.value ? 'success' : 'danger'"
+          [status]="
+            selectedMember.dirty
+              ? 'success'
+              : expenseIndex === undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="
             selectedMember.invalid && selectedMember.touched ? true : null
           "
         >
-          <nb-option *ngFor="let user of teamUsers" [value]="user">{{
-            user.fullName
-          }}</nb-option>
+          <nb-option *ngFor="let user of teamUsers" [value]="user">
+            {{ user.fullName }}
+          </nb-option>
         </nb-select>
       </div>
     </div>
@@ -283,7 +312,13 @@
           fullWidth
           size="large"
           [required]="validation.coordination.required"
-          [status]="memberCoordination.value ? 'success' : 'basic'"
+          [status]="
+            memberCoordination.dirty
+              ? 'success'
+              : expenseIndex === undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="
             memberCoordination.invalid && memberCoordination.touched
               ? true
@@ -322,7 +357,7 @@
               placeholder="Coordenação"
               fullWidth
               size="large"
-              [status]="expense.team[i].coordination ? 'success' : 'danger'"
+              [status]="expense.team[i].coordination ? 'success' : 'basic'"
             >
               <nb-option
                 *ngFor="
@@ -351,7 +386,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
-              [status]="is100 ? 'success' : 'danger'"
+              [status]="is100 ? 'success' : 'basic'"
             />
           </div>
           <div
@@ -372,7 +407,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
-              [status]="is100 ? 'success' : 'danger'"
+              [status]="is100 ? 'success' : 'basic'"
             />
             %
           </div>
@@ -399,9 +434,7 @@
               ? description.invalid
                 ? 'danger'
                 : 'success'
-              : expense.description !== ''
-              ? 'success'
-              : 'danger'
+              : 'basic'
           "
           [attr.aria-invalid]="
             description.invalid && description.touched ? true : null
@@ -438,7 +471,13 @@
           size="large"
           (ngModelChange)="updatePaidDate()"
           [required]="validation.paidCheck.required"
-          [status]="paidCheck.value ? 'success' : 'danger'"
+          [status]="
+            paidCheck.dirty
+              ? 'success'
+              : expenseIndex === undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="
             paidCheck.invalid && paidCheck.touched ? true : null
           "
@@ -469,9 +508,9 @@
               ? paidDate.invalid
                 ? 'danger'
                 : 'success'
-              : expense.paidDate !== undefined
+              : expenseIndex === undefined
               ? 'success'
-              : 'danger'
+              : 'basic'
           "
           [attr.aria-invalid]="
             paidDate.invalid && paidDate.touched ? true : null
@@ -495,9 +534,9 @@
                 ? paidDate.invalid
                   ? 'danger'
                   : 'success'
-                : expense.paidDate !== undefined
+                : expenseIndex === undefined
                 ? 'success'
-                : 'danger'
+                : 'basic'
             "
             [attr.aria-invalid]="
               paidDate.invalid && paidDate.touched ? true : null
@@ -527,9 +566,9 @@
               ? created.invalid
                 ? 'danger'
                 : 'success'
-              : expense.created !== undefined
+              : expenseIndex === undefined
               ? 'success'
-              : 'danger'
+              : 'basic'
           "
           [attr.aria-invalid]="created.invalid && created.touched ? true : null"
         />
@@ -541,7 +580,7 @@
         <label class="label" for="input-updated">Última atualização:</label>
         <input
           nbInput
-          [(ngModel)]="options.lastUpdateDate"
+          [ngModel]="utils.formatDate(expense.lastUpdate)"
           #updated="ngModel"
           id="input-updated"
           name="updated"
@@ -555,9 +594,9 @@
               ? updated.invalid
                 ? 'danger'
                 : 'success'
-              : options.lastUpdateDate !== undefined
+              : expenseIndex === undefined
               ? 'success'
-              : 'danger'
+              : 'basic'
           "
           [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
         />
@@ -565,9 +604,9 @@
     </div>
     <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
       <div class="form-control-group">
-        <label class="label" for="input-description"
-          >Comprovantes anexados:</label
-        >
+        <label class="label" for="input-description">
+          Comprovantes anexados:
+        </label>
         <nb-list>
           <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
             <div class="row irow" style="width: 100%">

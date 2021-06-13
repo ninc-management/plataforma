@@ -25,7 +25,11 @@
     autocorrect="off"
     autocapitalize="off"
     [nbTooltip]="tooltipFunction(this.inputObject)"
-    [nbTooltipTrigger]="isPhone ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+    [nbTooltipTrigger]="
+      isPhone || tooltipFunction(this.inputObject) == ''
+        ? tooltipTriggers.NOOP
+        : tooltipTriggers.HINT
+    "
     nbTooltipPlacement="top"
     nbTooltipStatus="primary"
     nbTooltipAdjustment="noop"
@@ -51,19 +55,23 @@
       <nb-list-item
         *ngIf="searchActive && displaySearching"
         class="completer-searching"
-        >{{ textSearching }}</nb-list-item
       >
+        {{ textSearching }}
+      </nb-list-item>
       <nb-list-item
         *ngIf="!searchActive && (!items || items.length === 0)"
         class="completer-no-results"
-        >{{ textNoResults }}</nb-list-item
       >
+        {{ textNoResults }}
+      </nb-list-item>
       <nb-list-item
         class="completer-row-wrapper"
         *ngFor="let item of items; let rowIndex = index"
         [nbTooltip]="tooltipFunction(item.originalObject)"
         [nbTooltipTrigger]="
-          isPhone ? tooltipTriggers.NOOP : tooltipTriggers.HINT
+          isPhone || tooltipFunction(this.inputObject) == ''
+            ? tooltipTriggers.NOOP
+            : tooltipTriggers.HINT
         "
         nbTooltipPlacement="top"
         nbTooltipStatus="primary"
@@ -76,8 +84,7 @@
               [onlyPicture]="true"
               [name]="item.title"
               [picture]="item.image"
-            >
-            </nb-user>
+            ></nb-user>
           </div>
           <div class="col" style="display: flex; align-items: center">
             <completer-list-item
@@ -94,8 +101,7 @@
               [matchClass]="matchClass ? matchClass : ''"
               [searchStr]="searchStr"
               [type]="'description'"
-            >
-            </completer-list-item>
+            ></completer-list-item>
           </div>
         </div>
       </nb-list-item>

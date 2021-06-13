@@ -7,7 +7,6 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { format } from 'date-fns';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -59,13 +58,21 @@ export class PaymentItemComponent implements OnInit {
   };
   options = {
     valueType: '$',
-    lastUpdateDate: format(this.payment.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
     lastTeam: [] as ContractUserPayment[],
   };
 
   userSearch = '';
   userData: CompleterData = this.completerService.local([]);
+
+  get is100(): boolean {
+    return (
+      this.payment.team.reduce((sum, m) => {
+        sum = this.stringUtil.sumMoney(sum, m.value);
+        return sum;
+      }, '0,00') === this.payment.value
+    );
+  }
 
   constructor(
     public departmentService: DepartmentService,

@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-md-4">
       <div class="form-control-group">
-        <label class="label" for="input-value"
-          >Valor:
+        <label class="label" for="input-value">
+          Valor:
           <nb-icon
             status="info"
             icon="info"
@@ -12,8 +12,8 @@
             nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma ordem de pagamento."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
-          ></nb-icon
-        ></label>
+          ></nb-icon>
+        </label>
         <input
           nbInput
           [(ngModel)]="payment.value"
@@ -39,7 +39,7 @@
               ? value.invalid
                 ? 'danger'
                 : 'success'
-              : payment.value !== undefined
+              : paymentIndex === undefined && payment.value !== ''
               ? 'success'
               : 'basic'
           "
@@ -102,7 +102,13 @@
           size="large"
           (ngModelChange)="updatePaidDate()"
           [required]="validation.paidCheck.required"
-          [status]="paidCheck.value ? 'success' : 'basic'"
+          [status]="
+            paidCheck.dirty
+              ? 'success'
+              : paymentIndex === undefined
+              ? 'success'
+              : 'basic'
+          "
           [attr.aria-invalid]="
             paidCheck.invalid && paidCheck.touched ? true : null
           "
@@ -158,7 +164,7 @@
                 ? paidDate.invalid
                   ? 'danger'
                   : 'success'
-                : payment.paidDate !== undefined
+                : paymentIndex === undefined
                 ? 'success'
                 : 'basic'
             "
@@ -190,7 +196,7 @@
               ? created.invalid
                 ? 'danger'
                 : 'success'
-              : payment.created !== undefined
+              : paymentIndex === undefined
               ? 'success'
               : 'basic'
           "
@@ -204,7 +210,7 @@
         <label class="label" for="input-updated">Última atualização:</label>
         <input
           nbInput
-          [(ngModel)]="options.lastUpdateDate"
+          [ngModel]="utils.formatDate(payment.lastUpdate)"
           #updated="ngModel"
           id="input-updated"
           name="updated"
@@ -218,7 +224,7 @@
               ? updated.invalid
                 ? 'danger'
                 : 'success'
-              : options.lastUpdateDate !== undefined
+              : paymentIndex === undefined
               ? 'success'
               : 'basic'
           "
@@ -242,13 +248,7 @@
           [minlength]="validation.service.minLength"
           [maxlength]="validation.service.maxLength"
           [status]="
-            service.dirty
-              ? service.invalid
-                ? 'danger'
-                : 'success'
-              : payment.service !== undefined
-              ? 'success'
-              : 'basic'
+            service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
           "
           [attr.aria-invalid]="service.invalid && service.touched ? true : null"
         ></textarea>
@@ -273,8 +273,8 @@
   <div class="row">
     <div class="col-md-4">
       <div class="form-control-group">
-        <label class="label" for="input-user"
-          >Colaborador:
+        <label class="label" for="input-user">
+          Colaborador:
           <nb-icon
             status="info"
             icon="info"
@@ -283,8 +283,8 @@
             nbTooltip="É exibido somente a lista de membros do orçamento e gestor. Caso o associado que deseja não esteja na lista, adicione ele como equipe do orçamento."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
-          ></nb-icon
-        ></label>
+          ></nb-icon>
+        </label>
         <nb-completer
           [(ngModel)]="userSearch"
           [inputName]="'userListCompleter'"
@@ -294,9 +294,7 @@
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="
-            userService.idToName(userPayment.user)
-          "
+          [selectedText]="userService.idToName(userPayment.user)"
           [dataService]="userData"
           [minSearchLength]="0"
           [placeholder]="'Digite o nome do colaborador'"
@@ -316,8 +314,7 @@
           [attr.aria-invalid]="
             userList.invalid && userList.touched ? true : null
           "
-        >
-        </nb-completer>
+        ></nb-completer>
       </div>
     </div>
     <div class="col-md-4">
@@ -447,7 +444,15 @@
               decimalCaracter: ',',
               decimal: 2
             }"
-            [status]="payment.team[i].value ? 'success' : 'basic'"
+            [status]="
+              paymentIndex === undefined
+                ? is100
+                  ? 'success'
+                  : 'danger'
+                : is100
+                ? 'basic'
+                : 'danger'
+            "
           />
         </div>
         <div class="col-5 col-md-2" style="display: flex; align-items: center">
@@ -465,7 +470,15 @@
               decimalCaracter: ',',
               decimal: 2
             }"
-            [status]="payment.team[i].value ? 'success' : 'basic'"
+            [status]="
+              paymentIndex === undefined
+                ? is100
+                  ? 'success'
+                  : 'danger'
+                : is100
+                ? 'basic'
+                : 'danger'
+            "
           />
           %
         </div>

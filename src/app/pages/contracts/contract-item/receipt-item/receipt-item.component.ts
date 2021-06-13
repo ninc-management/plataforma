@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { format } from 'date-fns';
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -10,6 +9,7 @@ import {
   ContractReceipt,
   Contract,
 } from '../../../../../../backend/src/models/contract';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -34,18 +34,22 @@ export class ReceiptItemComponent implements OnInit {
   options = {
     valueType: '$',
     liquid: '0',
-    lastUpdateDate: format(this.receipt.lastUpdate, 'dd/MM/yyyy'),
   };
 
   constructor(
     private contractService: ContractService,
+    private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    private utils: UtilsService
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
-    this.receipt.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.receipt.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    if (this.contract.invoice) {
+      const tmp = cloneDeep(this.contract);
+      tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.receipt.notaFiscal = this.utils.nfPercentage(tmp);
+      this.receipt.nortanPercentage = this.utils.nortanPercentage(tmp);
+    }
     if (this.receiptIndex !== undefined) {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
       this.toLiquid(this.receipt.value);

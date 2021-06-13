@@ -632,7 +632,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           this.options.total = this.stringUtil.numberToMoney(
             subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
           );
-        else this.options.total = '0,00';
+        else this.options.total = this.stringUtil.numberToMoney(subtotal);
         this.options.subtotal = this.stringUtil.numberToMoney(subtotal);
         break;
       }

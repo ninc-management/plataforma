@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { UtilsService } from './utils.service';
+import { parseISO } from 'date-fns';
 
 interface IdWise {
   _id: string;
@@ -19,6 +20,10 @@ export class WebSocketService {
   ): void {
     if (data == new Object()) return;
     if (data.ns.coll != coll) return;
+    data = JSON.parse(JSON.stringify(data), (k, v) => {
+      if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+      return v;
+    });
     switch (data.operationType) {
       case 'update': {
         const tmpArray = oArray$.getValue();

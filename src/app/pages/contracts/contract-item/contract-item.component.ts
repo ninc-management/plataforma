@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
-import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
@@ -121,9 +120,9 @@ export class ContractItemComponent implements OnInit {
               .idToName(expense.source)
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
-          format(expense.created, 'dd/MM/yyyy').includes(
-            this.searchQuery.toLowerCase()
-          )
+          this.utils
+            .formatDate(expense.created)
+            .includes(this.searchQuery.toLowerCase())
         );
       });
     return this.contract.expenses;
@@ -516,10 +515,6 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  formatDate(date: Date): string {
-    return format(date, 'dd/MM/yyyy');
-  }
-
   expenseTypesSum(): ExpenseTypesSum[] {
     const result = this.contract.expenses.reduce(
       (sum: ExpenseTypesSum[], expense) => {
@@ -676,7 +671,7 @@ export class ContractItemComponent implements OnInit {
         const tmp = cloneDeep(expense);
         tmp.number = '#' + (index + 1).toString();
         tmp.source = this.userService.idToShortName(tmp.source);
-        tmp.created = format(tmp.created, 'dd/MM/yyyy');
+        tmp.created = this.utils.formatDate(tmp.created);
         return tmp;
       })
     );

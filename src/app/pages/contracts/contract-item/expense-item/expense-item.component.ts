@@ -13,7 +13,6 @@ import {
   StorageProvider,
   NbFileItem,
 } from 'app/@theme/components';
-import { format } from 'date-fns';
 import { take, takeUntil, skip } from 'rxjs/operators';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
@@ -82,7 +81,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     number: '#0',
   };
   options = {
-    lastUpdateDate: format(this.expense.lastUpdate, 'dd/MM/yyyy'),
     lastValue: '0',
     lastTeam: [] as ContractExpenseTeamMember[],
   };
@@ -157,19 +155,15 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     );
     this.updateUploaderOptions();
 
-    this.userData = this.completerService
-      .local(
-        this.contract.team.map((member: ContractTeamMember) => member.user),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
     const tmp = this.contract.team
       .map((member: ContractTeamMember): User | undefined => {
         if (member.user) return this.userService.idToUser(member.user);
         return;
       })
       .filter((user: User | undefined): user is User => user !== undefined);
+    this.userData = this.completerService
+      .local(tmp, 'fullName', 'fullName')
+      .imageField('profilePicture');
     tmp.unshift(CONTRACT_BALANCE);
     this.sourceArray.next(tmp);
 
@@ -287,7 +281,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
             ).toString();
             const type = this.expense.type;
             const value = this.expense.value.replace('.', '');
-            const date = format(new Date(), 'dd-MM-yy');
+            const date = this.utils.formatDate(new Date());
             const extension = name.match('[.].+');
             return item + '-' + type + '-' + value + '-' + date + extension;
           },

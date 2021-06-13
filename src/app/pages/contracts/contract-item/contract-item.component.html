@@ -209,9 +209,9 @@
         </div>
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-administration"
-              >Administração do contrato:</label
-            >
+            <label class="label" for="input-administration">
+              Administração do contrato:
+            </label>
             <nb-select
               [ngModel]="invoiceAdministration"
               #administration="ngModel"
@@ -291,8 +291,8 @@
         </div>
         <div class="col-6 col-md-3">
           <div class="form-control-group">
-            <label class="label" for="input-liquid"
-              >Valor liquido:
+            <label class="label" for="input-liquid">
+              Valor liquido:
               <nb-icon
                 status="info"
                 icon="info"
@@ -301,8 +301,8 @@
                 nbTooltip="As porcentagens da NF e Nortan são calculadas automaticamente como exibido no balanço. Para alterar a porcentagem da Nortan é necessário criar uma OE com a porcentagem alterada."
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
-              ></nb-icon
-            ></label>
+              ></nb-icon>
+            </label>
             <input
               nbInput
               [ngModel]="contract.liquid"
@@ -351,7 +351,7 @@
             <label class="label" for="input-updated">Última atualização:</label>
             <input
               nbInput
-              [(ngModel)]="contract.lastUpdate"
+              [ngModel]="utils.formatDate(contract.lastUpdate)"
               #updated="ngModel"
               id="input-updated"
               name="updated"
@@ -375,8 +375,8 @@
         </div>
         <div class="col-12 col-md-3">
           <div class="form-control-group">
-            <label class="label" for="input-user"
-              >Colaborador:
+            <label class="label" for="input-user">
+              Colaborador:
               <nb-icon
                 status="info"
                 icon="info"
@@ -385,8 +385,8 @@
                 nbTooltip="Adicione as % de recebimento de cada membro do contrato para que a ordem de empenho seja calculada automaticamente."
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
-              ></nb-icon
-            ></label>
+              ></nb-icon>
+            </label>
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
@@ -420,15 +420,14 @@
               [attr.aria-invalid]="
                 userList.invalid && userList.touched ? true : null
               "
-            >
-            </nb-completer>
+            ></nb-completer>
           </div>
         </div>
         <div class="col-6 col-md-2">
           <div class="form-control-group">
-            <label class="label" for="input-memberCoordination"
-              >Coordenação:</label
-            >
+            <label class="label" for="input-memberCoordination">
+              Coordenação:
+            </label>
             <nb-select
               [(ngModel)]="teamMember.coordination"
               #memberCoordination="ngModel"
@@ -687,9 +686,9 @@
         </nb-list>
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-hasISS"
-              >Houve retenção de ISS?:</label
-            >
+            <label class="label" for="input-hasISS">
+              Houve retenção de ISS?:
+            </label>
             <nb-select
               [(ngModel)]="options.hasISS"
               #hasISS="ngModel"
@@ -898,12 +897,14 @@
         <div class="form-control-group">
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
-            <b>{{
-              contractService.subtractComissions(
-                stringUtil.applyPercentage(contract.value, contract.ISS),
-                contract
-              )
-            }}</b>
+            <b>
+              {{
+                contractService.subtractComissions(
+                  stringUtil.applyPercentage(contract.value, contract.ISS),
+                  contract
+                )
+              }}
+            </b>
           </p>
         </div>
       </div>
@@ -1204,8 +1205,7 @@
       (delete)="
         confirmationDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)
       "
-    >
-    </ng2-smart-table>
+    ></ng2-smart-table>
     <ng-template #phone>
       <div class="row">
         <div class="col-2" style="padding-left: 0; padding-right: 0">
@@ -1251,8 +1251,7 @@
                       [onlyPicture]="true"
                       [name]="userService.idToName(expense.author)"
                       [picture]="profilePicture(expense.author)"
-                    >
-                    </nb-user>
+                    ></nb-user>
                   </div>
                   <div class="col-Auto">#{{ +i + 1 }}</div>
                   <div class="col">
@@ -1275,7 +1274,7 @@
                       status="primary"
                     ></nb-icon>
                     <span style="vertical-align: 0.1em">
-                      {{ formatDate(expense.created) }}
+                      {{ utils.formatDate(expense.created) }}
                     </span>
                   </div>
                 </a>

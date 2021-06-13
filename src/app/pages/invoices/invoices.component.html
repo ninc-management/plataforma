@@ -44,8 +44,7 @@
           (edit)="invoiceDialog($event)"
           (create)="invoiceDialog({})"
           (delete)="generatePDF($event)"
-        >
-        </ng2-smart-table>
+        ></ng2-smart-table>
       </ng-template>
       <ng-template #phone>
         <nb-list>
@@ -58,8 +57,7 @@
                     [name]="invoice.name"
                     [title]="invoice.code"
                     [picture]="invoice.author?.profilePicture"
-                  >
-                  </nb-user>
+                  ></nb-user>
                 </div>
                 <div class="col-6">
                   <p>

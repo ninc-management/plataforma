@@ -12,6 +12,7 @@ import {
   subDays,
   subMonths,
   subYears,
+  format,
 } from 'date-fns';
 import { Contract } from '../../../../backend/src/models/contract';
 import { Invoice } from '../../../../backend/src/models/invoice';
@@ -159,6 +160,10 @@ export class UtilsService {
         return false;
       }
     }
+  }
+
+  formatDate(date: Date): string {
+    return format(date, 'dd/MM/yyyy');
   }
 
   isWithinInterval(date: Date, start: Date, end: Date): boolean {

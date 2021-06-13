@@ -15,8 +15,7 @@
               "
               [name]="currentUser.fullName"
               size="giant"
-            >
-            </nb-user>
+            ></nb-user>
             <div style="margin-top: 20px; margin-bottom: 20px">
               <button nbButton status="primary" (click)="uploadDialog()">
                 Editar foto
@@ -91,9 +90,9 @@
 
                 <div class="col-md-3">
                   <div class="form-control-group">
-                    <label class="label" for="input-ename"
-                      >Nome de exibição:</label
-                    >
+                    <label class="label" for="input-ename">
+                      Nome de exibição:
+                    </label>
                     <input
                       nbInput
                       [(ngModel)]="currentUser.exibitionName"
@@ -141,9 +140,9 @@
 
                 <div class="col-md-3">
                   <div class="form-control-group">
-                    <label class="label" for="input-theme-selector"
-                      >Tema:</label
-                    >
+                    <label class="label" for="input-theme-selector">
+                      Tema:
+                    </label>
                     <nb-select
                       [(ngModel)]="currentUser.theme"
                       #themeSelector="ngModel"
@@ -171,8 +170,9 @@
                       <nb-option
                         *ngFor="let theme of THEMES"
                         [value]="theme.value"
-                        >{{ theme.name }}</nb-option
                       >
+                        {{ theme.name }}
+                      </nb-option>
                     </nb-select>
                   </div>
                 </div>
@@ -181,9 +181,9 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-email"
-                      >Email pessoal:</label
-                    >
+                    <label class="label" for="input-email">
+                      Email pessoal:
+                    </label>
                     <input
                       nbInput
                       [(ngModel)]="currentUser.email"
@@ -226,9 +226,9 @@
 
                 <div class="col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-emailn"
-                      >Email nortan:</label
-                    >
+                    <label class="label" for="input-emailn">
+                      Email nortan:
+                    </label>
                     <input
                       nbInput
                       [(ngModel)]="currentUser.emailNortan"
@@ -322,9 +322,9 @@
                 </div>
                 <div class="col-md-4">
                   <div class="form-control-group">
-                    <label class="label" for="input-phone"
-                      >Telefone para contato:</label
-                    >
+                    <label class="label" for="input-phone">
+                      Telefone para contato:
+                    </label>
                     <input
                       nbInput
                       [(ngModel)]="currentUser.phone"
@@ -373,9 +373,9 @@
                 </div>
                 <div class="col-md-4">
                   <div class="form-control-group">
-                    <label class="label" for="input-article"
-                      >Artigo de tratamento:</label
-                    >
+                    <label class="label" for="input-article">
+                      Artigo de tratamento:
+                    </label>
                     <nb-select
                       [(ngModel)]="currentUser.article"
                       #article="ngModel"
@@ -476,8 +476,8 @@
               <div class="row">
                 <div class="col-12 col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-position"
-                      >Papeis:
+                    <label class="label" for="input-position">
+                      Papeis:
                       <nb-icon
                         status="info"
                         icon="info"
@@ -486,8 +486,8 @@
                         [nbTooltip]="positionMessage"
                         nbTooltipPlacement="top"
                         nbTooltipStatus="info"
-                      ></nb-icon
-                    ></label>
+                      ></nb-icon>
+                    </label>
                     <nb-select
                       [(ngModel)]="currentUser.position"
                       #position="ngModel"
@@ -521,8 +521,8 @@
                 </div>
                 <div class="col-12 col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-level"
-                      >Enquadramento:
+                    <label class="label" for="input-level">
+                      Enquadramento:
                       <nb-icon
                         *ngIf="
                           NOT(
@@ -539,8 +539,8 @@
                         nbTooltip="Somente o elo principal pode alterar o enquadramento dos associados."
                         nbTooltipPlacement="top"
                         nbTooltipStatus="info"
-                      ></nb-icon
-                    ></label>
+                      ></nb-icon>
+                    </label>
                     <nb-select
                       [(ngModel)]="currentUser.level"
                       #level="ngModel"
@@ -571,9 +571,9 @@
               </div>
 
               <div class="form-control-group">
-                <label class="label" for="input-interests"
-                  >Diretoria principal:</label
-                >
+                <label class="label" for="input-interests">
+                  Diretoria principal:
+                </label>
                 <nb-select
                   [(ngModel)]="currentUser.mainDepartment"
                   #department="ngModel"
@@ -607,9 +607,9 @@
               <div class="row" *ngIf="isCurrentUser && isAER">
                 <div class="col">
                   <div class="form-control-group">
-                    <label class="label" for="input-user"
-                      >Colaboradores assessorados:</label
-                    >
+                    <label class="label" for="input-user">
+                      Colaboradores assessorados:
+                    </label>
                     <nb-completer
                       [(ngModel)]="userSearch"
                       [inputName]="'userListCompleter'"
@@ -638,8 +638,7 @@
                       [attr.aria-invalid]="
                         userList.invalid && userList.touched ? true : null
                       "
-                    >
-                    </nb-completer>
+                    ></nb-completer>
                   </div>
                 </div>
                 <div class="col-auto">
@@ -684,9 +683,9 @@
               </div>
 
               <div class="form-control-group">
-                <label class="label" for="input-interests"
-                  >Coordenações atuantes:</label
-                >
+                <label class="label" for="input-interests">
+                  Coordenações atuantes:
+                </label>
                 <div class="row">
                   <div class="col-md-4">
                     <div class="form-control-group">
@@ -697,8 +696,10 @@
                         [status]="adm.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Administração</nb-checkbox
-                      ><br />
+                      >
+                        Administração
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.design"
                         #design="ngModel"
@@ -706,8 +707,10 @@
                         [status]="design.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Design de Interiores</nb-checkbox
-                      ><br />
+                      >
+                        Design de Interiores
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.obras"
                         #obras="ngModel"
@@ -715,8 +718,10 @@
                         [status]="obras.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Gerenciamento de Obras</nb-checkbox
-                      ><br />
+                      >
+                        Gerenciamento de Obras
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.impermeabilizacao"
                         #impermeabilizacao="ngModel"
@@ -724,8 +729,10 @@
                         [status]="impermeabilizacao.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Impermeabilização</nb-checkbox
-                      ><br />
+                      >
+                        Impermeabilização
+                      </nb-checkbox>
+                      <br />
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -737,8 +744,10 @@
                         [status]="instalacoes.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Instalações</nb-checkbox
-                      ><br />
+                      >
+                        Instalações
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.ambiental"
                         #ambiental="ngModel"
@@ -746,8 +755,10 @@
                         [status]="ambiental.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Meio Ambiente</nb-checkbox
-                      ><br />
+                      >
+                        Meio Ambiente
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.arquitetura"
                         #arquitetura="ngModel"
@@ -755,8 +766,10 @@
                         [status]="arquitetura.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Projetos Arquitetônicos</nb-checkbox
-                      ><br />
+                      >
+                        Projetos Arquitetônicos
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.hidrico"
                         #hidrico="ngModel"
@@ -764,8 +777,10 @@
                         [status]="hidrico.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Recursos Hídricos</nb-checkbox
-                      ><br />
+                      >
+                        Recursos Hídricos
+                      </nb-checkbox>
+                      <br />
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -777,8 +792,10 @@
                         [status]="eletrica.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Sistemas Elétricos</nb-checkbox
-                      ><br />
+                      >
+                        Sistemas Elétricos
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.civil"
                         #civil="ngModel"
@@ -786,8 +803,10 @@
                         [status]="civil.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Sistemas Estruturais</nb-checkbox
-                      ><br />
+                      >
+                        Sistemas Estruturais
+                      </nb-checkbox>
+                      <br />
                       <nb-checkbox
                         [(ngModel)]="currentUser.sanitaria"
                         #sanitaria="ngModel"
@@ -795,25 +814,27 @@
                         [status]="sanitaria.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
-                        >Sistemas Hidrosanitários</nb-checkbox
-                      ><br />
+                      >
+                        Sistemas Hidrosanitários
+                      </nb-checkbox>
+                      <br />
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="form-control-group">
-                <label class="label" for="input-expertise"
-                  >Perfis de atuação por coordenação:</label
-                >
+                <label class="label" for="input-expertise">
+                  Perfis de atuação por coordenação:
+                </label>
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
                     [tabTitle]="currentUser.expertise[idx].coordination"
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
-                    <label class="label" for="input-shortExpertise"
-                      >Especialidade:</label
-                    >
+                    <label class="label" for="input-shortExpertise">
+                      Especialidade:
+                    </label>
                     <textarea
                       nbInput
                       [(ngModel)]="currentUser.expertise[idx].shortExpertise"
@@ -878,9 +899,9 @@
                         caracteres
                       </p>
                     </ng-container>
-                    <label class="label" for="input-expertise"
-                      >Perfil de atuação:</label
-                    >
+                    <label class="label" for="input-expertise">
+                      Perfil de atuação:
+                    </label>
                     <p>
                       {{ currentUser.exibitionName }} é {{ currentUser.level }},
                     </p>
@@ -946,8 +967,8 @@
                         caracteres
                       </p>
                     </ng-container>
-                  </nb-tab></nb-tabset
-                >
+                  </nb-tab>
+                </nb-tabset>
               </div>
 
               <div class="row" *ngIf="isEditing">

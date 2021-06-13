@@ -38,8 +38,7 @@
               [attr.aria-invalid]="
                 authorList.invalid && authorList.touched ? true : null
               "
-            >
-            </nb-completer>
+            ></nb-completer>
           </div>
         </div>
         <div class="col-md-6">
@@ -134,9 +133,9 @@
         </div>
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-administration"
-              >Administração do contrato:</label
-            >
+            <label class="label" for="input-administration">
+              Administração do contrato:
+            </label>
             <nb-select
               [(ngModel)]="tempInvoice.administration"
               #administration="ngModel"
@@ -165,9 +164,9 @@
       </div>
 
       <div class="form-control-group">
-        <label class="label" for="input-type"
-          >Tipologia do empreendimento:</label
-        >
+        <label class="label" for="input-type">
+          Tipologia do empreendimento:
+        </label>
         <input
           nbInput
           [(ngModel)]="tempInvoice.type"
@@ -286,8 +285,7 @@
               [attr.aria-invalid]="
                 contractor.invalid && contractor.touched ? true : null
               "
-            >
-            </nb-completer>
+            ></nb-completer>
           </div>
         </div>
         <div class="col-3 col-md-1">
@@ -354,9 +352,9 @@
       <div class="row">
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-value"
-              >Valor bruto do contrato:</label
-            >
+            <label class="label" for="input-value">
+              Valor bruto do contrato:
+            </label>
             <input
               nbInput
               [(ngModel)]="tempInvoice.value"
@@ -406,9 +404,9 @@
 
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-net-value"
-              >Valor líquido do contrato:</label
-            >
+            <label class="label" for="input-net-value">
+              Valor líquido do contrato:
+            </label>
             <input
               nbInput
               [ngModel]="netValue"
@@ -417,7 +415,9 @@
               placeholder="Valor liquido do contrato"
               fullWidth
               fieldSize="large"
-              [status]="value.invalid ? 'basic' : 'success'"
+              [status]="
+                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
+              "
               [readonly]="true"
             />
           </div>
@@ -456,8 +456,8 @@
             <label class="label">
               <!-- TODO: Remover depois de adicionar data de criação para todos os orçamentos -->
               <!-- >{{ editing ? 'Última atualização' : 'Data de criação' }}:</label -->
-              {{ 'Data de criação' }}:</label
-            >
+              {{ 'Data de criação' }}:
+            </label>
             <!-- TODO: Alterar ngIf para editing depois de adicionar data de criação dos orçamentos -->
             <input
               *ngIf="false; else datePicker"
@@ -524,12 +524,12 @@
                 name="invoiceType"
                 style="height: 16px"
               >
-                <nb-radio value="projeto" style="height: 16px"
-                  >Projeto</nb-radio
-                >
-                <nb-radio value="serviço" style="height: 16px"
-                  >Serviço</nb-radio
-                >
+                <nb-radio value="projeto" style="height: 16px">
+                  Projeto
+                </nb-radio>
+                <nb-radio value="serviço" style="height: 16px">
+                  Serviço
+                </nb-radio>
               </nb-radio-group>
             </label>
           </div>
@@ -628,9 +628,9 @@
       <div class="row">
         <div class="col-md-9">
           <div class="form-control-group">
-            <label class="label" for="input-contactName"
-              >Primeiro nome do contato:</label
-            >
+            <label class="label" for="input-contactName">
+              Primeiro nome do contato:
+            </label>
             <input
               nbInput
               [(ngModel)]="tempInvoice.contactName"
@@ -731,8 +731,8 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-user"
-              >Colaborador:
+            <label class="label" for="input-user">
+              Colaborador:
               <nb-icon
                 status="info"
                 icon="info"
@@ -746,8 +746,8 @@
                 "
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
-              ></nb-icon
-            ></label>
+              ></nb-icon>
+            </label>
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
@@ -780,15 +780,14 @@
               [attr.aria-invalid]="
                 userList.invalid && userList.touched ? true : null
               "
-            >
-            </nb-completer>
+            ></nb-completer>
           </div>
         </div>
         <div class="col-md-5">
           <div class="form-control-group">
-            <label class="label" for="input-memberCoordination"
-              >Coordenação:</label
-            >
+            <label class="label" for="input-memberCoordination">
+              Coordenação:
+            </label>
             <nb-select
               [(ngModel)]="teamMember.coordination"
               #memberCoordination="ngModel"
@@ -879,12 +878,11 @@
         <label
           class="label"
           for="input-subject"
-          style="width: 100%; display: flex"
-          >Assunto: (Pontuação final necessária)
-          <span style="text-align: right; width: 100%"
-            >(Negrito: *!texto*)</span
-          ></label
+          style="width: 100%; display: flex; justify-content: space-between"
         >
+          Assunto: (Pontuação final necessária)
+          <span>(Negrito: *!texto*)</span>
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.subject"
@@ -923,9 +921,9 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peep"
-          >Período de execução: (Já está entre parênteses)</label
-        >
+        <label class="label" for="input-peep">
+          Período de execução: (Já está entre parênteses)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peep"
@@ -958,9 +956,9 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aep"
-              >Atividades: (Pontuação final automática)</label
-            >
+            <label class="label" for="input-aep">
+              Atividades: (Pontuação final automática)
+            </label>
             <input
               nbInput
               [(ngModel)]="options.aep"
@@ -1024,9 +1022,9 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dep"
-          >Detalhes: (Pontuação final necessária)</label
-        >
+        <label class="label" for="input-dep">
+          Detalhes: (Pontuação final necessária)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dep"
@@ -1063,9 +1061,9 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peee"
-          >Período de execução: (Já está entre parênteses)</label
-        >
+        <label class="label" for="input-peee">
+          Período de execução: (Já está entre parênteses)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peee"
@@ -1098,9 +1096,9 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aee"
-              >Atividades: (Pontuação final automática)</label
-            >
+            <label class="label" for="input-aee">
+              Atividades: (Pontuação final automática)
+            </label>
             <input
               nbInput
               [(ngModel)]="options.aee"
@@ -1164,9 +1162,9 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dee"
-          >Detalhes: (Pontuação final necessária)</label
-        >
+        <label class="label" for="input-dee">
+          Detalhes: (Pontuação final necessária)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dee"
@@ -1203,9 +1201,9 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peec"
-          >Período de execução: (Já está entre parênteses)</label
-        >
+        <label class="label" for="input-peec">
+          Período de execução: (Já está entre parênteses)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peec"
@@ -1238,9 +1236,9 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aec"
-              >Atividades: (Pontuação final automática)</label
-            >
+            <label class="label" for="input-aec">
+              Atividades: (Pontuação final automática)
+            </label>
             <input
               nbInput
               [(ngModel)]="options.aec"
@@ -1304,9 +1302,9 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dec"
-          >Detalhes: (Pontuação final necessária)</label
-        >
+        <label class="label" for="input-dec">
+          Detalhes: (Pontuação final necessária)
+        </label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dec"
@@ -1726,7 +1724,13 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
-                [status]="discountValue.value ? 'success' : 'basic'"
+                [status]="
+                  discountValue.dirty
+                    ? discountValue.value
+                      ? 'success'
+                      : 'basic'
+                    : 'basic'
+                "
                 [attr.aria-invalid]="
                   discountValue.invalid && discountValue.touched ? true : null
                 "
@@ -1751,13 +1755,20 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
-                [status]="discountPercentage.value ? 'success' : 'basic'"
+                [status]="
+                  discountPercentage.dirty
+                    ? discountPercentage.value
+                      ? 'success'
+                      : 'basic'
+                    : 'basic'
+                "
                 [attr.aria-invalid]="
                   discountPercentage.invalid && discountPercentage.touched
                     ? true
                     : null
                 "
-              />%
+              />
+              %
             </div>
             <div class="col-1"></div>
           </div>
@@ -1988,9 +1999,9 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-important"
-              >Importante: (Pontuação final automática)</label
-            >
+            <label class="label" for="input-important">
+              Importante: (Pontuação final automática)
+            </label>
             <textarea
               nbInput
               [(ngModel)]="options.important"
@@ -2168,9 +2179,9 @@
         </div>
         <div class="col-6 col-md-2" *ngIf="tempInvoice.materialListType == '2'">
           <div class="form-control-group">
-            <label class="label" for="input-materialValue"
-              >Valor unitário:</label
-            >
+            <label class="label" for="input-materialValue">
+              Valor unitário:
+            </label>
             <input
               nbInput
               [(ngModel)]="options.material.value"
@@ -2295,7 +2306,11 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
-                [status]="tempInvoice.materials[i].amount ? 'success' : 'basic'"
+                [status]="
+                  tempInvoice.materials[i].amount.length == 0
+                    ? 'danger'
+                    : 'basic'
+                "
               />
             </div>
             <div
@@ -2319,7 +2334,11 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
-                [status]="tempInvoice.materials[i].value ? 'success' : 'basic'"
+                [status]="
+                  tempInvoice.materials[i].value.length == 0
+                    ? 'danger'
+                    : 'basic'
+                "
               />
             </div>
             <div
