@@ -31,10 +31,7 @@ export class WebSocketService {
           (el: T) => el._id === data.documentKey._id
         );
         if (data.updateDescription.updatedFields)
-          tmpArray[idx] = Object.assign(
-            tmpArray[idx],
-            data.updateDescription.updatedFields
-          );
+          Object.assign(tmpArray[idx], data.updateDescription.updatedFields);
         if (data.updateDescription.removedFields.length > 0)
           for (const f of data.updateDescription.removedFields)
             delete (tmpArray[idx] as any)[f];
