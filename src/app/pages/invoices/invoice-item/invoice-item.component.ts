@@ -318,10 +318,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         const p = this.stringUtil
           .toPercentage(lastArray[index].value, this.options.lastValue, 20)
           .slice(0, -1);
-        item.value = this.stringUtil.numberToMoney(
-          this.stringUtil.moneyToNumber(this.tempInvoice.value) *
-            (1 - this.stringUtil.toMutiplyPercentage(p))
-        );
+        item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
 
         item.percentage = p;
 
@@ -576,15 +573,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateDiscountValue(): void {
-    const total = this.tempInvoice.products.reduce(
-      (accumulator: number, product: any) =>
-        accumulator + this.stringUtil.moneyToNumber(product.value),
-      0
+    const total = this.stringUtil.numberToMoney(
+      this.tempInvoice.products.reduce(
+        (accumulator: number, product: any) =>
+          accumulator + this.stringUtil.moneyToNumber(product.value),
+        0
+      )
     );
-    this.tempInvoice.discount = this.stringUtil.numberToMoney(
-      total -
-        this.stringUtil.toMutiplyPercentage(this.options.discountPercentage) *
-          total
+    this.tempInvoice.discount = this.stringUtil.subtractMoney(
+      total,
+      this.stringUtil.removePercentage(total, this.options.discountPercentage)
     );
   }
 
@@ -663,9 +661,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateValue(array: any[], idx: number): void {
-    array[idx].value = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.tempInvoice.value) *
-        (1 - this.stringUtil.toMutiplyPercentage(array[idx].percentage))
+    array[idx].value = this.stringUtil.applyPercentage(
+      this.tempInvoice.value,
+      array[idx].percentage
     );
   }
 

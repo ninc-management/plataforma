@@ -183,7 +183,7 @@ export class ContractService implements OnDestroy {
       );
     const result = this.stringUtil.round(
       this.stringUtil.moneyToNumber(contract.liquid) *
-        (1 - this.stringUtil.toMutiplyPercentage(distribution)) -
+        this.stringUtil.toMultiplyPercentage(distribution) -
         expenseContribution.contract +
         expenseContribution.expense +
         expenseContribution.contribution
@@ -238,22 +238,16 @@ export class ContractService implements OnDestroy {
   }
 
   toGrossValue(netValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.round(
-        this.stringUtil.moneyToNumber(netValue) /
-          (this.stringUtil.toMutiplyPercentage(NF) *
-            this.stringUtil.toMutiplyPercentage(nortanPercentage))
-      )
+    return this.stringUtil.revertPercentage(
+      this.stringUtil.revertPercentage(netValue, NF),
+      nortanPercentage
     );
   }
 
   toNetValue(grossValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.round(
-        this.stringUtil.moneyToNumber(grossValue) *
-          this.stringUtil.toMutiplyPercentage(NF) *
-          this.stringUtil.toMutiplyPercentage(nortanPercentage)
-      )
+    return this.stringUtil.applyPercentage(
+      this.stringUtil.applyPercentage(grossValue, NF),
+      nortanPercentage
     );
   }
 

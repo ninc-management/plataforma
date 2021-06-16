@@ -900,7 +900,7 @@
             <b>
               {{
                 contractService.subtractComissions(
-                  stringUtil.applyPercentage(contract.value, contract.ISS),
+                  stringUtil.removePercentage(contract.value, contract.ISS),
                   contract
                 )
               }}

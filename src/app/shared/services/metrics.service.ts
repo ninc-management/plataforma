@@ -1201,12 +1201,12 @@ export class MetricsService implements OnDestroy {
                       this.utils.isWithinInterval(paidDate, start, end)
                     ) {
                       paid.count += 1;
-                      paid.value +=
-                        this.stringUtil.moneyToNumber(receipt.value) *
-                        (1 -
-                          this.stringUtil.toMutiplyPercentage(
-                            receipt.nortanPercentage
-                          ));
+                      paid.value += this.stringUtil.moneyToNumber(
+                        this.stringUtil.applyPercentage(
+                          receipt.value,
+                          receipt.nortanPercentage
+                        )
+                      );
                     }
                     return paid;
                   },
@@ -1221,7 +1221,7 @@ export class MetricsService implements OnDestroy {
         );
       }),
       map((metricInfo) => {
-        metricInfo.value *= 1 - this.stringUtil.toMutiplyPercentage(percentage);
+        metricInfo.value *= this.stringUtil.toMultiplyPercentage(percentage);
         return metricInfo;
       }),
       take(1)

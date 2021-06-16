@@ -280,7 +280,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
                 : this.contract.expenses.length + 1
             ).toString();
             const type = this.expense.type;
-            const value = this.expense.value.replace('.', '');
+            const value = this.expense.value.replace(/\./g, '');
             const date = this.utils.formatDate(new Date());
             const extension = name.match('[.].+');
             return item + '-' + type + '-' + value + '-' + date + extension;
@@ -394,12 +394,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   updateValue(idx: number): void {
-    this.expense.team[idx].value = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.expense.value) *
-        (1 -
-          this.stringUtil.toMutiplyPercentage(
-            this.expense.team[idx].percentage
-          ))
+    this.expense.team[idx].value = this.stringUtil.applyPercentage(
+      this.expense.value,
+      this.expense.team[idx].percentage
     );
   }
 
@@ -419,9 +416,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   calculateTeamValues(): void {
     if (this.expense.value !== '0') {
       this.expense.team.map((member) => {
-        member.value = this.stringUtil.numberToMoney(
-          this.stringUtil.moneyToNumber(this.expense.value) *
-            (1 - this.stringUtil.toMutiplyPercentage(member.percentage))
+        member.value = this.stringUtil.applyPercentage(
+          this.expense.value,
+          member.percentage
         );
         return member;
       });
@@ -452,12 +449,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
         for (let index = 0; index < this.expense.team.length; index++) {
           this.expense.team[index].percentage =
             this.contract.team[index].distribution;
-          this.expense.team[index].value = this.stringUtil.numberToMoney(
-            this.stringUtil.moneyToNumber(this.expense.value) *
-              (1 -
-                this.stringUtil.toMutiplyPercentage(
-                  this.expense.team[index].percentage
-                ))
+          this.expense.team[index].value = this.stringUtil.applyPercentage(
+            this.expense.value,
+            this.expense.team[index].percentage
           );
         }
         break;
