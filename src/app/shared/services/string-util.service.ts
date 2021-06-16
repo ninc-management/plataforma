@@ -23,18 +23,26 @@ export class StringUtilService {
 
   applyPercentage(value: string, percentage: string): string {
     return this.numberToMoney(
-      this.moneyToNumber(value) * this.toMutiplyPercentage(percentage)
+      this.moneyToNumber(value) * this.toMultiplyPercentage(percentage)
+    );
+  }
+
+  removePercentage(value: string, percentage: string): string {
+    return this.numberToMoney(
+      this.moneyToNumber(value) * (1 - this.toMultiplyPercentage(percentage))
+    );
+  }
+
+  revertPercentage(value: string, percentage: string): string {
+    if (!value || value.length == 0) return '0,00';
+    return this.numberToMoney(
+      this.moneyToNumber(value) / (1 - this.toMultiplyPercentage(percentage))
     );
   }
 
   moneyToNumber(money: string | undefined): number {
     if (money === undefined || money === '') return 0;
-    const result = money.replace('.', '').replace(',', '.');
-    return +result;
-  }
-
-  numberToNumber(money: string): number {
-    const result = money.replace(',', '.');
+    const result = money.replace(/\./g, '').replace(',', '.');
     return +result;
   }
 
@@ -44,7 +52,7 @@ export class StringUtilService {
 
   numberToMoney(value: number, decimals = 2): string {
     const result = this.brMask.writeValueMoney(
-      value.toFixed(decimals).toString().replace('.', ','),
+      value.toFixed(decimals).toString(),
       {
         money: true,
         thousand: '.',
@@ -59,9 +67,9 @@ export class StringUtilService {
     return Math.round((num + Number.EPSILON) * 100) / 100;
   }
 
-  toMutiplyPercentage(percentage: string | undefined): number {
-    if (!percentage || percentage.length == 0) return 1;
-    return (100 - this.numberToNumber(percentage)) / 100;
+  toMultiplyPercentage(percentage: string | undefined): number {
+    if (!percentage || percentage.length == 0) return 0;
+    return this.moneyToNumber(percentage) / 100;
   }
 
   toPercentage(
@@ -89,7 +97,7 @@ export class StringUtilService {
     value: number | undefined,
     base: number | undefined
   ): string {
-    if (base == undefined || +base === 0 || value == undefined) return '0,00%';
+    if (base == undefined || base === 0 || value == undefined) return '0,00%';
     return this.numberToMoney((value / base) * 100) + '%';
   }
 

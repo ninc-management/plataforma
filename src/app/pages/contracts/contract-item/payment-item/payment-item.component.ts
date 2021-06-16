@@ -116,15 +116,14 @@ export class PaymentItemComponent implements OnInit {
           };
           if (member.distribution && member.user)
             payment.value = this.stringUtil.numberToString(
-              1 -
-                this.stringUtil.toMutiplyPercentage(
-                  this.contractService.percentageToReceive(
-                    member.distribution,
-                    this.userService.idToUser(member.user),
-                    this.contract,
-                    20
-                  )
-                ),
+              this.stringUtil.toMultiplyPercentage(
+                this.contractService.percentageToReceive(
+                  member.distribution,
+                  this.userService.idToUser(member.user),
+                  this.contract,
+                  20
+                )
+              ),
               20
             );
           return payment;
@@ -169,12 +168,9 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateValue(idx: number): void {
-    this.payment.team[idx].value = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.payment.value) *
-        (1 -
-          this.stringUtil.toMutiplyPercentage(
-            this.payment.team[idx].percentage
-          ))
+    this.payment.team[idx].value = this.stringUtil.applyPercentage(
+      this.payment.value,
+      this.payment.team[idx].percentage
     );
   }
 
@@ -238,10 +234,7 @@ export class PaymentItemComponent implements OnInit {
               20
             )
             .slice(0, -1);
-          member.value = this.stringUtil.numberToMoney(
-            this.stringUtil.moneyToNumber(this.payment.value) *
-              (1 - this.stringUtil.toMutiplyPercentage(p))
-          );
+          member.value = this.stringUtil.applyPercentage(this.payment.value, p);
         }
         member.percentage = this.stringUtil
           .toPercentage(member.value, this.payment.value, 20)

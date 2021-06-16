@@ -106,7 +106,7 @@ export class ReceiptItemComponent implements OnInit {
     let result =
       this.stringUtil.moneyToNumber(
         this.contractService.subtractComissions(
-          this.stringUtil.applyPercentage(
+          this.stringUtil.removePercentage(
             this.contract.value,
             this.contract.ISS
           ),
@@ -140,12 +140,10 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   toLiquid(value: string): void {
-    const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(value) *
-        this.stringUtil.toMutiplyPercentage(this.receipt.notaFiscal) *
-        this.stringUtil.toMutiplyPercentage(this.receipt.nortanPercentage)
+    this.options.liquid = this.stringUtil.removePercentage(
+      this.stringUtil.removePercentage(value, this.receipt.notaFiscal),
+      this.receipt.nortanPercentage
     );
-    this.options.liquid = this.stringUtil.numberToMoney(result);
   }
 
   updatePaidDate(): void {

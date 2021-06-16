@@ -281,9 +281,9 @@ export class ContractItemComponent implements OnInit {
       }
     } else {
       this.contract.team = this.contract.team.map((member, idx) => {
-        member.netValue = this.stringUtil.numberToMoney(
-          this.stringUtil.moneyToNumber(this.contract.liquid) *
-            (1 - this.stringUtil.toMutiplyPercentage(member.distribution))
+        member.netValue = this.stringUtil.applyPercentage(
+          this.contract.liquid,
+          member.distribution
         );
         member.grossValue = this.contractService.toGrossValue(
           member.netValue,
@@ -575,7 +575,10 @@ export class ContractItemComponent implements OnInit {
   updateLiquid(): void {
     this.contract.liquid = this.contractService.toNetValue(
       this.contractService.subtractComissions(
-        this.stringUtil.applyPercentage(this.contract.value, this.contract.ISS),
+        this.stringUtil.removePercentage(
+          this.contract.value,
+          this.contract.ISS
+        ),
         this.contract
       ),
       this.options.notaFiscal,
@@ -585,12 +588,9 @@ export class ContractItemComponent implements OnInit {
 
   updateValue(idx?: number): void {
     if (idx != undefined) {
-      this.contract.team[idx].netValue = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.contract.liquid) *
-          (1 -
-            this.stringUtil.toMutiplyPercentage(
-              this.contract.team[idx].distribution
-            ))
+      this.contract.team[idx].netValue = this.stringUtil.applyPercentage(
+        this.contract.liquid,
+        this.contract.team[idx].distribution
       );
       this.contract.team[idx].grossValue = this.contractService.toGrossValue(
         this.contract.team[idx].netValue,
@@ -599,10 +599,9 @@ export class ContractItemComponent implements OnInit {
       );
       this.updateTeamTotal();
     } else {
-      this.teamMember.netValue = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.contract.liquid) *
-          (1 -
-            this.stringUtil.toMutiplyPercentage(this.teamMember.distribution))
+      this.teamMember.netValue = this.stringUtil.applyPercentage(
+        this.contract.liquid,
+        this.teamMember.distribution
       );
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,

@@ -33,7 +33,7 @@ export class OnedriveService {
   }
 
   private generateForderName(invoice: Invoice): string {
-    const slices = invoice.code.replace('/', '_').split('-');
+    const slices = invoice.code.replace(/\//g, '_').split('-');
     const numberSlices = slices[1].split('_');
     const authorName = invoice.author
       ? this.userService.idToShortName(invoice.author)

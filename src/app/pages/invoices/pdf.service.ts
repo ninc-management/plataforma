@@ -1360,7 +1360,7 @@ export class PdfService {
       } else
         pdf
           .create()
-          .download(invoice.code.replace('/', '_').slice(0, -3) + '.pdf');
+          .download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
     }
   }
 }
