@@ -66,14 +66,14 @@ export class Invoice extends Base<string> {
   @prop({ required: true })
   coordination!: string;
 
-  @prop({ default: 'nortan', required: true })
-  administration!: string;
+  @prop({ required: true })
+  administration: string = 'nortan';
 
   @prop({ required: true, unique: true })
   code!: string;
 
   @prop({ required: true })
-  type!: string;
+  type: string = 'projeto';
 
   @prop({ required: true })
   service!: string;
@@ -96,10 +96,10 @@ export class Invoice extends Base<string> {
   @prop()
   trello?: boolean;
 
-  @prop({ default: new Date(), required: true })
+  @prop({ required: true })
   created: Date = new Date();
 
-  @prop({ default: new Date(), required: true })
+  @prop({ required: true })
   lastUpdate: Date = new Date();
 
   @prop()
@@ -150,13 +150,13 @@ export class Invoice extends Base<string> {
   @prop()
   discount?: string;
 
-  @prop({ default: '1' })
-  materialListType?: string;
+  @prop()
+  materialListType: string = '1';
 
-  @prop({ default: '1' })
-  productListType?: string;
+  @prop()
+  productListType: string = '1';
 
-  @prop({ default: 'projeto' })
+  @prop()
   invoiceType: string = 'projeto';
 
   @prop({ type: () => [InvoiceProduct] })

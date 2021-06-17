@@ -38,13 +38,18 @@ type NonOptionalKeys<T> = {
   providedIn: 'root',
 })
 export class UtilsService {
+  document: any = document;
   tooltipTriggers = NbTrigger;
 
   constructor(private breakpointService: NbMediaBreakpointsService) {}
 
   isPhone(): boolean {
-    const { sm } = this.breakpointService.getBreakpointsMap();
-    return document.documentElement.clientWidth <= sm;
+    const { md } = this.breakpointService.getBreakpointsMap();
+    return this.document.documentElement.clientWidth <= md;
+  }
+
+  mockDocument(d: { documentElement: { clientWidth: number } }): void {
+    this.document = d;
   }
 
   nfPercentage(document: Contract | Invoice): string {
@@ -109,16 +114,16 @@ export class UtilsService {
     return invoice.administration == 'nortan' ? '15' : '17';
   }
 
-  assingOrIncrement(base: number, increment: number): number {
+  assingOrIncrement(base: number | undefined, increment: number): number {
     let result = 0;
     if (base != undefined) result += base;
     result += increment;
     return result;
   }
 
-  compareDates(
-    date: number | Date,
-    last = 'Hoje',
+  isValidDate(
+    date: Date,
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): boolean {
@@ -127,10 +132,11 @@ export class UtilsService {
         return isSameMonth(new Date(), date);
       }
       case 'Dia': {
-        return isWithinInterval(date, {
-          start: subDays(new Date(), number),
-          end: new Date(),
-        });
+        return this.isWithinInterval(
+          date,
+          subDays(new Date(), number),
+          new Date()
+        );
       }
       case 'Mês': {
         const lastMonthStart = fromToday
@@ -139,10 +145,7 @@ export class UtilsService {
         const lastMonthEnd = fromToday
           ? new Date()
           : endOfMonth(addMonths(lastMonthStart, number - 1));
-        return isWithinInterval(date, {
-          start: lastMonthStart,
-          end: lastMonthEnd,
-        });
+        return this.isWithinInterval(date, lastMonthStart, lastMonthEnd);
       }
       case 'Ano': {
         const lastYearStart = fromToday
@@ -151,10 +154,7 @@ export class UtilsService {
         const lastYearEnd = fromToday
           ? new Date()
           : endOfYear(addYears(lastYearStart, number - 1));
-        return isWithinInterval(date, {
-          start: lastYearStart,
-          end: lastYearEnd,
-        });
+        return this.isWithinInterval(date, lastYearStart, lastYearEnd);
       }
       default: {
         return false;

@@ -68,6 +68,19 @@ interface Departments {
   DRM: number;
 }
 
+interface FilteredDepartments {
+  DAD?: number;
+  DEC?: number;
+  DAQ?: number;
+  DPC?: number;
+  DRM?: number;
+}
+
+interface FilteredUserAndDepartments {
+  user: FilteredDepartments;
+  global: FilteredDepartments;
+}
+
 interface UserAndDepartments {
   user: Departments;
   global: Departments;
@@ -128,7 +141,7 @@ export class MetricsService implements OnDestroy {
 
   userDepartmentRepresentation(
     department: string,
-    userDepartment: UserAndDepartments
+    userDepartment: FilteredUserAndDepartments
   ): string {
     const departmentsAbrevs = this.departmentService
       .buildDepartmentList()
@@ -253,7 +266,7 @@ export class MetricsService implements OnDestroy {
 
   contractsAsManger(
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
@@ -271,7 +284,7 @@ export class MetricsService implements OnDestroy {
             if (
               contract.invoice &&
               this.invoiceService.isInvoiceAuthor(contract.invoice, uId) &&
-              this.utils.compareDates(created, last, number, fromToday)
+              this.utils.isValidDate(created, last, number, fromToday)
             ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               metricInfo.count += 1;
@@ -288,7 +301,7 @@ export class MetricsService implements OnDestroy {
 
   invoicesAsManger(
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
@@ -302,7 +315,7 @@ export class MetricsService implements OnDestroy {
               const created = invoice.created;
               if (
                 this.invoiceService.isInvoiceAuthor(invoice, uId) &&
-                this.utils.compareDates(created, last, number, fromToday)
+                this.utils.isValidDate(created, last, number, fromToday)
               ) {
                 metricInfo.count += 1;
                 metricInfo.value += this.stringUtil.moneyToNumber(
@@ -320,7 +333,7 @@ export class MetricsService implements OnDestroy {
 
   contractsAsMember(
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
@@ -338,7 +351,7 @@ export class MetricsService implements OnDestroy {
             if (
               contract.invoice &&
               this.invoiceService.isInvoiceMember(contract.invoice, uId) &&
-              this.utils.compareDates(created, last, number, fromToday)
+              this.utils.isValidDate(created, last, number, fromToday)
             ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               metricInfo.count += 1;
@@ -355,7 +368,7 @@ export class MetricsService implements OnDestroy {
 
   invoicesAsMember(
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
@@ -369,7 +382,7 @@ export class MetricsService implements OnDestroy {
               const created = invoice.created;
               if (
                 this.invoiceService.isInvoiceMember(invoice, uId) &&
-                this.utils.compareDates(created, last, number, fromToday)
+                this.utils.isValidDate(created, last, number, fromToday)
               ) {
                 metricInfo.count += 1;
                 metricInfo.value += this.stringUtil.moneyToNumber(
@@ -387,7 +400,7 @@ export class MetricsService implements OnDestroy {
 
   receivedValueByCoordinations(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<UserAndCoordinations> {
@@ -402,7 +415,7 @@ export class MetricsService implements OnDestroy {
                   const paidDate = payment.paidDate;
                   if (
                     paidDate &&
-                    this.utils.compareDates(paidDate, last, number, fromToday)
+                    this.utils.isValidDate(paidDate, last, number, fromToday)
                   ) {
                     const uCPayments = payment.team.reduce(
                       (upaid: UserAndCoordinations, member) => {
@@ -539,7 +552,7 @@ export class MetricsService implements OnDestroy {
                 const source = this.userService.idToUser(expense.source);
                 if (
                   paidDate &&
-                  this.utils.compareDates(paidDate, last, number, fromToday) &&
+                  this.utils.isValidDate(paidDate, last, number, fromToday) &&
                   source._id != CONTRACT_BALANCE._id
                 ) {
                   const coords =
@@ -662,16 +675,14 @@ export class MetricsService implements OnDestroy {
 
   receivedValueByCoordinationsFiltered(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<FilteredUserAndCoordinations> {
     return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return userCoord;
-        const filtered: UserAndCoordinations = cloneDeep(
-          this.defaultUserCoordValue
-        );
+        const filtered: FilteredUserAndCoordinations = { user: {}, global: {} };
         for (const coord of this.departmentService.userCoordinations(uId)) {
           const coords = this.departmentService.buildAllCoordinationsList();
           switch (coord) {
@@ -723,16 +734,14 @@ export class MetricsService implements OnDestroy {
               break;
           }
         }
-        return Object.fromEntries(
-          Object.entries(filtered).filter(([_, v]) => v != 0)
-        ) as FilteredUserAndCoordinations;
+        return filtered;
       })
     );
   }
 
   receivedValueByDepartments(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<UserAndDepartments> {
@@ -779,15 +788,13 @@ export class MetricsService implements OnDestroy {
 
   receivedValueByDepartmentsFiltered(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
-  ): Observable<UserAndDepartments> {
+  ): Observable<FilteredUserAndDepartments> {
     return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
       map((userDepartment: UserAndDepartments) => {
-        const filtered: UserAndDepartments = cloneDeep(
-          this.defaultUserDepartmentValue
-        );
+        const filtered: FilteredUserAndDepartments = { user: {}, global: {} };
         for (const coord of this.departmentService.userCoordinations(uId)) {
           const coords = this.departmentService.buildAllCoordinationsList();
           switch (coord) {
@@ -912,7 +919,7 @@ export class MetricsService implements OnDestroy {
 
   receivedValueNortan(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<UserAndGlobalMetric> {
@@ -931,7 +938,7 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueList(
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<any> {
@@ -948,7 +955,7 @@ export class MetricsService implements OnDestroy {
                   const paidDate = payment.paidDate;
                   if (
                     paidDate &&
-                    this.utils.compareDates(paidDate, last, number, fromToday)
+                    this.utils.isValidDate(paidDate, last, number, fromToday)
                   ) {
                     const uCPayments = payment.team.reduce(
                       (upaid: any, member) => {
@@ -988,7 +995,7 @@ export class MetricsService implements OnDestroy {
   invoicesToContracts(
     role: 'manager' | 'member',
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<number> {
@@ -1023,7 +1030,7 @@ export class MetricsService implements OnDestroy {
   invoicesToContractsValue(
     role: 'manager' | 'member',
     uId: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<number> {
@@ -1057,7 +1064,7 @@ export class MetricsService implements OnDestroy {
 
   impulses(
     uId?: string,
-    last = 'Hoje',
+    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
     fromToday = false
   ): Observable<number> {
@@ -1072,7 +1079,7 @@ export class MetricsService implements OnDestroy {
                   const paidDate = receipt.paidDate;
                   if (
                     paidDate &&
-                    this.utils.compareDates(paidDate, last, number, fromToday)
+                    this.utils.isValidDate(paidDate, last, number, fromToday)
                   )
                     acc += this.stringUtil.moneyToNumber(
                       this.contractService.toNetValue(
