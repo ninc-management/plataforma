@@ -83,6 +83,7 @@ import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { routes } from 'app/app-routing.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { PagesModule } from 'app/pages/pages.module';
+import { CommonModule } from '@angular/common';
 
 const roles = Object.values(Permissions);
 
@@ -146,6 +147,7 @@ const IMPORTS = [
     protectedResourceMap: new Map(),
   }),
   AngularFireModule.initializeApp(environment.firebaseConfig),
+  CommonModule,
   FormsModule,
   HttpClientTestingModule,
   NbActionsModule,
