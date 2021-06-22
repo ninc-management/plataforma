@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { WebSocketService } from './web-socket.service';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take, filter } from 'rxjs/operators';
+import { takeUntil, take, filter, last } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 import { UtilsService } from './utils.service';
 import { User } from '../../../../backend/src/models/user';
+import { cloneDeep } from 'lodash';
 
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
@@ -30,13 +31,14 @@ export const CONTRACT_BALANCE = {
 })
 export class UserService implements OnDestroy {
   private requested = false;
+  private isLoaded = false;
   private _currentUser$ = new BehaviorSubject<User>(new User());
   private destroy$ = new Subject<void>();
   private users$ = new BehaviorSubject<User[]>([]);
 
   get currentUser$(): Observable<User> {
     if (this._currentUser$.value.fullName == '') {
-      this.getCurrentUser();
+      this.refreshCurrentUser();
     }
     return this._currentUser$;
   }
@@ -51,9 +53,9 @@ export class UserService implements OnDestroy {
     this.authService.onUserChange$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.getCurrentUser();
+        this.refreshCurrentUser();
       });
-    this.getCurrentUser();
+    this.refreshCurrentUser();
   }
 
   ngOnDestroy(): void {
@@ -61,25 +63,26 @@ export class UserService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  getCurrentUser(): void {
+  refreshCurrentUser(): void {
     const email = this.authService.userEmail();
     if (email) {
       this.getUser(email)
         .pipe(
           take(2),
-          filter((user) => user !== undefined)
+          filter((user): user is User => user !== undefined)
         )
-        .subscribe((user) => this._currentUser$.next(user));
+        .subscribe((user) => this._currentUser$.next(cloneDeep(user)));
     }
   }
 
-  getUser(userEmail: string): BehaviorSubject<User> {
-    const user$ = new BehaviorSubject<User>(new User());
+  getUser(userEmail: string): BehaviorSubject<User | undefined> {
+    const user$ = new BehaviorSubject<User | undefined>(undefined);
     this.getUsers()
-      .pipe(take(2))
+      .pipe(take(this.isLoaded ? 1 : 2), last())
       .subscribe((users) => {
         const matchedUsers = users.filter((user) => user.email == userEmail);
-        if (matchedUsers.length > 0) user$.next(matchedUsers[0]);
+        if (matchedUsers.length > 0) user$.next(cloneDeep(matchedUsers[0]));
+        else user$.next(undefined);
       });
     return user$;
   }
@@ -93,6 +96,7 @@ export class UserService implements OnDestroy {
         .subscribe((users: any) => {
           this.users$.next(
             (users as User[]).sort((a, b) => {
+              this.isLoaded = true;
               return a.fullName
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '') <
@@ -125,8 +129,8 @@ export class UserService implements OnDestroy {
       .pipe(take(1))
       .subscribe(() => {
         if (isCurrentUser) {
-          this._currentUser$.next(user);
-          if (callback) callback();
+          this._currentUser$.next(cloneDeep(user));
+          if (callback !== undefined) callback();
         }
       });
   }
@@ -150,7 +154,10 @@ export class UserService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  isEqual(u1?: string | User, u2?: string | User): boolean {
+  isEqual(
+    u1: string | User | undefined,
+    u2: string | User | undefined
+  ): boolean {
     if (u1 == undefined || u2 == undefined) return false;
     return this.idToUser(u1)._id == this.idToUser(u2)._id;
   }

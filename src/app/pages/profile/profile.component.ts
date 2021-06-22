@@ -33,10 +33,10 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('shortExpertise', { read: ElementRef })
   shortExpertiseRefs!: QueryList<ElementRef>;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
-  @Input() user = new User();
+  @Input() inputUser = new User();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   isCurrentUser = false;
-  currentUser = new User();
+  user = new User();
   cities: string[] = [];
   states: string[] = [];
   validation = (user_validation as any).default;
@@ -105,25 +105,24 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    if (this.user !== undefined) this.currentUser = cloneDeep(this.user);
+    if (this.inputUser !== undefined) this.user = cloneDeep(this.inputUser);
     else
       this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-        this.user = user;
-        this.currentUser = cloneDeep(this.user);
+        this.inputUser = user;
+        this.user = cloneDeep(this.inputUser);
         this.isCurrentUser = true;
       });
-    if (this.currentUser.state)
-      this.cities = this.statecityService.buildCityList(this.currentUser.state);
-    if (this.currentUser.expertise == undefined)
-      this.currentUser.expertise = [];
-    if (this.currentUser.theme == undefined) this.currentUser.theme = 'default';
+    if (this.user.state)
+      this.cities = this.statecityService.buildCityList(this.user.state);
+    if (this.user.expertise == undefined) this.user.expertise = [];
+    if (this.user.theme == undefined) this.user.theme = 'default';
     this.buildPositionsList();
     this.buildLevelList();
     this.refreshExpertises();
     this.userData = this.completerService
       .local(
         this.userService.getUsersList().filter((user) => {
-          if (user._id != this.currentUser._id) return true;
+          if (user._id != this.user._id) return true;
           return false;
         }),
         'fullName',
@@ -145,26 +144,22 @@ export class ProfileComponent implements OnInit, DoCheck {
       this.shortExpertiseRefs != undefined
     ) {
       this.expertiseRefs.toArray().forEach((el: any) => {
-        const idx = this.currentUser.expertise.findIndex(
+        const idx = this.user.expertise.findIndex(
           (ael) =>
             ael.coordination ===
             el.nativeElement.placeholder.split(' ').slice(-1)[0]
         );
-        if (el.nativeElement.value != this.currentUser.expertise[idx].text)
-          el.nativeElement.value = this.currentUser.expertise[idx].text;
+        if (el.nativeElement.value != this.user.expertise[idx].text)
+          el.nativeElement.value = this.user.expertise[idx].text;
       });
       this.shortExpertiseRefs.toArray().forEach((el: any) => {
-        const idx = this.currentUser.expertise.findIndex(
+        const idx = this.user.expertise.findIndex(
           (ael) =>
             ael.coordination ===
             el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
         );
-        if (
-          el.nativeElement.value !=
-          this.currentUser.expertise[idx].shortExpertise
-        )
-          el.nativeElement.value =
-            this.currentUser.expertise[idx].shortExpertise;
+        if (el.nativeElement.value != this.user.expertise[idx].shortExpertise)
+          el.nativeElement.value = this.user.expertise[idx].shortExpertise;
       });
     }
   }
@@ -184,54 +179,48 @@ export class ProfileComponent implements OnInit, DoCheck {
   }
 
   fixPositionAndLevel(): void {
-    this.currentUser.position = this.currentUser.position.map((position) => {
+    this.user.position = this.user.position.map((position) => {
       switch (position) {
         case (position.match(/Parceir[o,a]/) || {}).input:
-          return 'Parceir' + (this.currentUser.article == 'a' ? 'a' : 'o');
+          return 'Parceir' + (this.user.article == 'a' ? 'a' : 'o');
         case (position.match(/Associad[o,a]/) || {}).input:
-          return 'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o');
+          return 'Associad' + (this.user.article == 'a' ? 'a' : 'o');
         case (position.match(/Direto(r|ra) Financeir[oa]/) || {}).input:
           return (
             'Diretor' +
-            (this.currentUser.article == 'a' ? 'a' : '') +
+            (this.user.article == 'a' ? 'a' : '') +
             ' Financeir' +
-            (this.currentUser.article == 'a' ? 'a' : 'o')
+            (this.user.article == 'a' ? 'a' : 'o')
           );
         case (position.match(/Direto(r|ra) Administrativ[oa]/) || {}).input:
           return (
             'Diretor' +
-            (this.currentUser.article == 'a' ? 'a' : '') +
+            (this.user.article == 'a' ? 'a' : '') +
             ' Administrativ' +
-            (this.currentUser.article == 'a' ? 'a' : 'o')
+            (this.user.article == 'a' ? 'a' : 'o')
           );
         case (position.match(/Assesso(r|ra) Executiv[oa] Remot[oa]/) || {})
           .input:
-          return 'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o');
+          return 'Associad' + (this.user.article == 'a' ? 'a' : 'o');
         case (position.match(/Direto(r|ra) de T.I/) || {}).input:
-          return (
-            'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de T.I'
-          );
+          return 'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I';
         default:
           return position;
       }
     });
 
-    switch (this.currentUser.level) {
-      case (this.currentUser.level.match(/Associad[oa] Trainee/) || {}).input:
-        this.currentUser.level =
-          'Associad' + this.currentUser.article + ' Trainee';
+    switch (this.user.level) {
+      case (this.user.level.match(/Associad[oa] Trainee/) || {}).input:
+        this.user.level = 'Associad' + this.user.article + ' Trainee';
         break;
-      case (this.currentUser.level.match(/Associad[oa] Equipe/) || {}).input:
-        this.currentUser.level =
-          'Associad' + this.currentUser.article + ' Equipe';
+      case (this.user.level.match(/Associad[oa] Equipe/) || {}).input:
+        this.user.level = 'Associad' + this.user.article + ' Equipe';
         break;
-      case (this.currentUser.level.match(/Associad[oa] Líder/) || {}).input:
-        this.currentUser.level =
-          'Associad' + this.currentUser.article + ' Líder';
+      case (this.user.level.match(/Associad[oa] Líder/) || {}).input:
+        this.user.level = 'Associad' + this.user.article + ' Líder';
         break;
-      case (this.currentUser.level.match(/Associad[oa] Gestor/) || {}).input:
-        this.currentUser.level =
-          'Associad' + this.currentUser.article + ' Gestor';
+      case (this.user.level.match(/Associad[oa] Gestor/) || {}).input:
+        this.user.level = 'Associad' + this.user.article + ' Gestor';
         break;
       default:
         break;
@@ -240,33 +229,29 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   refreshExpertises(): void {
     const active: boolean[] = [
-      this.currentUser.adm ? this.currentUser.adm : false,
-      this.currentUser.design ? this.currentUser.design : false,
-      this.currentUser.obras ? this.currentUser.obras : false,
-      this.currentUser.impermeabilizacao
-        ? this.currentUser.impermeabilizacao
-        : false,
-      this.currentUser.instalacoes ? this.currentUser.instalacoes : false,
-      this.currentUser.ambiental ? this.currentUser.ambiental : false,
-      this.currentUser.arquitetura ? this.currentUser.arquitetura : false,
-      this.currentUser.hidrico ? this.currentUser.hidrico : false,
-      this.currentUser.eletrica ? this.currentUser.eletrica : false,
-      this.currentUser.civil ? this.currentUser.civil : false,
-      this.currentUser.sanitaria ? this.currentUser.sanitaria : false,
+      this.user.adm ? this.user.adm : false,
+      this.user.design ? this.user.design : false,
+      this.user.obras ? this.user.obras : false,
+      this.user.impermeabilizacao ? this.user.impermeabilizacao : false,
+      this.user.instalacoes ? this.user.instalacoes : false,
+      this.user.ambiental ? this.user.ambiental : false,
+      this.user.arquitetura ? this.user.arquitetura : false,
+      this.user.hidrico ? this.user.hidrico : false,
+      this.user.eletrica ? this.user.eletrica : false,
+      this.user.civil ? this.user.civil : false,
+      this.user.sanitaria ? this.user.sanitaria : false,
     ];
     this.ACTIVE_EXPERTISE = [];
     this.COORDINATIONS.filter((cd: string, idx: number) => {
       return active[idx];
     }).map((cd: string) => {
-      let idx = this.currentUser.expertise.findIndex(
-        (el) => el.coordination === cd
-      );
+      let idx = this.user.expertise.findIndex((el) => el.coordination === cd);
       if (idx != -1) {
-        if (this.currentUser.expertise[idx].shortExpertise == undefined)
-          this.currentUser.expertise[idx].shortExpertise = '';
+        if (this.user.expertise[idx].shortExpertise == undefined)
+          this.user.expertise[idx].shortExpertise = '';
         this.ACTIVE_EXPERTISE.push(idx);
       } else {
-        idx = this.currentUser.expertise.push({
+        idx = this.user.expertise.push({
           coordination: cd,
           text: '',
           shortExpertise: '',
@@ -290,9 +275,8 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   updateUser(): void {
     this.isEditing = false;
-    this.user = cloneDeep(this.currentUser);
     this.userService.updateUser(
-      this.currentUser,
+      this.user,
       () => this.checkPrivileges(),
       this.isCurrentUser
     );
@@ -304,7 +288,7 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   revert(): void {
     this.isEditing = false;
-    this.currentUser = cloneDeep(this.user);
+    this.user = cloneDeep(this.inputUser);
     this.refreshExpertises();
     this.changeTheme();
   }
@@ -323,7 +307,7 @@ export class ProfileComponent implements OnInit, DoCheck {
           maxFileSize: 2,
           name: {
             fn: (name: string) => {
-              return this.currentUser._id;
+              return this.user._id;
             },
           },
         },
@@ -335,75 +319,64 @@ export class ProfileComponent implements OnInit, DoCheck {
       .subscribe((urls) => {
         this.isDialogBlocked.next(false);
         if (urls.length > 0) {
-          this.currentUser.profilePicture = urls[0].url;
-          this.userService.updateUser(
-            this.currentUser,
-            undefined,
-            this.isCurrentUser
-          );
+          this.user.profilePicture = urls[0].url;
+          this.userService.updateUser(this.user, undefined, this.isCurrentUser);
         }
       });
   }
 
   buildPositionsList(): void {
     this.POSITIONS = [];
-    this.POSITIONS.push(
-      'Parceir' + (this.currentUser.article == 'a' ? 'a' : 'o')
-    );
+    this.POSITIONS.push('Parceir' + (this.user.article == 'a' ? 'a' : 'o'));
     this.POSITIONS.push('Cliente');
-    this.POSITIONS.push(
-      'Associad' + (this.currentUser.article == 'a' ? 'a' : 'o')
-    );
+    this.POSITIONS.push('Associad' + (this.user.article == 'a' ? 'a' : 'o'));
     this.departmentService
       .buildDepartmentList()
       .map((dp: string) => this.POSITIONS.push('Elo Principal' + dp.slice(15)));
     this.POSITIONS.push(
       'Diretor' +
-        (this.currentUser.article == 'a' ? 'a' : '') +
+        (this.user.article == 'a' ? 'a' : '') +
         ' Financeir' +
-        (this.currentUser.article == 'a' ? 'a' : 'o')
+        (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push(
       'Diretor' +
-        (this.currentUser.article == 'a' ? 'a' : '') +
+        (this.user.article == 'a' ? 'a' : '') +
         ' Administrativ' +
-        (this.currentUser.article == 'a' ? 'a' : 'o')
+        (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push(
       'Assessor' +
-        (this.currentUser.article == 'a' ? 'a' : '') +
+        (this.user.article == 'a' ? 'a' : '') +
         ' Executiv' +
-        (this.currentUser.article == 'a' ? 'a' : 'o') +
+        (this.user.article == 'a' ? 'a' : 'o') +
         ' Remot' +
-        (this.currentUser.article == 'a' ? 'a' : 'o')
+        (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push('Elo Principal Nortan');
     this.POSITIONS.push(
-      'Diretor' + (this.currentUser.article == 'a' ? 'a' : '') + ' de T.I'
+      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I'
     );
   }
 
   buildLevelList(): void {
     this.LEVELS = [];
     this.LEVELS.push('Freelancer');
-    this.LEVELS.push('Associad' + this.currentUser.article + ' Trainee');
-    this.LEVELS.push('Associad' + this.currentUser.article + ' Equipe');
-    this.LEVELS.push('Associad' + this.currentUser.article + ' Líder');
-    this.LEVELS.push('Associad' + this.currentUser.article + ' Gestor');
+    this.LEVELS.push('Associad' + this.user.article + ' Trainee');
+    this.LEVELS.push('Associad' + this.user.article + ' Equipe');
+    this.LEVELS.push('Associad' + this.user.article + ' Líder');
+    this.LEVELS.push('Associad' + this.user.article + ' Gestor');
   }
 
   changeTheme(): void {
     if (this.isCurrentUser)
       this.themeService.changeTheme(
-        this.currentUser?.theme == undefined
-          ? 'default'
-          : this.currentUser.theme
+        this.user?.theme == undefined ? 'default' : this.user.theme
       );
   }
 
   addToAER(): void {
-    if (this.currentUser.AER)
-      this.currentUser.AER.push(cloneDeep(this.userAER));
+    if (this.user.AER) this.user.AER.push(cloneDeep(this.userAER));
     this.userAER = new User();
     this.userSearch = '';
   }

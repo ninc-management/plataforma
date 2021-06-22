@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <nb-card
-      [nbSpinner]="currentUser?.fullName == undefined"
+      [nbSpinner]="user?.fullName == undefined"
       nbSpinnerStatus="primary"
     >
       <nb-card-body>
@@ -10,10 +10,8 @@
             <nb-user
               class="profile"
               [onlyPicture]="true"
-              [picture]="
-                currentUser.profilePicture ? currentUser.profilePicture : ''
-              "
-              [name]="currentUser.fullName"
+              [picture]="user.profilePicture ? user.profilePicture : ''"
+              [name]="user.fullName"
               size="giant"
             ></nb-user>
             <div style="margin-top: 20px; margin-bottom: 20px">
@@ -42,7 +40,7 @@
                     <label class="label" for="input-name">Nome completo:</label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.fullName"
+                      [(ngModel)]="user.fullName"
                       #fullName="ngModel"
                       id="input-name"
                       name="fullName"
@@ -95,7 +93,7 @@
                     </label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.exibitionName"
+                      [(ngModel)]="user.exibitionName"
                       #exibitionName="ngModel"
                       id="input-ename"
                       name="exibitionName"
@@ -144,7 +142,7 @@
                       Tema:
                     </label>
                     <nb-select
-                      [(ngModel)]="currentUser.theme"
+                      [(ngModel)]="user.theme"
                       #themeSelector="ngModel"
                       id="input-theme-selector"
                       name="themeSelector"
@@ -186,7 +184,7 @@
                     </label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.email"
+                      [(ngModel)]="user.email"
                       #email="ngModel"
                       id="input-email"
                       name="email"
@@ -231,7 +229,7 @@
                     </label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.emailNortan"
+                      [(ngModel)]="user.emailNortan"
                       #emailNortan="ngModel"
                       id="input-emailn"
                       name="emailNortan"
@@ -278,7 +276,7 @@
                     <label class="label" for="input-document">CPF/CNPJ:</label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.document"
+                      [(ngModel)]="user.document"
                       #document="ngModel"
                       id="input-document"
                       name="document"
@@ -327,7 +325,7 @@
                     </label>
                     <input
                       nbInput
-                      [(ngModel)]="currentUser.phone"
+                      [(ngModel)]="user.phone"
                       #phone="ngModel"
                       id="input-phone"
                       name="phone"
@@ -377,7 +375,7 @@
                       Artigo de tratamento:
                     </label>
                     <nb-select
-                      [(ngModel)]="currentUser.article"
+                      [(ngModel)]="user.article"
                       #article="ngModel"
                       id="input-article"
                       name="article"
@@ -414,7 +412,7 @@
                   <div class="form-control-group">
                     <label class="label" for="input-state">Estado:</label>
                     <nb-select
-                      [(ngModel)]="currentUser.state"
+                      [(ngModel)]="user.state"
                       #state="ngModel"
                       id="input-state"
                       name="state"
@@ -445,7 +443,7 @@
                   <div class="form-control-group">
                     <label class="label" for="input-city">Cidade:</label>
                     <nb-select
-                      [(ngModel)]="currentUser.city"
+                      [(ngModel)]="user.city"
                       #city="ngModel"
                       id="input-city"
                       name="city"
@@ -489,7 +487,7 @@
                       ></nb-icon>
                     </label>
                     <nb-select
-                      [(ngModel)]="currentUser.position"
+                      [(ngModel)]="user.position"
                       #position="ngModel"
                       id="input-position"
                       name="position"
@@ -542,7 +540,7 @@
                       ></nb-icon>
                     </label>
                     <nb-select
-                      [(ngModel)]="currentUser.level"
+                      [(ngModel)]="user.level"
                       #level="ngModel"
                       id="input-level"
                       name="level"
@@ -575,7 +573,7 @@
                   Diretoria principal:
                 </label>
                 <nb-select
-                  [(ngModel)]="currentUser.mainDepartment"
+                  [(ngModel)]="user.mainDepartment"
                   #department="ngModel"
                   id="input-department"
                   name="department"
@@ -658,7 +656,7 @@
                 <nb-list style="width: 100%; padding: 10px 0">
                   <nb-list-item
                     *ngFor="
-                      let user of currentUser.AER;
+                      let user of user.AER;
                       let i = index;
                       trackBy: utils.trackByIndex
                     "
@@ -673,7 +671,7 @@
                           status="basic"
                           icon="trash-2-outline"
                           pack="eva"
-                          (click)="currentUser.AER.splice(i, 1)"
+                          (click)="user.AER.splice(i, 1)"
                           [options]="{ animation: { type: 'shake' } }"
                         ></nb-icon>
                       </div>
@@ -690,7 +688,7 @@
                   <div class="col-md-4">
                     <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="currentUser.adm"
+                        [(ngModel)]="user.adm"
                         #adm="ngModel"
                         name="adm"
                         [status]="adm.value ? 'success' : 'basic'"
@@ -701,7 +699,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.design"
+                        [(ngModel)]="user.design"
                         #design="ngModel"
                         name="design"
                         [status]="design.value ? 'success' : 'basic'"
@@ -712,7 +710,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.obras"
+                        [(ngModel)]="user.obras"
                         #obras="ngModel"
                         name="obras"
                         [status]="obras.value ? 'success' : 'basic'"
@@ -723,7 +721,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.impermeabilizacao"
+                        [(ngModel)]="user.impermeabilizacao"
                         #impermeabilizacao="ngModel"
                         name="impermeabilizacao"
                         [status]="impermeabilizacao.value ? 'success' : 'basic'"
@@ -738,7 +736,7 @@
                   <div class="col-md-4">
                     <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="currentUser.instalacoes"
+                        [(ngModel)]="user.instalacoes"
                         #instalacoes="ngModel"
                         name="instalacoes"
                         [status]="instalacoes.value ? 'success' : 'basic'"
@@ -749,7 +747,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.ambiental"
+                        [(ngModel)]="user.ambiental"
                         #ambiental="ngModel"
                         name="ambiental"
                         [status]="ambiental.value ? 'success' : 'basic'"
@@ -760,7 +758,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.arquitetura"
+                        [(ngModel)]="user.arquitetura"
                         #arquitetura="ngModel"
                         name="arquitetura"
                         [status]="arquitetura.value ? 'success' : 'basic'"
@@ -771,7 +769,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.hidrico"
+                        [(ngModel)]="user.hidrico"
                         #hidrico="ngModel"
                         name="hidrico"
                         [status]="hidrico.value ? 'success' : 'basic'"
@@ -786,7 +784,7 @@
                   <div class="col-md-4">
                     <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="currentUser.eletrica"
+                        [(ngModel)]="user.eletrica"
                         #eletrica="ngModel"
                         name="eletrica"
                         [status]="eletrica.value ? 'success' : 'basic'"
@@ -797,7 +795,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.civil"
+                        [(ngModel)]="user.civil"
                         #civil="ngModel"
                         name="civil"
                         [status]="civil.value ? 'success' : 'basic'"
@@ -808,7 +806,7 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
-                        [(ngModel)]="currentUser.sanitaria"
+                        [(ngModel)]="user.sanitaria"
                         #sanitaria="ngModel"
                         name="sanitaria"
                         [status]="sanitaria.value ? 'success' : 'basic'"
@@ -829,7 +827,7 @@
                 </label>
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
-                    [tabTitle]="currentUser.expertise[idx].coordination"
+                    [tabTitle]="user.expertise[idx].coordination"
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
                     <label class="label" for="input-shortExpertise">
@@ -837,12 +835,12 @@
                     </label>
                     <textarea
                       nbInput
-                      [(ngModel)]="currentUser.expertise[idx].shortExpertise"
+                      [(ngModel)]="user.expertise[idx].shortExpertise"
                       #shortExpertise="ngModel"
                       id="input-shortExpertise"
                       name="shortExpertise"
                       placeholder="Descreva a sua especialidade na {{
-                        currentUser.expertise[idx].coordination
+                        user.expertise[idx].coordination
                       }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
                       fullWidth
                       fieldSize="large"
@@ -870,7 +868,7 @@
                         class="caption status-danger"
                         *ngIf="
                           expertise.errors?.required &&
-                          currentUser.expertise[idx].shortExpertise.length != 0
+                          user.expertise[idx].shortExpertise.length != 0
                         "
                       >
                         É necessário preencher todas as especialidades!
@@ -879,12 +877,11 @@
                         class="caption status-danger"
                         *ngIf="
                           expertise.errors?.required &&
-                          currentUser.expertise[idx].shortExpertise.length == 0
+                          user.expertise[idx].shortExpertise.length == 0
                         "
                       >
                         A especialidade em
-                        {{ currentUser.expertise[idx].coordination }} é
-                        obrigatória!
+                        {{ user.expertise[idx].coordination }} é obrigatória!
                       </p>
                       <p
                         class="caption status-danger"
@@ -902,17 +899,15 @@
                     <label class="label" for="input-expertise">
                       Perfil de atuação:
                     </label>
-                    <p>
-                      {{ currentUser.exibitionName }} é {{ currentUser.level }},
-                    </p>
+                    <p>{{ user.exibitionName }} é {{ user.level }},</p>
                     <textarea
                       nbInput
-                      [(ngModel)]="currentUser.expertise[idx].text"
+                      [(ngModel)]="user.expertise[idx].text"
                       #expertise="ngModel"
                       id="input-expertise"
                       name="expertise"
                       placeholder="Descreva o seu perfil de atuação na {{
-                        currentUser.expertise[idx].coordination
+                        user.expertise[idx].coordination
                       }}"
                       fullWidth
                       fieldSize="large"
@@ -938,7 +933,7 @@
                         class="caption status-danger"
                         *ngIf="
                           expertise.errors?.required &&
-                          currentUser.expertise[idx].text.length != 0
+                          user.expertise[idx].text.length != 0
                         "
                       >
                         É necessário preencher todos os perfis de atuação!
@@ -947,12 +942,11 @@
                         class="caption status-danger"
                         *ngIf="
                           expertise.errors?.required &&
-                          currentUser.expertise[idx].text.length == 0
+                          user.expertise[idx].text.length == 0
                         "
                       >
                         O perfil de atuação na
-                        {{ currentUser.expertise[idx].coordination }} é
-                        obrigatório!
+                        {{ user.expertise[idx].coordination }} é obrigatório!
                       </p>
                       <p
                         class="caption status-danger"

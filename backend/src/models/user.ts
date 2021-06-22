@@ -16,7 +16,7 @@ export class UserExpertise {
 @plugin(mongooseUniqueValidator)
 export class User extends Base<string> {
   @prop({ required: true })
-  public fullName!: string;
+  public fullName: string = '';
 
   @prop()
   public exibitionName?: string;

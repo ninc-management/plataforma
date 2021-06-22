@@ -62,7 +62,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       .isGranted(childRoute.data.permission, childRoute.data.resource)
       .pipe(
         tap((isGranted) => {
-          if (!isGranted) this.router.navigate(['pages/dashboard']);
+          if (!isGranted) this.router.navigate(['/']);
         })
       );
   }
