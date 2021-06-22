@@ -1,4 +1,5 @@
 src/test.ts
 src/**/*.spec.ts
+src/types
 node_modules/@nebular/**/*.spec.ts
 e2e

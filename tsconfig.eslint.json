@@ -10,6 +10,7 @@
   "exclude": [
     "./src/test.ts",
     "./src/**/*.spec.ts",
+    "./src/types",
     "./node_modules/@nebular/**/*.spec.ts",
     "./backend/angular",
     "./e2e"
