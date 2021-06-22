@@ -38,7 +38,7 @@ describe('StorageService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should upload file to firebase', (done) => {
+  it('should upload file to firebase', (done: DoneFn) => {
     const metadata = service.uploadFileAndGetMetadata(
       '',
       emptyFile,

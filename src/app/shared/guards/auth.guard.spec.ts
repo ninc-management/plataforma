@@ -23,7 +23,7 @@ describe('AuthGuard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should be not athenticated and redirected to auth/login', (done: any) => {
+  it('should be not athenticated and redirected to auth/login', (done: DoneFn) => {
     spyOn(router, 'navigate');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe(
       (result) => {
@@ -34,7 +34,7 @@ describe('AuthGuard', () => {
     );
   });
 
-  it('should allow navigate to childRoute', (done: any) => {
+  it('should allow navigate to childRoute', (done: DoneFn) => {
     childRoute.data = { permission: 'elo-principal', resource: 'test' };
     spyOn(router, 'navigate');
     (
@@ -46,14 +46,14 @@ describe('AuthGuard', () => {
     });
   });
 
-  it('should deny navigate to childRoute', (done: any) => {
+  it('should deny navigate to childRoute', (done: DoneFn) => {
     childRoute.data = { permission: 'test', resource: 'test' };
     spyOn(router, 'navigate');
     (
       guard.canActivateChild(childRoute, stateSpy) as Observable<boolean>
     ).subscribe((result) => {
       expect(result).toBe(false);
-      expect(router.navigate).toHaveBeenCalledWith(['pages/dashboard']);
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
       done();
     });
   });
