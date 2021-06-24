@@ -671,7 +671,11 @@
                           status="basic"
                           icon="trash-2-outline"
                           pack="eva"
-                          (click)="user.AER.splice(i, 1)"
+                          (click)="
+                            user
+                              ? userService.idToUser(user).AER.splice(i, 1)
+                              : ''
+                          "
                           [options]="{ animation: { type: 'shake' } }"
                         ></nb-icon>
                       </div>
