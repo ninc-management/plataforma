@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { WebSocketService } from './web-socket.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take, filter, last } from 'rxjs/operators';

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from './web-socket.service';
 import { UtilsService } from './utils.service';
 import { Promotion } from '../../../../backend/src/models/promotion';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';

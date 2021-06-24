@@ -7,11 +7,11 @@ import {
   Router,
   CanActivateChild,
 } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
 import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker } from '@nebular/security';
 import { MsalService } from '@azure/msal-angular';
-import { tap, take, skip } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
