@@ -6,11 +6,11 @@ import { last, take, publish } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '../../../../backend/src/models/user';
 import { cloneDeep } from 'lodash';
-import { ConnectableObservable, Subject, Observable } from 'rxjs';
+import { ConnectableObservable, Subject } from 'rxjs';
 import { AuthService } from 'app/auth/auth.service';
 import { SocketMock } from 'app/../types/socketio-mock';
-import MockedServerSocket from 'socket.io-mock';
 import { Socket } from 'ngx-socket-io';
+import MockedServerSocket from 'socket.io-mock';
 
 describe('UserService', () => {
   let service: UserService;
