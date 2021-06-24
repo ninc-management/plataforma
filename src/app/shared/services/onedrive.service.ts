@@ -75,10 +75,16 @@ export class OnedriveService {
           },
           name: this.generateForderName(invoice),
         };
-        this.http
-          .post(environment.onedriveUri + path + ':/copy', body)
-          .pipe(take(1))
-          .subscribe(() => isComplete$.next(true));
+        if (environment.onedriveUri) {
+          let copyURI: string;
+          if (environment.onedriveUri.match(/root/g)?.length)
+            copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
+          else copyURI = environment.onedriveUri.slice(0, -24);
+          this.http
+            .post(copyURI + metadata.id + '/copy', body)
+            .pipe(take(1))
+            .subscribe(() => isComplete$.next(true));
+        }
       });
     return isComplete$;
   }

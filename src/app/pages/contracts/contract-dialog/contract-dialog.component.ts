@@ -9,6 +9,7 @@ import { take } from 'rxjs/operators';
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '../../../../../backend/src/models/contract';
+import { cloneDeep } from 'lodash';
 
 export enum ComponentTypes {
   CONTRACT,
@@ -65,14 +66,18 @@ export class ContractDialogComponent
   }
 
   getOnedriveUrl(): void {
-    this.onedrive.webUrl(this.contract).subscribe(
-      (url) => {
-        this.onedriveUrl = url;
-      },
-      (error) => {
-        this.onedriveUrl = '';
-      }
-    );
+    if (this.contract.invoice) {
+      const contract = cloneDeep(this.contract);
+      contract.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.onedrive.webUrl(contract).subscribe(
+        (url) => {
+          this.onedriveUrl = url;
+        },
+        (error) => {
+          this.onedriveUrl = '';
+        }
+      );
+    }
   }
 
   addToOnedrive(): void {
