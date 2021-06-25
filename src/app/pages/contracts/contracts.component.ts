@@ -22,7 +22,7 @@ import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { format, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { saveAs } from 'file-saver';
-import { take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil, filter } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 import { NbAccessChecker } from '@nebular/security';
 import { Contract } from '../../../../backend/src/models/contract';
@@ -188,39 +188,42 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contractorService.getContractors(),
       this.userService.currentUser$,
     ])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(
+          ([contracts, invoices, contractors, user]) =>
+            contracts.length > 0 &&
+            invoices.length > 0 &&
+            contractors.length > 0
+        )
+      )
       .subscribe(([contracts, invoices, contractors, user]) => {
-        if (
-          contracts.length > 0 &&
-          invoices.length > 0 &&
-          contractors.length > 0
-        ) {
-          this.contracts = contracts.map((contract: Contract) => {
-            if (contract.invoice) {
-              const invoice = this.invoiceService.idToInvoice(contract.invoice);
-              if (invoice.author) {
-                contract.fullName = this.userService.idToShortName(
-                  invoice.author
-                );
-              }
-              if (invoice.contractor) {
-                contract.contractor = this.contractorService.idToName(
-                  invoice.contractor
-                );
-              }
-              contract.code = this.invoiceService.idToInvoice(
-                contract.invoice
-              ).code;
-              contract.name = invoice.name;
-              contract.value = invoice.value;
-              contract.interests =
-                contract.receipts.length.toString() + '/' + contract.total;
-              contract.role = this.invoiceService.role(invoice, user);
+        this.contracts = contracts.map((contract: Contract) => {
+          if (contract.invoice) {
+            const invoice = this.invoiceService.idToInvoice(contract.invoice);
+            contract.invoice = invoice;
+            if (invoice.author) {
+              contract.fullName = this.userService.idToShortName(
+                invoice.author
+              );
             }
-            return contract;
-          });
-          this.source.load(this.contracts);
-        }
+            if (invoice.contractor) {
+              contract.contractor = this.contractorService.idToName(
+                invoice.contractor
+              );
+            }
+            contract.code = this.invoiceService.idToInvoice(
+              contract.invoice
+            ).code;
+            contract.name = invoice.name;
+            contract.value = invoice.value;
+            contract.interests =
+              contract.receipts.length.toString() + '/' + contract.total;
+            contract.role = this.invoiceService.role(invoice, user);
+          }
+          return contract;
+        });
+        this.source.load(this.contracts);
       });
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')

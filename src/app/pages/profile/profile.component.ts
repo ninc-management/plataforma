@@ -105,7 +105,7 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    if (this.inputUser !== undefined) this.user = cloneDeep(this.inputUser);
+    if (this.inputUser._id !== undefined) this.user = cloneDeep(this.inputUser);
     else
       this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
         this.inputUser = user;

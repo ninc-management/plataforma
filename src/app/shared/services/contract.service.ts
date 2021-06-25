@@ -245,8 +245,8 @@ export class ContractService implements OnDestroy {
   }
 
   toNetValue(grossValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.applyPercentage(
-      this.stringUtil.applyPercentage(grossValue, NF),
+    return this.stringUtil.removePercentage(
+      this.stringUtil.removePercentage(grossValue, NF),
       nortanPercentage
     );
   }

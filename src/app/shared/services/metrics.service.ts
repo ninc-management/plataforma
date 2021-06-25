@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map, take, filter, tap } from 'rxjs/operators';
+import { takeUntil, map, take, filter } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
@@ -1162,7 +1162,6 @@ export class MetricsService implements OnDestroy {
                 },
                 { count: 0, value: 0 }
               );
-              console.log('Adicionando o valor', value.value);
               metricInfo.count += value.count;
               metricInfo.value += value.value;
             }
@@ -1171,7 +1170,6 @@ export class MetricsService implements OnDestroy {
           { count: 0, value: 0 }
         );
       }),
-      tap((x) => console.log('Valor final', x.value)),
       take(1)
     );
   }

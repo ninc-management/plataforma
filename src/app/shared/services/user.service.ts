@@ -37,7 +37,7 @@ export class UserService implements OnDestroy {
   private users$ = new BehaviorSubject<User[]>([]);
 
   get currentUser$(): Observable<User> {
-    if (this._currentUser$.value.fullName == '') {
+    if (this._currentUser$.value._id == undefined) {
       this.refreshCurrentUser();
     }
     return this._currentUser$;
