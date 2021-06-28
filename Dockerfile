@@ -19,6 +19,9 @@ RUN npm install
 # Adicionar arquivos do repositório no container
 COPY . .
 
+# Compilar os modulos ES6
+RUN npm run postinstall
+
 # Compilar os arquivos do typescript
 RUN npm run build
 

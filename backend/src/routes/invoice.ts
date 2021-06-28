@@ -37,7 +37,8 @@ router.post('/update', async (req, res, next) => {
   await Invoice.findOneAndUpdate(
     { _id: req.body.invoice._id },
     req.body.invoice,
-    function (err) {
+    { upsert: false, new: false },
+    function (err, doc, response) {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar orçamento!',

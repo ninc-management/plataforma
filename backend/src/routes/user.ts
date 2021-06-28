@@ -7,7 +7,8 @@ router.post('/update', async (req, res, next) => {
   await User.findOneAndUpdate(
     { email: req.body.user.email },
     req.body.user,
-    function (err) {
+    { upsert: false, new: false },
+    function (err, doc, res) {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar usuário!',
