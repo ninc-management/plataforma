@@ -5,6 +5,16 @@ WORKDIR /home/nodejs/app
 
 # Evitar interação durante instalação dos pacotes
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Define variáveis de ambiente
+ENV FIREBASE_APIKEY ${{ secrets.FIREBASE_APIKEY }}
+ENV FIREBASE_MSENDERID ${{ secrets.FIREBASE_MSENDERID }}
+ENV FIREBASE_APPID ${{ secrets.FIREBASE_APPID }}
+ENV FIREBASE_MID ${{ secrets.FIREBASE_MID }}
+ENV MSAL_CLIENT_ID ${{ secrets.MSAL_CLIENT_ID }}
+ENV MSAL_REDIRECT_URI ${{ secrets.MSAL_REDIRECT_URI }}
+ENV ONEDRIVE_URI ${{ secrets.ONEDRIVE_URI }}
+
 # Instala o node 12
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt -y install nodejs gcc g++ make
@@ -29,7 +39,7 @@ RUN npm run build
 RUN rm -rf src/app src/assets backend/src && npm prune --production
 
 # Define variáveis de ambiente
-ENV  NODE_ENV production
+ENV NODE_ENV production
 
 # Corrige permissões da pasta
 RUN chmod -Rf 775 /home/nodejs && chown -Rf nodejs:nodejs /home/nodejs

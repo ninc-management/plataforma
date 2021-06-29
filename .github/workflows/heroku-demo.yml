@@ -22,6 +22,59 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+          with:
+          fetch-depth: 0
+          ref: demo
+      - name: Configure git identity
+        run: |
+          git config --global user.email "contact@augustoicaro.com"
+          git config --global user.name "Augusto Icaro Farias da Cunha"
+      - name: Parser Firebase API key
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: FIREBASE_APIKEY
+          secret-value: ${{ secrets.FIREBASE_APIKEY }}
+      - name: Parser Firebase M Sender Id
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: FIREBASE_MSENDERID
+          secret-value: ${{ secrets.FIREBASE_MSENDERID }}
+      - name: Parser Firebase App Id
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: FIREBASE_APPID
+          secret-value: ${{ secrets.FIREBASE_APPID }}
+      - name: Parser Firebase M Id
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: FIREBASE_MID
+          secret-value: ${{ secrets.FIREBASE_MID }}
+      - name: Parser MSAL Client Id
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: MSAL_CLIENT_ID
+          secret-value: ${{ secrets.MSAL_CLIENT_ID }}
+      - name: Parser MSAL Rdirect URI
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: MSAL_REDIRECT_URI
+          secret-value: ${{ secrets.MSAL_REDIRECT_URI_DEMO }}
+      - name: Parser MSAL Onedrive URI
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: ONEDRIVE_URI
+          secret-value: ${{ secrets.ONEDRIVE_URI_LOCAL }}
+      - name: Replacing secrets
+        run: |
+          git add -A
+          git commit -m"Replace Secrets"
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@cdd8fc68da4ad96ca0384cfa50d9e3eb2a6f6c1b
       - uses: AkhileshNS/heroku-deploy@v3.6.8
@@ -32,5 +85,3 @@ jobs:
           heroku_email: icaro.morpheus@gmail.com
           # The appname to use for deploying/updating
           heroku_app_name: nortan-demo
-          # The branch that you would like to deploy to Heroku
-          branch: demo

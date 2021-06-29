@@ -3,7 +3,6 @@
 ![DEV](https://github.com/nortan-projetos/plataforma/workflows/Development/badge.svg)
 ![DEMO](https://github.com/nortan-projetos/plataforma/workflows/Demo/badge.svg)
 ![PROD](https://github.com/nortan-projetos/plataforma/workflows/Production/badge.svg)
-![UMBLER](https://github.com/nortan-projetos/plataforma/workflows/Umbler/badge.svg)
 
 ## How to Serve Locally
 
