@@ -64,6 +64,43 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+// Fix percentages strings
+db.contracts.find().forEach((c) => {
+  if(c.team){
+    c.team.forEach((member, i) => {
+      if(member.distribution)
+        c.team[i].distribution = member.distribution.replace('.',',');
+    });
+  }
+  if(c.receipts){
+    c.receipts.forEach((receipt, i) => {
+      if((receipt.notaFiscal.match(/\./g) || []).length > 0)
+        print(receipt.notaFiscal);
+      c.receipts[i].notaFiscal = receipt.notaFiscal.replace('.',',');
+      c.receipts[i].nortanPercentage = receipt.nortanPercentage.replace('.',',');
+    });
+  }
+  if(c.expenses){
+    c.expenses.forEach((expense, i) => {
+      c.expenses[i].team.forEach((member, j) => {
+        c.expenses[i].team[j].percentage = member.percentage.replace('.',',');
+      });
+    });
+  }
+  db.contracts.replaceOne({_id: c._id}, c);
+})
+
+db.contracts.find().forEach((c) => {
+  if(c.receipts){
+    c.receipts.forEach((receipt, i) => {
+      if((receipt.notaFiscal.match(/\./g) || []).length > 0)
+        print(receipt.notaFiscal);
+      if((receipt.nortanPercentage.match(/\./g) || []).length > 0)
+        print(receipt.nortanPercentage);
+    });
+  }
+})
+
 // Update Mongo contracts db
 
 db.contracts.find().forEach(function(c) {
