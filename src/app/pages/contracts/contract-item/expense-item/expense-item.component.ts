@@ -281,7 +281,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
             ).toString();
             const type = this.expense.type;
             const value = this.expense.value.replace(/\./g, '');
-            const date = this.utils.formatDate(new Date());
+            const date = this.utils.formatDate(new Date(), '-');
             const extension = name.match('[.].+');
             return item + '-' + type + '-' + value + '-' + date + extension;
           },
