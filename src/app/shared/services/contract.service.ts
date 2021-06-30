@@ -20,6 +20,7 @@ export enum EXPENSE_TYPES {
   MATERIAL = 'Material',
   PRE_OBRA = 'Pré-Obra',
   TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
+  GASOLINA = 'Gasolina',
   OUTROS = 'Outros',
 }
 
