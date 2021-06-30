@@ -35,9 +35,11 @@ export class NbFileUploaderService implements OnDestroy {
   /* eslint-disable @typescript-eslint/indent */
   get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
     return this.uploadQueue$.pipe(
-      map((fileList: BehaviorSubject<NbFileItem>[]):
-        | BehaviorSubject<NbFileItem>
-        | undefined => fileList.slice(-1).pop()),
+      map(
+        (
+          fileList: BehaviorSubject<NbFileItem>[]
+        ): BehaviorSubject<NbFileItem> | undefined => fileList.slice(-1).pop()
+      ),
       filter((file): file is BehaviorSubject<NbFileItem> => file != undefined)
     );
   }
