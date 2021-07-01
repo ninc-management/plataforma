@@ -75,8 +75,7 @@ export class ContractService implements OnDestroy {
   }
 
   editContract(contract: Contract): void {
-    const currentTime = new Date();
-    contract.lastUpdate = currentTime;
+    contract.lastUpdate = new Date();
     const req = {
       contract: contract,
     };

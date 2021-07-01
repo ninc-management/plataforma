@@ -25,6 +25,7 @@ import { OnedriveService } from 'app/shared/services/onedrive.service';
 import {
   UserService,
   CONTRACT_BALANCE,
+  CLIENT,
 } from 'app/shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -165,6 +166,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       .local(tmp, 'fullName', 'fullName')
       .imageField('profilePicture');
     tmp.unshift(CONTRACT_BALANCE);
+    tmp.unshift(CLIENT);
     this.sourceArray.next(tmp);
 
     if (this.expenseIndex !== undefined) {
