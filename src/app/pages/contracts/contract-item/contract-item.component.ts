@@ -153,7 +153,7 @@ export class ContractItemComponent implements OnInit {
       delete: true,
     },
     columns: {
-      number: {
+      code: {
         title: '#',
         type: 'string',
         sortDirection: 'desc',
@@ -683,12 +683,15 @@ export class ContractItemComponent implements OnInit {
     this.source.load(
       this.contract.expenses.map((expense: any, index: number) => {
         const tmp = cloneDeep(expense);
-        tmp.number = '#' + (index + 1).toString();
         tmp.source = this.userService.idToShortName(tmp.source);
         tmp.created = this.utils.formatDate(tmp.created);
         return tmp;
       })
     );
+  }
+
+  expenseIndex(code: 'string'): number {
+    return this.contract.expenses.findIndex((expense) => expense.code == code);
   }
 
   profilePicture(uId: string | User | undefined): string {

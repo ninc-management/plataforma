@@ -64,6 +64,19 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+// Fix createdExpenses number and expense code
+db.contracts.find().forEach((c) => {
+  if(c.expenses){
+    c.expenses.forEach((expense, i) => {
+      c.expenses[i].code = '#' + (i+1).toString();
+    });
+    c.createdExpenses = c.expenses.length;
+  }
+  else
+    c.createdExpenses = 0;
+  db.contracts.replaceOne({_id: c._id}, c);
+})
+
 // Fix percentages strings
 db.contracts.find().forEach((c) => {
   if(c.team){

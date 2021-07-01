@@ -78,7 +78,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     paid: true,
     team: [],
     uploadedFiles: [],
-    number: '#0',
+    code: '#0',
   };
   options = {
     lastValue: '0',
@@ -338,11 +338,13 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   registerExpense(): void {
+    this.contract.createdExpenses += 1;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       this.expense.lastUpdate = new Date();
       this.contract.expenses[this.expenseIndex] = cloneDeep(this.expense);
     } else {
+      this.expense.code = '#' + this.contract.createdExpenses.toString();
       this.contract.expenses.push(cloneDeep(this.expense));
     }
     this.contractService.editContract(this.contract);

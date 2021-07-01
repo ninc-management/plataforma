@@ -57,6 +57,9 @@ export class ContractExpense {
   @prop({ required: true })
   paid!: boolean;
 
+  @prop({ required: true })
+  code!: string;
+
   @prop()
   paidDate?: Date;
 
@@ -65,8 +68,6 @@ export class ContractExpense {
 
   @prop({ type: () => [ContractExpenseTeamMember] })
   team: ContractExpenseTeamMember[] = [];
-
-  number = '#0';
 }
 
 export class ContractUserPayment {
@@ -160,16 +161,16 @@ export class Contract extends Base<string> {
   expenses: ContractExpense[] = [];
 
   @prop({ required: true })
-  status!: string;
+  status: string = 'Em andamento';
 
   @prop({ required: true })
-  version!: string;
+  version: string = '00';
 
   @prop({ required: true })
-  ISS!: string;
+  ISS: string = '0,00';
 
   @prop({ required: true })
-  total!: string;
+  total: string = '1';
 
   @prop({ required: true })
   created: Date = new Date();
@@ -179,6 +180,9 @@ export class Contract extends Base<string> {
 
   @prop({ type: () => [ContractTeamMember] })
   team: ContractTeamMember[] = [];
+
+  @prop({ required: true })
+  createdExpenses: number = 0;
 
   balance = '';
   value = '';

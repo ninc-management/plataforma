@@ -1201,9 +1201,9 @@
       [settings]="settings"
       [source]="source"
       (create)="paymentDialog(types.EXPENSE)"
-      (edit)="paymentDialog(types.EXPENSE, +$event.data.number.slice(1) - 1)"
+      (edit)="paymentDialog(types.EXPENSE, expenseIndex($event.data.code))"
       (delete)="
-        confirmationDialog(+$event.data.number.slice(1) - 1, types.EXPENSE)
+        confirmationDialog(expenseIndex($event.data.code), types.EXPENSE)
       "
     ></ng2-smart-table>
     <ng-template #phone>
