@@ -9,11 +9,11 @@ import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import { AuthService } from 'app/auth/auth.service';
 import { Socket } from 'ngx-socket-io';
-import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
 import { CONTRACT_BALANCE } from './user.service';
+import MockedServerSocket from 'socket.io-mock';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -32,6 +32,51 @@ describe('InvoiceService', () => {
   ]);
 
   CommonTestingModule.setUpTestBed();
+
+  const baseTest = (
+    name: string,
+    test: (expectedInvoices: Invoice[]) => void
+  ) => {
+    it(name, (done: DoneFn) => {
+      let i = 1;
+
+      service
+        .getInvoices()
+        .pipe(take(2))
+        .subscribe((invoices) => {
+          switch (i) {
+            case 1: {
+              i += 1;
+              expect(invoices.length).toBe(0);
+              break;
+            }
+            case 2: {
+              const expectedInvoices = JSON.parse(
+                JSON.stringify(mockedInvoices),
+                (k, v) => {
+                  if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
+                  return v;
+                }
+              ) as Invoice[];
+              expect(invoices.length).toBe(2);
+              expect(invoices).toEqual(expectedInvoices);
+              test(expectedInvoices);
+              done();
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        });
+      // mock response
+      const req = httpMock.expectOne('/api/invoice/all');
+      expect(req.request.method).toBe('POST');
+      setTimeout(() => {
+        req.flush(mockedInvoices);
+      }, 50);
+    });
+  };
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
@@ -76,9 +121,7 @@ describe('InvoiceService', () => {
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
+    req.flush(mockedUsers);
   });
 
   afterEach(() => {
@@ -89,7 +132,7 @@ describe('InvoiceService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('saveInvoice', (done: DoneFn) => {
+  it('saveInvoice should work', (done: DoneFn) => {
     const tmpInvoice = new Invoice();
     tmpInvoice._id = '2';
     tmpInvoice.author = mockedUsers[0];
@@ -149,7 +192,8 @@ describe('InvoiceService', () => {
             break;
           }
         }
-      }); // mock response
+      });
+    // mock response
     const req = httpMock.expectOne('/api/invoice/all');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
@@ -157,7 +201,7 @@ describe('InvoiceService', () => {
     }, 50);
   });
 
-  it('editInvoice', (done: DoneFn) => {
+  it('editInvoice should work', (done: DoneFn) => {
     const tmpInvoice = cloneDeep(mockedInvoices[1]);
     tmpInvoice.department = 'DAD';
     let i = 1;
@@ -204,7 +248,6 @@ describe('InvoiceService', () => {
           }
           case 3: {
             expect(invoices.length).toBe(2);
-            mockedInvoices.push(tmpInvoice);
             expect(invoices[1].trello).toBe(undefined);
             expect(invoices[1].department).toBe('DAD');
             done();
@@ -214,7 +257,8 @@ describe('InvoiceService', () => {
             break;
           }
         }
-      }); // mock response
+      });
+    // mock response
     const req = httpMock.expectOne('/api/invoice/all');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
@@ -222,43 +266,9 @@ describe('InvoiceService', () => {
     }, 50);
   });
 
-  it('getInvoices', (done: DoneFn) => {
-    let i = 1;
+  baseTest('getInvoices should work', (expectedInvoices: Invoice[]) => {});
 
-    service
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(invoices.length).toBe(0);
-            break;
-          }
-          case 2: {
-            expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(
-              JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Invoice[]
-            );
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }); // mock response
-    const req = httpMock.expectOne('/api/invoice/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedInvoices);
-    }, 50);
-  });
-
-  it('invoicesSize', (done: DoneFn) => {
+  it('invoicesSize should work', (done: DoneFn) => {
     let i = 1;
 
     service
@@ -280,7 +290,8 @@ describe('InvoiceService', () => {
             break;
           }
         }
-      }); // mock response
+      });
+    // mock response
     const req = httpMock.expectOne('/api/invoice/count');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
@@ -288,194 +299,42 @@ describe('InvoiceService', () => {
     }, 50);
   });
 
-  it('idToInvoice', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(invoices.length).toBe(0);
-            break;
-          }
-          case 2: {
-            const expectedInvoices = JSON.parse(
-              JSON.stringify(mockedInvoices),
-              (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }
-            ) as Invoice[];
-            expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(expectedInvoices);
-            expect(service.idToInvoice('0')).toEqual(expectedInvoices[0]);
-            expect(service.idToInvoice(expectedInvoices[0])).toEqual(
-              expectedInvoices[0]
-            );
-            expect(service.idToInvoice('1')).toEqual(expectedInvoices[1]);
-            expect(service.idToInvoice(expectedInvoices[1])).toEqual(
-              expectedInvoices[1]
-            );
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }); // mock response
-    const req = httpMock.expectOne('/api/invoice/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedInvoices);
-    }, 50);
+  baseTest('idToInvoice should work', (expectedInvoices: Invoice[]) => {
+    expect(service.idToInvoice('0')).toEqual(expectedInvoices[0]);
+    expect(service.idToInvoice(expectedInvoices[0])).toEqual(
+      expectedInvoices[0]
+    );
+    expect(service.idToInvoice('1')).toEqual(expectedInvoices[1]);
+    expect(service.idToInvoice(expectedInvoices[1])).toEqual(
+      expectedInvoices[1]
+    );
   });
 
-  it('isInvoiceAuthor', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(invoices.length).toBe(0);
-            break;
-          }
-          case 2: {
-            const expectedInvoices = JSON.parse(
-              JSON.stringify(mockedInvoices),
-              (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }
-            ) as Invoice[];
-            expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(expectedInvoices);
-            expect(service.isInvoiceAuthor('0', '0')).toBe(true);
-            expect(service.isInvoiceAuthor(expectedInvoices[1], '1')).toBe(
-              true
-            );
-            expect(service.isInvoiceAuthor('0', mockedUsers[1])).toBe(false);
-            expect(
-              service.isInvoiceAuthor(expectedInvoices[1], mockedUsers[0])
-            ).toBe(false);
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }); // mock response
-    const req = httpMock.expectOne('/api/invoice/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedInvoices);
-    }, 50);
+  baseTest('isInvoiceAuthor should work', (expectedInvoices: Invoice[]) => {
+    expect(service.isInvoiceAuthor('0', '0')).toBe(true);
+    expect(service.isInvoiceAuthor(expectedInvoices[1], '1')).toBe(true);
+    expect(service.isInvoiceAuthor('0', mockedUsers[1])).toBe(false);
+    expect(service.isInvoiceAuthor(expectedInvoices[1], mockedUsers[0])).toBe(
+      false
+    );
   });
 
-  it('isInvoiceMember', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(invoices.length).toBe(0);
-            break;
-          }
-          case 2: {
-            const expectedInvoices = JSON.parse(
-              JSON.stringify(mockedInvoices),
-              (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }
-            ) as Invoice[];
-            expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(expectedInvoices);
-            expect(service.isInvoiceMember('1', '0')).toBe(true);
-            expect(service.isInvoiceMember(expectedInvoices[0], '1')).toBe(
-              true
-            );
-            expect(service.isInvoiceMember('1', mockedUsers[1])).toBe(false);
-            expect(
-              service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])
-            ).toBe(false);
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }); // mock response
-    const req = httpMock.expectOne('/api/invoice/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedInvoices);
-    }, 50);
+  baseTest('isInvoiceMember should work', (expectedInvoices: Invoice[]) => {
+    expect(service.isInvoiceMember('1', '0')).toBe(true);
+    expect(service.isInvoiceMember(expectedInvoices[0], '1')).toBe(true);
+    expect(service.isInvoiceMember('1', mockedUsers[1])).toBe(false);
+    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])).toBe(
+      false
+    );
   });
 
-  it('role', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .getInvoices()
-      .pipe(take(2))
-      .subscribe((invoices) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(invoices.length).toBe(0);
-            break;
-          }
-          case 2: {
-            const expectedInvoices = JSON.parse(
-              JSON.stringify(mockedInvoices),
-              (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }
-            ) as Invoice[];
-            expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(expectedInvoices);
-            expect(service.role(expectedInvoices[0], mockedUsers[0])).toBe(
-              'Gestor'
-            );
-            expect(service.role(expectedInvoices[0], mockedUsers[1])).toBe(
-              'Equipe'
-            );
-            expect(
-              service.role(expectedInvoices[0], CONTRACT_BALANCE as User)
-            ).toBe('Nenhum');
-            expect(service.role(expectedInvoices[1], mockedUsers[1])).toBe(
-              'Gestor'
-            );
-            expect(service.role(expectedInvoices[1], mockedUsers[0])).toBe(
-              'Equipe'
-            );
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      }); // mock response
-    const req = httpMock.expectOne('/api/invoice/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedInvoices);
-    }, 50);
+  baseTest('role should work', (expectedInvoices: Invoice[]) => {
+    expect(service.role(expectedInvoices[0], mockedUsers[0])).toBe('Gestor');
+    expect(service.role(expectedInvoices[0], mockedUsers[1])).toBe('Equipe');
+    expect(service.role(expectedInvoices[0], CONTRACT_BALANCE as User)).toBe(
+      'Nenhum'
+    );
+    expect(service.role(expectedInvoices[1], mockedUsers[1])).toBe('Gestor');
+    expect(service.role(expectedInvoices[1], mockedUsers[0])).toBe('Equipe');
   });
 });
