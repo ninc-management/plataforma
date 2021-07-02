@@ -30,6 +30,13 @@ export enum SPLIT_TYPES {
   PROPORCIONAL = 'Proporcional',
 }
 
+export enum CONTRACT_STATOOS {
+  EM_ANDAMENTO = 'Em andamento',
+  A_RECEBER = 'A receber',
+  CONCLUIDO = 'Concluído',
+  ARQUIVADO = 'Arquivado',
+}
+
 @Injectable({
   providedIn: 'root',
 })

@@ -15,6 +15,7 @@ import {
   ContractService,
   EXPENSE_TYPES,
   SPLIT_TYPES,
+  CONTRACT_STATOOS,
 } from 'app/shared/services/contract.service';
 import {
   UserService,
@@ -30,13 +31,6 @@ import {
 } from '../../../../../backend/src/models/contract';
 import { User } from '../../../../../backend/src/models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
-
-export enum CONTRACT_STATOOS {
-  EM_ANDAMENTO = 'Em andamento',
-  A_RECEBER = 'A receber',
-  CONCLUIDO = 'Concluído',
-  ARQUIVADO = 'Arquivado',
-}
 
 interface ExpenseTypesSum {
   type: string;

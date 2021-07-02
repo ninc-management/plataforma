@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ContractService } from 'app/shared/services/contract.service';
+import {
+  ContractService,
+  CONTRACT_STATOOS,
+} from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { CONTRACT_STATOOS } from '../contract-item.component';
 import { cloneDeep } from 'lodash';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import {
