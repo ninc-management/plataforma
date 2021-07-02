@@ -55,7 +55,7 @@ export class ContractExpense {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid!: boolean;
+  paid: boolean = false;
 
   @prop({ required: true })
   code!: string;
@@ -100,7 +100,7 @@ export class ContractPayment {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid!: boolean;
+  paid: boolean = false;
 
   @prop()
   paidDate?: Date;
@@ -126,7 +126,7 @@ export class ContractReceipt {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid!: boolean;
+  paid: boolean = false;
 
   @prop()
   paidDate?: Date;
