@@ -32,7 +32,7 @@ export class OnedriveService {
     return path;
   }
 
-  private generateForderName(invoice: Invoice): string {
+  private generateFolderName(invoice: Invoice): string {
     const slices = invoice.code.replace(/\//g, '_').split('-');
     const numberSlices = slices[1].split('_');
     const authorName = invoice.author
@@ -55,7 +55,7 @@ export class OnedriveService {
   generatePath(invoice: Invoice, concluded = false): string {
     return (
       this.generateBasePath(invoice, concluded) +
-      this.generateForderName(invoice)
+      this.generateFolderName(invoice)
     );
   }
 
@@ -73,7 +73,7 @@ export class OnedriveService {
             driveId: metadata.parentReference.driveId,
             id: metadata.parentReference.id,
           },
-          name: this.generateForderName(invoice),
+          name: this.generateFolderName(invoice),
         };
         if (environment.onedriveUri) {
           let copyURI: string;
@@ -100,7 +100,7 @@ export class OnedriveService {
           parentReference: {
             id: metadata.id,
           },
-          name: this.generateForderName(invoice),
+          name: this.generateFolderName(invoice),
         };
         this.http
           .patch(environment.onedriveUri + originalPath, body)

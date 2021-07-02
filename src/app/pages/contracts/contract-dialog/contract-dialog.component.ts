@@ -33,7 +33,7 @@ export class ContractDialogComponent
   @Input() paymentIndex?: number;
   @Input() receiptIndex?: number;
   @Input() expenseIndex?: number;
-  @Input() componentType = ComponentTypes.CONTRACT;
+  @Input() componentType = ComponentTypes.RECEIPT;
   isPayable = true;
   hasBalance = true;
   types = ComponentTypes;
