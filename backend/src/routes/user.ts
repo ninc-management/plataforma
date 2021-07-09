@@ -8,7 +8,7 @@ router.post('/update', async (req, res, next) => {
     { email: req.body.user.email },
     req.body.user,
     { upsert: false, new: false },
-    function (err, doc, res) {
+    function (err, doc, response) {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar usuário!',
