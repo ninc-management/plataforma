@@ -81,7 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((theme) => {
         this.logoIcon = ['dark', 'cosmic'].includes(theme.name)
-          ? 'logoWhite'
+          ? 'logoNoFill'
           : 'logo';
       });
   }

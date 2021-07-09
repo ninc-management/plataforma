@@ -4,6 +4,7 @@ import {
   NbSpinnerModule,
   NbIconModule,
   NbTooltipModule,
+  NbTabsetModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from 'app/@theme/theme.module';
@@ -14,6 +15,7 @@ import { ProgressSectionComponent } from './progress-section/progress-section.co
   imports: [
     NbCardModule,
     NbIconModule,
+    NbTabsetModule,
     NbSpinnerModule,
     NbTooltipModule,
     ThemeModule,

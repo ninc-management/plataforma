@@ -1,3 +1,16 @@
-<div class="row">
-  <div class="col-12 col-md-3"><progress-section></progress-section></div>
-</div>
+<nb-tabset class="dashboard">
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Pessoal'"
+    tabIcon="person"
+    responsive
+  >
+    <div class="row">
+      <div class="col-12 col-md-3"><progress-section></progress-section></div>
+    </div>
+  </nb-tab>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : 'Nortan'"
+    [tabIcon]="nortanIcon"
+    responsive
+  ></nb-tab>
+</nb-tabset>
