@@ -77,7 +77,8 @@ export class ContractorService implements OnDestroy {
     return this.contractors$;
   }
 
-  idToName(id: string | Contractor): string {
+  idToName(id: string | Contractor | undefined): string {
+    if (id === undefined) return '';
     return this.idToContractor(id).fullName;
   }
 
