@@ -42,6 +42,22 @@ export const CLIENT = {
     'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
 } as User;
 
+export const NORTAN = {
+  _id: '000000000000000000000002',
+  fullName: 'Nortan',
+  email: '',
+  emailNortan: '',
+  phone: '',
+  article: '',
+  state: '',
+  city: '',
+  mainDepartment: '',
+  level: '',
+  document: '',
+  profilePicture:
+    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
+} as User;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -167,6 +183,7 @@ export class UserService implements OnDestroy {
       return id;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     if (id == CLIENT._id) return CLIENT as User;
+    if (id == NORTAN._id) return NORTAN as User;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
