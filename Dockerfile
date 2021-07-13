@@ -33,7 +33,10 @@ COPY . .
 RUN npm run postinstall
 
 # Compilar os arquivos do typescript
-RUN npm run build
+RUN npx tsc --build backend/tsconfig.json
+
+# Compilar os arquivos do typescript
+RUN node --optimize_for_size --max_old_space_size=920 node_modules/@angular/cli/bin/ng build --configuration production --aot
 
 # Remove arquivos desnecesários (Comentar essa linha quando for desenvolver no container)
 RUN rm -rf src/app src/assets backend/src && npm prune --production
