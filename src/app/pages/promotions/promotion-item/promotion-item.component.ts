@@ -23,7 +23,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
-import { Promotion } from '../../../../../backend/src/models/promotion';
+import { Promotion } from '@models/promotion';
 import { NbComponentStatus } from '@nebular/theme';
 import { NgModel } from '@angular/forms';
 

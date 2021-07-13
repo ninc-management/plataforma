@@ -38,8 +38,8 @@ import {
   ContractExpense,
   ContractExpenseTeamMember,
   Contract,
-} from '../../../../../../backend/src/models/contract';
-import { User } from '../../../../../../backend/src/models/user';
+} from '@models/contract';
+import { User } from '@models/user';
 import * as expense_validation from 'app//shared/expense-validation.json';
 
 @Component({

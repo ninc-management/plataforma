@@ -14,8 +14,8 @@ import {
   subYears,
   format,
 } from 'date-fns';
-import { Contract } from '../../../../backend/src/models/contract';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import { at } from 'lodash';
 
 export enum Permissions {

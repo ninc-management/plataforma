@@ -8,9 +8,9 @@ import { OnedriveService } from './onedrive.service';
 import { UtilsService } from './utils.service';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
-import { User } from '../../../../backend/src/models/user';
-import { Contract } from '../../../../backend/src/models/contract';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { User } from '@models/user';
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import { parseISO } from 'date-fns';
 
 export enum EXPENSE_TYPES {

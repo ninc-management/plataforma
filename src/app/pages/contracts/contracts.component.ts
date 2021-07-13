@@ -25,8 +25,8 @@ import { saveAs } from 'file-saver';
 import { take, takeUntil, filter } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 import { NbAccessChecker } from '@nebular/security';
-import { Contract } from '../../../../backend/src/models/contract';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'ngx-contracts',

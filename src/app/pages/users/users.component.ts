@@ -6,7 +6,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
 import { takeUntil } from 'rxjs/operators';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { User } from '../../../../backend/src/models/user';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-users',

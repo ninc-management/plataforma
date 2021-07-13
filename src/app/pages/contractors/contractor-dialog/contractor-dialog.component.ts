@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, Input, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Contractor } from '../../../../../backend/src/models/contractor';
+import { Contractor } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractor-dialog',

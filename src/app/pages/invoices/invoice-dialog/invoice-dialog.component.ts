@@ -8,7 +8,9 @@ import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { take } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
-import { Invoice } from '../../../../../backend/src/models/invoice';
+import { INVOICE_STATOOS } from 'app/shared/services/invoice.service';
+import { Invoice, InvoiceProduct, InvoiceMaterial } from '@models/invoice';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -57,26 +59,26 @@ export class InvoiceDialogComponent
       );
     oInvoice.code = '';
     if (oInvoice.products.length > 0)
-      oInvoice.products.map((product) => {
+      oInvoice.products.map((product: InvoiceProduct) => {
         product.amount = product.amount ? product.amount : '1';
         product.total = product.total ? product.total : product.value;
         return product;
       });
     if (oInvoice.materials.length > 0)
-      oInvoice.materials.map((material) => {
+      oInvoice.materials.map((material: InvoiceMaterial) => {
         material.value = material.value ? material.value : '0,00';
         material.total = material.total ? material.total : '0,00';
         return material;
       });
-    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+    this.userService.currentUser$.pipe(take(1)).subscribe((user: User) => {
       oInvoice.author = user;
     });
-    delete oInvoice._id;
-    delete oInvoice.created;
-    delete oInvoice.lastUpdate;
-    delete oInvoice.status;
+    delete (oInvoice as any)._id;
+    oInvoice.created = new Date();
+    oInvoice.lastUpdate = new Date();
+    oInvoice.status = INVOICE_STATOOS.EM_ANALISE;
     oInvoice.model = true;
-    this.ref.close(oInvoice);
+    this.derivedRef.close(oInvoice);
   }
 
   generatePDF(): void {

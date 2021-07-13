@@ -7,7 +7,7 @@ import { takeUntil, take, filter, last } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 import { UtilsService } from './utils.service';
-import { User } from '../../../../backend/src/models/user';
+import { User } from '@models/user';
 import { cloneDeep } from 'lodash';
 
 export const CONTRACT_BALANCE = {

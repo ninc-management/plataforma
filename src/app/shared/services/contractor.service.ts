@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from './web-socket.service';
 import { UtilsService } from './utils.service';
-import { Contractor } from '../../../../backend/src/models/contractor';
+import { Contractor } from '@models/contractor';
 import { Observable } from 'rxjs';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';

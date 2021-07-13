@@ -7,8 +7,8 @@ import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { Invoice } from '../../../../backend/src/models/invoice';
-import { User } from '../../../../backend/src/models/user';
+import { Invoice } from '@models/invoice';
+import { User } from '@models/user';
 import { parseISO } from 'date-fns';
 
 export enum INVOICE_STATOOS {

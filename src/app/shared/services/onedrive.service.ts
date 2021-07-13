@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { environment } from '../../../environments/environment';
-import { Invoice } from '../../../../backend/src/models/invoice';
-import { Contract } from '../../../../backend/src/models/contract';
+import { Invoice } from '@models/invoice';
+import { Contract } from '@models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
 

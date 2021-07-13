@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { InvoiceService } from './invoice.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { Invoice } from '../../../../backend/src/models/invoice';
-import { User } from '../../../../backend/src/models/user';
+import { Invoice } from '@models/invoice';
+import { User } from '@models/user';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';

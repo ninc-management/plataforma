@@ -5,12 +5,9 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 import { subMonths, addMonths, subYears, subDays, format } from 'date-fns';
 import { range } from 'lodash';
 import { Component } from '@angular/core';
-import { User } from '../../../../backend/src/models/user';
-import {
-  Contract,
-  ContractReceipt,
-} from '../../../../backend/src/models/contract';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { User } from '@models/user';
+import { Contract, ContractReceipt } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'test-cmp',

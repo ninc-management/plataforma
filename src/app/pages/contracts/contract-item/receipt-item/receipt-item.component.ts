@@ -7,10 +7,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import * as contract_validation from '../../../../shared/payment-validation.json';
-import {
-  ContractReceipt,
-  Contract,
-} from '../../../../../../backend/src/models/contract';
+import { ContractReceipt, Contract } from '@models/contract';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 
 @Component({

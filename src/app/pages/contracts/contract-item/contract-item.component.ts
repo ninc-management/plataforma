@@ -25,11 +25,8 @@ import {
   ContractDialogComponent,
   ComponentTypes,
 } from '../contract-dialog/contract-dialog.component';
-import {
-  ContractExpense,
-  Contract,
-} from '../../../../../backend/src/models/contract';
-import { User } from '../../../../../backend/src/models/user';
+import { ContractExpense, Contract } from '@models/contract';
+import { User } from '@models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
 
 interface ExpenseTypesSum {

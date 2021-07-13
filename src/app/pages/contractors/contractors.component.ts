@@ -5,7 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Contractor } from '../../../../backend/src/models/contractor';
+import { Contractor } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractors',

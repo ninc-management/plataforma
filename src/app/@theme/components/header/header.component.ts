@@ -10,7 +10,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { User } from '../../../../../backend/src/models/user';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-header',

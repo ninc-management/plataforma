@@ -36,9 +36,9 @@ import {
   InvoiceMaterial,
   InvoiceProduct,
   InvoiceStage,
-} from '../../../../../backend/src/models/invoice';
-import { User } from '../../../../../backend/src/models/user';
-import { Contractor } from '../../../../../backend/src/models/contractor';
+} from '@models/invoice';
+import { User } from '@models/user';
+import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
 
 @Component({

@@ -3,7 +3,7 @@ import { NbRoleProvider } from '@nebular/security';
 import { UserService } from '../services/user.service';
 import { Observable, of } from 'rxjs';
 import { filter, map, take } from 'rxjs/operators';
-import { User } from '../../../../backend/src/models/user';
+import { User } from '@models/user';
 import { Permissions } from 'app/shared/services/utils.service';
 import { AuthService } from 'app/auth/auth.service';
 

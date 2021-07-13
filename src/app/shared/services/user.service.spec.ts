@@ -4,7 +4,7 @@ import { UserService, CONTRACT_BALANCE } from './user.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { last, take, publish } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '../../../../backend/src/models/user';
+import { User } from '@models/user';
 import { cloneDeep } from 'lodash';
 import { ConnectableObservable, Subject } from 'rxjs';
 import { AuthService } from 'app/auth/auth.service';

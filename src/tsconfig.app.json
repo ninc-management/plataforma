@@ -1,17 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/app",
-    "baseUrl": "./"
+    "outDir": "../out-tsc/app"
   },
   "files": ["main.ts", "polyfills.ts"],
-  "include": [
-    "../src/*.ts",
-    "../src/**/*.ts",
-    "../node_modules/@nebular/**/*.ts",
-    "../server.js",
-    "../backend/app.js",
-    "../backend/models/*.js",
-    "../backend/routes/*.js"
-  ]
+  "include": ["**/*.d.ts"]
 }

@@ -8,7 +8,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { take } from 'rxjs/operators';
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Contract } from '../../../../../backend/src/models/contract';
+import { Contract } from '@models/contract';
 import { cloneDeep } from 'lodash';
 
 export enum ComponentTypes {

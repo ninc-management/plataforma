@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
-import { Promotion } from '../../../../backend/src/models/promotion';
+import { Promotion } from '@models/promotion';
 import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
 
 @Component({

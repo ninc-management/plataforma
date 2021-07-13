@@ -20,8 +20,8 @@ import {
   ContractUserPayment,
   ContractPayment,
   Contract,
-} from '../../../../../../backend/src/models/contract';
-import { User } from '../../../../../../backend/src/models/user';
+} from '@models/contract';
+import { User } from '@models/user';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({

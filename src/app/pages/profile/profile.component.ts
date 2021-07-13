@@ -19,7 +19,7 @@ import { DepartmentService } from 'app/shared/services/department.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
-import { User } from '../../../../backend/src/models/user';
+import { User } from '@models/user';
 import * as user_validation from 'app/shared/user-validation.json';
 
 @Component({

@@ -19,7 +19,11 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@models/*": ["../backend/src/models/*"]
+    }
   },
   "angularCompilerOptions": {
     "strictTemplates": true,

@@ -12,10 +12,10 @@ import {
   ContractReceipt,
   ContractExpense,
   ContractPayment,
-} from '../../../../backend/src/models/contract';
+} from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '../../../../backend/src/models/user';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { User } from '@models/user';
+import { Invoice } from '@models/invoice';
 import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import { AuthService } from 'app/auth/auth.service';

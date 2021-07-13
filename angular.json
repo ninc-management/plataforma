@@ -14,7 +14,6 @@
             "customWebpackConfig": {
               "path": "extra-webpack.config.js"
             },
-            "aot": true,
             "preserveSymlinks": true,
             "outputPath": "backend/angular",
             "index": "src/index.html",
@@ -22,13 +21,6 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": ["src/assets", "src/favicon.ico", "src/favicon.png"],
-            "allowedCommonJsDependencies": [
-              "lodash",
-              "mongoose-unique-validator",
-              "@typegoose/typegoose/lib/defaultClasses",
-              "ng2-pdf-viewer",
-              "file-saver"
-            ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.css",
               "node_modules/typeface-exo/index.css",
@@ -41,7 +33,20 @@
               "node_modules/pace-js/templates/pace-theme-flash.tmpl.css",
               "src/app/@theme/styles/styles.scss"
             ],
-            "scripts": ["node_modules/pace-js/pace.min.js"]
+            "scripts": ["node_modules/pace-js/pace.min.js"],
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "mongoose-unique-validator",
+              "@typegoose/typegoose/lib/defaultClasses",
+              "ng2-pdf-viewer",
+              "file-saver"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -72,7 +77,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",

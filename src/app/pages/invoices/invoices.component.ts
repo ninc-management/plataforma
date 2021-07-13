@@ -19,7 +19,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { Invoice } from '../../../../backend/src/models/invoice';
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'ngx-invoices',

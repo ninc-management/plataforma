@@ -9,8 +9,8 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import extenso from 'extenso';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
-import { Invoice } from '../../../../backend/src/models/invoice';
-import { User } from '../../../../backend/src/models/user';
+import { Invoice } from '@models/invoice';
+import { User } from '@models/user';
 
 pdfMake.fonts = {
   Sans: {
