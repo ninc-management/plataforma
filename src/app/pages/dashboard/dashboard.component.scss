@@ -9,6 +9,16 @@
     overflow: unset;
     margin-top: 10px;
   }
+
+  .noOverflow {
+    overflow: hidden !important;
+  }
+
+  ngx-gauge {
+    display: block;
+    height: 100px;
+    width: 100%;
+  }
 }
 
 ::ng-deep {

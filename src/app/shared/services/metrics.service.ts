@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, map, take, filter } from 'rxjs/operators';
-import { ContractService } from './contract.service';
+import { ContractService, CONTRACT_STATOOS } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
 import { UserService, CONTRACT_BALANCE } from './user.service';
@@ -1174,12 +1174,82 @@ export class MetricsService implements OnDestroy {
     );
   }
 
+  nortanValue(
+    start: Date,
+    end: Date,
+    type: 'nortan' | 'taxes' = 'nortan',
+    uId?: string
+  ): Observable<UserAndGlobalMetric> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+    ]).pipe(
+      filter(
+        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
+      ),
+      map(([contracts, invoices]) => {
+        return contracts.reduce(
+          (metricInfo: UserAndGlobalMetric, contract) => {
+            if (this.contractService.hasReceipts(contract._id)) {
+              const value = contract.receipts
+                .filter((receipt) => receipt.paid)
+                .reduce(
+                  (paid: UserAndGlobalMetric, receipt) => {
+                    const paidDate = receipt.paidDate;
+                    if (
+                      paidDate &&
+                      this.utils.isWithinInterval(paidDate, start, end)
+                    ) {
+                      const value = this.stringUtil.moneyToNumber(
+                        this.stringUtil.applyPercentage(
+                          receipt.value,
+                          type == 'nortan'
+                            ? receipt.nortanPercentage
+                            : receipt.notaFiscal
+                        )
+                      );
+                      if (
+                        uId &&
+                        contract.invoice &&
+                        this.invoiceService.isInvoiceAuthor(
+                          contract.invoice,
+                          uId
+                        )
+                      )
+                        paid.user += value;
+                      paid.global += value;
+                    }
+                    return paid;
+                  },
+                  { user: 0, global: 0 }
+                );
+              metricInfo.user += value.user;
+              metricInfo.global += value.global;
+            }
+            return metricInfo;
+          },
+          { user: 0, global: 0 }
+        );
+      }),
+      take(1)
+    );
+  }
+
   cashbackValue(
     uId: string,
     percentage: string,
     start: Date,
     end: Date
   ): Observable<MetricInfo> {
+    return this.nortanValue(start, end, 'nortan', uId).pipe(
+      map((metricInfo): MetricInfo => {
+        metricInfo.user *= this.stringUtil.toMultiplyPercentage(percentage);
+        return { count: 0, value: metricInfo.user };
+      })
+    );
+  }
+
+  countContracts(status: CONTRACT_STATOOS): Observable<MetricInfo> {
     return combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
@@ -1190,44 +1260,17 @@ export class MetricsService implements OnDestroy {
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
-            if (this.contractService.hasReceipts(contract._id)) {
-              const value = contract.receipts
-                .filter(
-                  (receipt) =>
-                    receipt.paid &&
-                    contract.invoice &&
-                    this.invoiceService.isInvoiceAuthor(contract.invoice, uId)
-                )
-                .reduce(
-                  (paid: MetricInfo, receipt) => {
-                    const paidDate = receipt.paidDate;
-                    if (
-                      paidDate &&
-                      this.utils.isWithinInterval(paidDate, start, end)
-                    ) {
-                      paid.count += 1;
-                      paid.value += this.stringUtil.moneyToNumber(
-                        this.stringUtil.applyPercentage(
-                          receipt.value,
-                          receipt.nortanPercentage
-                        )
-                      );
-                    }
-                    return paid;
-                  },
-                  { count: 0, value: 0 }
+            if (contract.status == status) {
+              metricInfo.count += 1;
+              if (contract.invoice)
+                metricInfo.value += this.stringUtil.moneyToNumber(
+                  this.invoiceService.idToInvoice(contract.invoice).value
                 );
-              metricInfo.count += value.count;
-              metricInfo.value += value.value;
             }
             return metricInfo;
           },
           { count: 0, value: 0 }
         );
-      }),
-      map((metricInfo) => {
-        metricInfo.value *= this.stringUtil.toMultiplyPercentage(percentage);
-        return metricInfo;
       }),
       take(1)
     );
