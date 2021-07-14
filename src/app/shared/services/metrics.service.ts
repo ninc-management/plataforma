@@ -4,7 +4,7 @@ import { takeUntil, map, take, filter } from 'rxjs/operators';
 import { ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
-import { UserService, CONTRACT_BALANCE } from './user.service';
+import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
@@ -553,7 +553,8 @@ export class MetricsService implements OnDestroy {
                 if (
                   paidDate &&
                   this.utils.isValidDate(paidDate, last, number, fromToday) &&
-                  source._id != CONTRACT_BALANCE._id
+                  source._id != CONTRACT_BALANCE._id &&
+                  source._id != CLIENT._id
                 ) {
                   const coords =
                     this.departmentService.buildAllCoordinationsList();
