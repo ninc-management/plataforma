@@ -40,4 +40,8 @@ export class DashboardComponent {
       .nortanValue(this.start, this.end, 'taxes')
       .pipe(map((metricInfo) => metricInfo.global));
   }
+
+  openDialog(): void {
+    console.log('ok');
+  }
 }

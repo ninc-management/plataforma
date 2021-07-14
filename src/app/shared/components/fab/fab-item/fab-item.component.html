@@ -1,0 +1,14 @@
+<div
+  #elementref
+  class="item {{ disabled ? 'disabled' : '' }}"
+  (click)="emitClickEvent($event)"
+>
+  <div class="content-wrapper" #contentref>
+    <div class="content" [style.display]="content ? 'block' : 'none'">
+      {{ content }}
+    </div>
+  </div>
+  <a class="fab-item" [style.backgroundColor]="color">
+    <nb-icon [icon]="icon" [pack]="pack"></nb-icon>
+  </a>
+</div>

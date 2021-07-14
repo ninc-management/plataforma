@@ -16,6 +16,8 @@ import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
+import { FabComponent } from './components/fab/fab.component';
+import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 
 @NgModule({
   imports: [
@@ -28,7 +30,13 @@ import { BaseDialogComponent } from './components/base-dialog/base-dialog.compon
     NbIconModule,
     PdfViewerModule,
   ],
-  exports: [BrMaskDirective, OverPaidDirective, LastPaymentDirective],
+  exports: [
+    BrMaskDirective,
+    OverPaidDirective,
+    LastPaymentDirective,
+    FabComponent,
+    FabItemComponent,
+  ],
   declarations: [
     BrMaskDirective,
     FileUploadDialogComponent,
@@ -37,6 +45,8 @@ import { BaseDialogComponent } from './components/base-dialog/base-dialog.compon
     PdfDialogComponent,
     ConfirmationDialogComponent,
     BaseDialogComponent,
+    FabComponent,
+    FabItemComponent,
   ],
 })
 export class SharedModule {}

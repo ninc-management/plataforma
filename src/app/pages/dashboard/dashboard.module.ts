@@ -12,6 +12,7 @@ import { ThemeModule } from 'app/@theme/theme.module';
 import { DashboardComponent } from './dashboard.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { GaugeComponent } from './charts/gauge/gauge.component';
+import { SharedModule } from 'app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -23,6 +24,7 @@ import { GaugeComponent } from './charts/gauge/gauge.component';
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),
+    SharedModule,
     ThemeModule,
   ],
   declarations: [DashboardComponent, ProgressSectionComponent, GaugeComponent],
