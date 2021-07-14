@@ -20,6 +20,7 @@ import {
 import {
   UserService,
   CONTRACT_BALANCE,
+  CLIENT,
 } from 'app/shared/services/user.service';
 import {
   ContractDialogComponent,
@@ -524,11 +525,16 @@ export class ContractItemComponent implements OnInit {
   expenseTypesSum(): ExpenseTypesSum[] {
     const result = this.contract.expenses.reduce(
       (sum: ExpenseTypesSum[], expense) => {
-        const idx = sum.findIndex((el) => el.type == expense.type);
-        sum[idx].value = this.stringUtil.sumMoney(
-          sum[idx].value,
-          expense.value
-        );
+        if (
+          expense.source &&
+          this.userService.idToUser(expense.source)._id != CLIENT._id
+        ) {
+          const idx = sum.findIndex((el) => el.type == expense.type);
+          sum[idx].value = this.stringUtil.sumMoney(
+            sum[idx].value,
+            expense.value
+          );
+        }
         return sum;
       },
       this.EXPENSE_OPTIONS.map((type) => ({
@@ -558,7 +564,7 @@ export class ContractItemComponent implements OnInit {
         }
         return sum;
       },
-      [CONTRACT_BALANCE.fullName]
+      [CONTRACT_BALANCE.fullName, CLIENT.fullName]
         .concat(
           this.contract.team
             .map((member) => {
