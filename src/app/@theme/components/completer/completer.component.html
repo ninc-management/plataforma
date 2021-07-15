@@ -37,6 +37,7 @@
 
   <div
     class="completer-dropdown-holder"
+    [ngClass]="{ hidden: focused ? false : true }"
     *ctrList="
       dataService;
       minSearchLength: minSearchLength;
