@@ -310,6 +310,14 @@ describe('InvoiceService', () => {
     );
   });
 
+  baseTest('idToCode should work', (expectedInvoices: Invoice[]) => {
+    expect(service.idToCode(undefined)).toEqual('');
+    expect(service.idToCode('0')).toEqual('test');
+    expect(service.idToCode(expectedInvoices[0])).toEqual('test');
+    expect(service.idToCode('1')).toEqual('test1');
+    expect(service.idToCode(expectedInvoices[1])).toEqual('test1');
+  });
+
   baseTest('isInvoiceAuthor should work', (expectedInvoices: Invoice[]) => {
     expect(service.isInvoiceAuthor('0', '0')).toBe(true);
     expect(service.isInvoiceAuthor(expectedInvoices[1], '1')).toBe(true);

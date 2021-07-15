@@ -113,6 +113,11 @@ export class InvoiceService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
+  idToCode(id: string | Invoice | undefined): string {
+    if (id === undefined) return '';
+    return this.idToInvoice(id)?.code;
+  }
+
   isInvoiceAuthor(iId: string | Invoice, uId: string | User): boolean {
     return this.userService.isEqual(uId, this.idToInvoice(iId).author);
   }
