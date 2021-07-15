@@ -173,6 +173,37 @@ export class UtilsService {
     });
   }
 
+  codeSort(direction: number, a: string, b: string): number {
+    let first = { count: 0, year: 0 };
+    let second = { count: 0, year: 0 };
+    let tmp = { count: a.match(/-(\d+)\//g), year: a.match(/\/(\d+)-/g) };
+    if (tmp.count && tmp.year)
+      tmp = {
+        count: tmp.count[0].match(/\d+/g),
+        year: tmp.year[0].match(/\d+/g),
+      };
+    if (tmp.count && tmp.year)
+      first = { count: +tmp.count[0], year: +tmp.year[0] };
+    tmp = { count: b.match(/-(\d+)\//g), year: b.match(/\/(\d+)-/g) };
+    if (tmp.count && tmp.year)
+      tmp = {
+        count: tmp.count[0].match(/\d+/g),
+        year: tmp.year[0].match(/\d+/g),
+      };
+    if (tmp.count && tmp.year)
+      second = { count: +tmp.count[0], year: +tmp.year[0] };
+
+    if (first.year < second.year) return -1 * direction;
+
+    if (first.year > second.year) return direction;
+
+    if (first.year == second.year) {
+      if (first.count < second.count) return -1 * direction;
+      else return direction;
+    }
+    return 0;
+  }
+
   trackByIndex<T>(index: number, obj: T): number {
     return index;
   }

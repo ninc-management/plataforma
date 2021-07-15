@@ -52,7 +52,9 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.invoices.sort((a, b) => this.codeSort(-1, a.code, b.code));
+    return this.invoices.sort((a, b) =>
+      this.utils.codeSort(-1, a.code, b.code)
+    );
   }
   settings = {
     mode: 'external',
@@ -87,7 +89,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Código',
         type: 'string',
         sortDirection: 'desc',
-        compareFunction: this.codeSort,
+        compareFunction: this.utils.codeSort,
       },
       contractorName: {
         title: 'Cliente',
@@ -262,37 +264,6 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (first > second) {
       return direction;
-    }
-    return 0;
-  }
-
-  codeSort(direction: number, a: string, b: string): number {
-    let first = { count: 0, year: 0 };
-    let second = { count: 0, year: 0 };
-    let tmp = { count: a.match(/-(\d+)\//g), year: a.match(/\/(\d+)-/g) };
-    if (tmp.count && tmp.year)
-      tmp = {
-        count: tmp.count[0].match(/\d+/g),
-        year: tmp.year[0].match(/\d+/g),
-      };
-    if (tmp.count && tmp.year)
-      first = { count: +tmp.count[0], year: +tmp.year[0] };
-    tmp = { count: b.match(/-(\d+)\//g), year: b.match(/\/(\d+)-/g) };
-    if (tmp.count && tmp.year)
-      tmp = {
-        count: tmp.count[0].match(/\d+/g),
-        year: tmp.year[0].match(/\d+/g),
-      };
-    if (tmp.count && tmp.year)
-      second = { count: +tmp.count[0], year: +tmp.year[0] };
-
-    if (first.year < second.year) return -1 * direction;
-
-    if (first.year > second.year) return direction;
-
-    if (first.year == second.year) {
-      if (first.count < second.count) return -1 * direction;
-      else return direction;
     }
     return 0;
   }
