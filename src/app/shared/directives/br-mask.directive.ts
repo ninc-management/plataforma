@@ -63,7 +63,6 @@ export class BrMaskDirective implements OnInit {
   constructor(
     @Optional()
     @Host()
-    @SkipSelf()
     private elementRef: ElementRef
   ) {}
 
