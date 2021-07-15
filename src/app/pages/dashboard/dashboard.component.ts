@@ -5,6 +5,11 @@ import { startOfMonth } from 'date-fns';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { NbDialogService } from '@nebular/theme';
+import {
+  ComponentTypes,
+  ContractDialogComponent,
+} from '../contracts/contract-dialog/contract-dialog.component';
 
 @Component({
   selector: 'ngx-dashboard',
@@ -25,6 +30,7 @@ export class DashboardComponent {
 
   constructor(
     private metricsService: MetricsService,
+    private dialogService: NbDialogService,
     public utils: UtilsService
   ) {
     this.open$ = metricsService
@@ -42,6 +48,18 @@ export class DashboardComponent {
   }
 
   openDialog(): void {
-    console.log('ok');
+    const title = 'ADICIONAR DESPESA';
+
+    this.dialogService.open(ContractDialogComponent, {
+      context: {
+        title: title,
+        expenseIndex: undefined,
+        componentType: ComponentTypes.EXPENSE,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }

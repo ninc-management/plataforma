@@ -194,6 +194,7 @@ export class Contract extends Base<string> {
   role = '';
   notPaid = '';
   liquid = '';
+  managerPicture = '';
 }
 
 export default getModelForClass(Contract);

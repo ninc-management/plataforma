@@ -13,11 +13,12 @@ import {
   StorageProvider,
   NbFileItem,
 } from 'app/@theme/components';
-import { take, takeUntil, skip } from 'rxjs/operators';
+import { take, takeUntil, skip, map } from 'rxjs/operators';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
+  CONTRACT_STATOOS,
   EXPENSE_TYPES,
   SPLIT_TYPES,
 } from 'app/shared/services/contract.service';
@@ -33,7 +34,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { cloneDeep } from 'lodash';
-import {
+import contract, {
   ContractTeamMember,
   ContractExpense,
   ContractExpenseTeamMember,
@@ -57,6 +58,7 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   @Output() submit: EventEmitter<void> = new EventEmitter<void>();
   private destroy$ = new Subject<void>();
   private newExpense$ = new Subject<void>();
+  hasInitialContract = true;
   validation = (expense_validation as any).default;
   uploadedFiles: UploadedFile[] = [];
   USER_COORDINATIONS: string[] = [];
@@ -96,6 +98,9 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
   fileTypesAllowed: string[] = [];
   maxFileSize = 4;
+
+  contractSearch = '';
+  contractData: CompleterData = this.completerService.local([]);
 
   userSearch = '';
   userData: CompleterData = this.completerService.local([]);
@@ -154,6 +159,75 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
       fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
     );
+
+    if (this.contract._id) this.fillContractData();
+    else {
+      this.hasInitialContract = false;
+      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+        this.contractData = this.completerService
+          .local(
+            this.contractService.getContracts().pipe(
+              map((contracts) => {
+                contracts = contracts.filter(
+                  (contract) =>
+                    contract.invoice &&
+                    (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO ||
+                      contract.status == CONTRACT_STATOOS.A_RECEBER) &&
+                    (this.invoiceService.isInvoiceAuthor(
+                      contract.invoice,
+                      user
+                    ) ||
+                      this.invoiceService.isInvoiceMember(
+                        contract.invoice,
+                        user
+                      ))
+                );
+                contracts.map((contract) => {
+                  contract.code = this.invoiceService.idToCode(
+                    contract.invoice
+                  );
+                  contract.balance = this.contractService.balance(contract);
+                  if (contract.invoice) {
+                    const invoice = this.invoiceService.idToInvoice(
+                      contract.invoice
+                    );
+                    if (invoice.author) {
+                      const managerPicture = this.userService.idToUser(
+                        invoice.author
+                      ).profilePicture;
+                      if (managerPicture)
+                        contract.managerPicture = managerPicture;
+                    }
+                  }
+                  return contract;
+                });
+                return contracts.sort((a, b) =>
+                  this.utils.codeSort(-1, a.code, b.code)
+                );
+              })
+            ),
+            'code',
+            'code'
+          )
+          .imageField('managerPicture');
+      });
+    }
+
+    if (!this.expense.splitType)
+      this.expense.splitType = SPLIT_TYPES.PROPORCIONAL;
+
+    this.formRef.control.statusChanges
+      .pipe(skip(1), takeUntil(this.destroy$))
+      .subscribe((status) => {
+        if (status === 'VALID' && this.expense.nf === true)
+          this.updateUploaderOptions();
+      });
+  }
+
+  fillContractData(): void {
+    this.sourceSearch = '';
+    this.expense.source = '';
+
     this.updateUploaderOptions();
 
     const tmp = this.contract.team
@@ -204,9 +278,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       this.updatePaidDate();
     }
 
-    if (!this.expense.splitType)
-      this.expense.splitType = SPLIT_TYPES.PROPORCIONAL;
-
     if (!this.expense.team || this.expense.team.length == 0)
       this.expense.team = this.contract.team.map(
         (member: ContractTeamMember) => ({
@@ -226,13 +297,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.sourceSearch = this.expense.source
       ? this.userService.idToUser(this.expense.source)?.fullName
       : '';
-
-    this.formRef.control.statusChanges
-      .pipe(skip(1), takeUntil(this.destroy$))
-      .subscribe((status) => {
-        if (status === 'VALID' && this.expense.nf === true)
-          this.updateUploaderOptions();
-      });
 
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
       this.splitSelectedMember = this.userService.idToUser(

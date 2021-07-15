@@ -429,52 +429,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   calculateBalance(): void {
-    const expenseContribution = this.contract.expenses.reduce(
-      (accumulator, expense: ContractExpense) => {
-        if (expense.paid) {
-          if (
-            expense.source &&
-            this.userService.idToUser(expense.source)._id ==
-              CONTRACT_BALANCE._id
-          )
-            accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
-
-          if (expense.type == EXPENSE_TYPES.APORTE)
-            accumulator.contribution += this.stringUtil.moneyToNumber(
-              expense.value
-            );
-
-          if (
-            expense.nf &&
-            expense.uploadedFiles.length >=
-              (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
-          ) {
-            accumulator.cashback += this.stringUtil.moneyToNumber(
-              this.stringUtil.applyPercentage(
-                expense.value,
-                this.options.nortanPercentage
-              )
-            );
-          }
-        }
-        return accumulator;
-      },
-      { expense: 0, contribution: 0, cashback: 0 }
-    );
-    this.contract.balance = this.stringUtil.numberToMoney(
-      this.stringUtil.round(
-        this.stringUtil.moneyToNumber(this.options.paid) -
-          this.contract.payments.reduce((accumulator: number, payment: any) => {
-            if (payment.paid)
-              accumulator =
-                accumulator + this.stringUtil.moneyToNumber(payment.value);
-            return accumulator;
-          }, 0) -
-          expenseContribution.expense +
-          expenseContribution.contribution +
-          expenseContribution.cashback
-      )
-    );
+    this.contract.balance = this.contractService.balance(this.contract);
   }
 
   tooltipText(): string {
