@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NbDialogService } from '@nebular/theme';
 import {
-  ComponentTypes,
+  COMPONENT_TYPES,
   ContractDialogComponent,
 } from '../contracts/contract-dialog/contract-dialog.component';
 
@@ -54,7 +54,7 @@ export class DashboardComponent {
       context: {
         title: title,
         expenseIndex: undefined,
-        componentType: ComponentTypes.EXPENSE,
+        componentType: COMPONENT_TYPES.EXPENSE,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

@@ -11,7 +11,7 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { Contract } from '@models/contract';
 import { cloneDeep } from 'lodash';
 
-export enum ComponentTypes {
+export enum COMPONENT_TYPES {
   CONTRACT,
   PAYMENT,
   RECEIPT,
@@ -33,10 +33,10 @@ export class ContractDialogComponent
   @Input() paymentIndex?: number;
   @Input() receiptIndex?: number;
   @Input() expenseIndex?: number;
-  @Input() componentType = ComponentTypes.RECEIPT;
+  @Input() componentType = COMPONENT_TYPES.RECEIPT;
   isPayable = true;
   hasBalance = true;
-  types = ComponentTypes;
+  types = COMPONENT_TYPES;
   onedriveUrl = '';
 
   constructor(
@@ -58,7 +58,7 @@ export class ContractDialogComponent
       this.contract.total != undefined &&
       this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
-    if (this.componentType == ComponentTypes.CONTRACT) this.getOnedriveUrl();
+    if (this.componentType == COMPONENT_TYPES.CONTRACT) this.getOnedriveUrl();
   }
 
   dismiss(): void {

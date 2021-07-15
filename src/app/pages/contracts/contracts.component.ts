@@ -9,7 +9,7 @@ import {
 import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import {
   ContractDialogComponent,
-  ComponentTypes,
+  COMPONENT_TYPES,
 } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -274,8 +274,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         contract: event.data,
         contractIndex: +event.index,
         componentType: isEditing
-          ? ComponentTypes.CONTRACT
-          : ComponentTypes.RECEIPT,
+          ? COMPONENT_TYPES.CONTRACT
+          : COMPONENT_TYPES.RECEIPT,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

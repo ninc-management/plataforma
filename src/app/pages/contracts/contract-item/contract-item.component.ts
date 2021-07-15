@@ -24,7 +24,7 @@ import {
 } from 'app/shared/services/user.service';
 import {
   ContractDialogComponent,
-  ComponentTypes,
+  COMPONENT_TYPES,
 } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
 import { User } from '@models/user';
@@ -50,7 +50,7 @@ export class ContractItemComponent implements OnInit {
   @Input() index?: number;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();
-  types = ComponentTypes;
+  types = COMPONENT_TYPES;
   today = new Date();
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
@@ -301,24 +301,24 @@ export class ContractItemComponent implements OnInit {
     this.contractService.editContract(this.iContract);
   }
 
-  paymentDialog(componentType: ComponentTypes, index?: number): void {
+  paymentDialog(componentType: COMPONENT_TYPES, index?: number): void {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     let title = '';
     switch (componentType) {
-      case ComponentTypes.RECEIPT:
+      case COMPONENT_TYPES.RECEIPT:
         title =
           index != undefined
             ? 'ORDEM DE EMPENHO'
             : 'ADICIONAR ORDEM DE EMPENHO';
         break;
-      case ComponentTypes.PAYMENT:
+      case COMPONENT_TYPES.PAYMENT:
         title =
           index != undefined
             ? 'ORDEM DE PAGAMENTO'
             : 'ADICIONAR ORDEM DE PAGAMENTO';
         break;
-      case ComponentTypes.EXPENSE:
+      case COMPONENT_TYPES.EXPENSE:
         title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
         break;
       default:
@@ -332,11 +332,11 @@ export class ContractItemComponent implements OnInit {
           contract: this.contract,
           contractIndex: this.index,
           paymentIndex:
-            componentType == ComponentTypes.PAYMENT ? index : undefined,
+            componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
           receiptIndex:
-            componentType == ComponentTypes.RECEIPT ? index : undefined,
+            componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
           expenseIndex:
-            componentType == ComponentTypes.EXPENSE ? index : undefined,
+            componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
           componentType: componentType,
         },
         dialogClass: 'my-dialog',
@@ -348,22 +348,22 @@ export class ContractItemComponent implements OnInit {
       .subscribe(() => {
         this.calculatePaidValue();
         this.calculateBalance();
-        if (componentType === ComponentTypes.EXPENSE) this.loadTableExpenses();
+        if (componentType === COMPONENT_TYPES.EXPENSE) this.loadTableExpenses();
         this.isDialogBlocked.next(false);
       });
   }
 
-  confirmationDialog(index: number, componentType: ComponentTypes): void {
+  confirmationDialog(index: number, componentType: COMPONENT_TYPES): void {
     this.isDialogBlocked.next(true);
     let item = '';
     switch (componentType) {
-      case ComponentTypes.RECEIPT:
+      case COMPONENT_TYPES.RECEIPT:
         item = 'a ordem de empenho #' + (index + 1).toString() + '?';
         break;
-      case ComponentTypes.PAYMENT:
+      case COMPONENT_TYPES.PAYMENT:
         item = 'a ordem de pagamento #' + (index + 1).toString() + '?';
         break;
-      case ComponentTypes.EXPENSE:
+      case COMPONENT_TYPES.EXPENSE:
         item = 'a despesa #' + (index + 1).toString() + '?';
         break;
       default:
@@ -384,13 +384,13 @@ export class ContractItemComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           switch (componentType) {
-            case ComponentTypes.RECEIPT:
+            case COMPONENT_TYPES.RECEIPT:
               this.contract.receipts.splice(index, 1);
               break;
-            case ComponentTypes.PAYMENT:
+            case COMPONENT_TYPES.PAYMENT:
               this.contract.payments.splice(index, 1);
               break;
-            case ComponentTypes.EXPENSE:
+            case COMPONENT_TYPES.EXPENSE:
               this.contract.expenses.splice(index, 1);
               this.loadTableExpenses();
               break;
