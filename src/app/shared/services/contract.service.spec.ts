@@ -186,9 +186,9 @@ describe('ContractService', () => {
     mockedContracts.push(tmpContract);
     tmpContract = new Contract();
     tmpContract._id = '1';
-    tmpContract.liquid = '2000,00';
-    tmpContract.balance = '0,00';
-    tmpContract.notPaid = '1000,00';
+    tmpContract.liquid = '2.000,00';
+    tmpContract.balance = '-1.000,00';
+    tmpContract.notPaid = '1.000,00';
     tmpContract.invoice = mockedInvoices[1];
     let tmpPayment = new ContractPayment();
     tmpPayment.service = 'test';
@@ -451,6 +451,11 @@ describe('ContractService', () => {
     expect(service.hasExpenses(expectedContracts[0])).toBe(true);
     expect(service.hasExpenses('1')).toBe(false);
     expect(service.hasExpenses(expectedContracts[1])).toBe(false);
+  });
+
+  it('balance should work', () => {
+    expect(service.balance(mockedContracts[0])).toBe('1.000,00');
+    expect(service.balance(mockedContracts[1])).toBe('-1.000,00');
   });
 
   it('netValueBalance should work', () => {

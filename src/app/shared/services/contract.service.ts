@@ -7,9 +7,9 @@ import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
 import { UtilsService } from './utils.service';
 import { StringUtilService } from './string-util.service';
-import { UserService } from './user.service';
+import { CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
-import { Contract } from '@models/contract';
+import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { parseISO } from 'date-fns';
 
@@ -153,6 +153,68 @@ export class ContractService implements OnDestroy {
   hasExpenses(cId: string | Contract): boolean {
     const contract = this.idToContract(cId);
     return contract.expenses.length != 0;
+  }
+
+  balance(contract: Contract): string {
+    const paid = this.toNetValue(
+      this.stringUtil.numberToMoney(
+        contract.receipts.reduce((accumulator: number, recipt: any) => {
+          if (recipt.paid)
+            accumulator =
+              accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          return accumulator;
+        }, 0)
+      ),
+      this.utils.nfPercentage(contract),
+      this.utils.nortanPercentage(contract)
+    );
+
+    const expenseContribution = contract.expenses.reduce(
+      (accumulator, expense: ContractExpense) => {
+        if (expense.paid) {
+          if (
+            expense.source &&
+            this.userService.idToUser(expense.source)._id ==
+              CONTRACT_BALANCE._id
+          )
+            accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
+
+          if (expense.type == EXPENSE_TYPES.APORTE)
+            accumulator.contribution += this.stringUtil.moneyToNumber(
+              expense.value
+            );
+
+          if (
+            expense.nf &&
+            expense.uploadedFiles.length >=
+              (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
+          ) {
+            accumulator.cashback += this.stringUtil.moneyToNumber(
+              this.stringUtil.applyPercentage(
+                expense.value,
+                this.utils.nortanPercentage(contract)
+              )
+            );
+          }
+        }
+        return accumulator;
+      },
+      { expense: 0, contribution: 0, cashback: 0 }
+    );
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.round(
+        this.stringUtil.moneyToNumber(paid) -
+          contract.payments.reduce((accumulator: number, payment: any) => {
+            if (payment.paid)
+              accumulator =
+                accumulator + this.stringUtil.moneyToNumber(payment.value);
+            return accumulator;
+          }, 0) -
+          expenseContribution.expense +
+          expenseContribution.contribution +
+          expenseContribution.cashback
+      )
+    );
   }
 
   netValueBalance(
