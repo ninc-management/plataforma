@@ -14,6 +14,7 @@ ENV FIREBASE_MID ${{ secrets.FIREBASE_MID }}
 ENV MSAL_CLIENT_ID ${{ secrets.MSAL_CLIENT_ID }}
 ENV MSAL_REDIRECT_URI ${{ secrets.MSAL_REDIRECT_URI }}
 ENV ONEDRIVE_URI ${{ secrets.ONEDRIVE_URI }}
+ENV NODE_ENV production
 
 # Instala o node 12
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
@@ -28,21 +29,6 @@ RUN npm install
 
 # Adicionar arquivos do repositório no container
 COPY . .
-
-# Compilar os modulos ES6
-RUN npm run postinstall
-
-# Compilar os arquivos do typescript
-RUN npx tsc --build backend/tsconfig.json
-
-# Compilar os arquivos do typescript
-RUN node --optimize_for_size --max_old_space_size=920 node_modules/@angular/cli/bin/ng build --configuration production --aot
-
-# Remove arquivos desnecesários (Comentar essa linha quando for desenvolver no container)
-RUN rm -rf src/app src/assets backend/src && npm prune --production
-
-# Define variáveis de ambiente
-ENV NODE_ENV production
 
 # Corrige permissões da pasta
 RUN chmod -Rf 775 /home/nodejs && chown -Rf nodejs:nodejs /home/nodejs

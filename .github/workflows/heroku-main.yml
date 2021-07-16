@@ -71,10 +71,32 @@ jobs:
           filename: Dockerfile
           secret-name: ONEDRIVE_URI
           secret-value: ${{ secrets.ONEDRIVE_URI_LOCAL }}
-      - name: Replacing secrets
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+      - name: Install dependencies
+        run: npm i
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: Build project
+        run: npm run build
+        env:
+          FIREBASE_APIKEY: ${{secrets.FIREBASE_APIKEY}}
+          FIREBASE_MSENDERID: ${{secrets.FIREBASE_MSENDERID}}
+          FIREBASE_APPID: ${{secrets.FIREBASE_APPID}}
+          FIREBASE_MID: ${{secrets.FIREBASE_MID}}
+          MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
+          MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI}}
+          ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI}}
+      - name: Clean source files
+        run: rm -rf src/app src/assets backend/src
+      - name: Commit changes
         run: |
+          rm -f .gitignore
+          echo '/node_modules' >> .gitignore
           git add -A
-          git commit -m"Replace Secrets"
+          git commit -m"Replace Secrets and build application"
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@cdd8fc68da4ad96ca0384cfa50d9e3eb2a6f6c1b
       - uses: AkhileshNS/heroku-deploy@v3.6.8
