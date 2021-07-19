@@ -1,0 +1,72 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Brasil Cloud
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    name: 🚀 Deploy
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: 🧩 Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.x'
+      - name: 🌐 Install dependencies
+        run: npm i
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: 🏗️ Build project
+        run: npm run build
+        env:
+          FIREBASE_APIKEY: ${{secrets.FIREBASE_APIKEY}}
+          FIREBASE_MSENDERID: ${{secrets.FIREBASE_MSENDERID}}
+          FIREBASE_APPID: ${{secrets.FIREBASE_APPID}}
+          FIREBASE_MID: ${{secrets.FIREBASE_MID}}
+          MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
+          MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI_BC}}
+          ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI_LOCAL}}
+      - name: 🧹 Clean source files and uninstall dev packages
+        run: rm -rf src/app src/assets backend/src && npm prune --production
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: app/
+          exclude: '[
+            **/.*/**,
+            **/.*, **/node_modules/**,
+            **/Dockerfile,
+            **/angular.json,
+            **/CHANGELOG.md,
+            **/CODE_OF_CONDUCT.md,
+            **/CONTRIBUTING.md,
+            **/DEV_DOCS.md,
+            **/extra-webpack.config.js,
+            **/heroku.yml,
+            **/karma.conf.js,
+            **/LICENSE,
+            **/playground.mongodb,
+            **/protractor.conf.js
+            ]'

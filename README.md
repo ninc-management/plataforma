@@ -1,8 +1,9 @@
-# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![GitHub](https://img.shields.io/github/license/nortan-projetos/plataforma.svg)](https://raw.githubusercontent.com/nortan-projetos/plataforma/main/LICENSE) [![Codecov](https://img.shields.io/codecov/c/github/nortan-projetos/plataforma/main.svg)](https://codecov.io/gh/nortan-projetos/plataforma/branch/main)
+# Plataforma Nortan [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![GitHub](https://img.shields.io/github/license/nortan-projetos/plataforma.svg)](https://raw.githubusercontent.com/nortan-projetos/plataforma/main/LICENSE) [![Codecov](https://img.shields.io/codecov/c/github/nortan-projetos/plataforma/main.svg)](https://codecov.io/gh/nortan-projetos/plataforma/branch/main) [![Deployed with FTP Deploy Action](https://img.shields.io/badge/Deployed%20With-FTP%20DEPLOY%20ACTION-blue)](https://github.com/SamKirkland/FTP-Deploy-Action)
 
 ![DEV](https://github.com/nortan-projetos/plataforma/workflows/Development/badge.svg)
 ![DEMO](https://github.com/nortan-projetos/plataforma/workflows/Demo/badge.svg)
 ![PROD](https://github.com/nortan-projetos/plataforma/workflows/Production/badge.svg)
+![BrasilCloud](https://github.com/nortan-projetos/plataforma/workflows/Brasil%20Cloud/badge.svg)
 
 ## How to Serve Locally
 

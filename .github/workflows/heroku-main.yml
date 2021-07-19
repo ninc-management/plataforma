@@ -15,71 +15,73 @@ on:
 jobs:
   # This workflow contains a single job called "deploy"
   deploy:
+    name: 🚀 Deploy
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: main
-      - name: Configure git identity
+      - name: 🆔 Configure git identity
         run: |
           git config --global user.email "contact@augustoicaro.com"
           git config --global user.name "Augusto Icaro Farias da Cunha"
-      - name: Parser Firebase API key
+      - name: 🔑 Parser Firebase API key
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: FIREBASE_APIKEY
           secret-value: ${{ secrets.FIREBASE_APIKEY }}
-      - name: Parser Firebase M Sender Id
+      - name: 🔑 Parser Firebase M Sender Id
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: FIREBASE_MSENDERID
           secret-value: ${{ secrets.FIREBASE_MSENDERID }}
-      - name: Parser Firebase App Id
+      - name: 🔑 Parser Firebase App Id
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: FIREBASE_APPID
           secret-value: ${{ secrets.FIREBASE_APPID }}
-      - name: Parser Firebase M Id
+      - name: 🔑 Parser Firebase M Id
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: FIREBASE_MID
           secret-value: ${{ secrets.FIREBASE_MID }}
-      - name: Parser MSAL Client Id
+      - name: 🔑 Parser MSAL Client Id
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: MSAL_CLIENT_ID
           secret-value: ${{ secrets.MSAL_CLIENT_ID }}
-      - name: Parser MSAL Rdirect URI
+      - name: 🔑 Parser MSAL Rdirect URI
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: MSAL_REDIRECT_URI
           secret-value: ${{ secrets.MSAL_REDIRECT_URI_MAIN }}
-      - name: Parser MSAL Onedrive URI
+      - name: 🔑 Parser MSAL Onedrive URI
         uses: jwsi/secret-parser@v1
         with:
           filename: Dockerfile
           secret-name: ONEDRIVE_URI
           secret-value: ${{ secrets.ONEDRIVE_URI_LOCAL }}
-      - name: Use Node.js 12.x
+      - name: 🧩 Use Node.js 12.x
         uses: actions/setup-node@v2
         with:
           node-version: '12.x'
-      - name: Install dependencies
+      - name: 🌐 Install dependencies
         run: npm i
         env:
           DEBIAN_FRONTEND: noninteractive
-      - name: Build project
+      - name: 🏗️ Build project
         run: npm run build
         env:
           FIREBASE_APIKEY: ${{secrets.FIREBASE_APIKEY}}
@@ -87,11 +89,11 @@ jobs:
           FIREBASE_APPID: ${{secrets.FIREBASE_APPID}}
           FIREBASE_MID: ${{secrets.FIREBASE_MID}}
           MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
-          MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI}}
-          ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI}}
-      - name: Clean source files
+          MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI_MAIN}}
+          ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI_LOCAL}}
+      - name: 🧹 Clean source files
         run: rm -rf src/app src/assets backend/src
-      - name: Commit changes
+      - name: 🔄 Commit changes
         run: |
           rm -f .gitignore
           echo '/node_modules' >> .gitignore
@@ -99,12 +101,13 @@ jobs:
           git commit -m"Replace Secrets and build application"
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@cdd8fc68da4ad96ca0384cfa50d9e3eb2a6f6c1b
-      - uses: AkhileshNS/heroku-deploy@v3.6.8
+      - name: 🏗️ Install prod packages and Deploy on Heroku
+        uses: AkhileshNS/heroku-deploy@v3.6.8
         with:
           # This will be used for authentication. You can find it in your heroku homepage account settings
           heroku_api_key: ${{secrets.HEROKU_AUTH_TOKEN}}
           # Email that you use with heroku
-          heroku_email: icaro.morpheus@gmail.com
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
           # The appname to use for deploying/updating
           heroku_app_name: nortan-dev
           # An optional buildpack to use when creating the heroku application

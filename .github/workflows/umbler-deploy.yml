@@ -15,12 +15,13 @@ on:
 jobs:
   # This workflow contains a single job called "deploy"
   deploy:
+    name: 🚀 Deploy
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Install SSH Key
+      - name: 🔑 Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
@@ -28,60 +29,60 @@ jobs:
           #name: id_rsa # optional
           #config: ${{ secrets.CONFIG }} # ssh_config; optional
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Branch checkout
+      - name: 🚚 Branch checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: production
-      - name: Configure repository to Umbler
+      - name: 🆔 Configure repository to Umbler
         run: |
           git remote add umbler ${{ secrets.UMBLER_REMOTE }}
           git config --global user.email "contact@augustoicaro.com"
           git config --global user.name "Augusto Icaro Farias da Cunha"
           git cherry-pick 546e8903dac16767d8c713b8c1ae1caf11341ddb
-      - name: Parser Firebase API key
+      - name: 🔑 Parser Firebase API key
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: FIREBASE_APIKEY
           secret-value: ${{ secrets.FIREBASE_APIKEY }}
-      - name: Parser Firebase M Sender Id
+      - name: 🔑 Parser Firebase M Sender Id
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: FIREBASE_MSENDERID
           secret-value: ${{ secrets.FIREBASE_MSENDERID }}
-      - name: Parser Firebase App Id
+      - name: 🔑 Parser Firebase App Id
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: FIREBASE_APPID
           secret-value: ${{ secrets.FIREBASE_APPID }}
-      - name: Parser Firebase M Id
+      - name: 🔑 Parser Firebase M Id
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: FIREBASE_MID
           secret-value: ${{ secrets.FIREBASE_MID }}
-      - name: Parser MSAL Client Id
+      - name: 🔑 Parser MSAL Client Id
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: MSAL_CLIENT_ID
           secret-value: ${{ secrets.MSAL_CLIENT_ID }}
-      - name: Parser MSAL Rdirect URI
+      - name: 🔑 Parser MSAL Rdirect URI
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: MSAL_REDIRECT_URI
           secret-value: ${{ secrets.MSAL_REDIRECT_URI }}
-      - name: Parser MSAL Onedrive URI
+      - name: 🔑 Parser MSAL Onedrive URI
         uses: jwsi/secret-parser@v1
         with:
           filename: package.json
           secret-name: ONEDRIVE_URI
           secret-value: ${{ secrets.ONEDRIVE_URI }}
-      - name: Commit to Umbler using git remote
+      - name: ⬆️ Commit to Umbler using git remote
         run: |
           git add -A
           git commit -m"Replace Secrets"
