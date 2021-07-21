@@ -100,11 +100,4 @@ export class ContractDialogComponent
         true
       );
   }
-  windowWidth(): number {
-    return window.innerWidth;
-  }
-
-  windowHeight(): number {
-    return window.innerHeight * 0.99;
-  }
 }
