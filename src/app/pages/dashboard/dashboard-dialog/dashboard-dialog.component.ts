@@ -1,0 +1,32 @@
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { UtilsService } from 'app/shared/services/utils.service';
+
+@Component({
+  selector: 'dashboard-dialog',
+  templateUrl: './dashboard-dialog.component.html',
+  styleUrls: ['./dashboard-dialog.component.scss'],
+})
+export class DashboardDialogComponent
+  extends BaseDialogComponent
+  implements OnInit
+{
+  @Input() title = '';
+  @Input() expenseIndex?: number;
+  constructor(
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    @Optional() protected derivedRef: NbDialogRef<DashboardDialogComponent>,
+    public utils: UtilsService
+  ) {
+    super(derivedDocument, derivedRef);
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
+
+  dismiss(): void {
+    super.dismiss();
+  }
+}

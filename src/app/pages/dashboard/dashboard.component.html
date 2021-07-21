@@ -1,6 +1,6 @@
-<nb-tabset class="dashboard">
+<nb-tabset class="dashboard" (changeTab)="setActiveTab($event)">
   <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Pessoal'"
+    [tabTitle]="utils.isPhone() ? '' : tabTitles.PESSOAL"
     tabIcon="person"
     responsive
   >
@@ -9,7 +9,7 @@
     </div>
   </nb-tab>
   <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Nortan'"
+    [tabTitle]="utils.isPhone() ? '' : tabTitles.NORTAN"
     [tabIcon]="nortanIcon"
     responsive
   >

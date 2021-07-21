@@ -5,11 +5,17 @@ import { startOfMonth } from 'date-fns';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import {
   COMPONENT_TYPES,
   ContractDialogComponent,
 } from '../contracts/contract-dialog/contract-dialog.component';
+import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
+
+enum TAB_TITLES {
+  PESSOAL = 'Pessoal',
+  NORTAN = 'Nortan',
+}
 
 @Component({
   selector: 'ngx-dashboard',
@@ -17,6 +23,8 @@ import {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent {
+  tabTitles = TAB_TITLES;
+  activeTab = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoNoFill',
     pack: 'fac',
@@ -48,18 +56,46 @@ export class DashboardComponent {
   }
 
   openDialog(): void {
-    const title = 'ADICIONAR DESPESA';
+    if (this.activeTab == TAB_TITLES.NORTAN) {
+      this.dialogService.open(DashboardDialogComponent, {
+        context: {
+          title: 'ADICIONAR DESPESA NORTAN',
+          expenseIndex: undefined,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    } else {
+      this.dialogService.open(ContractDialogComponent, {
+        context: {
+          title: 'ADICIONAR DESPESA',
+          expenseIndex: undefined,
+          componentType: COMPONENT_TYPES.EXPENSE,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    }
+  }
 
-    this.dialogService.open(ContractDialogComponent, {
-      context: {
-        title: title,
-        expenseIndex: undefined,
-        componentType: COMPONENT_TYPES.EXPENSE,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+  setActiveTab(event: NbTabComponent): void {
+    switch (event.tabTitle) {
+      case TAB_TITLES.PESSOAL: {
+        this.activeTab = TAB_TITLES.PESSOAL;
+        break;
+      }
+      case TAB_TITLES.NORTAN: {
+        this.activeTab = TAB_TITLES.NORTAN;
+        break;
+      }
+      default: {
+        this.activeTab = TAB_TITLES.PESSOAL;
+        break;
+      }
+    }
   }
 }
