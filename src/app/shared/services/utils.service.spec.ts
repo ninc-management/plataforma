@@ -1,8 +1,8 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { UtilsService } from './utils.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { subMonths, addMonths, subYears, subDays, format } from 'date-fns';
+import { subMonths, addMonths, subYears, subDays } from 'date-fns';
 import { range } from 'lodash';
 import { Component } from '@angular/core';
 import { User } from '@models/user';
