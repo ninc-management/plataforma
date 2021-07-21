@@ -14,6 +14,7 @@ import contractorRoutes from './routes/contractor';
 import contractRoutes from './routes/contract';
 import invoiceRoutes from './routes/invoice';
 import promotionRoutes from './routes/promotion';
+import nortanRouter from './routes/nortan';
 
 class NortanAPI {
   public app;
@@ -62,6 +63,7 @@ class NortanAPI {
     this.app.use('/api/contract', contractRoutes);
     this.app.use('/api/invoice', invoiceRoutes);
     this.app.use('/api/promotion', promotionRoutes);
+    this.app.use('/api/nortan', nortanRouter);
 
     // For all GET requests, send back index.html
     // so that PathLocationStrategy can be used
