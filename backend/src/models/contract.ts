@@ -4,7 +4,7 @@ import { User } from './user';
 import { Invoice } from './invoice';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
-export class ContractUploadedFile {
+export class UploadedFile {
   @prop({ required: true })
   name!: string;
 
@@ -63,8 +63,8 @@ export class ContractExpense {
   @prop()
   paidDate?: Date;
 
-  @prop({ type: () => [ContractUploadedFile] })
-  uploadedFiles: ContractUploadedFile[] = [];
+  @prop({ type: () => [UploadedFile] })
+  uploadedFiles: UploadedFile[] = [];
 
   @prop({ type: () => [ContractExpenseTeamMember] })
   team: ContractExpenseTeamMember[] = [];
