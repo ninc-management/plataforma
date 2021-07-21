@@ -18,6 +18,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
 import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
 import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
+import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
     BaseDialogComponent,
     FabComponent,
     FabItemComponent,
+    BaseExpenseComponent,
   ],
 })
 export class SharedModule {}

@@ -1,20 +1,6 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  OnDestroy,
-} from '@angular/core';
-import { NgModel, NgForm } from '@angular/forms';
-import {
-  NbFileUploaderOptions,
-  StorageProvider,
-  NbFileItem,
-} from 'app/@theme/components';
+import { Component, OnInit, Input } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import { take, takeUntil, skip, map } from 'rxjs/operators';
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
@@ -34,13 +20,14 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { cloneDeep } from 'lodash';
-import contract, {
+import {
   ContractTeamMember,
-  ContractExpense,
   ContractExpenseTeamMember,
+  ContractExpense,
   Contract,
 } from '@models/contract';
 import { User } from '@models/user';
+import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import * as expense_validation from 'app//shared/expense-validation.json';
 
 @Component({
@@ -48,23 +35,18 @@ import * as expense_validation from 'app//shared/expense-validation.json';
   templateUrl: './expense-item.component.html',
   styleUrls: ['./expense-item.component.scss'],
 })
-export class ExpenseItemComponent implements OnInit, OnDestroy {
-  @ViewChild('form', { static: true })
-  formRef!: NgForm;
+export class ExpenseItemComponent
+  extends BaseExpenseComponent
+  implements OnInit
+{
   @Input()
   contract = new Contract();
   @Input() contractIndex?: number;
   @Input() expenseIndex?: number;
-  @Output() submit: EventEmitter<void> = new EventEmitter<void>();
-  private destroy$ = new Subject<void>();
-  private newExpense$ = new Subject<void>();
   hasInitialContract = true;
   validation = (expense_validation as any).default;
-  uploadedFiles: UploadedFile[] = [];
   USER_COORDINATIONS: string[] = [];
-  today = new Date();
   types = Object.values(EXPENSE_TYPES);
-  sTypes = Object.values(SPLIT_TYPES);
   expenseTypes = EXPENSE_TYPES;
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
@@ -83,31 +65,16 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     uploadedFiles: [],
     code: '#0',
   };
+
   options = {
     lastValue: '0',
     lastTeam: [] as ContractExpenseTeamMember[],
   };
   splitSelectedMember = new User();
-  uploaderOptions: NbFileUploaderOptions = {
-    multiple: true,
-    directory: false,
-    showUploadQueue: true,
-    storageProvider: StorageProvider.ONEDRIVE,
-    mediaFolderPath: 'profileImages/',
-  };
-  allowedMimeType = ['image/png', 'image/jpg', 'image/jpeg', 'application/pdf'];
-  fileTypesAllowed: string[] = [];
-  maxFileSize = 4;
 
   contractSearch = '';
   contractData: CompleterData = this.completerService.local([]);
 
-  userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
-
-  sourceSearch = '';
-  sourceData: CompleterData = this.completerService.local([]);
-  private sourceArray = new BehaviorSubject<User[]>([]);
   lastType = EXPENSE_TYPES.MATERIAL;
 
   get is100(): boolean {
@@ -140,25 +107,18 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    private stringUtil: StringUtilService,
-    private completerService: CompleterService,
-    private onedrive: OnedriveService,
+    protected stringUtil: StringUtilService,
+    protected completerService: CompleterService,
+    protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
     public utils: UtilsService
-  ) {}
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.newExpense$.next();
-    this.newExpense$.complete();
+  ) {
+    super(stringUtil, completerService, onedrive, userService);
   }
 
   ngOnInit(): void {
-    this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
-      fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
-    );
+    super.ngOnInit();
 
     if (this.contract._id) this.fillContractData();
     else {
@@ -309,50 +269,25 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
   }
 
   updateUploaderOptions(): void {
-    if (this.contract.invoice)
-      this.uploaderOptions = {
-        multiple: true,
-        directory: false,
-        showUploadQueue: true,
-        storageProvider: StorageProvider.ONEDRIVE,
-        mediaFolderPath:
-          this.onedrive.generatePath(
-            this.invoiceService.idToInvoice(this.contract.invoice)
-          ) + '/Recibos',
-        allowedFileTypes: this.allowedMimeType,
-        filter: {
-          fn: (item?: File) => {
-            if (!item) return false;
-            // Verifica se arquivo é maior que maxFileSize mb
-            if (item.size / 1024 / 1024 > this.maxFileSize) {
-              return false;
-            }
-            const itemType =
-              item.name.substring(
-                item.name.lastIndexOf('.') + 1,
-                item.name.length
-              ) || item.name;
-            if (!this.fileTypesAllowed.includes(itemType)) {
-              return false;
-            }
-            return true;
-          },
-        },
-        name: {
-          fn: (name: string) => {
-            const item = (
-              this.expenseIndex !== undefined
-                ? this.expenseIndex + 1
-                : this.contract.expenses.length + 1
-            ).toString();
-            const type = this.expense.type;
-            const value = this.expense.value.replace(/\./g, '');
-            const date = this.utils.formatDate(new Date(), '-');
-            const extension = name.match('[.].+');
-            return item + '-' + type + '-' + value + '-' + date + extension;
-          },
-        },
+    if (this.contract.invoice) {
+      const mediaFolderPath =
+        this.onedrive.generatePath(
+          this.invoiceService.idToInvoice(this.contract.invoice)
+        ) + '/Recibos';
+      const fn = (name: string) => {
+        const item = (
+          this.expenseIndex !== undefined
+            ? this.expenseIndex + 1
+            : this.contract.expenses.length + 1
+        ).toString();
+        const type = this.expense.type;
+        const value = this.expense.value.replace(/\./g, '');
+        const date = this.utils.formatDate(new Date(), '-');
+        const extension = name.match('[.].+');
+        return item + '-' + type + '-' + value + '-' + date + extension;
       };
+      super.updateUploaderOptions(mediaFolderPath, fn);
+    }
   }
 
   addContractBalanceMember(): void {
@@ -393,16 +328,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.lastType = this.expense.type as EXPENSE_TYPES;
   }
 
-  urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
-    uploadedFile$.pipe(takeUntil(this.newExpense$)).subscribe((file$) => {
-      if (file$)
-        file$.pipe(take(2)).subscribe((file) => {
-          if (file$.getValue().isSuccess)
-            this.uploadedFiles.push({ name: file.name, url: file.url });
-        });
-    });
-  }
-
   registerExpense(): void {
     this.contract.createdExpenses += 1;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
@@ -417,11 +342,6 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.submit.emit();
   }
 
-  updatePaidDate(): void {
-    if (!this.expense.paid) this.expense.paidDate = undefined;
-    else this.expense.paidDate = new Date();
-  }
-
   addAndClean(): void {
     this.newExpense$.next();
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
@@ -431,17 +351,11 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
     this.expense.source = '';
     this.expense.description = '';
     this.expense.value = '';
-    this.expense.description = '';
     this.uploadedFiles = [];
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
     this.updatePaidDate();
-  }
-
-  removeFile(index: number): void {
-    //TODO: Remove file on Onedrive
-    this.uploadedFiles.splice(index, 1);
   }
 
   overPaid(): string {
@@ -527,5 +441,10 @@ export class ExpenseItemComponent implements OnInit, OnDestroy {
       default:
         break;
     }
+  }
+
+  updatePaidDate(): void {
+    if (!this.expense.paid) this.expense.paidDate = undefined;
+    else this.expense.paidDate = new Date();
   }
 }
