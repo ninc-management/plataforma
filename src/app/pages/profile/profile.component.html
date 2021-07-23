@@ -650,20 +650,20 @@
                     [disabled]="!userList.value"
                     (click)="addToAER()"
                   >
-                    +
+                    <nb-icon icon="plus"></nb-icon>
                   </button>
                 </div>
                 <nb-list style="width: 100%; padding: 10px 0">
                   <nb-list-item
                     *ngFor="
-                      let user of user.AER;
+                      let AERuser of user.AER;
                       let i = index;
                       trackBy: utils.trackByIndex
                     "
                   >
                     <div class="row irow">
                       <div class="col">
-                        {{ userService.idToName(user) }}
+                        {{ userService.idToName(AERuser) }}
                       </div>
                       <div class="col-auto" style="text-align: right">
                         <nb-icon
