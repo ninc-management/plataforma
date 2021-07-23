@@ -39,14 +39,7 @@ export class ContractorService implements OnDestroy {
     const req = {
       contractor: contractor,
     };
-    this.http
-      .post('/api/contractor/update', req)
-      .pipe(take(1))
-      .subscribe(() => {
-        const tmp = this.contractors$.getValue();
-        tmp[tmp.findIndex((el) => el._id === contractor._id)] = contractor;
-        this.contractors$.next(tmp);
-      });
+    this.http.post('/api/contractor/update', req).pipe(take(1)).subscribe();
   }
 
   getContractors(): Observable<Contractor[]> {

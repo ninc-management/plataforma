@@ -9,32 +9,14 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { NortanService } from 'app/shared/services/nortan.service';
+import {
+  NortanService,
+  NORTAN_EXPENSE_TYPES,
+  NORTAN_FIXED_EXPENSE_TYPES,
+} from 'app/shared/services/nortan.service';
 import { Expense } from '@models/expense';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
-
-enum NORTAN_EXPENSE_TYPES {
-  DIVISAO_DE_LUCRO = 'Divisão de lucro',
-  FOLHA_DE_PAGAMENTO = 'Folha de pagamento',
-  REEMBOLSO = 'Reembolso',
-  INVESTIMENTOS_PATRIMONIO = 'Investimentos/patrimônio',
-  ADIANTAMENTO_EMPRESTIMOS = 'Adiantamento/empréstimos',
-  DESPESAS = 'Despesas',
-  CUSTO_OPERACIONAL = 'Custo operacional',
-  GASTOS_FIXOS = 'Gastos fixos',
-  IMPOSTOS = 'Impostos',
-  RECEITA = 'Receita',
-}
-
-enum NORTAN_FIXED_EXPENSE_TYPES {
-  ALUGUEL = 'Aluguel',
-  INTERNET = 'Internet',
-  ENERGIA = 'Energia',
-  MARKETING = 'Marketing',
-  ADMINISTRATIVO = 'Administrativo',
-  OUTROS = 'Outros',
-}
 
 @Component({
   selector: 'ngx-nortan-expense-item',

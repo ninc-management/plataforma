@@ -8,6 +8,28 @@ import { map, take, takeUntil } from 'rxjs/operators';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 
+export enum NORTAN_EXPENSE_TYPES {
+  DIVISAO_DE_LUCRO = 'Divisão de lucro',
+  FOLHA_DE_PAGAMENTO = 'Folha de pagamento',
+  REEMBOLSO = 'Reembolso',
+  INVESTIMENTOS_PATRIMONIO = 'Investimentos/patrimônio',
+  ADIANTAMENTO_EMPRESTIMOS = 'Adiantamento/empréstimos',
+  DESPESAS = 'Despesas',
+  CUSTO_OPERACIONAL = 'Custo operacional',
+  GASTOS_FIXOS = 'Gastos fixos',
+  IMPOSTOS = 'Impostos',
+  RECEITA = 'Receita',
+}
+
+export enum NORTAN_FIXED_EXPENSE_TYPES {
+  ALUGUEL = 'Aluguel',
+  INTERNET = 'Internet',
+  ENERGIA = 'Energia',
+  MARKETING = 'Marketing',
+  ADMINISTRATIVO = 'Administrativo',
+  OUTROS = 'Outros',
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,8 +41,7 @@ export class NortanService implements OnDestroy {
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
-    private socket: Socket,
-    private utils: UtilsService
+    private socket: Socket
   ) {}
 
   ngOnDestroy(): void {
@@ -39,14 +60,7 @@ export class NortanService implements OnDestroy {
     const req = {
       expense: expense,
     };
-    this.http
-      .post('/api/nortan/updateExpense', req)
-      .pipe(take(1))
-      .subscribe(() => {
-        const tmp = this.expenses$.getValue();
-        tmp[tmp.findIndex((el) => el._id === expense._id)] = expense;
-        this.expenses$.next(tmp);
-      });
+    this.http.post('/api/nortan/updateExpense', req).pipe(take(1)).subscribe();
   }
 
   getExpenses(): Observable<Expense[]> {
