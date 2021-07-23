@@ -91,6 +91,7 @@ jobs:
           MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
           MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI_DEMO}}
           ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI_LOCAL}}
+          DEMO: ${{secrets.DEMO}}
       - name: 🧹 Clean source files
         run: rm -rf src/app src/assets backend/src
       - name: 🔄 Commit changes

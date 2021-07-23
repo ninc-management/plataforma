@@ -1,11 +1,17 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
+import { environment } from 'app/../environments/environment';
 
 @Component({
   selector: 'ngx-one-column-layout',
   styleUrls: ['./one-column.layout.scss'],
   template: `
     <nb-layout windowMode>
-      <nb-layout-header fixed>
+      <nb-layout-header
+        fixed
+        [ngStyle]="{
+          'background-color': headerColor()
+        }"
+      >
         <ngx-header></ngx-header>
       </nb-layout-header>
 
@@ -43,4 +49,10 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 export class OneColumnLayoutComponent {
   @ViewChild('sidebar', { static: false, read: ElementRef })
   sidebarRef!: ElementRef<HTMLElement>;
+
+  headerColor(): string {
+    return environment.demo != undefined
+      ? 'var(--alert-accent-danger-color)'
+      : 'var(--header-background-color)';
+  }
 }

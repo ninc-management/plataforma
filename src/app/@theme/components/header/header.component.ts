@@ -10,6 +10,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { environment } from 'app/../environments/environment';
 import { User } from '@models/user';
 
 @Component({
@@ -19,6 +20,7 @@ import { User } from '@models/user';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
+  env = environment;
   menuButtonClicked = false;
   menuTitle = 'Nortan';
   userPictureOnly = false;

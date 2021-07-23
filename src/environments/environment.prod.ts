@@ -11,6 +11,7 @@ export const environment = {
   msalClientId: ENV_VARS.MSAL_CLIENT_ID,
   msalRedirectUri: ENV_VARS.MSAL_REDIRECT_URI,
   onedriveUri: ENV_VARS.ONEDRIVE_URI,
+  demo: ENV_VARS.DEMO,
   firebaseConfig: {
     apiKey: ENV_VARS.FIREBASE_APIKEY,
     authDomain: 'plataforma-nortan.firebaseapp.com',
