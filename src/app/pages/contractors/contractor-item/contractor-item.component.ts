@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { cloneDeep } from 'lodash';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import * as contractor_validation from 'app/shared/contractor-validation.json';
 import { Contractor } from '@models/contractor';
+import * as contractor_validation from 'app/shared/contractor-validation.json';
 
 @Component({
   selector: 'ngx-contractor-item',
@@ -9,8 +10,9 @@ import { Contractor } from '@models/contractor';
   styleUrls: ['./contractor-item.component.scss'],
 })
 export class ContractorItemComponent implements OnInit {
-  @Input() contractor?: Contractor;
+  @Input() iContractor?: Contractor;
   @Output() submit = new EventEmitter<void>();
+  contractor = new Contractor();
   editing = false;
   submitted = false;
   validation = (contractor_validation as any).default;
@@ -18,10 +20,9 @@ export class ContractorItemComponent implements OnInit {
   constructor(private contractorService: ContractorService) {}
 
   ngOnInit(): void {
-    if (this.contractor) {
+    if (this.iContractor) {
       this.editing = true;
-    } else {
-      this.contractor = new Contractor();
+      this.contractor = cloneDeep(this.iContractor);
     }
   }
 
