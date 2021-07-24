@@ -44,7 +44,7 @@
             icon="info"
             pack="eva"
             [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
+            nbTooltip="Não será possível alterar o valor do gasto se ela já foi paga."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
           ></nb-icon>
@@ -55,7 +55,7 @@
           #value="ngModel"
           id="input-value"
           name="value"
-          placeholder="Valor da despesa"
+          placeholder="Valor do gasto"
           fullWidth
           fieldSize="large"
           [brmasker]="{
@@ -90,7 +90,7 @@
               (value.dirty || value.touched)
             "
           >
-            O valor da despesa é obrigatório!
+            O valor do gasto é obrigatório!
           </p>
           <p
             class="caption status-danger"
@@ -100,7 +100,7 @@
               (value.dirty || value.touched)
             "
           >
-            O valor da despesa deve conter entre
+            O valor do gasto deve conter entre
             {{ validation.value.minLength }} a
             {{ validation.value.maxLength }}
             números
@@ -117,7 +117,7 @@
             icon="info"
             pack="eva"
             [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar despesa. Esse arquivo deve ter no máximo 4mb."
+            nbTooltip="Caso possua NF, é nessário anexar um arquivo para cadastrar o gasto. Esse arquivo deve ter no máximo 4mb."
             nbTooltipPlacement="top"
             nbTooltipStatus="info"
           ></nb-icon>
@@ -187,14 +187,14 @@
       }"
     >
       <div class="form-control-group">
-        <label class="label" for="input-type">Categoria da despesa:</label>
+        <label class="label" for="input-type">Categoria do gasto:</label>
         <nb-select
           [(ngModel)]="expense.type"
           (selectedChange)="handleTypeChange()"
           #type="ngModel"
           id="input-type"
           name="type"
-          placeholder="Categoria da despesa"
+          placeholder="Categoria do gasto"
           fullWidth
           size="large"
           [required]="validation.type.required"
@@ -215,15 +215,13 @@
     </div>
     <div *ngIf="expense.type === expenseTypes.GASTOS_FIXOS" class="col-md-3">
       <div class="form-control-group">
-        <label class="label" for="input-fixed-type">
-          Tipo de despesa fixa:
-        </label>
+        <label class="label" for="input-fixed-type">Tipo de gasto fixo:</label>
         <nb-select
           [(ngModel)]="expense.fixedType"
           #fixedType="ngModel"
           id="input-fixed-type"
           name="fixedType"
-          placeholder="Categoria da despesa fixa"
+          placeholder="Categoria do gasto fixo"
           fullWidth
           size="large"
           [status]="
@@ -252,7 +250,7 @@
           #description="ngModel"
           id="input-description"
           name="description"
-          placeholder="Descreva os detalhes da despesa"
+          placeholder="Descreva os detalhes do gasto"
           fullWidth
           fieldSize="large"
           [required]="validation.service.required"

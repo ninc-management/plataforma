@@ -59,7 +59,7 @@ export class DashboardComponent {
     if (this.activeTab == TAB_TITLES.NORTAN) {
       this.dialogService.open(DashboardDialogComponent, {
         context: {
-          title: 'ADICIONAR DESPESA NORTAN',
+          title: 'ADICIONAR GASTO NORTAN',
           expenseIndex: undefined,
         },
         dialogClass: 'my-dialog',
