@@ -28,6 +28,8 @@ export class FabItemComponent implements OnInit {
   color!: string;
   @Input()
   disabled = false;
+  @Input()
+  iconTop = '0';
 
   @Output()
   clicked: EventEmitter<any> = new EventEmitter();

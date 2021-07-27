@@ -38,6 +38,13 @@
     icon="minus"
     pack="fac"
     content="Despesa"
-    (clicked)="openDialog()"
+    (clicked)="openDialog(dialogTypes.EXPENSE)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    icon="file-invoice-dollar"
+    pack="fac"
+    content="Orçamento"
+    iconTop="-3"
+    (clicked)="openDialog(dialogTypes.INVOICE)"
   ></ngx-fab-item>
 </ngx-fab>

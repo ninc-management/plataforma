@@ -9,6 +9,11 @@
     </div>
   </div>
   <a class="fab-item" [style.backgroundColor]="color">
-    <nb-icon [icon]="icon" [pack]="pack"></nb-icon>
+    <nb-icon
+      [ngStyle]="{ 'top.px': iconTop }"
+      [icon]="icon"
+      [pack]="pack"
+      style="position: relative"
+    ></nb-icon>
   </a>
 </div>

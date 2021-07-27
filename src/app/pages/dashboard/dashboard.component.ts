@@ -17,6 +17,11 @@ enum TAB_TITLES {
   NORTAN = 'Nortan',
 }
 
+enum DIALOG_TYPES {
+  INVOICE,
+  EXPENSE,
+}
+
 @Component({
   selector: 'ngx-dashboard',
   templateUrl: './dashboard.component.html',
@@ -24,6 +29,7 @@ enum TAB_TITLES {
 })
 export class DashboardComponent {
   tabTitles = TAB_TITLES;
+  dialogTypes = DIALOG_TYPES;
   activeTab = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoNoFill',
@@ -55,30 +61,42 @@ export class DashboardComponent {
       .pipe(map((metricInfo) => metricInfo.global));
   }
 
-  openDialog(): void {
-    if (this.activeTab == TAB_TITLES.NORTAN) {
-      this.dialogService.open(DashboardDialogComponent, {
-        context: {
-          title: 'ADICIONAR GASTO NORTAN',
-          expenseIndex: undefined,
-        },
-        dialogClass: 'my-dialog',
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        autoFocus: false,
-      });
-    } else {
-      this.dialogService.open(ContractDialogComponent, {
-        context: {
-          title: 'ADICIONAR DESPESA',
-          expenseIndex: undefined,
-          componentType: COMPONENT_TYPES.EXPENSE,
-        },
-        dialogClass: 'my-dialog',
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        autoFocus: false,
-      });
+  openDialog(dType: DIALOG_TYPES): void {
+    switch (dType) {
+      case DIALOG_TYPES.EXPENSE: {
+        if (this.activeTab == TAB_TITLES.NORTAN) {
+          this.dialogService.open(DashboardDialogComponent, {
+            context: {
+              title: 'ADICIONAR GASTO NORTAN',
+              expenseIndex: undefined,
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        } else {
+          this.dialogService.open(ContractDialogComponent, {
+            context: {
+              title: 'ADICIONAR DESPESA',
+              expenseIndex: undefined,
+              componentType: COMPONENT_TYPES.EXPENSE,
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        }
+        break;
+      }
+
+      case DIALOG_TYPES.INVOICE: {
+        break;
+      }
+
+      default:
+        break;
     }
   }
 
