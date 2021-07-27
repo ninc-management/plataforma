@@ -7,6 +7,8 @@ import { Invoice } from '@models/invoice';
 import { Contract } from '@models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
+import { Expense } from '@models/expense';
+import { NORTAN_EXPENSE_TYPES } from './nortan.service';
 
 @Injectable({
   providedIn: 'root',
@@ -59,13 +61,38 @@ export class OnedriveService {
     );
   }
 
+  generateNortanExpensesPath(nortanExpense: Expense): string {
+    let path = '10-Financeiro/Comprovantes/' + nortanExpense.type;
+    if (nortanExpense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
+      path += '/' + nortanExpense.fixedType;
+    }
+    return path;
+  }
+
+  oneDriveURI(isAdm?: boolean): string {
+    let URI = '';
+    if (environment.onedriveUri) {
+      if (environment.onedriveUri.match(/root/g)?.length)
+        URI = environment.onedriveUri;
+      else {
+        URI =
+          environment.onedriveUri +
+          (isAdm !== undefined
+            ? environment.onedriveAdmID
+            : environment.onedriveNortanID) +
+          ':/';
+      }
+    }
+    return URI;
+  }
+
   copyModelFolder(invoice: Invoice): Observable<boolean> {
     const modelFolder = 'ORC-000_ANO-NOME DO CONTRATO-GESTOR';
     const path = this.generateBasePath(invoice) + modelFolder;
     const isComplete$ = new Subject<boolean>();
 
     this.http
-      .get(environment.onedriveUri + path)
+      .get(this.oneDriveURI() + path)
       .pipe(take(1))
       .subscribe((metadata: any) => {
         const body = {
@@ -79,7 +106,7 @@ export class OnedriveService {
           let copyURI: string;
           if (environment.onedriveUri.match(/root/g)?.length)
             copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
-          else copyURI = environment.onedriveUri.slice(0, -24);
+          else copyURI = environment.onedriveUri;
           this.http
             .post(copyURI + metadata.id + '/copy', body)
             .pipe(take(1))
@@ -93,7 +120,7 @@ export class OnedriveService {
     const originalPath = this.generatePath(invoice);
 
     this.http
-      .get(environment.onedriveUri + this.generateBasePath(invoice, true))
+      .get(this.oneDriveURI() + this.generateBasePath(invoice, true))
       .pipe(take(1))
       .subscribe((metadata: any) => {
         const body = {
@@ -103,7 +130,7 @@ export class OnedriveService {
           name: this.generateFolderName(invoice),
         };
         this.http
-          .patch(environment.onedriveUri + originalPath, body)
+          .patch(this.oneDriveURI() + originalPath, body)
           .pipe(take(1))
           .subscribe();
       });
@@ -124,7 +151,7 @@ export class OnedriveService {
       const invoice = contract.invoice;
       const concluded = invoice.status === 'Concluído';
       return this.http
-        .get(environment.onedriveUri + this.generatePath(invoice, concluded))
+        .get(this.oneDriveURI() + this.generatePath(invoice, concluded))
         .pipe(
           take(1),
           map((metadata: any): string => metadata.webUrl)

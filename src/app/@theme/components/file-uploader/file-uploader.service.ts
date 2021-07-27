@@ -98,7 +98,8 @@ export class NbFileUploaderService implements OnDestroy {
         options.mediaFolderPath,
         tempFile.rawFile,
         tempFile.name,
-        options.storageProvider
+        options.storageProvider,
+        options.isAdmFolder
       );
 
     uploadProgress$

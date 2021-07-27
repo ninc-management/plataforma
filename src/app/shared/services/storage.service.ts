@@ -8,7 +8,7 @@ import { from, Observable, Subject } from 'rxjs';
 import { switchMap, take, filter } from 'rxjs/operators';
 import { StorageProvider } from 'app/@theme/components/file-uploader/file-uploader.model';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { environment } from '../../../environments/environment';
+import { OnedriveService } from './onedrive.service';
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
   downloadUrl$: Observable<UploadedFile | string>;
@@ -22,7 +22,8 @@ export class StorageService implements OnDestroy {
 
   constructor(
     private readonly storage: AngularFireStorage,
-    private http: HttpClient
+    private http: HttpClient,
+    private onedriveService: OnedriveService
   ) {}
 
   ngOnDestroy(): void {
@@ -34,7 +35,8 @@ export class StorageService implements OnDestroy {
     mediaFolderPath: string,
     fileToUpload: File,
     fileName: string,
-    provider: StorageProvider
+    provider: StorageProvider,
+    isAdmFolder?: boolean
   ): FilesUploadMetadata {
     switch (provider) {
       case StorageProvider.FIREBASE: {
@@ -57,7 +59,7 @@ export class StorageService implements OnDestroy {
         fileToUpload.arrayBuffer().then((f) => {
           this.http
             .put(
-              environment.onedriveUri +
+              this.onedriveService.oneDriveURI(isAdmFolder) +
                 mediaFolderPath +
                 '/' +
                 fileName +
