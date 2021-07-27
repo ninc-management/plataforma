@@ -15,6 +15,8 @@ export const environment = {
   msalClientId: ENV_VARS.MSAL_CLIENT_ID,
   msalRedirectUri: 'http://localhost:4200',
   onedriveUri: 'https://graph.microsoft.com/v1.0/drive/root:/',
+  onedriveNortanID: ENV_VARS.ONEDRIVE_NORTAN_ID,
+  onedriveAdmID: ENV_VARS.ONEDRIVE_ADM_ID,
   demo: ENV_VARS.DEMO,
   firebaseConfig: {
     apiKey: ENV_VARS.FIREBASE_APIKEY,
