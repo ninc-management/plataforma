@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { CompleterService } from 'ng2-completer';
-import { take, takeUntil } from 'rxjs/operators';
+import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -17,6 +17,7 @@ import {
 import { Expense } from '@models/expense';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-nortan-expense-item',
@@ -27,10 +28,12 @@ export class NortanExpenseItemComponent
   extends BaseExpenseComponent
   implements OnInit
 {
+  @ViewChild('form', { static: true })
+  formRef!: NgForm;
   @Input() expenseIndex?: number;
   validation = (expense_validation as any).default;
-  types = Object.values(NORTAN_EXPENSE_TYPES);
-  fixedTypes = Object.values(NORTAN_FIXED_EXPENSE_TYPES);
+  types = Object.values(NORTAN_EXPENSE_TYPES).sort();
+  fixedTypes = Object.values(NORTAN_FIXED_EXPENSE_TYPES).sort();
   expenseTypes = NORTAN_EXPENSE_TYPES;
   fixedExpenseTypes = NORTAN_FIXED_EXPENSE_TYPES;
 
@@ -56,6 +59,8 @@ export class NortanExpenseItemComponent
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
+
     const tmp = this.userService.getUsers().value;
     this.userData = this.completerService
       .local(cloneDeep(tmp), 'fullName', 'fullName')
@@ -92,6 +97,15 @@ export class NortanExpenseItemComponent
     this.sourceSearch = this.expense.source
       ? this.userService.idToUser(this.expense.source)?.fullName
       : '';
+
+    this.formRef.control.statusChanges
+      .pipe(skip(1), takeUntil(this.destroy$))
+      .subscribe((status) => {
+        if (status === 'VALID' && this.expense.nf === true)
+          setTimeout(() => {
+            this.updateUploaderOptions();
+          }, 5);
+      });
   }
 
   registerExpense(): void {
@@ -114,6 +128,24 @@ export class NortanExpenseItemComponent
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
+  }
+
+  updateUploaderOptions(): void {
+    const mediaFolderPath = this.onedrive.generateNortanExpensesPath(
+      this.expense
+    );
+    const fn = (name: string) => {
+      const type = this.expense.type;
+      const date = this.utils.formatDate(new Date(), '-');
+      const extension = name.match('[.].+');
+      if (this.expense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
+        const subType = this.expense.fixedType;
+        return 'Comprovante-' + type + '-' + subType + '-' + date + extension;
+      }
+      return 'Comprovante-' + type + '-' + date + extension;
+    };
+    console.log(mediaFolderPath);
+    super.updateUploaderOptions(mediaFolderPath, fn, true);
   }
 
   handleTypeChange(): void {
