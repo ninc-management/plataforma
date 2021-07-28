@@ -70,7 +70,6 @@ export class DashboardComponent {
           this.dialogService.open(DashboardDialogComponent, {
             context: {
               title: 'ADICIONAR GASTO NORTAN',
-              expenseIndex: undefined,
             },
             dialogClass: 'my-dialog',
             closeOnBackdropClick: false,
@@ -81,7 +80,6 @@ export class DashboardComponent {
           this.dialogService.open(ContractDialogComponent, {
             context: {
               title: 'ADICIONAR DESPESA',
-              expenseIndex: undefined,
               componentType: COMPONENT_TYPES.EXPENSE,
             },
             dialogClass: 'my-dialog',
@@ -98,6 +96,20 @@ export class DashboardComponent {
           context: {
             title: 'CADASTRO DE ORÇAMENTO',
             invoice: undefined,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.RECEIPT: {
+        this.dialogService.open(ContractDialogComponent, {
+          context: {
+            title: 'ADICIONAR ORDEM DE EMPENHO',
+            componentType: COMPONENT_TYPES.RECEIPT,
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
