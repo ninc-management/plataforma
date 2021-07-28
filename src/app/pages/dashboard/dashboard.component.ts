@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
-import { UtilsService } from 'app/shared/services/utils.service';
-import { MetricsService } from 'app/shared/services/metrics.service';
-import { startOfMonth } from 'date-fns';
-import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NbDialogService, NbTabComponent } from '@nebular/theme';
+import { startOfMonth } from 'date-fns';
+import { UtilsService } from 'app/shared/services/utils.service';
+import { MetricsService } from 'app/shared/services/metrics.service';
+import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import {
   COMPONENT_TYPES,
   ContractDialogComponent,
 } from '../contracts/contract-dialog/contract-dialog.component';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
+import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -92,6 +93,16 @@ export class DashboardComponent {
       }
 
       case DIALOG_TYPES.INVOICE: {
+        this.dialogService.open(InvoiceDialogComponent, {
+          context: {
+            title: 'CADASTRO DE ORÇAMENTO',
+            invoice: undefined,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
         break;
       }
 
