@@ -21,6 +21,7 @@ enum TAB_TITLES {
 enum DIALOG_TYPES {
   INVOICE,
   EXPENSE,
+  RECEIPT,
 }
 
 @Component({
