@@ -1,14 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { CompleterData, CompleterService } from 'ng2-completer';
+import { cloneDeep } from 'lodash';
 import {
   ContractService,
   CONTRACT_STATOOS,
 } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { cloneDeep } from 'lodash';
-import * as contract_validation from '../../../../shared/payment-validation.json';
-import { ContractReceipt, Contract } from '@models/contract';
 import { InvoiceService } from 'app/shared/services/invoice.service';
+import { ContractReceipt, Contract } from '@models/contract';
+import * as contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -17,8 +18,10 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 })
 export class ReceiptItemComponent implements OnInit {
   @Input() contract = new Contract();
+  @Input() availableContracts: Contract[] = [];
   @Input() contractIndex?: number;
   @Input() receiptIndex?: number;
+  hasInitialContract = true;
   validation = (contract_validation as any).default;
   today = new Date();
   receipt: ContractReceipt = {
@@ -35,14 +38,30 @@ export class ReceiptItemComponent implements OnInit {
     liquid: '0',
   };
 
+  contractSearch = '';
+  get availableContractsData(): CompleterData {
+    if (this.availableContracts.length === 0) {
+      return this.completerService.local(this.availableContracts);
+    }
+    return this.completerService
+      .local(this.availableContracts, 'code', 'code')
+      .imageField('managerPicture');
+  }
+
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
+    private completerService: CompleterService,
     public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
+    if (this.contract._id) this.fillContractData();
+    else this.hasInitialContract = false;
+  }
+
+  fillContractData(): void {
     if (this.contract.invoice) {
       const tmp = cloneDeep(this.contract);
       tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);

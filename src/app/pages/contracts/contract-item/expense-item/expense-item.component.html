@@ -17,7 +17,7 @@
           matchClass="match"
           fieldSize="large"
           [selectedText]="contract.code"
-          [dataService]="contractData"
+          [dataService]="availableContracts"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
@@ -25,7 +25,7 @@
               ? contractList.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined && userSearch !== ''
+              : expenseIndex === undefined && contractSearch !== ''
               ? 'success'
               : 'basic'
           "

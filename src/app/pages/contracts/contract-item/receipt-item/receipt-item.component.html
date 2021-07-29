@@ -1,5 +1,40 @@
 <form (ngSubmit)="registerReceipt()" #form="ngForm" aria-labelledby="title">
   <div class="row">
+    <div class="col-12" *ngIf="!hasInitialContract">
+      <div class="form-control-group">
+        <label class="label" for="input-user">Contrato:</label>
+        <nb-completer
+          [(ngModel)]="contractSearch"
+          (selected)="this.contract = $event.originalObject; fillContractData()"
+          inputName="contractListCompleter"
+          #contractList="ngModel"
+          id="input-contract"
+          name="contractList"
+          placeholder="Digite e selecione o código do contrato"
+          textNoResults="
+          Não foi possível achar um contrato com o código digitado
+          "
+          matchClass="match"
+          fieldSize="large"
+          [selectedText]="contract.code"
+          [dataService]="availableContractsData"
+          [minSearchLength]="0"
+          [fullWidth]="true"
+          [status]="
+            contractList.dirty
+              ? contractList.invalid
+                ? 'danger'
+                : 'success'
+              : receiptIndex === undefined && contractSearch !== ''
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            contractList.invalid && contractList.touched ? true : null
+          "
+        ></nb-completer>
+      </div>
+    </div>
     <div class="col-md-4">
       <div class="form-control-group">
         <label class="label" for="input-value">

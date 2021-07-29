@@ -73,7 +73,7 @@ export class ExpenseItemComponent
   splitSelectedMember = new User();
 
   contractSearch = '';
-  contractData: CompleterData = this.completerService.local([]);
+  availableContracts: CompleterData = this.completerService.local([]);
 
   lastType = EXPENSE_TYPES.MATERIAL;
 
@@ -124,7 +124,7 @@ export class ExpenseItemComponent
     else {
       this.hasInitialContract = false;
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-        this.contractData = this.completerService
+        this.availableContracts = this.completerService
           .local(
             this.contractService.getContracts().pipe(
               map((contracts) => {

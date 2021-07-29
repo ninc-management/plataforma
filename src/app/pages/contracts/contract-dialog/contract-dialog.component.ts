@@ -1,15 +1,20 @@
 import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { DepartmentService } from 'app//shared/services/department.service';
+import { cloneDeep } from 'lodash';
+import { map, take } from 'rxjs/operators';
+import { DepartmentService } from 'app/shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { take } from 'rxjs/operators';
 import { PdfService } from 'app/pages/invoices/pdf.service';
+import { UserService } from 'app/shared/services/user.service';
+import {
+  ContractService,
+  CONTRACT_STATOOS,
+} from 'app/shared/services/contract.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
-import { cloneDeep } from 'lodash';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -38,6 +43,7 @@ export class ContractDialogComponent
   hasBalance = true;
   types = COMPONENT_TYPES;
   onedriveUrl = '';
+  availableContracts: Contract[] = [];
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -45,6 +51,8 @@ export class ContractDialogComponent
     protected departmentService: DepartmentService,
     protected invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
+    private userService: UserService,
+    private contractService: ContractService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
     public utils: UtilsService
@@ -59,6 +67,61 @@ export class ContractDialogComponent
       this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT) this.getOnedriveUrl();
+    if (
+      (this.componentType == COMPONENT_TYPES.RECEIPT ||
+        this.componentType == COMPONENT_TYPES.PAYMENT) &&
+      this.contract._id === undefined
+    ) {
+      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+        this.contractService
+          .getContracts()
+          .pipe(
+            map((contracts) => {
+              contracts = contracts.filter(
+                (contract) =>
+                  contract.invoice &&
+                  (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO ||
+                    contract.status == CONTRACT_STATOOS.A_RECEBER) &&
+                  (this.invoiceService.isInvoiceAuthor(
+                    contract.invoice,
+                    user
+                  ) ||
+                    this.invoiceService.isInvoiceMember(contract.invoice, user))
+              );
+              contracts.map((contract) => {
+                contract.code = this.invoiceService.idToCode(contract.invoice);
+                contract.balance = this.contractService.balance(contract);
+                if (contract.invoice) {
+                  const invoice = this.invoiceService.idToInvoice(
+                    contract.invoice
+                  );
+                  if (invoice.author) {
+                    const managerPicture = this.userService.idToUser(
+                      invoice.author
+                    ).profilePicture;
+                    if (managerPicture)
+                      contract.managerPicture = managerPicture;
+                  }
+                }
+                return contract;
+              });
+              return contracts.sort((a, b) =>
+                this.utils.codeSort(-1, a.code, b.code)
+              );
+            })
+          )
+          .subscribe((contracts) => {
+            if (contracts.length === 0) this.isPayable = false;
+            else {
+              if (this.componentType == COMPONENT_TYPES.RECEIPT)
+                this.availableContracts = contracts.filter(
+                  (contract) =>
+                    contract.total !== contract.receipts.length.toString()
+                );
+            }
+          });
+      });
+    }
   }
 
   dismiss(): void {
