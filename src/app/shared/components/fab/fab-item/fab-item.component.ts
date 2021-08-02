@@ -30,6 +30,8 @@ export class FabItemComponent implements OnInit {
   disabled = false;
   @Input()
   iconTop = '0';
+  @Input()
+  iconLeft = '0';
 
   @Output()
   clicked: EventEmitter<any> = new EventEmitter();
