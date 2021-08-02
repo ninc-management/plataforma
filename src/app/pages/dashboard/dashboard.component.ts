@@ -12,6 +12,7 @@ import {
 } from '../contracts/contract-dialog/contract-dialog.component';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
+import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -111,6 +112,19 @@ export class DashboardComponent {
           context: {
             title: 'ADICIONAR ORDEM DE EMPENHO',
             componentType: COMPONENT_TYPES.RECEIPT,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.CLIENT: {
+        this.dialogService.open(ContractorDialogComponent, {
+          context: {
+            title: 'CADASTRO DE CLIENTE',
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
