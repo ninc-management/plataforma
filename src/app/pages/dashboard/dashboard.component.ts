@@ -22,6 +22,7 @@ enum DIALOG_TYPES {
   INVOICE,
   EXPENSE,
   RECEIPT,
+  CLIENT,
 }
 
 @Component({
