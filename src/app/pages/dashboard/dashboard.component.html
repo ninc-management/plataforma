@@ -41,17 +41,23 @@
     (clicked)="openDialog(dialogTypes.EXPENSE)"
   ></ngx-fab-item>
   <ngx-fab-item
-    icon="file-invoice-dollar"
-    pack="fac"
-    content="Orçamento"
-    iconTop="-3"
-    (clicked)="openDialog(dialogTypes.INVOICE)"
+    icon="dollar-sign"
+    pack="fa"
+    content="Ordem de Pagamento"
+    (clicked)="openDialog(dialogTypes.PAYMENT)"
   ></ngx-fab-item>
   <ngx-fab-item
     icon="receipt"
     pack="fac"
     content="Ordem de Empenho"
     (clicked)="openDialog(dialogTypes.RECEIPT)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    icon="file-invoice-dollar"
+    pack="fac"
+    content="Orçamento"
+    iconTop="-3"
+    (clicked)="openDialog(dialogTypes.INVOICE)"
   ></ngx-fab-item>
   <ngx-fab-item
     icon="person-add-outline"
