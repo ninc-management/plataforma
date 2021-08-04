@@ -91,6 +91,37 @@ export class ContractDialogComponent
               contracts.map((contract) => {
                 contract.code = this.invoiceService.idToCode(contract.invoice);
                 contract.balance = this.contractService.balance(contract);
+                contract.liquid = this.contractService.toNetValue(
+                  this.contractService.subtractComissions(
+                    this.stringUtil.removePercentage(
+                      contract.value,
+                      contract.ISS
+                    ),
+                    contract
+                  ),
+                  this.utils.nfPercentage(contract),
+                  this.utils.nortanPercentage(contract)
+                );
+                const paid = this.contractService.toNetValue(
+                  this.stringUtil.numberToMoney(
+                    contract.receipts.reduce(
+                      (accumulator: number, recipt: any) => {
+                        if (recipt.paid)
+                          accumulator =
+                            accumulator +
+                            this.stringUtil.moneyToNumber(recipt.value);
+                        return accumulator;
+                      },
+                      0
+                    )
+                  ),
+                  this.utils.nfPercentage(contract),
+                  this.utils.nortanPercentage(contract)
+                );
+                contract.notPaid = this.stringUtil.numberToMoney(
+                  this.stringUtil.moneyToNumber(contract.liquid) -
+                    this.stringUtil.moneyToNumber(paid)
+                );
                 if (contract.invoice) {
                   const invoice = this.invoiceService.idToInvoice(
                     contract.invoice
@@ -113,11 +144,23 @@ export class ContractDialogComponent
           .subscribe((contracts) => {
             if (contracts.length === 0) this.isPayable = false;
             else {
-              if (this.componentType == COMPONENT_TYPES.RECEIPT)
+              if (this.componentType == COMPONENT_TYPES.RECEIPT) {
                 this.availableContracts = contracts.filter(
                   (contract) =>
                     contract.total !== contract.receipts.length.toString()
                 );
+                if (this.availableContracts.length === 0)
+                  this.isPayable = false;
+              }
+              if (this.componentType == COMPONENT_TYPES.PAYMENT) {
+                this.availableContracts = contracts.filter(
+                  (contract) =>
+                    this.stringUtil.moneyToNumber(contract.balance) > 0
+                );
+                if (this.availableContracts.length === 0)
+                  this.hasBalance = false;
+                else this.hasBalance = true;
+              }
             }
           });
       });

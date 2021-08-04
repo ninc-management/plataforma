@@ -31,11 +31,13 @@ import * as contract_validation from '../../../../shared/payment-validation.json
 })
 export class PaymentItemComponent implements OnInit {
   @Input() contract = new Contract();
+  @Input() availableContracts: Contract[] = [];
   @Input() contractIndex?: number;
   @Input() paymentIndex?: number;
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
   valueInputRef!: ElementRef<HTMLInputElement>;
+  hasInitialContract = true;
   validation = (contract_validation as any).default;
   ALL_COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
@@ -65,6 +67,16 @@ export class PaymentItemComponent implements OnInit {
   userSearch = '';
   userData: CompleterData = this.completerService.local([]);
 
+  contractSearch = '';
+  get availableContractsData(): CompleterData {
+    if (this.availableContracts.length === 0) {
+      return this.completerService.local(this.availableContracts);
+    }
+    return this.completerService
+      .local(this.availableContracts, 'code', 'code')
+      .imageField('managerPicture');
+  }
+
   get is100(): boolean {
     return (
       this.payment.team.reduce((sum, m) => {
@@ -86,6 +98,11 @@ export class PaymentItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+    if (this.contract._id) this.fillContractData();
+    else this.hasInitialContract = false;
+  }
+
+  fillContractData(): void {
     const teamUsers = this.contract.team
       .map((member) => {
         if (member.user) return this.userService.idToUser(member.user);

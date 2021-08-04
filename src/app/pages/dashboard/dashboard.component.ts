@@ -122,6 +122,20 @@ export class DashboardComponent {
         break;
       }
 
+      case DIALOG_TYPES.PAYMENT: {
+        this.dialogService.open(ContractDialogComponent, {
+          context: {
+            title: 'ADICIONAR ORDEM DE PAGAMENTO',
+            componentType: COMPONENT_TYPES.PAYMENT,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
       case DIALOG_TYPES.CLIENT: {
         this.dialogService.open(ContractorDialogComponent, {
           context: {
