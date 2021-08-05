@@ -14,6 +14,8 @@ import {
   NbButtonModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import langPTBR from 'app/shared/langPT-BR';
 
 import { ThemeModule } from 'app/@theme/theme.module';
 import { DashboardComponent } from './dashboard.component';
@@ -24,6 +26,9 @@ import { NortanExpenseItemComponent } from './nortan-expense-item/nortan-expense
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { FormsModule } from '@angular/forms';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
+import { TimeSeriesComponent } from './charts/time-series/time-series.component';
+
+echarts.registerLocale('PT-BR', langPTBR);
 
 @NgModule({
   imports: [
@@ -42,9 +47,7 @@ import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.co
     NbSpinnerModule,
     NbTabsetModule,
     NbTooltipModule,
-    NgxEchartsModule.forRoot({
-      echarts: () => import('echarts'),
-    }),
+    NgxEchartsModule.forRoot({ echarts }),
     SharedModule,
     ThemeModule,
   ],
@@ -54,6 +57,7 @@ import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.co
     GaugeComponent,
     NortanExpenseItemComponent,
     DashboardDialogComponent,
+    TimeSeriesComponent,
   ],
 })
 export class DashboardModule {}

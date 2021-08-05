@@ -13,11 +13,16 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
   @Input() name = '';
   options: any = {};
   themeSubscription: any;
+  currentTheme = {};
 
   constructor(
     private theme: NbThemeService,
     private stringUtil: StringUtilService
   ) {}
+
+  ngOnDestroy(): void {
+    this.themeSubscription.unsubscribe();
+  }
 
   ngAfterViewInit(): void {
     this.themeSubscription = combineLatest([
@@ -25,7 +30,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
       this.value$,
     ]).subscribe(([config, dataValue]) => {
       const colors: any = config.variables;
-      const echarts: any = colors.echarts;
+      this.currentTheme = colors.echarts;
       let color: string;
       if (dataValue <= 2500) color = colors.danger;
       else if (dataValue <= 5000) color = colors.warning;
@@ -35,7 +40,6 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
         series: [
           {
             type: 'gauge',
-            backgroundColor: echarts.bg,
             startAngle: 180,
             endAngle: 0,
             min: 0,
@@ -87,7 +91,6 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
               },
             },
             axisLabel: {
-              color: echarts.textColor,
               fontSize: 8,
               distance: 7,
               formatter: function (value: number) {
@@ -106,7 +109,6 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
             title: {
               offsetCenter: [0, '-30%'],
               fontSize: 10,
-              color: echarts.textColor,
             },
             detail: {
               fontSize: 16,
@@ -127,9 +129,5 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
         ],
       };
     });
-  }
-
-  ngOnDestroy(): void {
-    this.themeSubscription.unsubscribe();
   }
 }
