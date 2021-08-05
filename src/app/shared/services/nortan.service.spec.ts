@@ -1,4 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { parseISO } from 'date-fns';
+import { cloneDeep } from 'lodash';
+import { Socket } from 'ngx-socket-io';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { SocketMock } from 'types/socketio-mock';
+import MockedServerSocket from 'socket.io-mock';
 
 import {
   NortanService,
@@ -6,17 +14,9 @@ import {
   NORTAN_FIXED_EXPENSE_TYPES,
 } from './nortan.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { HttpTestingController } from '@angular/common/http/testing';
-import { Socket } from 'ngx-socket-io';
-import { Subject } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
-import expense, { Expense } from '@models/expense';
-import { User } from '@models/user';
-import MockedServerSocket from 'socket.io-mock';
-import { cloneDeep } from 'lodash';
 import { NORTAN } from './user.service';
-import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
+import { Expense } from '@models/expense';
+import { User } from '@models/user';
 
 describe('NortanService', () => {
   let service: NortanService;
@@ -281,10 +281,13 @@ describe('NortanService', () => {
   baseTest(
     'expensesSize should work',
     (expectedExpenses: Expense[], done: DoneFn) => {
-      service.expensesSize().subscribe((size) => {
-        expect(size).toBe(2);
-        done();
-      });
+      service
+        .expensesSize()
+        .pipe(take(1))
+        .subscribe((size) => {
+          expect(size).toBe(expectedExpenses.length);
+          done();
+        });
     }
   );
 });
