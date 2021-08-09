@@ -1,21 +1,21 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-// import { TemporalSeriesComponent } from './temporal-series.component';
-// import { CommonTestingModule } from 'app/../common-testing.module';
+import { TimeSeriesComponent } from './time-series.component';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
-// describe('TemporalSeriesComponent', () => {
-//   let component: TemporalSeriesComponent;
-//   let fixture: ComponentFixture<TemporalSeriesComponent>;
+describe('TemporalSeriesComponent', () => {
+  let component: TimeSeriesComponent;
+  let fixture: ComponentFixture<TimeSeriesComponent>;
 
-//   CommonTestingModule.setUpTestBed(TemporalSeriesComponent);
+  CommonTestingModule.setUpTestBed(TimeSeriesComponent);
 
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(TemporalSeriesComponent);
-//     component = fixture.componentInstance;
-//     fixture.detectChanges();
-//   });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TimeSeriesComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
-//   });
-// });
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
