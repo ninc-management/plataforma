@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { MetricsService } from 'app/shared/services/metrics.service';
+import { UserService } from 'app/shared/services/user.service';
+import {
+  MetricsService,
+  TimeSeries,
+} from 'app/shared/services/metrics.service';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import {
   COMPONENT_TYPES,
@@ -46,9 +50,11 @@ export class DashboardComponent {
   toReceive$!: Observable<number>;
   contractsBalance$!: Observable<number>;
   taxesBalance$!: Observable<number>;
+  timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
 
   constructor(
     private metricsService: MetricsService,
+    private userService: UserService,
     private dialogService: NbDialogService,
     public utils: UtilsService
   ) {
@@ -64,6 +70,22 @@ export class DashboardComponent {
     this.taxesBalance$ = this.metricsService
       .nortanValue(this.start, this.end, 'taxes')
       .pipe(map((metricInfo) => metricInfo.global));
+    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.timeSeries$ = this.metricsService
+        .receivedValueTimeSeries(user._id)
+        .pipe(
+          map((timeSeriesItems) => {
+            const recebido: TimeSeries = {
+              name: 'Recebido',
+              type: 'bar',
+              smooth: false,
+              symbol: 'none',
+              data: timeSeriesItems,
+            };
+            return [recebido];
+          })
+        );
+    });
   }
 
   openDialog(dType: DIALOG_TYPES): void {
