@@ -1341,4 +1341,50 @@ export class MetricsService implements OnDestroy {
       })
     );
   }
+
+  expensesTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
+    return this.contractService.getContracts().pipe(
+      map((contracts) => {
+        const fContracts = contracts.filter((contract) =>
+          this.contractService.hasExpenses(contract)
+        );
+        const timeSeriesItems = fContracts.map((contract) => {
+          let fExpenses = contract.expenses.filter(
+            (expense) => expense.paid && expense.source != CLIENT
+          );
+          if (uId != undefined) {
+            fExpenses = fExpenses.filter((expense) => {
+              return expense.team
+                .map((team) => this.userService.isEqual(team.user, uId))
+                .filter((isSameUser) => isSameUser).length;
+            });
+            fExpenses = fExpenses.map((expense) => {
+              expense.value = expense.team[0].value;
+              return expense;
+            });
+          }
+          return fExpenses.map((payment) => {
+            const date: string = payment.paidDate
+              ? format(payment.paidDate, 'yyyy/MM/dd')
+              : '';
+            return [
+              date,
+              this.stringUtil.moneyToNumber(payment.value),
+            ] as TimeSeriesItem;
+          });
+        });
+        const timeSeriesItemsFlat = timeSeriesItems.flat();
+        return Object.entries(groupBy(timeSeriesItemsFlat, '0'))
+          .map((objs) => {
+            return [
+              objs[0],
+              -1 * objs[1].reduce((acc, obj) => acc + obj[1], 0),
+            ] as TimeSeriesItem;
+          })
+          .sort((a, b) => {
+            return a[0] < b[0] ? -1 : 1;
+          });
+      })
+    );
+  }
 }
