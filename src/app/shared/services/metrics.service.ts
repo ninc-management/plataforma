@@ -8,7 +8,28 @@ import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
-import { cloneDeep, mergeWith, add } from 'lodash';
+import { cloneDeep, mergeWith, add, groupBy } from 'lodash';
+import { format } from 'date-fns';
+
+export type TimeSeriesItem = [string, number];
+
+/* eslint-disable @typescript-eslint/indent */
+// prettier-ignore
+export interface TimeSeries {
+  name: string;
+  type: 'line' | 'bar' | 'boxplot' | 'candlestick' | 'parallel';
+  smooth: boolean;
+  symbol: 'circle'
+    | 'rect'
+    | 'roundRect'
+    | 'triangle'
+    | 'diamond'
+    | 'pin'
+    | 'arrow'
+    | 'none';
+  data: TimeSeriesItem[];
+}
+/* eslint-enable @typescript-eslint/indent */
 
 interface MetricInfo {
   count: number;
@@ -1274,6 +1295,50 @@ export class MetricsService implements OnDestroy {
         );
       }),
       take(1)
+    );
+  }
+
+  receivedValueTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
+    return this.contractService.getContracts().pipe(
+      map((contracts) => {
+        const fContracts = contracts.filter((contract) =>
+          this.contractService.hasPayments(contract)
+        );
+        const timeSeriesItems = fContracts.map((contract) => {
+          let fPayments = contract.payments.filter((payment) => payment.paid);
+          if (uId != undefined) {
+            fPayments = fPayments.filter((payment) => {
+              return payment.team
+                .map((team) => this.userService.isEqual(team.user, uId))
+                .filter((isSameUser) => isSameUser).length;
+            });
+            fPayments = fPayments.map((payment) => {
+              payment.value = payment.team[0].value;
+              return payment;
+            });
+          }
+          return fPayments.map((payment) => {
+            const date: string = payment.paidDate
+              ? format(payment.paidDate, 'yyyy/MM/dd')
+              : '';
+            return [
+              date,
+              this.stringUtil.moneyToNumber(payment.value),
+            ] as TimeSeriesItem;
+          });
+        });
+        const timeSeriesItemsFlat = timeSeriesItems.flat();
+        return Object.entries(groupBy(timeSeriesItemsFlat, '0'))
+          .map((objs) => {
+            return [
+              objs[0],
+              objs[1].reduce((acc, obj) => acc + obj[1], 0),
+            ] as TimeSeriesItem;
+          })
+          .sort((a, b) => {
+            return a[0] < b[0] ? -1 : 1;
+          });
+      })
     );
   }
 }
