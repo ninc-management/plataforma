@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -71,20 +71,28 @@ export class DashboardComponent {
       .nortanValue(this.start, this.end, 'taxes')
       .pipe(map((metricInfo) => metricInfo.global));
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.timeSeries$ = this.metricsService
-        .receivedValueTimeSeries(user._id)
-        .pipe(
-          map((timeSeriesItems) => {
-            const recebido: TimeSeries = {
-              name: 'Recebido',
-              type: 'bar',
-              smooth: false,
-              symbol: 'none',
-              data: timeSeriesItems,
-            };
-            return [recebido];
-          })
-        );
+      this.timeSeries$ = combineLatest([
+        this.metricsService.receivedValueTimeSeries(user._id),
+        this.metricsService.expensesTimeSeries(user._id),
+      ]).pipe(
+        map(([receivedSeriesItems, expensesSeriesItems]) => {
+          const received: TimeSeries = {
+            name: 'Recebido',
+            type: 'bar',
+            smooth: false,
+            symbol: 'none',
+            data: receivedSeriesItems,
+          };
+          const expenses: TimeSeries = {
+            name: 'Despesas',
+            type: 'bar',
+            smooth: false,
+            symbol: 'none',
+            data: expensesSeriesItems,
+          };
+          return [received, expenses];
+        })
+      );
     });
   }
 
