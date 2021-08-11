@@ -1363,13 +1363,13 @@ export class MetricsService implements OnDestroy {
               return expense;
             });
           }
-          return fExpenses.map((payment) => {
-            const date: string = payment.paidDate
-              ? format(payment.paidDate, 'yyyy/MM/dd')
+          return fExpenses.map((expense) => {
+            const date: string = expense.paidDate
+              ? format(expense.paidDate, 'yyyy/MM/dd')
               : '';
             return [
               date,
-              this.stringUtil.moneyToNumber(payment.value),
+              this.stringUtil.moneyToNumber(expense.value),
             ] as TimeSeriesItem;
           });
         });
@@ -1379,6 +1379,63 @@ export class MetricsService implements OnDestroy {
             return [
               objs[0],
               -1 * objs[1].reduce((acc, obj) => acc + obj[1], 0),
+            ] as TimeSeriesItem;
+          })
+          .sort((a, b) => {
+            return a[0] < b[0] ? -1 : 1;
+          });
+      })
+    );
+  }
+
+  contractValueTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+    ]).pipe(
+      filter(
+        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
+      ),
+      map(([contracts, invoices]) => {
+        let fContracts = contracts.map((contract) => {
+          if (contract.invoice)
+            contract.value = this.invoiceService.idToInvoice(
+              contract.invoice
+            ).value;
+          return contract;
+        });
+        if (uId != undefined) {
+          fContracts = fContracts.filter((contract) => {
+            return contract.team
+              .map(
+                (team) =>
+                  this.userService.isEqual(team.user, uId) &&
+                  team.distribution != undefined
+              )
+              .filter((isSameUser) => isSameUser).length;
+          });
+          fContracts = fContracts.map((contract) => {
+            contract.value = this.stringUtil.applyPercentage(
+              contract.value,
+              contract.team[0].distribution
+            );
+            return contract;
+          });
+        }
+        const timeSeriesItems = fContracts.map((contract) => {
+          const date: string = contract.created
+            ? format(contract.created, 'yyyy/MM/dd')
+            : '';
+          return [
+            date,
+            this.stringUtil.moneyToNumber(contract.value),
+          ] as TimeSeriesItem;
+        });
+        return Object.entries(groupBy(timeSeriesItems, '0'))
+          .map((objs) => {
+            return [
+              objs[0],
+              objs[1].reduce((acc, obj) => acc + obj[1], 0),
             ] as TimeSeriesItem;
           })
           .sort((a, b) => {
