@@ -4,6 +4,8 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { TimeSeries } from 'app/shared/services/metrics.service';
 import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
+import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
 
 @Component({
   selector: 'ngx-time-series',
@@ -13,6 +15,7 @@ import { filter } from 'rxjs/operators';
 export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   @Input() series$!: Observable<TimeSeries[]>;
   @Input() name = '';
+  currentTimeSeries: TimeSeries[] = [];
   echartsInstance: any;
   options: any = {};
   themeSubscription: any;
@@ -27,6 +30,10 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     this.themeSubscription.unsubscribe();
   }
 
+  onChartInit(event: any): void {
+    this.echartsInstance = event;
+  }
+
   ngAfterViewInit(): void {
     this.themeSubscription = combineLatest([
       this.theme.getJsTheme(),
@@ -36,12 +43,37 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
       .subscribe(([config, series]) => {
         const colors: any = config.variables;
         this.currentTheme = colors.echarts;
+        this.currentTimeSeries = cloneDeep(series);
 
         this.options = {
           tooltip: {
             trigger: 'axis',
-            position: (pt: any) => {
-              return [pt[0], '10%'];
+            position: (
+              pos: any,
+              params: any,
+              dom: any,
+              rect: any,
+              size: any
+            ) => {
+              // tooltip will be fixed on the right if mouse hovering on the left,
+              // and on the left if h: anyovering on the right.
+              let obj: any = { top: '5%' };
+              const mouseX = pos[0];
+              const tooltipWidth = size.contentSize[0];
+              const canvasWidth = size.viewSize[0];
+              console.log(mouseX, tooltipWidth, canvasWidth);
+
+              let left = 0;
+              if (
+                mouseX >= Math.round(tooltipWidth / 2) &&
+                mouseX <= canvasWidth - Math.round(tooltipWidth / 2)
+              )
+                left = mouseX - Math.round(tooltipWidth / 2);
+              if (mouseX > canvasWidth - Math.round(tooltipWidth / 2))
+                left = canvasWidth - tooltipWidth;
+              obj['left'] = left;
+
+              return obj;
             },
             formatter: (params: any) => {
               params.sort(function (a: any, b: any) {
@@ -80,6 +112,8 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
           xAxis: {
             type: 'time',
             boundaryGap: false,
+            min: '2020/01/01',
+            max: format(new Date(), 'yyyy/MM/dd'),
           },
           yAxis: {
             type: 'value',
@@ -88,13 +122,15 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
           dataZoom: [
             {
               type: 'inside',
-              start: 0,
-              end: 20,
+              startValue: startOfMonth(new Date()),
+              endValue: new Date(),
+              rangeMode: 'value',
             },
             {
               type: 'slider',
-              start: 0,
-              end: 20,
+              startValue: startOfMonth(new Date()),
+              endValue: new Date(),
+              rangeMode: 'value',
               labelFormatter: (value: Date): string => {
                 return this.utils.formatDate(value);
               },

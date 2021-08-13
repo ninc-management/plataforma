@@ -74,24 +74,41 @@ export class DashboardComponent {
       this.timeSeries$ = combineLatest([
         this.metricsService.receivedValueTimeSeries(user._id),
         this.metricsService.expensesTimeSeries(user._id),
+        this.metricsService.contractValueTimeSeries(user._id),
       ]).pipe(
-        map(([receivedSeriesItems, expensesSeriesItems]) => {
-          const received: TimeSeries = {
-            name: 'Recebido',
-            type: 'bar',
-            smooth: false,
-            symbol: 'none',
-            data: receivedSeriesItems,
-          };
-          const expenses: TimeSeries = {
-            name: 'Despesas',
-            type: 'bar',
-            smooth: false,
-            symbol: 'none',
-            data: expensesSeriesItems,
-          };
-          return [received, expenses];
-        })
+        map(
+          ([
+            receivedSeriesItems,
+            expensesSeriesItems,
+            contractValueSeriesItems,
+          ]) => {
+            const received: TimeSeries = {
+              name: 'Recebido',
+              type: 'bar',
+              smooth: false,
+              cumulative: false,
+              symbol: 'none',
+              data: receivedSeriesItems,
+            };
+            const expenses: TimeSeries = {
+              name: 'Despesas',
+              type: 'bar',
+              smooth: false,
+              cumulative: false,
+              symbol: 'none',
+              data: expensesSeriesItems,
+            };
+            const contractsValue: TimeSeries = {
+              name: 'Valor em contratos',
+              type: 'line',
+              smooth: false,
+              cumulative: true,
+              symbol: 'none',
+              data: contractValueSeriesItems,
+            };
+            return [received, expenses, contractsValue];
+          }
+        )
       );
     });
   }
