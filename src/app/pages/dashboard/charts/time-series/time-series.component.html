@@ -3,5 +3,7 @@
   [initOpts]="{ locale: 'PT-BR' }"
   [theme]="currentTheme"
   [options]="options"
+  (chartInit)="onChartInit($event)"
+  (chartDataZoom)="onDataZoom()"
   class="echart"
 ></div>

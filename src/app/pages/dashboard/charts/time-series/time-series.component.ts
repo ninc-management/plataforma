@@ -34,6 +34,54 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     this.echartsInstance = event;
   }
 
+  onDataZoom(): void {
+    const currentOptions = this.echartsInstance.getOption();
+    const dataZoom = currentOptions.dataZoom[0];
+    const zoomStart: Date = addDays(new Date(dataZoom.startValue), 1);
+    const zoomEnd: Date = dataZoom.endValue;
+
+    let lastValue = 0;
+    this.currentTimeSeries
+      .map((serie) => {
+        if (!serie.cumulative) return serie.data;
+        return serie.data
+          .filter((seriesItem) =>
+            this.utils.isWithinInterval(
+              new Date(seriesItem[0]),
+              zoomStart,
+              zoomEnd
+            )
+          )
+          .map((seriesItem) => {
+            const accumulated = seriesItem[1] + lastValue;
+            lastValue = accumulated;
+            return [seriesItem[0], accumulated];
+          });
+      })
+      .forEach((originalTimeSeriesItems, index) => {
+        const timeSeriesItems = cloneDeep(originalTimeSeriesItems);
+        if (timeSeriesItems.length == 0) {
+          timeSeriesItems.push([format(zoomStart, 'yyyy/MM/dd'), 0]);
+          timeSeriesItems.push([format(zoomEnd, 'yyyy/MM/dd'), 0]);
+        } else {
+          if (!isSameDay(new Date(timeSeriesItems[0][0]), zoomStart))
+            timeSeriesItems.unshift([format(zoomStart, 'yyyy/MM/dd'), 0]);
+          if (
+            !isSameDay(
+              new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
+              zoomEnd
+            )
+          )
+            timeSeriesItems.push([
+              format(zoomEnd, 'yyyy/MM/dd'),
+              timeSeriesItems[timeSeriesItems.length - 1][1],
+            ]);
+        }
+        currentOptions.series[index].data = timeSeriesItems;
+      });
+    this.echartsInstance.setOption(currentOptions);
+  }
+
   ngAfterViewInit(): void {
     this.themeSubscription = combineLatest([
       this.theme.getJsTheme(),

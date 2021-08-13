@@ -19,6 +19,7 @@ export interface TimeSeries {
   name: string;
   type: 'line' | 'bar' | 'boxplot' | 'candlestick' | 'parallel';
   smooth: boolean;
+  cumulative: boolean;
   symbol: 'circle'
     | 'rect'
     | 'roundRect'
