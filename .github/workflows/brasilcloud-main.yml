@@ -70,3 +70,14 @@ jobs:
             **/playground.mongodb,
             **/protractor.conf.js
             ]'
+      - name: 🌐 Install dependencies on Brasil Cloud server
+        uses: appleboy/ssh-action@master
+        env:
+          DEBIAN_FRONTEND: 'noninteractive'
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: DEBIAN_FRONTEND
+          script: cd app && npm i && npm prune --production && pidof node | xargs kill
