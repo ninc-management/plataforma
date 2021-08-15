@@ -259,9 +259,10 @@ export class ExpenseItemComponent
       : '';
 
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
-      this.splitSelectedMember = this.userService.idToUser(
-        this.expense.team[0].user
-      );
+      if (this.splitSelectedMember._id == undefined)
+        this.splitSelectedMember = this.userService.idToUser(
+          this.expense.team[0].user
+        );
       this.USER_COORDINATIONS = this.departmentService.userCoordinations(
         this.splitSelectedMember._id
       );
