@@ -33,6 +33,10 @@
   .dashboard {
     display: flex !important;
     flex-direction: column;
+    margin-top: -2.5rem;
+    @include media-breakpoint-down(md) {
+      margin-top: -1rem;
+    }
 
     .tabset {
       align-self: center;
