@@ -34,56 +34,60 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     this.echartsInstance = event;
   }
 
+  handleCumulativeSeries(
+    series: TimeSeries[],
+    start: Date,
+    end: Date
+  ): TimeSeries[] {
+    let lastValue = 0;
+    return cloneDeep(series).map((serie) => {
+      if (!serie.cumulative) return serie;
+      serie.data = serie.data
+        .filter((seriesItem) =>
+          this.utils.isWithinInterval(new Date(seriesItem[0]), start, end)
+        )
+        .map((seriesItem) => {
+          const accumulated = seriesItem[1] + lastValue;
+          lastValue = accumulated;
+          return [seriesItem[0], accumulated];
+        });
+      const timeSeriesItems = serie.data;
+      if (timeSeriesItems.length == 0) {
+        timeSeriesItems.push([format(start, 'yyyy/MM/dd'), 0]);
+        timeSeriesItems.push([format(end, 'yyyy/MM/dd'), 0]);
+      } else {
+        if (!isSameDay(new Date(timeSeriesItems[0][0]), start))
+          timeSeriesItems.unshift([format(start, 'yyyy/MM/dd'), 0]);
+        if (
+          !isSameDay(
+            new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
+            end
+          )
+        )
+          timeSeriesItems.push([
+            format(end, 'yyyy/MM/dd'),
+            timeSeriesItems[timeSeriesItems.length - 1][1],
+          ]);
+      }
+      serie.data = timeSeriesItems;
+      return serie;
+    });
+  }
+
   onDataZoom(): void {
     const currentOptions = this.echartsInstance.getOption();
     const dataZoom = currentOptions.dataZoom[0];
     const zoomStart: Date = addDays(new Date(dataZoom.startValue), 1);
     const zoomEnd: Date = dataZoom.endValue;
 
-    let lastValue = 0;
-    this.currentTimeSeries
-      .map((serie) => {
-        if (!serie.cumulative) return { cumulative: false, serie: serie.data };
-        return {
-          cumulative: true,
-          serie: serie.data
-            .filter((seriesItem) =>
-              this.utils.isWithinInterval(
-                new Date(seriesItem[0]),
-                zoomStart,
-                zoomEnd
-              )
-            )
-            .map((seriesItem) => {
-              const accumulated = seriesItem[1] + lastValue;
-              lastValue = accumulated;
-              return [seriesItem[0], accumulated];
-            }),
-        };
-      })
-      .forEach((originalTimeSeriesItems, index) => {
-        if (originalTimeSeriesItems.cumulative) {
-          const timeSeriesItems = cloneDeep(originalTimeSeriesItems.serie);
-          if (timeSeriesItems.length == 0) {
-            timeSeriesItems.push([format(zoomStart, 'yyyy/MM/dd'), 0]);
-            timeSeriesItems.push([format(zoomEnd, 'yyyy/MM/dd'), 0]);
-          } else {
-            if (!isSameDay(new Date(timeSeriesItems[0][0]), zoomStart))
-              timeSeriesItems.unshift([format(zoomStart, 'yyyy/MM/dd'), 0]);
-            if (
-              !isSameDay(
-                new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
-                zoomEnd
-              )
-            )
-              timeSeriesItems.push([
-                format(zoomEnd, 'yyyy/MM/dd'),
-                timeSeriesItems[timeSeriesItems.length - 1][1],
-              ]);
-          }
-          currentOptions.series[index].data = timeSeriesItems;
-        }
-      });
+    this.handleCumulativeSeries(
+      this.currentTimeSeries,
+      zoomStart,
+      zoomEnd
+    ).forEach((serie, index) => {
+      currentOptions.series[index].data = serie.data;
+    });
+
     this.echartsInstance.setOption(currentOptions);
   }
 
@@ -97,6 +101,8 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
         const colors: any = config.variables;
         this.currentTheme = colors.echarts;
         this.currentTimeSeries = cloneDeep(series);
+        const zoomStart: Date = startOfMonth(new Date());
+        const zoomEnd: Date = new Date();
 
         this.options = {
           tooltip: {
@@ -174,21 +180,21 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
           dataZoom: [
             {
               type: 'inside',
-              startValue: startOfMonth(new Date()),
-              endValue: new Date(),
+              startValue: zoomStart,
+              endValue: zoomEnd,
               rangeMode: 'value',
             },
             {
               type: 'slider',
-              startValue: startOfMonth(new Date()),
-              endValue: new Date(),
+              startValue: zoomStart,
+              endValue: zoomEnd,
               rangeMode: 'value',
               labelFormatter: (value: Date): string => {
                 return this.utils.formatDate(value);
               },
             },
           ],
-          series: series,
+          series: this.handleCumulativeSeries(series, zoomStart, zoomEnd),
         };
       });
   }
