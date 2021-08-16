@@ -20,7 +20,8 @@ export interface TimeSeries {
   type: 'line' | 'bar' | 'boxplot' | 'candlestick' | 'parallel';
   smooth: boolean;
   cumulative: boolean;
-  symbol: 'circle'
+  symbol:
+    | 'circle'
     | 'rect'
     | 'roundRect'
     | 'triangle'
@@ -28,6 +29,8 @@ export interface TimeSeries {
     | 'pin'
     | 'arrow'
     | 'none';
+  barGap?: string;
+  barMaxWidth?: number | string;
   data: TimeSeriesItem[];
 }
 /* eslint-enable @typescript-eslint/indent */
@@ -1351,7 +1354,10 @@ export class MetricsService implements OnDestroy {
         );
         const timeSeriesItems = fContracts.map((contract) => {
           let fExpenses = contract.expenses.filter(
-            (expense) => expense.paid && expense.source != CLIENT
+            (expense) =>
+              expense.paid &&
+              expense.source != CONTRACT_BALANCE &&
+              expense.source != CLIENT
           );
           if (uId != undefined) {
             fExpenses = fExpenses.filter((expense) => {

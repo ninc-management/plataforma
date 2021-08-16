@@ -43,41 +43,46 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     let lastValue = 0;
     this.currentTimeSeries
       .map((serie) => {
-        if (!serie.cumulative) return serie.data;
-        return serie.data
-          .filter((seriesItem) =>
-            this.utils.isWithinInterval(
-              new Date(seriesItem[0]),
-              zoomStart,
-              zoomEnd
+        if (!serie.cumulative) return { cumulative: false, serie: serie.data };
+        return {
+          cumulative: true,
+          serie: serie.data
+            .filter((seriesItem) =>
+              this.utils.isWithinInterval(
+                new Date(seriesItem[0]),
+                zoomStart,
+                zoomEnd
+              )
             )
-          )
-          .map((seriesItem) => {
-            const accumulated = seriesItem[1] + lastValue;
-            lastValue = accumulated;
-            return [seriesItem[0], accumulated];
-          });
+            .map((seriesItem) => {
+              const accumulated = seriesItem[1] + lastValue;
+              lastValue = accumulated;
+              return [seriesItem[0], accumulated];
+            }),
+        };
       })
       .forEach((originalTimeSeriesItems, index) => {
-        const timeSeriesItems = cloneDeep(originalTimeSeriesItems);
-        if (timeSeriesItems.length == 0) {
-          timeSeriesItems.push([format(zoomStart, 'yyyy/MM/dd'), 0]);
-          timeSeriesItems.push([format(zoomEnd, 'yyyy/MM/dd'), 0]);
-        } else {
-          if (!isSameDay(new Date(timeSeriesItems[0][0]), zoomStart))
-            timeSeriesItems.unshift([format(zoomStart, 'yyyy/MM/dd'), 0]);
-          if (
-            !isSameDay(
-              new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
-              zoomEnd
+        if (originalTimeSeriesItems.cumulative) {
+          const timeSeriesItems = cloneDeep(originalTimeSeriesItems.serie);
+          if (timeSeriesItems.length == 0) {
+            timeSeriesItems.push([format(zoomStart, 'yyyy/MM/dd'), 0]);
+            timeSeriesItems.push([format(zoomEnd, 'yyyy/MM/dd'), 0]);
+          } else {
+            if (!isSameDay(new Date(timeSeriesItems[0][0]), zoomStart))
+              timeSeriesItems.unshift([format(zoomStart, 'yyyy/MM/dd'), 0]);
+            if (
+              !isSameDay(
+                new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
+                zoomEnd
+              )
             )
-          )
-            timeSeriesItems.push([
-              format(zoomEnd, 'yyyy/MM/dd'),
-              timeSeriesItems[timeSeriesItems.length - 1][1],
-            ]);
+              timeSeriesItems.push([
+                format(zoomEnd, 'yyyy/MM/dd'),
+                timeSeriesItems[timeSeriesItems.length - 1][1],
+              ]);
+          }
+          currentOptions.series[index].data = timeSeriesItems;
         }
-        currentOptions.series[index].data = timeSeriesItems;
       });
     this.echartsInstance.setOption(currentOptions);
   }
@@ -109,7 +114,6 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
               const mouseX = pos[0];
               const tooltipWidth = size.contentSize[0];
               const canvasWidth = size.viewSize[0];
-              console.log(mouseX, tooltipWidth, canvasWidth);
 
               let left = 0;
               if (

@@ -88,6 +88,8 @@ export class DashboardComponent {
               smooth: false,
               cumulative: false,
               symbol: 'none',
+              barGap: '-100%',
+              barMaxWidth: 25,
               data: receivedSeriesItems,
             };
             const expenses: TimeSeries = {
@@ -96,6 +98,8 @@ export class DashboardComponent {
               smooth: false,
               cumulative: false,
               symbol: 'none',
+              barGap: '-100%',
+              barMaxWidth: 25,
               data: expensesSeriesItems,
             };
             const contractsValue: TimeSeries = {
