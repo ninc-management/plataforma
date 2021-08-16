@@ -88,6 +88,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     lastValue: '',
     lastProducts: [] as InvoiceProduct[],
     lastStages: [] as InvoiceStage[],
+    netValue: '0,00',
   };
   destroy$ = new Subject<void>();
   editing = false;
@@ -110,16 +111,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   USER_COORDINATIONS: string[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
-
-  get netValue(): string {
-    if (!this.tempInvoice.value && !this.tempInvoice.administration)
-      return '0,00';
-    return this.contractService.toNetValue(
-      this.tempInvoice.value,
-      this.utils.nfPercentage(this.tempInvoice),
-      this.utils.nortanPercentage(this.tempInvoice)
-    );
-  }
 
   constructor(
     private dialogService: NbDialogService,
@@ -171,6 +162,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.updateDependentValues(this.tempInvoice.products, 'product');
       this.updateDependentValues(this.tempInvoice.stages, 'stage');
       this.updateTotal('material');
+      this.updateNetValue();
     } else {
       this.tempInvoice = new Invoice();
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -686,6 +678,28 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.stringUtil.moneyToNumber(array[idx].value) *
           this.stringUtil.moneyToNumber(array[idx].amount)
       );
+  }
+
+  updateNetValue(): void {
+    if (!this.tempInvoice.value && !this.tempInvoice.administration) {
+      this.options.netValue = '0,00';
+    } else {
+      this.options.netValue = this.contractService.toNetValue(
+        this.tempInvoice.value,
+        this.utils.nfPercentage(this.tempInvoice),
+        this.utils.nortanPercentage(this.tempInvoice)
+      );
+    }
+  }
+
+  updateGrossValue(): void {
+    const newInvoiceValue = this.contractService.toGrossValue(
+      this.options.netValue,
+      this.utils.nfPercentage(this.tempInvoice),
+      this.utils.nortanPercentage(this.tempInvoice)
+    );
+
+    this.tempInvoice.value = newInvoiceValue;
   }
 }
 
