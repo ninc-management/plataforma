@@ -110,7 +110,17 @@ export class DashboardComponent {
               symbol: 'none',
               data: contractValueSeriesItems,
             };
-            return [received, expenses, contractsValue];
+            const balance: TimeSeries = {
+              name: 'Balanço',
+              type: 'line',
+              smooth: false,
+              cumulative: true,
+              symbol: 'none',
+              data: receivedSeriesItems
+                .concat(expensesSeriesItems)
+                .sort((a, b) => (a[0] > b[0] ? 1 : -1)),
+            };
+            return [received, expenses, contractsValue, balance];
           }
         )
       );
