@@ -382,7 +382,8 @@
               (focusout)="updateLastValues()"
               (ngModelChange)="
                 updateDependentValues(tempInvoice.products, 'product');
-                updateDependentValues(tempInvoice.stages, 'stage')
+                updateDependentValues(tempInvoice.stages, 'stage');
+                updateNetValue()
               "
             />
             <ng-container *ngIf="value.invalid && value.touched">
@@ -409,16 +410,33 @@
             </label>
             <input
               nbInput
-              [ngModel]="netValue"
+              [(ngModel)]="options.netValue"
+              #netValue="ngModel"
               id="input-net-value"
               name="netValue"
               placeholder="Valor liquido do contrato"
               fullWidth
               fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              [required]="validation.value.required"
+              [minlength]="validation.value.minLength"
+              [maxlength]="validation.value.maxLength"
               [status]="
-                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
+                netValue.dirty
+                  ? netValue.invalid
+                    ? 'danger'
+                    : 'success'
+                  : 'basic'
               "
-              [readonly]="true"
+              [attr.aria-invalid]="
+                netValue.invalid && netValue.touched ? true : null
+              "
+              (ngModelChange)="updateGrossValue()"
             />
           </div>
         </div>
