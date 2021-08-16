@@ -6,6 +6,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 @Component({
   selector: 'ngx-time-series',
@@ -24,7 +25,11 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   };
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private utils: UtilsService) {}
+  constructor(
+    private theme: NbThemeService,
+    private utils: UtilsService,
+    private stringUtil: StringUtilService
+  ) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -39,9 +44,9 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     start: Date,
     end: Date
   ): TimeSeries[] {
-    let lastValue = 0;
     return cloneDeep(series).map((serie) => {
       if (!serie.cumulative) return serie;
+      let lastValue = 0;
       serie.data = serie.data
         .filter((seriesItem) =>
           this.utils.isWithinInterval(new Date(seriesItem[0]), start, end)
@@ -143,12 +148,16 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
                 this.utils.formatDate(new Date(date)) +
                 '</div>';
               for (let i = 0; i < params.length; i++) {
+                const value = this.currentTimeSeries[params[i].seriesIndex]
+                  .isMoney
+                  ? this.stringUtil.numberToMoney(params[i].value[1])
+                  : params[i].value[1];
                 output +=
                   '<div style="display: flex; justify-content: space-between"><span>' +
                   params[i].marker +
                   params[i].seriesName +
                   ':&nbsp </span><span><b>' +
-                  params[i].value[1] +
+                  value +
                   '</b></span></div>';
               }
               return output;

@@ -31,6 +31,7 @@ export interface TimeSeries {
     | 'none';
   barGap?: string;
   barMaxWidth?: number | string;
+  isMoney?: boolean;
   data: TimeSeriesItem[];
 }
 /* eslint-enable @typescript-eslint/indent */

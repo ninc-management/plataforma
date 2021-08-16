@@ -90,6 +90,7 @@ export class DashboardComponent {
               symbol: 'none',
               barGap: '-100%',
               barMaxWidth: 25,
+              isMoney: true,
               data: receivedSeriesItems,
             };
             const expenses: TimeSeries = {
@@ -100,6 +101,7 @@ export class DashboardComponent {
               symbol: 'none',
               barGap: '-100%',
               barMaxWidth: 25,
+              isMoney: true,
               data: expensesSeriesItems,
             };
             const contractsValue: TimeSeries = {
@@ -108,6 +110,7 @@ export class DashboardComponent {
               smooth: false,
               cumulative: true,
               symbol: 'none',
+              isMoney: true,
               data: contractValueSeriesItems,
             };
             const balance: TimeSeries = {
@@ -116,6 +119,7 @@ export class DashboardComponent {
               smooth: false,
               cumulative: true,
               symbol: 'none',
+              isMoney: true,
               data: receivedSeriesItems
                 .concat(expensesSeriesItems)
                 .sort((a, b) => (a[0] > b[0] ? 1 : -1)),
