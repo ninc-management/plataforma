@@ -8,6 +8,7 @@ import { Component } from '@angular/core';
 import { User } from '@models/user';
 import { Contract, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { TimeSeriesItem } from './metrics.service';
 
 @Component({
   selector: 'test-cmp',
@@ -102,6 +103,39 @@ describe('UtilsService', () => {
     ).toBe(false);
     expect(service.isWithinInterval(date, subMonths(start, 1), end)).toBe(true);
     expect(service.isWithinInterval(date, start, addMonths(end, 1))).toBe(true);
+  });
+
+  it('groupByDateTimeSerie should work', () => {
+    const case1: TimeSeriesItem[] = [];
+    const case2: TimeSeriesItem[] = [
+      ['2021/01/01', 200],
+      ['2021/01/02', 300],
+    ];
+    const case3: TimeSeriesItem[] = [
+      ['2021/01/01', 200],
+      ['2021/01/01', 100],
+      ['2021/01/02', 300],
+    ];
+    const expectedCase3: TimeSeriesItem[] = [
+      ['2021/01/01', 300],
+      ['2021/01/02', 300],
+    ];
+    const case4: TimeSeriesItem[] = [
+      ['2021/01/01', 100],
+      ['2021/01/02', 200],
+      ['2021/01/03', 300],
+      ['2021/01/02', 100],
+    ];
+    const expectedCase4: TimeSeriesItem[] = [
+      ['2021/01/01', 100],
+      ['2021/01/02', 300],
+      ['2021/01/03', 300],
+    ];
+
+    expect(service.groupByDateTimeSerie(case1)).toEqual(case1);
+    expect(service.groupByDateTimeSerie(case2)).toEqual(case2);
+    expect(service.groupByDateTimeSerie(case3)).toEqual(expectedCase3);
+    expect(service.groupByDateTimeSerie(case4)).toEqual(expectedCase4);
   });
 
   it('trackByIndex should work', () => {
