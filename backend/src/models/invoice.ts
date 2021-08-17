@@ -1,8 +1,8 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { Contractor } from './contractor';
 import { User } from './user';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+import { StatusHistory } from './baseStatusHistory';
 
 export class InvoiceProduct {
   @prop({ required: true })
@@ -56,7 +56,7 @@ export class InvoiceTeamMember {
 }
 
 @plugin(mongooseUniqueValidator)
-export class Invoice extends Base<string> {
+export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
   author!: Ref<User>;
 
@@ -86,9 +86,6 @@ export class Invoice extends Base<string> {
 
   @prop({ required: true })
   value!: string;
-
-  @prop({ required: true })
-  status!: string;
 
   @prop({ type: () => [InvoiceTeamMember] })
   team: InvoiceTeamMember[] = [];
