@@ -16,7 +16,8 @@ import {
 } from 'date-fns';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { at } from 'lodash';
+import { at, groupBy } from 'lodash';
+import { TimeSeriesItem } from './metrics.service';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -202,6 +203,19 @@ export class UtilsService {
       else return direction;
     }
     return 0;
+  }
+
+  groupByDateTimeSerie(serie: TimeSeriesItem[]): TimeSeriesItem[] {
+    return Object.entries(groupBy(serie, '0'))
+      .map((objs) => {
+        return [
+          objs[0],
+          objs[1].reduce((acc, obj) => acc + obj[1], 0),
+        ] as TimeSeriesItem;
+      })
+      .sort((a, b) => {
+        return a[0] < b[0] ? -1 : 1;
+      });
   }
 
   trackByIndex<T>(index: number, obj: T): number {

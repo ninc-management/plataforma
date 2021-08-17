@@ -1333,16 +1333,7 @@ export class MetricsService implements OnDestroy {
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
-        return Object.entries(groupBy(timeSeriesItemsFlat, '0'))
-          .map((objs) => {
-            return [
-              objs[0],
-              objs[1].reduce((acc, obj) => acc + obj[1], 0),
-            ] as TimeSeriesItem;
-          })
-          .sort((a, b) => {
-            return a[0] < b[0] ? -1 : 1;
-          });
+        return this.utils.groupByDateTimeSerie(timeSeriesItemsFlat);
       })
     );
   }
@@ -1382,16 +1373,7 @@ export class MetricsService implements OnDestroy {
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
-        return Object.entries(groupBy(timeSeriesItemsFlat, '0'))
-          .map((objs) => {
-            return [
-              objs[0],
-              -1 * objs[1].reduce((acc, obj) => acc + obj[1], 0),
-            ] as TimeSeriesItem;
-          })
-          .sort((a, b) => {
-            return a[0] < b[0] ? -1 : 1;
-          });
+        return this.utils.groupByDateTimeSerie(timeSeriesItemsFlat);
       })
     );
   }
@@ -1439,16 +1421,7 @@ export class MetricsService implements OnDestroy {
             this.stringUtil.moneyToNumber(contract.value),
           ] as TimeSeriesItem;
         });
-        return Object.entries(groupBy(timeSeriesItems, '0'))
-          .map((objs) => {
-            return [
-              objs[0],
-              objs[1].reduce((acc, obj) => acc + obj[1], 0),
-            ] as TimeSeriesItem;
-          })
-          .sort((a, b) => {
-            return a[0] < b[0] ? -1 : 1;
-          });
+        return this.utils.groupByDateTimeSerie(timeSeriesItems);
       })
     );
   }
