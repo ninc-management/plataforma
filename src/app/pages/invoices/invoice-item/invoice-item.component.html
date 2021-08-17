@@ -436,7 +436,11 @@
               [attr.aria-invalid]="
                 netValue.invalid && netValue.touched ? true : null
               "
-              (ngModelChange)="updateGrossValue()"
+              (ngModelChange)="
+                updateGrossValue();
+                updateDependentValues(tempInvoice.products, 'product');
+                updateDependentValues(tempInvoice.stages, 'stage')
+              "
             />
           </div>
         </div>
