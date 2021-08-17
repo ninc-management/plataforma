@@ -285,6 +285,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.tempInvoice.lastUpdate = new Date();
     if (this.editing) {
       this.updateRevision();
+      if (this.oldStatus !== this.tempInvoice.status) {
+        const lastStatusIndex = this.tempInvoice.statusHistory.length - 1;
+        this.tempInvoice.statusHistory[lastStatusIndex].end =
+          this.tempInvoice.lastUpdate;
+        this.tempInvoice.statusHistory.push({
+          status: this.tempInvoice.status,
+          start: this.tempInvoice.lastUpdate,
+        });
+      }
       this.invoiceService.editInvoice(this.tempInvoice);
       if (this.oldStatus !== this.tempInvoice.status) {
         if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
@@ -296,6 +305,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.iInvoice = cloneDeep(this.tempInvoice);
       this.tempInvoice.department = department;
     } else {
+      this.tempInvoice.statusHistory.push({
+        status: this.tempInvoice.status,
+        start: this.tempInvoice.created,
+      });
       this.invoiceService.saveInvoice(this.tempInvoice);
       this.submit.emit();
     }
