@@ -120,9 +120,9 @@ export class DashboardComponent {
               cumulative: true,
               symbol: 'none',
               isMoney: true,
-              data: receivedSeriesItems
-                .concat(expensesSeriesItems)
-                .sort((a, b) => (a[0] > b[0] ? 1 : -1)),
+              data: this.utils.groupByDateTimeSerie(
+                receivedSeriesItems.concat(expensesSeriesItems)
+              ),
             };
             return [received, expenses, contractsValue, balance];
           }
