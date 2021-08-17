@@ -64,6 +64,16 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+// Fix invoice status history
+db.invoices.find().forEach((i) => {
+  i.statusHistory = [];
+  i.statusHistory.push({
+    status: i.status,
+    start: i.lastUpdate,
+  });
+  db.invoices.replaceOne({_id: i._id}, i);
+})
+
 // Fix createdExpenses number and expense code
 db.contracts.find().forEach((c) => {
   if(c.expenses){
