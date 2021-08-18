@@ -297,6 +297,15 @@ export class ContractItemComponent implements OnInit {
     version += 1;
     this.contract.version = version.toString().padStart(2, '0');
     this.contract.lastUpdate = new Date();
+    if (this.iContract.status !== this.contract.status) {
+      const lastStatusIndex = this.contract.statusHistory.length - 1;
+      this.contract.statusHistory[lastStatusIndex].end =
+        this.contract.lastUpdate;
+      this.contract.statusHistory.push({
+        status: this.contract.status,
+        start: this.contract.lastUpdate,
+      });
+    }
     this.iContract = cloneDeep(this.contract);
     this.contractService.editContract(this.iContract);
   }

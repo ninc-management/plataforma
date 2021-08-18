@@ -63,6 +63,10 @@ export class ContractService implements OnDestroy {
 
   saveContract(invoice: Invoice): void {
     const contract = new Contract();
+    contract.statusHistory.push({
+      status: contract.status,
+      start: contract.created,
+    });
     contract.invoice = invoice;
     contract.total = invoice.stages.length.toString();
     const req = {

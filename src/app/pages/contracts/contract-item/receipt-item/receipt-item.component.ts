@@ -105,19 +105,40 @@ export class ReceiptItemComponent implements OnInit {
     if (
       isOtherPaid &&
       this.receipt.paid &&
-      this.contract.total == this.contract.receipts.length.toString()
-    )
+      this.contract.total == this.contract.receipts.length.toString() &&
+      this.contract.status != CONTRACT_STATOOS.CONCLUIDO
+    ) {
       this.contract.status = CONTRACT_STATOOS.CONCLUIDO;
+      this.updateContractStatusHistory();
+    }
     if (
       isOtherPaid &&
       this.receipt.paid &&
-      this.contract.total != this.contract.receipts.length.toString()
-    )
+      this.contract.total != this.contract.receipts.length.toString() &&
+      this.contract.status != CONTRACT_STATOOS.EM_ANDAMENTO
+    ) {
       this.contract.status = CONTRACT_STATOOS.EM_ANDAMENTO;
-    if (!isOtherPaid || !this.receipt.paid)
+      this.updateContractStatusHistory();
+    }
+    if (
+      (!isOtherPaid || !this.receipt.paid) &&
+      this.contract.status != CONTRACT_STATOOS.A_RECEBER
+    ) {
       this.contract.status = CONTRACT_STATOOS.A_RECEBER;
+      this.updateContractStatusHistory();
+    }
 
     this.contractService.editContract(this.contract);
+  }
+
+  updateContractStatusHistory(): void {
+    this.contract.lastUpdate = new Date();
+    const lastStatusIndex = this.contract.statusHistory.length - 1;
+    this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
+    this.contract.statusHistory.push({
+      status: this.contract.status,
+      start: this.contract.lastUpdate,
+    });
   }
 
   notPaid(): string {
