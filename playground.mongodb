@@ -74,6 +74,16 @@ db.invoices.find().forEach((i) => {
   db.invoices.replaceOne({_id: i._id}, i);
 })
 
+// Fix contract status history
+db.contracts.find().forEach((c) => {
+  c.statusHistory = [];
+  c.statusHistory.push({
+    status: c.status,
+    start: c.status != "Em andamento" ? c.lastUpdate : c.created,
+  });
+  db.contracts.replaceOne({_id: c._id}, c);
+})
+
 // Fix createdExpenses number and expense code
 db.contracts.find().forEach((c) => {
   if(c.expenses){

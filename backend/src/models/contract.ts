@@ -1,7 +1,7 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from './user';
 import { Invoice } from './invoice';
+import { StatusHistory } from './baseStatusHistory';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class UploadedFile {
@@ -147,7 +147,7 @@ export class ContractTeamMember {
 }
 
 @plugin(mongooseUniqueValidator)
-export class Contract extends Base<string> {
+export class Contract extends StatusHistory {
   @prop({ required: true, ref: () => Invoice })
   invoice!: Ref<Invoice>;
 
