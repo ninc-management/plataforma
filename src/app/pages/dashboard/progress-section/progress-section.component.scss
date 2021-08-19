@@ -1,6 +1,6 @@
 @import '../../../@theme/styles/themes';
-
-$shadow-green: #00977e;
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
   --spinner-primary-background-color: transparent;
@@ -13,10 +13,17 @@ $shadow-green: #00977e;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin-top: 2rem;
+  }
 
-    &:first-child {
-      margin-top: 0;
+  nb-card-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: flex-start;
+    justify-content: space-around;
+    @include media-breakpoint-down(md) {
+      flex-direction: column;
     }
   }
 

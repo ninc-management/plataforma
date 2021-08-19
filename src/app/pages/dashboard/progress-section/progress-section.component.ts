@@ -1,6 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { take, map, startWith } from 'rxjs/operators';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  Renderer2,
+  ViewChildren,
+} from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { take, map, startWith, takeUntil } from 'rxjs/operators';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -15,20 +25,39 @@ interface MetricItem {
   loading: Observable<boolean>;
 }
 
+/* eslint-disable @typescript-eslint/indent */
 @Component({
   selector: 'progress-section',
   templateUrl: './progress-section.component.html',
   styleUrls: ['./progress-section.component.scss'],
 })
-export class ProgressSectionComponent implements OnInit {
+export class ProgressSectionComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
+  /* eslint-enable @typescript-eslint/indent */
+  @ViewChildren('textMetric', { read: ElementRef })
+  metricsRef!: QueryList<ElementRef>;
   METRICS: MetricItem[] = [];
+  resize$ = new BehaviorSubject<boolean>(true);
+  destroy$ = new Subject<void>();
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.resize$.next(true);
+  }
 
   constructor(
+    private renderer: Renderer2,
     private metricsService: MetricsService,
     private userService: UserService,
     private stringUtil: StringUtilService,
     private departmentService: DepartmentService
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
@@ -385,6 +414,25 @@ export class ProgressSectionComponent implements OnInit {
             map((x) => x == undefined),
             startWith(true)
           ),
+        });
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    combineLatest(this.METRICS.map((m) => m.loading)).subscribe((loadings) => {
+      if (loadings.every((loading) => loading === false)) {
+        this.resize$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+          setTimeout(() => {
+            this.metricsRef.toArray().forEach((el) => {
+              this.renderer.setStyle(el.nativeElement, 'margin-top', '0');
+              if (
+                el.nativeElement.offsetTop !=
+                this.metricsRef.first.nativeElement.offsetTop
+              )
+                this.renderer.setStyle(el.nativeElement, 'margin-top', '2rem');
+            });
+          }, 10);
         });
       }
     });
