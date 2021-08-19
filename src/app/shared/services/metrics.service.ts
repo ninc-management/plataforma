@@ -8,7 +8,8 @@ import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
-import { cloneDeep, mergeWith, add, groupBy } from 'lodash';
+import { NortanService } from './nortan.service';
+import { cloneDeep, mergeWith, add } from 'lodash';
 import { format } from 'date-fns';
 
 export type TimeSeriesItem = [string, number];
@@ -153,6 +154,7 @@ export class MetricsService implements OnDestroy {
   constructor(
     private contractService: ContractService,
     private contractorService: ContractorService,
+    private nortanService: NortanService,
     private invoiceService: InvoiceService,
     private userService: UserService,
     private departmentService: DepartmentService,
@@ -1259,6 +1261,30 @@ export class MetricsService implements OnDestroy {
         );
       }),
       take(1)
+    );
+  }
+
+  teamExpenses(start: Date, end: Date): Observable<MetricInfo> {
+    return this.nortanService.getExpenses().pipe(
+      map((expenses) => {
+        console.log(expenses);
+        return expenses
+          .filter((expense) => expense.paid)
+          .reduce(
+            (acc, expense) => {
+              const paidDate = expense.paidDate;
+              if (
+                paidDate &&
+                this.utils.isWithinInterval(paidDate, start, end)
+              ) {
+                acc.count += 1;
+                acc.value += this.stringUtil.moneyToNumber(expense.value);
+              }
+              return acc;
+            },
+            { count: 0, value: 0 }
+          );
+      })
     );
   }
 
