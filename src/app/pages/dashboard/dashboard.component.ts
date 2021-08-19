@@ -17,6 +17,7 @@ import {
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -48,16 +49,21 @@ export class DashboardComponent {
   end = new Date();
   open$!: Observable<number>;
   toReceive$!: Observable<number>;
+  expenses$!: Observable<string>;
   contractsBalance$!: Observable<number>;
   taxesBalance$!: Observable<number>;
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
 
   constructor(
     private metricsService: MetricsService,
+    private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
     public utils: UtilsService
   ) {
+    this.expenses$ = metricsService
+      .teamExpenses(startOfMonth(new Date()), new Date())
+      .pipe(map((metricInfo) => stringUtil.numberToMoney(metricInfo.value)));
     this.open$ = metricsService
       .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
       .pipe(map((metricInfo) => metricInfo.count));

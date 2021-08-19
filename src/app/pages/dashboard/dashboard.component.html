@@ -26,13 +26,17 @@
         <div class="col-12 col-md-3">
           <ngx-gauge [value$]="taxesBalance$" name="Impostos"></ngx-gauge>
         </div>
-        <div class="col-12 col-md-3" style="text-align: center">
+        <div class="col-12 col-md-2" style="text-align: center">
           <h2 style="margin-top: 15px">{{ open$ | async }}</h2>
           <p>Contratos em Aberto</p>
         </div>
-        <div class="col-12 col-md-3" style="text-align: center">
+        <div class="col-12 col-md-2" style="text-align: center">
           <h2 style="margin-top: 15px">{{ toReceive$ | async }}</h2>
           <p>Contratos a Receber</p>
+        </div>
+        <div class="col-12 col-md-2" style="text-align: center">
+          <h2 style="margin-top: 15px">R$ {{ expenses$ | async }}</h2>
+          <p>Despesas Administrativas</p>
         </div>
       </div>
     </nb-card>
