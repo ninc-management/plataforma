@@ -1267,7 +1267,6 @@ export class MetricsService implements OnDestroy {
   teamExpenses(start: Date, end: Date): Observable<MetricInfo> {
     return this.nortanService.getExpenses().pipe(
       map((expenses) => {
-        console.log(expenses);
         return expenses
           .filter((expense) => expense.paid)
           .reduce(
