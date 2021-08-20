@@ -1,5 +1,10 @@
 <div class="row justify-content-center">
-  <div class="col-8">
+  <div
+    [ngClass]="{
+      'col-8': componentType === dTypes.EXPENSE,
+      'col-11': componentType === dTypes.EXPENSES
+    }"
+  >
     <nb-card
       [ngStyle]="{
         'max-height.px': windowHeight()
@@ -27,9 +32,14 @@
       </nb-card-header>
       <nb-card-body>
         <ngx-nortan-expense-item
-          [expenseIndex]="expenseIndex"
+          *ngIf="componentType === dTypes.EXPENSE"
+          [iExpense]="iExpense"
           (submit)="dismiss()"
         ></ngx-nortan-expense-item>
+        <ngx-nortan-expenses
+          *ngIf="componentType === dTypes.EXPENSES"
+          [isDialogBlocked]="isBlocked"
+        ></ngx-nortan-expenses>
       </nb-card-body>
     </nb-card>
   </div>
