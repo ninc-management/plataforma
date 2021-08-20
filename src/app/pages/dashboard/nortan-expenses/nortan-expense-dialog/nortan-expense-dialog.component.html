@@ -1,0 +1,38 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
+>
+  <div class="col-md-11">
+    <nb-card
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
+      <nb-card-header>
+        {{ title }}
+        <div class="buttons">
+          <button
+            nbButton
+            ghost
+            nbTooltip="Fechar"
+            [nbTooltipTrigger]="
+              utils.isPhone()
+                ? utils.tooltipTriggers.NOOP
+                : utils.tooltipTriggers.HINT
+            "
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="dismiss()"
+          >
+            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+          </button>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <ngx-nortan-expenses></ngx-nortan-expenses>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

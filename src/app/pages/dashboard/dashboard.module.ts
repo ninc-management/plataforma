@@ -22,11 +22,13 @@ import { DashboardComponent } from './dashboard.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { GaugeComponent } from './charts/gauge/gauge.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { NortanExpenseItemComponent } from './nortan-expense-item/nortan-expense-item.component';
+import { NortanExpensesComponent } from './nortan-expenses/nortan-expenses.component';
+import { NortanExpenseItemComponent } from './nortan-expenses/nortan-expense-item/nortan-expense-item.component';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { FormsModule } from '@angular/forms';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { TimeSeriesComponent } from './charts/time-series/time-series.component';
+import { NortanExpenseDialogComponent } from './nortan-expenses/nortan-expense-dialog/nortan-expense-dialog.component';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -58,6 +60,8 @@ echarts.registerLocale('PT-BR', langPTBR);
     NortanExpenseItemComponent,
     DashboardDialogComponent,
     TimeSeriesComponent,
+    NortanExpensesComponent,
+    NortanExpenseDialogComponent,
   ],
 })
 export class DashboardModule {}
