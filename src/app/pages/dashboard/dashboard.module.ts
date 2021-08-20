@@ -28,7 +28,7 @@ import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { FormsModule } from '@angular/forms';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { TimeSeriesComponent } from './charts/time-series/time-series.component';
-import { NortanExpenseDialogComponent } from './nortan-expenses/nortan-expense-dialog/nortan-expense-dialog.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -52,6 +52,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     NgxEchartsModule.forRoot({ echarts }),
     SharedModule,
     ThemeModule,
+    Ng2SmartTableModule,
   ],
   declarations: [
     DashboardComponent,
@@ -61,7 +62,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     DashboardDialogComponent,
     TimeSeriesComponent,
     NortanExpensesComponent,
-    NortanExpenseDialogComponent,
   ],
 })
 export class DashboardModule {}
