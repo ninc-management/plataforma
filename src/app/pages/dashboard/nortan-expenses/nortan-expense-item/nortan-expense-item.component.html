@@ -25,7 +25,7 @@
               ? userList.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined && userSearch !== ''
+              : iExpense === undefined && userSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -72,13 +72,11 @@
               ? value.invalid
                 ? 'danger'
                 : 'success'
-              : expense.value &&
-                expense.value !== '' &&
-                expenseIndex === undefined
+              : expense.value && expense.value !== '' && iExpense === undefined
               ? 'success'
               : 'basic'
           "
-          [disabled]="expense.paid && expenseIndex !== undefined"
+          [disabled]="expense.paid && iExpense !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
         />
         <ng-container>
@@ -132,11 +130,7 @@
           size="large"
           [required]="validation.nf.required"
           [status]="
-            nf.dirty
-              ? 'success'
-              : expenseIndex === undefined
-              ? 'success'
-              : 'basic'
+            nf.dirty ? 'success' : iExpense === undefined ? 'success' : 'basic'
           "
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
         >
@@ -170,7 +164,7 @@
               ? sourceList.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined && sourceSearch !== ''
+              : iExpense === undefined && sourceSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -201,7 +195,7 @@
           [status]="
             type.dirty
               ? 'success'
-              : expenseIndex === undefined && type.value && type.value !== ''
+              : iExpense === undefined && type.value && type.value !== ''
               ? 'success'
               : 'basic'
           "
@@ -228,7 +222,7 @@
           [status]="
             fixedType.dirty
               ? 'success'
-              : expenseIndex === undefined && fixedType.value !== ''
+              : iExpense === undefined && fixedType.value !== ''
               ? 'success'
               : 'basic'
           "
@@ -302,7 +296,7 @@
           [status]="
             paidCheck.dirty
               ? 'success'
-              : expenseIndex === undefined
+              : iExpense === undefined
               ? 'success'
               : 'basic'
           "
@@ -336,7 +330,7 @@
               ? paidDate.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined
+              : iExpense === undefined
               ? 'success'
               : 'basic'
           "
@@ -362,7 +356,7 @@
                 ? paidDate.invalid
                   ? 'danger'
                   : 'success'
-                : expenseIndex === undefined
+                : iExpense === undefined
                 ? 'success'
                 : 'basic'
             "
@@ -394,7 +388,7 @@
               ? created.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined
+              : iExpense === undefined
               ? 'success'
               : 'basic'
           "
@@ -422,7 +416,7 @@
               ? updated.invalid
                 ? 'danger'
                 : 'success'
-              : expenseIndex === undefined
+              : iExpense === undefined
               ? 'success'
               : 'basic'
           "
@@ -480,8 +474,8 @@
 <div class="row">
   <div
     [ngClass]="{
-      'col-12': expenseIndex !== undefined,
-      'col-6': expenseIndex === undefined
+      'col-12': iExpense !== undefined,
+      'col-6': iExpense === undefined
     }"
   >
     <button
@@ -492,10 +486,10 @@
       [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
       (click)="registerExpense()"
     >
-      {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+      {{ iExpense !== undefined ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
-  <div class="col-6" *ngIf="expenseIndex === undefined">
+  <div class="col-6" *ngIf="iExpense === undefined">
     <button
       nbButton
       fullWidth

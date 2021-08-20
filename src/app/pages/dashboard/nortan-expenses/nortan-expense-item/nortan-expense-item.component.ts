@@ -30,7 +30,7 @@ export class NortanExpenseItemComponent
 {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
-  @Input() expenseIndex?: number;
+  @Input() iExpense?: Expense;
   validation = (expense_validation as any).default;
   types = Object.values(NORTAN_EXPENSE_TYPES).sort();
   fixedTypes = Object.values(NORTAN_FIXED_EXPENSE_TYPES).sort();
@@ -61,7 +61,7 @@ export class NortanExpenseItemComponent
   ngOnInit(): void {
     super.ngOnInit();
 
-    const tmp = this.userService.getUsers().value;
+    const tmp = cloneDeep(this.userService.getUsers().value);
     this.userData = this.completerService
       .local(cloneDeep(tmp), 'fullName', 'fullName')
       .imageField('profilePicture');
@@ -69,8 +69,8 @@ export class NortanExpenseItemComponent
     this.sourceData = this.completerService
       .local(tmp, 'fullName', 'fullName')
       .imageField('profilePicture');
-    if (this.expenseIndex != undefined) {
-      // this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
+    if (this.iExpense != undefined) {
+      this.expense = cloneDeep(this.iExpense);
       if (this.expense.author)
         this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source)
@@ -109,7 +109,7 @@ export class NortanExpenseItemComponent
   }
 
   registerExpense(): void {
-    if (this.expenseIndex !== undefined) {
+    if (this.iExpense !== undefined) {
       this.expense.lastUpdate = new Date();
       this.nortanService.editExpense(cloneDeep(this.expense));
     } else {
@@ -144,7 +144,6 @@ export class NortanExpenseItemComponent
       }
       return 'Comprovante-' + type + '-' + date + extension;
     };
-    console.log(mediaFolderPath);
     super.updateUploaderOptions(mediaFolderPath, fn, true);
   }
 
