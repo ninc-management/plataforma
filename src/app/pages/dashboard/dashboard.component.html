@@ -34,10 +34,30 @@
           <h2 style="margin-top: 15px">{{ toReceive$ | async }}</h2>
           <p>Contratos a Receber</p>
         </div>
-        <div class="col-12 col-md-2" style="text-align: center">
-          <h2 style="margin-top: 15px">R$ {{ expenses$ | async }}</h2>
-          <p>Despesas Administrativas</p>
-        </div>
+        <a
+          style="text-decoration: none; display: contents; cursor: pointer"
+          (click)="openDialog(dialogTypes.NORTAN_EXPENSE_TABLE)"
+        >
+          <div class="col-12 col-md-2" style="text-align: center">
+            <h2
+              style="
+                margin-top: 15px;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+              "
+            >
+              R$ {{ expenses$ | async }}
+              <nb-icon
+                status="info"
+                icon="diagonal-arrow-right-up"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+            </h2>
+            <p>Despesas Administrativas</p>
+          </div>
+        </a>
       </div>
     </nb-card>
   </nb-tab>

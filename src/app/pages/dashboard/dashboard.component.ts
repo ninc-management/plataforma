@@ -17,6 +17,7 @@ import {
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
+import { NortanExpenseDialogComponent } from './nortan-expenses/nortan-expense-dialog/nortan-expense-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 
 enum TAB_TITLES {
@@ -30,6 +31,7 @@ enum DIALOG_TYPES {
   PAYMENT,
   EXPENSE,
   CLIENT,
+  NORTAN_EXPENSE_TABLE,
 }
 
 @Component({
@@ -139,6 +141,19 @@ export class DashboardComponent {
 
   openDialog(dType: DIALOG_TYPES): void {
     switch (dType) {
+      case DIALOG_TYPES.NORTAN_EXPENSE_TABLE: {
+        this.dialogService.open(NortanExpenseDialogComponent, {
+          context: {
+            title: 'GASTOS NORTAN',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
       case DIALOG_TYPES.EXPENSE: {
         if (this.activeTab == TAB_TITLES.NORTAN) {
           this.dialogService.open(DashboardDialogComponent, {
