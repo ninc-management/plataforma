@@ -1,1 +1,9 @@
-<p>nortan-expenses works!</p>
+<ng2-smart-table
+  #smartTable
+  *ngIf="!utils.isPhone(); else phone"
+  [settings]="settings"
+  [source]="source"
+  (create)="openDialog()"
+  (edit)="openDialog(expenseIndex($event.data.code))"
+></ng2-smart-table>
+<ng-template #phone></ng-template>
