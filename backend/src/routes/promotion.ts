@@ -20,10 +20,7 @@ router.post('/', async (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await Promotion.findOneAndUpdate(
-    { _id: req.body.promotion._id },
-    req.body.promotion
-  );
+  await Promotion.findByIdAndUpdate(req.body.promotion._id, req.body.promotion);
   return res.status(200).json({
     message: 'Promoção Atualizada!',
   });

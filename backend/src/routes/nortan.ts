@@ -21,10 +21,7 @@ router.post('/expense', async (req, res, next) => {
 });
 
 router.post('/updateExpense', async (req, res, next) => {
-  await Expense.findOneAndUpdate(
-    { _id: req.body.expense._id },
-    req.body.expense
-  );
+  await Expense.findByIdAndUpdate(req.body.expense._id, req.body.expense);
   return res.status(200).json({
     message: 'Despesa Atualizada!',
   });

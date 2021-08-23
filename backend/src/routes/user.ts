@@ -4,11 +4,11 @@ import User from '../models/user';
 const router = express.Router();
 
 router.post('/update', async (req, res, next) => {
-  await User.findOneAndUpdate(
-    { email: req.body.user.email },
+  await User.findByIdAndUpdate(
+    req.body.user._id,
     req.body.user,
     { upsert: false, new: false },
-    function (err, doc, response) {
+    function (err, response) {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar usuário!',

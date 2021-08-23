@@ -20,10 +20,7 @@ router.post('/', async (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await Contract.findOneAndUpdate(
-    { _id: req.body.contract._id },
-    req.body.contract
-  );
+  await Contract.findByIdAndUpdate(req.body.contract._id, req.body.contract);
   return res.status(200).json({
     message: 'Contrato Atualizado!',
   });
