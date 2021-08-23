@@ -43,8 +43,10 @@ const io = require('socket.io')(server, {
   transports: ['websocket'],
 });
 
+const dbWatcher$ = app.db.watch();
+
 io.on('connection', (socket) => {
-  app.db.watch().on('change', (data) => {
+  dbWatcher$.on('change', (data) => {
     socket.emit('dbchange', data);
   });
 });

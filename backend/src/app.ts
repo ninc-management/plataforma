@@ -28,9 +28,9 @@ class NortanAPI {
       useNewUrlParser: true,
       useFindAndModify: false,
       autoIndex: false,
-      poolSize: 100,
-      serverSelectionTimeoutMS: 29000,
-      connectTimeoutMS: 29000,
+      poolSize: 250,
+      serverSelectionTimeoutMS: 15000,
+      connectTimeoutMS: 15000,
     } as mongoose.ConnectionOptions;
     mongoose
       .connect(process.env.MONGODB_URI, options)
