@@ -1250,10 +1250,10 @@
                     <nb-user
                       [onlyPicture]="true"
                       [name]="userService.idToName(expense.author)"
-                      [picture]="profilePicture(expense.author)"
+                      [picture]="userService.profilePicture(expense.author)"
                     ></nb-user>
                   </div>
-                  <div class="col-Auto">#{{ +i + 1 }}</div>
+                  <div class="col-auto">#{{ +i + 1 }}</div>
                   <div class="col">
                     {{ expense.description }}
                   </div>

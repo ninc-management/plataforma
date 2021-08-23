@@ -188,6 +188,13 @@ export class UserService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
+  profilePicture(uId: string | User | undefined): string {
+    if (uId === undefined) return '';
+    const author = this.idToUser(uId);
+    if (author.profilePicture === undefined) return '';
+    return author.profilePicture;
+  }
+
   isEqual(
     u1: string | User | undefined,
     u2: string | User | undefined

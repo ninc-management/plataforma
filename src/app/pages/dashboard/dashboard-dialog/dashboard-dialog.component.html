@@ -1,8 +1,13 @@
-<div class="row justify-content-center">
+<div
+  class="row justify-content-center"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
+>
   <div
     [ngClass]="{
-      'col-8': componentType === dTypes.EXPENSE,
-      'col-11': componentType === dTypes.EXPENSES
+      'col-12 col-md-8': componentType === dTypes.EXPENSE,
+      'col-12 col-md-11': componentType === dTypes.EXPENSES
     }"
   >
     <nb-card

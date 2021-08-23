@@ -12,6 +12,7 @@ import {
   NbDatepickerModule,
   NbDialogModule,
   NbButtonModule,
+  NbUserModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
@@ -49,6 +50,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     NbSpinnerModule,
     NbTabsetModule,
     NbTooltipModule,
+    NbUserModule,
     NgxEchartsModule.forRoot({ echarts }),
     SharedModule,
     ThemeModule,

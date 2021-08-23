@@ -654,11 +654,4 @@ export class ContractItemComponent implements OnInit {
   expenseIndex(code: 'string'): number {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
   }
-
-  profilePicture(uId: string | User | undefined): string {
-    if (uId === undefined) return '';
-    const author = this.userService.idToUser(uId);
-    if (author.profilePicture === undefined) return '';
-    return author.profilePicture;
-  }
 }

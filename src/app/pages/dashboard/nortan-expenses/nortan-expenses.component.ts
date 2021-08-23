@@ -26,6 +26,36 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   expenses: Expense[] = [];
   source: LocalDataSource = new LocalDataSource();
+  searchQuery = '';
+  get filtredExpenses(): Expense[] {
+    if (this.searchQuery !== '')
+      return this.expenses.filter((expense) => {
+        return (
+          expense.description
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.value
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (expense.author &&
+            this.userService
+              .idToName(expense.author)
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          (expense.source &&
+            this.userService
+              .idToName(expense.source)
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          this.utils
+            .formatDate(expense.created)
+            .includes(this.searchQuery.toLowerCase())
+        );
+      });
+    return this.expenses;
+  }
+
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum gasto para o filtro selecionado.',
@@ -93,8 +123,8 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
 
   constructor(
     private nortanService: NortanService,
-    private userService: UserService,
     private dialogService: NbDialogService,
+    public userService: UserService,
     public utils: UtilsService
   ) {}
 
@@ -143,7 +173,7 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
       });
   }
 
-  expenseIndex(code: 'string'): number {
+  expenseIndex(code: string): number {
     return this.expenses.findIndex((expense) => expense.code == code);
   }
 

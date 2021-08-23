@@ -6,4 +6,81 @@
   (create)="openDialog()"
   (edit)="openDialog(expenseIndex($event.data.code))"
 ></ng2-smart-table>
-<ng-template #phone></ng-template>
+<ng-template #phone>
+  <div class="row">
+    <div class="col-2" style="padding-left: 0; padding-right: 0">
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        style="height: 100%"
+        (click)="openDialog()"
+      >
+        <i class="nb-plus" style="font-size: 1.5rem"></i>
+      </button>
+    </div>
+    <div class="col-10">
+      <input
+        nbInput
+        [(ngModel)]="searchQuery"
+        #search="ngModel"
+        id="input-search"
+        name="search"
+        placeholder="Busque aqui..."
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+  </div>
+  <nb-list>
+    <nb-list-item *ngFor="let expense of filtredExpenses; let i = index">
+      <div class="row irow" style="width: 100%">
+        <div class="col-10 col-md-11">
+          <div class="irow row">
+            <a
+              (click)="openDialog(expenseIndex(expense.code))"
+              style="
+                width: 100%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <div class="col-auto">
+                <nb-user
+                  [onlyPicture]="true"
+                  [name]="userService.idToName(expense.author)"
+                  [picture]="userService.profilePicture(expense.author)"
+                ></nb-user>
+              </div>
+              <div class="col-auto">#{{ +i + 1 }}</div>
+              <div class="col">
+                {{ expense.description }}
+              </div>
+              <div class="col-md-auto">
+                <nb-icon
+                  icon="dollar-sign"
+                  pack="fa"
+                  status="success"
+                ></nb-icon>
+                <span style="vertical-align: 0.1em">
+                  {{ expense.value }}
+                </span>
+              </div>
+              <div class="col-md-auto">
+                <nb-icon
+                  icon="calendar-alt"
+                  pack="fa"
+                  status="primary"
+                ></nb-icon>
+                <span style="vertical-align: 0.1em">
+                  {{ utils.formatDate(expense.created) }}
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nb-list-item>
+  </nb-list>
+</ng-template>
