@@ -31,7 +31,7 @@ router.post('/updateExpense', async (req, res, next) => {
 });
 
 router.post('/allExpenses', async (req, res) => {
-  const expenses = await Expense.find({});
+  const expenses = await Expense.find({}).lean();
   return res.status(200).json(expenses);
 });
 

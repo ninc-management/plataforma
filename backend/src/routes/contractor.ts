@@ -31,7 +31,7 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  const contracotrs = await Contractor.find({});
+  const contracotrs = await Contractor.find({}).lean();
   return res.status(200).json(contracotrs);
 });
 

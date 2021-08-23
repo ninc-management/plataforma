@@ -22,7 +22,7 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  const users = await User.find({}).populate('expertise');
+  const users = await User.find({}).populate('expertise').lean();
   return res.status(200).json(users);
 });
 

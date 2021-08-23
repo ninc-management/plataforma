@@ -30,7 +30,7 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  const promotions = await Promotion.find({});
+  const promotions = await Promotion.find({}).lean();
   return res.status(200).json(promotions);
 });
 

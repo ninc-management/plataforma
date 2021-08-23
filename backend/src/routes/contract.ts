@@ -44,7 +44,7 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  const contracts = await Contract.find({});
+  const contracts = await Contract.find({}).lean();
   return res.status(200).json(contracts);
 });
 

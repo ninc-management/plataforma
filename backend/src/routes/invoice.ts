@@ -66,7 +66,7 @@ router.post('/count', (req, res) => {
 });
 
 router.post('/all', async (req, res) => {
-  const invoices = await Invoice.find({});
+  const invoices = await Invoice.find({}).lean();
   return res.status(200).json(invoices);
 });
 
