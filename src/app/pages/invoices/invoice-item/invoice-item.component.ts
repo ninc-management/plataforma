@@ -40,6 +40,7 @@ import {
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
+import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -122,7 +123,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     public utils: UtilsService,
     public userService: UserService,
     public contractorService: ContractorService,
-    public accessChecker: NbAccessChecker
+    public accessChecker: NbAccessChecker,
+    private brMask: BrMaskDirective
   ) {}
 
   ngOnDestroy(): void {
@@ -616,6 +618,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           base === 'product' ? this.options.total : this.options.stageTotal
         )
     );
+  }
+
+  updateMaterialList(): void {
+    if (this.tempInvoice.materialListType == '2') {
+      for (let i = 0; i < this.tempInvoice.materials.length; i++) {
+        this.tempInvoice.materials[i].amount = this.brMask.writeValueMoney(
+          this.tempInvoice.materials[i].amount,
+          {
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: 2,
+          }
+        );
+        this.updateItemTotal(this.tempInvoice.materials, i);
+      }
+      this.updateTotal('material');
+    }
   }
 
   updateTotal(base: 'product' | 'stage' | 'material'): void {
