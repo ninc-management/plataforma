@@ -2091,6 +2091,7 @@
             </label>
             <nb-radio-group
               [(ngModel)]="tempInvoice.materialListType"
+              (ngModelChange)="updateMaterialList()"
               #materialListType="ngModel"
               id="input-material-list-type"
               name="materialListType"
@@ -2287,31 +2288,46 @@
             >
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.materials[i].amount"
-                (ngModelChange)="
-                  tempInvoice.materialListType != '2'
-                    ? ''
-                    : updateItemTotal(tempInvoice.materials, i);
-                  tempInvoice.materialListType != '2'
-                    ? ''
-                    : updateTotal('material')
+                *ngIf="
+                  tempInvoice.materialListType == '1';
+                  else nbInputMaskTest
                 "
+                [(ngModel)]="tempInvoice.materials[i].amount"
                 id="input-materialAmount-{{ i }}"
                 name="materialAmount-{{ i }}"
                 placeholder="Quantidade"
                 fullWidth
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
                 [status]="
                   tempInvoice.materials[i].amount.length == 0
                     ? 'danger'
                     : 'basic'
                 "
               />
+              <ng-template #nbInputMaskTest>
+                <input
+                  nbInput
+                  [(ngModel)]="tempInvoice.materials[i].amount"
+                  (ngModelChange)="
+                    updateItemTotal(tempInvoice.materials, i);
+                    updateTotal('material')
+                  "
+                  id="input-materialAmount-{{ i }}"
+                  name="materialAmount-{{ i }}"
+                  placeholder="Quantidade"
+                  fullWidth
+                  [brmasker]="{
+                    money: true,
+                    thousand: '.',
+                    decimalCaracter: ',',
+                    decimal: 2
+                  }"
+                  [status]="
+                    tempInvoice.materials[i].amount.length == 0
+                      ? 'danger'
+                      : 'basic'
+                  "
+                />
+              </ng-template>
             </div>
             <div
               class="col-3 col-md-2"
