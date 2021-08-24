@@ -344,6 +344,8 @@ export class ExpenseItemComponent
   }
 
   addAndClean(): void {
+    this.contract.createdExpenses += 1;
+    this.expense.code = '#' + this.contract.createdExpenses.toString();
     this.newExpense$.next();
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     this.contract.expenses.push(cloneDeep(this.expense));
