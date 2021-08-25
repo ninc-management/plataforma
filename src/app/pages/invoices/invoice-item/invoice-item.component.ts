@@ -622,18 +622,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateMaterialList(): void {
     if (this.tempInvoice.materialListType == '2') {
-      for (let i = 0; i < this.tempInvoice.materials.length; i++) {
-        this.tempInvoice.materials[i].amount = this.brMask.writeValueMoney(
-          this.tempInvoice.materials[i].amount,
-          {
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: 2,
-          }
-        );
-        this.updateItemTotal(this.tempInvoice.materials, i);
-      }
+      this.tempInvoice.materials.map((material, index) => {
+        material.amount = this.brMask.writeValueMoney(material.amount, {
+          money: true,
+          thousand: '.',
+          decimalCaracter: ',',
+          decimal: 2,
+        });
+        this.updateItemTotal(this.tempInvoice.materials, index);
+      });
       this.updateTotal('material');
     }
   }
