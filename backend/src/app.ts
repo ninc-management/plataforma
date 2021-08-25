@@ -7,6 +7,7 @@ import helmet from 'helmet';
 
 // import logger from 'morgan';
 // Import API endpoint routes
+import { isUserAuthenticated } from './shared/util';
 import authRoutes from './routes/auth';
 import emailRoutes from './routes/email';
 import userRoutes from './routes/user';
@@ -55,6 +56,8 @@ class NortanAPI {
     this.app.use(express.urlencoded({ extended: false, limit: '50mb' }));
     this.app.use('/', express.static(path.join(__dirname, 'angular')));
 
+    // API tooken validation
+    this.app.use(isUserAuthenticated);
     // API endpoint routes
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/sendmail', emailRoutes);
