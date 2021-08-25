@@ -1,35 +1,68 @@
 import * as express from 'express';
-import Expense from '../models/expense';
+import ExpenseModel from '../models/expense';
+import { Expense } from '../models/expense';
+import { Mutex } from 'async-mutex';
 
 const router = express.Router();
+let requested = false;
+const expensesMap: Record<string, Expense> = {};
+const mutex = new Mutex();
 
-router.post('/expense', async (req, res, next) => {
+router.post('/expense', (req, res, next) => {
   delete req.body.expense._id;
-  const expense = new Expense(req.body.expense);
-  expense.save(function (err, result) {
-    if (err) {
-      return res.status(500).json({
-        error: err,
+  const expense = new ExpenseModel(req.body.expense);
+  mutex.acquire().then((release) => {
+    expense
+      .save()
+      .then((savedExpense) => {
+        if (requested) {
+          const tempExpense: Expense = savedExpense.toJSON();
+          expensesMap[tempExpense._id] = tempExpense;
+        }
+        release();
+        return res.status(201).json({
+          message: 'Gasto cadastrado!',
+        });
+      })
+      .catch((err) => {
+        release();
+        return res.status(500).json({
+          error: err,
+        });
       });
-    } else {
-      return res.status(201).json({
-        message: 'Despesa cadastrada!',
-        expense: result,
-      });
-    }
   });
 });
 
 router.post('/updateExpense', async (req, res, next) => {
-  await Expense.findByIdAndUpdate(req.body.expense._id, req.body.expense);
-  return res.status(200).json({
-    message: 'Despesa Atualizada!',
-  });
+  await ExpenseModel.findByIdAndUpdate(
+    req.body.expense._id,
+    req.body.expense,
+    { upsert: false, new: false },
+    async (err, response) => {
+      if (err)
+        return res.status(500).json({
+          message: 'Erro ao atualizar gasto administrativo!',
+          error: err,
+        });
+      if (requested) {
+        await mutex.runExclusive(async () => {
+          expensesMap[req.body.expense._id] = req.body.expense;
+        });
+      }
+      return res.status(200).json({
+        message: 'Gasto Atualizado!',
+      });
+    }
+  );
 });
 
 router.post('/allExpenses', async (req, res) => {
-  const expenses = await Expense.find({}).lean();
-  return res.status(200).json(expenses);
+  if (!requested) {
+    const expenses: Expense[] = await ExpenseModel.find({}).lean();
+    expenses.map((expense) => (expensesMap[expense._id] = expense));
+    requested = true;
+  }
+  return res.status(200).json(Array.from(Object.values(expensesMap)));
 });
 
 export default router;

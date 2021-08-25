@@ -1,48 +1,73 @@
 import * as express from 'express';
-import Contract from '../models/contract';
+import ContractModel from '../models/contract';
+import { Contract } from '../models/contract';
+import { Mutex } from 'async-mutex';
 
 const router = express.Router();
+let requested = false;
+const contractsMap: Record<string, Contract> = {};
+const mutex = new Mutex();
 
-router.post('/', async (req, res, next) => {
-  const contract = new Contract(req.body.contract);
-  contract.save(function (err, result) {
-    if (err) {
-      return res.status(500).json({
-        error: err,
+router.post('/', (req, res, next) => {
+  const contract = new ContractModel(req.body.contract);
+  mutex.acquire().then((release) => {
+    contract
+      .save()
+      .then((savedContract) => {
+        if (requested) {
+          const tempContract: Contract = savedContract.toJSON();
+          contractsMap[tempContract._id] = tempContract;
+        }
+        release();
+        return res.status(201).json({
+          message: 'Contrato cadastrado!',
+        });
+      })
+      .catch((err) => {
+        release();
+        return res.status(500).json({
+          error: err,
+        });
       });
-    } else {
-      return res.status(201).json({
-        message: 'Contrato cadastrado!',
-        contract: result,
-      });
-    }
   });
 });
 
 router.post('/update', async (req, res, next) => {
-  await Contract.findByIdAndUpdate(req.body.contract._id, req.body.contract);
-  return res.status(200).json({
-    message: 'Contrato Atualizado!',
-  });
+  await ContractModel.findByIdAndUpdate(
+    req.body.contract._id,
+    req.body.contract,
+    { upsert: false, new: false },
+    async (err, response) => {
+      if (err)
+        return res.status(500).json({
+          message: 'Erro ao atualizar contrato!',
+          error: err,
+        });
+      if (requested) {
+        await mutex.runExclusive(async () => {
+          contractsMap[req.body.contract._id] = req.body.contract;
+        });
+      }
+      return res.status(200).json({
+        message: 'Contrato Atualizado!',
+      });
+    }
+  );
 });
 
 router.post('/count', (req, res) => {
-  Contract.estimatedDocumentCount({}, function (err, result) {
-    if (err) {
-      res.status(500).json({
-        error: err,
-      });
-    } else {
-      res.json({
-        size: result,
-      });
-    }
+  res.json({
+    size: Array.from(Object.values(contractsMap)).length,
   });
 });
 
 router.post('/all', async (req, res) => {
-  const contracts = await Contract.find({}).lean();
-  return res.status(200).json(contracts);
+  if (!requested) {
+    const contracts: Contract[] = await ContractModel.find({}).lean();
+    contracts.map((contract) => (contractsMap[contract._id] = contract));
+    requested = true;
+  }
+  return res.status(200).json(Array.from(Object.values(contractsMap)));
 });
 
 export default router;

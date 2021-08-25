@@ -1,34 +1,67 @@
 import * as express from 'express';
-import Promotion from '../models/promotion';
+import PromotionModel from '../models/promotion';
+import { Promotion } from '../models/promotion';
+import { Mutex } from 'async-mutex';
 
 const router = express.Router();
+let requested = false;
+const promotionsMap: Record<string, Promotion> = {};
+const mutex = new Mutex();
 
-router.post('/', async (req, res, next) => {
-  const promotion = new Promotion(req.body.promotion);
-  promotion.save(function (err, result) {
-    if (err) {
-      return res.status(500).json({
-        error: err,
+router.post('/', (req, res, next) => {
+  const promotion = new PromotionModel(req.body.promotion);
+  mutex.acquire().then((release) => {
+    promotion
+      .save()
+      .then((savedPromotion) => {
+        if (requested) {
+          const tempPromotion: Promotion = savedPromotion.toJSON();
+          promotionsMap[tempPromotion._id] = tempPromotion;
+        }
+        release();
+        return res.status(201).json({
+          message: 'Promoção cadastrada!',
+        });
+      })
+      .catch((err) => {
+        release();
+        return res.status(500).json({
+          error: err,
+        });
       });
-    } else {
-      return res.status(201).json({
-        message: 'Promoção cadastrada!',
-        contract: result,
-      });
-    }
   });
 });
 
 router.post('/update', async (req, res, next) => {
-  await Promotion.findByIdAndUpdate(req.body.promotion._id, req.body.promotion);
-  return res.status(200).json({
-    message: 'Promoção Atualizada!',
-  });
+  await PromotionModel.findByIdAndUpdate(
+    req.body.promotion._id,
+    req.body.promotion,
+    { upsert: false, new: false },
+    async (err, response) => {
+      if (err)
+        return res.status(500).json({
+          message: 'Erro ao atualizar promoção!',
+          error: err,
+        });
+      if (requested) {
+        await mutex.runExclusive(async () => {
+          promotionsMap[req.body.promotion._id] = req.body.promotion;
+        });
+      }
+      return res.status(200).json({
+        message: 'Promoção Atualizada!',
+      });
+    }
+  );
 });
 
 router.post('/all', async (req, res) => {
-  const promotions = await Promotion.find({}).lean();
-  return res.status(200).json(promotions);
+  if (!requested) {
+    const promotions: Promotion[] = await PromotionModel.find({}).lean();
+    promotions.map((promotion) => (promotionsMap[promotion._id] = promotion));
+    requested = true;
+  }
+  return res.status(200).json(Array.from(Object.values(promotionsMap)));
 });
 
 export default router;

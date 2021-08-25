@@ -1,49 +1,68 @@
 import * as express from 'express';
-import Invoice from '../models/invoice';
+import InvoiceModel from '../models/invoice';
+import { Invoice } from '../models/invoice';
+import { Mutex } from 'async-mutex';
 
 const router = express.Router();
+let requested = false;
+const invoicesMap: Record<string, Invoice> = {};
+const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
-  let invoice = new Invoice(req.body.invoice);
-  Invoice.estimatedDocumentCount({}, function (err, result) {
-    if (err) {
-      res.status(500).json({
-        error: err,
-      });
-    } else {
-      const count = result + 1;
-      invoice.code = invoice.code.replace(
-        /-(\d+)\//g,
-        '-' + count.toString() + '/'
-      );
-      invoice
-        .save()
-        .then((savedInvoice) => {
-          res.status(201).json({
-            message: 'Orçamento cadastrado!',
-            invoice: savedInvoice,
-          });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            error: err,
-          });
+  const invoice = new InvoiceModel(req.body.invoice);
+  mutex.acquire().then((release) => {
+    InvoiceModel.estimatedDocumentCount({}, async (err, result) => {
+      if (err) {
+        release();
+        res.status(500).json({
+          error: err,
         });
-    }
+      } else {
+        const count = result + 1;
+        invoice.code = invoice.code.replace(
+          /-(\d+)\//g,
+          '-' + count.toString() + '/'
+        );
+        invoice
+          .save()
+          .then((savedInvoice) => {
+            if (requested) {
+              const tempInvoice: Invoice = savedInvoice.toJSON();
+              invoicesMap[tempInvoice._id] = tempInvoice;
+            }
+            release();
+            res.status(201).json({
+              message: 'Orçamento cadastrado!',
+              invoice: savedInvoice,
+            });
+          })
+          .catch((err) => {
+            release();
+            res.status(500).json({
+              error: err,
+            });
+          });
+      }
+    });
   });
 });
 
 router.post('/update', async (req, res, next) => {
-  await Invoice.findByIdAndUpdate(
+  await InvoiceModel.findByIdAndUpdate(
     req.body.invoice._id,
     req.body.invoice,
     { upsert: false, new: false },
-    function (err, response) {
+    async (err, response) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar orçamento!',
           error: err,
         });
+      if (requested) {
+        await mutex.runExclusive(async () => {
+          invoicesMap[req.body.invoice._id] = req.body.invoice;
+        });
+      }
       return res.status(200).json({
         message: 'Orçamento Atualizado!',
       });
@@ -52,22 +71,18 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/count', (req, res) => {
-  Invoice.estimatedDocumentCount({}, function (err, result) {
-    if (err) {
-      res.status(500).json({
-        error: err,
-      });
-    } else {
-      res.json({
-        size: result,
-      });
-    }
+  res.json({
+    size: Array.from(Object.values(invoicesMap)).length,
   });
 });
 
 router.post('/all', async (req, res) => {
-  const invoices = await Invoice.find({}).lean();
-  return res.status(200).json(invoices);
+  if (!requested) {
+    const invoices: Invoice[] = await InvoiceModel.find({}).lean();
+    invoices.map((invoice) => (invoicesMap[invoice._id] = invoice));
+    requested = true;
+  }
+  return res.status(200).json(Array.from(Object.values(invoicesMap)));
 });
 
 export default router;
