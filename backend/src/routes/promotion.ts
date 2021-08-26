@@ -57,7 +57,7 @@ router.post('/update', async (req, res, next) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const promotions: Promotion[] = await PromotionModel.find({}).lean();
+    const promotions: Promotion[] = await PromotionModel.find({});
     promotions.map((promotion) => (promotionsMap[promotion._id] = promotion));
     requested = true;
   }

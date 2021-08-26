@@ -63,7 +63,7 @@ router.post('/count', (req, res) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const contracts: Contract[] = await ContractModel.find({}).lean();
+    const contracts: Contract[] = await ContractModel.find({});
     contracts.map((contract) => (contractsMap[contract._id] = contract));
     requested = true;
   }

@@ -58,7 +58,7 @@ router.post('/updateExpense', async (req, res, next) => {
 
 router.post('/allExpenses', async (req, res) => {
   if (!requested) {
-    const expenses: Expense[] = await ExpenseModel.find({}).lean();
+    const expenses: Expense[] = await ExpenseModel.find({});
     expenses.map((expense) => (expensesMap[expense._id] = expense));
     requested = true;
   }

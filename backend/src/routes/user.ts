@@ -57,7 +57,7 @@ router.post('/update', async (req, res, next) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const users: User[] = await UserModel.find({}).lean();
+    const users: User[] = await UserModel.find({});
     users.map((user) => (usersMap[user._id] = user));
     requested = true;
   }

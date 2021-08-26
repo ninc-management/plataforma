@@ -78,7 +78,7 @@ router.post('/count', (req, res) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const invoices: Invoice[] = await InvoiceModel.find({}).lean();
+    const invoices: Invoice[] = await InvoiceModel.find({});
     invoices.map((invoice) => (invoicesMap[invoice._id] = invoice));
     requested = true;
   }

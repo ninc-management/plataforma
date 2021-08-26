@@ -57,7 +57,7 @@ router.post('/update', async (req, res, next) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const contractors: Contractor[] = await ContractorModel.find({}).lean();
+    const contractors: Contractor[] = await ContractorModel.find({});
     contractors.map(
       (contractor) => (contractorsMap[contractor._id] = contractor)
     );
