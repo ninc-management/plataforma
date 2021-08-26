@@ -14,6 +14,7 @@ export const environment = {
   onedriveNortanID: ENV_VARS.ONEDRIVE_NORTAN_ID,
   onedriveAdmID: ENV_VARS.ONEDRIVE_ADM_ID,
   demo: ENV_VARS.DEMO,
+  apiToken: ENV_VARS.API_TOKEN,
   firebaseConfig: {
     apiKey: ENV_VARS.FIREBASE_APIKEY,
     authDomain: 'plataforma-nortan.firebaseapp.com',

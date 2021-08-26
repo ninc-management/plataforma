@@ -45,6 +45,7 @@ import {
   BrowserCacheLocation,
   InteractionType,
 } from '@azure/msal-browser';
+import { interceptorProviders } from './shared/interceptors/interceptors';
 
 const config: SocketIoConfig = {
   url: '',
@@ -154,6 +155,7 @@ registerLocaleData(ptBr);
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt' },
+    interceptorProviders,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,

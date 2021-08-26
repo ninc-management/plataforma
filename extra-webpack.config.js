@@ -14,6 +14,7 @@ module.exports = {
         ONEDRIVE_NORTAN_ID: JSON.stringify(process.env.ONEDRIVE_NORTAN_ID),
         ONEDRIVE_ADM_ID: JSON.stringify(process.env.ONEDRIVE_ADM_ID),
         DEMO: JSON.stringify(process.env.DEMO),
+        API_TOKEN: JSON.stringify(process.env.API_TOKEN),
       },
     }),
     new webpack.NormalModuleReplacementPlugin(
