@@ -26,6 +26,7 @@ router.post('/', (req, res, next) => {
       .catch((err) => {
         release();
         return res.status(500).json({
+          message: 'Erro ao cadastrar contrato!',
           error: err,
         });
       });

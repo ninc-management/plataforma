@@ -27,6 +27,7 @@ router.post('/expense', (req, res, next) => {
       .catch((err) => {
         release();
         return res.status(500).json({
+          message: 'Erro ao cadastrar gasto administrativo!',
           error: err,
         });
       });

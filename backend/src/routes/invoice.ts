@@ -39,6 +39,7 @@ router.post('/', (req, res, next) => {
           .catch((err) => {
             release();
             res.status(500).json({
+              message: 'Erro ao cadastrar orçamento!',
               error: err,
             });
           });
