@@ -16,6 +16,7 @@ import {
   NbSelectModule,
   NbThemeModule,
   NbTooltipModule,
+  NbToastrService,
   NbUserModule,
   NbSpinnerModule,
   NbProgressBarModule,
@@ -29,6 +30,7 @@ import {
   NbContextMenuModule,
   NbRadioModule,
   NbIconLibraries,
+  NbToastrModule,
 } from '@nebular/theme';
 import { Ng2CompleterModule } from 'ng2-completer';
 import {
@@ -177,6 +179,7 @@ const IMPORTS = [
   NbSpinnerModule,
   NbThemeModule.forRoot(),
   NbTooltipModule,
+  NbToastrModule.forRoot(),
   NbUserModule,
   Ng2CompleterModule,
   PagesModule,
@@ -228,6 +231,7 @@ const PROVIDERS = [
   NbDialogService,
   NbIconLibraries,
   NbOverlayService,
+  NbToastrService,
   NbTokenService,
   OnedriveService,
   PromotionService,
