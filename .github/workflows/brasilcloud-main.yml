@@ -45,6 +45,7 @@ jobs:
           MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
           MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI_BC}}
           ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI_LOCAL}}
+          API_TOKEN: ${{secrets.API_TOKEN}}
       - name: 🧹 Clean source files and uninstall dev packages
         run: rm -rf src/app src/assets backend/src && npm prune --production
       - name: 📂 Sync files

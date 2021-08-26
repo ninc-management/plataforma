@@ -39,7 +39,7 @@ jobs:
           git remote add umbler ${{ secrets.UMBLER_REMOTE }}
           git config --global user.email "contact@augustoicaro.com"
           git config --global user.name "Augusto Icaro Farias da Cunha"
-          git cherry-pick eade9ae56e0b65eb78266162275f545a166cf0a6
+          git cherry-pick 24368d5fd93e209006e5f451aacf2e3bae5589df
       - name: 🔑 Parser Firebase API key
         uses: jwsi/secret-parser@v1
         with:
@@ -94,6 +94,12 @@ jobs:
           filename: package.json
           secret-name: ONEDRIVE_ADM_ID
           secret-value: ${{ secrets.ONEDRIVE_ADM_ID }}
+      - name: 🔑 Parser Nortan API Token
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: package.json
+          secret-name: API_TOKEN
+          secret-value: ${{ secrets.API_TOKEN }}
       - name: ⬆️ Commit to Umbler using git remote
         run: |
           git add -A
