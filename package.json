@@ -23,7 +23,7 @@
     "test": "ng test --watch=false",
     "test:dev": "ng test",
     "test:coverage": "rimraf coverage && npm run test -- --code-coverage --watch=false",
-    "lint": "eslint src/**/*.ts server.js backend/**/*.ts",
+    "lint": "eslint './src/**/*.ts' server.js './backend/**/*.ts'",
     "lint:fix": "ng lint plataforma-nortan --fix",
     "lint:styles": "stylelint ./src/**/*.scss",
     "lint:ci": "npm run lint && npm run lint:styles",
