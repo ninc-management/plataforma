@@ -416,8 +416,6 @@ export class PdfService {
           width: '*',
           text:
             this.userService.idToShortName(author) +
-            ' é ' +
-            author.level +
             ', ' +
             (author.expertise
               ? author.expertise[
@@ -476,8 +474,6 @@ export class PdfService {
               width: '*',
               text:
                 user.exibitionName +
-                ' é ' +
-                user.level +
                 ', ' +
                 (user.expertise
                   ? user.expertise[
