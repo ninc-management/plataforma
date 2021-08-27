@@ -15,13 +15,16 @@ function port(port: string, fallback = '8080'): string {
 }
 
 export function isUserAuthenticated(req, res, next): boolean {
-  if (req.headers.authorization == process.env.API_TOKEN) {
-    next();
-  } else {
-    return res.status(401).json({
-      message: 'Chave de autenticação da API invalida',
-    });
-  }
+  const urlCheck = req.url.split('/').filter((el) => el.length > 0);
+  if (urlCheck.length > 0 && urlCheck[0] == 'api') {
+    if (req.headers.authorization == process.env.API_TOKEN) {
+      next();
+    } else {
+      return res.status(401).json({
+        message: 'Chave de autenticação da API invalida',
+      });
+    }
+  } else next();
 }
 
 export default {
