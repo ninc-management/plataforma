@@ -77,6 +77,10 @@ export class FabComponent implements AfterContentInit, OnDestroy {
       i += 1;
       const style = btn.elementref.nativeElement.style;
 
+      btn.contentref.nativeElement.style.display = this.state.getValue().display
+        ? 'block'
+        : 'none';
+
       if (eventType !== 'directionChanged' && this.state.getValue().display) {
         style['transform'] = 'scale(1)';
         style['transition-duration'] = '0s';
