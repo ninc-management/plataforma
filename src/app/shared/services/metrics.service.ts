@@ -1393,7 +1393,7 @@ export class MetricsService implements OnDestroy {
               : '';
             return [
               date,
-              this.stringUtil.moneyToNumber(expense.value),
+              -1 * this.stringUtil.moneyToNumber(expense.value),
             ] as TimeSeriesItem;
           });
         });
