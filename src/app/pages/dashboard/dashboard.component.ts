@@ -115,11 +115,11 @@ export class DashboardComponent {
               data: expensesSeriesItems,
             };
             const contractsValue: TimeSeries = {
-              name: 'Valor em contratos',
+              name: 'Total em contratos',
               type: 'line',
               smooth: false,
               cumulative: true,
-              symbol: 'none',
+              symbol: 'circle',
               isMoney: true,
               data: contractValueSeriesItems,
             };
@@ -128,7 +128,7 @@ export class DashboardComponent {
               type: 'line',
               smooth: false,
               cumulative: true,
-              symbol: 'none',
+              symbol: 'circle',
               isMoney: true,
               data: this.utils.groupByDateTimeSerie(
                 receivedSeriesItems.concat(expensesSeriesItems)
