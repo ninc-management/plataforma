@@ -654,4 +654,20 @@ export class ContractItemComponent implements OnInit {
   expenseIndex(code: 'string'): number {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
   }
+
+  isGrossValueOK(): boolean {
+    return (
+      this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.teamTotal.grossValue) +
+          this.contractService.getComissionsSum(this.contract)
+      ) === this.contract.value && this.teamTotal.grossValue !== '0,00'
+    );
+  }
+
+  isNetValueOK(): boolean {
+    return (
+      this.teamTotal.netValue === this.contract.liquid &&
+      this.teamTotal.netValue !== '0,00'
+    );
+  }
 }

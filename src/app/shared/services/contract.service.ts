@@ -317,14 +317,19 @@ export class ContractService implements OnDestroy {
   }
 
   subtractComissions(contractValue: string, contract: Contract): string {
-    const comissions = contract['expenses'].reduce((sum, expense) => {
-      if (expense.type == EXPENSE_TYPES.COMISSAO)
-        sum += this.stringUtil.moneyToNumber(expense.value);
-      return sum;
-    }, 0);
+    const comissionsSum = this.getComissionsSum(contract);
 
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(contractValue) - comissions
+      this.stringUtil.moneyToNumber(contractValue) - comissionsSum
     );
+  }
+
+  getComissionsSum(contract: Contract): number {
+    return contract.expenses.reduce((sum, expense) => {
+      if (expense.type == EXPENSE_TYPES.COMISSAO) {
+        sum += this.stringUtil.moneyToNumber(expense.value);
+      }
+      return sum;
+    }, 0);
   }
 }
