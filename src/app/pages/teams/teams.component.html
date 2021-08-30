@@ -1,1 +1,64 @@
-<p>teams works!</p>
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header *ngIf="utils.isPhone()">
+        <div class="row">
+          <div class="col-2" style="padding-left: 0; padding-right: 0">
+            <button nbButton fullWidth status="primary" style="height: 100%">
+              <nb-icon icon="plus"></nb-icon>
+            </button>
+          </div>
+          <div class="col-10">
+            <input
+              nbInput
+              [(ngModel)]="searchQuery"
+              #user="ngModel"
+              id="input-user"
+              name="user"
+              placeholder="Busque aqui..."
+              fullWidth
+              fieldSize="large"
+            />
+          </div>
+        </div>
+      </nb-card-header>
+      <div
+        *ngIf="teams.length == 0; else table"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+        style="width: 100%; height: 654px"
+      ></div>
+      <ng-template #table>
+        <ng2-smart-table
+          *ngIf="!utils.isPhone(); else phone"
+          [settings]="settings"
+          [source]="source"
+        ></ng2-smart-table>
+      </ng-template>
+
+      <ng-template #phone>
+        <nb-list>
+          <nb-list-item *ngFor="let team of filtredTeams; let i = index">
+            <a (click)="openDialog({ data: team })">
+              <div class="row">
+                <div class="col-12" style="margin-bottom: 10px">
+                  <nb-user
+                    size="giant"
+                    [name]="team.name"
+                    [title]="team.name"
+                  ></nb-user>
+                </div>
+                <div class="col-12">
+                  <p>
+                    {{ team.name }}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </nb-list-item>
+        </nb-list>
+      </ng-template>
+    </nb-card>
+  </div>
+</div>
