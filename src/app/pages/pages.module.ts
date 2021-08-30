@@ -46,6 +46,7 @@ import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { PromotionDialogComponent } from './promotions/promotion-dialog/promotion-dialog.component';
 import { PromotionItemComponent } from './promotions/promotion-item/promotion-item.component';
+import { TeamsComponent } from './teams/teams.component';
 
 @NgModule({
   imports: [
@@ -94,6 +95,7 @@ import { PromotionItemComponent } from './promotions/promotion-item/promotion-it
     PromotionsComponent,
     PromotionDialogComponent,
     PromotionItemComponent,
+    TeamsComponent,
   ],
 })
 export class PagesModule {}

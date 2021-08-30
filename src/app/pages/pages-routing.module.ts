@@ -10,6 +10,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
 import { UsersComponent } from './users/users.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { Permissions } from 'app/shared/services/utils.service';
+import { TeamsComponent } from './teams/teams.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,14 @@ const routes: Routes = [
         component: UsersComponent,
         data: {
           resource: 'view-users',
+          permission: Permissions.ELO_PRINCIPAL,
+        },
+      },
+      {
+        path: 'teams',
+        component: TeamsComponent,
+        data: {
+          resource: 'view-teams',
           permission: Permissions.ELO_PRINCIPAL,
         },
       },
