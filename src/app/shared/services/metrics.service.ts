@@ -427,10 +427,9 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueByCoordinations(
-    uId?: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
+    start: Date,
+    end: Date,
+    uId?: string
   ): Observable<UserAndCoordinations> {
     return this.contractService.getContracts().pipe(
       filter((contracts) => contracts.length > 0),
@@ -443,7 +442,7 @@ export class MetricsService implements OnDestroy {
                   const paidDate = payment.paidDate;
                   if (
                     paidDate &&
-                    this.utils.isValidDate(paidDate, last, number, fromToday)
+                    this.utils.isWithinInterval(paidDate, start, end)
                   ) {
                     const uCPayments = payment.team.reduce(
                       (upaid: UserAndCoordinations, member) => {
@@ -580,7 +579,7 @@ export class MetricsService implements OnDestroy {
                 const source = this.userService.idToUser(expense.source);
                 if (
                   paidDate &&
-                  this.utils.isValidDate(paidDate, last, number, fromToday) &&
+                  this.utils.isWithinInterval(paidDate, start, end) &&
                   source._id != CONTRACT_BALANCE._id &&
                   source._id != CLIENT._id
                 ) {
@@ -703,12 +702,11 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueByCoordinationsFiltered(
-    uId?: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
+    start: Date,
+    end: Date,
+    uId?: string
   ): Observable<FilteredUserAndCoordinations> {
-    return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
+    return this.receivedValueByCoordinations(start, end, uId).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return userCoord;
         const filtered: FilteredUserAndCoordinations = { user: {}, global: {} };
@@ -769,12 +767,11 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueByDepartments(
-    uId?: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
+    start: Date,
+    end: Date,
+    uId?: string
   ): Observable<UserAndDepartments> {
-    return this.receivedValueByCoordinations(uId, last, number, fromToday).pipe(
+    return this.receivedValueByCoordinations(start, end, uId).pipe(
       map((userCoord: UserAndCoordinations) => {
         const userDepartment = cloneDeep(this.defaultUserDepartmentValue);
         userDepartment.user.DAD += userCoord.user.CADM;
@@ -816,12 +813,11 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueByDepartmentsFiltered(
-    uId?: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
+    start: Date,
+    end: Date,
+    uId?: string
   ): Observable<FilteredUserAndDepartments> {
-    return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
+    return this.receivedValueByDepartments(start, end, uId).pipe(
       map((userDepartment: UserAndDepartments) => {
         const filtered: FilteredUserAndDepartments = { user: {}, global: {} };
         for (const coord of this.departmentService.userCoordinations(uId)) {
@@ -947,12 +943,11 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueNortan(
-    uId?: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
+    start: Date,
+    end: Date,
+    uId?: string
   ): Observable<UserAndGlobalMetric> {
-    return this.receivedValueByDepartments(uId, last, number, fromToday).pipe(
+    return this.receivedValueByDepartments(start, end, uId).pipe(
       map((userDepartment: UserAndDepartments) => {
         const result: UserAndGlobalMetric = { user: 0, global: 0 };
         result.user = Object.values(userDepartment.user).reduce(

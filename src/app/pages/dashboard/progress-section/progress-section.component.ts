@@ -15,6 +15,7 @@ import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { DepartmentService } from 'app/shared/services/department.service';
+import { startOfMonth, subMonths } from 'date-fns';
 
 interface MetricItem {
   title: string;
@@ -60,6 +61,9 @@ export class ProgressSectionComponent
   }
 
   ngOnInit(): void {
+    const today = new Date();
+    const monthStart = startOfMonth(today);
+    const previousMonth = subMonths(monthStart, 1);
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       if (user._id != undefined) {
         this.METRICS.push({
@@ -67,10 +71,10 @@ export class ProgressSectionComponent
           tooltip:
             'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
           value: this.metricsService
-            .receivedValueNortan(user._id)
+            .receivedValueNortan(monthStart, today, user._id)
             .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
           description: this.metricsService
-            .receivedValueNortan(user._id, 'Mês')
+            .receivedValueNortan(previousMonth, monthStart, user._id)
             .pipe(
               map((pastPayments) => {
                 return (
@@ -80,20 +84,22 @@ export class ProgressSectionComponent
                 );
               })
             ),
-          loading: this.metricsService.receivedValueNortan(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
-          ),
+          loading: this.metricsService
+            .receivedValueNortan(monthStart, today, user._id)
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         this.METRICS.push({
           title: 'Nº de IMPUL$$O$',
           tooltip:
             'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
           value: this.metricsService
-            .receivedValueNortan(user._id)
+            .receivedValueNortan(monthStart, today, user._id)
             .pipe(map((x) => Math.trunc(x.global / 1000).toString())),
           description: this.metricsService
-            .receivedValueNortan(user._id, 'Mês')
+            .receivedValueNortan(previousMonth, monthStart, user._id)
             .pipe(
               map((pastImpulses) => {
                 return (
@@ -103,10 +109,12 @@ export class ProgressSectionComponent
                 );
               })
             ),
-          loading: this.metricsService.receivedValueNortan(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
-          ),
+          loading: this.metricsService
+            .receivedValueNortan(monthStart, today, user._id)
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
         this.METRICS.push({
           title: 'Contratos como gestor',
@@ -209,7 +217,7 @@ export class ProgressSectionComponent
           tooltip:
             'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados Nortan, no mês corrente. (R$ total recebido / R$ total pago aos associados nortan)',
           value: this.metricsService
-            .receivedValueNortan(user._id)
+            .receivedValueNortan(monthStart, today, user._id)
             .pipe(
               map((userGlobal) =>
                 this.stringUtil.toPercentageNumber(
@@ -219,7 +227,7 @@ export class ProgressSectionComponent
               )
             ),
           description: this.metricsService
-            .receivedValueNortan(user._id, 'Mês', 1)
+            .receivedValueNortan(previousMonth, monthStart, user._id)
             .pipe(
               map(
                 (userGlobal) =>
@@ -231,10 +239,12 @@ export class ProgressSectionComponent
                   )
               )
             ),
-          loading: this.metricsService.receivedValueNortan(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
-          ),
+          loading: this.metricsService
+            .receivedValueNortan(monthStart, today, user._id)
+            .pipe(
+              map((x) => x == undefined),
+              startWith(true)
+            ),
         });
       }
     });
