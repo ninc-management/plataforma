@@ -29,6 +29,7 @@ export class ResponseNotifierService implements HttpInterceptor {
         (event) => {
           if (
             event instanceof HttpResponse &&
+            event.body &&
             event.body.message !== undefined
           ) {
             this.toastrService.show('', event.body.message, {
