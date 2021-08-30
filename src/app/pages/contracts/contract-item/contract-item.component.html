@@ -648,12 +648,8 @@
               <div
                 class="col-2"
                 [ngClass]="{
-                  danger:
-                    teamTotal.grossValue !== contract.value &&
-                    teamTotal.grossValue !== '0,00',
-                  success:
-                    teamTotal.grossValue === contract.value &&
-                    teamTotal.grossValue !== '0,00'
+                  danger: !isGrossValueOK(),
+                  success: isGrossValueOK()
                 }"
               >
                 R$ {{ teamTotal.grossValue }}
@@ -661,12 +657,8 @@
               <div
                 class="col-2"
                 [ngClass]="{
-                  danger:
-                    teamTotal.netValue !== contract.liquid &&
-                    teamTotal.netValue !== '0,00',
-                  success:
-                    teamTotal.netValue === contract.liquid &&
-                    teamTotal.netValue !== '0,00'
+                  danger: !isNetValueOK(),
+                  success: isNetValueOK()
                 }"
               >
                 R$ {{ teamTotal.netValue }}
