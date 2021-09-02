@@ -13,8 +13,7 @@
   }
 
   .completer-dropdown-holder {
-    width: calc(100% - 30px);
-    position: absolute;
+    position: fixed;
     z-index: 666;
     background: nb-theme(card-background-color);
     border: nb-theme(card-border-width) nb-theme(card-border-style)

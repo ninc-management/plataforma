@@ -1,4 +1,4 @@
-<div class="completer-holder" ctrCompleter>
+<div class="completer-holder" ctrCompleter #holder>
   <input
     nbInput
     ctrInput
@@ -37,6 +37,7 @@
 
   <div
     class="completer-dropdown-holder"
+    [ngStyle]="{ 'width.px': holder.offsetWidth }"
     [ngClass]="{ hidden: focused ? false : true }"
     *ctrList="
       dataService;
