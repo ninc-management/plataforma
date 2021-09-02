@@ -252,41 +252,7 @@ export class ContractItemComponent implements OnInit {
     this.updateLiquid();
     this.calculatePaidValue();
     this.calculateBalance();
-    if (
-      this.contract.invoice &&
-      (!this.contract.team || this.contract.team?.length == 0)
-    ) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.team) {
-        this.contract.team = cloneDeep(invoice.team).map((member) => ({
-          user: member.user,
-          coordination: member.coordination,
-          distribution: '',
-          netValue: '0,00',
-          grossValue: '0,00',
-        }));
-        this.contract.team.unshift({
-          user: invoice.author,
-          coordination: invoice.coordination,
-          distribution: '',
-          netValue: '0,00',
-          grossValue: '0,00',
-        });
-      }
-    } else {
-      this.contract.team = this.contract.team.map((member, idx) => {
-        member.netValue = this.stringUtil.applyPercentage(
-          this.contract.liquid,
-          member.distribution
-        );
-        member.grossValue = this.contractService.toGrossValue(
-          member.netValue,
-          this.options.notaFiscal,
-          this.options.nortanPercentage
-        );
-        return member;
-      });
-    }
+    this.applyDistribution();
     this.updateTeamTotal();
     this.availableUsers = combineLatest([
       this.userService.getUsers(),
@@ -716,5 +682,20 @@ export class ContractItemComponent implements OnInit {
           )
         ) && this.teamTotal.netValue !== '0,00'
     );
+  }
+
+  applyDistribution(): void {
+    this.contract.team = this.contract.team.map((member) => {
+      member.netValue = this.stringUtil.applyPercentage(
+        this.contract.liquid,
+        member.distribution
+      );
+      member.grossValue = this.contractService.toGrossValue(
+        member.netValue,
+        this.options.notaFiscal,
+        this.options.nortanPercentage
+      );
+      return member;
+    });
   }
 }
