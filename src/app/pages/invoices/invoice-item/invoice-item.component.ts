@@ -15,7 +15,7 @@ import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { map, take } from 'rxjs/operators';
 import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -150,7 +150,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.revision = +this.tempInvoice.code?.slice(
         this.tempInvoice.code.length - 2
       );
-      this.revision += 1;
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
       if (this.tempInvoice.materialListType == undefined)
         this.tempInvoice.materialListType = '1';
@@ -266,29 +265,32 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.tempInvoice.department = this.departmentService.extractAbreviation(
       this.tempInvoice.department
     );
-    this.tempInvoice.lastUpdate = new Date();
     if (this.editing) {
-      this.updateRevision();
-      if (this.oldStatus !== this.tempInvoice.status) {
-        const lastStatusIndex = this.tempInvoice.statusHistory.length - 1;
-        this.tempInvoice.statusHistory[lastStatusIndex].end =
-          this.tempInvoice.lastUpdate;
-        this.tempInvoice.statusHistory.push({
-          status: this.tempInvoice.status,
-          start: this.tempInvoice.lastUpdate,
-        });
+      if (!isEqual(this.iInvoice, this.tempInvoice)) {
+        this.updateRevision();
+        this.tempInvoice.lastUpdate = new Date();
+        if (this.oldStatus !== this.tempInvoice.status) {
+          const lastStatusIndex = this.tempInvoice.statusHistory.length - 1;
+          this.tempInvoice.statusHistory[lastStatusIndex].end =
+            this.tempInvoice.lastUpdate;
+          this.tempInvoice.statusHistory.push({
+            status: this.tempInvoice.status,
+            start: this.tempInvoice.lastUpdate,
+          });
+        }
+        this.invoiceService.editInvoice(this.tempInvoice);
+        if (this.oldStatus !== this.tempInvoice.status) {
+          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
+            this.contractService.saveContract(this.tempInvoice);
+        }
+        this.tempInvoice.contractorName = this.tempInvoice.contractor
+          ? this.contractorService.idToName(this.tempInvoice.contractor)
+          : '';
+        this.iInvoice = cloneDeep(this.tempInvoice);
+        this.tempInvoice.department = department;
       }
-      this.invoiceService.editInvoice(this.tempInvoice);
-      if (this.oldStatus !== this.tempInvoice.status) {
-        if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
-          this.contractService.saveContract(this.tempInvoice);
-      }
-      this.tempInvoice.contractorName = this.tempInvoice.contractor
-        ? this.contractorService.idToName(this.tempInvoice.contractor)
-        : '';
-      this.iInvoice = cloneDeep(this.tempInvoice);
-      this.tempInvoice.department = department;
     } else {
+      this.tempInvoice.lastUpdate = new Date();
       this.tempInvoice.statusHistory.push({
         status: this.tempInvoice.status,
         start: this.tempInvoice.created,

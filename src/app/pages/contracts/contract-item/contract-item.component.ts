@@ -3,7 +3,7 @@ import { NbDialogService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
 import { map, take } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -306,20 +306,23 @@ export class ContractItemComponent implements OnInit {
   }
 
   updateContract(): void {
-    let version = +this.contract.version;
-    version += 1;
-    this.contract.version = version.toString().padStart(2, '0');
-    this.contract.lastUpdate = new Date();
-    if (this.iContract.status !== this.contract.status) {
-      const lastStatusIndex = this.contract.statusHistory.length - 1;
-      this.contract.statusHistory[lastStatusIndex].end =
-        this.contract.lastUpdate;
-      this.contract.statusHistory.push({
-        status: this.contract.status,
-        start: this.contract.lastUpdate,
-      });
+    if (!isEqual(this.iContract, this.contract)) {
+      let version = +this.contract.version;
+      version += 1;
+      this.contract.version = version.toString().padStart(2, '0');
+      this.contract.lastUpdate = new Date();
+      if (this.iContract.status !== this.contract.status) {
+        const lastStatusIndex = this.contract.statusHistory.length - 1;
+        this.contract.statusHistory[lastStatusIndex].end =
+          this.contract.lastUpdate;
+        this.contract.statusHistory.push({
+          status: this.contract.status,
+          start: this.contract.lastUpdate,
+        });
+      }
+      this.iContract = cloneDeep(this.contract);
+      this.contractService.editContract(this.iContract);
     }
-    this.contractService.editContract(this.contract);
   }
 
   paymentDialog(componentType: COMPONENT_TYPES, index?: number): void {
