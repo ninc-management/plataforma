@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TeamDialogComponent } from './team-dialog/team-dialog.component';
 
 @Component({
-  selector: 'teams',
+  selector: 'ngx-teams',
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.component.scss'],
 })
@@ -64,9 +66,22 @@ export class TeamsComponent implements OnInit {
     },
   };
 
-  constructor(public utils: UtilsService) {}
+  constructor(
+    private dialogService: NbDialogService,
+    public utils: UtilsService
+  ) {}
 
   ngOnInit(): void {}
 
-  openDialog(data: any): void {}
+  openDialog(data: any): void {
+    this.dialogService.open(TeamDialogComponent, {
+      context: {
+        title: 'CADASTRO DE TIME',
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
+  }
 }

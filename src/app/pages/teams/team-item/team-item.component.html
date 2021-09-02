@@ -1,0 +1,225 @@
+<form (ngSubmit)="createOrUpdate()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <div class="form-control-group">
+        <label class="label" for="input-name">Nome do time:</label>
+        <input
+          nbInput
+          [(ngModel)]="team.name"
+          #name="ngModel"
+          id="input-name"
+          name="name"
+          placeholder="Escolha o nome do time"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.name.required"
+          [minlength]="validation.name.minLength"
+          [maxlength]="validation.name.maxLength"
+          [status]="
+            name.touched
+              ? name.invalid
+                ? 'danger'
+                : 'success'
+              : teamIndex !== undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+        />
+      </div>
+      <ng-container *ngIf="name.invalid && name.touched">
+        <p class="caption status-danger" *ngIf="name.errors?.required">
+          O nome do time é obrigatório!
+        </p>
+        <p
+          class="caption status-danger"
+          *ngIf="name.errors?.minlength || name.errors?.maxlength"
+        >
+          O nome do time deve conter entre
+          {{ validation.name.minLength }} a
+          {{ validation.name.maxLength }}
+          caracteres
+        </p>
+      </ng-container>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="form-control-group">
+        <label class="label" for="input-leader">
+          Líder:
+          <nb-icon
+            status="info"
+            icon="info"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+            nbTooltip="A lista de líder é preenchida com a lista de membros. O líder deve fazer parte do time."
+            nbTooltipPlacement="top"
+            nbTooltipStatus="info"
+          ></nb-icon>
+        </label>
+        <nb-completer
+          [(ngModel)]="leaderSearch"
+          (selected)="this.team.leader = $event.originalObject"
+          inputName="leaderListCompleter"
+          #leaderList="ngModel"
+          id="input-leader"
+          name="leaderList"
+          placeholder="Digite e selecione o nome do líder do time"
+          textNoResults="
+          Não foi possível achar um associado com o nome digitado
+          "
+          matchClass="match"
+          fieldSize="large"
+          [selectedText]="userService.idToName(this.team.leader)"
+          [dataService]="avaliableLeaders"
+          [required]="validation.leader.required"
+          [minSearchLength]="0"
+          [fullWidth]="true"
+          [status]="
+            leaderList.touched
+              ? leaderList.invalid
+                ? 'danger'
+                : 'success'
+              : teamIndex === undefined && leaderSearch !== ''
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            leaderList.invalid && leaderList.touched ? true : null
+          "
+        ></nb-completer>
+        <ng-container *ngIf="leaderList.invalid && leaderList.touched">
+          <p class="caption status-danger" *ngIf="leaderList.errors?.required">
+            A escolha do líder do time é obrigatória!
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="form-control-group">
+        <label class="label" for="input-expertise">Área de atuação:</label>
+        <nb-select
+          [(ngModel)]="team.expertise"
+          #expertise="ngModel"
+          id="input-expertise"
+          name="expertise"
+          placeholder="Selecione a área de atuação"
+          fullWidth
+          size="large"
+          [required]="validation.expertise.required"
+          [status]="
+            expertise.touched
+              ? expertise.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            expertise.invalid && expertise.touched ? true : null
+          "
+          [disabled]="false"
+        >
+          <nb-option
+            *ngFor="let coordination of COORDINATIONS"
+            [value]="coordination"
+          >
+            {{ coordination }}
+          </nb-option>
+        </nb-select>
+        <ng-container *ngIf="expertise.invalid && expertise.touched">
+          <p class="caption status-danger" *ngIf="expertise.errors?.required">
+            A escolha do líder do time é obrigatória!
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-10 col-md-11">
+      <div class="form-control-group">
+        <label class="label" for="input-member">Membros:</label>
+        <nb-completer
+          [(ngModel)]="memberSearch"
+          [inputName]="'memberListCompleter'"
+          (selected)="currentMember = $event.originalObject"
+          #memberList="ngModel"
+          id="input-member"
+          name="memberList"
+          [selectedText]="userService.idToName(currentMember)"
+          [dataService]="availableUsers"
+          [minSearchLength]="0"
+          [placeholder]="'Digite e selecione o nome do membro do time'"
+          [textNoResults]="
+            'Não foi possível achar um membro com o nome digitado'
+          "
+          [matchClass]="'match'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [status]="
+            memberList.dirty && memberSearch
+              ? memberList.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            memberList.invalid && memberList.touched ? true : null
+          "
+        ></nb-completer>
+      </div>
+    </div>
+    <div class="col-2 col-md-1">
+      <button
+        nbButton
+        type="button"
+        fullWidth
+        status="primary"
+        size="large"
+        style="margin-top: 28px"
+        [disabled]="!memberList.value"
+        (click)="addMember()"
+      >
+        +
+      </button>
+    </div>
+  </div>
+  <nb-list style="width: 100%; padding: 10px 0">
+    <nb-list-item
+      *ngFor="
+        let member of team.members;
+        let i = index;
+        trackBy: utils.trackByIndex
+      "
+    >
+      <div class="row irow">
+        <div class="col-10 col-md-5">
+          <nb-user
+            size="giant"
+            [name]="member.fullName"
+            [picture]="member.profilePicture ? member.profilePicture : ''"
+          ></nb-user>
+        </div>
+      </div>
+      <div class="col-2 col-md-1" style="text-align: right">
+        <nb-icon
+          class="xIcon"
+          status="basic"
+          icon="trash-2-outline"
+          pack="eva"
+          (click)="
+            handleLeader(i);
+            team.members.splice(i, 1);
+            memberChanged$.next(true)
+          "
+          [options]="{ animation: { type: 'shake' } }"
+        ></nb-icon>
+      </div>
+    </nb-list-item>
+  </nb-list>
+  <button
+    nbButton
+    fullWidth
+    status="primary"
+    size="large"
+    [disabled]="!form.valid"
+  >
+    {{ teamIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+  </button>
+</form>

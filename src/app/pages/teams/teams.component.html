@@ -23,7 +23,7 @@
         </div>
       </nb-card-header>
       <div
-        *ngIf="teams.length == 0; else table"
+        *ngIf="teams.length != 0; else table"
         [nbSpinner]="true"
         nbSpinnerStatus="primary"
         nbSpinnerSize="giant"
@@ -34,6 +34,8 @@
           *ngIf="!utils.isPhone(); else phone"
           [settings]="settings"
           [source]="source"
+          (create)="openDialog({})"
+          (edit)="openDialog($event)"
         ></ng2-smart-table>
       </ng-template>
 

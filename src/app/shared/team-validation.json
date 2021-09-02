@@ -1,0 +1,9 @@
+{
+  "name": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 100
+  },
+  "expertise": { "required": true },
+  "leader": { "required": true }
+}
