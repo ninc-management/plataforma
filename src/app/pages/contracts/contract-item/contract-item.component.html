@@ -853,7 +853,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="!form.valid"
+        [disabled]="!form.valid || !form.dirty"
       >
         Atualizar
       </button>

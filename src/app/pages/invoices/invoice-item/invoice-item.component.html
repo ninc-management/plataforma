@@ -2416,7 +2416,7 @@
   fullWidth
   status="primary"
   size="large"
-  [disabled]="!form.valid"
+  [disabled]="!form.valid || !form.dirty"
 >
   {{ editing ? 'Atualizar' : 'Cadastrar' }}
 </button>
