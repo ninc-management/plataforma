@@ -28,7 +28,7 @@ interface MetricItem {
 
 /* eslint-disable @typescript-eslint/indent */
 @Component({
-  selector: 'progress-section',
+  selector: 'ngx-progress-section',
   templateUrl: './progress-section.component.html',
   styleUrls: ['./progress-section.component.scss'],
 })

@@ -10,7 +10,7 @@ export enum DASHBOARD_COMPONENT_TYPES {
 }
 
 @Component({
-  selector: 'dashboard-dialog',
+  selector: 'ngx-dashboard-dialog',
   templateUrl: './dashboard-dialog.component.html',
   styleUrls: ['./dashboard-dialog.component.scss'],
 })

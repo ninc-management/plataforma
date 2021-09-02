@@ -5,7 +5,7 @@
     responsive
   >
     <div class="row">
-      <div class="col-12"><progress-section></progress-section></div>
+      <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
       <div class="col-12">
         <nb-card>
           <ngx-time-series [series$]="timeSeries$"></ngx-time-series>
@@ -66,7 +66,9 @@
   <ngx-fab-item
     icon="minus"
     pack="fac"
-    [content]= "activeTab == tabTitles.PESSOAL ? 'Despesas' : 'Gastos Administrativos' "
+    [content]="
+      activeTab == tabTitles.PESSOAL ? 'Despesas' : 'Gastos Administrativos'
+    "
     (clicked)="openDialog(dialogTypes.EXPENSE)"
   ></ngx-fab-item>
   <ngx-fab-item
