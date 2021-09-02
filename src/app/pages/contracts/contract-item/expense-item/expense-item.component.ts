@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NgModel } from '@angular/forms';
 import { take, takeUntil, skip, map } from 'rxjs/operators';
 import { CompleterData, CompleterService } from 'ng2-completer';
 import {
@@ -370,12 +369,6 @@ export class ExpenseItemComponent
       return this.contract.balance;
     }
     return this.stringUtil.numberToMoney(Number.MAX_VALUE);
-  }
-
-  forceValidatorUpdate(model: NgModel, time = 1): void {
-    setTimeout(() => {
-      model.control.updateValueAndValidity();
-    }, time);
   }
 
   updateValue(idx: number): void {

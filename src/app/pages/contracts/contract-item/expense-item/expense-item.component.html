@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12" *ngIf="!hasInitialContract">
       <div class="form-control-group">
-        <label class="label" for="input-user">Contrato:</label>
+        <label class="label" for="input-contract-list">Contrato:</label>
         <nb-completer
           [(ngModel)]="contractSearch"
           (selected)="this.contract = $event.originalObject; fillContractData()"
@@ -201,7 +201,8 @@
         <nb-completer
           [(ngModel)]="sourceSearch"
           (selected)="
-            expense.source = $event.originalObject; forceValidatorUpdate(value)
+            expense.source = $event.originalObject;
+            utils.forceValidatorUpdate(value)
           "
           inputName="sourceListCompleter"
           #sourceList="ngModel"

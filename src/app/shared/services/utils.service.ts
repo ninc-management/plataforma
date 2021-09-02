@@ -18,6 +18,7 @@ import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { at, groupBy } from 'lodash';
 import { TimeSeriesItem } from './metrics.service';
+import { NgModel } from '@angular/forms';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -174,6 +175,13 @@ export class UtilsService {
     });
   }
 
+  nameSort(direction = 1, a: string, b: string): number {
+    return a.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
+      b.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      ? -1 * direction
+      : direction;
+  }
+
   codeSort(direction: number, a: string, b: string): number {
     let first = { count: 0, year: 0 };
     let second = { count: 0, year: 0 };
@@ -216,6 +224,12 @@ export class UtilsService {
       .sort((a, b) => {
         return a[0] < b[0] ? -1 : 1;
       });
+  }
+
+  forceValidatorUpdate(model: NgModel, time = 1): void {
+    setTimeout(() => {
+      model.control.updateValueAndValidity();
+    }, time);
   }
 
   trackByIndex<T>(index: number, obj: T): number {
