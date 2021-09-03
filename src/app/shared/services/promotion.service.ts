@@ -40,14 +40,7 @@ export class PromotionService implements OnDestroy {
     const req = {
       promotion: promotion,
     };
-    this.http
-      .post('/api/promotion/update', req)
-      .pipe(take(1))
-      .subscribe(() => {
-        const tmp = this.promotions$.getValue();
-        tmp[tmp.findIndex((el) => el._id === promotion._id)] = promotion;
-        this.promotions$.next(tmp);
-      });
+    this.http.post('/api/promotion/update', req).pipe(take(1)).subscribe();
   }
 
   getPromotions(): Observable<Promotion[]> {
