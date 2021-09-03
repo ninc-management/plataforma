@@ -86,6 +86,7 @@ import { routes } from 'app/app-routing.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { PagesModule } from 'app/pages/pages.module';
 import { CommonModule } from '@angular/common';
+import { TeamService } from 'app/shared/services/team.service';
 
 const roles = Object.values(Permissions);
 
@@ -239,6 +240,7 @@ const PROVIDERS = [
   StatecityService,
   StorageService,
   StringUtilService,
+  TeamService,
   UserService,
   UtilsService,
   WebSocketService,
