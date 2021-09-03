@@ -20,7 +20,7 @@
               ? name.invalid
                 ? 'danger'
                 : 'success'
-              : teamIndex !== undefined
+              : editing
               ? 'success'
               : 'basic'
           "
@@ -79,7 +79,7 @@
               ? leaderList.invalid
                 ? 'danger'
                 : 'success'
-              : teamIndex === undefined && leaderSearch !== ''
+              : !editing && leaderSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -192,8 +192,8 @@
         <div class="col-10 col-md-5">
           <nb-user
             size="giant"
-            [name]="member.fullName"
-            [picture]="member.profilePicture ? member.profilePicture : ''"
+            [name]="userService.idToName(member)"
+            [picture]="userService.idToProfilePicture(member)"
           ></nb-user>
         </div>
       </div>
@@ -220,6 +220,6 @@
     size="large"
     [disabled]="!form.valid"
   >
-    {{ teamIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+    {{ editing ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>

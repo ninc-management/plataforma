@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CompleterData, CompleterService } from 'ng2-completer';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { DepartmentService } from 'app/shared/services/department.service';
-import { CompleterData, CompleterService } from 'ng2-completer';
-import { cloneDeep } from 'lodash';
+import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Team } from '@models/team';
 import * as team_validation from 'app/shared/team-validation.json';
 
 @Component({
@@ -15,9 +17,10 @@ import * as team_validation from 'app/shared/team-validation.json';
   styleUrls: ['./team-item.component.scss'],
 })
 export class TeamItemComponent implements OnInit {
-  @Input() teamIndex?: number;
+  @Input() iTeam = new Team();
   validation = (team_validation as any).default;
-  team: any = {};
+  team: Team = new Team();
+  editing = false;
   memberChanged$ = new BehaviorSubject<boolean>(true);
 
   leaderSearch = '';
@@ -29,6 +32,7 @@ export class TeamItemComponent implements OnInit {
 
   constructor(
     private completerService: CompleterService,
+    private teamService: TeamService,
     public utils: UtilsService,
     public userService: UserService,
     public departamentService: DepartmentService
@@ -37,13 +41,18 @@ export class TeamItemComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.iTeam._id !== undefined) {
+      this.editing = true;
+      this.team = cloneDeep(this.iTeam);
+    }
     this.availableUsers = this.completerService
       .local(
         combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
           map(([users, _]) => {
             return users.filter((user) => {
-              return this.team.members.find((member: User) =>
-                this.userService.isEqual(user, member)
+              return this.team.members.find(
+                (member: User | string | undefined) =>
+                  this.userService.isEqual(user, member)
               ) === undefined
                 ? true
                 : false;
@@ -60,8 +69,9 @@ export class TeamItemComponent implements OnInit {
         combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
           map(([users, _]) => {
             return users.filter((user) => {
-              return this.team.members.find((member: User) =>
-                this.userService.isEqual(user, member)
+              return this.team.members.find(
+                (member: User | string | undefined) =>
+                  this.userService.isEqual(user, member)
               ) === undefined
                 ? false
                 : true;
@@ -76,7 +86,13 @@ export class TeamItemComponent implements OnInit {
     this.COORDINATIONS = this.departamentService.buildAllCoordinationsList();
   }
 
-  createOrUpdate(): void {}
+  createOrUpdate(): void {
+    if (this.editing) {
+      this.teamService.editTeam(this.team);
+    } else {
+      this.teamService.saveTeam(this.team);
+    }
+  }
 
   addMember(): void {
     this.team.members.push(cloneDeep(this.currentMember));

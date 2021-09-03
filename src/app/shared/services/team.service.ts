@@ -34,7 +34,7 @@ export class TeamService implements OnDestroy {
     this.http.post('/api/team/', req).pipe(take(1)).subscribe();
   }
 
-  editPromotion(team: Team): void {
+  editTeam(team: Team): void {
     const req = {
       team: team,
     };

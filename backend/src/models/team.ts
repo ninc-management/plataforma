@@ -12,8 +12,10 @@ export class Team extends Base<string> {
   @prop({ required: true })
   expertise!: string;
 
-  @prop({ type: () => [User] })
+  @prop({ ref: () => User })
   members: Ref<User>[] = [];
+
+  leaderName = '';
 }
 
 export default getModelForClass(Team);

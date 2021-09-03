@@ -1,23 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { TeamDialogComponent } from './team-dialog/team-dialog.component';
+import { Team } from '@models/team';
 
 @Component({
   selector: 'ngx-teams',
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.component.scss'],
 })
-export class TeamsComponent implements OnInit {
-  teams: any[] = [];
+export class TeamsComponent implements OnInit, OnDestroy {
+  destroy$ = new Subject<void>();
+  teams: Team[] = [];
   searchQuery = '';
-  get filtredTeams(): any[] {
+  get filtredTeams(): Team[] {
     if (this.searchQuery !== '')
       return this.teams.filter((team) => {
         return (
           team.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          team.leader.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          this.userService
+            .idToName(team.leader)
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
           team.expertise.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
@@ -55,11 +64,11 @@ export class TeamsComponent implements OnInit {
         title: 'Nome do time',
         type: 'string',
       },
-      area: {
+      expertise: {
         title: 'Área de atuação',
         type: 'string',
       },
-      leader: {
+      leaderName: {
         title: 'Líder',
         type: 'string',
       },
@@ -68,10 +77,28 @@ export class TeamsComponent implements OnInit {
 
   constructor(
     private dialogService: NbDialogService,
+    private userService: UserService,
+    private teamService: TeamService,
     public utils: UtilsService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  ngOnInit(): void {
+    this.teamService
+      .getTeams()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((teams) => {
+        this.teams = teams.map((team) => {
+          team.leaderName = this.userService.idToName(team.leader);
+          return team;
+        });
+        this.source.load(this.teams);
+      });
+  }
 
   openDialog(data: any): void {
     this.dialogService.open(TeamDialogComponent, {
