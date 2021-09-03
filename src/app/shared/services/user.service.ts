@@ -178,6 +178,12 @@ export class UserService implements OnDestroy {
     return this.idToUser(id).fullName;
   }
 
+  idToProfilePicture(id: string | User | undefined): string {
+    if (id === undefined) return '';
+    const pP = this.idToUser(id).profilePicture;
+    return pP ? pP : '';
+  }
+
   idToUser(id: string | User): User {
     if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone']))
       return id;

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { UserService, CONTRACT_BALANCE } from './user.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { last, take, publish } from 'rxjs/operators';
+import { last, take, publish, mergeMap } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { cloneDeep } from 'lodash';
@@ -29,6 +29,27 @@ describe('UserService', () => {
 
   CommonTestingModule.setUpTestBed();
 
+  const baseTest = (
+    name: string,
+    test: (expectedUsers: User[], done: DoneFn) => void
+  ) => {
+    it(name, (done: DoneFn) => {
+      service
+        .getUsers()
+        .pipe(take(2), last())
+        .subscribe((users) => {
+          expect(users.length).toBe(2);
+          expect(users).toEqual(mockedUsers);
+          test(mockedUsers, done);
+        });
+      const req = httpMock.expectOne('/api/user/all');
+      expect(req.request.method).toBe('POST');
+      setTimeout(() => {
+        req.flush(mockedUsers);
+      }, 50);
+    });
+  };
+
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
@@ -47,6 +68,7 @@ describe('UserService', () => {
     tmp.fullName = 'Test2';
     tmp.email = 'test2@te.st';
     tmp.phone = '123456';
+    tmp.profilePicture = 'test.png';
     mockedUsers.push(cloneDeep(tmp));
   });
 
@@ -66,7 +88,7 @@ describe('UserService', () => {
       (user) => {
         expect(user).toEqual(new User());
       },
-      undefined,
+      () => {},
       (test2 as ConnectableObservable<User>).connect.bind(test2)
     );
     // Set current user
@@ -84,61 +106,31 @@ describe('UserService', () => {
     }, 50);
   });
 
-  it('getUser should work', (done: DoneFn) => {
-    const test1 = service.getUser('test1@te.st').pipe(take(2), last());
-    const test2 = service.getUser('test3@te.st').pipe(take(1), publish());
-
-    test1.subscribe(
-      (user) => {
-        expect(user).toBeTruthy();
-        expect(user).toEqual(mockedUsers[0]);
-      },
-      undefined,
-      (test2 as ConnectableObservable<User | undefined>).connect.bind(test2)
-    );
-    // Test2 only is executed after test 1 completes due to publish() method
-    test2.subscribe((user) => {
-      expect(user).toBe(undefined);
-      done();
-    });
-
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
-  });
-
-  it('getUsers should work', (done: DoneFn) => {
+  baseTest('getUser should work', (expectedUsers: User[], done: DoneFn) => {
     service
-      .getUsers()
-      .pipe(take(2), last())
-      .subscribe((users) => {
-        expect(users.length).toBe(2);
-        expect(users).toEqual(mockedUsers);
+      .getUser('test1@te.st')
+      .pipe(
+        take(1),
+        mergeMap((user) => {
+          expect(user).toBeTruthy();
+          expect(user).toEqual(mockedUsers[0]);
+          return service.getUser('test3@te.st').pipe(take(1));
+        })
+      )
+      .subscribe((user) => {
+        expect(user).toBe(undefined);
         done();
       });
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
   });
 
-  it('getUsersList should work', (done: DoneFn) => {
-    service
-      .getUsers()
-      .pipe(take(2), last())
-      .subscribe((users) => {
-        expect(service.getUsersList()).toEqual(mockedUsers);
-        expect(service.getUsersList()).toEqual(users);
-        done();
-      });
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
+  baseTest('getUsers should work', (expectdUsers: User[], done: DoneFn) =>
+    done()
+  );
+
+  baseTest('getUsersList should work', (expectdUsers: User[], done: DoneFn) => {
+    expect(service.getUsersList()).toEqual(mockedUsers);
+    expect(expectdUsers).toEqual(mockedUsers);
+    done();
   });
 
   it('updateUser should work without change current user', (done: DoneFn) => {
@@ -168,7 +160,7 @@ describe('UserService', () => {
       (user) => {
         expect(user).toEqual(new User());
       },
-      undefined,
+      () => {},
       (test2 as ConnectableObservable<User>).connect.bind(test2)
     );
 
@@ -240,7 +232,7 @@ describe('UserService', () => {
       (user) => {
         expect(user).toEqual(new User());
       },
-      undefined,
+      () => {},
       (test2 as ConnectableObservable<User>).connect.bind(test2)
     );
 
@@ -313,7 +305,7 @@ describe('UserService', () => {
       (user) => {
         expect(user).toEqual(new User());
       },
-      undefined,
+      () => {},
       (test2 as ConnectableObservable<User>).connect.bind(test2)
     );
 
@@ -361,133 +353,67 @@ describe('UserService', () => {
     }, 50);
   });
 
-  it('idToName should work', (done: DoneFn) => {
-    const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
-    // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      undefined,
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
+  baseTest('idToName should work', (expectedUsers: User[], done: DoneFn) => {
+    expect(expectedUsers).toEqual(mockedUsers);
+    expect(service.idToName('0')).toBe(mockedUsers[0].fullName);
+    expect(service.idToName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
+    expect(service.idToName(undefined)).toBe('');
+    expect(service.idToName('000000000000000000000000')).toBe(
+      'Caixa do contrato'
     );
-    // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
-    service.refreshCurrentUser();
-    test2.subscribe((user) => {
-      expect(user).toEqual(mockedUsers[1]);
-      expect(service.idToName('0')).toEqual(mockedUsers[0].fullName);
-      expect(service.idToName(mockedUsers[0])).toEqual(mockedUsers[0].fullName);
-      expect(service.idToName(undefined)).toEqual('');
-      expect(service.idToName('000000000000000000000000')).toEqual(
-        'Caixa do contrato'
-      );
-      done();
-    });
-    // mock response
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
+    done();
   });
 
-  it('idToShortName should work', (done: DoneFn) => {
-    const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
-    // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      undefined,
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
-    // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
-    service.refreshCurrentUser();
-    test2.subscribe((user) => {
-      expect(user).toEqual(mockedUsers[1]);
-      expect(service.idToShortName('0')).toEqual(mockedUsers[0].fullName);
-      expect(service.idToShortName(mockedUsers[0])).toEqual(
+  baseTest(
+    'idToShortName should work',
+    (expectedUsers: User[], done: DoneFn) => {
+      expect(expectedUsers).toEqual(mockedUsers);
+      expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
+      expect(service.idToShortName(mockedUsers[0])).toBe(
         mockedUsers[0].fullName
       );
-      expect(service.idToShortName('000000000000000000000000')).toEqual(
+      expect(service.idToShortName('000000000000000000000000')).toBe(
         'Caixa do contrato'
       );
       done();
-    });
-    // mock response
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
-  });
+    }
+  );
 
-  it('idToUser should work', (done: DoneFn) => {
-    const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
-    // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      undefined,
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
-    // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
-    service.refreshCurrentUser();
-    test2.subscribe((user) => {
-      expect(user).toEqual(mockedUsers[1]);
-      expect(service.idToUser('0')).toEqual(mockedUsers[0]);
-      expect(service.idToUser(mockedUsers[0])).toEqual(mockedUsers[0]);
-      expect(service.idToUser('000000000000000000000000')).toEqual(
-        CONTRACT_BALANCE as User
+  baseTest(
+    'idToProfilePicture should work',
+    (expectedUsers: User[], done: DoneFn) => {
+      expect(expectedUsers).toEqual(mockedUsers);
+      expect(service.idToProfilePicture('0')).toBe('');
+      expect(service.idToProfilePicture(mockedUsers[1])).toBe(
+        mockedUsers[1].profilePicture as string
+      );
+      expect(service.idToProfilePicture('000000000000000000000000')).toBe(
+        CONTRACT_BALANCE.profilePicture as string
       );
       done();
-    });
-    // mock response
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
+    }
+  );
+
+  baseTest('idToUser should work', (expectedUsers: User[], done: DoneFn) => {
+    expect(expectedUsers).toEqual(mockedUsers);
+    expect(service.idToUser('0')).toEqual(mockedUsers[0]);
+    expect(service.idToUser(mockedUsers[0])).toEqual(mockedUsers[0]);
+    expect(service.idToUser('000000000000000000000000')).toEqual(
+      CONTRACT_BALANCE as User
+    );
+    done();
   });
 
-  it('isEqual should work', (done: DoneFn) => {
-    const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
-    // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      undefined,
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
-    // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
-    service.refreshCurrentUser();
-    test2.subscribe((user) => {
-      expect(user).toEqual(mockedUsers[1]);
-      expect(service.isEqual(undefined, undefined)).toBe(false);
-      expect(service.isEqual(undefined, '0')).toBe(false);
-      expect(service.isEqual('0', undefined)).toBe(false);
-      expect(service.isEqual(mockedUsers[0], '0')).toBe(true);
-      expect(service.isEqual('1', mockedUsers[1])).toBe(true);
-      expect(
-        service.isEqual('000000000000000000000000', CONTRACT_BALANCE as User)
-      ).toBe(true);
-      done();
-    });
-    // mock response
-    const req = httpMock.expectOne('/api/user/all');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush(mockedUsers);
-    }, 50);
+  baseTest('isEqual should work', (expectedUsers: User[], done: DoneFn) => {
+    expect(expectedUsers).toEqual(mockedUsers);
+    expect(service.isEqual(undefined, undefined)).toBe(false);
+    expect(service.isEqual(undefined, '0')).toBe(false);
+    expect(service.isEqual('0', undefined)).toBe(false);
+    expect(service.isEqual(mockedUsers[0], '0')).toBe(true);
+    expect(service.isEqual('1', mockedUsers[1])).toBe(true);
+    expect(
+      service.isEqual('000000000000000000000000', CONTRACT_BALANCE as User)
+    ).toBe(true);
+    done();
   });
 });
