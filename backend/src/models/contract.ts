@@ -194,6 +194,7 @@ export class Contract extends StatusHistory {
   role = '';
   notPaid = '';
   liquid = '';
+  cashback = '';
   managerPicture = '';
 }
 

@@ -14,10 +14,7 @@ router.post('/', (req, res, next) => {
     user
       .save()
       .then((savedUser) => {
-        if (requested) {
-          const tempUser: User = savedUser.toJSON();
-          usersMap[tempUser._id] = tempUser;
-        }
+        if (requested) usersMap[savedUser._id] = savedUser.toJSON();
         release();
         return res.status(201).json({
           message: 'Usuário cadastrado!',
@@ -38,7 +35,7 @@ router.post('/update', async (req, res, next) => {
     req.body.user._id,
     req.body.user,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedUser) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar usuário!',
@@ -46,7 +43,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          usersMap[req.body.user._id] = req.body.user;
+          usersMap[req.body.user._id] = savedUser.toJSON();
         });
       }
       return res.status(200).json({

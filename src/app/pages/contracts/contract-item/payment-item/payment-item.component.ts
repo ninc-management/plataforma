@@ -114,12 +114,6 @@ export class PaymentItemComponent implements OnInit {
       .imageField('profilePicture');
     if (this.paymentIndex !== undefined) {
       this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
-      this.payment.value = this.brMask.writeValueMoney(this.payment.value, {
-        money: true,
-        thousand: '.',
-        decimalCaracter: ',',
-        decimal: 2,
-      });
       this.updateLastValues();
       this.calculateTeamValues();
     } else {

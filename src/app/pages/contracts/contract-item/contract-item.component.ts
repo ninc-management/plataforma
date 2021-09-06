@@ -560,12 +560,20 @@ export class ContractItemComponent implements OnInit {
       this.options.notaFiscal,
       this.options.nortanPercentage
     );
+    this.contract.cashback = this.stringUtil.numberToMoney(
+      this.contractService.expensesContributions(this.contract).cashback
+    );
   }
 
   updateValue(idx?: number): void {
     if (idx != undefined) {
       this.contract.team[idx].netValue = this.stringUtil.applyPercentage(
-        this.contract.liquid,
+        this.stringUtil.sumMoney(
+          this.contract.liquid,
+          this.stringUtil.numberToMoney(
+            this.contractService.expensesContributions(this.contract).cashback
+          )
+        ),
         this.contract.team[idx].distribution
       );
       this.contract.team[idx].grossValue = this.contractService.toGrossValue(
@@ -576,7 +584,12 @@ export class ContractItemComponent implements OnInit {
       this.updateTeamTotal();
     } else {
       this.teamMember.netValue = this.stringUtil.applyPercentage(
-        this.contract.liquid,
+        this.stringUtil.sumMoney(
+          this.contract.liquid,
+          this.stringUtil.numberToMoney(
+            this.contractService.expensesContributions(this.contract).cashback
+          )
+        ),
         this.teamMember.distribution
       );
       this.teamMember.grossValue = this.contractService.toGrossValue(
@@ -592,7 +605,12 @@ export class ContractItemComponent implements OnInit {
       this.contract.team[idx].distribution = this.stringUtil
         .toPercentage(
           this.contract.team[idx].netValue,
-          this.contract.liquid,
+          this.stringUtil.sumMoney(
+            this.contract.liquid,
+            this.stringUtil.numberToMoney(
+              this.contractService.expensesContributions(this.contract).cashback
+            )
+          ),
           20
         )
         .slice(0, -1);
@@ -604,7 +622,16 @@ export class ContractItemComponent implements OnInit {
       this.updateTeamTotal();
     } else {
       this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.netValue, this.contract.liquid, 20)
+        .toPercentage(
+          this.teamMember.netValue,
+          this.stringUtil.sumMoney(
+            this.contract.liquid,
+            this.stringUtil.numberToMoney(
+              this.contractService.expensesContributions(this.contract).cashback
+            )
+          ),
+          20
+        )
         .slice(0, -1);
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,
@@ -666,8 +693,13 @@ export class ContractItemComponent implements OnInit {
 
   isNetValueOK(): boolean {
     return (
-      this.teamTotal.netValue === this.contract.liquid &&
-      this.teamTotal.netValue !== '0,00'
+      this.teamTotal.netValue ===
+        this.stringUtil.sumMoney(
+          this.contract.liquid,
+          this.stringUtil.numberToMoney(
+            this.contractService.expensesContributions(this.contract).cashback
+          )
+        ) && this.teamTotal.netValue !== '0,00'
     );
   }
 }

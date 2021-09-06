@@ -26,10 +26,8 @@ router.post('/', (req, res, next) => {
         invoice
           .save()
           .then((savedInvoice) => {
-            if (requested) {
-              const tempInvoice: Invoice = savedInvoice.toJSON();
-              invoicesMap[tempInvoice._id] = tempInvoice;
-            }
+            if (requested)
+              invoicesMap[savedInvoice._id] = savedInvoice.toJSON();
             release();
             res.status(201).json({
               message: 'Orçamento cadastrado!',
@@ -53,7 +51,7 @@ router.post('/update', async (req, res, next) => {
     req.body.invoice._id,
     req.body.invoice,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedInvoice) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar orçamento!',
@@ -61,7 +59,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          invoicesMap[req.body.invoice._id] = req.body.invoice;
+          invoicesMap[req.body.invoice._id] = savedInvoice.toJSON();
         });
       }
       return res.status(200).json({

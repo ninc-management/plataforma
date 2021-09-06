@@ -173,7 +173,7 @@ export class ExpenseItemComponent
     }
 
     if (!this.expense.splitType)
-      this.expense.splitType = SPLIT_TYPES.PROPORCIONAL;
+      this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
 
     this.formRef.control.statusChanges
       .pipe(skip(1), takeUntil(this.destroy$))

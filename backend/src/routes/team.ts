@@ -14,10 +14,7 @@ router.post('/', (req, res, next) => {
     team
       .save()
       .then((savedTeam) => {
-        if (requested) {
-          const tempTeam: Team = savedTeam.toJSON();
-          teamMap[tempTeam._id] = tempTeam;
-        }
+        if (requested) teamMap[savedTeam._id] = savedTeam.toJSON();
         release();
         return res.status(201).json({
           message: 'Time cadastrado!',
@@ -46,7 +43,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          teamMap[req.body.team._id] = req.body.team;
+          teamMap[req.body.team._id] = savedTeam.toJSON();
         });
       }
       return res.status(200).json({

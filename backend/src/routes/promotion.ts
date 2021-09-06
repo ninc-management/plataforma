@@ -14,10 +14,8 @@ router.post('/', (req, res, next) => {
     promotion
       .save()
       .then((savedPromotion) => {
-        if (requested) {
-          const tempPromotion: Promotion = savedPromotion.toJSON();
-          promotionsMap[tempPromotion._id] = tempPromotion;
-        }
+        if (requested)
+          promotionsMap[savedPromotion._id] = savedPromotion.toJSON();
         release();
         return res.status(201).json({
           message: 'Promoção cadastrada!',
@@ -38,7 +36,7 @@ router.post('/update', async (req, res, next) => {
     req.body.promotion._id,
     req.body.promotion,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedPromotion) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar promoção!',
@@ -46,7 +44,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          promotionsMap[req.body.promotion._id] = req.body.promotion;
+          promotionsMap[req.body.promotion._id] = savedPromotion.toJSON();
         });
       }
       return res.status(200).json({

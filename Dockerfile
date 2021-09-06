@@ -14,6 +14,7 @@ ENV FIREBASE_MID ${{ secrets.FIREBASE_MID }}
 ENV MSAL_CLIENT_ID ${{ secrets.MSAL_CLIENT_ID }}
 ENV MSAL_REDIRECT_URI ${{ secrets.MSAL_REDIRECT_URI }}
 ENV ONEDRIVE_URI ${{ secrets.ONEDRIVE_URI }}
+ENV API_TOKEN ${{ secrets.API_TOKEN }}
 ENV NODE_ENV production
 
 # Instala o node 12

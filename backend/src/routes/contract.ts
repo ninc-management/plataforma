@@ -14,10 +14,7 @@ router.post('/', (req, res, next) => {
     contract
       .save()
       .then((savedContract) => {
-        if (requested) {
-          const tempContract: Contract = savedContract.toJSON();
-          contractsMap[tempContract._id] = tempContract;
-        }
+        if (requested) contractsMap[savedContract._id] = savedContract.toJSON();
         release();
         return res.status(201).json({
           message: 'Contrato cadastrado!',
@@ -38,7 +35,7 @@ router.post('/update', async (req, res, next) => {
     req.body.contract._id,
     req.body.contract,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedContract) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar contrato!',
@@ -46,7 +43,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          contractsMap[req.body.contract._id] = req.body.contract;
+          contractsMap[req.body.contract._id] = savedContract.toJSON();
         });
       }
       return res.status(200).json({

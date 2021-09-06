@@ -14,10 +14,8 @@ router.post('/', (req, res, next) => {
     contractor
       .save()
       .then((savedContractor) => {
-        if (requested) {
-          const tempContractor: Contractor = savedContractor.toJSON();
-          contractorsMap[tempContractor._id] = tempContractor;
-        }
+        if (requested)
+          contractorsMap[savedContractor._id] = savedContractor.toJSON();
         release();
         res.status(201).json({
           message: 'Cliente cadastrado!',
@@ -38,7 +36,7 @@ router.post('/update', async (req, res, next) => {
     req.body.contractor._id,
     req.body.contractor,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedContractor) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar cliente!',
@@ -46,7 +44,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          contractorsMap[req.body.contractor._id] = req.body.contractor;
+          contractorsMap[req.body.contractor._id] = savedContractor.toJSON();
         });
       }
       return res.status(200).json({

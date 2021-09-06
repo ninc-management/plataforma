@@ -15,10 +15,7 @@ router.post('/expense', (req, res, next) => {
     expense
       .save()
       .then((savedExpense) => {
-        if (requested) {
-          const tempExpense: Expense = savedExpense.toJSON();
-          expensesMap[tempExpense._id] = tempExpense;
-        }
+        if (requested) expensesMap[savedExpense._id] = savedExpense.toJSON();
         release();
         return res.status(201).json({
           message: 'Gasto cadastrado!',
@@ -39,7 +36,7 @@ router.post('/updateExpense', async (req, res, next) => {
     req.body.expense._id,
     req.body.expense,
     { upsert: false, new: false },
-    async (err, response) => {
+    async (err, savedExpense) => {
       if (err)
         return res.status(500).json({
           message: 'Erro ao atualizar gasto administrativo!',
@@ -47,7 +44,7 @@ router.post('/updateExpense', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          expensesMap[req.body.expense._id] = req.body.expense;
+          expensesMap[req.body.expense._id] = savedExpense.toJSON();
         });
       }
       return res.status(200).json({

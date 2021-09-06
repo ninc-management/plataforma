@@ -73,6 +73,12 @@ jobs:
           filename: Dockerfile
           secret-name: ONEDRIVE_URI
           secret-value: ${{ secrets.ONEDRIVE_URI_LOCAL }}
+      - name: 🔑 Parser Nortan API Token
+        uses: jwsi/secret-parser@v1
+        with:
+          filename: Dockerfile
+          secret-name: API_TOKEN
+          secret-value: ${{ secrets.API_TOKEN }}
       - name: 🧩 Use Node.js 12.x
         uses: actions/setup-node@v2
         with:
@@ -91,6 +97,7 @@ jobs:
           MSAL_CLIENT_ID: ${{secrets.MSAL_CLIENT_ID}}
           MSAL_REDIRECT_URI: ${{secrets.MSAL_REDIRECT_URI_MAIN}}
           ONEDRIVE_URI: ${{secrets.ONEDRIVE_URI_LOCAL}}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
       - name: 🧹 Clean source files
         run: rm -rf src/app src/assets backend/src
       - name: 🔄 Commit changes
