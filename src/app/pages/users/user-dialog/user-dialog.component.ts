@@ -12,7 +12,6 @@ import { User } from '@models/user';
 export class UserDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() user = new User();
-  @Input() userIndex?: number;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,

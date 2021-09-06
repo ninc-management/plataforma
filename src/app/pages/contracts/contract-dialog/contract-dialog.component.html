@@ -190,12 +190,10 @@
             <ngx-contract-item
               [isDialogBlocked]="isBlocked"
               [iContract]="contract"
-              [index]="contractIndex"
               *ngIf="componentType == types.CONTRACT"
             ></ngx-contract-item>
             <ngx-payment-item
               [contract]="contract"
-              [contractIndex]="contractIndex"
               [paymentIndex]="paymentIndex"
               [availableContracts]="availableContracts"
               (submit)="dismiss()"
@@ -203,7 +201,6 @@
             ></ngx-payment-item>
             <ngx-receipt-item
               [contract]="contract"
-              [contractIndex]="contractIndex"
               [receiptIndex]="receiptIndex"
               [availableContracts]="availableContracts"
               (submit)="dismiss()"
@@ -211,7 +208,6 @@
             ></ngx-receipt-item>
             <ngx-expense-item
               [contract]="contract"
-              [contractIndex]="contractIndex"
               [expenseIndex]="expenseIndex"
               (submit)="dismiss()"
               *ngIf="componentType == types.EXPENSE"

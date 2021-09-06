@@ -51,11 +51,7 @@
           <nb-list-item
             *ngFor="let contract of filtredContracts; let i = index"
           >
-            <a
-              (click)="
-                contractDialog({ data: contract, index: i.toString() }, true)
-              "
-            >
+            <a (click)="contractDialog({ data: contract }, true)">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
                   <nb-user

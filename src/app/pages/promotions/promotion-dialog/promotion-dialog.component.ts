@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { Promotion } from '@models/promotion';
 
 @Component({
   selector: 'ngx-promotion-dialog',
@@ -13,7 +14,7 @@ export class PromotionDialogComponent
   implements OnInit
 {
   @Input() title = '';
-  @Input() promotion: any;
+  @Input() promotion = new Promotion();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,

@@ -14,7 +14,7 @@ export class ContractorDialogComponent
   implements OnInit
 {
   @Input() title = '';
-  @Input() contractor?: Contractor;
+  @Input() contractor = new Contractor();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,

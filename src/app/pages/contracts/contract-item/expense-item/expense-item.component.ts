@@ -40,7 +40,6 @@ export class ExpenseItemComponent
 {
   @Input()
   contract = new Contract();
-  @Input() contractIndex?: number;
   @Input() expenseIndex?: number;
   hasInitialContract = true;
   validation = (expense_validation as any).default;

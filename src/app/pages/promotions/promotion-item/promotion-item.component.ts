@@ -26,6 +26,7 @@ import { PromotionService } from 'app/shared/services/promotion.service';
 import { Promotion } from '@models/promotion';
 import { NbComponentStatus } from '@nebular/theme';
 import { NgModel } from '@angular/forms';
+import { cloneDeep } from 'lodash';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -65,8 +66,9 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   @ViewChild(Ng2SmartTableComponent)
   table!: Ng2SmartTableComponent;
   @Input()
-  promotion!: Promotion;
+  iPromotion = new Promotion();
   @Output() submit: EventEmitter<void> = new EventEmitter();
+  promotion = new Promotion();
   validation = (promotion_validation as any).default;
   pTypes = Object.values(PROMOTION_STATOOS);
   pObjTypes = Object.values(RULE_OBJECTS);
@@ -93,8 +95,9 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.promotion) {
+    if (this.iPromotion._id != undefined) {
       this.editing = true;
+      this.promotion = cloneDeep(this.iPromotion);
     } else {
       this.promotion = new Promotion();
       this.promotion.rules = [{ container: '', operator: '', value: '' }];
@@ -149,7 +152,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
           cashback: [] as Observable<string>[],
         }
       );
-    combineLatest(forkJoin(...obj), forkJoin(...cashback)).subscribe(
+    combineLatest([forkJoin(obj), forkJoin(cashback)]).subscribe(
       ([objCount, cashbackValue]) => {
         const objArray = this.userTableItems.value;
         this.userTableItems.next(

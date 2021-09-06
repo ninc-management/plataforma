@@ -10,7 +10,7 @@ import * as contractor_validation from 'app/shared/contractor-validation.json';
   styleUrls: ['./contractor-item.component.scss'],
 })
 export class ContractorItemComponent implements OnInit {
-  @Input() iContractor?: Contractor;
+  @Input() iContractor = new Contractor();
   @Output() submit = new EventEmitter<void>();
   contractor = new Contractor();
   editing = false;
@@ -20,7 +20,7 @@ export class ContractorItemComponent implements OnInit {
   constructor(private contractorService: ContractorService) {}
 
   ngOnInit(): void {
-    if (this.iContractor) {
+    if (this.iContractor._id !== undefined) {
       this.editing = true;
       this.contractor = cloneDeep(this.iContractor);
     }
@@ -28,12 +28,8 @@ export class ContractorItemComponent implements OnInit {
 
   registerContractor(): void {
     this.submitted = true;
-    if (this.contractor) {
-      if (this.editing)
-        this.contractorService.editContractor(this.contractor);
-      else
-        this.contractorService.saveContractor(this.contractor);
-    }
+    if (this.editing) this.contractorService.editContractor(this.contractor);
+    else this.contractorService.saveContractor(this.contractor);
     this.submit.emit();
   }
 }

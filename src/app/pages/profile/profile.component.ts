@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChildren('shortExpertise', { read: ElementRef })
   shortExpertiseRefs!: QueryList<ElementRef>;
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
-  @Input() inputUser = new User();
+  @Input() iUser = new User();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   isCurrentUser = false;
   user = new User();
@@ -105,11 +105,11 @@ export class ProfileComponent implements OnInit, DoCheck {
       .map((cd: string) => {
         return cd.split(' ')[0];
       });
-    if (this.inputUser._id !== undefined) this.user = cloneDeep(this.inputUser);
+    if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
     else
       this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-        this.inputUser = user;
-        this.user = cloneDeep(this.inputUser);
+        this.iUser = user;
+        this.user = cloneDeep(this.iUser);
         this.isCurrentUser = true;
       });
     if (this.user.state)
@@ -288,7 +288,7 @@ export class ProfileComponent implements OnInit, DoCheck {
 
   revert(): void {
     this.isEditing = false;
-    this.user = cloneDeep(this.inputUser);
+    this.user = cloneDeep(this.iUser);
     this.refreshExpertises();
     this.changeTheme();
   }

@@ -32,7 +32,6 @@ import * as contract_validation from '../../../../shared/payment-validation.json
 export class PaymentItemComponent implements OnInit {
   @Input() contract = new Contract();
   @Input() availableContracts: Contract[] = [];
-  @Input() contractIndex?: number;
   @Input() paymentIndex?: number;
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })

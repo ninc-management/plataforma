@@ -108,7 +108,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.dialogService.open(UserDialogComponent, {
       context: {
         title: 'EDIÇÃO DE ASSOCIADO',
-        user: event.data,
+        user: event.data ? event.data : new User(),
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

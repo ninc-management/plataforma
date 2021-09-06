@@ -27,7 +27,6 @@ import {
   COMPONENT_TYPES,
 } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
-import { User } from '@models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
 
 interface ExpenseTypesSum {
@@ -47,7 +46,6 @@ interface ExpenseSourceSum {
 })
 export class ContractItemComponent implements OnInit {
   @Input() iContract = new Contract();
-  @Input() index?: number;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();
   types = COMPONENT_TYPES;
@@ -306,8 +304,7 @@ export class ContractItemComponent implements OnInit {
         start: this.contract.lastUpdate,
       });
     }
-    this.iContract = cloneDeep(this.contract);
-    this.contractService.editContract(this.iContract);
+    this.contractService.editContract(this.contract);
   }
 
   paymentDialog(componentType: COMPONENT_TYPES, index?: number): void {
@@ -339,7 +336,6 @@ export class ContractItemComponent implements OnInit {
         context: {
           title: title,
           contract: this.contract,
-          contractIndex: this.index,
           paymentIndex:
             componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
           receiptIndex:

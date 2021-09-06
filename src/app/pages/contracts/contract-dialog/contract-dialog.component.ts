@@ -34,7 +34,6 @@ export class ContractDialogComponent
 {
   @Input() title = '';
   @Input() contract = new Contract();
-  @Input() contractIndex?: number;
   @Input() paymentIndex?: number;
   @Input() receiptIndex?: number;
   @Input() expenseIndex?: number;

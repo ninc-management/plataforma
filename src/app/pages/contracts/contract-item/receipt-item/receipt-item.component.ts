@@ -19,7 +19,6 @@ import * as contract_validation from '../../../../shared/payment-validation.json
 export class ReceiptItemComponent implements OnInit {
   @Input() contract = new Contract();
   @Input() availableContracts: Contract[] = [];
-  @Input() contractIndex?: number;
   @Input() receiptIndex?: number;
   hasInitialContract = true;
   validation = (contract_validation as any).default;

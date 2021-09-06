@@ -102,11 +102,11 @@ export class ContractorsComponent implements OnInit, OnDestroy {
       });
   }
 
-  contractorDialog(event: { data?: any }): void {
+  contractorDialog(event: { data?: Contractor }): void {
     this.dialogService.open(ContractorDialogComponent, {
       context: {
         title: event.data ? 'EDIÇÃO DE CLIENTE' : 'CADASTRO DE CLIENTE',
-        contractor: event.data,
+        contractor: event.data ? event.data : new Contractor(),
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

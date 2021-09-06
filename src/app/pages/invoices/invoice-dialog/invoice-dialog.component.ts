@@ -43,11 +43,6 @@ export class InvoiceDialogComponent
   }
 
   dismiss(): void {
-    if (this.invoice)
-      if (this.invoice.department.length > 3)
-        this.invoice.department = this.departmentService.extractAbreviation(
-          this.invoice.department
-        );
     super.dismiss();
   }
 

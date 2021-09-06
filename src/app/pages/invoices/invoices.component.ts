@@ -223,7 +223,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
               ? 'EDIÇÃO'
               : 'EDIÇÃO DE ORÇAMENTO'
             : 'CADASTRO DE ORÇAMENTO',
-          invoice: event.data,
+          invoice: event.data ? event.data : new Invoice(),
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

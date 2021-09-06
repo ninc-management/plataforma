@@ -102,7 +102,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
       });
   }
 
-  promotionDialog(event: { data?: any }): void {
+  promotionDialog(event: { data?: Promotion }): void {
     this.dialogService.open(PromotionDialogComponent, {
       context: {
         title: event.data
@@ -110,7 +110,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
             ? 'EDIÇÃO'
             : 'EDIÇÃO DE PROMOÇÃO'
           : 'CADASTRO DE PROMOÇÃO',
-        promotion: event.data,
+        promotion: event.data ? event.data : new Promotion(),
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
