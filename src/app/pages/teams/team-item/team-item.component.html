@@ -79,7 +79,7 @@
               ? leaderList.invalid
                 ? 'danger'
                 : 'success'
-              : !editing && leaderSearch !== ''
+              : editing && leaderSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -111,6 +111,8 @@
               ? expertise.invalid
                 ? 'danger'
                 : 'success'
+              : editing
+              ? 'success'
               : 'basic'
           "
           [attr.aria-invalid]="

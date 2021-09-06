@@ -44,6 +44,7 @@ export class TeamItemComponent implements OnInit {
     if (this.iTeam._id !== undefined) {
       this.editing = true;
       this.team = cloneDeep(this.iTeam);
+      this.leaderSearch = this.userService.idToName(this.team.leader);
     }
     this.availableUsers = this.completerService
       .local(
