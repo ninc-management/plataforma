@@ -51,12 +51,7 @@ export class ContractorService implements OnDestroy {
         .subscribe((contractors: any) => {
           this.contractors$.next(
             (contractors as Contractor[]).sort((a, b) => {
-              return a.fullName
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '') <
-                b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                ? -1
-                : 1;
+              return this.utils.nameSort(1, a.fullName, b.fullName);
             })
           );
         });

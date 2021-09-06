@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ContractorService } from 'app/shared/services/contractor.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { Contractor } from '@models/contractor';
 
 @Component({
@@ -35,10 +36,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         );
       });
     return this.contractors.sort((a, b) => {
-      return a.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
-        b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        ? -1
-        : 1;
+      return this.utils.nameSort(1, a.fullName, b.fullName);
     });
   }
   settings = {
@@ -84,7 +82,8 @@ export class ContractorsComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private contractorService: ContractorService
+    private contractorService: ContractorService,
+    private utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {

@@ -129,12 +129,7 @@ export class UserService implements OnDestroy {
           this.users$.next(
             (users as User[]).sort((a, b) => {
               this.isLoaded = true;
-              return a.fullName
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '') <
-                b.fullName.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                ? -1
-                : 1;
+              return this.utils.nameSort(1, a.fullName, b.fullName);
             })
           );
         });

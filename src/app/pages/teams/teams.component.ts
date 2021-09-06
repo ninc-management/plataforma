@@ -31,10 +31,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
         );
       });
     return this.teams.sort((a, b) => {
-      return a.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
-        b.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        ? -1
-        : 1;
+      return this.utils.nameSort(1, a.name, b.name);
     });
   }
 
