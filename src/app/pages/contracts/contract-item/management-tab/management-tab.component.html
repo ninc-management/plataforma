@@ -152,3 +152,84 @@
     </div>
   </div>
 </div>
+
+<div class="row">
+  <div class="col-auto">
+    <h6>Checklist</h6>
+  </div>
+  <div class="col">
+    <hr />
+  </div>
+</div>
+<form (ngSubmit)="registerAction()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-3">
+      <label class="label" for="input-action-name">Ação:</label>
+      <input
+        nbInput
+        id="input-action-name"
+        name="action-name"
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+    <div class="col-2">
+      <label class="label" for="input-action-start-date">Início:</label>
+      <input
+        nbInput
+        id="input-action-start-date"
+        name="action-start-date"
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+    <div class="col-2">
+      <label class="label" for="input-action-end-date">Fim:</label>
+      <input
+        nbInput
+        id="input-action-end-date"
+        name="action-end-date"
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+    <div class="col-2">
+      <label class="label" for="input-action-responsible">Responsável:</label>
+      <input
+        nbInput
+        id="input-action-responsible"
+        name="action-responsible"
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+    <div class="col-2">
+      <label class="label" for="input-action-status">Status:</label>
+      <nb-select
+        id="input-action-status"
+        name="action-status"
+        fullWidth
+        size="large"
+      >
+        <nb-option
+          *ngFor="let status of avaliableActionStatus"
+          [value]="status"
+        >
+          {{ status }}
+        </nb-option>
+      </nb-select>
+    </div>
+    <div class="col-1">
+      <button
+        nbButton
+        type="button"
+        fullWidth
+        status="primary"
+        size="large"
+        style="margin-top: 28px"
+      >
+        +
+      </button>
+    </div>
+  </div>
+</form>
