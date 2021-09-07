@@ -11,7 +11,7 @@ import {
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { CompleterData, CompleterService } from 'ng2-completer';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
@@ -69,8 +69,9 @@ export class ProfileComponent implements OnInit, DoCheck {
   ];
 
   userAER = new User();
+  memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
+  availableUsers: CompleterData = this.completerService.local([]);
 
   get positionMessage(): string {
     let response = '';
@@ -119,12 +120,21 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.buildPositionsList();
     this.buildLevelList();
     this.refreshExpertises();
-    this.userData = this.completerService
+    this.availableUsers = this.completerService
       .local(
-        this.userService.getUsersList().filter((user) => {
-          if (user._id != this.user._id) return true;
-          return false;
-        }),
+        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
+          map(([users, _]) => {
+            return users.filter((user) => {
+              return (
+                (this.user.AER.find((member) =>
+                  this.userService.isEqual(user, member)
+                ) === undefined
+                  ? true
+                  : false) && !this.userService.isEqual(user, this.user)
+              );
+            });
+          })
+        ),
         'fullName',
         'fullName'
       )
@@ -265,7 +275,9 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.accessChecker
       .isGranted('aer', 'aer')
       .pipe(take(1))
-      .subscribe((isGranted) => (this.isAER = isGranted));
+      .subscribe((isGranted) => {
+        return (this.isAER = isGranted);
+      });
 
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'edit-level-position')
@@ -379,6 +391,7 @@ export class ProfileComponent implements OnInit, DoCheck {
     if (this.user.AER) this.user.AER.push(cloneDeep(this.userAER));
     this.userAER = new User();
     this.userSearch = '';
+    this.memberChanged$.next(true);
   }
 
   NOT(o$: Observable<boolean>): Observable<boolean> {

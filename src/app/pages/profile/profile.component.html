@@ -616,7 +616,7 @@
                       id="input-user"
                       name="userList"
                       [selectedText]="userAER?.fullName"
-                      [dataService]="userData"
+                      [dataService]="availableUsers"
                       [minSearchLength]="0"
                       [placeholder]="'Digite e selecione o nome do colaborador'"
                       [textNoResults]="
@@ -674,7 +674,8 @@
                           (click)="
                             user
                               ? userService.idToUser(user).AER.splice(i, 1)
-                              : ''
+                              : '';
+                            memberChanged$.next(true)
                           "
                           [options]="{ animation: { type: 'shake' } }"
                         ></nb-icon>

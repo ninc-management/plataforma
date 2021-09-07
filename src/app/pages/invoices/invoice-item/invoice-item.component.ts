@@ -14,8 +14,8 @@ import {
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { take, takeUntil } from 'rxjs/operators';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -99,10 +99,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   validation = (invoice_validation as any).default;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
+  memberChanged$ = new BehaviorSubject<boolean>(true);
   contractorSearch = '';
   contractorData: CompleterData = this.completerService.local([]);
   userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
+  availableUsers: CompleterData = this.completerService.local([]);
   authorSearch = '';
   authorData: CompleterData = this.completerService.local([]);
 
@@ -217,15 +218,22 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         );
       });
 
-    this.userData = this.completerService
+    this.availableUsers = this.completerService
       .local(
-        this.userService.getUsersList().filter((user) => {
-          if (this.tempInvoice.author)
-            return (
-              user._id != this.userService.idToUser(this.tempInvoice.author)._id
-            );
-          return false;
-        }),
+        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
+          map(([users, _]) => {
+            return users.filter((user) => {
+              return (
+                (this.tempInvoice.team.find((member: InvoiceTeamMember) =>
+                  this.userService.isEqual(user, member.user)
+                ) === undefined
+                  ? true
+                  : false) &&
+                !this.userService.isEqual(user, this.tempInvoice.author)
+              );
+            });
+          })
+        ),
         'fullName',
         'fullName'
       )
@@ -352,6 +360,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.team.push(cloneDeep(this.teamMember));
       this.userSearch = '';
       this.USER_COORDINATIONS = this.updateUserCoordinations();
+      this.memberChanged$.next(true);
     }
   }
 

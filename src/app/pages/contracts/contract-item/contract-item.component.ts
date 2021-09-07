@@ -2,8 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { CompleterService, CompleterData } from 'ng2-completer';
 import { LocalDataSource } from 'ng2-smart-table';
-import { take } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -26,7 +26,11 @@ import {
   ContractDialogComponent,
   COMPONENT_TYPES,
 } from '../contract-dialog/contract-dialog.component';
-import { ContractExpense, Contract } from '@models/contract';
+import {
+  ContractExpense,
+  Contract,
+  ContractTeamMember,
+} from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 
 interface ExpenseTypesSum {
@@ -85,8 +89,9 @@ export class ContractItemComponent implements OnInit {
   }
 
   teamMember: any = {};
+  memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
+  availableUsers: CompleterData = this.completerService.local([]);
 
   searchQuery = '';
   get filtredExpenses(): ContractExpense[] {
@@ -284,8 +289,22 @@ export class ContractItemComponent implements OnInit {
       });
     }
     this.updateTeamTotal();
-    this.userData = this.completerService
-      .local(this.userService.getUsersList(), 'fullName', 'fullName')
+    this.availableUsers = this.completerService
+      .local(
+        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
+          map(([users, _]) => {
+            return users.filter((user) => {
+              return this.contract.team.find((member: ContractTeamMember) =>
+                this.userService.isEqual(user, member.user)
+              ) === undefined
+                ? true
+                : false;
+            });
+          })
+        ),
+        'fullName',
+        'fullName'
+      )
       .imageField('profilePicture');
     this.loadTableExpenses();
   }
@@ -458,6 +477,7 @@ export class ContractItemComponent implements OnInit {
     this.userSearch = '';
     this.teamMember = {};
     this.updateTeamTotal();
+    this.memberChanged$.next(true);
   }
 
   updateTeamTotal(): void {

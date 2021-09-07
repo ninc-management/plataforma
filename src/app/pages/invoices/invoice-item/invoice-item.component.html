@@ -781,7 +781,7 @@
               id="input-user"
               name="userList"
               [selectedText]="userService.idToName(teamMember.user)"
-              [dataService]="userData"
+              [dataService]="availableUsers"
               [minSearchLength]="0"
               [placeholder]="
                 'Digite e selecione o nome do colaborador do orçamento'
@@ -889,7 +889,9 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.team.splice(i, 1)"
+                (click)="
+                  tempInvoice.team.splice(i, 1); memberChanged$.next(true)
+                "
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>

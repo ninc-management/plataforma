@@ -19,7 +19,6 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
     public utils: UtilsService
   ) {
     super(derivedDocument, derivedRef);
-    console.log(this.team);
   }
 
   ngOnInit(): void {

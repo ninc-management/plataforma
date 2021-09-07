@@ -23,6 +23,8 @@ import {
 } from '@models/contract';
 import { User } from '@models/user';
 import * as contract_validation from '../../../../shared/payment-validation.json';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -63,8 +65,9 @@ export class PaymentItemComponent implements OnInit {
     lastTeam: [] as ContractUserPayment[],
   };
 
+  memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
+  availableUsers: CompleterData = this.completerService.local([]);
 
   contractSearch = '';
   get availableContractsData(): CompleterData {
@@ -108,9 +111,6 @@ export class PaymentItemComponent implements OnInit {
         return;
       })
       .filter((user): user is User => user !== undefined);
-    this.userData = this.completerService
-      .local(teamUsers, 'fullName', 'fullName')
-      .imageField('profilePicture');
     if (this.paymentIndex !== undefined) {
       this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
       this.updateLastValues();
@@ -140,6 +140,23 @@ export class PaymentItemComponent implements OnInit {
         }
       );
     }
+    this.availableUsers = this.completerService
+      .local(
+        this.memberChanged$.pipe(
+          map((_) => {
+            return teamUsers.filter((user) => {
+              return this.payment.team.find((member: ContractUserPayment) =>
+                this.userService.isEqual(user, member.user)
+              ) === undefined
+                ? true
+                : false;
+            });
+          })
+        ),
+        'fullName',
+        'fullName'
+      )
+      .imageField('profilePicture');
   }
 
   registerPayment(): void {
@@ -175,6 +192,7 @@ export class PaymentItemComponent implements OnInit {
     };
     this.userSearch = '';
     this.updateTotal();
+    this.memberChanged$.next(true);
   }
 
   updateValue(idx: number): void {

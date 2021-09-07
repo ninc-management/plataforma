@@ -330,7 +330,7 @@
           id="input-user"
           name="userList"
           [selectedText]="userService.idToName(userPayment.user)"
-          [dataService]="userData"
+          [dataService]="availableUsers"
           [minSearchLength]="0"
           [placeholder]="'Digite o nome do colaborador'"
           [textNoResults]="
@@ -523,7 +523,11 @@
             status="basic"
             icon="trash-2-outline"
             pack="eva"
-            (click)="payment.team.splice(i, 1); updateTotal()"
+            (click)="
+              payment.team.splice(i, 1);
+              updateTotal();
+              memberChanged$.next(true)
+            "
             [options]="{ animation: { type: 'shake' } }"
           ></nb-icon>
         </div>
