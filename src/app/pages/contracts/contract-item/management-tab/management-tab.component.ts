@@ -27,6 +27,20 @@ export class ManagementTabComponent implements OnInit {
     'Concluído',
   ];
 
+  avaliableActionStatus = [
+    'Briefing',
+    'Anteprojeto',
+    'Estudo preliminar',
+    'Projeto básico',
+    'Projeto executivo',
+    'Campo',
+    'Prioridade',
+    'Análise externa',
+    'Espera',
+    'Finalização',
+    'Concluído',
+  ];
+
   constructor(
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
@@ -55,4 +69,6 @@ export class ManagementTabComponent implements OnInit {
     }
     return '';
   }
+
+  registerAction() {}
 }
