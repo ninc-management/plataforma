@@ -734,7 +734,9 @@
     </form>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" responsive>
-    <ngx-management-tab></ngx-management-tab>
+    <ngx-management-tab
+      [contract]='contract'
+    ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <div class="row">
