@@ -157,7 +157,9 @@ export class UserService implements OnDestroy {
       .subscribe(() => {
         if (isCurrentUser) {
           this._currentUser$.next(cloneDeep(user));
-          if (callback !== undefined) callback();
+          if (callback !== undefined) {
+            setTimeout(callback, 100);
+          }
         }
       });
   }
