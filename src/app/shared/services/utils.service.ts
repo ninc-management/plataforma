@@ -176,8 +176,14 @@ export class UtilsService {
   }
 
   nameSort(direction = 1, a: string, b: string): number {
-    return a.normalize('NFD').replace(/[\u0300-\u036f]/g, '') <
-      b.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    return a
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') <
+      b
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
       ? -1 * direction
       : direction;
   }
