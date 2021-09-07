@@ -58,7 +58,9 @@
                 [attr.aria-invalid]="status.invalid && status.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
-                <nb-option *ngFor="let status of STATOOS" [value]="status">{{ status }}</nb-option>
+                <nb-option *ngFor="let status of STATOOS" [value]="status">
+                  {{ status }}
+                </nb-option>
               </nb-select>
             </div>
           </div>
@@ -149,8 +151,8 @@
                   O nome do cliente é obrigatório!
                 </p>
                 <p class="caption status-danger" *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength">
-                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a
-                  {{ validation.contractor.maxLength }} caracteres
+                  O nome do cliente deve conter entre
+                  {{ validation.contractor.minLength }} a {{ validation.contractor.maxLength }} caracteres
                 </p>
               </ng-container>
             </div>
@@ -196,8 +198,8 @@
           <ng-container *ngIf="name.invalid && name.touched">
             <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
             <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
-              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a
-              {{ validation.name.maxLength }} caracteres
+              O nome do empreendimento deve conter entre
+              {{ validation.name.minLength }} a {{ validation.name.maxLength }} caracteres
             </p>
           </ng-container>
         </div>
@@ -718,7 +720,9 @@
                 [attr.aria-invalid]="total.invalid && total.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
-                <nb-option *ngFor="let interest of INTERESTS" [value]="interest">{{ interest }}</nb-option>
+                <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
+                  {{ interest }}
+                </nb-option>
               </nb-select>
             </div>
           </div>
@@ -728,6 +732,9 @@
         </button>
       </fieldset>
     </form>
+  </nb-tab>
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" responsive>
+    <ngx-management-tab></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <div class="row">
@@ -1020,7 +1027,7 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right">
+          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
             <span
               class="mr-1"
               [nbTooltip]="receipt.paid ? 'Pago' : 'Não pago'"
@@ -1069,7 +1076,7 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right">
+          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
             <span
               class="mr-1"
               [nbTooltip]="payment.paid ? 'Pago' : 'Não pago'"
@@ -1159,7 +1166,9 @@
                   <div class="col">{{ expense.description }}</div>
                   <div class="col-md-auto">
                     <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-                    <span style="vertical-align: 0.1em">{{ expense.value }}</span>
+                    <span style="vertical-align: 0.1em">
+                      {{ expense.value }}
+                    </span>
                   </div>
                   <div class="col-md-auto">
                     <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
