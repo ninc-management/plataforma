@@ -1,1 +1,154 @@
-<p>management-tab works!</p>
+<div class="row">
+  <div class="col-4">
+    <div class="form-control-group">
+      <label class="label" for="input-code">Código do Contrato:</label>
+      <input
+        nbInput
+        [(ngModel)]="contract.code"
+        #code="ngModel"
+        id="input-code"
+        name="code"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-5">
+    <div class="form-control-group">
+      <label class="label" for="input-contractor">Cliente:</label>
+      <input
+        nbInput
+        [(ngModel)]="contract.contractor"
+        #contractor="ngModel"
+        id="input-contractor"
+        name="contractor"
+        fullWidth
+        fieldSize="large"
+        [nbTooltip]="tooltipText()"
+        nbTooltipPlacement="top"
+        nbTooltipStatus="primary"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="form-control-group">
+      <label class="label" for="input-model">Modelo:</label>
+      <!-- Aguardar o Augusto terminar o novo completer -->
+      <input
+        nbInput
+        name="model"
+        placeholder="Modelo"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-2">
+    <div class="form-control-group">
+      <label class="label" for="input-start-date">Início:</label>
+      <input
+        nbInput
+        [(ngModel)]="contract.created"
+        #startdate="ngModel"
+        id="input-start-date"
+        name="start-date"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-2">
+    <div class="form-control-group">
+      <!-- Aprimorar quando adicionar data final no contrato -->
+      <label class="label" for="input-end-date">Fim:</label>
+      <input
+        nbInput
+        id="input-end-date"
+        name="end-date"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-2">
+    <div class="form-control-group">
+      <!-- Aprimorar quando adicionar data fim ao contrato -->
+      <label class="label" for="input-remaining-days">Dias restantes:</label>
+      <input
+        nbInput
+        id="input-remaining-days"
+        name="remaining-days"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="form-control-group">
+      <label class="label" for="input-responsible">Responsável:</label>
+      <input
+        nbInput
+        [(ngModel)]="responsible"
+        #author="ngModel"
+        id="input-responsible"
+        name="responsible"
+        fullWidth
+        fieldSize="large"
+        [readonly]="true"
+      />
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="form-control-group">
+      <label class="label" for="input-management-status">
+        Status de gestão:
+      </label>
+      <nb-select
+        [(ngModel)]="managementStatus"
+        #managementstatus="ngModel"
+        id="input-management-status"
+        name="management-status"
+        placeholder="Selecione o status"
+        fullWidth
+        size="large"
+        [status]="
+          managementstatus.dirty
+            ? managementstatus.invalid
+              ? 'danger'
+              : 'success'
+            : 'basic'
+        "
+        [attr.aria-invalid]="
+          managementstatus.invalid && managementstatus.touched ? true : null
+        "
+      >
+        <nb-option *ngFor="let status of avaliableStatus" [value]="status">
+          {{ status }}
+        </nb-option>
+      </nb-select>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="form-control-group">
+      <label class="label" for="input-observations">Observações:</label>
+      <!-- Aprimorar quando adicionar observações no model -->
+      <textarea
+        nbInput
+        id="input-observations"
+        name="observations"
+        fullWidth
+        fieldSize="large"
+      ></textarea>
+    </div>
+  </div>
+</div>
