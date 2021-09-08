@@ -1,30 +1,50 @@
-<div class="completer-holder" ctrCompleter #holder>
-  <input
-    nbInput
-    ctrInput
-    [status]="status"
-    [fullWidth]="fullWidth"
-    [fieldSize]="fieldSize"
-    [clearSelected]="clearSelected"
-    [overrideSuggested]="overrideSuggested"
-    [fillHighlighted]="fillHighlighted"
-    [openOnFocus]="openOnFocus"
-    [openOnClick]="openOnClick"
-    [selectOnClick]="selectOnClick"
-    [selectOnFocus]="selectOnFocus"
-    [(ngModel)]="searchStr"
-    #inputCompleter="ngModel"
-    [attr.name]="inputName"
-    [attr.maxlength]="maxChars"
-    [tabindex]="fieldTabindex"
-    [disabled]="disableInput"
-    (blur)="onBlur()"
-    (focus)="onFocus()"
-    [placeholder]="placeholder"
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    [nbTooltip]="tooltipFunction(this.inputObject)"
+<input
+  #autoInput
+  nbInput
+  [status]="status"
+  [fullWidth]="fullWidth"
+  [fieldSize]="fieldSize"
+  [ngModel]="searchStr"
+  (ngModelChange)="onModelChange($event)"
+  (blur)="onBlur()"
+  #inputCompleter="ngModel"
+  [attr.name]="inputName"
+  [attr.maxlength]="maxChars"
+  [disabled]="disabled"
+  [placeholder]="placeholder"
+  [nbTooltip]="tooltipFunction(this.inputObject)"
+  [nbTooltipTrigger]="
+    isPhone || tooltipFunction(this.inputObject) == ''
+      ? tooltipTriggers.NOOP
+      : tooltipTriggers.HINT
+  "
+  nbTooltipPlacement="top"
+  nbTooltipStatus="primary"
+  nbTooltipAdjustment="noop"
+  type="text"
+  autocomplete="off"
+  [focusInputOnValueChange]="false"
+  [nbAutocomplete]="autoNgModel"
+/>
+
+<nb-autocomplete #autoNgModel (selectedChange)="onSelect($event)">
+  <nb-option
+    *ngIf="searchActive && displaySearching"
+    class="completer-searching"
+  >
+    {{ textSearching }}
+  </nb-option>
+  <nb-option
+    *ngIf="!searchActive && (!data$ || (filteredDataIsEmpty$ | async))"
+    class="completer-no-results"
+  >
+    {{ textNoResults }}
+  </nb-option>
+  <nb-option
+    class="completer-row-wrapper"
+    *ngFor="let item of filteredData$ | async; let rowIndex = index"
+    [value]="item"
+    [nbTooltip]="tooltipFunction(item)"
     [nbTooltipTrigger]="
       isPhone || tooltipFunction(this.inputObject) == ''
         ? tooltipTriggers.NOOP
@@ -33,80 +53,19 @@
     nbTooltipPlacement="top"
     nbTooltipStatus="primary"
     nbTooltipAdjustment="noop"
-  />
-
-  <div
-    class="completer-dropdown-holder"
-    [ngStyle]="{ 'width.px': holder.offsetWidth }"
-    [ngClass]="{ hidden: focused ? false : true }"
-    *ctrList="
-      dataService;
-      minSearchLength: minSearchLength;
-      pause: pause;
-      autoMatch: autoMatch;
-      let items = results;
-      let searchActive = searching;
-      let isInitialized = searchInitialized
-    "
   >
-    <nb-list
-      class="completer-dropdown"
-      ctrDropdown
-      *ngIf="isInitialized && focused"
-    >
-      <nb-list-item
-        *ngIf="searchActive && displaySearching"
-        class="completer-searching"
-      >
-        {{ textSearching }}
-      </nb-list-item>
-      <nb-list-item
-        *ngIf="!searchActive && (!items || items.length === 0)"
-        class="completer-no-results"
-      >
-        {{ textNoResults }}
-      </nb-list-item>
-      <nb-list-item
-        class="completer-row-wrapper"
-        *ngFor="let item of items; let rowIndex = index"
-        [nbTooltip]="tooltipFunction(item.originalObject)"
-        [nbTooltipTrigger]="
-          isPhone || tooltipFunction(this.inputObject) == ''
-            ? tooltipTriggers.NOOP
-            : tooltipTriggers.HINT
-        "
-        nbTooltipPlacement="top"
-        nbTooltipStatus="primary"
-        nbTooltipAdjustment="noop"
-      >
-        <div class="completer-row row" [ctrRow]="rowIndex" [dataItem]="item">
-          <div *ngIf="showAvatar" class="col" class="completer-image-holder">
-            <nb-user
-              class="completer-image"
-              [onlyPicture]="true"
-              [name]="item.title"
-              [picture]="item.image"
-            ></nb-user>
-          </div>
-          <div class="col" style="display: flex; align-items: center">
-            <completer-list-item
-              class="completer-title"
-              [text]="item.title"
-              [matchClass]="matchClass ? matchClass : ''"
-              [searchStr]="searchStr"
-              [type]="'title'"
-            ></completer-list-item>
-            <completer-list-item
-              *ngIf="item.description && item.description != ''"
-              class="completer-description"
-              [text]="item.description"
-              [matchClass]="matchClass ? matchClass : ''"
-              [searchStr]="searchStr"
-              [type]="'description'"
-            ></completer-list-item>
-          </div>
-        </div>
-      </nb-list-item>
-    </nb-list>
-  </div>
-</div>
+    <div class="completer-row row">
+      <div *ngIf="showAvatar" class="col" class="completer-image-holder">
+        <nb-user
+          class="completer-image"
+          [onlyPicture]="true"
+          [name]="item[nameField]"
+          [picture]="item[pictureField]"
+        ></nb-user>
+      </div>
+      <div class="col" style="display: flex; align-items: center">
+        {{ item[nameField] }}
+      </div>
+    </div>
+  </nb-option>
+</nb-autocomplete>

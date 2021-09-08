@@ -31,8 +31,8 @@ import {
   NbRadioModule,
   NbIconLibraries,
   NbToastrModule,
+  NbAutocompleteModule,
 } from '@nebular/theme';
-import { Ng2CompleterModule } from 'ng2-completer';
 import {
   NbAuthModule,
   NbAuthService,
@@ -156,6 +156,7 @@ const IMPORTS = [
   NbActionsModule,
   NbAlertModule,
   NbAuthModule,
+  NbAutocompleteModule,
   NbButtonModule,
   NbCardModule,
   NbCheckboxModule,
@@ -182,7 +183,6 @@ const IMPORTS = [
   NbTooltipModule,
   NbToastrModule.forRoot(),
   NbUserModule,
-  Ng2CompleterModule,
   PagesModule,
   PdfViewerModule,
   ReactiveFormsModule,

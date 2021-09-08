@@ -7,8 +7,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Ng2CompleterModule } from 'ng2-completer';
 import {
+  NbAutocompleteModule,
   NbInputModule,
   NbListModule,
   NbTooltipModule,
@@ -24,8 +24,8 @@ import { NbCompleterComponent } from './completer.component';
     NbInputModule,
     NbListModule,
     NbTooltipModule,
+    NbAutocompleteModule,
     NbUserModule,
-    Ng2CompleterModule,
   ],
   declarations: [NbCompleterComponent],
   exports: [NbCompleterComponent],

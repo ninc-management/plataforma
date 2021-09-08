@@ -18,7 +18,6 @@ import {
   NbDatepickerModule,
   NbAlertModule,
 } from '@nebular/theme';
-import { Ng2CompleterModule } from 'ng2-completer';
 import { ThemeModule } from '../@theme/theme.module';
 import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
 import { PagesComponent } from './pages.component';
@@ -71,7 +70,6 @@ import { TeamItemComponent } from './teams/team-item/team-item.component';
     NbTooltipModule,
     NbUserModule,
     Ng2SmartTableModule,
-    Ng2CompleterModule,
     PagesRoutingModule,
     SharedModule,
     ThemeModule,

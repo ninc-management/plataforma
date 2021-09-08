@@ -11,11 +11,6 @@ import { of as observableOf } from 'rxjs';
 
 import { throwIfAlreadyLoaded } from './module-import-guard';
 import { AnalyticsService, LayoutService, SeoService } from './utils';
-import {
-  CompleterService,
-  LocalDataFactory,
-  RemoteDataFactory,
-} from 'ng2-completer';
 import { RoleProvider } from '../shared/providers/role.provider';
 
 const socialLinks = [
@@ -143,9 +138,6 @@ export const NB_CORE_PROVIDERS = [
   AnalyticsService,
   LayoutService,
   SeoService,
-  CompleterService,
-  LocalDataFactory,
-  RemoteDataFactory,
 ];
 
 @NgModule({

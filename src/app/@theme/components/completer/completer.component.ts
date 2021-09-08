@@ -7,27 +7,17 @@ import {
   OnInit,
   ViewChild,
   forwardRef,
-  OnDestroy,
+  ElementRef,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-
-import { CtrCompleter, CompleterData, CompleterItem } from 'ng2-completer';
-import { Subject } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { NbTrigger, NbComponentStatus, NbComponentSize } from '@nebular/theme';
 
 const MAX_CHARS = 524288; // the default max length per the html maxlength attribute
 const MIN_SEARCH_LENGTH = 3;
-const PAUSE = 10;
 const TEXT_SEARCHING = 'Procurando..';
 const TEXT_NO_RESULTS = 'Nenhum resultado encontrado';
-const CLEAR_TIMEOUT = 50;
-
-function isNil(value: any) {
-  return typeof value === 'undefined' || value === null;
-}
-
-// tslint:disable-next-line:no-empty
 const noop = () => {};
 
 const COMPLETER_CONTROL_VALUE_ACCESSOR = {
@@ -42,77 +32,108 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
   styleUrls: ['./completer.component.scss'],
   providers: [COMPLETER_CONTROL_VALUE_ACCESSOR],
 })
-/* eslint-disable @typescript-eslint/indent */
-export class NbCompleterComponent
-  implements OnInit, OnDestroy, ControlValueAccessor
-{
-  @Input() public dataService!: CompleterData;
-  @Input() public inputName = '';
-  @Input() public pause = PAUSE;
-  @Input() public minSearchLength = MIN_SEARCH_LENGTH;
-  @Input() public maxChars = MAX_CHARS;
-  @Input() public overrideSuggested = false;
-  @Input() public fillHighlighted = false;
-  @Input() public clearSelected = false;
-  @Input() public openOnFocus = true;
-  @Input() public openOnClick = false;
-  @Input() public selectOnClick = false;
-  @Input() public selectOnFocus = true;
-  @Input() public placeholder = '';
-  @Input() public selectedText: string | undefined;
-  @Input() public matchClass: string | undefined;
-  @Input() public textSearching = TEXT_SEARCHING;
-  @Input() public textNoResults = TEXT_NO_RESULTS;
-  @Input() public fieldTabindex: number | undefined;
-  @Input() public autoMatch = false;
-  @Input() public disableInput = false;
-  @Input() public fullWidth = false;
-  @Input() public fieldSize = 'normal' as NbComponentSize;
-  @Input() public status = 'basic' as NbComponentStatus;
-  @Input() public isPhone = false;
-  @Input() public showAvatar = true;
-  @Input() public inputObject: any | undefined;
-  @Input() public tooltipFunction: (args: any) => string = function (
-    args: any
-  ) {
+export class NbCompleterComponent implements OnInit, ControlValueAccessor {
+  @Input() data$!: Observable<any>;
+  @Input() inputName = '';
+  @Input() nameField = '';
+  @Input() pictureField = '';
+  @Input() minSearchLength = MIN_SEARCH_LENGTH;
+  @Input() maxChars = MAX_CHARS;
+  @Input() placeholder = '';
+  @Input() textSearching = TEXT_SEARCHING;
+  @Input() textNoResults = TEXT_NO_RESULTS;
+  @Input() disabled = false;
+  @Input() fullWidth = false;
+  @Input() fieldSize = 'normal' as NbComponentSize;
+  @Input() status = 'basic' as NbComponentStatus;
+  @Input() isPhone = false;
+  @Input() showAvatar = true;
+  @Input() inputObject: any | undefined;
+  @Input() tooltipFunction: (args: any) => string = function (args: any) {
     return '';
   };
-  @Output() public selected = new EventEmitter<CompleterItem>();
-  @Output() public highlighted = new EventEmitter<CompleterItem>();
-  @Output() public blur = new EventEmitter<void>();
+  @Output() selected = new EventEmitter<any>();
+  @Output() blur = new EventEmitter<void>();
 
-  public displaySearching = true;
-  public searchStr = '';
-  public focused = false;
-  public tooltipTriggers = NbTrigger;
+  @ViewChild('autoInput') input!: ElementRef;
 
-  @ViewChild(CtrCompleter, { static: true }) private completer:
-    | CtrCompleter
-    | undefined;
-  /* eslint-enable @typescript-eslint/indent */
-
-  private destroy$ = new Subject<void>();
+  searchStr = '';
+  lastSelected = '';
+  displaySearching = true;
+  isInitialized = false;
+  searchActive = false;
+  filteredData$: Observable<any[]> = of([]);
+  filteredDataIsEmpty$: Observable<boolean> = of(true);
+  tooltipTriggers = NbTrigger;
+  searchChange$ = new BehaviorSubject<boolean>(true);
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
-  private lastSelected: CompleterItem | undefined;
 
-  get value(): any {
-    return this.searchStr;
-  }
-
-  set value(v: any) {
-    if (v !== this.searchStr) {
-      this.searchStr = v;
-      this._onChangeCallback(v);
+  public ngOnInit(): void {
+    if (this.data$) {
+      this.filteredData$ = combineLatest([this.data$, this.searchChange$]).pipe(
+        map(([objs, _]) => {
+          if (objs.length == 0) return objs;
+          this.searchActive = true;
+          const filterValue = this.prepareString(this.searchStr);
+          return objs.filter((obj: any) => {
+            const result = this.prepareString(obj[this.nameField]).includes(
+              filterValue
+            );
+            this.searchActive = false;
+            return result;
+          });
+        })
+      );
+      this.filteredDataIsEmpty$ = this.filteredData$.pipe(
+        map((objs) => objs.length === 0)
+      );
     }
   }
 
-  public onTouched(): void {
-    this._onTouchedCallback();
+  prepareString(s: string): string {
+    return s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  onModelChange(event: any): void {
+    if (this.isInitialized) {
+      if (typeof event === 'string') this.searchStr = event;
+      else this.searchStr = event[this.nameField];
+      this.searchChange$.next(true);
+    }
+  }
+
+  onSelect(event: any): void {
+    if (this.isInitialized) {
+      if (event) {
+        if (typeof event === 'object') {
+          this.lastSelected = event[this.nameField];
+          this._onChangeCallback(this.searchStr);
+          this.selected.emit(event);
+        } else if (typeof event === 'string') {
+          this.lastSelected = event;
+        }
+      }
+    } else this.isInitialized = true;
+  }
+
+  onBlur(): void {
+    setTimeout(() => {
+      this.searchStr = this.lastSelected;
+      this._onTouchedCallback();
+      this.blur.emit();
+    }, 100);
   }
 
   public writeValue(value: any): void {
-    this.searchStr = value;
+    if (value != undefined || value != null) {
+      setTimeout(() => {
+        this.searchStr = value;
+      }, 100);
+    }
   }
 
   public registerOnChange(fn: any): void {
@@ -121,54 +142,5 @@ export class NbCompleterComponent
 
   public registerOnTouched(fn: any): void {
     this._onTouchedCallback = fn;
-  }
-
-  public ngOnInit(): void {
-    if (!this.completer) {
-      return;
-    }
-
-    this.completer.selected
-      .pipe(
-        filter((c): c is CompleterItem => c != null),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((item: CompleterItem) => {
-        if (item) {
-          this.selected.emit(item);
-          this.lastSelected = item;
-          this._onChangeCallback(item.title);
-        }
-      });
-    this.completer.highlighted
-      .pipe(
-        filter((c): c is CompleterItem => c != null),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((item: CompleterItem) => {
-        this.highlighted.emit(item);
-      });
-
-    if (this.textSearching === 'false') {
-      this.displaySearching = false;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  public onBlur(): void {
-    this.blur.emit();
-    setTimeout(() => {
-      this.focused = false;
-      this.searchStr = this.selectedText ? this.selectedText : '';
-    }, 500);
-    this.onTouched();
-  }
-
-  public onFocus(): void {
-    this.focused = true;
   }
 }

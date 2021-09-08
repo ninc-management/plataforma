@@ -1,41 +1,16 @@
 @import '../../styles/themes';
 
-@include nb-install-component() {
-  .completer-row-wrapper:hover {
-    background-color: nb-theme(option-hover-background-color);
-    color: nb-theme(option-hover-text);
+::ng-deep {
+  .completer-row-wrapper {
+    display: flex;
   }
 
   .completer-row {
     width: 100%;
     height: 100%;
-    padding: 1rem;
-  }
-
-  .completer-dropdown-holder {
-    position: fixed;
-    z-index: 666;
-    background: nb-theme(card-background-color);
-    border: nb-theme(card-border-width) nb-theme(card-border-style)
-      nb-theme(card-border-color);
-    border-width: 1px;
-    max-height: 300px !important;
-    overflow-y: scroll;
-    overflow-x: hidden;
-  }
-
-  .hidden {
-    visibility: hidden;
   }
 
   .completer-image {
     padding-left: 1rem;
-  }
-
-  nb-list {
-    width: 100%;
-    nb-list-item {
-      padding: 0;
-    }
   }
 }
