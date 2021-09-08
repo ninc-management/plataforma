@@ -38,6 +38,11 @@ export enum CONTRACT_STATOOS {
   ARQUIVADO = 'Arquivado',
 }
 
+export enum EXPENSE_SOURCES {
+  CAIXA_DO_CONTRATO = '000000000000000000000000',
+  CLIENTE = '000000000000000000000001',
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -385,5 +390,44 @@ export class ContractService implements OnDestroy {
     });
 
     return tmpContract;
+  }
+
+  getMemberExpensesSum(
+    user: User | string | undefined,
+    contract: Contract
+  ): string {
+    const filteredExpenses = contract.expenses
+      .filter((expense) => {
+        return (
+          expense.paid &&
+          expense.type !== EXPENSE_TYPES.APORTE &&
+          expense.type !== EXPENSE_TYPES.COMISSAO &&
+          expense.source !== EXPENSE_SOURCES.CAIXA_DO_CONTRATO &&
+          expense.source !== EXPENSE_SOURCES.CLIENTE
+        );
+      })
+      .map((expense) => expense.team)
+      .flat();
+
+    const expensesSum = filteredExpenses.reduce((sum, expense) => {
+      if (this.userService.isEqual(expense.user, user)) {
+        sum += this.stringUtil.moneyToNumber(expense.value);
+      }
+      return sum;
+    }, 0);
+
+    return this.stringUtil.numberToMoney(expensesSum);
+  }
+
+  getMemberBalance(
+    user: User | string | undefined,
+    contract: Contract
+  ): string {
+    const receiptsSum = this.receivedValue(user, contract);
+    const expensesSum = this.getMemberExpensesSum(user, contract);
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(receiptsSum) -
+        this.stringUtil.moneyToNumber(expensesSum)
+    );
   }
 }
