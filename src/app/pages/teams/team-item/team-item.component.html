@@ -5,6 +5,7 @@
         <label class="label" for="input-name">Nome do time:</label>
         <input
           nbInput
+          autofocus
           [(ngModel)]="team.name"
           #name="ngModel"
           id="input-name"
@@ -58,7 +59,7 @@
         </label>
         <nb-completer
           [(ngModel)]="leaderSearch"
-          (selected)="this.team.leader = $event.originalObject"
+          (selected)="this.team.leader = $event"
           inputName="leaderListCompleter"
           #leaderList="ngModel"
           id="input-leader"
@@ -67,10 +68,10 @@
           textNoResults="
           Não foi possível achar um associado com o nome digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="userService.idToName(this.team.leader)"
-          [dataService]="avaliableLeaders"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="avaliableLeaders"
           [required]="validation.leader.required"
           [minSearchLength]="0"
           [fullWidth]="true"
@@ -140,18 +141,18 @@
         <nb-completer
           [(ngModel)]="memberSearch"
           [inputName]="'memberListCompleter'"
-          (selected)="currentMember = $event.originalObject"
+          (selected)="currentMember = $event"
           #memberList="ngModel"
           id="input-member"
           name="memberList"
-          [selectedText]="userService.idToName(currentMember)"
-          [dataService]="availableUsers"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="availableUsers"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do membro do time'"
           [textNoResults]="
             'Não foi possível achar um membro com o nome digitado'
           "
-          [matchClass]="'match'"
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="
@@ -175,7 +176,7 @@
         status="primary"
         size="large"
         style="margin-top: 28px"
-        [disabled]="!memberList.value"
+        [disabled]="!memberList.value || currentMember._id === undefined"
         (click)="addMember()"
       >
         +

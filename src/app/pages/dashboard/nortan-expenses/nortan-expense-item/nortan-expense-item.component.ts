@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { CompleterService } from 'ng2-completer';
 import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -18,6 +17,7 @@ import { Expense } from '@models/expense';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
 import { NgForm } from '@angular/forms';
+import { of } from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'ngx-nortan-expense-item',
@@ -48,13 +48,12 @@ export class NortanExpenseItemComponent
   constructor(
     private nortanService: NortanService,
     protected stringUtil: StringUtilService,
-    protected completerService: CompleterService,
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
     public utils: UtilsService
   ) {
-    super(stringUtil, completerService, onedrive, userService);
+    super(stringUtil, onedrive, userService);
     this.expense.code = '#0';
   }
 
@@ -62,13 +61,9 @@ export class NortanExpenseItemComponent
     super.ngOnInit();
 
     const tmp = cloneDeep(this.userService.getUsers().value);
-    this.userData = this.completerService
-      .local(cloneDeep(tmp), 'fullName', 'fullName')
-      .imageField('profilePicture');
+    this.userData = of(cloneDeep(tmp));
     tmp.unshift(NORTAN);
-    this.sourceData = this.completerService
-      .local(tmp, 'fullName', 'fullName')
-      .imageField('profilePicture');
+    this.sourceData = of(tmp);
     if (this.iExpense != undefined) {
       this.expense = cloneDeep(this.iExpense);
       if (this.expense.author)

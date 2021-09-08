@@ -5,7 +5,7 @@
         <label class="label" for="input-user">Contrato:</label>
         <nb-completer
           [(ngModel)]="contractSearch"
-          (selected)="this.contract = $event.originalObject; fillContractData()"
+          (selected)="this.contract = $event; fillContractData()"
           inputName="contractListCompleter"
           #contractList="ngModel"
           id="input-contract"
@@ -14,10 +14,10 @@
           textNoResults="
           Não foi possível achar um contrato com o código digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="contract.code"
-          [dataService]="availableContractsData"
+          nameField="code"
+          pictureField="managerPicture"
+          [data$]="availableContractsData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
@@ -323,20 +323,18 @@
         <nb-completer
           [(ngModel)]="userSearch"
           [inputName]="'userListCompleter'"
-          (selected)="
-            userPayment.user = $event.originalObject; updateUserCoordinations()
-          "
+          (selected)="userPayment.user = $event; updateUserCoordinations()"
           #userList="ngModel"
           id="input-user"
           name="userList"
-          [selectedText]="userService.idToName(userPayment.user)"
-          [dataService]="availableUsers"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="availableUsers"
           [minSearchLength]="0"
           [placeholder]="'Digite o nome do colaborador'"
           [textNoResults]="
             'Não foi possível achar um colaborador com o nome digitado'
           "
-          [matchClass]="'match'"
           [fullWidth]="true"
           [fieldSize]="'large'"
           [status]="

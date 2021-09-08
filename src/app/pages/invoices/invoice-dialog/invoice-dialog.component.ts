@@ -40,6 +40,7 @@ export class InvoiceDialogComponent
   ngOnInit(): void {
     super.ngOnInit();
     if (this.invoice) this.tempInvoice = cloneDeep(this.invoice);
+    else this.invoice = new Invoice();
   }
 
   dismiss(): void {

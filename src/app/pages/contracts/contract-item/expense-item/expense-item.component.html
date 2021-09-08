@@ -5,7 +5,7 @@
         <label class="label" for="input-contract-list">Contrato:</label>
         <nb-completer
           [(ngModel)]="contractSearch"
-          (selected)="this.contract = $event.originalObject; fillContractData()"
+          (selected)="this.contract = $event; fillContractData()"
           inputName="contractListCompleter"
           #contractList="ngModel"
           id="input-contract"
@@ -14,10 +14,10 @@
           textNoResults="
           Não foi possível achar um contrato com o código digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="contract.code"
-          [dataService]="availableContracts"
+          nameField="code"
+          pictureField="managerPicture"
+          [data$]="availableContractsData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
@@ -40,7 +40,7 @@
         <label class="label" for="input-user">Autor:</label>
         <nb-completer
           [(ngModel)]="userSearch"
-          (selected)="expense.author = $event.originalObject"
+          (selected)="expense.author = $event"
           inputName="userListCompleter"
           #userList="ngModel"
           id="input-user"
@@ -49,10 +49,10 @@
           textNoResults="
           Não foi possível achar um colaborador com o nome digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="userService.idToName(expense.author)"
-          [dataService]="userData"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="userData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
@@ -201,8 +201,7 @@
         <nb-completer
           [(ngModel)]="sourceSearch"
           (selected)="
-            expense.source = $event.originalObject;
-            utils.forceValidatorUpdate(value)
+            expense.source = $event; utils.forceValidatorUpdate(value)
           "
           inputName="sourceListCompleter"
           #sourceList="ngModel"
@@ -212,10 +211,10 @@
           textNoResults="
           Não foi possível achar um colaborador com o nome digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="userService.idToName(expense.source)"
-          [dataService]="sourceData"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="sourceData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { take, takeUntil, skip, map } from 'rxjs/operators';
-import { CompleterData, CompleterService } from 'ng2-completer';
 import {
   ContractService,
   CONTRACT_STATOOS,
@@ -28,6 +27,7 @@ import {
 import { User } from '@models/user';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import * as expense_validation from 'app//shared/expense-validation.json';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -41,6 +41,7 @@ export class ExpenseItemComponent
   @Input()
   contract = new Contract();
   @Input() expenseIndex?: number;
+  @Input() availableContracts: Contract[] = [];
   hasInitialContract = true;
   validation = (expense_validation as any).default;
   USER_COORDINATIONS: string[] = [];
@@ -71,7 +72,9 @@ export class ExpenseItemComponent
   splitSelectedMember = new User();
 
   contractSearch = '';
-  availableContracts: CompleterData = this.completerService.local([]);
+  get availableContractsData(): Observable<Contract[]> {
+    return of(this.availableContracts);
+  }
 
   lastType = EXPENSE_TYPES.MATERIAL;
 
@@ -106,70 +109,19 @@ export class ExpenseItemComponent
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     protected stringUtil: StringUtilService,
-    protected completerService: CompleterService,
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
     public utils: UtilsService
   ) {
-    super(stringUtil, completerService, onedrive, userService);
+    super(stringUtil, onedrive, userService);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
 
     if (this.contract._id) this.fillContractData();
-    else {
-      this.hasInitialContract = false;
-      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-        this.availableContracts = this.completerService
-          .local(
-            this.contractService.getContracts().pipe(
-              map((contracts) => {
-                contracts = contracts.filter(
-                  (contract) =>
-                    contract.invoice &&
-                    (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO ||
-                      contract.status == CONTRACT_STATOOS.A_RECEBER) &&
-                    (this.invoiceService.isInvoiceAuthor(
-                      contract.invoice,
-                      user
-                    ) ||
-                      this.invoiceService.isInvoiceMember(
-                        contract.invoice,
-                        user
-                      ))
-                );
-                contracts.map((contract) => {
-                  contract.code = this.invoiceService.idToCode(
-                    contract.invoice
-                  );
-                  contract.balance = this.contractService.balance(contract);
-                  if (contract.invoice) {
-                    const invoice = this.invoiceService.idToInvoice(
-                      contract.invoice
-                    );
-                    if (invoice.author) {
-                      const managerPicture = this.userService.idToUser(
-                        invoice.author
-                      ).profilePicture;
-                      if (managerPicture)
-                        contract.managerPicture = managerPicture;
-                    }
-                  }
-                  return contract;
-                });
-                return contracts.sort((a, b) =>
-                  this.utils.codeSort(-1, a.code, b.code)
-                );
-              })
-            ),
-            'code',
-            'code'
-          )
-          .imageField('managerPicture');
-      });
-    }
+    else this.hasInitialContract = false;
 
     if (!this.expense.splitType)
       this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
@@ -194,9 +146,7 @@ export class ExpenseItemComponent
         return;
       })
       .filter((user: User | undefined): user is User => user !== undefined);
-    this.userData = this.completerService
-      .local(tmp, 'fullName', 'fullName')
-      .imageField('profilePicture');
+    this.userData = of(tmp);
     tmp.unshift(CONTRACT_BALANCE);
     tmp.unshift(CLIENT);
     this.sourceArray.next(tmp);
@@ -246,9 +196,7 @@ export class ExpenseItemComponent
         })
       );
 
-    this.sourceData = this.completerService
-      .local(this.sourceArray.asObservable(), 'fullName', 'fullName')
-      .imageField('profilePicture');
+    this.sourceData = this.sourceArray;
     this.userSearch = this.expense.author
       ? this.userService.idToUser(this.expense.author)?.fullName
       : '';

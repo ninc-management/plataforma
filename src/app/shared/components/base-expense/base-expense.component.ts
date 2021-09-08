@@ -18,8 +18,7 @@ import { SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { CompleterData, CompleterService } from 'ng2-completer';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 
 @Component({
@@ -51,15 +50,14 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
   maxFileSize = 4;
 
   userSearch = '';
-  userData: CompleterData = this.completerService.local([]);
+  userData: Observable<User[]> = of([]);
 
   sourceSearch = '';
-  sourceData: CompleterData = this.completerService.local([]);
+  sourceData: Observable<User[]> = of([]);
   protected sourceArray = new BehaviorSubject<User[]>([]);
 
   constructor(
     protected stringUtil: StringUtilService,
-    protected completerService: CompleterService,
     protected onedrive: OnedriveService,
     public userService: UserService
   ) {}

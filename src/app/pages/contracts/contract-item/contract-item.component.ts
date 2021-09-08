@@ -1,9 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { CompleterService, CompleterData } from 'ng2-completer';
 import { LocalDataSource } from 'ng2-smart-table';
 import { map, take } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -32,6 +31,7 @@ import {
   ContractTeamMember,
 } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
+import { User } from '@models/user';
 
 interface ExpenseTypesSum {
   type: string;
@@ -91,7 +91,7 @@ export class ContractItemComponent implements OnInit {
   teamMember: any = {};
   memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  availableUsers: CompleterData = this.completerService.local([]);
+  availableUsers: Observable<User[]> = of([]);
 
   searchQuery = '';
   get filtredExpenses(): ContractExpense[] {
@@ -227,7 +227,6 @@ export class ContractItemComponent implements OnInit {
 
   constructor(
     private dialogService: NbDialogService,
-    private completerService: CompleterService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     public stringUtil: StringUtilService,
@@ -289,23 +288,20 @@ export class ContractItemComponent implements OnInit {
       });
     }
     this.updateTeamTotal();
-    this.availableUsers = this.completerService
-      .local(
-        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-          map(([users, _]) => {
-            return users.filter((user) => {
-              return this.contract.team.find((member: ContractTeamMember) =>
-                this.userService.isEqual(user, member.user)
-              ) === undefined
-                ? true
-                : false;
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.availableUsers = combineLatest([
+      this.userService.getUsers(),
+      this.memberChanged$,
+    ]).pipe(
+      map(([users, _]) => {
+        return users.filter((user) => {
+          return this.contract.team.find((member: ContractTeamMember) =>
+            this.userService.isEqual(user, member.user)
+          ) === undefined
+            ? true
+            : false;
+        });
+      })
+    );
     this.loadTableExpenses();
   }
 

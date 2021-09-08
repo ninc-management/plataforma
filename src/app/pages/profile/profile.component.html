@@ -611,18 +611,18 @@
                     <nb-completer
                       [(ngModel)]="userSearch"
                       [inputName]="'userListCompleter'"
-                      (selected)="userAER = $event.originalObject"
+                      (selected)="userAER = $event"
                       #userList="ngModel"
                       id="input-user"
                       name="userList"
-                      [selectedText]="userAER?.fullName"
-                      [dataService]="availableUsers"
+                      nameField="fullName"
+                      pictureField="profilePicture"
+                      [data$]="availableUsers"
                       [minSearchLength]="0"
                       [placeholder]="'Digite e selecione o nome do colaborador'"
                       [textNoResults]="
                         'Não foi possível achar um colaborador com o nome digitado'
                       "
-                      [matchClass]="'match'"
                       [fullWidth]="true"
                       [fieldSize]="'large'"
                       [disabled]="!isEditing"
@@ -665,7 +665,11 @@
                       <div class="col">
                         {{ userService.idToName(AERuser) }}
                       </div>
-                      <div class="col-auto" style="text-align: right">
+                      <div
+                        class="col-auto"
+                        style="text-align: right"
+                        *ngIf="isEditing"
+                      >
                         <nb-icon
                           class="xIcon"
                           status="basic"

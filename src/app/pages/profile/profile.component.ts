@@ -10,8 +10,7 @@ import {
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { CompleterData, CompleterService } from 'ng2-completer';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
@@ -71,7 +70,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   userAER = new User();
   memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  availableUsers: CompleterData = this.completerService.local([]);
+  availableUsers: Observable<User[]> = of([]);
 
   get positionMessage(): string {
     let response = '';
@@ -92,7 +91,6 @@ export class ProfileComponent implements OnInit, DoCheck {
     private departmentService: DepartmentService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
-    private completerService: CompleterService,
     public userService: UserService,
     public accessChecker: NbAccessChecker,
     public utils: UtilsService
@@ -120,25 +118,22 @@ export class ProfileComponent implements OnInit, DoCheck {
     this.buildPositionsList();
     this.buildLevelList();
     this.refreshExpertises();
-    this.availableUsers = this.completerService
-      .local(
-        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-          map(([users, _]) => {
-            return users.filter((user) => {
-              return (
-                (this.user.AER.find((member) =>
-                  this.userService.isEqual(user, member)
-                ) === undefined
-                  ? true
-                  : false) && !this.userService.isEqual(user, this.user)
-              );
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.availableUsers = combineLatest([
+      this.userService.getUsers(),
+      this.memberChanged$,
+    ]).pipe(
+      map(([users, _]) => {
+        return users.filter((user) => {
+          return (
+            (this.user.AER.find((member) =>
+              this.userService.isEqual(user, member)
+            ) === undefined
+              ? true
+              : false) && !this.userService.isEqual(user, this.user)
+          );
+        });
+      })
+    );
 
     this.checkPrivileges();
   }

@@ -209,6 +209,7 @@
             <ngx-expense-item
               [contract]="contract"
               [expenseIndex]="expenseIndex"
+              [availableContracts]="availableContracts"
               (submit)="dismiss()"
               *ngIf="componentType == types.EXPENSE"
             ></ngx-expense-item>

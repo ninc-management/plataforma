@@ -11,11 +11,10 @@ import {
   Inject,
   Optional,
 } from '@angular/core';
-import { CompleterService, CompleterData } from 'ng2-completer';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { map, take, takeUntil } from 'rxjs/operators';
-import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -37,10 +36,10 @@ import {
   InvoiceProduct,
   InvoiceStage,
 } from '@models/invoice';
+import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
-import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -101,11 +100,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   memberChanged$ = new BehaviorSubject<boolean>(true);
   contractorSearch = '';
-  contractorData: CompleterData = this.completerService.local([]);
+  contractorData: Observable<Contractor[]> = of([]);
   userSearch = '';
-  availableUsers: CompleterData = this.completerService.local([]);
+  availableUsers: Observable<User[]> = of([]);
   authorSearch = '';
-  authorData: CompleterData = this.completerService.local([]);
+  authorData: Observable<User[]> = of([]);
 
   DEPARTMENTS: string[] = [];
   COORDINATIONS: string[] = [];
@@ -118,7 +117,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private contractService: ContractService,
-    private completerService: CompleterService,
     public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
@@ -207,38 +205,26 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.invoiceNumber = size;
         this.updateCode();
       });
-    this.contractorService
-      .getContractors()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((contractors) => {
-        this.contractorData = this.completerService.local(
-          contractors,
-          'fullName,document',
-          'fullName'
-        );
-      });
 
-    this.availableUsers = this.completerService
-      .local(
-        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-          map(([users, _]) => {
-            return users.filter((user) => {
-              return (
-                (this.tempInvoice.team.find((member: InvoiceTeamMember) =>
-                  this.userService.isEqual(user, member.user)
-                ) === undefined
-                  ? true
-                  : false) &&
-                !this.userService.isEqual(user, this.tempInvoice.author)
-              );
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.contractorData = this.contractorService.getContractors();
 
+    this.availableUsers = combineLatest([
+      this.userService.getUsers(),
+      this.memberChanged$,
+    ]).pipe(
+      map(([users, _]) => {
+        return users.filter((user) => {
+          return (
+            (this.tempInvoice.team.find((member: InvoiceTeamMember) =>
+              this.userService.isEqual(user, member.user)
+            ) === undefined
+              ? true
+              : false) &&
+            !this.userService.isEqual(user, this.tempInvoice.author)
+          );
+        });
+      })
+    );
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.accessChecker
         .isGranted('aer', 'invoice-author')
@@ -248,19 +234,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
             const u = cloneDeep(user);
             if (u.AER) {
               u.AER.unshift(u._id);
-              this.authorData = this.completerService
-                .local(
-                  u.AER.filter((u): u is User | string => u != undefined).map(
-                    (u) => this.userService.idToUser(u)
-                  ),
-                  'fullName',
-                  'fullName'
+              this.authorData = of(
+                u.AER.filter((u): u is User | string => u != undefined).map(
+                  (u) => this.userService.idToUser(u)
                 )
-                .imageField('profilePicture');
+              );
               if (
                 this.tempInvoice.author &&
                 u.AER.includes(
-                  this.userService.idToUser(this.tempInvoice.author)._id
+                  this.userService.idToUser(this.tempInvoice.author)?._id
                 )
               )
                 this.authorSearch = this.userService.idToName(

@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { CompleterData, CompleterService } from 'ng2-completer';
 import { cloneDeep } from 'lodash';
 import {
   ContractService,
@@ -10,6 +9,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import * as contract_validation from '../../../../shared/payment-validation.json';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -38,20 +38,14 @@ export class ReceiptItemComponent implements OnInit {
   };
 
   contractSearch = '';
-  get availableContractsData(): CompleterData {
-    if (this.availableContracts.length === 0) {
-      return this.completerService.local(this.availableContracts);
-    }
-    return this.completerService
-      .local(this.availableContracts, 'code', 'code')
-      .imageField('managerPicture');
+  get availableContractsData(): Observable<Contract[]> {
+    return of(this.availableContracts);
   }
 
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    private completerService: CompleterService,
     public utils: UtilsService
   ) {}
 

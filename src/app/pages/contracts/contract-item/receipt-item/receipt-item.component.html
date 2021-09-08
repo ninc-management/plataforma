@@ -5,7 +5,7 @@
         <label class="label" for="input-user">Contrato:</label>
         <nb-completer
           [(ngModel)]="contractSearch"
-          (selected)="this.contract = $event.originalObject; fillContractData()"
+          (selected)="this.contract = $event; fillContractData()"
           inputName="contractListCompleter"
           #contractList="ngModel"
           id="input-contract"
@@ -14,10 +14,10 @@
           textNoResults="
           Não foi possível achar um contrato com o código digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="contract.code"
-          [dataService]="availableContractsData"
+          nameField="code"
+          pictureField="managerPicture"
+          [data$]="availableContractsData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="

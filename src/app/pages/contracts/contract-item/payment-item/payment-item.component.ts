@@ -7,7 +7,6 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
-import { CompleterService, CompleterData } from 'ng2-completer';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -25,6 +24,7 @@ import { User } from '@models/user';
 import * as contract_validation from '../../../../shared/payment-validation.json';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -67,16 +67,11 @@ export class PaymentItemComponent implements OnInit {
 
   memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
-  availableUsers: CompleterData = this.completerService.local([]);
+  availableUsers: Observable<User[]> = of([]);
 
   contractSearch = '';
-  get availableContractsData(): CompleterData {
-    if (this.availableContracts.length === 0) {
-      return this.completerService.local(this.availableContracts);
-    }
-    return this.completerService
-      .local(this.availableContracts, 'code', 'code')
-      .imageField('managerPicture');
+  get availableContractsData(): Observable<Contract[]> {
+    return of(this.availableContracts);
   }
 
   get is100(): boolean {
@@ -91,7 +86,6 @@ export class PaymentItemComponent implements OnInit {
   constructor(
     public departmentService: DepartmentService,
     private contractService: ContractService,
-    private completerService: CompleterService,
     private brMask: BrMaskDirective,
     public userService: UserService,
     public stringUtil: StringUtilService,
@@ -140,23 +134,17 @@ export class PaymentItemComponent implements OnInit {
         }
       );
     }
-    this.availableUsers = this.completerService
-      .local(
-        this.memberChanged$.pipe(
-          map((_) => {
-            return teamUsers.filter((user) => {
-              return this.payment.team.find((member: ContractUserPayment) =>
-                this.userService.isEqual(user, member.user)
-              ) === undefined
-                ? true
-                : false;
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.availableUsers = this.memberChanged$.pipe(
+      map((_) => {
+        return teamUsers.filter((user) => {
+          return this.payment.team.find((member: ContractUserPayment) =>
+            this.userService.isEqual(user, member.user)
+          ) === undefined
+            ? true
+            : false;
+        });
+      })
+    );
   }
 
   registerPayment(): void {

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CompleterData, CompleterService } from 'ng2-completer';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -26,12 +25,11 @@ export class TeamItemComponent implements OnInit {
   leaderSearch = '';
   memberSearch = '';
   currentMember = new User();
-  availableUsers: CompleterData = this.completerService.local([]);
-  avaliableLeaders: CompleterData = this.completerService.local([]);
+  availableUsers: Observable<User[]> = of([]);
+  avaliableLeaders: Observable<User[]> = of([]);
   COORDINATIONS: string[] = [];
 
   constructor(
-    private completerService: CompleterService,
     private teamService: TeamService,
     public utils: UtilsService,
     public userService: UserService,
@@ -46,43 +44,35 @@ export class TeamItemComponent implements OnInit {
       this.team = cloneDeep(this.iTeam);
       this.leaderSearch = this.userService.idToName(this.team.leader);
     }
-    this.availableUsers = this.completerService
-      .local(
-        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-          map(([users, _]) => {
-            return users.filter((user) => {
-              return this.team.members.find(
-                (member: User | string | undefined) =>
-                  this.userService.isEqual(user, member)
-              ) === undefined
-                ? true
-                : false;
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.availableUsers = combineLatest([
+      this.userService.getUsers(),
+      this.memberChanged$,
+    ]).pipe(
+      map(([users, _]) => {
+        return users.filter((user) => {
+          return this.team.members.find((member: User | string | undefined) =>
+            this.userService.isEqual(user, member)
+          ) === undefined
+            ? true
+            : false;
+        });
+      })
+    );
 
-    this.avaliableLeaders = this.completerService
-      .local(
-        combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-          map(([users, _]) => {
-            return users.filter((user) => {
-              return this.team.members.find(
-                (member: User | string | undefined) =>
-                  this.userService.isEqual(user, member)
-              ) === undefined
-                ? false
-                : true;
-            });
-          })
-        ),
-        'fullName',
-        'fullName'
-      )
-      .imageField('profilePicture');
+    this.avaliableLeaders = combineLatest([
+      this.userService.getUsers(),
+      this.memberChanged$,
+    ]).pipe(
+      map(([users, _]) => {
+        return users.filter((user) => {
+          return this.team.members.find((member: User | string | undefined) =>
+            this.userService.isEqual(user, member)
+          ) === undefined
+            ? false
+            : true;
+        });
+      })
+    );
 
     this.COORDINATIONS = this.departamentService.buildAllCoordinationsList();
   }

@@ -11,12 +11,13 @@
             <nb-completer
               [(ngModel)]="authorSearch"
               [inputName]="'authorListCompleter'"
-              (selected)="tempInvoice.author = $event.originalObject"
+              (selected)="tempInvoice.author = $event"
               #authorList="ngModel"
               id="input-author"
               name="authorList"
-              [selectedText]="userService.idToName(tempInvoice.author)"
-              [dataService]="authorData"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="authorData"
               [minSearchLength]="0"
               [placeholder]="
                 'Digite e selecione o nome do colaborador do orçamento'
@@ -24,7 +25,6 @@
               [textNoResults]="
                 'Não foi possível achar um colaborador com o nome digitado'
               "
-              [matchClass]="'match'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [required]="validation.author.required"
@@ -246,7 +246,7 @@
               [(ngModel)]="contractorSearch"
               [inputName]="'contractorCompleter'"
               (selected)="
-                tempInvoice.contractor = $event.originalObject;
+                tempInvoice.contractor = $event;
                 tempInvoice.contractorFullName = tempInvoice.contractor
                   ? contractorService.idToName(tempInvoice.contractor)
                   : ''
@@ -254,12 +254,8 @@
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
-              [selectedText]="
-                tempInvoice.contractor
-                  ? contractorService.idToName(tempInvoice.contractor)
-                  : ''
-              "
-              [dataService]="contractorData"
+              nameField="fullName"
+              [data$]="contractorData"
               [minSearchLength]="0"
               [placeholder]="
                 'Digite e selecione o nome do cliente do orçamento'
@@ -267,7 +263,6 @@
               [textNoResults]="
                 'Não foi possível achar um cliente com o nome digitado'
               "
-              [matchClass]="'match'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [isPhone]="utils.isPhone()"
@@ -774,14 +769,15 @@
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
               (selected)="
-                teamMember.user = $event.originalObject;
+                teamMember.user = $event;
                 USER_COORDINATIONS = updateUserCoordinations()
               "
               #userList="ngModel"
               id="input-user"
               name="userList"
-              [selectedText]="userService.idToName(teamMember.user)"
-              [dataService]="availableUsers"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="availableUsers"
               [minSearchLength]="0"
               [placeholder]="
                 'Digite e selecione o nome do colaborador do orçamento'
@@ -789,7 +785,6 @@
               [textNoResults]="
                 'Não foi possível achar um colaborador com o nome digitado'
               "
-              [matchClass]="'match'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [status]="

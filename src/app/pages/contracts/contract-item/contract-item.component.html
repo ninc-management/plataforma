@@ -391,7 +391,7 @@
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
               (selected)="
-                teamMember.user = $event.originalObject;
+                teamMember.user = $event;
                 USER_COORDINATIONS = departmentService.userCoordinations(
                   teamMember.user._id
                 );
@@ -400,14 +400,14 @@
               #userList="ngModel"
               id="input-user"
               name="userList"
-              [selectedText]="teamMember.user?.fullName"
-              [dataService]="availableUsers"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="availableUsers"
               [minSearchLength]="0"
               [placeholder]="'Digite e selecione o nome do colaborador'"
               [textNoResults]="
                 'Não foi possível achar um colaborador com o nome digitado'
               "
-              [matchClass]="'match'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [status]="

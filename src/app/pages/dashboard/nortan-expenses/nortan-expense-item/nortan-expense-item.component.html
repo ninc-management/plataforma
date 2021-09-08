@@ -5,7 +5,7 @@
         <label class="label" for="input-user">Autor:</label>
         <nb-completer
           [(ngModel)]="userSearch"
-          (selected)="expense.author = $event.originalObject"
+          (selected)="expense.author = $event"
           inputName="userListCompleter"
           #userList="ngModel"
           id="input-user"
@@ -14,10 +14,10 @@
           textNoResults="
           Não foi possível achar um colaborador com o nome digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="userService.idToName(expense.author)"
-          [dataService]="userData"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="userData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
@@ -144,7 +144,7 @@
         <label class="label" for="input-source">Fonte de pagamento:</label>
         <nb-completer
           [(ngModel)]="sourceSearch"
-          (selected)="expense.source = $event.originalObject"
+          (selected)="expense.source = $event"
           inputName="sourceListCompleter"
           #sourceList="ngModel"
           id="input-source"
@@ -153,10 +153,10 @@
           textNoResults="
           Não foi possível achar um colaborador com o nome digitado
           "
-          matchClass="match"
           fieldSize="large"
-          [selectedText]="userService.idToName(expense.source)"
-          [dataService]="sourceData"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="sourceData"
           [minSearchLength]="0"
           [fullWidth]="true"
           [status]="
