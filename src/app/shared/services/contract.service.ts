@@ -351,6 +351,7 @@ export class ContractService implements OnDestroy {
   }
 
   setDefaultDistribution(contract: Contract, invoice: Invoice): Contract {
+    const tmpContract = cloneDeep(contract);
     // +1 because the current user isn't in the invoice team
     const teamSize = invoice.team.length + 1;
     const defaultDistribution = this.stringUtil.numberToString(
@@ -358,16 +359,16 @@ export class ContractService implements OnDestroy {
       20
     );
     const defaultNetValue = this.stringUtil.applyPercentage(
-      contract.liquid,
+      tmpContract.liquid,
       defaultDistribution
     );
     const defaultGrossValue = this.toGrossValue(
       defaultNetValue,
-      this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract)
+      this.utils.nfPercentage(tmpContract),
+      this.utils.nortanPercentage(tmpContract)
     );
 
-    contract.team = cloneDeep(invoice.team).map((member) => ({
+    tmpContract.team = cloneDeep(invoice.team).map((member) => ({
       user: member.user,
       coordination: member.coordination,
       distribution: defaultDistribution,
@@ -375,7 +376,7 @@ export class ContractService implements OnDestroy {
       grossValue: defaultGrossValue,
     }));
 
-    contract.team.unshift({
+    tmpContract.team.unshift({
       user: invoice.author,
       coordination: invoice.coordination,
       distribution: defaultDistribution,
@@ -383,6 +384,6 @@ export class ContractService implements OnDestroy {
       grossValue: defaultGrossValue,
     });
 
-    return contract;
+    return tmpContract;
   }
 }
