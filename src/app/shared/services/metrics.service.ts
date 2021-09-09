@@ -1338,8 +1338,9 @@ export class MetricsService implements OnDestroy {
                 .filter((isSameUser) => isSameUser).length;
             });
             fPayments = fPayments.map((payment) => {
-              payment.value = payment.team[0].value;
-              return payment;
+              const tmp = cloneDeep(payment);
+              tmp.value = payment.team[0].value;
+              return tmp;
             });
           }
           return fPayments.map((payment) => {
@@ -1368,8 +1369,8 @@ export class MetricsService implements OnDestroy {
           let fExpenses = contract.expenses.filter(
             (expense) =>
               expense.paid &&
-              expense.source != CONTRACT_BALANCE &&
-              expense.source != CLIENT
+              !this.userService.isEqual(expense.source, CONTRACT_BALANCE) &&
+              !this.userService.isEqual(expense.source, CLIENT)
           );
           if (uId != undefined) {
             fExpenses = fExpenses.filter((expense) => {
