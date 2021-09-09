@@ -390,4 +390,13 @@ export class ExpenseItemComponent
     if (!this.expense.paid) this.expense.paidDate = undefined;
     else this.expense.paidDate = new Date();
   }
+
+  isRadioDisabled(): boolean {
+    if (this.expense.team.length == 1) {
+      this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
+      return true;
+    }
+
+    return this.expense.type === EXPENSE_TYPES.APORTE;
+  }
 }

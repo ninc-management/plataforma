@@ -282,7 +282,7 @@
           #splitType="ngModel"
           id="input-split-type"
           name="splitType"
-          [disabled]="expense.type === expenseTypes.APORTE"
+          [disabled]="isRadioDisabled()"
           [ngStyle]="{
             'height.px': 16,
             display: utils.isPhone() ? 'contents' : 'flex'
