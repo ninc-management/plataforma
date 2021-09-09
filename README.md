@@ -10,33 +10,25 @@ To run this website locally, you need to install the dependencies following the 
 
 1. Install Node 12 or greater
 
-2. Install mongo server
-
-3. Go to project folder and install project dependencies
+2. Go to project folder and install project dependencies
 
 ```
 npm i
 ```
 
-4. After install dependencies just start mongo server locally
-
-```
-mongod
-```
-
-5. Then start backend
+3. Then start backend
 
 ```
 npm run start:dev
 ```
 
-5. Then start frontend
+4. Then start frontend
 
 ```
 npm run ng serve -- --proxy-config proxy-config.json
 ```
 
-6. Finally, Open a browser with this url: `localhost:4200`
+5. Finally, Open a browser with this url: `localhost:4200`
 
 ## Akveo Template Demo
 
