@@ -64,6 +64,90 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+// Fix payment value format
+db.contracts.find().forEach((c) => {
+  if(c.payments){
+    c.payments.forEach((payment, i) => {
+      c.payments[i].value = moneyMask(c.payments[i].value);
+    });
+    db.contracts.replaceOne({_id: c._id}, c);
+  }
+})
+
+// Chance CSE to CBT
+var cbt = "C.B.T - Coordenação de Baixa Tensão";
+var cse = "C.S.E - Coordenação de Sistemas Elétricos";
+db.users.find().forEach((u) => {
+  u.mediaTensao = false;
+  u.baixaTensao = u.eletrica;
+  delete u.eletrica;
+  if(u.expertise) {
+    u.expertise.forEach((e, idx) => {
+      if(e.coordination && e.coordination == cse)
+        u.expertise[idx].coordination = cbt;
+    });
+  } else print('Não tem area de atuação no usuario ' + u.fullName);
+  db.contracts.replaceOne({_id: u._id}, u);
+});
+db.invoices.find().forEach((i) => {
+  var changed = false;
+  if(i.coordination && i.coordination == cse){
+    i.coordination = cbt;
+    changed = true;
+  }
+  if(i.team) {
+    i.team.forEach((member, idx) => {
+      if(member.coordination && member.coordination == cse) {
+        i.team[idx].coordination = cbt;
+        changed = true;
+      }
+    });
+  } else print('Não tem time no orçamento ' + i.code);
+  if(changed)
+    db.contracts.replaceOne({_id: i._id}, i);
+});
+db.contracts.aggregate({$unwind: "$invoice"},
+  {$lookup: {
+    from:"invoices",
+    localField: "invoice",
+    foreignField: "_id",
+    as: "invoice"
+   }}).forEach((c) => {
+  var changed = false;
+  if(c.team) {
+    c.team.forEach((member, idx) => {
+      if(member.coordination && member.coordination == cse) {
+        c.team[idx].coordination = cbt;
+        changed = true;
+      }
+    });
+  } else print('Não tem time no conrato ' + c.invoice[0].code);
+  if(c.payments) {
+    c.payments.forEach((payment, i) => {
+      payment.team.forEach((member, idx) => {
+        if(member.coordination && member.coordination == cse) {
+          payment.team[idx].coordination = cbt;
+          changed = true;
+        }
+      });
+    });
+  } else print('Não tem arrays de pagamentos no conrato ' + c.invoice[0].code);
+  if(c.expenses) {
+  c.expenses.forEach((expense, i) => {
+    if(expense.team) {
+      expense.team.forEach((member, idx) => {
+        if(member.coordination && member.coordination == cse) {
+          expense.team[idx].coordination = cbt;
+          changed = true;
+        }
+      });
+    } else print('Não tem arrays de time na despesa ' + expense.code + ' no conrato ' + c.invoice[0].code);
+  });
+  } else print('Não tem array de despesas no conrato ' + c.invoice[0].code);
+  if(changed)
+    db.contracts.replaceOne({_id: c._id}, c);
+});
+
 // Fix invoice status history
 db.invoices.find().forEach((i) => {
   i.statusHistory = [];

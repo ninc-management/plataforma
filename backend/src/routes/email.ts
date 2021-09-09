@@ -49,8 +49,11 @@ function sendMail(user: User, callback: any): void {
       '<li>Engenharia Civil: ' +
       (user.civil ? '✔️' : '❌') +
       '</li>' +
-      '<li>Engenharia Elétrica: ' +
-      (user.eletrica ? '✔️' : '❌') +
+      '<li>Baixa Tensão ' +
+      (user.baixaTensao ? '✔️' : '❌') +
+      '</li>' +
+      '<li>Média Tensão: ' +
+      (user.mediaTensao ? '✔️' : '❌') +
       '</li>' +
       '<li>Engenharia Sanitária: ' +
       (user.sanitaria ? '✔️' : '❌') +

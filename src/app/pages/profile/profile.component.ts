@@ -242,7 +242,8 @@ export class ProfileComponent implements OnInit, DoCheck {
       this.user.ambiental ? this.user.ambiental : false,
       this.user.arquitetura ? this.user.arquitetura : false,
       this.user.hidrico ? this.user.hidrico : false,
-      this.user.eletrica ? this.user.eletrica : false,
+      this.user.baixaTensao ? this.user.baixaTensao : false,
+      this.user.mediaTensao ? this.user.mediaTensao : false,
       this.user.civil ? this.user.civil : false,
       this.user.sanitaria ? this.user.sanitaria : false,
     ];

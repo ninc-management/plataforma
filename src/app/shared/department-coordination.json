@@ -26,7 +26,8 @@
       "abrev": "DPC",
       "name": "Diretoria de Projetos Complementares",
       "coordinations": [
-        "C.S.E - Coordenação de Sistemas Elétricos",
+        "C.B.T - Coordenação de Baixa Tensão",
+        "C.M.T - Coordenação de Média Tensão",
         "C.S.H - Coordenação de Sistemas Hidrosanitários",
         "C.S.EST - Coordenação de Sistemas Estruturais"
       ]

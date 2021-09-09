@@ -793,14 +793,25 @@
                   <div class="col-md-4">
                     <div class="form-control-group">
                       <nb-checkbox
-                        [(ngModel)]="user.eletrica"
-                        #eletrica="ngModel"
-                        name="eletrica"
-                        [status]="eletrica.value ? 'success' : 'basic'"
+                        [(ngModel)]="user.baixaTensao"
+                        #baixaTensao="ngModel"
+                        name="baixaTensao"
+                        [status]="baixaTensao.value ? 'success' : 'basic'"
                         [disabled]="!isEditing"
                         (ngModelChange)="refreshExpertises()"
                       >
-                        Sistemas Elétricos
+                        Baixa Tensão
+                      </nb-checkbox>
+                      <br />
+                      <nb-checkbox
+                        [(ngModel)]="user.mediaTensao"
+                        #mediaTensao="ngModel"
+                        name="mediaTensao"
+                        [status]="mediaTensao.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                      >
+                        Média Tensão
                       </nb-checkbox>
                       <br />
                       <nb-checkbox

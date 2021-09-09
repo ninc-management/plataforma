@@ -57,7 +57,8 @@ export class DepartmentService {
       user.ambiental ? true : false,
       user.arquitetura ? true : false,
       user.hidrico ? true : false,
-      user.eletrica ? true : false,
+      user.baixaTensao ? true : false,
+      user.mediaTensao ? true : false,
       user.civil ? true : false,
       user.sanitaria ? true : false,
     ];

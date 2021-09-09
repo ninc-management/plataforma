@@ -245,32 +245,49 @@
             name="arquitetura"
             checked="false"
             [status]="arquitetura.value ? 'success' : 'basic'"
-            >Arquitetura</nb-checkbox
-          ><br />
+          >
+            Arquitetura
+          </nb-checkbox>
+          <br />
           <nb-checkbox
             [(ngModel)]="user.design"
             #design="ngModel"
             name="design"
             checked="false"
             [status]="design.value ? 'success' : 'basic'"
-            >Design de Interiores</nb-checkbox
-          ><br />
+          >
+            Design de Interiores
+          </nb-checkbox>
+          <br />
           <nb-checkbox
             [(ngModel)]="user.civil"
             #civil="ngModel"
             name="civil"
             checked="false"
             [status]="civil.value ? 'success' : 'basic'"
-            >Engenharia Civil</nb-checkbox
-          ><br />
-          <nb-checkbox
-            [(ngModel)]="user.eletrica"
-            #eletrica="ngModel"
-            name="eletrica"
-            checked="false"
-            [status]="eletrica.value ? 'success' : 'basic'"
-            >Engenharia Elétrica</nb-checkbox
           >
+            Engenharia Civil
+          </nb-checkbox>
+          <br />
+          <nb-checkbox
+            [(ngModel)]="user.baixaTensao"
+            #baixaTensao="ngModel"
+            name="baixaTensao"
+            checked="false"
+            [status]="baixaTensao.value ? 'success' : 'basic'"
+          >
+            Engenharia Elétrica de Baixa Tensão
+          </nb-checkbox>
+          <br />
+          <nb-checkbox
+            [(ngModel)]="user.mediaTensao"
+            #mediaTensao="ngModel"
+            name="mediaTensao"
+            checked="false"
+            [status]="mediaTensao.value ? 'success' : 'basic'"
+          >
+            Engenharia Elétrica de Média Tensão
+          </nb-checkbox>
         </div>
       </div>
       <div class="col-sm-6">
@@ -281,32 +298,39 @@
             name="sanitaria"
             checked="false"
             [status]="sanitaria.value ? 'success' : 'basic'"
-            >Engenharia Sanitária</nb-checkbox
-          ><br />
+          >
+            Engenharia Sanitária
+          </nb-checkbox>
+          <br />
           <nb-checkbox
             [(ngModel)]="user.impermeabilizacao"
             #impermeabilizacao="ngModel"
             name="impermeabilizacao"
             checked="false"
             [status]="impermeabilizacao.value ? 'success' : 'basic'"
-            >Impermeabilização</nb-checkbox
-          ><br />
+          >
+            Impermeabilização
+          </nb-checkbox>
+          <br />
           <nb-checkbox
             [(ngModel)]="user.ambiental"
             #ambiental="ngModel"
             name="ambiental"
             checked="false"
             [status]="ambiental.value ? 'success' : 'basic'"
-            >Engenharia Ambiental</nb-checkbox
-          ><br />
+          >
+            Engenharia Ambiental
+          </nb-checkbox>
+          <br />
           <nb-checkbox
             [(ngModel)]="user.hidrico"
             #hidrico="ngModel"
             name="hidrico"
             checked="false"
             [status]="hidrico.value ? 'success' : 'basic'"
-            >Recursos Hídricos</nb-checkbox
           >
+            Recursos Hídricos
+          </nb-checkbox>
         </div>
       </div>
     </div>
@@ -324,9 +348,9 @@
   </div>
 
   <div class="form-control-group">
-    <label class="label" for="input-meet"
-      >Melhor data e hora para reunião:</label
-    >
+    <label class="label" for="input-meet">
+      Melhor data e hora para reunião:
+    </label>
     <textarea
       nbInput
       [(ngModel)]="user.meet"
@@ -420,5 +444,6 @@
 </section>
 
 <section class="another-action" aria-label="Sign in">
-  Já possui uma conta? <a class="text-link" routerLink="../login">Entre</a>
+  Já possui uma conta?
+  <a class="text-link" routerLink="../login">Entre</a>
 </section>
