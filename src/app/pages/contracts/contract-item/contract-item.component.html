@@ -1019,6 +1019,12 @@
       </div>
       <div class="col-md">
         <div class="form-control-group">
+          <label class="label" for="input-paid">Despesas:</label>
+          <p>{{ expenseSourceSum().reverse()[0].value }}</p>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="form-control-group">
           <label class="label" for="input-interest">Parcelas criadas:</label>
           <p>{{ options.interest }}</p>
         </div>
