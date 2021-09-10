@@ -2,6 +2,7 @@ import * as express from 'express';
 import ContractorModel from '../models/contractor';
 import { Contractor } from '../models/contractor';
 import { Mutex } from 'async-mutex';
+import { cloneDeep } from 'lodash';
 
 const router = express.Router();
 let requested = false;
@@ -15,7 +16,9 @@ router.post('/', (req, res, next) => {
       .save()
       .then((savedContractor) => {
         if (requested)
-          contractorsMap[savedContractor._id] = savedContractor.toJSON();
+          contractorsMap[savedContractor._id] = cloneDeep(
+            savedContractor.toJSON()
+          );
         release();
         res.status(201).json({
           message: 'Cliente cadastrado!',
@@ -35,7 +38,7 @@ router.post('/update', async (req, res, next) => {
   await ContractorModel.findByIdAndUpdate(
     req.body.contractor._id,
     req.body.contractor,
-    { upsert: false, new: false },
+    { upsert: false },
     async (err, savedContractor) => {
       if (err)
         return res.status(500).json({
@@ -44,7 +47,9 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          contractorsMap[req.body.contractor._id] = savedContractor.toJSON();
+          contractorsMap[req.body.contractor._id] = cloneDeep(
+            savedContractor.toJSON()
+          );
         });
       }
       return res.status(200).json({
@@ -58,7 +63,7 @@ router.post('/all', async (req, res) => {
   if (!requested) {
     const contractors: Contractor[] = await ContractorModel.find({});
     contractors.map(
-      (contractor) => (contractorsMap[contractor._id] = contractor)
+      (contractor) => (contractorsMap[contractor._id] = cloneDeep(contractor))
     );
     requested = true;
   }

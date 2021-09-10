@@ -2,6 +2,7 @@ import * as express from 'express';
 import PromotionModel from '../models/promotion';
 import { Promotion } from '../models/promotion';
 import { Mutex } from 'async-mutex';
+import { cloneDeep } from 'lodash';
 
 const router = express.Router();
 let requested = false;
@@ -15,7 +16,9 @@ router.post('/', (req, res, next) => {
       .save()
       .then((savedPromotion) => {
         if (requested)
-          promotionsMap[savedPromotion._id] = savedPromotion.toJSON();
+          promotionsMap[savedPromotion._id] = cloneDeep(
+            savedPromotion.toJSON()
+          );
         release();
         return res.status(201).json({
           message: 'Promoção cadastrada!',
@@ -35,7 +38,7 @@ router.post('/update', async (req, res, next) => {
   await PromotionModel.findByIdAndUpdate(
     req.body.promotion._id,
     req.body.promotion,
-    { upsert: false, new: false },
+    { upsert: false },
     async (err, savedPromotion) => {
       if (err)
         return res.status(500).json({
@@ -44,7 +47,9 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          promotionsMap[req.body.promotion._id] = savedPromotion.toJSON();
+          promotionsMap[req.body.promotion._id] = cloneDeep(
+            savedPromotion.toJSON()
+          );
         });
       }
       return res.status(200).json({
@@ -57,7 +62,9 @@ router.post('/update', async (req, res, next) => {
 router.post('/all', async (req, res) => {
   if (!requested) {
     const promotions: Promotion[] = await PromotionModel.find({});
-    promotions.map((promotion) => (promotionsMap[promotion._id] = promotion));
+    promotions.map(
+      (promotion) => (promotionsMap[promotion._id] = cloneDeep(promotion))
+    );
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(promotionsMap)));

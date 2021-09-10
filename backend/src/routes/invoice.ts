@@ -2,6 +2,7 @@ import * as express from 'express';
 import InvoiceModel from '../models/invoice';
 import { Invoice } from '../models/invoice';
 import { Mutex } from 'async-mutex';
+import { cloneDeep } from 'lodash';
 
 const router = express.Router();
 let requested = false;
@@ -27,7 +28,7 @@ router.post('/', (req, res, next) => {
           .save()
           .then((savedInvoice) => {
             if (requested)
-              invoicesMap[savedInvoice._id] = savedInvoice.toJSON();
+              invoicesMap[savedInvoice._id] = cloneDeep(savedInvoice.toJSON());
             release();
             res.status(201).json({
               message: 'Orçamento cadastrado!',
@@ -50,7 +51,7 @@ router.post('/update', async (req, res, next) => {
   await InvoiceModel.findByIdAndUpdate(
     req.body.invoice._id,
     req.body.invoice,
-    { upsert: false, new: false },
+    { upsert: false },
     async (err, savedInvoice) => {
       if (err)
         return res.status(500).json({
@@ -59,7 +60,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          invoicesMap[req.body.invoice._id] = savedInvoice.toJSON();
+          invoicesMap[req.body.invoice._id] = cloneDeep(savedInvoice.toJSON());
         });
       }
       return res.status(200).json({
@@ -78,7 +79,7 @@ router.post('/count', (req, res) => {
 router.post('/all', async (req, res) => {
   if (!requested) {
     const invoices: Invoice[] = await InvoiceModel.find({});
-    invoices.map((invoice) => (invoicesMap[invoice._id] = invoice));
+    invoices.map((invoice) => (invoicesMap[invoice._id] = cloneDeep(invoice)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(invoicesMap)));

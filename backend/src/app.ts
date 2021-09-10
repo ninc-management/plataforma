@@ -44,6 +44,7 @@ class NortanAPI {
         process.exit(1);
       });
     mongoose.set('useCreateIndex', true);
+    mongoose.set('returnOriginal', false);
 
     // app.use(logger('dev'));
     this.app.use(compression());

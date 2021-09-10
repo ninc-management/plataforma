@@ -2,6 +2,7 @@ import * as express from 'express';
 import ExpenseModel from '../models/expense';
 import { Expense } from '../models/expense';
 import { Mutex } from 'async-mutex';
+import { cloneDeep } from 'lodash';
 
 const router = express.Router();
 let requested = false;
@@ -15,7 +16,8 @@ router.post('/expense', (req, res, next) => {
     expense
       .save()
       .then((savedExpense) => {
-        if (requested) expensesMap[savedExpense._id] = savedExpense.toJSON();
+        if (requested)
+          expensesMap[savedExpense._id] = cloneDeep(savedExpense.toJSON());
         release();
         return res.status(201).json({
           message: 'Gasto cadastrado!',
@@ -35,7 +37,7 @@ router.post('/updateExpense', async (req, res, next) => {
   await ExpenseModel.findByIdAndUpdate(
     req.body.expense._id,
     req.body.expense,
-    { upsert: false, new: false },
+    { upsert: false },
     async (err, savedExpense) => {
       if (err)
         return res.status(500).json({
@@ -44,7 +46,7 @@ router.post('/updateExpense', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          expensesMap[req.body.expense._id] = savedExpense.toJSON();
+          expensesMap[req.body.expense._id] = cloneDeep(savedExpense.toJSON());
         });
       }
       return res.status(200).json({
@@ -57,7 +59,7 @@ router.post('/updateExpense', async (req, res, next) => {
 router.post('/allExpenses', async (req, res) => {
   if (!requested) {
     const expenses: Expense[] = await ExpenseModel.find({});
-    expenses.map((expense) => (expensesMap[expense._id] = expense));
+    expenses.map((expense) => (expensesMap[expense._id] = cloneDeep(expense)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(expensesMap)));

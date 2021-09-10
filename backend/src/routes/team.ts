@@ -2,6 +2,7 @@ import * as express from 'express';
 import TeamModel from '../models/team';
 import { Team } from '../models/team';
 import { Mutex } from 'async-mutex';
+import { cloneDeep } from 'lodash';
 
 const router = express.Router();
 let requested = false;
@@ -14,7 +15,7 @@ router.post('/', (req, res, next) => {
     team
       .save()
       .then((savedTeam) => {
-        if (requested) teamMap[savedTeam._id] = savedTeam.toJSON();
+        if (requested) teamMap[savedTeam._id] = cloneDeep(savedTeam.toJSON());
         release();
         return res.status(201).json({
           message: 'Time cadastrado!',
@@ -34,7 +35,7 @@ router.post('/update', async (req, res, next) => {
   await TeamModel.findByIdAndUpdate(
     req.body.team._id,
     req.body.team,
-    { upsert: false, new: false },
+    { upsert: false },
     async (err, savedTeam) => {
       if (err)
         return res.status(500).json({
@@ -43,7 +44,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          teamMap[req.body.team._id] = savedTeam.toJSON();
+          teamMap[req.body.team._id] = cloneDeep(savedTeam.toJSON());
         });
       }
       return res.status(200).json({
@@ -56,7 +57,7 @@ router.post('/update', async (req, res, next) => {
 router.post('/all', async (req, res) => {
   if (!requested) {
     const teams: Team[] = await TeamModel.find({});
-    teams.map((team) => (teamMap[team._id] = team));
+    teams.map((team) => (teamMap[team._id] = cloneDeep(team)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(teamMap)));
