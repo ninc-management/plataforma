@@ -542,11 +542,13 @@ export class ContractItemComponent implements OnInit {
         )
         .map((name) => ({ user: name, value: '0,00' }))
     );
+    const contractor = result.splice(1, 1)[0];
     const total = result.reduce(
       (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
       '0,00'
     );
     result.push({ user: 'TOTAL', value: total });
+    result.push(contractor);
     return result;
   }
 
