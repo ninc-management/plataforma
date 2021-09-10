@@ -932,14 +932,19 @@
     <nb-list style="width: 100%; padding: 10px 0; text-align: center">
       <nb-list-item class="noPadding">
         <div class="row irow">
-          <div class="col-12 col-md-2"><b>Colaborador</b></div>
-          <div class="col-6 col-md-2"><b>Bruto</b></div>
-          <div class="col-6 col-md-2"><b>Líquido</b></div>
-          <div class="col-4 col-md-1"><b>%</b></div>
-          <div class="col-4 col-md-2"><b>Recebido</b></div>
-          <div class="col-4 col-md-1"><b>Saldo</b></div>
-          <div class="col-4 col-md-1"><b>Despesas</b></div>
-          <div class="col-4 col-md-1"><b>Balanço</b></div>
+          <div class="col-md-12">
+            <div class="col-md-6 d-flex">
+              <div class="col-10 col-md-5"><b>Colaborador</b></div>
+              <div class="col-4 col-md-2"><b>Bruto</b></div>
+              <div class="col-4 col-md-2"><b>Líquido</b></div>
+              <div class="col-4 col-md-2"><b>%</b></div>
+              <div class="col-4 col-md-2"><b>Recebido</b></div>
+              <div class="col-4 col-md-2"><b>Saldo</b></div>
+              <div class="col-4 col-md-2"><b>Despesas</b></div>
+              <div class="col-4 col-md-2"><b>Balanço</b></div>
+            </div>
+            <div class="col-md-6"></div>
+          </div>
         </div>
       </nb-list-item>
       <nb-list-item
@@ -948,59 +953,67 @@
           let i = index;
           trackBy: utils.trackByIndex
         "
+        class="noPadding"
       >
         <div class="row irow">
-          <div class="col-12 col-md-2">
-            {{ userService.idToName(member.user) }}
-          </div>
-          <div class="col-6 col-md-2">
-            {{
-              contractService.toGrossValue(
-                contractService.netValueBalance(
-                  member.distribution,
-                  contract,
-                  member.user
-                ),
-                options.notaFiscal,
-                options.nortanPercentage
-              )
-            }}
-          </div>
-          <div class="col-6 col-md-2">
-            {{
-              contractService.netValueBalance(
-                member.distribution,
-                contract,
-                member.user
-              )
-            }}
-          </div>
-          <div class="col-4 col-md-1">
-            {{
-              contractService.percentageToReceive(
-                member.distribution,
-                member.user,
-                contract
-              )
-            }}
-          </div>
-          <div class="col-4 col-md-2">
-            {{ contractService.receivedValue(member.user, contract) }}
-          </div>
-          <div class="col-4 col-md-1">
-            {{
-              contractService.notPaidValue(
-                member.distribution,
-                member.user,
-                contract
-              )
-            }}
-          </div>
-          <div class="col-4 col-md-1">
-            {{ contractService.getMemberExpensesSum(member.user, contract) }}
-          </div>
-          <div class="col-4 col-md-1">
-            {{ contractService.getMemberBalance(member.user, contract) }}
+          <div class="col-md-12">
+            <div class="col-md-6 d-flex">
+              <div class="col-10 col-md-5">
+                {{ userService.idToName(member.user) }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{
+                  contractService.toGrossValue(
+                    contractService.netValueBalance(
+                      member.distribution,
+                      contract,
+                      member.user
+                    ),
+                    options.notaFiscal,
+                    options.nortanPercentage
+                  )
+                }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{
+                  contractService.netValueBalance(
+                    member.distribution,
+                    contract,
+                    member.user
+                  )
+                }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{
+                  contractService.percentageToReceive(
+                    member.distribution,
+                    member.user,
+                    contract
+                  )
+                }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{ contractService.receivedValue(member.user, contract) }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{
+                  contractService.notPaidValue(
+                    member.distribution,
+                    member.user,
+                    contract
+                  )
+                }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{
+                  contractService.getMemberExpensesSum(member.user, contract)
+                }}
+              </div>
+              <div class="col-4 col-md-2">
+                {{ contractService.getMemberBalance(member.user, contract) }}
+              </div>
+            </div>
+            <div class="col-md-6"></div>
           </div>
         </div>
       </nb-list-item>
