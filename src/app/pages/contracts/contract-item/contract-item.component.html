@@ -935,8 +935,8 @@
           <div class="col-md-12">
             <div class="col-md-6 d-flex">
               <div class="col-10 col-md-5"><b>Colaborador</b></div>
-              <div class="col-4 col-md-2"><b>Bruto</b></div>
-              <div class="col-4 col-md-2"><b>Líquido</b></div>
+              <div class="col-4 col-md-3"><b>Bruto</b></div>
+              <div class="col-4 col-md-3"><b>Líquido</b></div>
               <div class="col-4 col-md-2"><b>%</b></div>
               <div class="col-4 col-md-2"><b>Recebido</b></div>
               <div class="col-4 col-md-2"><b>Saldo</b></div>
@@ -962,7 +962,7 @@
               <div class="col-10 col-md-5">
                 {{ userService.idToName(member.user) }}
               </div>
-              <div class="col-4 col-md-2">
+              <div class="col-4 col-md-3">
                 {{
                   contractService.toGrossValue(
                     contractService.netValueBalance(
@@ -975,7 +975,7 @@
                   )
                 }}
               </div>
-              <div class="col-4 col-md-2">
+              <div class="col-4 col-md-3">
                 {{
                   contractService.netValueBalance(
                     member.distribution,
