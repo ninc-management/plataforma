@@ -1,4 +1,11 @@
-import { TestBed } from '@angular/core/testing';
+import {
+  discardPeriodicTasks,
+  fakeAsync,
+  flush,
+  flushMicrotasks,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 
 import { UserService, CONTRACT_BALANCE } from './user.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
@@ -320,15 +327,19 @@ describe('UserService', () => {
         .subscribe((users) => {
           switch (i) {
             case 1: {
+              jasmine.clock().uninstall();
               i += 1;
               expect(users).toEqual(mockedUsers);
               const cb = jasmine.createSpy('test');
               service.updateUser(editedUser, cb, true);
               const req1 = httpMock.expectOne('/api/user/update');
               expect(req1.request.method).toBe('POST');
+              jasmine.clock().install();
               req1.flush(null);
+              jasmine.clock().tick(110);
               expect(cb.calls.any()).toBe(true);
               socket.emit('dbchange', data);
+              jasmine.clock().uninstall();
               break;
             }
             case 2: {
