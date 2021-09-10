@@ -12,7 +12,6 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { cloneDeep } from 'lodash';
 import {
   ContractTeamMember,
@@ -86,7 +85,6 @@ export class PaymentItemComponent implements OnInit {
   constructor(
     public departmentService: DepartmentService,
     private contractService: ContractService,
-    private brMask: BrMaskDirective,
     public userService: UserService,
     public stringUtil: StringUtilService,
     public utils: UtilsService
