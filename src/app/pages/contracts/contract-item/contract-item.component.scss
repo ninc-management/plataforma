@@ -92,6 +92,11 @@
     align-items: center;
   }
 
+  .tabset .tab[data-tab-id='contract-tab'] a nb-icon {
+    top: -5px;
+    position: relative;
+  }
+
   nb-tooltip {
     white-space: pre-wrap;
   }

@@ -1044,52 +1044,94 @@
         <hr />
       </div>
     </div>
-    <div class="row" style="text-align: center">
-      <div class="col-md-6">
-        <div class="form-control-group">
-          <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-            <nb-list-item
-              *ngFor="
-                let expense of expenseTypesSum();
-                let i = index;
-                trackBy: utils.trackByIndex
-              "
-            >
-              <div class="row irow">
-                <div class="col-md-6">
-                  <b>{{ expense.type }}</b>
-                </div>
-                <div class="col-md-6">
-                  {{ expense.value }}
-                </div>
-              </div>
-            </nb-list-item>
-          </nb-list>
+    <nb-tabset fullWidth>
+      <nb-tab
+        tabId="contract-tab"
+        [tabTitle]="utils.isPhone() ? '' : 'Contrato'"
+        [tabIcon]="{
+          icon: 'file-invoice',
+          pack: 'fac'
+        }"
+        responsive
+      >
+        <div class="row" style="text-align: center">
+          <div class="col-md-6">
+            <div class="form-control-group">
+              <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+                <nb-list-item
+                  *ngFor="
+                    let expense of expenseTypesSum();
+                    let i = index;
+                    trackBy: utils.trackByIndex
+                  "
+                >
+                  <div class="row irow">
+                    <div class="col-md-6">
+                      <b>{{ expense.type }}</b>
+                    </div>
+                    <div class="col-md-6">
+                      {{ expense.value }}
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-control-group">
+              <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+                <nb-list-item
+                  *ngFor="
+                    let expense of expenseSourceSum();
+                    let i = index;
+                    trackBy: utils.trackByIndex
+                  "
+                >
+                  <div class="row irow">
+                    <div class="col-md-6">
+                      <b>{{ expense.user }}</b>
+                    </div>
+                    <div class="col-md-6">
+                      {{ expense.value }}
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-control-group">
-          <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-            <nb-list-item
-              *ngFor="
-                let expense of expenseSourceSum();
-                let i = index;
-                trackBy: utils.trackByIndex
-              "
-            >
-              <div class="row irow">
-                <div class="col-md-6">
-                  <b>{{ expense.user }}</b>
-                </div>
-                <div class="col-md-6">
-                  {{ expense.value }}
-                </div>
-              </div>
-            </nb-list-item>
-          </nb-list>
+      </nb-tab>
+      <nb-tab
+        [tabTitle]="utils.isPhone() ? '' : 'Cliente'"
+        [tabIcon]="contractorIcon"
+        responsive
+      >
+        <div class="row" style="text-align: center">
+          <div class="col-12" style="text-align: center">
+            <div class="form-control-group">
+              <nb-list style="width: 100%; padding: 10px 0; text-align: center">
+                <nb-list-item
+                  *ngFor="
+                    let expense of expenseTypesSum(true);
+                    let i = index;
+                    trackBy: utils.trackByIndex
+                  "
+                >
+                  <div class="row irow">
+                    <div class="col-md-6">
+                      <b>{{ expense.type }}</b>
+                    </div>
+                    <div class="col-md-6">
+                      {{ expense.value }}
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </nb-tab>
+    </nb-tabset>
   </nb-tab>
   <nb-tab
     [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"

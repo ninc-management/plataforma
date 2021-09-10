@@ -224,6 +224,14 @@ export class ContractItemComponent implements OnInit {
     },
   };
 
+  contractorIcon = {
+    icon: 'client',
+    pack: 'fac',
+  };
+  contractIcon = {
+    icon: 'file-invoice',
+    pack: 'fac',
+  };
   paymentIcon = {
     icon: 'dollar-sign',
     pack: 'fa',
@@ -488,12 +496,14 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  expenseTypesSum(): ExpenseTypesSum[] {
+  expenseTypesSum(wantsClient = false): ExpenseTypesSum[] {
     const result = this.contract.expenses.reduce(
       (sum: ExpenseTypesSum[], expense) => {
         if (
           expense.source &&
-          this.userService.idToUser(expense.source)._id != CLIENT._id
+          (wantsClient
+            ? this.userService.isEqual(expense.source, CLIENT._id)
+            : !this.userService.isEqual(expense.source, CLIENT._id))
         ) {
           const idx = sum.findIndex((el) => el.type == expense.type);
           sum[idx].value = this.stringUtil.sumMoney(
