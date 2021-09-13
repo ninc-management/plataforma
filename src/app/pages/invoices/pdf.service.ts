@@ -876,6 +876,13 @@ export class PdfService {
           fontSize: 8,
         },
         {
+          text: 'UNIDADE',
+          bold: true,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
           text: 'VALOR',
           bold: true,
           alignment: 'center',
@@ -928,6 +935,12 @@ export class PdfService {
         },
         {
           text: product.amount,
+          alignment: 'center',
+          border: [true, true, true, true],
+          fontSize: 8,
+        },
+        {
+          text: product.unit,
           alignment: 'center',
           border: [true, true, true, true],
           fontSize: 8,
@@ -998,7 +1011,7 @@ export class PdfService {
         },
       ];
       if (invoice.productListType == '2')
-        productTotal.splice(1, 0, ...[{}, {}]);
+        productTotal.splice(1, 0, ...[{}, {}, {}]);
       result.push(productTotal);
       return result;
     };
@@ -1009,7 +1022,7 @@ export class PdfService {
         widths:
           invoice.productListType == '1'
             ? ['*', 50]
-            : ['*', 'auto', 'auto', 50],
+            : ['*', 'auto', 'auto', 'auto', 50],
         dontBreakRows: true,
         body: [productHeader(), ...products, ...footer()],
       },

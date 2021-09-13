@@ -41,6 +41,13 @@ import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
 
+export enum UNIT_OF_MEASURE {
+  METRO_QUADRADO = 'm²',
+  KILO = 'km',
+  HECTO = 'ha',
+  DIA = 'dia',
+}
+
 @Component({
   selector: 'ngx-invoice-item',
   templateUrl: './invoice-item.component.html',
@@ -71,6 +78,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     product: {
       value: '',
       amount: '',
+      unit: '',
       total: '0,00',
       name: '',
       subproducts: [] as string[],
@@ -90,6 +98,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     lastStages: [] as InvoiceStage[],
     netValue: '0,00',
   };
+
   destroy$ = new Subject<void>();
   editing = false;
   today = new Date();
@@ -112,6 +121,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   USER_COORDINATIONS: string[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
+  UNITx = Object.values(UNIT_OF_MEASURE);
 
   constructor(
     private dialogService: NbDialogService,
@@ -154,7 +164,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       if (this.tempInvoice.materialListType == undefined)
         this.tempInvoice.materialListType = '1';
       if (this.tempInvoice.productListType == undefined)
-        this.tempInvoice.productListType = '1';
+        this.tempInvoice.productListType = '2';
       if (this.tempInvoice.invoiceType == undefined)
         this.tempInvoice.invoiceType = 'projeto';
       this.updateDiscountPercentage();
