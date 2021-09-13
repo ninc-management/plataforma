@@ -125,13 +125,14 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
       this.searchStr = this.lastSelected;
       this._onTouchedCallback();
       this.blur.emit();
-    }, 100);
+    }, 500);
   }
 
   public writeValue(value: any): void {
     if (value != undefined || value != null) {
       setTimeout(() => {
         this.searchStr = value;
+        this.lastSelected = value;
       }, 100);
     }
   }
