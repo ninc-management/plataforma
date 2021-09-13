@@ -12,6 +12,9 @@ export class InvoiceProduct {
   amount: string = '';
 
   @prop({ required: true })
+  unit: string = '';
+
+  @prop({ required: true })
   value: string = '';
 
   @prop({ required: true })
@@ -151,7 +154,7 @@ export class Invoice extends StatusHistory {
   materialListType: string = '1';
 
   @prop()
-  productListType: string = '1';
+  productListType: string = '2';
 
   @prop()
   invoiceType: string = 'projeto';

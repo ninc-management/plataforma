@@ -1385,7 +1385,7 @@
         <div
           [ngClass]="{
             'col-12': true,
-            'col-md-5': tempInvoice.productListType == '2',
+            'col-md-3': tempInvoice.productListType == '2',
             'col-md-7': tempInvoice.productListType == '1'
           }"
         >
@@ -1431,6 +1431,27 @@
                 productAmount.invalid && productAmount.touched ? true : null
               "
             />
+          </div>
+        </div>
+        <div class="col-6 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+          <div class="form-control-group">
+            <label class="label" for="input-unit">Unidade:</label>
+            <nb-select
+              [(ngModel)]="options.product.unit"
+              #unit="ngModel"
+              id="input-unit"
+              name="unit"
+              placeholder="Selecione a unidade"
+              fullWidth
+              size="large"
+            >
+              [required]="validation.unit.required" [status]=" unit.dirty ?
+              (unit.invalid ? 'danger' : 'success') : 'basic' "
+              [attr.aria-invalid]="unit.invalid && unit.touched ? true : null"
+              <nb-option *ngFor="let unit of UNITx" [value]="unit">
+                {{ unit }}
+              </nb-option>
+            </nb-select>
           </div>
         </div>
         <div
@@ -1534,7 +1555,7 @@
             <div
               [ngClass]="{
                 'col-12': true,
-                'col-md-5': tempInvoice.productListType == '2',
+                'col-md-3': tempInvoice.productListType == '2',
                 'col-md-7': tempInvoice.productListType == '1'
               }"
             >
@@ -1621,6 +1642,24 @@
                 }"
                 [status]="tempInvoice.products[i].amount ? 'success' : 'basic'"
               />
+            </div>
+            <div
+              class="col-3 col-md-2"
+              *ngIf="tempInvoice.productListType == '2'"
+            >
+              <nb-select
+                [(ngModel)]="tempInvoice.products[i].unit"
+                #unit="ngModel"
+                id="input-unit-{{ i }}"
+                name="unit-{{ i }}"
+                placeholder="Selecione a unidade"
+                fullWidth
+                size="large"
+              >
+                <nb-option *ngFor="let unit of UNITx" [value]="unit">
+                  {{ unit }}
+                </nb-option>
+              </nb-select>
             </div>
             <div
               [ngClass]="{
