@@ -38,11 +38,6 @@ export enum CONTRACT_STATOOS {
   ARQUIVADO = 'Arquivado',
 }
 
-export enum EXPENSE_SOURCES {
-  CAIXA_DO_CONTRATO = '000000000000000000000000',
-  CLIENTE = '000000000000000000000001',
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -402,8 +397,8 @@ export class ContractService implements OnDestroy {
           expense.paid &&
           expense.type !== EXPENSE_TYPES.APORTE &&
           expense.type !== EXPENSE_TYPES.COMISSAO &&
-          expense.source !== EXPENSE_SOURCES.CAIXA_DO_CONTRATO &&
-          expense.source !== EXPENSE_SOURCES.CLIENTE
+          !this.userService.isEqual(expense.source, CONTRACT_BALANCE) &&
+          !this.userService.isEqual(expense.source, CLIENT)
         );
       })
       .map((expense) => expense.team)
