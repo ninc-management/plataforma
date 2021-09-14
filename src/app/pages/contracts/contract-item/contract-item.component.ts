@@ -25,13 +25,10 @@ import {
   ContractDialogComponent,
   COMPONENT_TYPES,
 } from '../contract-dialog/contract-dialog.component';
-import {
-  ContractExpense,
-  Contract,
-  ContractTeamMember,
-} from '@models/contract';
+import { ContractExpense, Contract } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
 
 interface ExpenseTypesSum {
   type: string;
@@ -52,6 +49,7 @@ export class ContractItemComponent implements OnInit {
   @Input() iContract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();
+  invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
   today = new Date();
   validation = (contract_validation as any).default;
@@ -267,6 +265,8 @@ export class ContractItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.contract = cloneDeep(this.iContract);
+    if (this.contract.invoice)
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     if (this.contract.ISS) {
       if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0)
         this.options.hasISS = false;
@@ -289,7 +289,7 @@ export class ContractItemComponent implements OnInit {
     ]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return this.contract.team.find((member: ContractTeamMember) =>
+          return this.invoice.team.find((member: InvoiceTeamMember) =>
             this.userService.isEqual(user, member.user)
           ) === undefined
             ? true
@@ -316,6 +316,7 @@ export class ContractItemComponent implements OnInit {
         });
       }
       this.iContract = cloneDeep(this.contract);
+      this.invoiceService.editInvoice(this.invoice);
       this.contractService.editContract(this.iContract);
     }
   }
@@ -467,7 +468,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   addColaborator(): void {
-    this.contract.team.push(Object.assign({}, this.teamMember));
+    this.invoice.team.push(Object.assign({}, this.teamMember));
     this.userSearch = '';
     this.teamMember = {};
     this.updateTeamTotal();
@@ -475,7 +476,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   updateTeamTotal(): void {
-    this.teamTotal = this.contract.team.reduce(
+    this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
         sum.grossValue = this.stringUtil.sumMoney(
           sum.grossValue,
@@ -542,7 +543,7 @@ export class ContractItemComponent implements OnInit {
       },
       [CONTRACT_BALANCE.fullName, CLIENT.fullName]
         .concat(
-          this.contract.team
+          this.invoice.team
             .map((member) => {
               if (member.user)
                 return this.userService.idToShortName(member.user);
@@ -581,17 +582,17 @@ export class ContractItemComponent implements OnInit {
 
   updateValue(idx?: number): void {
     if (idx != undefined) {
-      this.contract.team[idx].netValue = this.stringUtil.applyPercentage(
+      this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
         this.stringUtil.sumMoney(
           this.contract.liquid,
           this.stringUtil.numberToMoney(
             this.contractService.expensesContributions(this.contract).cashback
           )
         ),
-        this.contract.team[idx].distribution
+        this.invoice.team[idx].distribution
       );
-      this.contract.team[idx].grossValue = this.contractService.toGrossValue(
-        this.contract.team[idx].netValue,
+      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
+        this.invoice.team[idx].netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
@@ -616,9 +617,9 @@ export class ContractItemComponent implements OnInit {
 
   updatePercentage(idx?: number): void {
     if (idx != undefined) {
-      this.contract.team[idx].distribution = this.stringUtil
+      this.invoice.team[idx].distribution = this.stringUtil
         .toPercentage(
-          this.contract.team[idx].netValue,
+          this.invoice.team[idx].netValue,
           this.stringUtil.sumMoney(
             this.contract.liquid,
             this.stringUtil.numberToMoney(
@@ -628,8 +629,8 @@ export class ContractItemComponent implements OnInit {
           20
         )
         .slice(0, -1);
-      this.contract.team[idx].grossValue = this.contractService.toGrossValue(
-        this.contract.team[idx].netValue,
+      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
+        this.invoice.team[idx].netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
@@ -718,7 +719,7 @@ export class ContractItemComponent implements OnInit {
   }
 
   applyDistribution(): void {
-    this.contract.team = this.contract.team.map((member) => {
+    this.invoice.team = this.invoice.team.map((member) => {
       member.netValue = this.stringUtil.applyPercentage(
         this.contract.liquid,
         member.distribution

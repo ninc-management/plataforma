@@ -12,7 +12,6 @@ import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { parseISO } from 'date-fns';
-import { cloneDeep } from 'lodash';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -70,7 +69,6 @@ export class ContractService implements OnDestroy {
     });
     contract.invoice = invoice;
     contract.total = invoice.stages.length.toString();
-    contract = this.setDefaultDistribution(contract, invoice);
     const req = {
       contract: contract,
     };
@@ -348,43 +346,6 @@ export class ContractService implements OnDestroy {
       }
       return sum;
     }, 0);
-  }
-
-  setDefaultDistribution(contract: Contract, invoice: Invoice): Contract {
-    const tmpContract = cloneDeep(contract);
-    // +1 because the current user isn't in the invoice team
-    const teamSize = invoice.team.length + 1;
-    const defaultDistribution = this.stringUtil.numberToString(
-      100 / teamSize,
-      20
-    );
-    const defaultNetValue = this.stringUtil.applyPercentage(
-      tmpContract.liquid,
-      defaultDistribution
-    );
-    const defaultGrossValue = this.toGrossValue(
-      defaultNetValue,
-      this.utils.nfPercentage(tmpContract),
-      this.utils.nortanPercentage(tmpContract)
-    );
-
-    tmpContract.team = cloneDeep(invoice.team).map((member) => ({
-      user: member.user,
-      coordination: member.coordination,
-      distribution: defaultDistribution,
-      netValue: defaultNetValue,
-      grossValue: defaultGrossValue,
-    }));
-
-    tmpContract.team.unshift({
-      user: invoice.author,
-      coordination: invoice.coordination,
-      distribution: defaultDistribution,
-      netValue: defaultNetValue,
-      grossValue: defaultGrossValue,
-    });
-
-    return tmpContract;
   }
 
   getMemberExpensesSum(

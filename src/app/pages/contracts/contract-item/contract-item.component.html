@@ -543,7 +543,7 @@
         <nb-list style="width: 100%; padding: 10px 0">
           <nb-list-item
             *ngFor="
-              let member of contract.team;
+              let member of invoice.team;
               let i = index;
               trackBy: utils.trackByIndex
             "
@@ -554,7 +554,7 @@
               </div>
               <div class="col-6 col-md-2">
                 <nb-select
-                  [(ngModel)]="contract.team[i].coordination"
+                  [(ngModel)]="invoice.team[i].coordination"
                   id="input-memberCoordination-{{ i }}"
                   name="memberCoordination-{{ i }}"
                   placeholder="Coordenação"
@@ -563,7 +563,7 @@
                   <nb-option
                     *ngFor="
                       let coordination of departmentService.userCoordinations(
-                        contract.team[i].user
+                        invoice.team[i].user
                       )
                     "
                     [value]="coordination"
@@ -575,19 +575,19 @@
               <div class="col-6 col-md-2">
                 <input
                   nbInput
-                  [ngModel]="contract.team[i].grossValue"
+                  [ngModel]="invoice.team[i].grossValue"
                   id="input-gross-value-{{ i }}"
                   name="gross-value-{{ i }}"
                   placeholder="Valor bruto"
                   fullWidth
                   readonly="true"
-                  [status]="contract.team[i].grossValue ? 'basic' : 'danger'"
+                  [status]="invoice.team[i].grossValue ? 'basic' : 'danger'"
                 />
               </div>
               <div class="col-6 col-md-2">
                 <input
                   nbInput
-                  [(ngModel)]="contract.team[i].netValue"
+                  [(ngModel)]="invoice.team[i].netValue"
                   (ngModelChange)="updatePercentage(i)"
                   id="input-net-value-{{ i }}"
                   name="net-value-{{ i }}"
@@ -599,7 +599,7 @@
                     decimalCaracter: ',',
                     decimal: 2
                   }"
-                  [status]="contract.team[i].netValue ? 'basic' : 'danger'"
+                  [status]="invoice.team[i].netValue ? 'basic' : 'danger'"
                 />
               </div>
               <div
@@ -608,7 +608,7 @@
               >
                 <input
                   nbInput
-                  [(ngModel)]="contract.team[i].distribution"
+                  [(ngModel)]="invoice.team[i].distribution"
                   (ngModelChange)="updateValue(i)"
                   id="input-distribution-{{ i }}"
                   name="distribution-{{ i }}"
@@ -620,7 +620,7 @@
                     decimalCaracter: ',',
                     decimal: 2
                   }"
-                  [status]="contract.team[i].distribution ? 'basic' : 'danger'"
+                  [status]="invoice.team[i].distribution ? 'basic' : 'danger'"
                 />
                 %
               </div>
@@ -631,7 +631,7 @@
                   icon="trash-2-outline"
                   pack="eva"
                   (click)="
-                    contract.team.splice(i, 1);
+                    invoice.team.splice(i, 1);
                     updateTeamTotal();
                     memberChanged$.next(true)
                   "
@@ -951,7 +951,7 @@
       </nb-list-item>
       <nb-list-item
         *ngFor="
-          let member of contract.team;
+          let member of invoice.team;
           let i = index;
           trackBy: utils.trackByIndex
         "

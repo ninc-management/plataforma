@@ -10,6 +10,8 @@ import { Socket } from 'ngx-socket-io';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { parseISO } from 'date-fns';
+import { StringUtilService } from './string-util.service';
+import { cloneDeep } from 'lodash';
 
 export enum INVOICE_STATOOS {
   EM_ANALISE = 'Em análise',
@@ -33,7 +35,8 @@ export class InvoiceService implements OnDestroy {
     private contractService: ContractService,
     private wsService: WebSocketService,
     private socket: Socket,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnDestroy(): void {
@@ -42,6 +45,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   saveInvoice(invoice: Invoice): void {
+    invoice = this.setDefaultDistribution(invoice);
     const req = {
       invoice: invoice,
     };
@@ -137,5 +141,23 @@ export class InvoiceService implements OnDestroy {
     if (this.isInvoiceAuthor(invoice._id, user._id)) return 'Gestor';
     if (this.isInvoiceMember(invoice._id, user._id)) return 'Equipe';
     return 'Nenhum';
+  }
+
+  setDefaultDistribution(invoice: Invoice): Invoice {
+    const defaultDistribution = this.stringUtil.numberToString(
+      100 / invoice.team.length,
+      20
+    );
+
+    const tmpInvoice = cloneDeep(invoice);
+    tmpInvoice.team = invoice.team.map((member) => ({
+      user: member.user,
+      coordination: member.coordination,
+      distribution: defaultDistribution,
+      netValue: '',
+      grossValue: '',
+    }));
+
+    return tmpInvoice;
   }
 }

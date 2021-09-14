@@ -132,20 +132,6 @@ export class ContractReceipt {
   paidDate?: Date;
 }
 
-export class ContractTeamMember {
-  @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
-
-  @prop({ required: true })
-  coordination!: string;
-
-  @prop({ required: true })
-  distribution!: string;
-
-  netValue = '0,00';
-  grossValue = '0,00';
-}
-
 @plugin(mongooseUniqueValidator)
 export class Contract extends StatusHistory {
   @prop({ required: true, ref: () => Invoice })
@@ -177,9 +163,6 @@ export class Contract extends StatusHistory {
 
   @prop({ required: true })
   lastUpdate: Date = new Date();
-
-  @prop({ type: () => [ContractTeamMember] })
-  team: ContractTeamMember[] = [];
 
   @prop({ required: true })
   createdExpenses: number = 0;

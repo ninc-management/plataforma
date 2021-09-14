@@ -56,6 +56,12 @@ export class InvoiceTeamMember {
 
   @prop({ required: true })
   coordination!: string;
+
+  @prop({ required: true })
+  distribution!: string;
+
+  netValue = '0,00';
+  grossValue = '0,00';
 }
 
 @plugin(mongooseUniqueValidator)

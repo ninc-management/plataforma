@@ -61,6 +61,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   teamMember: InvoiceTeamMember = {
     user: undefined,
     coordination: '',
+    distribution: '',
+    netValue: '',
+    grossValue: '',
   };
   options = {
     aep: '',
@@ -177,6 +180,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice = new Invoice();
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         this.tempInvoice.author = user;
+        if (this.tempInvoice.team.length === 0) {
+          this.tempInvoice.team.push({
+            user: user,
+            coordination: this.tempInvoice.coordination
+              ? this.tempInvoice.coordination
+              : '',
+            distribution: '',
+            netValue: '',
+            grossValue: '',
+          });
+        }
       });
     }
     if (this.tempInvoice.contactPlural == undefined)
@@ -223,14 +237,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     ]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return (
-            (this.tempInvoice.team.find((member: InvoiceTeamMember) =>
-              this.userService.isEqual(user, member.user)
-            ) === undefined
-              ? true
-              : false) &&
-            !this.userService.isEqual(user, this.tempInvoice.author)
-          );
+          return this.tempInvoice.team.find((member: InvoiceTeamMember) =>
+            this.userService.isEqual(user, member.user)
+          ) === undefined
+            ? true
+            : false;
         });
       })
     );
@@ -277,6 +288,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     );
     if (this.editing) {
       if (!isEqual(this.iInvoice, this.tempInvoice)) {
+        if (
+          !this.tempInvoice.team
+            .map((member) => member.distribution)
+            .every((distribution) => distribution !== '')
+        )
+          this.tempInvoice = this.invoiceService.setDefaultDistribution(
+            this.tempInvoice
+          );
         this.updateRevision();
         this.tempInvoice.lastUpdate = new Date();
         if (this.oldStatus !== this.tempInvoice.status) {

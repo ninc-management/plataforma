@@ -1,8 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { take, takeUntil, skip, map } from 'rxjs/operators';
+import { take, takeUntil, skip } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { cloneDeep } from 'lodash';
 import {
   ContractService,
-  CONTRACT_STATOOS,
   EXPENSE_TYPES,
   SPLIT_TYPES,
 } from 'app/shared/services/contract.service';
@@ -17,17 +18,15 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { cloneDeep } from 'lodash';
+import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import {
-  ContractTeamMember,
   ContractExpenseTeamMember,
   ContractExpense,
   Contract,
 } from '@models/contract';
 import { User } from '@models/user';
-import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import * as expense_validation from 'app//shared/expense-validation.json';
-import { Observable, of } from 'rxjs';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import * as expense_validation from 'app/shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -42,6 +41,7 @@ export class ExpenseItemComponent
   contract = new Contract();
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
+  invoice = new Invoice();
   hasInitialContract = true;
   validation = (expense_validation as any).default;
   USER_COORDINATIONS: string[] = [];
@@ -140,8 +140,11 @@ export class ExpenseItemComponent
 
     this.updateUploaderOptions();
 
-    const tmp = this.contract.team
-      .map((member: ContractTeamMember): User | undefined => {
+    if (this.contract.invoice !== undefined)
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+
+    const tmp = this.invoice.team
+      .map((member: InvoiceTeamMember): User | undefined => {
         if (member.user) return this.userService.idToUser(member.user);
         return;
       })
@@ -176,8 +179,8 @@ export class ExpenseItemComponent
       }
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
-        const member = this.contract.team.find(
-          (member: ContractTeamMember) =>
+        const member = this.invoice.team.find(
+          (member: InvoiceTeamMember) =>
             member.user &&
             this.userService.idToUser(member.user)._id == author._id
         );
@@ -187,8 +190,8 @@ export class ExpenseItemComponent
     }
 
     if (!this.expense.team || this.expense.team.length == 0)
-      this.expense.team = this.contract.team.map(
-        (member: ContractTeamMember) => ({
+      this.expense.team = this.invoice.team.map(
+        (member: InvoiceTeamMember) => ({
           user: member.user,
           value: '0,00',
           percentage: member.distribution,
@@ -373,7 +376,7 @@ export class ExpenseItemComponent
       case SPLIT_TYPES.PROPORCIONAL: {
         for (let index = 0; index < this.expense.team.length; index++) {
           this.expense.team[index].percentage =
-            this.contract.team[index].distribution;
+            this.invoice.team[index].distribution;
           this.expense.team[index].value = this.stringUtil.applyPercentage(
             this.expense.value,
             this.expense.team[index].percentage

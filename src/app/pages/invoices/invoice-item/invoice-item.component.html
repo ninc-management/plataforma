@@ -11,7 +11,9 @@
             <nb-completer
               [(ngModel)]="authorSearch"
               [inputName]="'authorListCompleter'"
-              (selected)="tempInvoice.author = $event"
+              (selected)="
+                tempInvoice.author = $event; tempInvoice.team[0].user = $event
+              "
               #authorList="ngModel"
               id="input-author"
               name="authorList"
@@ -80,6 +82,7 @@
             <label class="label" for="input-coordination">Coordenação:</label>
             <nb-select
               [(ngModel)]="tempInvoice.coordination"
+              (ngModelChange)="tempInvoice.team[0].coordination = $event"
               #coordination="ngModel"
               id="input-coordination"
               name="coordination"
@@ -748,23 +751,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-user">
-              Colaborador:
-              <nb-icon
-                status="info"
-                icon="info"
-                pack="eva"
-                [options]="{ animation: { type: 'pulse' } }"
-                nbTooltip="O gestor sempre está no orçamento, sendo o primeiro a aparecer, e seu perfil de atuação será o mesmo da coordenação do orçamento"
-                [nbTooltipTrigger]="
-                  utils.isPhone()
-                    ? utils.tooltipTriggers.NOOP
-                    : utils.tooltipTriggers.HINT
-                "
-                nbTooltipPlacement="top"
-                nbTooltipStatus="info"
-              ></nb-icon>
-            </label>
+            <label class="label" for="input-user">Colaborador:</label>
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
@@ -861,6 +848,7 @@
             <div class="col-10 col-md-5">
               <nb-select
                 [(ngModel)]="tempInvoice.team[i].coordination"
+                [disabled]="i === 0"
                 id="input-memberCoordination-{{ i }}"
                 name="memberCoordination-{{ i }}"
                 placeholder="Coordenação"
@@ -878,7 +866,11 @@
                 </nb-option>
               </nb-select>
             </div>
-            <div class="col-2 col-md-1" style="text-align: right">
+            <div
+              class="col-2 col-md-1"
+              style="text-align: right"
+              *ngIf="i != 0"
+            >
               <nb-icon
                 class="xIcon"
                 status="basic"

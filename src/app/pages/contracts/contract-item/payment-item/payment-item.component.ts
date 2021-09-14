@@ -7,23 +7,24 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { cloneDeep } from 'lodash';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { cloneDeep } from 'lodash';
 import {
-  ContractTeamMember,
   ContractUserPayment,
   ContractPayment,
   Contract,
 } from '@models/contract';
 import { User } from '@models/user';
-import * as contract_validation from '../../../../shared/payment-validation.json';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import * as contract_validation from 'app/shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -36,6 +37,7 @@ export class PaymentItemComponent implements OnInit {
   @Input() paymentIndex?: number;
   @Output() submit = new EventEmitter<void>();
   @ViewChild('value', { static: false, read: ElementRef })
+  invoice = new Invoice();
   valueInputRef!: ElementRef<HTMLInputElement>;
   hasInitialContract = true;
   validation = (contract_validation as any).default;
@@ -85,6 +87,7 @@ export class PaymentItemComponent implements OnInit {
   constructor(
     public departmentService: DepartmentService,
     private contractService: ContractService,
+    private invoiceService: InvoiceService,
     public userService: UserService,
     public stringUtil: StringUtilService,
     public utils: UtilsService
@@ -97,8 +100,10 @@ export class PaymentItemComponent implements OnInit {
   }
 
   fillContractData(): void {
-    const teamUsers = this.contract.team
-      .map((member) => {
+    if (this.contract.invoice !== undefined)
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    const teamUsers = this.invoice.team
+      .map((member: InvoiceTeamMember) => {
         if (member.user) return this.userService.idToUser(member.user);
         return;
       })
@@ -108,8 +113,8 @@ export class PaymentItemComponent implements OnInit {
       this.updateLastValues();
       this.calculateTeamValues();
     } else {
-      this.payment.team = cloneDeep(this.contract.team).map(
-        (member: ContractTeamMember): ContractUserPayment => {
+      this.payment.team = cloneDeep(this.invoice.team).map(
+        (member: InvoiceTeamMember): ContractUserPayment => {
           const payment: ContractUserPayment = {
             coordination: member.coordination,
             user: member.user,

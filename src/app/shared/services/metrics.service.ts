@@ -1417,8 +1417,10 @@ export class MetricsService implements OnDestroy {
         });
         if (uId != undefined) {
           fContracts = fContracts.filter((contract) => {
-            return contract.team
-              .map(
+            if (contract.invoice === undefined) return false;
+            return this.invoiceService
+              .idToInvoice(contract.invoice)
+              .team.map(
                 (team) =>
                   this.userService.isEqual(team.user, uId) &&
                   team.distribution != undefined
@@ -1426,10 +1428,13 @@ export class MetricsService implements OnDestroy {
               .filter((isSameUser) => isSameUser).length;
           });
           fContracts = fContracts.map((contract) => {
-            contract.value = this.stringUtil.applyPercentage(
-              contract.value,
-              contract.team[0].distribution
-            );
+            if (contract.invoice !== undefined) {
+              contract.value = this.stringUtil.applyPercentage(
+                contract.value,
+                this.invoiceService.idToInvoice(contract.invoice).team[0]
+                  .distribution
+              );
+            }
             return contract;
           });
         }
