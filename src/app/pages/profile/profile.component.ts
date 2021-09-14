@@ -235,15 +235,15 @@ export class ProfileComponent implements OnInit, DoCheck {
   refreshExpertises(): void {
     const active: boolean[] = [
       this.user.adm ? this.user.adm : false,
+      this.user.baixaTensao ? this.user.baixaTensao : false,
       this.user.design ? this.user.design : false,
       this.user.obras ? this.user.obras : false,
       this.user.impermeabilizacao ? this.user.impermeabilizacao : false,
       this.user.instalacoes ? this.user.instalacoes : false,
       this.user.ambiental ? this.user.ambiental : false,
+      this.user.mediaTensao ? this.user.mediaTensao : false,
       this.user.arquitetura ? this.user.arquitetura : false,
       this.user.hidrico ? this.user.hidrico : false,
-      this.user.baixaTensao ? this.user.baixaTensao : false,
-      this.user.mediaTensao ? this.user.mediaTensao : false,
       this.user.civil ? this.user.civil : false,
       this.user.sanitaria ? this.user.sanitaria : false,
     ];

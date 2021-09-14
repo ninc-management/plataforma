@@ -708,6 +708,17 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
+                        [(ngModel)]="user.baixaTensao"
+                        #baixaTensao="ngModel"
+                        name="baixaTensao"
+                        [status]="baixaTensao.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                      >
+                        Baixa Tensão
+                      </nb-checkbox>
+                      <br />
+                      <nb-checkbox
                         [(ngModel)]="user.design"
                         #design="ngModel"
                         name="design"
@@ -729,6 +740,10 @@
                         Gerenciamento de Obras
                       </nb-checkbox>
                       <br />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-control-group">
                       <nb-checkbox
                         [(ngModel)]="user.impermeabilizacao"
                         #impermeabilizacao="ngModel"
@@ -740,10 +755,6 @@
                         Impermeabilização
                       </nb-checkbox>
                       <br />
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-control-group">
                       <nb-checkbox
                         [(ngModel)]="user.instalacoes"
                         #instalacoes="ngModel"
@@ -767,6 +778,21 @@
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
+                        [(ngModel)]="user.mediaTensao"
+                        #mediaTensao="ngModel"
+                        name="mediaTensao"
+                        [status]="mediaTensao.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                      >
+                        Média Tensão
+                      </nb-checkbox>
+                      <br />
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-control-group">
+                      <nb-checkbox
                         [(ngModel)]="user.arquitetura"
                         #arquitetura="ngModel"
                         name="arquitetura"
@@ -786,32 +812,6 @@
                         (ngModelChange)="refreshExpertises()"
                       >
                         Recursos Hídricos
-                      </nb-checkbox>
-                      <br />
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-control-group">
-                      <nb-checkbox
-                        [(ngModel)]="user.baixaTensao"
-                        #baixaTensao="ngModel"
-                        name="baixaTensao"
-                        [status]="baixaTensao.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        (ngModelChange)="refreshExpertises()"
-                      >
-                        Baixa Tensão
-                      </nb-checkbox>
-                      <br />
-                      <nb-checkbox
-                        [(ngModel)]="user.mediaTensao"
-                        #mediaTensao="ngModel"
-                        name="mediaTensao"
-                        [status]="mediaTensao.value ? 'success' : 'basic'"
-                        [disabled]="!isEditing"
-                        (ngModelChange)="refreshExpertises()"
-                      >
-                        Média Tensão
                       </nb-checkbox>
                       <br />
                       <nb-checkbox
