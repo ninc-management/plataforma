@@ -20,6 +20,25 @@ function toMutiplyPercentage(percentage) {
   return (100 - numberToNumber(percentage)) / 100;
 }
 
+function numberToString(number, decimals=2) {
+  return number.toFixed(decimals).toString().replace('.', ',');
+}
+
+function setDefaultDistribution(invoice) {
+  var defaultDistribution = numberToString(
+    100 / invoice.team.length,
+    20
+  );
+
+  invoice.team = invoice.team.map((member) => ({
+    user: member.user,
+    coordination: member.coordination,
+    distribution: defaultDistribution,
+    netValue: '',
+    grossValue: '',
+  }));
+}
+
 function numberToNumber(money) {
   if (!money) return 0;
   const result = money.replace(',', '.');
@@ -147,6 +166,53 @@ db.contracts.aggregate({$unwind: "$invoice"},
   if(changed)
     db.contracts.replaceOne({_id: c._id}, c);
 });
+
+// Merge invoice and contract teams
+db.invoices.find().forEach((i) => {
+  if(i.team && i.team.length > 0) {
+    if(i.status === "Fechado"){
+      var c = db.contracts.findOne({invoice: i._id});
+      if(c == null) print(i.code);
+      if(c.team && c.team.length > 0) {
+        i.team = c.team.map((member) => ({user: member.user, coordination: member.coordination, distribution: member.distribution, netValue: "", grossValue: ""}));
+        delete c.team;
+        if (
+          !i.team
+            .map((member) => member.distribution)
+            .every((distribution) => !!distribution)
+        )
+          setDefaultDistribution(i);
+        db.contracts.replaceOne({_id: c._id}, c);
+      } else {
+        i.team.unshift({user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""});
+        setDefaultDistribution(i);
+      }
+    } else {
+      i.team.unshift({user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""});
+      setDefaultDistribution(i);
+    }
+  } else {
+    if(i.status === "Fechado"){
+      var c = db.contracts.findOne({invoice: i._id});
+      if(c == null) print(i.code);
+      if(c.team && c.team.length > 0) {
+        i.team = c.team.map((member) => ({user: member.user, coordination: member.coordination, distribution: member.distribution, netValue: "", grossValue: ""}));
+        delete c.team;
+        if (
+          !i.team
+            .map((member) => member.distribution)
+            .every((distribution) => !!distribution)
+        )
+          setDefaultDistribution(i);
+        db.contracts.replaceOne({_id: c._id}, c);
+      } else {
+        i.team = [{user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""}]
+      }
+    } else
+      i.team = [{user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""}];
+  }
+  db.invoices.replaceOne({_id: i._id}, i);
+})
 
 // Fix invoice status history
 db.invoices.find().forEach((i) => {
