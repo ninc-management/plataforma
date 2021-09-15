@@ -48,7 +48,7 @@ export class ContractExpense {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid: boolean = false;
+  paid = false;
 
   @prop({ required: true })
   code!: string;
@@ -93,7 +93,7 @@ export class ContractPayment {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid: boolean = false;
+  paid = false;
 
   @prop()
   paidDate?: Date;
@@ -119,10 +119,27 @@ export class ContractReceipt {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid: boolean = false;
+  paid = false;
 
   @prop()
   paidDate?: Date;
+}
+
+export class ContractChecklistItem {
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  startDate: Date = new Date();
+
+  @prop({ required: true })
+  endDate!: Date;
+
+  @prop({ required: true, ref: () => User })
+  responsible: Ref<User>;
+
+  @prop({ required: true })
+  status!: string;
 }
 
 @plugin(mongooseUniqueValidator)
@@ -140,16 +157,16 @@ export class Contract extends StatusHistory {
   expenses: ContractExpense[] = [];
 
   @prop({ required: true })
-  status: string = 'Em andamento';
+  status = 'Em andamento';
 
   @prop({ required: true })
-  version: string = '00';
+  version = '00';
 
   @prop({ required: true })
-  ISS: string = '0,00';
+  ISS = '0,00';
 
   @prop({ required: true })
-  total: string = '1';
+  total = '1';
 
   @prop({ required: true })
   created: Date = new Date();
@@ -158,7 +175,10 @@ export class Contract extends StatusHistory {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  createdExpenses: number = 0;
+  createdExpenses = 0;
+
+  @prop({ type: () => [ContractChecklistItem] })
+  checklist: ContractChecklistItem[] = [];
 
   balance = '';
   value = '';
