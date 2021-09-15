@@ -65,6 +65,7 @@ export class ContractItemComponent implements OnInit {
     notaFiscal: '0',
     nortanPercentage: '0',
   };
+  isEditionGranted = false;
 
   get invoiceAdministration(): string {
     if (this.contract.invoice)
@@ -201,7 +202,7 @@ export class ContractItemComponent implements OnInit {
       paid: {
         title: 'Pago?',
         type: 'string',
-        valuePrepareFunction: (value: any) => (value ? '✔️' : '❌'),
+        valuePrepareFunction: (value: any) => (value ? '✅' : '❌'),
         filter: {
           type: 'list',
           config: {
@@ -209,7 +210,7 @@ export class ContractItemComponent implements OnInit {
             list: [
               {
                 value: true,
-                title: '✔️',
+                title: '✅',
               },
               {
                 value: false,
@@ -297,7 +298,13 @@ export class ContractItemComponent implements OnInit {
         });
       })
     );
-    this.loadTableExpenses();
+    this.contractService
+      .checkEditPermission(this.invoice)
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        this.isEditionGranted = isGranted;
+        this.loadTableExpenses();
+      });
   }
 
   updateContract(): void {
@@ -683,6 +690,8 @@ export class ContractItemComponent implements OnInit {
   }
 
   loadTableExpenses(): void {
+    this.settings.actions.add = this.isEditionGranted;
+    this.settings.actions.delete = this.isEditionGranted;
     this.source.load(
       this.contract.expenses.map((expense: any, index: number) => {
         const tmp = cloneDeep(expense);

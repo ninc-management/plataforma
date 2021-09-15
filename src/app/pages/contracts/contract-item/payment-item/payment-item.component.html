@@ -35,154 +35,133 @@
         ></nb-completer>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-value">
-          Valor:
-          <nb-icon
-            status="info"
-            icon="info"
-            pack="eva"
-            [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma ordem de pagamento."
-            nbTooltipPlacement="top"
-            nbTooltipStatus="info"
-          ></nb-icon>
-        </label>
-        <input
-          nbInput
-          [(ngModel)]="payment.value"
-          #value="ngModel"
-          id="input-value"
-          name="value"
-          placeholder="Valor empenhado"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: 2
-          }"
-          [disabled]="paymentIndex != undefined"
-          [overPaid]="contract.balance"
-          [required]="validation.value.required"
-          [minLength]="validation.value.minLength"
-          [maxLength]="validation.value.maxLength"
-          [status]="
-            value.dirty
-              ? value.invalid
-                ? 'danger'
-                : 'success'
-              : paymentIndex === undefined && payment.value !== ''
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          (ngModelChange)="calculateTeamValues()"
-          (focus)="updateLastValues()"
-          (focusout)="updateLastValues()"
-        />
-        <ng-container>
-          <p class="caption">
-            Valor em caixa: R$
-            {{ contract.balance }}
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="
-              value.errors?.overpaid &&
-              value.invalid &&
-              (value.dirty || value.touched)
-            "
-          >
-            O valor do empenho é superior ao valor em caixa no contrato!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="
-              value.errors?.required &&
-              value.invalid &&
-              (value.dirty || value.touched)
-            "
-          >
-            O valor do empenho é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="
-              (value.errors?.minlength || value.errors?.maxlength) &&
-              value.invalid &&
-              (value.dirty || value.touched)
-            "
-          >
-            O valor do empenho deve conter entre
-            {{ validation.value.minLength }} a
-            {{ validation.value.maxLength }}
-            numeros
-          </p>
-        </ng-container>
-      </div>
-    </div>
-    <div class="col-6 col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-paidCheck">Pago?</label>
-        <nb-select
-          [(ngModel)]="payment.paid"
-          #paidCheck="ngModel"
-          id="input-paidCheck"
-          name="paidCheck"
-          placeholder="OE paga?"
-          fullWidth
-          size="large"
-          (ngModelChange)="updatePaidDate()"
-          [required]="validation.paidCheck.required"
-          [status]="
-            paidCheck.dirty
-              ? 'success'
-              : paymentIndex === undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            paidCheck.invalid && paidCheck.touched ? true : null
-          "
-        >
-          <nb-option [value]="false">NÃO</nb-option>
-          <nb-option [value]="true">SIM</nb-option>
-        </nb-select>
-      </div>
-    </div>
-    <div class="col-6 col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-paidDate">Data do pagamento:</label>
-        <input
-          *ngIf="!payment.paid; else withdate"
-          nbInput
-          [(ngModel)]="payment.paidDate"
-          #paidDate="ngModel"
-          id="input-paidDate"
-          name="paidDate"
-          placeholder="Escolha uma data"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-          [disabled]="!payment.paid"
-          [status]="
-            paidDate.dirty
-              ? paidDate.invalid
-                ? 'danger'
-                : 'success'
-              : payment.paidDate !== undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            paidDate.invalid && paidDate.touched ? true : null
-          "
-        />
-        <ng-template #withdate>
+  </div>
+  <fieldset [disabled]="!isEditionGranted">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-value">
+            Valor:
+            <nb-icon
+              status="info"
+              icon="info"
+              pack="eva"
+              [options]="{ animation: { type: 'pulse' } }"
+              nbTooltip="Os valores do time são recalculados automaticamente se já houver algum valor preechido. Se não, atualize no contrato a distribuição antes de gerar uma ordem de pagamento."
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
+            ></nb-icon>
+          </label>
           <input
+            nbInput
+            [(ngModel)]="payment.value"
+            #value="ngModel"
+            id="input-value"
+            name="value"
+            placeholder="Valor empenhado"
+            fullWidth
+            fieldSize="large"
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: 2
+            }"
+            [disabled]="paymentIndex != undefined"
+            [overPaid]="contract.balance"
+            [required]="validation.value.required"
+            [minLength]="validation.value.minLength"
+            [maxLength]="validation.value.maxLength"
+            [status]="
+              value.dirty
+                ? value.invalid
+                  ? 'danger'
+                  : 'success'
+                : paymentIndex === undefined && payment.value !== ''
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+            (ngModelChange)="calculateTeamValues()"
+            (focus)="updateLastValues()"
+            (focusout)="updateLastValues()"
+          />
+          <ng-container>
+            <p class="caption">
+              Valor em caixa: R$
+              {{ contract.balance }}
+            </p>
+            <p
+              class="caption status-danger"
+              *ngIf="
+                value.errors?.overpaid &&
+                value.invalid &&
+                (value.dirty || value.touched)
+              "
+            >
+              O valor do empenho é superior ao valor em caixa no contrato!
+            </p>
+            <p
+              class="caption status-danger"
+              *ngIf="
+                value.errors?.required &&
+                value.invalid &&
+                (value.dirty || value.touched)
+              "
+            >
+              O valor do empenho é obrigatório!
+            </p>
+            <p
+              class="caption status-danger"
+              *ngIf="
+                (value.errors?.minlength || value.errors?.maxlength) &&
+                value.invalid &&
+                (value.dirty || value.touched)
+              "
+            >
+              O valor do empenho deve conter entre
+              {{ validation.value.minLength }} a
+              {{ validation.value.maxLength }}
+              numeros
+            </p>
+          </ng-container>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-paidCheck">Pago?</label>
+          <nb-select
+            [(ngModel)]="payment.paid"
+            [disabled]="!isEditionGranted"
+            #paidCheck="ngModel"
+            id="input-paidCheck"
+            name="paidCheck"
+            placeholder="OE paga?"
+            fullWidth
+            size="large"
+            (ngModelChange)="updatePaidDate()"
+            [required]="validation.paidCheck.required"
+            [status]="
+              paidCheck.dirty
+                ? 'success'
+                : paymentIndex === undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              paidCheck.invalid && paidCheck.touched ? true : null
+            "
+          >
+            <nb-option [value]="false">NÃO</nb-option>
+            <nb-option [value]="true">SIM</nb-option>
+          </nb-select>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-paidDate">Data do pagamento:</label>
+          <input
+            *ngIf="!payment.paid; else withdate"
             nbInput
             [(ngModel)]="payment.paidDate"
             #paidDate="ngModel"
@@ -191,15 +170,14 @@
             placeholder="Escolha uma data"
             fullWidth
             fieldSize="large"
-            [nbDatepicker]="pDatepicker"
-            [required]="validation.paidDate.required"
             [readonly]="true"
+            [disabled]="!payment.paid"
             [status]="
               paidDate.dirty
                 ? paidDate.invalid
                   ? 'danger'
                   : 'success'
-                : paymentIndex === undefined
+                : payment.paidDate !== undefined
                 ? 'success'
                 : 'basic'
             "
@@ -207,366 +185,408 @@
               paidDate.invalid && paidDate.touched ? true : null
             "
           />
-          <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
-        </ng-template>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="form-control-group">
-        <label class="label" for="input-created">Data de criação:</label>
-        <input
-          nbInput
-          [(ngModel)]="payment.created"
-          #created="ngModel"
-          id="input-created"
-          name="created"
-          placeholder="Escolha uma data"
-          fullWidth
-          fieldSize="large"
-          [nbDatepicker]="cDatepicker"
-          [required]="validation.created.required"
-          [readonly]="true"
-          [status]="
-            created.dirty
-              ? created.invalid
-                ? 'danger'
-                : 'success'
-              : paymentIndex === undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="created.invalid && created.touched ? true : null"
-        />
-        <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="form-control-group">
-        <label class="label" for="input-updated">Última atualização:</label>
-        <input
-          nbInput
-          [ngModel]="utils.formatDate(payment.lastUpdate)"
-          #updated="ngModel"
-          id="input-updated"
-          name="updated"
-          placeholder="Escolha uma data"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.lastUpdate.required"
-          [readonly]="true"
-          [status]="
-            updated.dirty
-              ? updated.invalid
-                ? 'danger'
-                : 'success'
-              : paymentIndex === undefined
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
-        />
-      </div>
-    </div>
-    <div class="col-md-12">
-      <div class="form-control-group">
-        <label class="label" for="input-service">Serviço:</label>
-        <textarea
-          nbInput
-          [(ngModel)]="payment.service"
-          #service="ngModel"
-          id="input-service"
-          name="service"
-          placeholder="Descreva o serviço efetuado nessa ordem de empenho"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.service.required"
-          [minlength]="validation.service.minLength"
-          [maxlength]="validation.service.maxLength"
-          [status]="
-            service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
-          "
-          [attr.aria-invalid]="service.invalid && service.touched ? true : null"
-        ></textarea>
-        <ng-container *ngIf="service.invalid && service.touched">
-          <p class="caption status-danger" *ngIf="service.errors?.required">
-            O campo de serviço é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="service.errors?.minlength || service.errors?.maxlength"
-          >
-            O campo de serviço deve conter entre
-            {{ validation.service.minLength }} a
-            {{ validation.service.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
-      </div>
-    </div>
-  </div>
-  <hr />
-  <div class="row">
-    <div class="col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-user">
-          Colaborador:
-          <nb-icon
-            status="info"
-            icon="info"
-            pack="eva"
-            [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="É exibido somente a lista de membros do orçamento e gestor. Caso o associado que deseja não esteja na lista, adicione ele como equipe do orçamento."
-            nbTooltipPlacement="top"
-            nbTooltipStatus="info"
-          ></nb-icon>
-        </label>
-        <nb-completer
-          [(ngModel)]="userSearch"
-          [inputName]="'userListCompleter'"
-          (selected)="userPayment.user = $event; updateUserCoordinations()"
-          #userList="ngModel"
-          id="input-user"
-          name="userList"
-          nameField="fullName"
-          pictureField="profilePicture"
-          [data$]="availableUsers"
-          [minSearchLength]="0"
-          [placeholder]="'Digite o nome do colaborador'"
-          [textNoResults]="
-            'Não foi possível achar um colaborador com o nome digitado'
-          "
-          [fullWidth]="true"
-          [fieldSize]="'large'"
-          [status]="
-            userList.dirty && userSearch
-              ? userList.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            userList.invalid && userList.touched ? true : null
-          "
-        ></nb-completer>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="form-control-group">
-        <label class="label" for="input-coordination">Coordenação:</label>
-        <nb-select
-          [(ngModel)]="userPayment.coordination"
-          #coordination="ngModel"
-          id="input-coordination"
-          name="coordination"
-          placeholder="Coordenação"
-          fullWidth
-          size="large"
-          [status]="coordination.value ? 'success' : 'basic'"
-          [attr.aria-invalid]="
-            coordination.invalid && coordination.touched ? true : null
-          "
-        >
-          <nb-option
-            *ngFor="let coordination of USER_COORDINATIONS"
-            [value]="coordination"
-          >
-            {{ coordination }}
-          </nb-option>
-        </nb-select>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="form-control-group">
-        <label
-          class="label"
-          for="input-paid"
-          style="display: flex; margin-top: 4px"
-        >
-          <span style="margin-right: 10px">Valor:</span>
-          <nb-radio-group
-            [(ngModel)]="options.valueType"
-            #valueType="ngModel"
-            id="input-value-type"
-            name="valueType"
-            style="height: 16px"
-          >
-            <nb-radio value="$" style="height: 16px">R$</nb-radio>
-            <nb-radio value="%" style="height: 16px">%</nb-radio>
-          </nb-radio-group>
-        </label>
-        <input
-          nbInput
-          [(ngModel)]="userPayment.value"
-          #paid="ngModel"
-          id="input-paid"
-          name="paid"
-          placeholder="Valor"
-          fullWidth
-          fieldSize="large"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: 2
-          }"
-          [status]="paid.value ? 'success' : 'basic'"
-          [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
-          [readonly]="false"
-        />
-      </div>
-    </div>
-    <div class="col-md-1">
-      <button
-        nbButton
-        type="button"
-        fullWidth
-        status="primary"
-        size="large"
-        style="margin-top: 28px"
-        [disabled]="!paid.value || !coordination.value || !userList.value"
-        (click)="addColaborator()"
-      >
-        +
-      </button>
-    </div>
-  </div>
-  <nb-list style="width: 100%; padding: 10px 0">
-    <nb-list-item
-      *ngFor="
-        let userPayment of payment.team;
-        let i = index;
-        trackBy: utils.trackByIndex
-      "
-    >
-      <div class="row paymentRow">
-        <div class="col-12 col-md-4">
-          {{ userService.idToName(userPayment.user) }}
+          <ng-template #withdate>
+            <input
+              nbInput
+              [(ngModel)]="payment.paidDate"
+              #paidDate="ngModel"
+              id="input-paidDate"
+              name="paidDate"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [nbDatepicker]="pDatepicker"
+              [required]="validation.paidDate.required"
+              [readonly]="true"
+              [status]="
+                paidDate.dirty
+                  ? paidDate.invalid
+                    ? 'danger'
+                    : 'success'
+                  : paymentIndex === undefined
+                  ? 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                paidDate.invalid && paidDate.touched ? true : null
+              "
+            />
+            <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
+          </ng-template>
         </div>
-        <div class="col-12 col-md-3">
+      </div>
+      <div class="col-6">
+        <div class="form-control-group">
+          <label class="label" for="input-created">Data de criação:</label>
+          <input
+            nbInput
+            [(ngModel)]="payment.created"
+            #created="ngModel"
+            id="input-created"
+            name="created"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="cDatepicker"
+            [required]="validation.created.required"
+            [readonly]="true"
+            [status]="
+              created.dirty
+                ? created.invalid
+                  ? 'danger'
+                  : 'success'
+                : paymentIndex === undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              created.invalid && created.touched ? true : null
+            "
+          />
+          <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-control-group">
+          <label class="label" for="input-updated">Última atualização:</label>
+          <input
+            nbInput
+            [ngModel]="utils.formatDate(payment.lastUpdate)"
+            #updated="ngModel"
+            id="input-updated"
+            name="updated"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [required]="validation.lastUpdate.required"
+            [readonly]="true"
+            [status]="
+              updated.dirty
+                ? updated.invalid
+                  ? 'danger'
+                  : 'success'
+                : paymentIndex === undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              updated.invalid && updated.touched ? true : null
+            "
+          />
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-control-group">
+          <label class="label" for="input-service">Serviço:</label>
+          <textarea
+            nbInput
+            [(ngModel)]="payment.service"
+            #service="ngModel"
+            id="input-service"
+            name="service"
+            placeholder="Descreva o serviço efetuado nessa ordem de empenho"
+            fullWidth
+            fieldSize="large"
+            [required]="validation.service.required"
+            [minlength]="validation.service.minLength"
+            [maxlength]="validation.service.maxLength"
+            [status]="
+              service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
+            "
+            [attr.aria-invalid]="
+              service.invalid && service.touched ? true : null
+            "
+          ></textarea>
+          <ng-container *ngIf="service.invalid && service.touched">
+            <p class="caption status-danger" *ngIf="service.errors?.required">
+              O campo de serviço é obrigatório!
+            </p>
+            <p
+              class="caption status-danger"
+              *ngIf="service.errors?.minlength || service.errors?.maxlength"
+            >
+              O campo de serviço deve conter entre
+              {{ validation.service.minLength }} a
+              {{ validation.service.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-user">
+            Colaborador:
+            <nb-icon
+              status="info"
+              icon="info"
+              pack="eva"
+              [options]="{ animation: { type: 'pulse' } }"
+              nbTooltip="É exibido somente a lista de membros do orçamento e gestor. Caso o associado que deseja não esteja na lista, adicione ele como equipe do orçamento."
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
+            ></nb-icon>
+          </label>
+          <nb-completer
+            [(ngModel)]="userSearch"
+            [inputName]="'userListCompleter'"
+            (selected)="userPayment.user = $event; updateUserCoordinations()"
+            #userList="ngModel"
+            id="input-user"
+            name="userList"
+            nameField="fullName"
+            pictureField="profilePicture"
+            [data$]="availableUsers"
+            [minSearchLength]="0"
+            [placeholder]="'Digite o nome do colaborador'"
+            [textNoResults]="
+              'Não foi possível achar um colaborador com o nome digitado'
+            "
+            [fullWidth]="true"
+            [fieldSize]="'large'"
+            [status]="
+              userList.dirty && userSearch
+                ? userList.invalid
+                  ? 'danger'
+                  : 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              userList.invalid && userList.touched ? true : null
+            "
+          ></nb-completer>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-control-group">
+          <label class="label" for="input-coordination">Coordenação:</label>
           <nb-select
-            [(ngModel)]="payment.team[i].coordination"
-            id="input-memberCoordination-{{ i }}"
-            name="memberCoordination-{{ i }}"
+            [(ngModel)]="userPayment.coordination"
+            [disabled]="!isEditionGranted"
+            #coordination="ngModel"
+            id="input-coordination"
+            name="coordination"
             placeholder="Coordenação"
             fullWidth
+            size="large"
+            [status]="coordination.value ? 'success' : 'basic'"
+            [attr.aria-invalid]="
+              coordination.invalid && coordination.touched ? true : null
+            "
           >
             <nb-option
-              *ngFor="
-                let coordination of departmentService.userCoordinations(
-                  payment.team[i].user
-                )
-              "
+              *ngFor="let coordination of USER_COORDINATIONS"
               [value]="coordination"
             >
               {{ coordination }}
             </nb-option>
           </nb-select>
         </div>
-        <div class="col-5 col-md-2">
+      </div>
+      <div class="col-md-3">
+        <div class="form-control-group">
+          <label
+            class="label"
+            for="input-paid"
+            style="display: flex; margin-top: 4px"
+          >
+            <span style="margin-right: 10px">Valor:</span>
+            <nb-radio-group
+              [(ngModel)]="options.valueType"
+              #valueType="ngModel"
+              id="input-value-type"
+              name="valueType"
+              style="height: 16px"
+            >
+              <nb-radio value="$" style="height: 16px">R$</nb-radio>
+              <nb-radio value="%" style="height: 16px">%</nb-radio>
+            </nb-radio-group>
+          </label>
           <input
             nbInput
-            [(ngModel)]="payment.team[i].value"
-            (ngModelChange)="updatePercentage(i); updateTotal()"
-            id="input-memberValue-{{ i }}"
-            name="memberValue-{{ i }}"
+            [(ngModel)]="userPayment.value"
+            #paid="ngModel"
+            id="input-paid"
+            name="paid"
             placeholder="Valor"
             fullWidth
+            fieldSize="large"
             [brmasker]="{
               money: true,
               thousand: '.',
               decimalCaracter: ',',
               decimal: 2
             }"
-            [status]="
-              paymentIndex === undefined
-                ? is100
-                  ? 'success'
-                  : 'danger'
-                : is100
-                ? 'basic'
-                : 'danger'
-            "
+            [status]="paid.value ? 'success' : 'basic'"
+            [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
+            [readonly]="false"
           />
         </div>
-        <div class="col-5 col-md-2" style="display: flex; align-items: center">
-          <input
-            nbInput
-            [(ngModel)]="payment.team[i].percentage"
-            (ngModelChange)="updateValue(i); updateTotal()"
-            id="input-memberPercentage-{{ i }}"
-            name="memberPercentage-{{ i }}"
-            placeholder="Porcentagem"
-            fullWidth
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
+      </div>
+      <div class="col-md-1">
+        <button
+          nbButton
+          type="button"
+          fullWidth
+          status="primary"
+          size="large"
+          style="margin-top: 28px"
+          [disabled]="!paid.value || !coordination.value || !userList.value"
+          (click)="addColaborator()"
+        >
+          +
+        </button>
+      </div>
+    </div>
+    <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list-item
+        *ngFor="
+          let userPayment of payment.team;
+          let i = index;
+          trackBy: utils.trackByIndex
+        "
+      >
+        <div class="row paymentRow">
+          <div class="col-12 col-md-4">
+            {{ userService.idToName(userPayment.user) }}
+          </div>
+          <div class="col-12 col-md-3">
+            <nb-select
+              [(ngModel)]="payment.team[i].coordination"
+              [disabled]="!isEditionGranted"
+              id="input-memberCoordination-{{ i }}"
+              name="memberCoordination-{{ i }}"
+              placeholder="Coordenação"
+              fullWidth
+            >
+              <nb-option
+                *ngFor="
+                  let coordination of departmentService.userCoordinations(
+                    payment.team[i].user
+                  )
+                "
+                [value]="coordination"
+              >
+                {{ coordination }}
+              </nb-option>
+            </nb-select>
+          </div>
+          <div class="col-5 col-md-2">
+            <input
+              nbInput
+              [(ngModel)]="payment.team[i].value"
+              (ngModelChange)="updatePercentage(i); updateTotal()"
+              id="input-memberValue-{{ i }}"
+              name="memberValue-{{ i }}"
+              placeholder="Valor"
+              fullWidth
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              [status]="
+                paymentIndex === undefined
+                  ? is100
+                    ? 'success'
+                    : 'danger'
+                  : is100
+                  ? 'basic'
+                  : 'danger'
+              "
+            />
+          </div>
+          <div
+            class="col-5 col-md-2"
+            style="display: flex; align-items: center"
+          >
+            <input
+              nbInput
+              [(ngModel)]="payment.team[i].percentage"
+              (ngModelChange)="updateValue(i); updateTotal()"
+              id="input-memberPercentage-{{ i }}"
+              name="memberPercentage-{{ i }}"
+              placeholder="Porcentagem"
+              fullWidth
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              [status]="
+                paymentIndex === undefined
+                  ? is100
+                    ? 'success'
+                    : 'danger'
+                  : is100
+                  ? 'basic'
+                  : 'danger'
+              "
+            />
+            %
+          </div>
+          <div
+            class="col-2 col-md-1"
+            style="text-align: right"
+            *ngIf="!isEditionGranted"
+          >
+            <nb-icon
+              class="xIcon"
+              status="basic"
+              icon="trash-2-outline"
+              pack="eva"
+              (click)="
+                payment.team.splice(i, 1);
+                updateTotal();
+                memberChanged$.next(true)
+              "
+              [options]="{ animation: { type: 'shake' } }"
+            ></nb-icon>
+          </div>
+        </div>
+      </nb-list-item>
+      <nb-list-item>
+        <div class="row paymentRow">
+          <div class="col-12 col-md-4">Restante: {{ remainingBalance() }}</div>
+          <div class="col-4 col-md-4" style="text-align: right">Total:</div>
+          <div
+            class="col-4 col-md-2"
+            [ngClass]="{
+              danger: total !== payment.value && total !== '0',
+              success: total === payment.value && total !== '0'
             }"
-            [status]="
-              paymentIndex === undefined
-                ? is100
-                  ? 'success'
-                  : 'danger'
-                : is100
-                ? 'basic'
-                : 'danger'
-            "
-          />
-          %
+          >
+            {{ total }}
+          </div>
+          <div
+            class="col-4 col-md-1"
+            [ngClass]="{
+              danger: total !== payment.value && total !== '0',
+              success: total === payment.value && total !== '0'
+            }"
+          >
+            {{ stringUtil.toPercentage(total, payment.value) }}
+          </div>
+          <div class="col-md-1"></div>
         </div>
-        <div class="col-2 col-md-1" style="text-align: right">
-          <nb-icon
-            class="xIcon"
-            status="basic"
-            icon="trash-2-outline"
-            pack="eva"
-            (click)="
-              payment.team.splice(i, 1);
-              updateTotal();
-              memberChanged$.next(true)
-            "
-            [options]="{ animation: { type: 'shake' } }"
-          ></nb-icon>
-        </div>
-      </div>
-    </nb-list-item>
-    <nb-list-item>
-      <div class="row paymentRow">
-        <div class="col-12 col-md-4">Restante: {{ remainingBalance() }}</div>
-        <div class="col-4 col-md-4" style="text-align: right">Total:</div>
-        <div
-          class="col-4 col-md-2"
-          [ngClass]="{
-            danger: total !== payment.value && total !== '0',
-            success: total === payment.value && total !== '0'
-          }"
-        >
-          {{ total }}
-        </div>
-        <div
-          class="col-4 col-md-1"
-          [ngClass]="{
-            danger: total !== payment.value && total !== '0',
-            success: total === payment.value && total !== '0'
-          }"
-        >
-          {{ stringUtil.toPercentage(total, payment.value) }}
-        </div>
-        <div class="col-md-1"></div>
-      </div>
-    </nb-list-item>
-  </nb-list>
-  <button
-    nbButton
-    fullWidth
-    status="primary"
-    size="large"
-    [disabled]="
-      submitted || !form.valid || isTeamEmpty() || total !== payment.value
-    "
-    [class.btn-pulse]="submitted"
-  >
-    {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
-  </button>
+      </nb-list-item>
+    </nb-list>
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="
+        submitted || !form.valid || isTeamEmpty() || total !== payment.value
+      "
+      [class.btn-pulse]="submitted"
+    >
+      {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+    </button>
+  </fieldset>
 </form>

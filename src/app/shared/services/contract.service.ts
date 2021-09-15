@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { take, takeUntil } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
@@ -385,5 +385,27 @@ export class ContractService implements OnDestroy {
       this.stringUtil.moneyToNumber(receiptsSum) -
         this.stringUtil.moneyToNumber(expensesSum)
     );
+  }
+
+  checkEditPermission(invoice: Invoice): Observable<boolean> {
+    return this.userService.currentUser$.pipe(
+      map((user: User) => {
+        return (
+          this.isUserAnAER(user, invoice) ||
+          this.userService.isEqual(user, invoice.team[0].user)
+        );
+      })
+    );
+  }
+
+  private isUserAnAER(user: User, invoice: Invoice): boolean {
+    if (user.AER && user.AER.length != 0) {
+      return (
+        user.AER.find((member) =>
+          this.userService.isEqual(member, invoice.team[0].user)
+        ) != undefined
+      );
+    }
+    return false;
   }
 }

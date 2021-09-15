@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { cloneDeep } from 'lodash';
+import { Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import {
   ContractService,
   CONTRACT_STATOOS,
@@ -9,7 +11,6 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import * as contract_validation from '../../../../shared/payment-validation.json';
-import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -23,6 +24,7 @@ export class ReceiptItemComponent implements OnInit {
   hasInitialContract = true;
   validation = (contract_validation as any).default;
   today = new Date();
+  isEditionGranted = false;
   receipt: ContractReceipt = {
     notaFiscal: '15.5', // Porcentagem da nota fiscal
     nortanPercentage: '15',
@@ -60,6 +62,12 @@ export class ReceiptItemComponent implements OnInit {
       tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       this.receipt.notaFiscal = this.utils.nfPercentage(tmp);
       this.receipt.nortanPercentage = this.utils.nortanPercentage(tmp);
+      this.contractService
+        .checkEditPermission(tmp.invoice)
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          this.isEditionGranted = isGranted;
+        });
     }
     if (this.receiptIndex !== undefined) {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);

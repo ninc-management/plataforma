@@ -49,6 +49,7 @@ export class ExpenseItemComponent
   expenseTypes = EXPENSE_TYPES;
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
+  isEditionGranted = false;
   expense: ContractExpense = {
     author: '',
     source: '',
@@ -186,6 +187,12 @@ export class ExpenseItemComponent
         );
         if (member) this.expense.author = member.user;
       });
+      this.contractService
+        .checkEditPermission(this.invoice)
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          this.isEditionGranted = isGranted;
+        });
       this.updatePaidDate();
     }
 

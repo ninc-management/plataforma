@@ -8,7 +8,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -46,6 +46,7 @@ export class PaymentItemComponent implements OnInit {
   total = '0';
   today = new Date();
   submitted = false;
+  isEditionGranted = false;
   payment: ContractPayment = {
     team: [],
     paid: false,
@@ -148,6 +149,12 @@ export class PaymentItemComponent implements OnInit {
         });
       })
     );
+    this.contractService
+      .checkEditPermission(this.invoice)
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        this.isEditionGranted = isGranted;
+      });
   }
 
   registerPayment(): void {
