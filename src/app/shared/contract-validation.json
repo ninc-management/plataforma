@@ -26,5 +26,22 @@
     "required": false,
     "minLength": 1,
     "maxLength": 30
+  },
+  "checklist": {
+    "name": {
+      "required": true
+    },
+    "startDate": {
+      "required": true
+    },
+    "endDate": {
+      "required": true
+    },
+    "responsible": {
+      "required": true
+    },
+    "status": {
+      "required": true
+    }
   }
 }

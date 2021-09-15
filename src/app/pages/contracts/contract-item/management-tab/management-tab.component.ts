@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Contract } from '@models/contract';
+import { Contract, ContractChecklistItem } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -16,6 +16,9 @@ export class ManagementTabComponent implements OnInit {
   validation = (contract_validation as any).default;
   invoice: Invoice = new Invoice();
   responsible = '';
+  newChecklistItem = new ContractChecklistItem();
+  today = new Date();
+  yesterday = new Date();
 
   managementStatus = '';
   avaliableStatus = [
@@ -52,6 +55,7 @@ export class ManagementTabComponent implements OnInit {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     this.responsible = this.userService.idToName(this.invoice.author);
+    this.yesterday.setDate(this.today.getDate() - 1);
   }
 
   tooltipText(): string {
@@ -70,5 +74,8 @@ export class ManagementTabComponent implements OnInit {
     return '';
   }
 
-  registerAction() {}
+  registerChecklistItem(): void {
+    this.contract.checklist.push(this.newChecklistItem);
+    console.log(this.contract.checklist);
+  }
 }
