@@ -12,10 +12,10 @@ import { UserService } from 'app/shared/services/user.service';
   styleUrls: ['./management-tab.component.scss'],
 })
 export class ManagementTabComponent implements OnInit {
-  @Input() contract!: Contract;
+  @Input() contract: Contract = new Contract();
   validation = (contract_validation as any).default;
-  invoice!: Invoice;
-  responsible!: string;
+  invoice: Invoice = new Invoice();
+  responsible = '';
 
   managementStatus = '';
   avaliableStatus = [
