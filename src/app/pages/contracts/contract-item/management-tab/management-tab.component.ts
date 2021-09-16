@@ -1,10 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Contract, ContractChecklistItem } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { User } from '@models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -19,6 +21,8 @@ export class ManagementTabComponent implements OnInit {
   newChecklistItem = new ContractChecklistItem();
   today = new Date();
   yesterday = new Date();
+  responsibleSearch = '';
+  avaliableResponsibles: Observable<User[]> = of([]);
 
   managementStatus = '';
   avaliableStatus = [
@@ -56,6 +60,15 @@ export class ManagementTabComponent implements OnInit {
     }
     this.responsible = this.userService.idToName(this.invoice.author);
     this.yesterday.setDate(this.today.getDate() - 1);
+
+    this.avaliableResponsibles = of(
+      this.invoice.team
+        .map((member: InvoiceTeamMember): User | undefined => {
+          if (member.user) return this.userService.idToUser(member.user);
+          return;
+        })
+        .filter((user: User | undefined): user is User => user !== undefined)
+    );
   }
 
   tooltipText(): string {
@@ -76,6 +89,7 @@ export class ManagementTabComponent implements OnInit {
 
   registerChecklistItem(): void {
     this.contract.checklist.push(this.newChecklistItem);
+    this.newChecklistItem = new ContractChecklistItem();
     console.log(this.contract.checklist);
   }
 }

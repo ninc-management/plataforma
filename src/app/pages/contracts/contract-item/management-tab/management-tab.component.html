@@ -234,26 +234,23 @@
     </div>
     <div class="col-2">
       <label class="label" for="input-action-responsible">Responsável:</label>
-      <input
-        nbInput
-        [(ngModel)]="newChecklistItem.responsible"
-        #responsibleInput="ngModel"
+      <nb-completer
+        [(ngModel)]="responsibleSearch"
+        #invoiceModelList="ngModel"
+        (selected)="newChecklistItem.responsible = $event"
         id="input-action-responsible"
         name="action-responsible"
-        fullWidth
-        fieldSize="large"
-        [required]="validation.checklist.responsible"
-        [status]="
-          responsibleInput.dirty
-            ? responsibleInput.invalid
-              ? 'danger'
-              : 'success'
-            : 'basic'
+        inputName="actionResponsible"
+        nameField="fullname"
+        [data$]="avaliableResponsibles"
+        [placeholder]="'Digite o nome do responsável pela ação'"
+        [fullWidth]="true"
+        [fieldSize]="'large'"
+        [textNoResults]="
+          'Não foi possível achar um colaborador com o nome digitado'
         "
-        [attr.aria-invalid]="
-          responsibleInput.invalid && responsibleInput.touched ? true : null
-        "
-      />
+        [minSearchLength]="0"
+      ></nb-completer>
     </div>
     <div class="col-2">
       <label class="label" for="input-action-status">Status:</label>
