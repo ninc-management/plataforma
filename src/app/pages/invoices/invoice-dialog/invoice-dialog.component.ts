@@ -82,16 +82,22 @@ export class InvoiceDialogComponent
   }
 
   previewPDF(): void {
+    this.isBlocked.next(true);
     this.pdf.generate(this.tempInvoice, true);
 
-    this.dialogService.open(PdfDialogComponent, {
-      context: {
-        dataUrl$: this.pdf.pdfData$,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+    this.dialogService
+      .open(PdfDialogComponent, {
+        context: {
+          dataUrl$: this.pdf.pdfData$,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => {
+        this.isBlocked.next(false);
+      });
   }
 }
