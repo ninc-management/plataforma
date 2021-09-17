@@ -1408,7 +1408,8 @@ export class MetricsService implements OnDestroy {
         ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
       ),
       map(([contracts, invoices]) => {
-        let fContracts = contracts.map((contract) => {
+        let fContracts = contracts.map((iContract) => {
+          const contract = cloneDeep(iContract);
           if (contract.invoice)
             contract.value = this.invoiceService.idToInvoice(
               contract.invoice

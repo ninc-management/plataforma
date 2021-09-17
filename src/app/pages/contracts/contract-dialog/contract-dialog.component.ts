@@ -84,49 +84,55 @@ export class ContractDialogComponent
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => {
-                contract.code = this.invoiceService.idToCode(contract.invoice);
-                contract.balance = this.contractService.balance(contract);
-                contract.liquid = this.contractService.toNetValue(
-                  this.contractService.subtractComissions(
-                    this.stringUtil.removePercentage(
-                      contract.value,
-                      contract.ISS
-                    ),
-                    contract
-                  ),
-                  this.utils.nfPercentage(contract),
-                  this.utils.nortanPercentage(contract)
-                );
-                const paid = this.contractService.toNetValue(
-                  this.stringUtil.numberToMoney(
-                    contract.receipts.reduce(
-                      (accumulator: number, recipt: any) => {
-                        if (recipt.paid)
-                          accumulator =
-                            accumulator +
-                            this.stringUtil.moneyToNumber(recipt.value);
-                        return accumulator;
-                      },
-                      0
-                    )
-                  ),
-                  this.utils.nfPercentage(contract),
-                  this.utils.nortanPercentage(contract)
-                );
-                contract.notPaid = this.stringUtil.numberToMoney(
-                  this.stringUtil.moneyToNumber(contract.liquid) -
-                    this.stringUtil.moneyToNumber(paid)
-                );
-                if (contract.invoice) {
-                  const invoice = this.invoiceService.idToInvoice(
+                if (contract.invoice != undefined) {
+                  contract.invoice = this.invoiceService.idToInvoice(
                     contract.invoice
                   );
-                  if (invoice.author) {
-                    const managerPicture = this.userService.idToUser(
-                      invoice.author
-                    ).profilePicture;
-                    if (managerPicture)
-                      contract.managerPicture = managerPicture;
+                  contract.value = contract.invoice.value;
+                  contract.code = contract.invoice.code;
+                  contract.balance = this.contractService.balance(contract);
+                  contract.liquid = this.contractService.toNetValue(
+                    this.contractService.subtractComissions(
+                      this.stringUtil.removePercentage(
+                        contract.value,
+                        contract.ISS
+                      ),
+                      contract
+                    ),
+                    this.utils.nfPercentage(contract),
+                    this.utils.nortanPercentage(contract)
+                  );
+                  const paid = this.contractService.toNetValue(
+                    this.stringUtil.numberToMoney(
+                      contract.receipts.reduce(
+                        (accumulator: number, recipt: any) => {
+                          if (recipt.paid)
+                            accumulator =
+                              accumulator +
+                              this.stringUtil.moneyToNumber(recipt.value);
+                          return accumulator;
+                        },
+                        0
+                      )
+                    ),
+                    this.utils.nfPercentage(contract),
+                    this.utils.nortanPercentage(contract)
+                  );
+                  contract.notPaid = this.stringUtil.numberToMoney(
+                    this.stringUtil.moneyToNumber(contract.liquid) -
+                      this.stringUtil.moneyToNumber(paid)
+                  );
+                  if (contract.invoice) {
+                    const invoice = this.invoiceService.idToInvoice(
+                      contract.invoice
+                    );
+                    if (invoice.author) {
+                      const managerPicture = this.userService.idToUser(
+                        invoice.author
+                      ).profilePicture;
+                      if (managerPicture)
+                        contract.managerPicture = managerPicture;
+                    }
                   }
                 }
                 return contract;
