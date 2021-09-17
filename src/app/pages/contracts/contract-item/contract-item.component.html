@@ -486,31 +486,32 @@
               />
             </div>
           </div>
-          <div class="col-6 col-md-2">
-            <div class="form-control-group">
-              <label class="label" for="input-net-value">R$ Líquido:</label>
-              <input
-                nbInput
-                [(ngModel)]="teamMember.netValue"
-                (ngModelChange)="updatePercentage()"
-                #netValue="ngModel"
-                id="input-netValue"
-                name="netValue"
-                placeholder="Valor líquido"
-                fullWidth
-                fieldSize="large"
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
-                [status]="netValue.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  netValue.invalid && netValue.touched ? true : null
-                "
-              />
-            </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-net-value">R$ Líquido:</label>
+            <input
+              nbInput
+              [(ngModel)]="teamMember.netValue"
+              (ngModelChange)="updatePercentage()"
+              #netValue="ngModel"
+              id="input-netValue"
+              name="netValue"
+              placeholder="Valor líquido"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [status]="netValue.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                netValue.invalid && netValue.touched ? true : null
+              "
+            />
           </div>
           <div class="col-6 col-md-2">
             <div class="form-control-group">
@@ -531,6 +532,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="distribution.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="
                   distribution.invalid && distribution.touched ? true : null
@@ -616,93 +618,79 @@
                       decimalCaracter: ',',
                       decimal: 2
                     }"
-                    [status]="invoice.team[i].netValue ? 'basic' : 'danger'"
-                  />
-                </div>
-                <div
-                  class="col-6 col-md-2"
-                  style="display: flex; align-items: center"
-                >
-                  <input
-                    nbInput
-                    [(ngModel)]="invoice.team[i].distribution"
-                    (ngModelChange)="updateValue(i)"
-                    id="input-distribution-{{ i }}"
-                    name="distribution-{{ i }}"
-                    placeholder="Porcentagem distribuida"
-                    fullWidth
-                    [brmasker]="{
-                      money: true,
-                      thousand: '.',
-                      decimalCaracter: ',',
-                      decimal: 2
-                    }"
-                    [status]="invoice.team[i].distribution ? 'basic' : 'danger'"
-                  />
-                  %
-                </div>
-                <div
-                  class="col-12 col-md-1 list-erase"
-                  *ngIf="i != 0 && isEditionGranted"
-                >
-                  <nb-icon
-                    class="xIcon"
-                    status="basic"
-                    icon="trash-2-outline"
-                    pack="eva"
-                    (click)="
-                      invoice.team.splice(i, 1);
-                      updateTeamTotal();
-                      memberChanged$.next(true)
-                    "
-                    [options]="{ animation: { type: 'shake' } }"
-                  ></nb-icon>
-                </div>
+                  ngxSelectAllText
+                  [status]="contract.team[i].netValue ? 'basic' : 'danger'"
+                />
               </div>
-            </nb-list-item>
-            <nb-list-item *ngIf="!utils.isPhone()">
-              <div class="row irow totalRow">
-                <div class="col-2">
-                  Restante:
-                  {{
-                    stringUtil.subtractMoney(
-                      contract.liquid,
-                      teamTotal.netValue
-                    )
-                  }}
-                </div>
-                <div class="col-3" style="text-align: right">Total:</div>
-                <div
-                  class="col-2"
-                  [ngClass]="{
-                    danger: !isGrossValueOK(),
-                    success: isGrossValueOK()
+              <div
+                class="col-6 col-md-2"
+                style="display: flex; align-items: center"
+              >
+                <input
+                  nbInput
+                  [(ngModel)]="contract.team[i].distribution"
+                  (ngModelChange)="updateValue(i)"
+                  id="input-distribution-{{ i }}"
+                  name="distribution-{{ i }}"
+                  placeholder="Porcentagem distribuida"
+                  fullWidth
+                  [brmasker]="{
+                    money: true,
+                    thousand: '.',
+                    decimalCaracter: ',',
+                    decimal: 2
                   }"
-                >
-                  R$ {{ teamTotal.grossValue }}
-                </div>
-                <div
-                  class="col-2"
-                  [ngClass]="{
-                    danger: !isNetValueOK(),
-                    success: isNetValueOK()
-                  }"
-                >
-                  R$ {{ teamTotal.netValue }}
-                </div>
-                <div
-                  class="col-2"
-                  [ngClass]="{
-                    danger: teamTotal.distribution != '0,00',
-                    success: teamTotal.distribution == '100,00'
-                  }"
-                >
-                  {{ teamTotal.distribution }}%
-                </div>
-                <div class="col-1"></div>
+                  ngxSelectAllText
+                  [status]="contract.team[i].distribution ? 'basic' : 'danger'"
+                />
+                %
               </div>
-            </nb-list-item>
-          </nb-list>
+              <div class="col-12 col-md-1 list-erase">
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="
+                    contract.team.splice(i, 1);
+                    updateTeamTotal();
+                    memberChanged$.next(true)
+                  "
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+          <nb-list-item *ngIf="!utils.isPhone()">
+            <div class="row irow totalRow">
+              <div class="col-2">
+                Restante:
+                {{
+                  stringUtil.subtractMoney(contract.liquid, teamTotal.netValue)
+                }}
+              </div>
+              <div class="col-3" style="text-align: right">Total:</div>
+              <div
+                class="col-2"
+                [ngClass]="{
+                  danger: !isGrossValueOK(),
+                  success: isGrossValueOK()
+                }"
+              >
+                R$ {{ teamTotal.grossValue }}
+              </div>
+              <div
+                class="col-2"
+                [ngClass]="{
+                  danger: !isNetValueOK(),
+                  success: isNetValueOK()
+                }"
+              >
+                R$ {{ teamTotal.netValue }}
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
           <div class="col-6">
             <div class="form-control-group">
               <label class="label" for="input-hasISS">
@@ -737,92 +725,94 @@
                 <nb-option [value]="false">Não</nb-option>
               </nb-select>
             </div>
+        </div>
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-iss">Alíquota do ISS:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.ISS"
+              #iss="ngModel"
+              id="input-iss"
+              name="iss"
+              placeholder="Alíquota"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [disabled]="!hasISS.value"
+              [required]="validation.ISS?.required"
+              [status]="
+                iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
+              (ngModelChange)="updateLiquid()"
+            />
           </div>
-          <div class="col-6">
-            <div class="form-control-group">
-              <label class="label" for="input-iss">Alíquota do ISS:</label>
-              <input
-                nbInput
-                [(ngModel)]="contract.ISS"
-                #iss="ngModel"
-                id="input-iss"
-                name="iss"
-                placeholder="Alíquota"
-                fullWidth
-                fieldSize="large"
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
-                [disabled]="!hasISS.value"
-                [required]="validation.ISS?.required"
-                [status]="
-                  iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'
-                "
-                [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
-                (ngModelChange)="updateLiquid()"
-              />
-            </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-balance">Caixa:</label>
+            <input
+              nbInput
+              [(ngModel)]="contract.balance"
+              #balance="ngModel"
+              id="input-balance"
+              name="balance"
+              placeholder="Balanço do contrato"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.balance?.required"
+              [status]="
+                balance.invalid || contract.balance[0] == '-'
+                  ? 'danger'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="
+                balance.invalid && balance.touched ? true : null
+              "
+              [readonly]="true"
+            />
           </div>
-          <div class="col-6 col-md-4">
-            <div class="form-control-group">
-              <label class="label" for="input-balance">Caixa:</label>
-              <input
-                nbInput
-                [(ngModel)]="contract.balance"
-                #balance="ngModel"
-                id="input-balance"
-                name="balance"
-                placeholder="Balanço do contrato"
-                fullWidth
-                fieldSize="large"
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
-                [required]="validation.balance?.required"
-                [status]="
-                  balance.invalid || contract.balance[0] == '-'
-                    ? 'danger'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  balance.invalid && balance.touched ? true : null
-                "
-                [readonly]="true"
-              />
-            </div>
-          </div>
-          <div class="col-6 col-md-4">
-            <div class="form-control-group">
-              <label class="label" for="input-paid">Valor pago:</label>
-              <input
-                nbInput
-                [(ngModel)]="options.paid"
-                #paid="ngModel"
-                id="input-paid"
-                name="paid"
-                placeholder="Valor pago"
-                fullWidth
-                fieldSize="large"
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
-                [required]="validation.paid?.required"
-                [status]="
-                  paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'
-                "
-                [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
-                [readonly]="true"
-              />
-            </div>
+        </div>
+        <div class="col-6 col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-paid">Valor pago:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.paid"
+              #paid="ngModel"
+              id="input-paid"
+              name="paid"
+              placeholder="Valor pago"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.paid?.required"
+              [status]="
+                paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'
+              "
+              [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
+              [readonly]="true"
+            />
           </div>
           <div class="col-6 col-md-2">
             <div class="form-control-group">

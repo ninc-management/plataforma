@@ -67,6 +67,7 @@
               decimalCaracter: ',',
               decimal: 2
             }"
+            ngxSelectAllText
             [disabled]="paymentIndex != undefined"
             [overPaid]="contract.balance"
             [required]="validation.value.required"
@@ -420,6 +421,7 @@
               decimalCaracter: ',',
               decimal: 2
             }"
+            ngxSelectAllText
             [status]="paid.value ? 'success' : 'basic'"
             [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
             [readonly]="false"
@@ -489,6 +491,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="
                 paymentIndex === undefined
                   ? is100
@@ -518,6 +521,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="
                 paymentIndex === undefined
                   ? is100
