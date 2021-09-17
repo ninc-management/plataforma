@@ -525,17 +525,17 @@
                 name="distribution"
                 placeholder="Porcentagem distribuida"
                 fullWidth
-                fieldSize="large"
-                [brmasker]="{
-                  money: true,
-                  thousand: '.',
-                  decimalCaracter: ',',
-                  decimal: 2
-                }"
-                ngxSelectAllText
-                [status]="distribution.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  distribution.invalid && distribution.touched ? true : null
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 20
+              }"
+              ngxSelectAllText
+              [status]="distribution.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="
+                distribution.invalid && distribution.touched ? true : null
                 "
               />
             </div>
@@ -545,6 +545,7 @@
               nbButton
               type="button"
               fullWidth
+
               status="primary"
               size="large"
               style="margin-top: 28px"
@@ -638,7 +639,7 @@
                     money: true,
                     thousand: '.',
                     decimalCaracter: ',',
-                    decimal: 2
+                    decimal: 20
                   }"
                   ngxSelectAllText
                   [status]="contract.team[i].distribution ? 'basic' : 'danger'"
