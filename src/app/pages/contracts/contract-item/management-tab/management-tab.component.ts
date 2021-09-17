@@ -1,12 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Contract, ContractChecklistItem } from '@models/contract';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
-import { User } from '@models/user';
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -18,11 +16,6 @@ export class ManagementTabComponent implements OnInit {
   validation = (contract_validation as any).default;
   invoice: Invoice = new Invoice();
   responsible = '';
-  newChecklistItem = new ContractChecklistItem();
-  today = new Date();
-  yesterday = new Date();
-  responsibleSearch = '';
-  avaliableResponsibles: Observable<User[]> = of([]);
 
   managementStatus = '';
   avaliableStatus = [
@@ -30,20 +23,6 @@ export class ManagementTabComponent implements OnInit {
     'Análise Externa',
     'Espera',
     'Prioridade',
-    'Finalização',
-    'Concluído',
-  ];
-
-  avaliableActionStatus = [
-    'Briefing',
-    'Anteprojeto',
-    'Estudo preliminar',
-    'Projeto básico',
-    'Projeto executivo',
-    'Campo',
-    'Prioridade',
-    'Análise externa',
-    'Espera',
     'Finalização',
     'Concluído',
   ];
@@ -59,16 +38,6 @@ export class ManagementTabComponent implements OnInit {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     this.responsible = this.userService.idToName(this.invoice.author);
-    this.yesterday.setDate(this.today.getDate() - 1);
-
-    this.avaliableResponsibles = of(
-      this.invoice.team
-        .map((member: InvoiceTeamMember): User | undefined => {
-          if (member.user) return this.userService.idToUser(member.user);
-          return;
-        })
-        .filter((user: User | undefined): user is User => user !== undefined)
-    );
   }
 
   tooltipText(): string {
@@ -85,11 +54,5 @@ export class ManagementTabComponent implements OnInit {
         );
     }
     return '';
-  }
-
-  registerChecklistItem(): void {
-    this.contract.checklist.push(this.newChecklistItem);
-    this.newChecklistItem = new ContractChecklistItem();
-    console.log(this.contract.checklist);
   }
 }
