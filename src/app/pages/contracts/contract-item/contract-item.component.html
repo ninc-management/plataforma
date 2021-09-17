@@ -1046,7 +1046,14 @@
                   )
                 }}
               </div>
-              <div class="col-md-3"></div>
+              <div class="col-md-3">
+                {{
+                  stringUtil.numberToMoney(
+                    contractService.expensesContributions(contract, member.user)
+                      .user.cashback
+                  )
+                }}
+              </div>
               <div class="col-md-3">
                 {{
                   contractService.getMemberExpensesSum(member.user, contract)

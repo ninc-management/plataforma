@@ -583,7 +583,7 @@ export class ContractItemComponent implements OnInit {
       this.options.nortanPercentage
     );
     this.contract.cashback = this.stringUtil.numberToMoney(
-      this.contractService.expensesContributions(this.contract).cashback
+      this.contractService.expensesContributions(this.contract).global.cashback
     );
   }
 
@@ -593,7 +593,8 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.sumMoney(
           this.contract.liquid,
           this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).cashback
+            this.contractService.expensesContributions(this.contract).global
+              .cashback
           )
         ),
         this.invoice.team[idx].distribution
@@ -609,7 +610,8 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.sumMoney(
           this.contract.liquid,
           this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).cashback
+            this.contractService.expensesContributions(this.contract).global
+              .cashback
           )
         ),
         this.teamMember.distribution
@@ -630,7 +632,8 @@ export class ContractItemComponent implements OnInit {
           this.stringUtil.sumMoney(
             this.contract.liquid,
             this.stringUtil.numberToMoney(
-              this.contractService.expensesContributions(this.contract).cashback
+              this.contractService.expensesContributions(this.contract).global
+                .cashback
             )
           ),
           20
@@ -649,7 +652,8 @@ export class ContractItemComponent implements OnInit {
           this.stringUtil.sumMoney(
             this.contract.liquid,
             this.stringUtil.numberToMoney(
-              this.contractService.expensesContributions(this.contract).cashback
+              this.contractService.expensesContributions(this.contract).global
+                .cashback
             )
           ),
           20
@@ -721,7 +725,8 @@ export class ContractItemComponent implements OnInit {
         this.stringUtil.sumMoney(
           this.contract.liquid,
           this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).cashback
+            this.contractService.expensesContributions(this.contract).global
+              .cashback
           )
         ) && this.teamTotal.netValue !== '0,00'
     );

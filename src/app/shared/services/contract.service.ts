@@ -37,6 +37,12 @@ export enum CONTRACT_STATOOS {
   ARQUIVADO = 'Arquivado',
 }
 
+export interface ExpenseParts {
+  expense: number;
+  contribution: number;
+  cashback: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -183,9 +189,9 @@ export class ContractService implements OnDestroy {
                 accumulator + this.stringUtil.moneyToNumber(payment.value);
             return accumulator;
           }, 0) -
-          expenseContribution.expense +
-          expenseContribution.contribution +
-          expenseContribution.cashback
+          expenseContribution.global.expense +
+          expenseContribution.global.contribution +
+          expenseContribution.global.cashback
       )
     );
   }
@@ -193,7 +199,7 @@ export class ContractService implements OnDestroy {
   netValueBalance(
     distribution: string,
     contract: Contract,
-    user?: User | string
+    user: User | string | undefined
   ): string {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract.expenses
@@ -222,7 +228,7 @@ export class ContractService implements OnDestroy {
       );
     const result = this.stringUtil.round(
       (this.stringUtil.moneyToNumber(contract.liquid) +
-        this.expensesContributions(contract).cashback) *
+        this.expensesContributions(contract, user).user.cashback) *
         this.stringUtil.toMultiplyPercentage(distribution) -
         expenseContribution.contract +
         expenseContribution.expense +
@@ -232,11 +238,15 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(result);
   }
 
-  expensesContributions(contract: Contract): {
-    expense: number;
-    contribution: number;
-    cashback: number;
+  /* eslint-disable @typescript-eslint/indent */
+  expensesContributions(
+    contract: Contract,
+    user?: User | string
+  ): {
+    user: ExpenseParts;
+    global: ExpenseParts;
   } {
+    /* eslint-enable @typescript-eslint/indent */
     return contract.expenses.reduce(
       (accumulator, expense: ContractExpense) => {
         if (
@@ -248,27 +258,57 @@ export class ContractService implements OnDestroy {
             expense.source &&
             this.userService.idToUser(expense.source)._id ==
               CONTRACT_BALANCE._id
-          )
-            accumulator.expense += this.stringUtil.moneyToNumber(expense.value);
+          ) {
+            const expenseValue = this.stringUtil.moneyToNumber(expense.value);
+            const member = expense.team.find((el) => {
+              return this.userService.isEqual(el.user, user);
+            });
+            if (member) {
+              accumulator.user.expense += this.stringUtil.moneyToNumber(
+                member.value
+              );
+            }
+            accumulator.global.expense += expenseValue;
+          }
 
-          if (expense.type == EXPENSE_TYPES.APORTE)
-            accumulator.contribution += this.stringUtil.moneyToNumber(
+          if (expense.type == EXPENSE_TYPES.APORTE) {
+            const contributionValue = this.stringUtil.moneyToNumber(
               expense.value
             );
+            if (this.userService.isEqual(expense.author, user)) {
+              accumulator.user.contribution += contributionValue;
+            }
+            accumulator.global.contribution += contributionValue;
+          }
 
           if (
             expense.nf &&
             expense.uploadedFiles.length >=
               (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
           ) {
-            accumulator.cashback += this.stringUtil.moneyToNumber(
+            const cashbackValue = this.stringUtil.moneyToNumber(
               this.stringUtil.applyPercentage(expense.value, '15,00')
             );
+            const member = expense.team.find((el) => {
+              return this.userService.isEqual(el.user, user);
+            });
+            if (member) {
+              accumulator.user.cashback += this.stringUtil.moneyToNumber(
+                this.stringUtil.applyPercentage(
+                  this.stringUtil.numberToMoney(cashbackValue),
+                  member.percentage
+                )
+              );
+            }
+            accumulator.global.cashback += cashbackValue;
           }
         }
         return accumulator;
       },
-      { expense: 0, contribution: 0, cashback: 0 }
+      {
+        user: { expense: 0, contribution: 0, cashback: 0 },
+        global: { expense: 0, contribution: 0, cashback: 0 },
+      }
     );
   }
 
@@ -379,11 +419,13 @@ export class ContractService implements OnDestroy {
     user: User | string | undefined,
     contract: Contract
   ): string {
-    const receiptsSum = this.receivedValue(user, contract);
+    const receivedSum = this.receivedValue(user, contract);
     const expensesSum = this.getMemberExpensesSum(user, contract);
+    const cashBack = this.expensesContributions(contract, user).user.cashback;
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(receiptsSum) -
-        this.stringUtil.moneyToNumber(expensesSum)
+      this.stringUtil.moneyToNumber(receivedSum) -
+        this.stringUtil.moneyToNumber(expensesSum) +
+        cashBack
     );
   }
 
