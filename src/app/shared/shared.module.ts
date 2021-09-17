@@ -19,6 +19,7 @@ import { BaseDialogComponent } from './components/base-dialog/base-dialog.compon
 import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
+import { SelectAllTextDirective } from './directives/select-all-text.directive';
 
 @NgModule({
   imports: [
@@ -37,6 +38,7 @@ import { BaseExpenseComponent } from './components/base-expense/base-expense.com
     LastPaymentDirective,
     FabComponent,
     FabItemComponent,
+    SelectAllTextDirective,
   ],
   declarations: [
     BrMaskDirective,
@@ -49,6 +51,7 @@ import { BaseExpenseComponent } from './components/base-expense/base-expense.com
     FabComponent,
     FabItemComponent,
     BaseExpenseComponent,
+    SelectAllTextDirective,
   ],
 })
 export class SharedModule {}
