@@ -85,12 +85,16 @@ export class ContractService implements OnDestroy {
     const req = {
       contract: contract,
     };
+    const isMoved = contract.statusHistory.find(
+      (el) => el.status === 'Concluído'
+    );
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
         if (
           contract.status === 'Concluído' &&
+          !isMoved &&
           this.utils.isOfType<Invoice>(contract.invoice, [
             '_id',
             'author',
