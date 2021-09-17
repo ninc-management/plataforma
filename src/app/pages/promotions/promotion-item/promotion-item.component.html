@@ -36,9 +36,9 @@
     </div>
     <div class="col-4">
       <div class="form-control-group">
-        <label class="label" for="input-cashback"
-          >Porcentagem de cashback:</label
-        >
+        <label class="label" for="input-cashback">
+          Porcentagem de cashback:
+        </label>
         <input
           nbInput
           [(ngModel)]="promotion.cashback"
@@ -56,6 +56,7 @@
             decimalCaracter: ',',
             decimal: 2
           }"
+          ngxSelectAllText
           [status]="validateStatus(cashback)"
           [attr.aria-invalid]="
             cashback.invalid && cashback.touched ? true : null
@@ -258,6 +259,7 @@
             decimalCaracter: ',',
             decimal: 2
           }"
+          ngxSelectAllText
           [status]="validateStatus(ruleValue)"
           [attr.aria-invalid]="
             ruleValue.invalid && ruleValue.touched ? true : null
@@ -279,8 +281,7 @@
     *ngIf="!utils.isPhone(); else phone"
     [settings]="settings"
     [source]="source"
-  >
-  </ng2-smart-table>
+  ></ng2-smart-table>
   <ng-template #phone></ng-template>
 </form>
 <button

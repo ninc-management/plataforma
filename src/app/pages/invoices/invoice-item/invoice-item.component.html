@@ -368,6 +368,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [required]="validation.value.required"
               [minlength]="validation.value.minLength"
               [maxlength]="validation.value.maxLength"
@@ -421,6 +422,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [required]="validation.value.required"
               [minlength]="validation.value.minLength"
               [maxlength]="validation.value.maxLength"
@@ -1418,6 +1420,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="productAmount.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
                 productAmount.invalid && productAmount.touched ? true : null
@@ -1489,6 +1492,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="paid.value ? 'success' : 'basic'"
               [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
             />
@@ -1513,6 +1517,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="productTotal.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
                 productTotal.invalid && productTotal.touched ? true : null
@@ -1632,6 +1637,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="tempInvoice.products[i].amount ? 'success' : 'basic'"
               />
             </div>
@@ -1679,6 +1685,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="tempInvoice.products[i].value ? 'success' : 'basic'"
               />
             </div>
@@ -1703,6 +1710,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="tempInvoice.products[i].value ? 'success' : 'basic'"
               />
               %
@@ -1774,6 +1782,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="
                   discountValue.dirty
                     ? discountValue.value
@@ -1805,6 +1814,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="
                   discountPercentage.dirty
                     ? discountPercentage.value
@@ -1908,6 +1918,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="stagePaid.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
                 stagePaid.invalid && stagePaid.touched ? true : null
@@ -1969,6 +1980,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
               />
             </div>
@@ -1992,6 +2004,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
               />
               %
@@ -2220,6 +2233,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="materialAmount.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="
                   materialAmount.invalid && materialAmount.touched ? true : null
@@ -2249,6 +2263,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="materialValue.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
                 materialValue.invalid && materialValue.touched ? true : null
@@ -2278,6 +2293,7 @@
                 decimalCaracter: ',',
                 decimal: 2
               }"
+              ngxSelectAllText
               [status]="materialTotal.value ? 'success' : 'basic'"
               [attr.aria-invalid]="
                 materialTotal.invalid && materialTotal.touched ? true : null
@@ -2371,6 +2387,7 @@
                     decimalCaracter: ',',
                     decimal: 2
                   }"
+                  ngxSelectAllText
                   [status]="
                     tempInvoice.materials[i].amount.length == 0
                       ? 'danger'
@@ -2400,6 +2417,7 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
+                ngxSelectAllText
                 [status]="
                   tempInvoice.materials[i].value.length == 0
                     ? 'danger'
