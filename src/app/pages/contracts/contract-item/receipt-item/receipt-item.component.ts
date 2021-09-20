@@ -79,6 +79,16 @@ export class ReceiptItemComponent implements OnInit {
       ) {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
+      } else {
+        if (this.contract.invoice) {
+          const invoice = this.invoiceService.idToInvoice(
+            this.contract.invoice
+          );
+          const stage = invoice.stages[this.contract.receipts.length];
+          if (stage) {
+            this.receipt.value = stage.value;
+          }
+        }
       }
     }
   }
