@@ -1,0 +1,35 @@
+@import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+
+@include nb-install-component() {
+  .irow {
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+    div:not(:first-of-type) {
+      @include media-breakpoint-down(md) {
+        padding-top: 10px;
+      }
+    }
+  }
+
+  .list-erase {
+    text-align: right;
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
+  }
+
+  .list-name {
+    text-align: left;
+    padding-left: 0;
+    @include media-breakpoint-down(md) {
+      text-align: center;
+    }
+  }
+
+  nb-list-item {
+    padding-left: 0;
+  }
+}
