@@ -12,6 +12,7 @@ import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { parseISO } from 'date-fns';
+import { cloneDeep } from 'lodash';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -68,7 +69,7 @@ export class ContractService implements OnDestroy {
   }
 
   saveContract(invoice: Invoice): void {
-    let contract = new Contract();
+    const contract = new Contract();
     contract.statusHistory.push({
       status: contract.status,
       start: contract.created,
