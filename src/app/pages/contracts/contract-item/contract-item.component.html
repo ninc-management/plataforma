@@ -619,7 +619,7 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="contract.team[i].netValue ? 'basic' : 'danger'"
+                    [status]="invoice.team[i].netValue ? 'basic' : 'danger'"
                   />
                 </div>
                 <div
@@ -628,7 +628,7 @@
                 >
                   <input
                     nbInput
-                    [(ngModel)]="contract.team[i].distribution"
+                    [(ngModel)]="invoice.team[i].distribution"
                     (ngModelChange)="updateValue(i)"
                     id="input-distribution-{{ i }}"
                     name="distribution-{{ i }}"
@@ -642,7 +642,7 @@
                     }"
                     ngxSelectAllText
                     [status]="
-                      contract.team[i].distribution ? 'basic' : 'danger'
+                      invoice.team[i].distribution ? 'basic' : 'danger'
                     "
                   />
                   %
@@ -654,7 +654,7 @@
                     icon="trash-2-outline"
                     pack="eva"
                     (click)="
-                      contract.team.splice(i, 1);
+                      invoice.team.splice(i, 1);
                       updateTeamTotal();
                       memberChanged$.next(true)
                     "
