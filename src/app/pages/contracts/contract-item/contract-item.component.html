@@ -641,13 +641,14 @@
                       decimal: 20
                     }"
                     ngxSelectAllText
-                    [status]="
-                      invoice.team[i].distribution ? 'basic' : 'danger'
-                    "
+                    [status]="invoice.team[i].distribution ? 'basic' : 'danger'"
                   />
                   %
                 </div>
-                <div class="col-12 col-md-1 list-erase">
+                <div
+                  class="col-12 col-md-1 list-erase"
+                  *ngIf="i != 0 && isEditionGranted"
+                >
                   <nb-icon
                     class="xIcon"
                     status="basic"
