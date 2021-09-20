@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
+import { isBefore, parseISO } from 'date-fns';
+import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
 import { UtilsService } from './utils.service';
@@ -11,8 +13,6 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { parseISO } from 'date-fns';
-import { cloneDeep } from 'lodash';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -287,26 +287,42 @@ export class ContractService implements OnDestroy {
             accumulator.global.contribution += contributionValue;
           }
 
-          if (
-            expense.nf &&
-            expense.uploadedFiles.length >=
-              (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
-          ) {
-            const cashbackValue = this.stringUtil.moneyToNumber(
-              this.stringUtil.applyPercentage(expense.value, '15,00')
-            );
-            const member = expense.team.find((el) => {
-              return this.userService.isEqual(el.user, user);
-            });
-            if (member) {
-              accumulator.user.cashback += this.stringUtil.moneyToNumber(
-                this.stringUtil.applyPercentage(
-                  this.stringUtil.numberToMoney(cashbackValue),
-                  member.percentage
-                )
-              );
+          if (expense.nf) {
+            let cashbackValue = -1;
+            if (
+              expense.paidDate &&
+              isBefore(expense.paidDate, new Date('2021/09/01'))
+            ) {
+              if (
+                expense.uploadedFiles.length >=
+                (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
+              )
+                cashbackValue = this.stringUtil.moneyToNumber(
+                  this.stringUtil.applyPercentage(expense.value, '15,00')
+                );
+            } else {
+              if (
+                expense.uploadedFiles.length >= 1 &&
+                expense.type == EXPENSE_TYPES.MATERIAL
+              )
+                cashbackValue = this.stringUtil.moneyToNumber(
+                  this.stringUtil.applyPercentage(expense.value, '15,00')
+                );
             }
-            accumulator.global.cashback += cashbackValue;
+            if (cashbackValue != -1) {
+              const member = expense.team.find((el) => {
+                return this.userService.isEqual(el.user, user);
+              });
+              if (member) {
+                accumulator.user.cashback += this.stringUtil.moneyToNumber(
+                  this.stringUtil.applyPercentage(
+                    this.stringUtil.numberToMoney(cashbackValue),
+                    member.percentage
+                  )
+                );
+              }
+              accumulator.global.cashback += cashbackValue;
+            }
           }
         }
         return accumulator;

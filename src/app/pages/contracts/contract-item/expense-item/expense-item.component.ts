@@ -187,14 +187,14 @@ export class ExpenseItemComponent
         );
         if (member) this.expense.author = member.user;
       });
-      this.contractService
-        .checkEditPermission(this.invoice)
-        .pipe(take(1))
-        .subscribe((isGranted) => {
-          this.isEditionGranted = isGranted;
-        });
       this.updatePaidDate();
     }
+    this.contractService
+      .checkEditPermission(this.invoice)
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        this.isEditionGranted = isGranted;
+      });
 
     if (!this.expense.team || this.expense.team.length == 0)
       this.expense.team = this.invoice.team.map(
