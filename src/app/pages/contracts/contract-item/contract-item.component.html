@@ -525,17 +525,17 @@
                 name="distribution"
                 placeholder="Porcentagem distribuida"
                 fullWidth
-              fieldSize="large"
-              [brmasker]="{
-                money: true,
-                thousand: '.',
-                decimalCaracter: ',',
-                decimal: 20
-              }"
-              ngxSelectAllText
-              [status]="distribution.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                distribution.invalid && distribution.touched ? true : null
+                fieldSize="large"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: 20
+                }"
+                ngxSelectAllText
+                [status]="distribution.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="
+                  distribution.invalid && distribution.touched ? true : null
                 "
               />
             </div>
@@ -545,7 +545,6 @@
               nbButton
               type="button"
               fullWidth
-
               status="primary"
               size="large"
               style="margin-top: 28px"
@@ -619,79 +618,84 @@
                       decimalCaracter: ',',
                       decimal: 2
                     }"
-                  ngxSelectAllText
-                  [status]="contract.team[i].netValue ? 'basic' : 'danger'"
-                />
+                    ngxSelectAllText
+                    [status]="contract.team[i].netValue ? 'basic' : 'danger'"
+                  />
+                </div>
+                <div
+                  class="col-6 col-md-2"
+                  style="display: flex; align-items: center"
+                >
+                  <input
+                    nbInput
+                    [(ngModel)]="contract.team[i].distribution"
+                    (ngModelChange)="updateValue(i)"
+                    id="input-distribution-{{ i }}"
+                    name="distribution-{{ i }}"
+                    placeholder="Porcentagem distribuida"
+                    fullWidth
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 20
+                    }"
+                    ngxSelectAllText
+                    [status]="
+                      contract.team[i].distribution ? 'basic' : 'danger'
+                    "
+                  />
+                  %
+                </div>
+                <div class="col-12 col-md-1 list-erase">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="
+                      contract.team.splice(i, 1);
+                      updateTeamTotal();
+                      memberChanged$.next(true)
+                    "
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
               </div>
-              <div
-                class="col-6 col-md-2"
-                style="display: flex; align-items: center"
-              >
-                <input
-                  nbInput
-                  [(ngModel)]="contract.team[i].distribution"
-                  (ngModelChange)="updateValue(i)"
-                  id="input-distribution-{{ i }}"
-                  name="distribution-{{ i }}"
-                  placeholder="Porcentagem distribuida"
-                  fullWidth
-                  [brmasker]="{
-                    money: true,
-                    thousand: '.',
-                    decimalCaracter: ',',
-                    decimal: 20
+            </nb-list-item>
+            <nb-list-item *ngIf="!utils.isPhone()">
+              <div class="row irow totalRow">
+                <div class="col-2">
+                  Restante:
+                  {{
+                    stringUtil.subtractMoney(
+                      contract.liquid,
+                      teamTotal.netValue
+                    )
+                  }}
+                </div>
+                <div class="col-3" style="text-align: right">Total:</div>
+                <div
+                  class="col-2"
+                  [ngClass]="{
+                    danger: !isGrossValueOK(),
+                    success: isGrossValueOK()
                   }"
-                  ngxSelectAllText
-                  [status]="contract.team[i].distribution ? 'basic' : 'danger'"
-                />
-                %
+                >
+                  R$ {{ teamTotal.grossValue }}
+                </div>
+                <div
+                  class="col-2"
+                  [ngClass]="{
+                    danger: !isNetValueOK(),
+                    success: isNetValueOK()
+                  }"
+                >
+                  R$ {{ teamTotal.netValue }}
+                </div>
               </div>
-              <div class="col-12 col-md-1 list-erase">
-                <nb-icon
-                  class="xIcon"
-                  status="basic"
-                  icon="trash-2-outline"
-                  pack="eva"
-                  (click)="
-                    contract.team.splice(i, 1);
-                    updateTeamTotal();
-                    memberChanged$.next(true)
-                  "
-                  [options]="{ animation: { type: 'shake' } }"
-                ></nb-icon>
-              </div>
-            </div>
-          </nb-list-item>
-          <nb-list-item *ngIf="!utils.isPhone()">
-            <div class="row irow totalRow">
-              <div class="col-2">
-                Restante:
-                {{
-                  stringUtil.subtractMoney(contract.liquid, teamTotal.netValue)
-                }}
-              </div>
-              <div class="col-3" style="text-align: right">Total:</div>
-              <div
-                class="col-2"
-                [ngClass]="{
-                  danger: !isGrossValueOK(),
-                  success: isGrossValueOK()
-                }"
-              >
-                R$ {{ teamTotal.grossValue }}
-              </div>
-              <div
-                class="col-2"
-                [ngClass]="{
-                  danger: !isNetValueOK(),
-                  success: isNetValueOK()
-                }"
-              >
-                R$ {{ teamTotal.netValue }}
-              </div>
-            </div>
-          </nb-list-item>
-        </nb-list>
+            </nb-list-item>
+          </nb-list>
           <div class="col-6">
             <div class="form-control-group">
               <label class="label" for="input-hasISS">
@@ -726,6 +730,7 @@
                 <nb-option [value]="false">Não</nb-option>
               </nb-select>
             </div>
+          </div>
         </div>
         <div class="col-6">
           <div class="form-control-group">
