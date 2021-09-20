@@ -141,3 +141,7 @@
     </div>
   </div>
 </form>
+<ngx-checklist-item
+  *ngFor="let item of contract.checklist"
+  [checklistItem]="item"
+></ngx-checklist-item>

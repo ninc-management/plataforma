@@ -1,0 +1,132 @@
+<nb-list style="width: 100%; padding: 10px 0">
+  <nb-list-item>
+    <div class="row irow">
+      <div class="col-3 list-name">
+        <input
+          nbInput
+          [(ngModel)]="checklistItem.name"
+          #nameInput="ngModel"
+          id="input-action-name"
+          name="action-name"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.checklist.name"
+          [status]="
+            nameInput.dirty
+              ? nameInput.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            nameInput.invalid && nameInput.touched ? true : null
+          "
+        />
+      </div>
+      <div class="col-2">
+        <input
+          nbInput
+          [(ngModel)]="checklistItem.startDate"
+          #startDateInput="ngModel"
+          id="input-action-start-date"
+          name="action-start-date"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.checklist.startDate"
+          [nbDatepicker]="startdatepicker"
+          [status]="
+            startDateInput.dirty
+              ? startDateInput.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            startDateInput.invalid && startDateInput.touched ? true : null
+          "
+        />
+        <nb-datepicker #startdatepicker [max]="today"></nb-datepicker>
+      </div>
+      <div class="col-2">
+        <input
+          nbInput
+          [(ngModel)]="checklistItem.endDate"
+          #endDateInput="ngModel"
+          id="input-action-end-date"
+          name="action-end-date"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.checklist.endDate"
+          [nbDatepicker]="enddatepicker"
+          [status]="
+            endDateInput.dirty
+              ? endDateInput.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            endDateInput.invalid && endDateInput.touched ? true : null
+          "
+        />
+        <nb-datepicker #enddatepicker [min]="yesterday"></nb-datepicker>
+      </div>
+      <div class="col-2">
+        <nb-completer
+          [(ngModel)]="responsibleSearch"
+          #invoiceModelList="ngModel"
+          (selected)="checklistItem.responsible = $event"
+          id="input-action-responsible"
+          name="action-responsible"
+          inputName="actionResponsible"
+          nameField="fullname"
+          [data$]="avaliableResponsibles"
+          [placeholder]="'Digite o nome do responsável pela ação'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [textNoResults]="
+            'Não foi possível achar um colaborador com o nome digitado'
+          "
+          [minSearchLength]="0"
+        ></nb-completer>
+      </div>
+      <div class="col-2">
+        <nb-select
+          id="input-action-status"
+          [(ngModel)]="checklistItem.status"
+          #statusInput="ngModel"
+          name="action-status"
+          fullWidth
+          size="large"
+          [required]="validation.checklist.status"
+          [status]="
+            statusInput.dirty
+              ? statusInput.invalid
+                ? 'danger'
+                : 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="
+            statusInput.invalid && statusInput.touched ? true : null
+          "
+        >
+          <nb-option
+            *ngFor="let status of avaliableActionStatus"
+            [value]="status"
+          >
+            {{ status }}
+          </nb-option>
+        </nb-select>
+      </div>
+      <div class="col-1 col-md-auto list-erase" style="text-align: right">
+        <nb-icon
+          class="xIcon"
+          status="danger"
+          icon="trash-2-outline"
+          pack="eva"
+          [options]="{ animation: { type: 'shake' } }"
+        ></nb-icon>
+      </div>
+    </div>
+  </nb-list-item>
+</nb-list>
