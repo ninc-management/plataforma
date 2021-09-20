@@ -13,6 +13,7 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { StatusHistoryItem } from '@models/baseStatusHistory';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -93,7 +94,7 @@ export class ContractService implements OnDestroy {
     const history = cloneDeep(contract.statusHistory);
     const isMoved = history
       .splice(0, history.length - 1)
-      .find((el) => el.status === 'Concluído');
+      .find((el: StatusHistoryItem) => el.status === 'Concluído');
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))
