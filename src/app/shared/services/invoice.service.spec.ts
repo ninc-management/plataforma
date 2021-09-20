@@ -106,7 +106,13 @@ describe('InvoiceService', () => {
     tmpInvoice.code = 'test';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = true;
-    tmpInvoice.team.push({ user: '1', coordination: 'test' });
+    tmpInvoice.team.push({
+      user: '1',
+      coordination: 'test',
+      distribution: '50,00',
+      grossValue: '',
+      netValue: '',
+    });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     tmpInvoice = new Invoice();
     tmpInvoice._id = '1';
@@ -116,7 +122,13 @@ describe('InvoiceService', () => {
     tmpInvoice.code = 'test1';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = false;
-    tmpInvoice.team.push({ user: '0', coordination: 'test' });
+    tmpInvoice.team.push({
+      user: '0',
+      coordination: 'test',
+      distribution: '50,00',
+      grossValue: '',
+      netValue: '',
+    });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     // mock response
     const req = httpMock.expectOne('/api/user/all');

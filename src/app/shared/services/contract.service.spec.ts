@@ -121,7 +121,13 @@ describe('ContractService', () => {
     tmpInvoice.code = 'ORC-1/2021-NRT/DPC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = true;
-    tmpInvoice.team.push({ user: '1', coordination: 'test' });
+    tmpInvoice.team.push({
+      user: '1',
+      coordination: 'test',
+      distribution: '50,00',
+      grossValue: '',
+      netValue: '',
+    });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     tmpInvoice = new Invoice();
     tmpInvoice._id = '1';
@@ -131,7 +137,13 @@ describe('ContractService', () => {
     tmpInvoice.code = 'ORC-2/2021-NRT/DEC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = false;
-    tmpInvoice.team.push({ user: '0', coordination: 'test' });
+    tmpInvoice.team.push({
+      user: '0',
+      coordination: 'test',
+      distribution: '50,00',
+      grossValue: '',
+      netValue: '',
+    });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     let tmpContract = new Contract();
     tmpContract._id = '0';

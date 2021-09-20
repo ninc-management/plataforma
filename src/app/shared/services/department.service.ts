@@ -47,7 +47,12 @@ export class DepartmentService {
 
   userCoordinations(uId: string | User | undefined): string[] {
     if (uId == undefined) return [];
-    const user = this.userService.idToUser(uId);
+    let user: User;
+    if (typeof uId == 'string') user = this.userService.idToUser(uId);
+    else {
+      if (uId._id) user = this.userService.idToUser(uId._id);
+      else return [];
+    }
     const active: boolean[] = [
       user.adm ? true : false,
       user.design ? true : false,
