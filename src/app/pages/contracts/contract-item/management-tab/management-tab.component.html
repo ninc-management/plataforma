@@ -112,22 +112,22 @@
         Status de gestão:
       </label>
       <nb-select
-        [(ngModel)]="managementStatus"
-        #managementstatus="ngModel"
+        [(ngModel)]="contract.managmentStatus"
+        #managementStatus="ngModel"
         id="input-management-status"
         name="management-status"
-        placeholder="Selecione o status"
+        placeholder="Selecione o status da gestão"
         fullWidth
         size="large"
         [status]="
-          managementstatus.dirty
-            ? managementstatus.invalid
+          managementStatus.dirty
+            ? managementStatus.invalid
               ? 'danger'
               : 'success'
             : 'basic'
         "
         [attr.aria-invalid]="
-          managementstatus.invalid && managementstatus.touched ? true : null
+          managementStatus.invalid && managementStatus.touched ? true : null
         "
       >
         <nb-option *ngFor="let status of avaliableStatus" [value]="status">

@@ -18,7 +18,6 @@ export class ManagementTabComponent implements OnInit {
   invoice: Invoice = new Invoice();
   responsible = '';
 
-  managementStatus = '';
   avaliableStatus = [
     'Produção',
     'Análise Externa',

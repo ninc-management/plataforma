@@ -192,6 +192,7 @@ export class Contract extends StatusHistory {
   liquid = '';
   cashback = '';
   managerPicture = '';
+  managmentStatus = '';
 }
 
 export default getModelForClass(Contract);
