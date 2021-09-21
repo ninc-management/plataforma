@@ -5,6 +5,7 @@ import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -30,7 +31,8 @@ export class ManagementTabComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
-    private userService: UserService
+    private userService: UserService,
+    public utils: UtilsService
   ) {}
 
   ngOnInit(): void {

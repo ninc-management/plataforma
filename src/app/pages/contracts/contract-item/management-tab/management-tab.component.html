@@ -53,7 +53,7 @@
       <label class="label" for="input-start-date">Início:</label>
       <input
         nbInput
-        [(ngModel)]="contract.created"
+        [ngModel]="utils.formatDate(contract.created)"
         #startdate="ngModel"
         id="input-start-date"
         name="start-date"
