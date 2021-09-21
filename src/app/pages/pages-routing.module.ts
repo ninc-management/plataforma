@@ -11,6 +11,7 @@ import { UsersComponent } from './users/users.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { Permissions } from 'app/shared/services/utils.service';
 import { TeamsComponent } from './teams/teams.component';
+import { CoursesComponent } from './courses/courses.component';
 
 const routes: Routes = [
   {
@@ -78,6 +79,14 @@ const routes: Routes = [
         component: PromotionsComponent,
         data: {
           resource: 'view-promotions',
+          permission: Permissions.ELO_PRINCIPAL,
+        },
+      },
+      {
+        path: 'courses',
+        component: CoursesComponent,
+        data: {
+          resource: 'view-courses',
           permission: Permissions.ELO_PRINCIPAL,
         },
       },
