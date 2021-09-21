@@ -39,22 +39,26 @@ export class ChecklistComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private userService: UserService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
+    this.avaliableResponsibles = this.getAvaliableResponsibles();
+    this.yesterday.setDate(this.today.getDate() - 1);
   }
 
-  ngOnInit(): void {
-    this.avaliableResponsibles = of(
+  getAvaliableResponsibles(): Observable<User[]> {
+    return of(
       this.invoice.team
-        .map((member: InvoiceTeamMember): User | undefined => {
-          if (member.user) return this.userService.idToUser(member.user);
-          return;
+        .map((member: InvoiceTeamMember) => {
+          return member.user
+            ? this.userService.idToUser(member.user)
+            : undefined;
         })
         .filter((user: User | undefined): user is User => user !== undefined)
     );
-    this.yesterday.setDate(this.today.getDate() - 1);
   }
 
   registerChecklistItem(): void {
