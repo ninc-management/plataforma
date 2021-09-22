@@ -70,10 +70,10 @@
     </div>
     <div class="col-2">
       <div class="form-control-group">
-        <!-- Aprimorar quando adicionar data final no contrato -->
         <label class="label" for="input-end-date">Fim:</label>
         <input
           nbInput
+          [ngModel]="contract.endDate ? utils.formatDate(contract.endDate) : ''"
           id="input-end-date"
           name="end-date"
           fullWidth
@@ -84,10 +84,10 @@
     </div>
     <div class="col-2">
       <div class="form-control-group">
-        <!-- Aprimorar quando adicionar data fim ao contrato -->
         <label class="label" for="input-remaining-days">Dias restantes:</label>
         <input
           nbInput
+          [ngModel]="getRemainingDays()"
           id="input-remaining-days"
           name="remaining-days"
           fullWidth
