@@ -142,6 +142,7 @@
   </div>
 </form>
 <ngx-checklist-item
-  *ngFor="let item of contract.checklist"
+  *ngFor="let item of contract.checklist; let i = index"
   [checklistItem]="item"
+  (itemRemoved)="removeChecklistItem(i)"
 ></ngx-checklist-item>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ContractChecklistItem } from '@models/contract';
 import { User } from '@models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 })
 export class ChecklistItemComponent implements OnInit {
   @Input() checklistItem: ContractChecklistItem = new ContractChecklistItem();
+  @Output() itemRemoved = new EventEmitter();
   validation = (contract_validation as any).default;
   today = new Date();
   yesterday = new Date();
@@ -35,5 +36,9 @@ export class ChecklistItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.yesterday.setDate(this.today.getDate() - 1);
+  }
+
+  removeItem(): void {
+    this.itemRemoved.emit();
   }
 }
