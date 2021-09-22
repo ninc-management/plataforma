@@ -6,6 +6,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { Observable, of } from 'rxjs';
 import * as contract_validation from 'app/shared/contract-validation.json';
+import { ContractService } from 'app/shared/services/contract.service';
 
 @Component({
   selector: 'ngx-checklist',
@@ -38,7 +39,8 @@ export class ChecklistComponent implements OnInit {
 
   constructor(
     private invoiceService: InvoiceService,
-    private userService: UserService
+    private userService: UserService,
+    private contractService: ContractService
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +65,8 @@ export class ChecklistComponent implements OnInit {
 
   registerChecklistItem(): void {
     this.contract.checklist.push(this.newChecklistItem);
+    this.contractService.editContract(this.contract);
     this.newChecklistItem = new ContractChecklistItem();
-    console.log(this.contract.checklist);
+    this.responsibleSearch = '';
   }
 }
