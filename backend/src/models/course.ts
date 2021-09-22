@@ -15,7 +15,7 @@ export class Course extends Base<string> {
   courseHours = '0';
 
   @prop({ required: true })
-  minister: Ref<User>;
+  speaker: Ref<User>;
 
   @prop({ required: true })
   startDate: Date;
