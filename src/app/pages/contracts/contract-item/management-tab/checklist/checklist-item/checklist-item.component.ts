@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { ContractChecklistItem } from '@models/contract';
 import { User } from '@models/user';
 import * as contract_validation from 'app/shared/contract-validation.json';
+import { UserService } from 'app/shared/services/user.service';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -32,7 +33,7 @@ export class ChecklistItemComponent implements OnInit {
     'Concluído',
   ];
 
-  constructor() {}
+  constructor(public userService: UserService) {}
 
   ngOnInit(): void {
     this.yesterday.setDate(this.today.getDate() - 1);
