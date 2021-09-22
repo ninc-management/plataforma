@@ -106,7 +106,7 @@ db.users.find().forEach((u) => {
         u.expertise[idx].coordination = cbt;
     });
   } else print('Não tem area de atuação no usuario ' + u.fullName);
-  db.contracts.replaceOne({_id: u._id}, u);
+  db.users.replaceOne({_id: u._id}, u);
 });
 db.invoices.find().forEach((i) => {
   var changed = false;
@@ -123,7 +123,7 @@ db.invoices.find().forEach((i) => {
     });
   } else print('Não tem time no orçamento ' + i.code);
   if(changed)
-    db.contracts.replaceOne({_id: i._id}, i);
+    db.invoices.replaceOne({_id: i._id}, i);
 });
 db.contracts.aggregate({$unwind: "$invoice"},
   {$lookup: {
@@ -163,8 +163,10 @@ db.contracts.aggregate({$unwind: "$invoice"},
     } else print('Não tem arrays de time na despesa ' + expense.code + ' no conrato ' + c.invoice[0].code);
   });
   } else print('Não tem array de despesas no conrato ' + c.invoice[0].code);
-  if(changed)
+  if(changed){
+    c.invoice = c.invoice[0]._id;
     db.contracts.replaceOne({_id: c._id}, c);
+  }
 });
 
 // Merge invoice and contract teams
