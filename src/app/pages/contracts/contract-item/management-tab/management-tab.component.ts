@@ -7,6 +7,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { differenceInDays } from 'date-fns';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -41,6 +42,10 @@ export class ManagementTabComponent implements OnInit {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     this.responsible = this.userService.idToName(this.invoice.author);
+    //Without this my PC freezes (Leo)
+    if (this.contract.endDate) {
+      this.contract.endDate = new Date(this.contract.endDate);
+    }
   }
 
   tooltipText(): string {
@@ -61,5 +66,14 @@ export class ManagementTabComponent implements OnInit {
 
   updateContractManagment(): void {
     this.contractService.editContract(this.contract);
+  }
+
+  getRemainingDays(): string {
+    if (this.contract.endDate) {
+      const startDate = new Date(this.contract.created);
+      const endDate = new Date(this.contract.endDate);
+      return differenceInDays(endDate, startDate).toString();
+    }
+    return '';
   }
 }
