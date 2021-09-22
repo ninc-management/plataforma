@@ -1,21 +1,23 @@
 import {
   Component,
-  OnInit,
   DoCheck,
-  ViewChildren,
   ElementRef,
-  ViewChild,
   Input,
+  OnDestroy,
+  OnInit,
   QueryList,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
-import { take, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { take, map, takeUntil, filter } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
+import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
@@ -26,7 +28,7 @@ import * as user_validation from 'app/shared/user-validation.json';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit, DoCheck {
+export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChildren('expertise', { read: ElementRef })
   expertiseRefs!: QueryList<ElementRef>;
   @ViewChildren('shortExpertise', { read: ElementRef })
@@ -34,6 +36,7 @@ export class ProfileComponent implements OnInit, DoCheck {
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
   @Input() iUser = new User();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  private destroy$ = new Subject<void>();
   isCurrentUser = false;
   user = new User();
   cities: string[] = [];
@@ -92,50 +95,64 @@ export class ProfileComponent implements OnInit, DoCheck {
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
     public userService: UserService,
+    public teamService: TeamService,
     public accessChecker: NbAccessChecker,
     public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
-    this.states = this.statecityService.buildStateList();
-    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-    this.COORDINATIONS = this.departmentService
-      .buildAllCoordinationsList()
-      .map((cd: string) => {
-        return cd.split(' ')[0];
-      });
-    if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
-    else
-      this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-        this.iUser = user;
-        this.user = cloneDeep(this.iUser);
-        this.isCurrentUser = true;
-      });
-    if (this.user.state)
-      this.cities = this.statecityService.buildCityList(this.user.state);
-    if (this.user.expertise == undefined) this.user.expertise = [];
-    if (this.user.theme == undefined) this.user.theme = 'default';
-    this.buildPositionsList();
-    this.buildLevelList();
-    this.refreshExpertises();
-    this.availableUsers = combineLatest([
-      this.userService.getUsers(),
-      this.memberChanged$,
-    ]).pipe(
-      map(([users, _]) => {
-        return users.filter((user) => {
-          return (
-            (this.user.AER.find((member) =>
-              this.userService.isEqual(user, member)
-            ) === undefined
-              ? true
-              : false) && !this.userService.isEqual(user, this.user)
-          );
-        });
-      })
-    );
+    this.teamService
+      .getTeams()
+      .pipe(
+        filter((teams) => teams.length > 0),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.states = this.statecityService.buildStateList();
+        this.DEPARTMENTS = this.departmentService.buildDepartmentList();
+        this.COORDINATIONS = this.departmentService
+          .buildAllCoordinationsList()
+          .map((cd: string) => {
+            return cd.split(' ')[0];
+          });
+        if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
+        else
+          this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
+            this.iUser = user;
+            this.user = cloneDeep(this.iUser);
+            this.isCurrentUser = true;
+          });
+        if (this.user.state)
+          this.cities = this.statecityService.buildCityList(this.user.state);
+        if (this.user.expertise == undefined) this.user.expertise = [];
+        if (this.user.theme == undefined) this.user.theme = 'default';
+        this.buildPositionsList();
+        this.buildLevelList();
+        this.refreshExpertises();
+        this.availableUsers = combineLatest([
+          this.userService.getUsers(),
+          this.memberChanged$,
+        ]).pipe(
+          map(([users, _]) => {
+            return users.filter((user) => {
+              return (
+                (this.user.AER.find((member) =>
+                  this.userService.isEqual(user, member)
+                ) === undefined
+                  ? true
+                  : false) && !this.userService.isEqual(user, this.user)
+              );
+            });
+          })
+        );
 
-    this.checkPrivileges();
+        this.checkPrivileges();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngDoCheck(): void {
