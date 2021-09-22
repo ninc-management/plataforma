@@ -72,23 +72,16 @@
         <nb-datepicker #enddatepicker [min]="yesterday"></nb-datepicker>
       </div>
       <div class="col-2">
-        <nb-completer
-          [(ngModel)]="responsibleSearch"
-          #invoiceModelList="ngModel"
-          (selected)="checklistItem.responsible = $event"
-          id="input-action-responsible"
-          name="action-responsible"
-          inputName="actionResponsible"
-          nameField="fullname"
-          [data$]="avaliableResponsibles"
-          [placeholder]="'Digite o nome do responsável pela ação'"
-          [fullWidth]="true"
-          [fieldSize]="'large'"
-          [textNoResults]="
-            'Não foi possível achar um colaborador com o nome digitado'
-          "
-          [minSearchLength]="0"
-        ></nb-completer>
+        <input
+          nbInput
+          [ngModel]="this.userService.idToName(checklistItem.responsible)"
+          #responsible="ngModel"
+          id="responsible"
+          name="responsible"
+          fullWidth
+          fieldSize="large"
+          [readonly]="true"
+        />
       </div>
       <div class="col-2">
         <nb-select
