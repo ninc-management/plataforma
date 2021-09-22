@@ -444,8 +444,9 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    if (invoice.team) {
-      for (const [index, member] of invoice.team.entries()) {
+    if (invoice.team.length > 1) {
+      const team = invoice.team.slice(1);
+      for (const [index, member] of team.entries()) {
         const user = member.user
           ? this.userService.idToUser(member.user)
           : new User();
