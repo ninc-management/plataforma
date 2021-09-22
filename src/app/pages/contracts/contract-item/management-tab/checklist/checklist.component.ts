@@ -69,4 +69,9 @@ export class ChecklistComponent implements OnInit {
     this.newChecklistItem = new ContractChecklistItem();
     this.responsibleSearch = '';
   }
+
+  removeChecklistItem(index: number): void {
+    this.contract.checklist.splice(index, 1);
+    this.contractService.editContract(this.contract);
+  }
 }
