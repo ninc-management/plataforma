@@ -6,25 +6,25 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 @plugin(mongooseUniqueValidator)
 export class Course extends Base<string> {
   @prop({ required: true })
-  name = '';
+  name!: string;
 
   @prop({ required: true })
-  hasCertificate = true;
+  hasCertificate!: boolean;
 
   @prop({ required: true })
-  courseHours = '0';
+  courseHours!: string;
 
-  @prop({ required: true })
+  @prop({ required: true, ref: () => User })
   speaker: Ref<User>;
 
   @prop({ required: true })
   startDate: Date;
 
   @prop({ required: true })
-  place = '';
+  place!: string;
 
   @prop({ required: true })
-  price = '0,00';
+  price!: string;
 }
 
 export default getModelForClass(Course);
