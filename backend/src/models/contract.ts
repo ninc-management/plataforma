@@ -180,6 +180,12 @@ export class Contract extends StatusHistory {
   @prop({ type: () => [ContractChecklistItem] })
   checklist: ContractChecklistItem[] = [];
 
+  @prop()
+  managmentStatus = '';
+
+  @prop()
+  managmentNotes = '';
+
   balance = '';
   value = '';
   fullName = '';
@@ -192,7 +198,6 @@ export class Contract extends StatusHistory {
   liquid = '';
   cashback = '';
   managerPicture = '';
-  managmentStatus = '';
 }
 
 export default getModelForClass(Contract);

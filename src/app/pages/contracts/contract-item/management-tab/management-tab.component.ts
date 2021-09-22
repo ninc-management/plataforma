@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import * as contract_validation from 'app/shared/contract-validation.json';
+import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -31,7 +32,8 @@ export class ManagementTabComponent implements OnInit {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private contractService: ContractService
   ) {}
 
   ngOnInit(): void {
@@ -55,5 +57,9 @@ export class ManagementTabComponent implements OnInit {
         );
     }
     return '';
+  }
+
+  updateContractManagment(): void {
+    this.contractService.editContract(this.contract);
   }
 }
