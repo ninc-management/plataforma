@@ -56,7 +56,7 @@ export class ExpenseItemComponent
     description: '',
     nf: true,
     type: '',
-    splitType: '',
+    splitType: 'Individual',
     value: '',
     created: this.today,
     lastUpdate: this.today,
@@ -123,9 +123,6 @@ export class ExpenseItemComponent
 
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
-
-    if (!this.expense.splitType)
-      this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
 
     this.formRef.control.statusChanges
       .pipe(skip(1), takeUntil(this.destroy$))
@@ -223,6 +220,7 @@ export class ExpenseItemComponent
         this.splitSelectedMember._id
       );
     }
+    if (this.expenseIndex == undefined) this.updateTeamValues();
   }
 
   updateUploaderOptions(): void {
