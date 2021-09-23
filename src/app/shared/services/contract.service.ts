@@ -404,7 +404,7 @@ export class ContractService implements OnDestroy {
 
   getComissionsSum(contract: Contract): number {
     return contract.expenses.reduce((sum, expense) => {
-      if (expense.type == EXPENSE_TYPES.COMISSAO) {
+      if (expense.type == EXPENSE_TYPES.COMISSAO && expense.paid) {
         sum += this.stringUtil.moneyToNumber(expense.value);
       }
       return sum;
