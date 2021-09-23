@@ -234,8 +234,7 @@ export class ContractService implements OnDestroy {
         { expense: 0, contribution: 0, contract: 0 }
       );
     const result = this.stringUtil.round(
-      (this.stringUtil.moneyToNumber(contract.liquid) +
-        this.expensesContributions(contract, user).user.cashback) *
+      this.stringUtil.moneyToNumber(contract.liquid) *
         this.stringUtil.toMultiplyPercentage(distribution) -
         expenseContribution.contract +
         expenseContribution.expense +
