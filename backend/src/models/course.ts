@@ -18,7 +18,7 @@ export class Course extends Base<string> {
   speaker: Ref<User>;
 
   @prop({ required: true })
-  startDate: Date;
+  startDate!: Date;
 
   @prop({ required: true })
   place!: string;
