@@ -24,7 +24,7 @@ module.exports = {
     'no-var': 'warn',
     'prefer-const': 'warn',
     '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/no-inferrable-types': 'warn',
+    '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/indent': [
       'error',
       2,
