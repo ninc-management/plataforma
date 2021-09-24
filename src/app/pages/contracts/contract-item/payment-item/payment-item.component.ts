@@ -65,6 +65,7 @@ export class PaymentItemComponent implements OnInit {
     valueType: '$',
     lastValue: '0',
     lastTeam: [] as ContractUserPayment[],
+    initialTeam: [] as ContractUserPayment[],
   };
 
   memberChanged$ = new BehaviorSubject<boolean>(true);
@@ -86,11 +87,11 @@ export class PaymentItemComponent implements OnInit {
   }
 
   constructor(
-    public departmentService: DepartmentService,
-    private contractService: ContractService,
     private invoiceService: InvoiceService,
-    public userService: UserService,
+    public contractService: ContractService,
+    public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
+    public userService: UserService,
     public utils: UtilsService
   ) {}
 
@@ -112,6 +113,7 @@ export class PaymentItemComponent implements OnInit {
     if (this.paymentIndex !== undefined) {
       this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
       this.updateLastValues();
+      this.options.initialTeam = cloneDeep(this.payment.team);
       this.calculateTeamValues();
     } else {
       this.payment.team = cloneDeep(this.invoice.team).map(
@@ -230,6 +232,30 @@ export class PaymentItemComponent implements OnInit {
   updatePaidDate(): void {
     if (!this.payment.paid) this.payment.paidDate = undefined;
     else this.payment.paidDate = new Date();
+  }
+
+  userNotPaidValue(paymentMember: ContractUserPayment): string {
+    if (!this.contract.invoice) return '0,00';
+    const invoiceMember = this.invoiceService
+      .idToInvoice(this.contract.invoice)
+      .team.find((member) =>
+        this.userService.isEqual(member.user, paymentMember.user)
+      );
+    if (invoiceMember) {
+      let result = this.contractService.notPaidValue(
+        invoiceMember.distribution,
+        invoiceMember.user,
+        this.contract
+      );
+      if (this.paymentIndex !== undefined) {
+        const initialUser = this.options.initialTeam.find((member) =>
+          this.userService.isEqual(member.user, paymentMember.user)
+        );
+        if (initialUser)
+          result = this.stringUtil.sumMoney(result, initialUser.value);
+      }
+      return result;
+    } else return '0,00';
   }
 
   updateUserCoordinations(): void {

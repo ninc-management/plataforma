@@ -454,6 +454,15 @@
         <div class="row paymentRow">
           <div class="col-12 col-md-4">
             {{ userService.idToName(userPayment.user) }}
+            <ng-container>
+              <p
+                class="caption status-danger"
+                *ngIf="memberValue.errors?.overpaid && memberValue.invalid"
+              >
+                O valor pago é superior ao saldo a receber no contrato (R$
+                {{ userNotPaidValue(payment.team[i]) }})!
+              </p>
+            </ng-container>
           </div>
           <div class="col-12 col-md-3">
             <nb-select
@@ -481,6 +490,7 @@
               nbInput
               [(ngModel)]="payment.team[i].value"
               (ngModelChange)="updatePercentage(i); updateTotal()"
+              #memberValue="ngModel"
               id="input-memberValue-{{ i }}"
               name="memberValue-{{ i }}"
               placeholder="Valor"
@@ -492,12 +502,13 @@
                 decimal: 2
               }"
               ngxSelectAllText
+              [overPaid]="userNotPaidValue(payment.team[i])"
               [status]="
                 paymentIndex === undefined
-                  ? is100
+                  ? is100 && !memberValue.invalid
                     ? 'success'
                     : 'danger'
-                  : is100
+                  : is100 && !memberValue.invalid
                   ? 'basic'
                   : 'danger'
               "
@@ -524,10 +535,10 @@
               ngxSelectAllText
               [status]="
                 paymentIndex === undefined
-                  ? is100
+                  ? is100 && !memberValue.invalid
                     ? 'success'
                     : 'danger'
-                  : is100
+                  : is100 && !memberValue.invalid
                   ? 'basic'
                   : 'danger'
               "
@@ -537,7 +548,7 @@
           <div
             class="col-2 col-md-1"
             style="text-align: right"
-            *ngIf="!isEditionGranted"
+            *ngIf="isEditionGranted"
           >
             <nb-icon
               class="xIcon"
