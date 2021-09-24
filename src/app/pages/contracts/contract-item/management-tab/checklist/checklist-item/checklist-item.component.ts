@@ -4,6 +4,7 @@ import { User } from '@models/user';
 import { NbCalendarRange } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { UserService } from 'app/shared/services/user.service';
+import { differenceInCalendarDays, isBefore } from 'date-fns';
 import { Observable, of } from 'rxjs';
 
 @Component({
@@ -50,5 +51,32 @@ export class ChecklistItemComponent implements OnInit {
 
   removeItem(): void {
     this.itemRemoved.emit();
+  }
+
+  getTotalDays(): number {
+    return differenceInCalendarDays(
+      new Date(this.checklistItem.endDate),
+      new Date(this.checklistItem.startDate)
+    );
+  }
+
+  getRemainingDays(): number {
+    const today = new Date();
+    const itemStartDate = new Date(this.checklistItem.startDate);
+    const end = new Date(this.checklistItem.endDate);
+    if (isBefore(today, itemStartDate)) {
+      return differenceInCalendarDays(end, itemStartDate);
+    }
+    return differenceInCalendarDays(end, today);
+  }
+
+  getPercentualItemProgress(): number {
+    const total = this.getTotalDays();
+    const remaining = this.getRemainingDays();
+    if (total != 0) {
+      const progress = total - remaining;
+      return +((progress / total) * 100).toFixed(2);
+    }
+    return 0;
   }
 }

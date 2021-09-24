@@ -31,5 +31,15 @@
 
   nb-list-item {
     padding-left: 0;
+    display: flex;
+    flex-flow: column;
+  }
+
+  .progress-bar-container {
+    margin: 1rem 0rem;
+  }
+
+  .no-padding {
+    padding: 0;
   }
 }
