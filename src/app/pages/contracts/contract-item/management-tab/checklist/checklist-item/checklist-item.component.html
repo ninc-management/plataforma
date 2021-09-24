@@ -98,5 +98,19 @@
         ></nb-icon>
       </div>
     </div>
+    <div class="row irow">
+      <div class="col-12 no-padding">
+        <div class="progress-bar-container">
+          <nb-progress-bar
+            [status]="
+              getPercentualItemProgress() == 100 ? 'success' : 'primary'
+            "
+            [size]="'tiny'"
+            [displayValue]="true"
+            [value]="getPercentualItemProgress()"
+          ></nb-progress-bar>
+        </div>
+      </div>
+    </div>
   </nb-list-item>
 </nb-list>
