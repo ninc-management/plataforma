@@ -23,55 +23,35 @@
           "
         />
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <input
           nbInput
-          [(ngModel)]="checklistItem.startDate"
-          #startDateInput="ngModel"
-          id="input-action-start-date"
-          name="action-start-date"
+          [(ngModel)]="itemRange"
+          #rangeInput="ngModel"
+          id="action-range"
+          name="action-range-item"
           fullWidth
           fieldSize="large"
           [required]="validation.checklist.startDate"
-          [nbDatepicker]="startdatepicker"
+          [nbDatepicker]="rangePicker"
           [status]="
-            startDateInput.dirty
-              ? startDateInput.invalid
+            rangeInput.dirty
+              ? rangeInput.invalid
                 ? 'danger'
                 : 'success'
               : 'basic'
           "
           [attr.aria-invalid]="
-            startDateInput.invalid && startDateInput.touched ? true : null
+            rangeInput.invalid && rangeInput.touched ? true : null
           "
         />
-        <nb-datepicker #startdatepicker [max]="today"></nb-datepicker>
+        <nb-rangepicker
+          #rangePicker
+          [min]="yesterday"
+          [max]="rangeMax ? rangeMax : ''"
+        ></nb-rangepicker>
       </div>
-      <div class="col-2">
-        <input
-          nbInput
-          [(ngModel)]="checklistItem.endDate"
-          #endDateInput="ngModel"
-          id="input-action-end-date"
-          name="action-end-date"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.checklist.endDate"
-          [nbDatepicker]="enddatepicker"
-          [status]="
-            endDateInput.dirty
-              ? endDateInput.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            endDateInput.invalid && endDateInput.touched ? true : null
-          "
-        />
-        <nb-datepicker #enddatepicker [min]="yesterday"></nb-datepicker>
-      </div>
-      <div class="col-2">
+      <div class="col-3">
         <input
           nbInput
           [ngModel]="this.userService.idToName(checklistItem.responsible)"
