@@ -1,6 +1,6 @@
 <div class="progress-bar-container">
   <nb-progress-bar
-    [status]="'primary'"
+    [status]="getPercentualProgress() == 100 ? 'success' : 'primary'"
     [size]="'tiny'"
     [displayValue]="true"
     [value]="getPercentualProgress()"
