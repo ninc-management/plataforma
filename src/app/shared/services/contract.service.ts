@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { isBefore, parseISO } from 'date-fns';
+import { isAfter, isBefore, parseISO } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
@@ -499,5 +499,20 @@ export class ContractService implements OnDestroy {
     );
     result.push({ type: 'TOTAL', value: total });
     return result;
+  }
+
+  getDeadline(contract: Contract): Date | undefined {
+    return contract.checklist.length != 0 ? this.getLatestEndDate(contract) : undefined;
+  }
+
+  private getLatestEndDate(contract: Contract): Date {
+    let latestDate = new Date(contract.created);
+    for (const item of contract.checklist) {
+      const currentDate = new Date(item.endDate);
+      if (isAfter(currentDate, latestDate)) {
+        latestDate = new Date(item.endDate);
+      }
+    }
+    return latestDate;
   }
 }

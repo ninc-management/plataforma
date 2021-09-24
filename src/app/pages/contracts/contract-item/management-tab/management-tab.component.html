@@ -1,10 +1,9 @@
 <div class="progress-bar-container">
-  <label class="label">Progresso</label>
   <nb-progress-bar
     [status]="'primary'"
     [size]="'tiny'"
     [displayValue]="true"
-    [value]="getRemainingDaysAsPercentage()"
+    [value]="getPercentualProgress()"
   ></nb-progress-bar>
 </div>
 <form
@@ -82,7 +81,7 @@
         <label class="label" for="input-end-date">Fim:</label>
         <input
           nbInput
-          [ngModel]="contract.endDate ? utils.formatDate(contract.endDate) : ''"
+          [ngModel]="deadline ? utils.formatDate(deadline) : ''"
           id="input-end-date"
           name="end-date"
           fullWidth

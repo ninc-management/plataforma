@@ -19,6 +19,7 @@ export class ManagementTabComponent implements OnInit {
   validation = (contract_validation as any).default;
   invoice: Invoice = new Invoice();
   responsible = '';
+  deadline!: Date | undefined;
 
   avaliableStatus = [
     'Produção',
@@ -42,10 +43,7 @@ export class ManagementTabComponent implements OnInit {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     this.responsible = this.userService.idToName(this.invoice.author);
-    //Without this my PC freezes (Leo)
-    if (this.contract.endDate) {
-      this.contract.endDate = new Date(this.contract.endDate);
-    }
+    this.deadline = this.contractService.getDeadline(this.contract);
   }
 
   tooltipText(): string {
@@ -68,33 +66,29 @@ export class ManagementTabComponent implements OnInit {
     this.contractService.editContract(this.contract);
   }
 
-  getContractDeadline(): string {
-    if (this.contract.endDate) {
-      const startDate = new Date(this.contract.created);
-      const endDate = new Date(this.contract.endDate);
-      return differenceInDays(endDate, startDate).toString();
+  getTotalDays(): number | undefined {
+    if (this.deadline) {
+      //can start be the start date from the initial checklist item?
+      const start = new Date(this.contract.created);
+      return differenceInDays(this.deadline, start);
     }
-    return '';
+    return undefined;
   }
 
-  getRemainingDays(): string {
-    if (this.contract.endDate) {
-      const startDate = new Date();
-      const endDate = new Date(this.contract.endDate);
-      return differenceInDays(endDate, startDate).toString();
+  getRemainingDays(): number | undefined {
+    if (this.deadline) {
+      const today = new Date();
+      return differenceInDays(this.deadline, today);
     }
-    return '';
+    return undefined;
   }
 
-  getRemainingDaysAsPercentage(): number {
-    const deadline = this.getContractDeadline();
+  getPercentualProgress(): number {
+    const total = this.getTotalDays();
     const remaining = this.getRemainingDays();
-    if (deadline && remaining) {
-      const deadlineInt = parseInt(deadline);
-      const remainingInt = parseInt(remaining);
-      //can deadlineInt be zero?
-      const result = +((remainingInt / deadlineInt) * 100).toFixed(2);
-      return result;
+    if (total && total != 0 && remaining) {
+      const progress = total - remaining;
+      return +((progress / total) * 100).toFixed(2);
     }
     return 0;
   }
