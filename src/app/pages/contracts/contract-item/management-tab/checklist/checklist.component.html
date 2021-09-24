@@ -50,11 +50,7 @@
           rangeInput.invalid && rangeInput.touched ? true : null
         "
       />
-      <nb-rangepicker
-        #rangePicker
-        [min]="yesterday"
-        [max]="contractEndDate ? contractEndDate : ''"
-      ></nb-rangepicker>
+      <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
     </div>
     <div class="col-3">
       <label class="label" for="input-action-responsible">Responsável:</label>

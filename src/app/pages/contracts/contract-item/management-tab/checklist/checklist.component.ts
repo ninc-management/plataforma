@@ -52,9 +52,6 @@ export class ChecklistComponent implements OnInit {
     }
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.yesterday.setDate(this.today.getDate() - 1);
-    if (this.contract.endDate) {
-      this.contractEndDate = new Date(this.contract.endDate);
-    }
   }
 
   getAvaliableResponsibles(): Observable<User[]> {

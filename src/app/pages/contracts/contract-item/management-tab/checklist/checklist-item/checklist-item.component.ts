@@ -22,7 +22,6 @@ export class ChecklistItemComponent implements OnInit {
   avaliableResponsibles: Observable<User[]> = of([]);
   checklistItem!: ContractChecklistItem;
   itemRange!: NbCalendarRange<Date>;
-  rangeMax!: Date;
 
   avaliableActionStatus = [
     'Briefing',
@@ -47,9 +46,6 @@ export class ChecklistItemComponent implements OnInit {
       start: new Date(this.checklistItem.startDate),
       end: new Date(this.checklistItem.endDate),
     };
-    if (this.contract.endDate) {
-      this.rangeMax = new Date(this.contract.endDate);
-    }
   }
 
   removeItem(): void {

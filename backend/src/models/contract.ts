@@ -186,9 +186,6 @@ export class Contract extends StatusHistory {
   @prop()
   managementNotes: string = '';
 
-  @prop()
-  endDate?: Date;
-
   balance = '';
   value = '';
   fullName = '';

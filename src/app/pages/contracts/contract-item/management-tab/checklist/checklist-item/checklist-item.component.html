@@ -45,11 +45,7 @@
             rangeInput.invalid && rangeInput.touched ? true : null
           "
         />
-        <nb-rangepicker
-          #rangePicker
-          [min]="yesterday"
-          [max]="rangeMax ? rangeMax : ''"
-        ></nb-rangepicker>
+        <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
       </div>
       <div class="col-3">
         <input
