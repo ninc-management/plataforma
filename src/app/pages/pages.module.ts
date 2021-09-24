@@ -19,6 +19,7 @@ import {
   NbAlertModule,
   NbFormFieldModule,
   NbToggleModule,
+  NbProgressBarModule,
 } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
@@ -82,6 +83,7 @@ import { ChecklistItemComponent } from './contracts/contract-item/management-tab
     PagesRoutingModule,
     SharedModule,
     ThemeModule,
+    NbProgressBarModule,
   ],
   declarations: [
     PagesComponent,

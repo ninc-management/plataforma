@@ -1,3 +1,12 @@
+<div class="progress-bar-container">
+  <label class="label">Progresso</label>
+  <nb-progress-bar
+    [status]="'primary'"
+    [size]="'tiny'"
+    [displayValue]="true"
+    [value]="getRemainingDaysAsPercentage()"
+  ></nb-progress-bar>
+</div>
 <form
   (ngSubmit)="updateContractManagement()"
   #form="ngForm"

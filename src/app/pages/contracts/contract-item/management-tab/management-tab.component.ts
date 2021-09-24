@@ -68,12 +68,34 @@ export class ManagementTabComponent implements OnInit {
     this.contractService.editContract(this.contract);
   }
 
-  getRemainingDays(): string {
+  getContractDeadline(): string {
     if (this.contract.endDate) {
       const startDate = new Date(this.contract.created);
       const endDate = new Date(this.contract.endDate);
       return differenceInDays(endDate, startDate).toString();
     }
     return '';
+  }
+
+  getRemainingDays(): string {
+    if (this.contract.endDate) {
+      const startDate = new Date();
+      const endDate = new Date(this.contract.endDate);
+      return differenceInDays(endDate, startDate).toString();
+    }
+    return '';
+  }
+
+  getRemainingDaysAsPercentage(): number {
+    const deadline = this.getContractDeadline();
+    const remaining = this.getRemainingDays();
+    if (deadline && remaining) {
+      const deadlineInt = parseInt(deadline);
+      const remainingInt = parseInt(remaining);
+      //can deadlineInt be zero?
+      const result = +((remainingInt / deadlineInt) * 100).toFixed(2);
+      return result;
+    }
+    return 0;
   }
 }
