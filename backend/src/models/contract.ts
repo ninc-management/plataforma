@@ -48,7 +48,7 @@ export class ContractExpense {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid = false;
+  paid: boolean = false;
 
   @prop({ required: true })
   code!: string;
@@ -93,7 +93,7 @@ export class ContractPayment {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid = false;
+  paid: boolean = false;
 
   @prop()
   paidDate?: Date;
@@ -119,7 +119,7 @@ export class ContractReceipt {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  paid = false;
+  paid: boolean = false;
 
   @prop()
   paidDate?: Date;
@@ -157,16 +157,16 @@ export class Contract extends StatusHistory {
   expenses: ContractExpense[] = [];
 
   @prop({ required: true })
-  status = 'Em andamento';
+  status: string = 'Em andamento';
 
   @prop({ required: true })
-  version = '00';
+  version: string = '00';
 
   @prop({ required: true })
-  ISS = '0,00';
+  ISS: string = '0,00';
 
   @prop({ required: true })
-  total = '1';
+  total: string = '1';
 
   @prop({ required: true })
   created: Date = new Date();
@@ -175,16 +175,16 @@ export class Contract extends StatusHistory {
   lastUpdate: Date = new Date();
 
   @prop({ required: true })
-  createdExpenses = 0;
+  createdExpenses: number = 0;
 
   @prop({ type: () => [ContractChecklistItem] })
   checklist: ContractChecklistItem[] = [];
 
   @prop()
-  managmentStatus = '';
+  managementStatus: string = '';
 
   @prop()
-  managmentNotes = '';
+  managementNotes: string = '';
 
   @prop()
   endDate?: Date;

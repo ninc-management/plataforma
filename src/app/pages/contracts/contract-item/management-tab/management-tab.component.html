@@ -1,5 +1,5 @@
 <form
-  (ngSubmit)="updateContractManagment()"
+  (ngSubmit)="updateContractManagement()"
   #form="ngForm"
   aria-labelledby="title"
 >
@@ -117,7 +117,7 @@
           Status de gestão:
         </label>
         <nb-select
-          [(ngModel)]="contract.managmentStatus"
+          [(ngModel)]="contract.managementStatus"
           #managementStatus="ngModel"
           id="input-management-status"
           name="management-status"
@@ -148,9 +148,9 @@
         <label class="label" for="input-notes">Observações:</label>
         <textarea
           nbInput
-          [(ngModel)]="contract.managmentNotes"
+          [(ngModel)]="contract.managementNotes"
           id="input-notes"
-          name="managmentNotes"
+          name="managementNotes"
           fullWidth
           fieldSize="large"
         ></textarea>
