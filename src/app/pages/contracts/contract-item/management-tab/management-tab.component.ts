@@ -7,7 +7,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { differenceInDays } from 'date-fns';
+import { differenceInCalendarDays } from 'date-fns';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -70,7 +70,7 @@ export class ManagementTabComponent implements OnInit {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
       const start = new Date(this.contract.created);
-      return differenceInDays(this.deadline, start);
+      return differenceInCalendarDays(this.deadline, start);
     }
     return undefined;
   }
@@ -78,15 +78,17 @@ export class ManagementTabComponent implements OnInit {
   getRemainingDays(): number | undefined {
     if (this.deadline) {
       const today = new Date();
-      return differenceInDays(this.deadline, today);
+      return differenceInCalendarDays(this.deadline, today);
     }
     return undefined;
   }
 
   getPercentualProgress(): number {
+    //if the contract is created today, total is 0
+    //remaining can be 0 but cant be undefined
     const total = this.getTotalDays();
     const remaining = this.getRemainingDays();
-    if (total && total != 0 && remaining) {
+    if (total != undefined && total != 0 && remaining != undefined) {
       const progress = total - remaining;
       return +((progress / total) * 100).toFixed(2);
     }
