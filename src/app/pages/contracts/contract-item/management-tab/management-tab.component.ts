@@ -64,7 +64,7 @@ export class ManagementTabComponent implements OnInit {
     return '';
   }
 
-  updateContractManagment(): void {
+  updateContractManagement(): void {
     this.contractService.editContract(this.contract);
   }
 
