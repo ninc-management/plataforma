@@ -123,6 +123,7 @@
 </form>
 <ngx-checklist-item
   *ngFor="let item of contract.checklist; let i = index"
-  [checklistItem]="item"
+  [contract]="contract"
+  [itemIndex]="i"
   (itemRemoved)="removeChecklistItem(i)"
 ></ngx-checklist-item>

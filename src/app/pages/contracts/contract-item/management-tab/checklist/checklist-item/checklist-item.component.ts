@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContractChecklistItem } from '@models/contract';
+import { Contract, ContractChecklistItem } from '@models/contract';
 import { User } from '@models/user';
+import { NbCalendarRange } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { UserService } from 'app/shared/services/user.service';
 import { Observable, of } from 'rxjs';
@@ -11,13 +12,17 @@ import { Observable, of } from 'rxjs';
   styleUrls: ['./checklist-item.component.scss'],
 })
 export class ChecklistItemComponent implements OnInit {
-  @Input() checklistItem: ContractChecklistItem = new ContractChecklistItem();
+  @Input() contract: Contract = new Contract();
+  @Input() itemIndex!: number;
   @Output() itemRemoved = new EventEmitter();
   validation = (contract_validation as any).default;
   today = new Date();
   yesterday = new Date();
   responsibleSearch = '';
   avaliableResponsibles: Observable<User[]> = of([]);
+  checklistItem!: ContractChecklistItem;
+  itemRange!: NbCalendarRange<Date>;
+  rangeMax!: Date;
 
   avaliableActionStatus = [
     'Briefing',
@@ -37,6 +42,14 @@ export class ChecklistItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.yesterday.setDate(this.today.getDate() - 1);
+    this.checklistItem = this.contract.checklist[this.itemIndex];
+    this.itemRange = {
+      start: new Date(this.checklistItem.startDate),
+      end: new Date(this.checklistItem.endDate),
+    };
+    if (this.contract.endDate) {
+      this.rangeMax = new Date(this.contract.endDate);
+    }
   }
 
   removeItem(): void {
