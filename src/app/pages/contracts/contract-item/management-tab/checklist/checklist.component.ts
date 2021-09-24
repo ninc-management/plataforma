@@ -7,6 +7,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { Observable, of } from 'rxjs';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService } from 'app/shared/services/contract.service';
+import { NbCalendarRange } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-checklist',
@@ -22,6 +23,8 @@ export class ChecklistComponent implements OnInit {
   yesterday = new Date();
   responsibleSearch = '';
   avaliableResponsibles: Observable<User[]> = of([]);
+  contractEndDate!: Date;
+  itemRange!: NbCalendarRange<Date>;
 
   avaliableActionStatus = [
     'Briefing',
@@ -49,6 +52,9 @@ export class ChecklistComponent implements OnInit {
     }
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.yesterday.setDate(this.today.getDate() - 1);
+    if (this.contract.endDate) {
+      this.contractEndDate = new Date(this.contract.endDate);
+    }
   }
 
   getAvaliableResponsibles(): Observable<User[]> {
@@ -64,10 +70,15 @@ export class ChecklistComponent implements OnInit {
   }
 
   registerChecklistItem(): void {
+    this.newChecklistItem.startDate = this.itemRange.start;
+    if (this.itemRange.end) {
+      this.newChecklistItem.endDate = this.itemRange.end;
+    }
     this.contract.checklist.push(this.newChecklistItem);
     this.contractService.editContract(this.contract);
     this.newChecklistItem = new ContractChecklistItem();
     this.responsibleSearch = '';
+    this.itemRange = { start: new Date() };
   }
 
   removeChecklistItem(index: number): void {

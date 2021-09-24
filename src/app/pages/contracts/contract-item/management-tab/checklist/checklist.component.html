@@ -27,57 +27,36 @@
         "
       />
     </div>
-    <div class="col-2">
-      <label class="label" for="input-action-start-date">Início:</label>
+    <div class="col-3">
+      <label class="label" for="input-action-range">Prazo:</label>
       <input
         nbInput
-        [(ngModel)]="newChecklistItem.startDate"
-        #startDateInput="ngModel"
-        id="input-action-start-date"
-        name="action-start-date"
+        [(ngModel)]="itemRange"
+        #rangeInput="ngModel"
+        id="input-action-range"
+        name="action-range"
         fullWidth
         fieldSize="large"
         [required]="validation.checklist.startDate"
-        [nbDatepicker]="startdatepicker"
+        [nbDatepicker]="rangePicker"
         [status]="
-          startDateInput.dirty
-            ? startDateInput.invalid
+          rangeInput.dirty
+            ? rangeInput.invalid
               ? 'danger'
               : 'success'
             : 'basic'
         "
         [attr.aria-invalid]="
-          startDateInput.invalid && startDateInput.touched ? true : null
+          rangeInput.invalid && rangeInput.touched ? true : null
         "
       />
-      <nb-datepicker #startdatepicker [max]="today"></nb-datepicker>
+      <nb-rangepicker
+        #rangePicker
+        [min]="yesterday"
+        [max]="contractEndDate ? contractEndDate : ''"
+      ></nb-rangepicker>
     </div>
-    <div class="col-2">
-      <label class="label" for="input-action-end-date">Fim:</label>
-      <input
-        nbInput
-        [(ngModel)]="newChecklistItem.endDate"
-        #endDateInput="ngModel"
-        id="input-action-end-date"
-        name="action-end-date"
-        fullWidth
-        fieldSize="large"
-        [required]="validation.checklist.endDate"
-        [nbDatepicker]="enddatepicker"
-        [status]="
-          endDateInput.dirty
-            ? endDateInput.invalid
-              ? 'danger'
-              : 'success'
-            : 'basic'
-        "
-        [attr.aria-invalid]="
-          endDateInput.invalid && endDateInput.touched ? true : null
-        "
-      />
-      <nb-datepicker #enddatepicker [min]="yesterday"></nb-datepicker>
-    </div>
-    <div class="col-2">
+    <div class="col-3">
       <label class="label" for="input-action-responsible">Responsável:</label>
       <nb-completer
         [(ngModel)]="responsibleSearch"
@@ -135,6 +114,7 @@
         size="large"
         style="margin-top: 28px"
         (click)="registerChecklistItem()"
+        [disabled]="!form.valid || !form.dirty"
       >
         +
       </button>
