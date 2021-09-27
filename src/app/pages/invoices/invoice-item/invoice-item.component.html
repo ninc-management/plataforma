@@ -1843,10 +1843,8 @@
             <div
               class="col-4 col-md-2"
               [ngClass]="{
-                danger:
-                  options.total !== tempInvoice.value && options.total !== '0',
-                success:
-                  options.total === tempInvoice.value && options.total !== '0'
+                danger: !isTotalOK(),
+                success: isTotalOK()
               }"
             >
               {{ options.total }}
@@ -1854,10 +1852,8 @@
             <div
               class="col-4 col-md-1"
               [ngClass]="{
-                danger:
-                  options.total !== tempInvoice.value && options.total !== '0',
-                success:
-                  options.total === tempInvoice.value && options.total !== '0'
+                danger: !isTotalOK(),
+                success: isTotalOK()
               }"
             >
               {{ stringUtil.toPercentage(options.total, tempInvoice.value) }}
