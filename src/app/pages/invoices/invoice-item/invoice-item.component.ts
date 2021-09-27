@@ -634,12 +634,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   remainingBalance(base: string): string {
     if (this.tempInvoice.value == undefined) return '0,00';
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.tempInvoice.value) -
-        this.stringUtil.moneyToNumber(
-          base === 'product' ? this.options.total : this.options.stageTotal
-        )
+    const invoiceValue = this.stringUtil.moneyToNumber(this.tempInvoice.value);
+    const total = this.stringUtil.moneyToNumber(
+      base === 'product' ? this.options.total : this.options.stageTotal
     );
+
+    if (this.tempInvoice.discount) {
+      const discount = this.stringUtil.moneyToNumber(this.tempInvoice.discount);
+      return this.stringUtil.numberToMoney(invoiceValue - discount - total);
+    }
+    return this.stringUtil.numberToMoney(invoiceValue - total);
   }
 
   updateMaterialList(): void {
