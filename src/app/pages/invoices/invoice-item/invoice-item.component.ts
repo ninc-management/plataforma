@@ -753,6 +753,22 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
     this.tempInvoice.value = newInvoiceValue;
   }
+
+  isTotalOK(): boolean {
+    if (this.tempInvoice.discount) {
+      const invoiceValue = this.stringUtil.moneyToNumber(
+        this.tempInvoice.value
+      );
+      const discount = this.stringUtil.moneyToNumber(this.tempInvoice.discount);
+      const finalValue = this.stringUtil.numberToMoney(invoiceValue - discount);
+      return this.options.total !== '0' && this.options.total === finalValue;
+    }
+
+    return (
+      this.options.total !== '0' &&
+      this.options.total === this.tempInvoice.value
+    );
+  }
 }
 
 @Component({
