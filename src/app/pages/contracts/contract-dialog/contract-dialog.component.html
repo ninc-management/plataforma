@@ -38,16 +38,13 @@
       </nb-card-header>
       <nb-card-body>
         <p *ngIf="contract._id !== undefined; else dashboardReceiptError">
-          Não é possível adicionar outra ordem de empenho, pois o número de
-          parcelas pagas já é igual ao número de parcelas totais ({{
-            contract.total
-          }}).
+          Não é possível adicionar outra ordem de empenho, pois o número de parcelas pagas já é igual ao número de
+          parcelas totais ({{ contract.total }}).
         </p>
         <ng-template #dashboardReceiptError>
           <p>
-            Não é possível adicionar nova ordem de empenho, pois não há
-            contratos sem parcelas pagas no qual você é gestor ou membro do
-            contrato.
+            Não é possível adicionar nova ordem de empenho, pois não há contratos sem parcelas pagas no qual você é
+            gestor ou membro do contrato.
           </p>
         </ng-template>
       </nb-card-body>
@@ -87,16 +84,13 @@
         </nb-card-header>
         <nb-card-body>
           <p *ngIf="contract._id !== undefined; else dashboardPaymentError">
-            Não é possível adicionar uma ordem de pagamento quando não há caixa
-            no contrato para pagamentos. O valor atual do caixa é R${{
-              contract.balance
-            }}
+            Não é possível adicionar uma ordem de pagamento quando não há caixa no contrato para pagamentos. O valor
+            atual do caixa é R${{ contract.balance }}
           </p>
           <ng-template #dashboardPaymentError>
             <p>
-              Não é possível adicionar nova ordem de pagamento, pois não há
-              contratos com caixa positivo no qual você é gestor ou membro do
-              contrato.
+              Não é possível adicionar nova ordem de pagamento, pois não há contratos com caixa positivo no qual você é
+              gestor ou membro do contrato.
             </p>
           </ng-template>
         </nb-card-body>
@@ -160,11 +154,7 @@
                 nbTooltipStatus="info"
                 (click)="openPDFnewtab()"
               >
-                <nb-icon
-                  icon="file-pdf"
-                  pack="far"
-                  style="font-size: 19px"
-                ></nb-icon>
+                <nb-icon icon="file-pdf" pack="far" style="font-size: 19px"></nb-icon>
               </button>
               <button
                 nbButton
@@ -179,10 +169,7 @@
                 nbTooltipStatus="info"
                 (click)="dismiss()"
               >
-                <nb-icon
-                  icon="close-outline"
-                  pack="nebular-essentials"
-                ></nb-icon>
+                <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
               </button>
             </div>
           </nb-card-header>
@@ -193,6 +180,7 @@
               *ngIf="componentType == types.CONTRACT"
             ></ngx-contract-item>
             <ngx-payment-item
+              [isDialogBlocked]="isBlocked"
               [contract]="contract"
               [paymentIndex]="paymentIndex"
               [availableContracts]="availableContracts"

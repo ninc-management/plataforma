@@ -1,27 +1,17 @@
-import {
-  Component,
-  OnInit,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { NbDialogService } from '@nebular/theme';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import {
-  ContractUserPayment,
-  ContractPayment,
-  Contract,
-} from '@models/contract';
+import { ContractUserPayment, ContractPayment, Contract } from '@models/contract';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as contract_validation from 'app/shared/payment-validation.json';
@@ -32,13 +22,13 @@ import * as contract_validation from 'app/shared/payment-validation.json';
   styleUrls: ['./payment-item.component.scss'],
 })
 export class PaymentItemComponent implements OnInit {
+  private hasBeenDeleted = false;
   @Input() contract = new Contract();
   @Input() availableContracts: Contract[] = [];
   @Input() paymentIndex?: number;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
-  @ViewChild('value', { static: false, read: ElementRef })
   invoice = new Invoice();
-  valueInputRef!: ElementRef<HTMLInputElement>;
   hasInitialContract = true;
   validation = (contract_validation as any).default;
   ALL_COORDINATIONS: string[] = [];
@@ -87,6 +77,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   constructor(
+    private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     public contractService: ContractService,
     public departmentService: DepartmentService,
@@ -101,9 +92,40 @@ export class PaymentItemComponent implements OnInit {
     else this.hasInitialContract = false;
   }
 
+  confirmationDialog(index: number): void {
+    if (this.hasBeenDeleted) {
+      this.payment.team.splice(index, 1);
+      this.updateTotal();
+      this.memberChanged$.next(true);
+    } else {
+      this.isDialogBlocked.next(true);
+
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Você tem certeza que deseja alterar a distribuição do pagamento neste contrato?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response) => {
+          if (response) {
+            this.payment.team.splice(index, 1);
+            this.updateTotal();
+            this.memberChanged$.next(true);
+            this.hasBeenDeleted = true;
+          }
+
+          this.isDialogBlocked.next(false);
+        });
+    }
+  }
+
   fillContractData(): void {
-    if (this.contract.invoice !== undefined)
-      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.contract.invoice !== undefined) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     const teamUsers = this.invoice.team
       .map((member: InvoiceTeamMember) => {
         if (member.user) return this.userService.idToUser(member.user);
@@ -116,29 +138,27 @@ export class PaymentItemComponent implements OnInit {
       this.options.initialTeam = cloneDeep(this.payment.team);
       this.calculateTeamValues();
     } else {
-      this.payment.team = cloneDeep(this.invoice.team).map(
-        (member: InvoiceTeamMember): ContractUserPayment => {
-          const payment: ContractUserPayment = {
-            coordination: member.coordination,
-            user: member.user,
-            value: '0',
-            percentage: '0',
-          };
-          if (member.distribution && member.user)
-            payment.value = this.stringUtil.numberToString(
-              this.stringUtil.toMultiplyPercentage(
-                this.contractService.percentageToReceive(
-                  member.distribution,
-                  this.userService.idToUser(member.user),
-                  this.contract,
-                  20
-                )
-              ),
-              20
-            );
-          return payment;
-        }
-      );
+      this.payment.team = cloneDeep(this.invoice.team).map((member: InvoiceTeamMember): ContractUserPayment => {
+        const payment: ContractUserPayment = {
+          coordination: member.coordination,
+          user: member.user,
+          value: '0',
+          percentage: '0',
+        };
+        if (member.distribution && member.user)
+          payment.value = this.stringUtil.numberToString(
+            this.stringUtil.toMultiplyPercentage(
+              this.contractService.percentageToReceive(
+                member.distribution,
+                this.userService.idToUser(member.user),
+                this.contract,
+                20
+              )
+            ),
+            20
+          );
+        return payment;
+      });
     }
     this.availableUsers = this.memberChanged$.pipe(
       map((_) => {
@@ -174,10 +194,7 @@ export class PaymentItemComponent implements OnInit {
   addColaborator(): void {
     if (this.options.valueType === '%') {
       this.userPayment.percentage = this.userPayment.value;
-      this.userPayment.value = this.stringUtil.toValue(
-        this.userPayment.value,
-        this.payment.value
-      );
+      this.userPayment.value = this.stringUtil.toValue(this.userPayment.value, this.payment.value);
     } else
       this.userPayment.percentage = this.stringUtil
         .toPercentage(this.userPayment.value, this.payment.value, 20)
@@ -215,8 +232,7 @@ export class PaymentItemComponent implements OnInit {
   updateTotal(): void {
     this.total = this.stringUtil.numberToMoney(
       this.payment.team.reduce(
-        (accumulator: number, userPayment: any) =>
-          accumulator + this.stringUtil.moneyToNumber(userPayment.value),
+        (accumulator: number, userPayment: any) => accumulator + this.stringUtil.moneyToNumber(userPayment.value),
         0
       )
     );
@@ -224,8 +240,7 @@ export class PaymentItemComponent implements OnInit {
 
   remainingBalance(): string {
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.payment.value) -
-        this.stringUtil.moneyToNumber(this.total)
+      this.stringUtil.moneyToNumber(this.payment.value) - this.stringUtil.moneyToNumber(this.total)
     );
   }
 
@@ -238,21 +253,14 @@ export class PaymentItemComponent implements OnInit {
     if (!this.contract.invoice) return '0,00';
     const invoiceMember = this.invoiceService
       .idToInvoice(this.contract.invoice)
-      .team.find((member) =>
-        this.userService.isEqual(member.user, paymentMember.user)
-      );
+      .team.find((member) => this.userService.isEqual(member.user, paymentMember.user));
     if (invoiceMember) {
-      let result = this.contractService.notPaidValue(
-        invoiceMember.distribution,
-        invoiceMember.user,
-        this.contract
-      );
+      let result = this.contractService.notPaidValue(invoiceMember.distribution, invoiceMember.user, this.contract);
       if (this.paymentIndex !== undefined) {
         const initialUser = this.options.initialTeam.find((member) =>
           this.userService.isEqual(member.user, paymentMember.user)
         );
-        if (initialUser)
-          result = this.stringUtil.sumMoney(result, initialUser.value);
+        if (initialUser) result = this.stringUtil.sumMoney(result, initialUser.value);
       }
       return result;
     } else return '0,00';
@@ -261,9 +269,7 @@ export class PaymentItemComponent implements OnInit {
   updateUserCoordinations(): void {
     if (this.userPayment.user) {
       const selectedUser = this.userService.idToUser(this.userPayment.user);
-      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-        selectedUser._id
-      );
+      this.USER_COORDINATIONS = this.departmentService.userCoordinations(selectedUser._id);
       this.userPayment.coordination = '';
     }
   }
@@ -271,26 +277,18 @@ export class PaymentItemComponent implements OnInit {
   calculateTeamValues(): void {
     if (this.payment.value !== '0') {
       this.payment.team.map((member, index) => {
-        if (
-          this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1
-        )
+        if (this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1)
           member.value = this.stringUtil.numberToMoney(
             this.stringUtil.moneyToNumber(this.payment.value) *
               this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );
         else {
           const p = this.stringUtil
-            .toPercentage(
-              this.options.lastTeam[index].value,
-              this.options.lastValue,
-              20
-            )
+            .toPercentage(this.options.lastTeam[index].value, this.options.lastValue, 20)
             .slice(0, -1);
           member.value = this.stringUtil.applyPercentage(this.payment.value, p);
         }
-        member.percentage = this.stringUtil
-          .toPercentage(member.value, this.payment.value, 20)
-          .slice(0, -1);
+        member.percentage = this.stringUtil.toPercentage(member.value, this.payment.value, 20).slice(0, -1);
         return member;
       });
     }
@@ -298,9 +296,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateLastValues(): void {
-    this.options.lastValue = this.payment.value
-      ? this.payment.value.slice()
-      : '0';
+    this.options.lastValue = this.payment.value ? this.payment.value.slice() : '0';
     this.options.lastTeam = cloneDeep(this.payment.team);
   }
 }
