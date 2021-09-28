@@ -78,7 +78,9 @@ export class ManagementTabComponent implements OnInit {
   getRemainingDays(): number | undefined {
     if (this.deadline) {
       const today = new Date();
-      return differenceInCalendarDays(this.deadline, today);
+      const remaining = differenceInCalendarDays(this.deadline, today);
+      //Remaining days can't be a negative number
+      return remaining > 0 ? remaining : 0;
     }
     return undefined;
   }
