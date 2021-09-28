@@ -47,9 +47,7 @@ export class BrMaskDirective implements OnInit {
   @HostListener('keyup', ['$event'])
   inputKeyup(event: KeyboardEvent): void {
     if (event.target) {
-      const value: string = this.returnValue(
-        (event.target as HTMLInputElement).value
-      );
+      const value: string = this.returnValue((event.target as HTMLInputElement).value);
       this.setValue(value);
     }
   }
@@ -108,10 +106,7 @@ export class BrMaskDirective implements OnInit {
    * @param {BrMaskModel} config
    * @returns {string} mask intial value
    */
-  writeCreateValue(
-    value: string,
-    config: BrMaskModel = new BrMaskModel()
-  ): string {
+  writeCreateValue(value: string, config: BrMaskModel = new BrMaskModel()): string {
     if (value && config.phone) {
       return value.replace(
         /^(?:(?:\+|00)?(55)\s?)?(?:\(?([1-9][0-9])\)?\s?)?(?:((?:9\d|[2-9])\d{3})\-?(\d{4}))$/gi,
@@ -133,11 +128,7 @@ export class BrMaskDirective implements OnInit {
     }
 
     if (this.brmasker.userCaracters) {
-      return this.usingSpecialCharacters(
-        value,
-        this.brmasker.mask,
-        this.brmasker.len
-      );
+      return this.usingSpecialCharacters(value, this.brmasker.mask, this.brmasker.len);
     }
 
     if (value && config.mask) {
@@ -175,10 +166,7 @@ export class BrMaskDirective implements OnInit {
     if (value.length <= 11) {
       return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/gi, '$1.$2.$3-$4');
     } else {
-      return value.replace(
-        /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/gi,
-        '$1.$2.$3/$4-$5'
-      );
+      return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/gi, '$1.$2.$3/$4-$5');
     }
   }
 
@@ -190,10 +178,7 @@ export class BrMaskDirective implements OnInit {
    * @param {BrMaskModel} value
    * @returns {string} mask intial value
    */
-  writeValueMoney(
-    value: string,
-    config: BrMaskModel = new BrMaskModel()
-  ): string {
+  writeValueMoney(value: string, config: BrMaskModel = new BrMaskModel()): string {
     return this.moneyMask(value, config);
   }
 
@@ -219,7 +204,7 @@ export class BrMaskDirective implements OnInit {
       }
 
       if (this.brmasker.money) {
-        return this.moneyMask(this.onInput(formValue), this.brmasker);
+        return this.moneyMask(formValue, this.brmasker);
       }
       if (this.brmasker.phone) {
         return this.phoneMask(formValue);
@@ -237,11 +222,7 @@ export class BrMaskDirective implements OnInit {
         return this.thousand(formValue);
       }
       if (this.brmasker.userCaracters) {
-        return this.usingSpecialCharacters(
-          formValue,
-          this.brmasker.mask,
-          this.brmasker.len
-        );
+        return this.usingSpecialCharacters(formValue, this.brmasker.mask, this.brmasker.len);
       }
       return this.onInput(formValue);
     } else {
@@ -368,15 +349,16 @@ export class BrMaskDirective implements OnInit {
    * @param {BrMaskModel} config
    * @returns {string} string money
    */
-  private moneyMask(value: any, config: BrMaskModel): string {
+  private moneyMask(value: string, config: BrMaskModel): string {
     const decimal = config.decimal || this.brmasker.decimal || 2;
 
+    if (config.decimalCaracter) {
+      const pos = value.indexOf(config.decimalCaracter);
+      if (value.length - pos > decimal + 2 && pos !== -1) value = value.slice(0, pos + 1 + decimal);
+    }
     value = value
       .replace(/\D/gi, '')
-      .replace(
-        new RegExp('([0-9]{' + decimal + '})$', 'g'),
-        config.decimalCaracter + '$1'
-      );
+      .replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), config.decimalCaracter + '$1');
     if (value.length === 1 && !this.brmasker.moneyInitHasInt) {
       const dec = Array(decimal - 1).fill(0);
       return `0${config.decimalCaracter}${dec.join('')}${value}`;
@@ -388,10 +370,7 @@ export class BrMaskDirective implements OnInit {
     }
     if (config.thousand && value.length > Number(4) + Number(config.decimal)) {
       const valueOne = `([0-9]{3})${config.decimalCaracter}([0-9]{${config.decimal}}$)`;
-      value = value.replace(
-        new RegExp(`${valueOne}`, `g`),
-        `${config.thousand}$1${config.decimalCaracter}$2`
-      );
+      value = value.replace(new RegExp(`${valueOne}`, `g`), `${config.thousand}$1${config.decimalCaracter}$2`);
     }
     if (config.thousand && value.length > Number(8) + Number(config.decimal)) {
       const valueTwo = `([0-9]{3})${config.thousand}([0-9]{3})${config.decimalCaracter}([0-9]{${config.decimal}}$)`;
@@ -424,11 +403,7 @@ export class BrMaskDirective implements OnInit {
    * @param {number} size
    * @returns {string} value
    */
-  private usingSpecialCharacters(
-    field: string,
-    mask?: string,
-    size?: number
-  ): string {
+  private usingSpecialCharacters(field: string, mask?: string, size?: number): string {
     if (!size) {
       size = 99999999999;
     }
@@ -443,10 +418,7 @@ export class BrMaskDirective implements OnInit {
     let sizeMascara = campoSoNumeros.length;
     for (let i = 0; i < sizeMascara; i++) {
       if (i < size) {
-        boleanoMascara =
-          mask.charAt(i) === '-' ||
-          mask.charAt(i) === '.' ||
-          mask.charAt(i) === ',';
+        boleanoMascara = mask.charAt(i) === '-' || mask.charAt(i) === '.' || mask.charAt(i) === ',';
         if (boleanoMascara) {
           NovoValorCampo += mask.charAt(i);
           sizeMascara++;
@@ -503,31 +475,12 @@ export class BrMaskDirective implements OnInit {
     let TamanhoMascara = campoSoNumeros.length;
     for (let i = 0; i < TamanhoMascara; i++) {
       if (i < size) {
-        boleanoMascara =
-          mask.charAt(i) === '-' ||
-          mask.charAt(i) === '.' ||
-          mask.charAt(i) === '/';
+        boleanoMascara = mask.charAt(i) === '-' || mask.charAt(i) === '.' || mask.charAt(i) === '/';
         boleanoMascara = boleanoMascara || mask.charAt(i) === '_';
-        boleanoMascara =
-          boleanoMascara ||
-          mask.charAt(i) === '(' ||
-          mask.charAt(i) === ')' ||
-          mask.charAt(i) === ' ';
-        boleanoMascara =
-          boleanoMascara ||
-          mask.charAt(i) === ',' ||
-          mask.charAt(i) === '*' ||
-          mask.charAt(i) === '+';
-        boleanoMascara =
-          boleanoMascara ||
-          mask.charAt(i) === '@' ||
-          mask.charAt(i) === '#' ||
-          mask.charAt(i) === ':';
-        boleanoMascara =
-          boleanoMascara ||
-          mask.charAt(i) === '$' ||
-          mask.charAt(i) === '&' ||
-          mask.charAt(i) === '%';
+        boleanoMascara = boleanoMascara || mask.charAt(i) === '(' || mask.charAt(i) === ')' || mask.charAt(i) === ' ';
+        boleanoMascara = boleanoMascara || mask.charAt(i) === ',' || mask.charAt(i) === '*' || mask.charAt(i) === '+';
+        boleanoMascara = boleanoMascara || mask.charAt(i) === '@' || mask.charAt(i) === '#' || mask.charAt(i) === ':';
+        boleanoMascara = boleanoMascara || mask.charAt(i) === '$' || mask.charAt(i) === '&' || mask.charAt(i) === '%';
         if (boleanoMascara) {
           NovoValorCampo += mask.charAt(i);
           TamanhoMascara++;

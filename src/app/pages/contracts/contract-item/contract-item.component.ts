@@ -10,21 +10,9 @@ import { DepartmentService } from 'app/shared/services/department.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import {
-  ContractService,
-  EXPENSE_TYPES,
-  SPLIT_TYPES,
-  CONTRACT_STATOOS,
-} from 'app/shared/services/contract.service';
-import {
-  UserService,
-  CONTRACT_BALANCE,
-  CLIENT,
-} from 'app/shared/services/user.service';
-import {
-  ContractDialogComponent,
-  COMPONENT_TYPES,
-} from '../contract-dialog/contract-dialog.component';
+import { ContractService, EXPENSE_TYPES, SPLIT_TYPES, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
+import { ContractDialogComponent, COMPONENT_TYPES } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
@@ -68,22 +56,17 @@ export class ContractItemComponent implements OnInit {
   isEditionGranted = false;
 
   get invoiceAdministration(): string {
-    if (this.contract.invoice)
-      return this.invoiceService.idToInvoice(this.contract.invoice)
-        .administration;
+    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
     return '';
   }
 
   get invoiceCoordination(): string {
-    if (this.contract.invoice)
-      return this.invoiceService.idToInvoice(this.contract.invoice)
-        .coordination;
+    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).coordination;
     return '';
   }
 
   get invoiceDepartment(): string {
-    if (this.contract.invoice)
-      return this.invoiceService.idToInvoice(this.contract.invoice).department;
+    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).department;
     return '';
   }
 
@@ -97,26 +80,14 @@ export class ContractItemComponent implements OnInit {
     if (this.searchQuery !== '')
       return this.contract.expenses.filter((expense) => {
         return (
-          expense.description
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          expense.value
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            this.userService
-              .idToName(expense.author)
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
+            this.userService.idToName(expense.author).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            this.userService
-              .idToName(expense.source)
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
-          this.utils
-            .formatDate(expense.created)
-            .includes(this.searchQuery.toLowerCase())
+            this.userService.idToName(expense.source).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.contract.expenses;
@@ -266,11 +237,9 @@ export class ContractItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.contract = cloneDeep(this.iContract);
-    if (this.contract.invoice)
-      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     if (this.contract.ISS) {
-      if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0)
-        this.options.hasISS = false;
+      if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0) this.options.hasISS = false;
       else this.options.hasISS = true;
     } else {
       this.contract.ISS = '0,00';
@@ -284,15 +253,11 @@ export class ContractItemComponent implements OnInit {
     this.calculateBalance();
     this.applyDistribution();
     this.updateTeamTotal();
-    this.availableUsers = combineLatest([
-      this.userService.getUsers(),
-      this.memberChanged$,
-    ]).pipe(
+    this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return this.invoice.team.find((member: InvoiceTeamMember) =>
-            this.userService.isEqual(user, member.user)
-          ) === undefined
+          return this.invoice.team.find((member: InvoiceTeamMember) => this.userService.isEqual(user, member.user)) ===
+            undefined
             ? true
             : false;
         });
@@ -315,8 +280,7 @@ export class ContractItemComponent implements OnInit {
       this.contract.lastUpdate = new Date();
       if (this.iContract.status !== this.contract.status) {
         const lastStatusIndex = this.contract.statusHistory.length - 1;
-        this.contract.statusHistory[lastStatusIndex].end =
-          this.contract.lastUpdate;
+        this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
         this.contract.statusHistory.push({
           status: this.contract.status,
           start: this.contract.lastUpdate,
@@ -334,16 +298,10 @@ export class ContractItemComponent implements OnInit {
     let title = '';
     switch (componentType) {
       case COMPONENT_TYPES.RECEIPT:
-        title =
-          index != undefined
-            ? 'ORDEM DE EMPENHO'
-            : 'ADICIONAR ORDEM DE EMPENHO';
+        title = index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
         break;
       case COMPONENT_TYPES.PAYMENT:
-        title =
-          index != undefined
-            ? 'ORDEM DE PAGAMENTO'
-            : 'ADICIONAR ORDEM DE PAGAMENTO';
+        title = index != undefined ? 'ORDEM DE PAGAMENTO' : 'ADICIONAR ORDEM DE PAGAMENTO';
         break;
       case COMPONENT_TYPES.EXPENSE:
         title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
@@ -357,12 +315,9 @@ export class ContractItemComponent implements OnInit {
         context: {
           title: title,
           contract: this.contract,
-          paymentIndex:
-            componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
-          receiptIndex:
-            componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
-          expenseIndex:
-            componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
+          paymentIndex: componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
+          receiptIndex: componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
+          expenseIndex: componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
           componentType: componentType,
         },
         dialogClass: 'my-dialog',
@@ -439,9 +394,7 @@ export class ContractItemComponent implements OnInit {
     this.options.paid = this.contractService.toNetValue(
       this.stringUtil.numberToMoney(
         this.contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid)
-            accumulator =
-              accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
           return accumulator;
         }, 0)
       ),
@@ -449,8 +402,7 @@ export class ContractItemComponent implements OnInit {
       this.options.nortanPercentage
     );
     this.contract.notPaid = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.contract.liquid) -
-        this.stringUtil.moneyToNumber(this.options.paid)
+      this.stringUtil.moneyToNumber(this.contract.liquid) - this.stringUtil.moneyToNumber(this.options.paid)
     );
   }
 
@@ -485,15 +437,9 @@ export class ContractItemComponent implements OnInit {
   updateTeamTotal(): void {
     this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
-        sum.grossValue = this.stringUtil.sumMoney(
-          sum.grossValue,
-          member.grossValue
-        );
+        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.grossValue);
         sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.netValue);
-        sum.distribution = this.stringUtil.sumMoney(
-          sum.distribution,
-          member.distribution
-        );
+        sum.distribution = this.stringUtil.sumMoney(sum.distribution, member.distribution);
         return sum;
       },
       {
@@ -514,10 +460,7 @@ export class ContractItemComponent implements OnInit {
             : !this.userService.isEqual(expense.source, CLIENT._id))
         ) {
           const idx = sum.findIndex((el) => el.type == expense.type);
-          sum[idx].value = this.stringUtil.sumMoney(
-            sum[idx].value,
-            expense.value
-          );
+          sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
         }
         return sum;
       },
@@ -526,10 +469,7 @@ export class ContractItemComponent implements OnInit {
         value: '0,00',
       }))
     );
-    const total = result.reduce(
-      (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
-      '0,00'
-    );
+    const total = result.reduce((sum, expense) => this.stringUtil.sumMoney(sum, expense.value), '0,00');
     result.push({ type: 'TOTAL', value: total });
     return result;
   }
@@ -540,11 +480,7 @@ export class ContractItemComponent implements OnInit {
         if (expense.source != undefined) {
           const source = this.userService.idToShortName(expense.source);
           const idx = sum.findIndex((el) => el.user == source);
-          if (idx != -1)
-            sum[idx].value = this.stringUtil.sumMoney(
-              sum[idx].value,
-              expense.value
-            );
+          if (idx != -1) sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
         }
         return sum;
       },
@@ -552,8 +488,7 @@ export class ContractItemComponent implements OnInit {
         .concat(
           this.invoice.team
             .map((member) => {
-              if (member.user)
-                return this.userService.idToShortName(member.user);
+              if (member.user) return this.userService.idToShortName(member.user);
               return '';
             })
             .filter((n) => n.length > 0)
@@ -561,10 +496,7 @@ export class ContractItemComponent implements OnInit {
         .map((name) => ({ user: name, value: '0,00' }))
     );
     const contractor = result.splice(1, 1)[0];
-    const total = result.reduce(
-      (sum, expense) => this.stringUtil.sumMoney(sum, expense.value),
-      '0,00'
-    );
+    const total = result.reduce((sum, expense) => this.stringUtil.sumMoney(sum, expense.value), '0,00');
     result.push({ user: 'TOTAL', value: total });
     result.push(contractor);
     return result;
@@ -573,10 +505,7 @@ export class ContractItemComponent implements OnInit {
   updateLiquid(): void {
     this.contract.liquid = this.contractService.toNetValue(
       this.contractService.subtractComissions(
-        this.stringUtil.removePercentage(
-          this.contract.value,
-          this.contract.ISS
-        ),
+        this.stringUtil.removePercentage(this.contract.value, this.contract.ISS),
         this.contract
       ),
       this.options.notaFiscal,
@@ -587,35 +516,14 @@ export class ContractItemComponent implements OnInit {
     );
   }
 
-  updateValue(idx?: number): void {
+  updateGrossValue(idx?: number): void {
     if (idx != undefined) {
-      this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
-        this.stringUtil.sumMoney(
-          this.contract.liquid,
-          this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).global
-              .cashback
-          )
-        ),
-        this.invoice.team[idx].distribution
-      );
       this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
         this.invoice.team[idx].netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
-      this.updateTeamTotal();
     } else {
-      this.teamMember.netValue = this.stringUtil.applyPercentage(
-        this.stringUtil.sumMoney(
-          this.contract.liquid,
-          this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).global
-              .cashback
-          )
-        ),
-        this.teamMember.distribution
-      );
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,
         this.options.notaFiscal,
@@ -624,46 +532,44 @@ export class ContractItemComponent implements OnInit {
     }
   }
 
+  updateNetValue(idx?: number, source: 'gross' | 'distribution' = 'distribution'): void {
+    if (idx != undefined) {
+      if (source === 'gross') {
+        this.invoice.team[idx].netValue = this.contractService.toNetValue(
+          this.invoice.team[idx].grossValue,
+          this.options.notaFiscal,
+          this.options.nortanPercentage
+        );
+      } else {
+        this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
+          this.contract.liquid,
+          this.invoice.team[idx].distribution
+        );
+      }
+      this.updateTeamTotal();
+    } else {
+      if (source === 'gross') {
+        this.teamMember.netValue = this.contractService.toNetValue(
+          this.teamMember.grossValue,
+          this.options.notaFiscal,
+          this.options.nortanPercentage
+        );
+      } else {
+        this.teamMember.netValue = this.stringUtil.applyPercentage(this.contract.liquid, this.teamMember.distribution);
+      }
+    }
+  }
+
   updatePercentage(idx?: number): void {
     if (idx != undefined) {
       this.invoice.team[idx].distribution = this.stringUtil
-        .toPercentage(
-          this.invoice.team[idx].netValue,
-          this.stringUtil.sumMoney(
-            this.contract.liquid,
-            this.stringUtil.numberToMoney(
-              this.contractService.expensesContributions(this.contract).global
-                .cashback
-            )
-          ),
-          20
-        )
+        .toPercentage(this.invoice.team[idx].netValue, this.contract.liquid, 20)
         .slice(0, -1);
-      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
-        this.invoice.team[idx].netValue,
-        this.options.notaFiscal,
-        this.options.nortanPercentage
-      );
       this.updateTeamTotal();
     } else {
       this.teamMember.distribution = this.stringUtil
-        .toPercentage(
-          this.teamMember.netValue,
-          this.stringUtil.sumMoney(
-            this.contract.liquid,
-            this.stringUtil.numberToMoney(
-              this.contractService.expensesContributions(this.contract).global
-                .cashback
-            )
-          ),
-          20
-        )
+        .toPercentage(this.teamMember.netValue, this.contract.liquid, 20)
         .slice(0, -1);
-      this.teamMember.grossValue = this.contractService.toGrossValue(
-        this.teamMember.netValue,
-        this.options.notaFiscal,
-        this.options.nortanPercentage
-      );
     }
   }
 
@@ -713,8 +619,7 @@ export class ContractItemComponent implements OnInit {
   isGrossValueOK(): boolean {
     return (
       this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.teamTotal.grossValue) +
-          this.contractService.getComissionsSum(this.contract)
+        this.stringUtil.moneyToNumber(this.teamTotal.grossValue) + this.contractService.getComissionsSum(this.contract)
       ) === this.contract.value && this.teamTotal.grossValue !== '0,00'
     );
   }
@@ -724,20 +629,14 @@ export class ContractItemComponent implements OnInit {
       this.teamTotal.netValue ===
         this.stringUtil.sumMoney(
           this.contract.liquid,
-          this.stringUtil.numberToMoney(
-            this.contractService.expensesContributions(this.contract).global
-              .cashback
-          )
+          this.stringUtil.numberToMoney(this.contractService.expensesContributions(this.contract).global.cashback)
         ) && this.teamTotal.netValue !== '0,00'
     );
   }
 
   applyDistribution(): void {
     this.invoice.team = this.invoice.team.map((member) => {
-      member.netValue = this.stringUtil.applyPercentage(
-        this.contract.liquid,
-        member.distribution
-      );
+      member.netValue = this.stringUtil.applyPercentage(this.contract.liquid, member.distribution);
       member.grossValue = this.contractService.toGrossValue(
         member.netValue,
         this.options.notaFiscal,

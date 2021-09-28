@@ -1,9 +1,5 @@
 <nb-tabset fullWidth>
-  <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Dados'"
-    tabIcon="info-outline"
-    responsive
-  >
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
     <form (ngSubmit)="updateContract()" #form="ngForm" aria-labelledby="title">
       <fieldset [disabled]="!isEditionGranted">
         <div class="row">
@@ -86,9 +82,7 @@
                 "
                 [disabled]="!isEditionGranted"
               >
-                <nb-option *ngFor="let status of STATOOS" [value]="status">
-                  {{ status }}
-                </nb-option>
+                <nb-option *ngFor="let status of STATOOS" [value]="status">{{ status }}</nb-option>
               </nb-select>
             </div>
           </div>
@@ -198,10 +192,7 @@
                 [readonly]="true"
               />
               <ng-container *ngIf="contractor.invalid && contractor.touched">
-                <p
-                  class="caption status-danger"
-                  *ngIf="contractor.errors?.required"
-                >
+                <p class="caption status-danger" *ngIf="contractor.errors?.required">
                   O nome do cliente é obrigatório!
                 </p>
                 <p
@@ -210,19 +201,15 @@
                     contractor.errors?.minlength || contractor.errors?.maxlength
                   "
                 >
-                  O nome do cliente deve conter entre
-                  {{ validation.contractor.minLength }} a
-                  {{ validation.contractor.maxLength }}
-                  caracteres
+                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a {{
+                  validation.contractor.maxLength }} caracteres
                 </p>
               </ng-container>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-control-group">
-              <label class="label" for="input-administration">
-                Administração do contrato:
-              </label>
+              <label class="label" for="input-administration">Administração do contrato:</label>
               <nb-select
                 [ngModel]="invoiceAdministration"
                 #administration="ngModel"
@@ -269,17 +256,10 @@
             [readonly]="true"
           />
           <ng-container *ngIf="name.invalid && name.touched">
-            <p class="caption status-danger" *ngIf="name.errors?.required">
-              O nome do empreendimento é obrigatório!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="name.errors?.minlength || name.errors?.maxlength"
-            >
-              O nome do empreendimento deve conter entre
-              {{ validation.name.minLength }} a
-              {{ validation.name.maxLength }}
-              caracteres
+            <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength
+              }} caracteres
             </p>
           </ng-container>
         </div>
@@ -359,9 +339,7 @@
           </div>
           <div class="col-6 col-md-3">
             <div class="form-control-group">
-              <label class="label" for="input-updated">
-                Última atualização:
-              </label>
+              <label class="label" for="input-updated">Última atualização:</label>
               <input
                 nbInput
                 [ngModel]="utils.formatDate(contract.lastUpdate)"
@@ -438,9 +416,7 @@
           </div>
           <div class="col-6 col-md-2">
             <div class="form-control-group">
-              <label class="label" for="input-memberCoordination">
-                Coordenação:
-              </label>
+              <label class="label" for="input-memberCoordination">Coordenação:</label>
               <nb-select
                 [(ngModel)]="teamMember.coordination"
                 #memberCoordination="ngModel"
@@ -457,10 +433,7 @@
                 "
                 [disabled]="!isEditionGranted"
               >
-                <nb-option
-                  *ngFor="let coordination of USER_COORDINATIONS"
-                  [value]="coordination"
-                >
+                <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
                   {{ coordination.split(' ')[0] }}
                 </nb-option>
               </nb-select>
@@ -471,14 +444,20 @@
               <label class="label" for="input-gross-value">R$ Bruto:</label>
               <input
                 nbInput
-                [ngModel]="teamMember.grossValue"
+                [(ngModel)]="teamMember.grossValue"
+                (ngModelChange)="updateNetValue(undefined, 'gross'); updatePercentage()"
                 #grossValue="ngModel"
                 id="input-grossValue"
                 name="grossValue"
                 placeholder="Valor bruto"
                 fullWidth
                 fieldSize="large"
-                readonly="true"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: 2
+                }"
                 [status]="grossValue.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="
                   grossValue.invalid && grossValue.touched ? true : null
@@ -492,7 +471,7 @@
               <input
                 nbInput
                 [(ngModel)]="teamMember.netValue"
-                (ngModelChange)="updatePercentage()"
+                (ngModelChange)="updateGrossValue(); updatePercentage()"
                 #netValue="ngModel"
                 id="input-netValue"
                 name="netValue"
@@ -519,7 +498,7 @@
               <input
                 nbInput
                 [(ngModel)]="teamMember.distribution"
-                (ngModelChange)="updateValue()"
+                (ngModelChange)="updateNetValue(); updateGrossValue()"
                 #distribution="ngModel"
                 id="input-distribution"
                 name="distribution"
@@ -530,7 +509,7 @@
                   money: true,
                   thousand: '.',
                   decimalCaracter: ',',
-                  decimal: 20
+                  decimal: 2
                 }"
                 ngxSelectAllText
                 [status]="distribution.value ? 'success' : 'basic'"
@@ -566,9 +545,7 @@
             >
               <div class="row irow">
                 <div class="col-12 col-md-3 list-name">
-                  {{
-                    member.user ? userService.idToShortName(member.user) : ''
-                  }}
+                  {{ member.user ? userService.idToShortName(member.user) : '' }}
                 </div>
                 <div class="col-6 col-md-2">
                   <nb-select
@@ -594,12 +571,18 @@
                 <div class="col-6 col-md-2">
                   <input
                     nbInput
-                    [ngModel]="invoice.team[i].grossValue"
+                    [(ngModel)]="invoice.team[i].grossValue"
+                    (ngModelChange)="updateNetValue(i, 'gross'); updatePercentage(i)"
                     id="input-gross-value-{{ i }}"
                     name="gross-value-{{ i }}"
                     placeholder="Valor bruto"
                     fullWidth
-                    readonly="true"
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 2
+                    }"
                     [status]="invoice.team[i].grossValue ? 'basic' : 'danger'"
                   />
                 </div>
@@ -607,7 +590,7 @@
                   <input
                     nbInput
                     [(ngModel)]="invoice.team[i].netValue"
-                    (ngModelChange)="updatePercentage(i)"
+                    (ngModelChange)="updatePercentage(i); updateGrossValue(i)"
                     id="input-net-value-{{ i }}"
                     name="net-value-{{ i }}"
                     placeholder="Valor líquido"
@@ -622,14 +605,11 @@
                     [status]="invoice.team[i].netValue ? 'basic' : 'danger'"
                   />
                 </div>
-                <div
-                  class="col-6 col-md-2"
-                  style="display: flex; align-items: center"
-                >
+                <div class="col-6 col-md-2" style="display: flex; align-items: center">
                   <input
                     nbInput
                     [(ngModel)]="invoice.team[i].distribution"
-                    (ngModelChange)="updateValue(i)"
+                    (ngModelChange)="updateNetValue(i); updateGrossValue(i)"
                     id="input-distribution-{{ i }}"
                     name="distribution-{{ i }}"
                     placeholder="Porcentagem distribuida"
@@ -638,17 +618,14 @@
                       money: true,
                       thousand: '.',
                       decimalCaracter: ',',
-                      decimal: 20
+                      decimal: 2
                     }"
                     ngxSelectAllText
                     [status]="invoice.team[i].distribution ? 'basic' : 'danger'"
                   />
                   %
                 </div>
-                <div
-                  class="col-12 col-md-1 list-erase"
-                  *ngIf="i != 0 && isEditionGranted"
-                >
+                <div class="col-12 col-md-1 list-erase" *ngIf="i != 0 && isEditionGranted">
                   <nb-icon
                     class="xIcon"
                     status="basic"
@@ -666,15 +643,7 @@
             </nb-list-item>
             <nb-list-item *ngIf="!utils.isPhone()">
               <div class="row irow totalRow">
-                <div class="col-2">
-                  Restante:
-                  {{
-                    stringUtil.subtractMoney(
-                      contract.liquid,
-                      teamTotal.netValue
-                    )
-                  }}
-                </div>
+                <div class="col-2">Restante: {{ stringUtil.subtractMoney( contract.liquid, teamTotal.netValue ) }}</div>
                 <div class="col-3" style="text-align: right">Total:</div>
                 <div
                   class="col-2"
@@ -709,9 +678,7 @@
           </nb-list>
           <div class="col-6">
             <div class="form-control-group">
-              <label class="label" for="input-hasISS">
-                Houve retenção de ISS?:
-              </label>
+              <label class="label" for="input-hasISS">Houve retenção de ISS?:</label>
               <nb-select
                 [(ngModel)]="options.hasISS"
                 #hasISS="ngModel"
@@ -833,9 +800,7 @@
           </div>
           <div class="col-6 col-md-2">
             <div class="form-control-group">
-              <label class="label" for="input-interest">
-                Parcelas criadas:
-              </label>
+              <label class="label" for="input-interest">Parcelas criadas:</label>
               <input
                 nbInput
                 [(ngModel)]="options.interest"
@@ -882,33 +847,18 @@
                 "
                 [disabled]="!isEditionGranted"
               >
-                <nb-option
-                  *ngFor="let interest of INTERESTS"
-                  [value]="interest"
-                >
-                  {{ interest }}
-                </nb-option>
+                <nb-option *ngFor="let interest of INTERESTS" [value]="interest">{{ interest }}</nb-option>
               </nb-select>
             </div>
           </div>
         </div>
-        <button
-          nbButton
-          fullWidth
-          status="primary"
-          size="large"
-          [disabled]="!form.valid || !form.dirty"
-        >
+        <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">
           Atualizar
         </button>
       </fieldset>
     </form>
   </nb-tab>
-  <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Balanço'"
-    [tabIcon]="scaleIcon"
-    responsive
-  >
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <div class="row">
       <div class="col-auto">
         <label class="label-divider">Geral</label>
@@ -939,12 +889,8 @@
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
             <b>
-              {{
-                contractService.subtractComissions(
-                  stringUtil.removePercentage(contract.value, contract.ISS),
-                  contract
-                )
-              }}
+              {{ contractService.subtractComissions( stringUtil.removePercentage(contract.value, contract.ISS), contract
+              ) }}
             </b>
           </p>
         </div>
@@ -1004,71 +950,30 @@
       >
         <div class="row irow">
           <div class="col-md-12 d-flex">
-            <div class="col-md-3">
-              {{ userService.idToName(member.user) }}
-            </div>
+            <div class="col-md-3">{{ userService.idToName(member.user) }}</div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
-                {{
-                  contractService.toGrossValue(
-                    contractService.netValueBalance(
-                      member.distribution,
-                      contract,
-                      member.user
-                    ),
-                    options.notaFiscal,
-                    options.nortanPercentage
-                  )
-                }}
+                {{ contractService.toGrossValue( contractService.netValueBalance( member.distribution, contract,
+                member.user ), options.notaFiscal, options.nortanPercentage ) }}
               </div>
               <div class="col-md-3">
-                {{
-                  contractService.netValueBalance(
-                    member.distribution,
-                    contract,
-                    member.user
-                  )
-                }}
+                {{ contractService.netValueBalance( member.distribution, contract, member.user ) }}
               </div>
               <div class="col-md-3">
-                {{
-                  contractService.percentageToReceive(
-                    member.distribution,
-                    member.user,
-                    contract
-                  )
-                }}
+                {{ contractService.percentageToReceive( member.distribution, member.user, contract ) }}
               </div>
-              <div class="col-md-3">
-                {{ contractService.receivedValue(member.user, contract) }}
-              </div>
+              <div class="col-md-3">{{ contractService.receivedValue(member.user, contract) }}</div>
             </div>
             <div class="col-md-4 d-flex">
               <div class="col-md-3">
-                {{
-                  contractService.notPaidValue(
-                    member.distribution,
-                    member.user,
-                    contract
-                  )
-                }}
+                {{ contractService.notPaidValue( member.distribution, member.user, contract ) }}
               </div>
               <div class="col-md-3">
-                {{
-                  stringUtil.numberToMoney(
-                    contractService.expensesContributions(contract, member.user)
-                      .user.cashback
-                  )
-                }}
+                {{ stringUtil.numberToMoney( contractService.expensesContributions(contract, member.user) .user.cashback
+                ) }}
               </div>
-              <div class="col-md-3">
-                {{
-                  contractService.getMemberExpensesSum(member.user, contract)
-                }}
-              </div>
-              <div class="col-md-3">
-                {{ contractService.getMemberBalance(member.user, contract) }}
-              </div>
+              <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>
+              <div class="col-md-3">{{ contractService.getMemberBalance(member.user, contract) }}</div>
             </div>
           </div>
         </div>
@@ -1146,9 +1051,7 @@
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
                     </div>
-                    <div class="col-md-6">
-                      {{ expense.value }}
-                    </div>
+                    <div class="col-md-6">{{ expense.value }}</div>
                   </div>
                 </nb-list-item>
               </nb-list>
@@ -1168,9 +1071,7 @@
                     <div class="col-md-6">
                       <b>{{ expense.user }}</b>
                     </div>
-                    <div class="col-md-6">
-                      {{ expense.value }}
-                    </div>
+                    <div class="col-md-6">{{ expense.value }}</div>
                   </div>
                 </nb-list-item>
               </nb-list>
@@ -1178,11 +1079,7 @@
           </div>
         </div>
       </nb-tab>
-      <nb-tab
-        [tabTitle]="utils.isPhone() ? '' : 'Cliente'"
-        [tabIcon]="contractorIcon"
-        responsive
-      >
+      <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Cliente'" [tabIcon]="contractorIcon" responsive>
         <div class="row" style="text-align: center">
           <div class="col-12" style="text-align: center">
             <div class="form-control-group">
@@ -1198,9 +1095,7 @@
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
                     </div>
-                    <div class="col-md-6">
-                      {{ expense.value }}
-                    </div>
+                    <div class="col-md-6">{{ expense.value }}</div>
                   </div>
                 </nb-list-item>
               </nb-list>
@@ -1210,42 +1105,23 @@
       </nb-tab>
     </nb-tabset>
   </nb-tab>
-  <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'"
-    [tabIcon]="receiptIcon"
-    responsive
-  >
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <nb-list>
       <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
         <div class="row irow" style="width: 100%">
           <div class="col-10 col-md-11">
             <div class="irow row">
-              <a
-                (click)="paymentDialog(types.RECEIPT, i)"
-                style="width: 100%; cursor: pointer; display: flex"
-              >
+              <a (click)="paymentDialog(types.RECEIPT, i)" style="width: 100%; cursor: pointer; display: flex">
                 <div class="col-1">#{{ +i + 1 }}</div>
-                <div class="col">
-                  {{ receipt.description }}
-                </div>
+                <div class="col">{{ receipt.description }}</div>
                 <div class="col-md-3">
-                  <nb-icon
-                    icon="dollar-sign"
-                    pack="fa"
-                    status="success"
-                  ></nb-icon>
-                  <span style="vertical-align: 0.1em">
-                    {{ receipt.value }}
-                  </span>
+                  <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                  <span style="vertical-align: 0.1em">{{ receipt.value }}</span>
                 </div>
               </a>
             </div>
           </div>
-          <div
-            class="col-2 col-md-1"
-            style="text-align: right"
-            *ngIf="isEditionGranted"
-          >
+          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
             <nb-icon
               class="xIcon"
               status="basic"
@@ -1271,42 +1147,23 @@
       Nova Ordem de Empenho
     </button>
   </nb-tab>
-  <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'"
-    [tabIcon]="paymentIcon"
-    responsive
-  >
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
     <nb-list>
       <nb-list-item *ngFor="let payment of contract.payments; let i = index">
         <div class="row irow" style="width: 100%">
           <div class="col-10 col-md-11">
             <div class="irow row">
-              <a
-                (click)="paymentDialog(types.PAYMENT, i)"
-                style="width: 100%; cursor: pointer; display: flex"
-              >
+              <a (click)="paymentDialog(types.PAYMENT, i)" style="width: 100%; cursor: pointer; display: flex">
                 <div class="col-1">#{{ +i + 1 }}</div>
-                <div class="col">
-                  {{ payment.service }}
-                </div>
+                <div class="col">{{ payment.service }}</div>
                 <div class="col-md-3">
-                  <nb-icon
-                    icon="dollar-sign"
-                    pack="fa"
-                    status="success"
-                  ></nb-icon>
-                  <span style="vertical-align: 0.1em">
-                    {{ payment.value }}
-                  </span>
+                  <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                  <span style="vertical-align: 0.1em">{{ payment.value }}</span>
                 </div>
               </a>
             </div>
           </div>
-          <div
-            class="col-2 col-md-1"
-            style="text-align: right"
-            *ngIf="isEditionGranted"
-          >
+          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
             <nb-icon
               class="xIcon"
               status="basic"
@@ -1330,11 +1187,7 @@
       Nova Ordem de Pagamento
     </button>
   </nb-tab>
-  <nb-tab
-    [tabTitle]="utils.isPhone() ? '' : 'Despesas'"
-    [tabIcon]="expenseIcon"
-    responsive
-  >
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <ng2-smart-table
       #smartTable
       *ngIf="!utils.isPhone(); else phone"
@@ -1395,37 +1248,19 @@
                     ></nb-user>
                   </div>
                   <div class="col-auto">#{{ +i + 1 }}</div>
-                  <div class="col">
-                    {{ expense.description }}
+                  <div class="col">{{ expense.description }}</div>
+                  <div class="col-md-auto">
+                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                    <span style="vertical-align: 0.1em">{{ expense.value }}</span>
                   </div>
                   <div class="col-md-auto">
-                    <nb-icon
-                      icon="dollar-sign"
-                      pack="fa"
-                      status="success"
-                    ></nb-icon>
-                    <span style="vertical-align: 0.1em">
-                      {{ expense.value }}
-                    </span>
-                  </div>
-                  <div class="col-md-auto">
-                    <nb-icon
-                      icon="calendar-alt"
-                      pack="fa"
-                      status="primary"
-                    ></nb-icon>
-                    <span style="vertical-align: 0.1em">
-                      {{ utils.formatDate(expense.created) }}
-                    </span>
+                    <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
+                    <span style="vertical-align: 0.1em">{{ utils.formatDate(expense.created) }}</span>
                   </div>
                 </a>
               </div>
             </div>
-            <div
-              class="col-2 col-md-auto"
-              style="text-align: right"
-              *ngIf="isEditionGranted"
-            >
+            <div class="col-2 col-md-auto" style="text-align: right" *ngIf="isEditionGranted">
               <nb-icon
                 class="xIcon"
                 status="basic"
