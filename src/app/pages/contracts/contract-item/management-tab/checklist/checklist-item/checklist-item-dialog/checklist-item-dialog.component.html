@@ -11,11 +11,11 @@
       }"
     >
       <nb-card-header>
-        {{ item.name | uppercase }}
+        {{ checklistItem.name | uppercase }}
         <div class="d-flex">
           <nb-select
             id="item-status"
-            [(ngModel)]="item.status"
+            [(ngModel)]="checklistItem.status"
             fullWidth
             size="large"
           >
@@ -39,7 +39,38 @@
           </button>
         </div>
       </nb-card-header>
-      <nb-card-body></nb-card-body>
+      <nb-card-body>
+        <form
+          (ngSubmit)="updateItemNotes()"
+          #form="ngForm"
+          aria-labelledby="title"
+        >
+          <div class="form-control-group">
+            <label class="label" for="item-description">Descrição:</label>
+            <textarea
+              nbInput
+              [(ngModel)]="checklistItem.description"
+              id="item-description"
+              name="item-description"
+              fullWidth
+              fieldSize="large"
+            ></textarea>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <button
+                nbButton
+                fullWidth
+                status="primary"
+                size="large"
+                [disabled]="!form.valid || !form.dirty"
+              >
+                Atualizar
+              </button>
+            </div>
+          </div>
+        </form>
+      </nb-card-body>
     </nb-card>
   </div>
 </div>
