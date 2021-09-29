@@ -57,10 +57,12 @@ export class ActionListComponent implements OnInit {
     if (this.itemRange.end) {
       this.action.endDate = this.itemRange.end;
     }
-    this.contract.checklist[this.itemIndex].actionList.push(this.action);
-    this.contractService.editContract(this.contract);
-    this.action = new ChecklistItemAction();
-    this.responsibleSearch = '';
-    this.itemRange = { start: new Date() };
+    if (this.itemIndex !== undefined) {
+      this.contract.checklist[this.itemIndex].actionList.push(this.action);
+      this.contractService.editContract(this.contract);
+      this.action = new ChecklistItemAction();
+      this.responsibleSearch = '';
+      this.itemRange = { start: new Date() };
+    }
   }
 }

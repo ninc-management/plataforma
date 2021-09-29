@@ -13,22 +13,24 @@ export class ActionItemComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() itemIndex!: number;
   @Input() actionIndex!: number;
-  action!: ChecklistItemAction;
+  action: ChecklistItemAction = new ChecklistItemAction();
   itemRange!: NbCalendarRange<Date>;
   yesterday: Date = new Date();
 
   constructor(public userService: UserService) {}
 
   ngOnInit(): void {
-    this.action = cloneDeep(
-      this.contract.checklist[this.itemIndex].actionList[this.actionIndex]
-    );
+    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
+      this.action = cloneDeep(
+        this.contract.checklist[this.itemIndex].actionList[this.actionIndex]
+      );
+      this.itemRange = {
+        start: new Date(this.action.startDate),
+        end: new Date(this.action.endDate),
+      };
+    }
     const today = new Date();
     this.yesterday.setDate(today.getDate() - 1);
-    this.itemRange = {
-      start: new Date(this.action.startDate),
-      end: new Date(this.action.endDate),
-    };
   }
 
   removeAction(): void {}

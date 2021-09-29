@@ -14,9 +14,9 @@ export class ChecklistItemDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() contract!: Contract;
+  @Input() contract: Contract = new Contract();
   @Input() itemIndex!: number;
-  checklistItem!: ContractChecklistItem;
+  checklistItem: ContractChecklistItem = new ContractChecklistItem();
 
   avaliableActionStatus = [
     'Briefing',
@@ -41,7 +41,9 @@ export class ChecklistItemDialogComponent
   }
 
   ngOnInit(): void {
-    this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
+    if (this.itemIndex !== undefined) {
+      this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
+    }
   }
 
   dismiss(): void {
@@ -49,7 +51,9 @@ export class ChecklistItemDialogComponent
   }
 
   updateItemNotes(): void {
-    this.contract.checklist[this.itemIndex] = this.checklistItem;
-    this.contractService.editContract(this.contract);
+    if (this.itemIndex !== undefined) {
+      this.contract.checklist[this.itemIndex] = this.checklistItem;
+      this.contractService.editContract(this.contract);
+    }
   }
 }

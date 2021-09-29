@@ -24,7 +24,7 @@ export class ChecklistItemComponent implements OnInit {
   yesterday = new Date();
   responsibleSearch = '';
   avaliableResponsibles: Observable<User[]> = of([]);
-  checklistItem!: ContractChecklistItem;
+  checklistItem: ContractChecklistItem = new ContractChecklistItem();
   itemRange!: NbCalendarRange<Date>;
 
   avaliableActionStatus = [
@@ -48,11 +48,13 @@ export class ChecklistItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.yesterday.setDate(this.today.getDate() - 1);
-    this.checklistItem = this.contract.checklist[this.itemIndex];
-    this.itemRange = {
-      start: new Date(this.checklistItem.startDate),
-      end: new Date(this.checklistItem.endDate),
-    };
+    if (this.itemIndex !== undefined) {
+      this.checklistItem = this.contract.checklist[this.itemIndex];
+      this.itemRange = {
+        start: new Date(this.checklistItem.startDate),
+        end: new Date(this.checklistItem.endDate),
+      };
+    }
   }
 
   removeItem(): void {
