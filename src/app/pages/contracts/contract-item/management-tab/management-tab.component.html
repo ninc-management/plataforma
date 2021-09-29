@@ -1,178 +1,188 @@
-<div class="progress-bar-container">
-  <nb-progress-bar
-    [status]="getPercentualProgress() == 100 ? 'success' : 'primary'"
-    [size]="'tiny'"
-    [displayValue]="true"
-    [value]="getPercentualProgress()"
-  ></nb-progress-bar>
-</div>
-<form
-  (ngSubmit)="updateContractManagement()"
-  #form="ngForm"
-  aria-labelledby="title"
->
+<div class="container-fluid p-0">
   <div class="row">
-    <div class="col-4">
-      <div class="form-control-group">
-        <label class="label" for="input-code">Código do Contrato:</label>
-        <input
-          nbInput
-          [(ngModel)]="contract.code"
-          #code="ngModel"
-          id="input-code"
-          name="code"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-5">
-      <div class="form-control-group">
-        <label class="label" for="input-contractor">Cliente:</label>
-        <input
-          nbInput
-          [(ngModel)]="contract.contractor"
-          #contractor="ngModel"
-          id="input-contractor"
-          name="contractor"
-          fullWidth
-          fieldSize="large"
-          [nbTooltip]="tooltipText()"
-          nbTooltipPlacement="top"
-          nbTooltipStatus="primary"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="form-control-group">
-        <label class="label" for="input-model">Modelo:</label>
-        <!-- Aguardar o Augusto terminar o novo completer -->
-        <input
-          nbInput
-          name="model"
-          placeholder="Modelo"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
+    <div class="col-12 my-3">
+      <nb-progress-bar
+        [status]="getPercentualProgress() == 100 ? 'success' : 'primary'"
+        [size]="'tiny'"
+        [displayValue]="true"
+        [value]="getPercentualProgress()"
+      ></nb-progress-bar>
     </div>
   </div>
-  <div class="row">
-    <div class="col-2">
-      <div class="form-control-group">
-        <label class="label" for="input-start-date">Início:</label>
-        <input
-          nbInput
-          [ngModel]="utils.formatDate(contract.created)"
-          #startdate="ngModel"
-          id="input-start-date"
-          name="start-date"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-2">
-      <div class="form-control-group">
-        <label class="label" for="input-end-date">Fim:</label>
-        <input
-          nbInput
-          [ngModel]="deadline ? utils.formatDate(deadline) : ''"
-          id="input-end-date"
-          name="end-date"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-2">
-      <div class="form-control-group">
-        <label class="label" for="input-remaining-days">Dias restantes:</label>
-        <input
-          nbInput
-          [ngModel]="getRemainingDays()"
-          id="input-remaining-days"
-          name="remaining-days"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="form-control-group">
-        <label class="label" for="input-responsible">Responsável:</label>
-        <input
-          nbInput
-          [(ngModel)]="responsible"
-          #author="ngModel"
-          id="input-responsible"
-          name="responsible"
-          fullWidth
-          fieldSize="large"
-          [readonly]="true"
-        />
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="form-control-group">
-        <label class="label" for="input-management-status">
-          Status de gestão:
-        </label>
-        <nb-select
-          [(ngModel)]="contract.managementStatus"
-          #managementStatus="ngModel"
-          id="input-management-status"
-          name="management-status"
-          placeholder="Selecione o status da gestão"
-          fullWidth
-          size="large"
-          [status]="
-            managementStatus.dirty
-              ? managementStatus.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            managementStatus.invalid && managementStatus.touched ? true : null
-          "
-        >
-          <nb-option *ngFor="let status of avaliableStatus" [value]="status">
-            {{ status }}
-          </nb-option>
-        </nb-select>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="form-control-group">
-        <label class="label" for="input-notes">Observações:</label>
-        <textarea
-          nbInput
-          [(ngModel)]="contract.managementNotes"
-          id="input-notes"
-          name="managementNotes"
-          fullWidth
-          fieldSize="large"
-        ></textarea>
-      </div>
-    </div>
-  </div>
-  <button
-    nbButton
-    fullWidth
-    status="primary"
-    size="large"
-    [disabled]="!form.valid || !form.dirty"
+  <form
+    (ngSubmit)="updateContractManagement()"
+    #form="ngForm"
+    aria-labelledby="title"
   >
-    Atualizar
-  </button>
-</form>
-<ngx-checklist [contract]="contract"></ngx-checklist>
+    <div class="row">
+      <div class="col-4">
+        <div class="form-control-group">
+          <label class="label" for="input-code">Código do Contrato:</label>
+          <input
+            nbInput
+            [(ngModel)]="contract.code"
+            #code="ngModel"
+            id="input-code"
+            name="code"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="form-control-group">
+          <label class="label" for="input-contractor">Cliente:</label>
+          <input
+            nbInput
+            [(ngModel)]="contract.contractor"
+            #contractor="ngModel"
+            id="input-contractor"
+            name="contractor"
+            fullWidth
+            fieldSize="large"
+            [nbTooltip]="tooltipText()"
+            nbTooltipPlacement="top"
+            nbTooltipStatus="primary"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-control-group">
+          <label class="label" for="input-model">Modelo:</label>
+          <!-- Aguardar o Augusto terminar o novo completer -->
+          <input
+            nbInput
+            name="model"
+            placeholder="Modelo"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        <div class="form-control-group">
+          <label class="label" for="input-start-date">Início:</label>
+          <input
+            nbInput
+            [ngModel]="utils.formatDate(contract.created)"
+            #startdate="ngModel"
+            id="input-start-date"
+            name="start-date"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-2">
+        <div class="form-control-group">
+          <label class="label" for="input-end-date">Fim:</label>
+          <input
+            nbInput
+            [ngModel]="deadline ? utils.formatDate(deadline) : ''"
+            id="input-end-date"
+            name="end-date"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-2">
+        <div class="form-control-group">
+          <label class="label" for="input-remaining-days">
+            Dias restantes:
+          </label>
+          <input
+            nbInput
+            [ngModel]="getRemainingDays()"
+            id="input-remaining-days"
+            name="remaining-days"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-control-group">
+          <label class="label" for="input-responsible">Responsável:</label>
+          <input
+            nbInput
+            [(ngModel)]="responsible"
+            #author="ngModel"
+            id="input-responsible"
+            name="responsible"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-control-group">
+          <label class="label" for="input-management-status">
+            Status de gestão:
+          </label>
+          <nb-select
+            [(ngModel)]="contract.managementStatus"
+            #managementStatus="ngModel"
+            id="input-management-status"
+            name="management-status"
+            placeholder="Selecione o status da gestão"
+            fullWidth
+            size="large"
+            [status]="
+              managementStatus.dirty
+                ? managementStatus.invalid
+                  ? 'danger'
+                  : 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="
+              managementStatus.invalid && managementStatus.touched ? true : null
+            "
+          >
+            <nb-option *ngFor="let status of avaliableStatus" [value]="status">
+              {{ status }}
+            </nb-option>
+          </nb-select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-control-group">
+          <label class="label" for="input-notes">Observações:</label>
+          <textarea
+            nbInput
+            [(ngModel)]="contract.managementNotes"
+            id="input-notes"
+            name="managementNotes"
+            fullWidth
+            fieldSize="large"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <button
+          nbButton
+          fullWidth
+          status="primary"
+          size="large"
+          [disabled]="!form.valid || !form.dirty"
+        >
+          Atualizar
+        </button>
+      </div>
+    </div>
+  </form>
+  <ngx-checklist [contract]="contract"></ngx-checklist>
+</div>

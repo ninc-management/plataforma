@@ -1,4 +1,4 @@
-<div class="row checklist-header">
+<div class="row mt-3">
   <div class="col-auto">
     <h6>Checklist</h6>
   </div>
@@ -117,9 +117,16 @@
     </div>
   </div>
 </form>
-<ngx-checklist-item
-  *ngFor="let item of contract.checklist; let i = index"
-  [contract]="contract"
-  [itemIndex]="i"
-  (itemRemoved)="removeChecklistItem(i)"
-></ngx-checklist-item>
+<nb-list class="overflow-hidden py-3">
+  <nb-list-item
+    class="pt-3 px-0"
+    *ngFor="let item of contract.checklist; let i = index"
+  >
+    <ngx-checklist-item
+      [contract]="contract"
+      [itemIndex]="i"
+      (itemRemoved)="removeChecklistItem(i)"
+      class="w-100"
+    ></ngx-checklist-item>
+  </nb-list-item>
+</nb-list>
