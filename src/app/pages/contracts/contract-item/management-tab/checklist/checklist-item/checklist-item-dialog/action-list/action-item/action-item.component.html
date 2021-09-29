@@ -1,0 +1,51 @@
+<div class="row">
+  <div class="col-3">
+    <input
+      nbInput
+      [(ngModel)]="action.name"
+      #nameInput="ngModel"
+      id="action-name"
+      name="action-name"
+      fullWidth
+      fieldSize="large"
+    />
+  </div>
+  <div class="col-3">
+    <input
+      nbInput
+      [(ngModel)]="itemRange"
+      #rangeInput="ngModel"
+      id="action-range"
+      name="action-range"
+      fullWidth
+      fieldSize="large"
+      [nbDatepicker]="rangePicker"
+    />
+    <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
+  </div>
+  <div class="col-3">
+    <input
+      nbInput
+      [ngModel]="this.userService.idToName(action.responsible)"
+      #responsible="ngModel"
+      id="action-responsible"
+      name="action-responsible"
+      fullWidth
+      fieldSize="large"
+      [readonly]="true"
+    />
+  </div>
+  <div class="col-2 btn-container">
+    <nb-checkbox [checked]="action.isFinished"></nb-checkbox>
+  </div>
+  <div class="col-1 btn-container">
+    <nb-icon
+      class="xIcon"
+      status="danger"
+      icon="trash-2-outline"
+      pack="eva"
+      (click)="removeAction()"
+      [options]="{ animation: { type: 'shake' } }"
+    ></nb-icon>
+  </div>
+</div>

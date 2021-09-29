@@ -89,3 +89,16 @@
     </div>
   </div>
 </form>
+<nb-list class="overflow-hidden py-3">
+  <nb-list-item
+    class="pt-3 px-0"
+    *ngFor="let item of contract.checklist[itemIndex].actionList; let i = index"
+  >
+    <ngx-action-item
+      [contract]="contract"
+      [itemIndex]="itemIndex"
+      [actionIndex]="i"
+      class="w-100"
+    ></ngx-action-item>
+  </nb-list-item>
+</nb-list>
