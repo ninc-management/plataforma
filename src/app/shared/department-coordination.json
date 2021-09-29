@@ -17,17 +17,13 @@
     {
       "abrev": "DAQ",
       "name": "Diretoria de Arquitetura",
-      "coordinations": [
-        "C.P.A - Coordenação de Projetos Arquitetônicos",
-        "C.D.I - Coordenação de Design de Interiores"
-      ]
+      "coordinations": ["C.P.A - Coordenação de Projetos Arquitetônicos", "C.D.I - Coordenação de Design de Interiores"]
     },
     {
       "abrev": "DPC",
       "name": "Diretoria de Projetos Complementares",
       "coordinations": [
-        "C.B.T - Coordenação de Baixa Tensão",
-        "C.M.T - Coordenação de Média Tensão",
+        "C.S.E - Coordenação de Sistemas Elétricos",
         "C.S.H - Coordenação de Sistemas Hidrosanitários",
         "C.S.EST - Coordenação de Sistemas Estruturais"
       ]
@@ -35,10 +31,7 @@
     {
       "abrev": "DRM",
       "name": "Diretoria de Recursos Hídricos e Meio Ambiente",
-      "coordinations": [
-        "C.R.H - Coordenação de Recursos Hidrícos",
-        "C.M.A - Coordenação de Meio Ambiente"
-      ]
+      "coordinations": ["C.R.H - Coordenação de Recursos Hidrícos", "C.M.A - Coordenação de Meio Ambiente"]
     }
   ]
 }

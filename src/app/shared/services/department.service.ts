@@ -18,9 +18,7 @@ export class DepartmentService {
   }
 
   buildCoordinationsList(departmentAbrev: string): string[] {
-    const entry = json_department_coordination.departments.find(
-      (el) => el.abrev === departmentAbrev
-    );
+    const entry = json_department_coordination.departments.find((el) => el.abrev === departmentAbrev);
     if (entry) return entry.coordinations;
     return [];
   }
@@ -34,9 +32,7 @@ export class DepartmentService {
   }
 
   composedName(abrev: string): string {
-    const entry = json_department_coordination.departments.find(
-      (el: any) => el.abrev === abrev
-    );
+    const entry = json_department_coordination.departments.find((el: any) => el.abrev === abrev);
     if (entry) return entry.abrev + ' - ' + entry.name;
     return '';
   }
@@ -62,8 +58,7 @@ export class DepartmentService {
       user.ambiental ? true : false,
       user.arquitetura ? true : false,
       user.hidrico ? true : false,
-      user.baixaTensao ? true : false,
-      user.mediaTensao ? true : false,
+      user.eletrica ? true : false,
       user.civil ? true : false,
       user.sanitaria ? true : false,
     ];
@@ -77,9 +72,7 @@ export class DepartmentService {
     if (uId == undefined) return [];
     const uCoords = this.userCoordinations(uId);
     const allCoords = this.buildAllCoordinationsList();
-    const departmentsAbrevs = this.buildDepartmentList().map((d) =>
-      d.slice(0, 3)
-    ); // DAD DEC DAQ DPC DRM
+    const departmentsAbrevs = this.buildDepartmentList().map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
     const uDepartments: string[] = [];
 
     for (const coord of uCoords) {

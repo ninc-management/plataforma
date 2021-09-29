@@ -55,10 +55,7 @@ export class User extends Base<string> {
   public civil?: boolean;
 
   @prop()
-  public baixaTensao?: boolean;
-
-  @prop()
-  public mediaTensao?: boolean;
+  public eletrica?: boolean;
 
   @prop()
   public sanitaria?: boolean;

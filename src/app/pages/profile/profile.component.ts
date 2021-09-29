@@ -110,11 +110,9 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       .subscribe(() => {
         this.states = this.statecityService.buildStateList();
         this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-        this.COORDINATIONS = this.departmentService
-          .buildAllCoordinationsList()
-          .map((cd: string) => {
-            return cd.split(' ')[0];
-          });
+        this.COORDINATIONS = this.departmentService.buildAllCoordinationsList().map((cd: string) => {
+          return cd.split(' ')[0];
+        });
         if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
         else
           this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
@@ -122,25 +120,18 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
             this.user = cloneDeep(this.iUser);
             this.isCurrentUser = true;
           });
-        if (this.user.state)
-          this.cities = this.statecityService.buildCityList(this.user.state);
+        if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
         if (this.user.expertise == undefined) this.user.expertise = [];
         if (this.user.theme == undefined) this.user.theme = 'default';
         this.buildPositionsList();
         this.buildLevelList();
         this.refreshExpertises();
-        this.availableUsers = combineLatest([
-          this.userService.getUsers(),
-          this.memberChanged$,
-        ]).pipe(
+        this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
           map(([users, _]) => {
             return users.filter((user) => {
               return (
-                (this.user.AER.find((member) =>
-                  this.userService.isEqual(user, member)
-                ) === undefined
-                  ? true
-                  : false) && !this.userService.isEqual(user, this.user)
+                (this.user.AER.find((member) => this.userService.isEqual(user, member)) === undefined ? true : false) &&
+                !this.userService.isEqual(user, this.user)
               );
             });
           })
@@ -161,24 +152,17 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   fixTabText(): void {
-    if (
-      this.expertiseRefs != undefined &&
-      this.shortExpertiseRefs != undefined
-    ) {
+    if (this.expertiseRefs != undefined && this.shortExpertiseRefs != undefined) {
       this.expertiseRefs.toArray().forEach((el: any) => {
         const idx = this.user.expertise.findIndex(
-          (ael) =>
-            ael.coordination ===
-            el.nativeElement.placeholder.split(' ').slice(-1)[0]
+          (ael) => ael.coordination === el.nativeElement.placeholder.split(' ').slice(-1)[0]
         );
         if (el.nativeElement.value != this.user.expertise[idx].text)
           el.nativeElement.value = this.user.expertise[idx].text;
       });
       this.shortExpertiseRefs.toArray().forEach((el: any) => {
         const idx = this.user.expertise.findIndex(
-          (ael) =>
-            ael.coordination ===
-            el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
+          (ael) => ael.coordination === el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
         );
         if (el.nativeElement.value != this.user.expertise[idx].shortExpertise)
           el.nativeElement.value = this.user.expertise[idx].shortExpertise;
@@ -190,12 +174,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     if (this.tabsRef != undefined) {
       if ([...this.tabsRef.nativeElement.children[0].children].length > 0) {
         const children = [...this.tabsRef.nativeElement.children[0].children];
-        if (
-          children
-            .map((el) => el.classList.contains('active'))
-            .every((v) => v === false)
-        )
-          children[0].click();
+        if (children.map((el) => el.classList.contains('active')).every((v) => v === false)) children[0].click();
       }
     }
   }
@@ -209,10 +188,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           return 'Associad' + (this.user.article == 'a' ? 'a' : 'o');
         case (position.match(/Direto(r|ra) Financeir[oa]/) || {}).input:
           return (
-            'Diretor' +
-            (this.user.article == 'a' ? 'a' : '') +
-            ' Financeir' +
-            (this.user.article == 'a' ? 'a' : 'o')
+            'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Financeir' + (this.user.article == 'a' ? 'a' : 'o')
           );
         case (position.match(/Direto(r|ra) Administrativ[oa]/) || {}).input:
           return (
@@ -221,8 +197,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
             ' Administrativ' +
             (this.user.article == 'a' ? 'a' : 'o')
           );
-        case (position.match(/Assesso(r|ra) Executiv[oa] Remot[oa]/) || {})
-          .input:
+        case (position.match(/Assesso(r|ra) Executiv[oa] Remot[oa]/) || {}).input:
           return 'Associad' + (this.user.article == 'a' ? 'a' : 'o');
         case (position.match(/Direto(r|ra) de T.I/) || {}).input:
           return 'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I';
@@ -252,15 +227,14 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   refreshExpertises(): void {
     const active: boolean[] = [
       this.user.adm ? this.user.adm : false,
-      this.user.baixaTensao ? this.user.baixaTensao : false,
       this.user.design ? this.user.design : false,
       this.user.obras ? this.user.obras : false,
       this.user.impermeabilizacao ? this.user.impermeabilizacao : false,
       this.user.instalacoes ? this.user.instalacoes : false,
       this.user.ambiental ? this.user.ambiental : false,
-      this.user.mediaTensao ? this.user.mediaTensao : false,
       this.user.arquitetura ? this.user.arquitetura : false,
       this.user.hidrico ? this.user.hidrico : false,
+      this.user.eletrica ? this.user.eletrica : false,
       this.user.civil ? this.user.civil : false,
       this.user.sanitaria ? this.user.sanitaria : false,
     ];
@@ -270,8 +244,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     }).map((cd: string) => {
       let idx = this.user.expertise.findIndex((el) => el.coordination === cd);
       if (idx != -1) {
-        if (this.user.expertise[idx].shortExpertise == undefined)
-          this.user.expertise[idx].shortExpertise = '';
+        if (this.user.expertise[idx].shortExpertise == undefined) this.user.expertise[idx].shortExpertise = '';
         this.ACTIVE_EXPERTISE.push(idx);
       } else {
         idx = this.user.expertise.push({
@@ -300,11 +273,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
 
   updateUser(): void {
     this.isEditing = false;
-    this.userService.updateUser(
-      this.user,
-      () => this.checkPrivileges(),
-      this.isCurrentUser
-    );
+    this.userService.updateUser(this.user, () => this.checkPrivileges(), this.isCurrentUser);
   }
 
   enableEditing(): void {
@@ -359,16 +328,10 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       .buildDepartmentList()
       .map((dp: string) => this.POSITIONS.push('Elo Principal' + dp.slice(15)));
     this.POSITIONS.push(
-      'Diretor' +
-        (this.user.article == 'a' ? 'a' : '') +
-        ' Financeir' +
-        (this.user.article == 'a' ? 'a' : 'o')
+      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Financeir' + (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push(
-      'Diretor' +
-        (this.user.article == 'a' ? 'a' : '') +
-        ' Administrativ' +
-        (this.user.article == 'a' ? 'a' : 'o')
+      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Administrativ' + (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push(
       'Assessor' +
@@ -379,9 +342,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
         (this.user.article == 'a' ? 'a' : 'o')
     );
     this.POSITIONS.push('Elo Principal Nortan');
-    this.POSITIONS.push(
-      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I'
-    );
+    this.POSITIONS.push('Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I');
   }
 
   buildLevelList(): void {
@@ -394,10 +355,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   changeTheme(): void {
-    if (this.isCurrentUser)
-      this.themeService.changeTheme(
-        this.user?.theme == undefined ? 'default' : this.user.theme
-      );
+    if (this.isCurrentUser) this.themeService.changeTheme(this.user?.theme == undefined ? 'default' : this.user.theme);
   }
 
   addToAER(): void {
