@@ -91,7 +91,8 @@ export class ChecklistItemComponent implements OnInit {
     this.dialogService
       .open(ChecklistItemDialogComponent, {
         context: {
-          item: this.checklistItem,
+          contract: this.contract,
+          itemIndex: this.itemIndex,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

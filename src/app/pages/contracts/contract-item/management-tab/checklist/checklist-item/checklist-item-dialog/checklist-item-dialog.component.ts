@@ -1,7 +1,9 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { ContractChecklistItem } from '@models/contract';
+import { Contract, ContractChecklistItem } from '@models/contract';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ContractService } from 'app/shared/services/contract.service';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'ngx-checklist-item-dialog',
@@ -12,7 +14,9 @@ export class ChecklistItemDialogComponent
   extends BaseDialogComponent
   implements OnInit
 {
-  @Input() item!: ContractChecklistItem;
+  @Input() contract!: Contract;
+  @Input() itemIndex!: number;
+  checklistItem!: ContractChecklistItem;
 
   avaliableActionStatus = [
     'Briefing',
@@ -30,14 +34,22 @@ export class ChecklistItemDialogComponent
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>
+    @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>,
+    private contractService: ContractService
   ) {
     super(derivedDocument, derivedRef);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
+  }
 
   dismiss(): void {
     super.dismiss();
+  }
+
+  updateItemNotes(): void {
+    this.contract.checklist[this.itemIndex] = this.checklistItem;
+    this.contractService.editContract(this.contract);
   }
 }

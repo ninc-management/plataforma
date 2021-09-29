@@ -140,6 +140,9 @@ export class ContractChecklistItem {
 
   @prop({ required: true })
   status!: string;
+
+  @prop({ required: true })
+  description: string = '';
 }
 
 @plugin(mongooseUniqueValidator)
