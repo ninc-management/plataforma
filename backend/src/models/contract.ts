@@ -125,6 +125,23 @@ export class ContractReceipt {
   paidDate?: Date;
 }
 
+export class ChecklistItemAction {
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  startDate: Date = new Date();
+
+  @prop({ required: true })
+  endDate!: Date;
+
+  @prop({ required: true, ref: () => User })
+  responsible: Ref<User>;
+
+  @prop({ required: true })
+  isFinished: boolean = false;
+}
+
 export class ContractChecklistItem {
   @prop({ required: true })
   name!: string;
@@ -143,6 +160,9 @@ export class ContractChecklistItem {
 
   @prop({ required: true })
   description: string = '';
+
+  @prop({ type: () => [ChecklistItemAction] })
+  actionList: ChecklistItemAction[] = [];
 }
 
 @plugin(mongooseUniqueValidator)

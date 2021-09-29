@@ -1,0 +1,91 @@
+<div class="row mt-3">
+  <div class="col-auto">
+    <h6>Ações</h6>
+  </div>
+  <div class="col">
+    <hr />
+  </div>
+</div>
+<form #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-3">
+      <label class="label" for="input-action-name">Ação:</label>
+      <input
+        nbInput
+        [(ngModel)]="action.name"
+        #nameInput="ngModel"
+        id="input-action-name"
+        name="action-name"
+        fullWidth
+        fieldSize="large"
+        [required]="validation.checklist.action.name"
+        [status]="
+          nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'
+        "
+        [attr.aria-invalid]="
+          nameInput.invalid && nameInput.touched ? true : null
+        "
+      />
+    </div>
+    <div class="col-3">
+      <label class="label" for="input-action-range">Prazo:</label>
+      <input
+        nbInput
+        [(ngModel)]="itemRange"
+        #rangeInput="ngModel"
+        id="input-action-range"
+        name="action-range"
+        fullWidth
+        fieldSize="large"
+        [required]="validation.checklist.action.dateRange"
+        [nbDatepicker]="rangePicker"
+        [status]="
+          rangeInput.dirty
+            ? rangeInput.invalid
+              ? 'danger'
+              : 'success'
+            : 'basic'
+        "
+        [attr.aria-invalid]="
+          rangeInput.invalid && rangeInput.touched ? true : null
+        "
+      />
+      <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
+    </div>
+    <div class="col-3">
+      <label class="label" for="input-action-responsible">Responsável:</label>
+      <nb-completer
+        [(ngModel)]="responsibleSearch"
+        #invoiceModelList="ngModel"
+        (selected)="action.responsible = $event"
+        id="input-action-responsible"
+        name="action-responsible"
+        inputName="actionResponsible"
+        nameField="fullName"
+        [data$]="avaliableResponsibles"
+        [placeholder]="'Digite o nome do responsável pela ação'"
+        [fullWidth]="true"
+        [fieldSize]="'large'"
+        [required]="validation.checklist.action.responsible"
+        [textNoResults]="
+          'Não foi possível achar um colaborador com o nome digitado'
+        "
+        [minSearchLength]="0"
+      ></nb-completer>
+    </div>
+    <div class="col-1">
+      <button
+        nbButton
+        type="button"
+        fullWidth
+        status="primary"
+        size="large"
+        style="margin-top: 28px"
+        (click)="registerAction()"
+        [disabled]="!form.valid || !form.dirty"
+      >
+        +
+      </button>
+    </div>
+  </div>
+</form>

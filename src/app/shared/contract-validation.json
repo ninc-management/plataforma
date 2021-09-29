@@ -42,6 +42,17 @@
     },
     "status": {
       "required": true
+    },
+    "action": {
+      "name": {
+        "required": true
+      },
+      "dateRange": {
+        "required": true
+      },
+      "responsible": {
+        "required": true
+      }
     }
   }
 }
