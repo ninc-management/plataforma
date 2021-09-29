@@ -68,6 +68,7 @@ export class InvoiceDialogComponent
       });
     this.userService.currentUser$.pipe(take(1)).subscribe((user: User) => {
       oInvoice.author = user;
+      oInvoice.team[0].user = user;
     });
     delete (oInvoice as any)._id;
     oInvoice.created = new Date();
