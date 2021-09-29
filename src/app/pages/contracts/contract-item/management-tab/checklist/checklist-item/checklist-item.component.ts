@@ -1,11 +1,13 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Contract, ContractChecklistItem } from '@models/contract';
 import { User } from '@models/user';
-import { NbCalendarRange } from '@nebular/theme';
+import { NbCalendarRange, NbDialogService } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { UserService } from 'app/shared/services/user.service';
 import { differenceInCalendarDays, isBefore } from 'date-fns';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 
 @Component({
   selector: 'ngx-checklist-item',
@@ -15,6 +17,7 @@ import { Observable, of } from 'rxjs';
 export class ChecklistItemComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() itemIndex!: number;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() itemRemoved = new EventEmitter();
   validation = (contract_validation as any).default;
   today = new Date();
@@ -38,7 +41,10 @@ export class ChecklistItemComponent implements OnInit {
     'Concluído',
   ];
 
-  constructor(public userService: UserService) {}
+  constructor(
+    public userService: UserService,
+    private dialogService: NbDialogService
+  ) {}
 
   ngOnInit(): void {
     this.yesterday.setDate(this.today.getDate() - 1);
@@ -78,5 +84,23 @@ export class ChecklistItemComponent implements OnInit {
       return +((progress / total) * 100).toFixed(2);
     }
     return 0;
+  }
+
+  openItemDialog(): void {
+    this.isDialogBlocked.next(true);
+    this.dialogService
+      .open(ChecklistItemDialogComponent, {
+        context: {
+          item: this.checklistItem,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => {
+        this.isDialogBlocked.next(false);
+      });
   }
 }
