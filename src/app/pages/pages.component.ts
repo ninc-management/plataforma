@@ -1,8 +1,18 @@
-import { Component, DoCheck, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  DoCheck,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 
 import { MENU_ITEMS, SOCIAL_ITEMS } from './pages-menu';
 import { Router } from '@angular/router';
-import { NbIconLibraries, NbSidebarService, NbMenuService } from '@nebular/theme';
+import {
+  NbIconLibraries,
+  NbSidebarService,
+  NbMenuService,
+} from '@nebular/theme';
 import { LayoutService } from '../@core/utils';
 import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -16,7 +26,7 @@ import { Permissions } from 'app/shared/services/utils.service';
   template: `
     <ngx-one-column-layout>
       <nb-menu [items]="menu" tag="main" slot="main"></nb-menu>
-      <nb-menu [items]="social" tag="social" slot="social" style="position: absolute; bottom: 0;width: 100%;"></nb-menu>
+      <nb-menu [items]="social" tag="social" slot="social"></nb-menu>
       <router-outlet></router-outlet>
     </ngx-one-column-layout>
   `,
@@ -141,7 +151,8 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
-        if (this.layout.sidebarRef.nativeElement.classList.contains('expanded')) this.toggleSidebar();
+        if (this.layout.sidebarRef.nativeElement.classList.contains('expanded'))
+          this.toggleSidebar();
       });
   }
 
