@@ -3,6 +3,7 @@
     <input
       nbInput
       [(ngModel)]="checklistItem.name"
+      (click)="openItemDialog()"
       #nameInput="ngModel"
       id="input-action-name"
       name="action-name"

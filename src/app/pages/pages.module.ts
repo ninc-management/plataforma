@@ -56,6 +56,7 @@ import { ResourceItemComponent } from './courses/resource-item/resource-item.com
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
 import { ChecklistComponent } from './contracts/contract-item/management-tab/checklist/checklist.component';
 import { ChecklistItemComponent } from './contracts/contract-item/management-tab/checklist/checklist-item/checklist-item.component';
+import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
 
 @NgModule({
   imports: [
@@ -117,6 +118,7 @@ import { ChecklistItemComponent } from './contracts/contract-item/management-tab
     ManagementTabComponent,
     ChecklistComponent,
     ChecklistItemComponent,
+    ChecklistItemDialogComponent,
   ],
 })
 export class PagesModule {}

@@ -1,0 +1,45 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
+>
+  <div class="col-md-8">
+    <nb-card
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
+      <nb-card-header>
+        {{ item.name | uppercase }}
+        <div class="d-flex">
+          <nb-select
+            id="item-status"
+            [(ngModel)]="item.status"
+            fullWidth
+            size="large"
+          >
+            <nb-option
+              *ngFor="let status of avaliableActionStatus"
+              [value]="status"
+            >
+              {{ status }}
+            </nb-option>
+          </nb-select>
+          <button
+            nbButton
+            ghost
+            style="margin-left: 1rem"
+            nbTooltip="Fechar"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="dismiss()"
+          >
+            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+          </button>
+        </div>
+      </nb-card-header>
+      <nb-card-body></nb-card-body>
+    </nb-card>
+  </div>
+</div>
