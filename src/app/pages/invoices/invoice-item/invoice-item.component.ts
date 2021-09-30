@@ -772,6 +772,23 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.options.total === this.tempInvoice.value
     );
   }
+
+  getRemainingPercentage(): string {
+    if (this.tempInvoice.discount) {
+      return this.stringUtil.toPercentage(
+        this.options.total,
+        this.stringUtil.subtractMoney(
+          this.tempInvoice.value,
+          this.tempInvoice.discount
+        )
+      );
+    }
+
+    return this.stringUtil.toPercentage(
+      this.options.total,
+      this.tempInvoice.value
+    );
+  }
 }
 
 @Component({
