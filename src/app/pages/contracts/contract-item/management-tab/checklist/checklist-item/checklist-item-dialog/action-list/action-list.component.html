@@ -8,7 +8,7 @@
 </div>
 <form #form="ngForm" aria-labelledby="title">
   <div class="row">
-    <div class="col-3">
+    <div class="col-4">
       <label class="label" for="input-action-name">Ação:</label>
       <input
         nbInput
@@ -52,7 +52,7 @@
       />
       <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
     </div>
-    <div class="col-3">
+    <div class="col-4">
       <label class="label" for="input-action-responsible">Responsável:</label>
       <nb-completer
         [(ngModel)]="responsibleSearch"
