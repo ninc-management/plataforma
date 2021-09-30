@@ -37,7 +37,15 @@ export class ActionItemComponent implements OnInit {
     this.yesterday.setDate(today.getDate() - 1);
   }
 
-  removeAction(): void {}
+  removeAction(): void {
+    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
+      this.contract.checklist[this.itemIndex].actionList.splice(
+        this.actionIndex,
+        1
+      );
+      this.contractService.editContract(this.contract);
+    }
+  }
 
   onCheckedChange(): void {
     if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
