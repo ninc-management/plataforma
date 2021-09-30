@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ChecklistItemAction, Contract } from '@models/contract';
 import { NbCalendarRange } from '@nebular/theme';
+import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';
 
@@ -17,7 +18,10 @@ export class ActionItemComponent implements OnInit {
   itemRange!: NbCalendarRange<Date>;
   yesterday: Date = new Date();
 
-  constructor(public userService: UserService) {}
+  constructor(
+    public userService: UserService,
+    private contractService: ContractService
+  ) {}
 
   ngOnInit(): void {
     if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
@@ -34,4 +38,13 @@ export class ActionItemComponent implements OnInit {
   }
 
   removeAction(): void {}
+
+  onCheckedChange(): void {
+    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
+      this.action.isFinished = true;
+      this.contract.checklist[this.itemIndex].actionList[this.actionIndex] =
+        this.action;
+      this.contractService.editContract(this.contract);
+    }
+  }
 }

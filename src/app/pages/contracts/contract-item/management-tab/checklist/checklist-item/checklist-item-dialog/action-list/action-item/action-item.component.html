@@ -36,7 +36,10 @@
     />
   </div>
   <div class="col-2 btn-container">
-    <nb-checkbox [checked]="action.isFinished"></nb-checkbox>
+    <nb-checkbox
+      [checked]="action.isFinished"
+      (checkedChange)="onCheckedChange()"
+    ></nb-checkbox>
   </div>
   <div class="col-1 btn-container">
     <nb-icon
