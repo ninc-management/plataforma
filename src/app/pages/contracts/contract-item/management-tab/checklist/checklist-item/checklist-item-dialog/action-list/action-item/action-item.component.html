@@ -8,9 +8,10 @@
       name="action-name"
       fullWidth
       fieldSize="large"
+      [readonly]="action.isFinished"
     />
   </div>
-  <div class="col-3">
+  <div class="col-3" *ngIf="!action.isFinished">
     <input
       nbInput
       [(ngModel)]="itemRange"
@@ -22,6 +23,18 @@
       [nbDatepicker]="rangePicker"
     />
     <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
+  </div>
+  <div class="col-3" *ngIf="action.isFinished">
+    <input
+      nbInput
+      [ngModel]="getFormattedRange()"
+      #rangeInput="ngModel"
+      id="action-range"
+      name="action-range"
+      fullWidth
+      fieldSize="large"
+      [readonly]="action.isFinished"
+    />
   </div>
   <div class="col-3">
     <input
@@ -44,6 +57,7 @@
   </div>
   <div class="col-1 btn-container">
     <nb-icon
+      *ngIf="!action.isFinished"
       class="xIcon"
       status="danger"
       icon="trash-2-outline"
