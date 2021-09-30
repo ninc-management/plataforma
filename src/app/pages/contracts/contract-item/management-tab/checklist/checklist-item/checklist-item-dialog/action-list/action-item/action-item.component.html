@@ -35,7 +35,8 @@
       [readonly]="true"
     />
   </div>
-  <div class="col-1 btn-container">
+  <div class="col-1 btn-container flex-column">
+    <label class="label" for="input-action-responsible">Finalizada?</label>
     <nb-checkbox
       [checked]="action.isFinished"
       (checkedChange)="onCheckedChange()"
