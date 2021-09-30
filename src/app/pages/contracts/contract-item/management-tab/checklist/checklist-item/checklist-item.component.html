@@ -5,8 +5,6 @@
       [(ngModel)]="checklistItem.name"
       (click)="openItemDialog()"
       #nameInput="ngModel"
-      id="input-action-name"
-      name="action-name"
       fullWidth
       fieldSize="large"
       [required]="validation.checklist.name"
@@ -21,8 +19,6 @@
       nbInput
       [(ngModel)]="itemRange"
       #rangeInput="ngModel"
-      id="action-range"
-      name="action-range-item"
       fullWidth
       fieldSize="large"
       [required]="validation.checklist.startDate"
@@ -41,8 +37,6 @@
       nbInput
       [ngModel]="this.userService.idToName(checklistItem.responsible)"
       #responsible="ngModel"
-      id="responsible"
-      name="responsible"
       fullWidth
       fieldSize="large"
       [readonly]="true"
@@ -50,10 +44,8 @@
   </div>
   <div class="col-2">
     <nb-select
-      id="input-action-status"
       [(ngModel)]="checklistItem.status"
       #statusInput="ngModel"
-      name="action-status"
       fullWidth
       size="large"
       [required]="validation.checklist.status"
