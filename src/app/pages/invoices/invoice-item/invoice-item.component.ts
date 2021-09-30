@@ -634,16 +634,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   remainingBalance(base: string): string {
     if (this.tempInvoice.value == undefined) return '0,00';
-    const invoiceValue = this.stringUtil.moneyToNumber(this.tempInvoice.value);
-    const total = this.stringUtil.moneyToNumber(
-      base === 'product' ? this.options.total : this.options.stageTotal
-    );
+    const total =
+      base === 'product' ? this.options.total : this.options.stageTotal;
 
     if (this.tempInvoice.discount) {
-      const discount = this.stringUtil.moneyToNumber(this.tempInvoice.discount);
-      return this.stringUtil.numberToMoney(invoiceValue - discount - total);
+      return this.stringUtil.subtractMoney(
+        this.stringUtil.subtractMoney(this.tempInvoice.value, total),
+        this.tempInvoice.discount
+      );
     }
-    return this.stringUtil.numberToMoney(invoiceValue - total);
+    return this.stringUtil.subtractMoney(this.tempInvoice.value, total);
   }
 
   updateMaterialList(): void {
@@ -760,12 +760,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   isTotalOK(): boolean {
     if (this.tempInvoice.discount) {
-      const invoiceValue = this.stringUtil.moneyToNumber(
-        this.tempInvoice.value
+      const result = this.stringUtil.subtractMoney(
+        this.tempInvoice.value,
+        this.tempInvoice.discount
       );
-      const discount = this.stringUtil.moneyToNumber(this.tempInvoice.discount);
-      const finalValue = this.stringUtil.numberToMoney(invoiceValue - discount);
-      return this.options.total !== '0' && this.options.total === finalValue;
+      return this.options.total !== '0' && this.options.total === result;
     }
 
     return (
