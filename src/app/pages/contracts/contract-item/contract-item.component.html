@@ -625,7 +625,7 @@
                   />
                   %
                 </div>
-                <div class="col-12 col-md-1 list-erase" *ngIf="i != 0 && isEditionGranted">
+                <div class="col-12 col-md-1 list-erase" *ngIf="i != 0 && isEditionGranted && canRemoveMember(i)">
                   <nb-icon
                     class="xIcon"
                     status="basic"

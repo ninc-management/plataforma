@@ -645,4 +645,18 @@ export class ContractItemComponent implements OnInit {
       return member;
     });
   }
+
+  canRemoveMember(index: number): boolean {
+    const user = this.invoice.team[index].user;
+    if (this.stringUtil.moneyToNumber(this.contractService.receivedValue(user, this.contract)) > 0) {
+      return false;
+    }
+    if (this.stringUtil.moneyToNumber(this.contractService.getMemberExpensesSum(user, this.contract)) > 0) {
+      return false;
+    }
+    if (!!this.contract.expenses.find((expense) => expense.paid && this.userService.isEqual(expense.source, user))) {
+      return false;
+    }
+    return true;
+  }
 }
