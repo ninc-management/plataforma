@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { map, take } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -33,7 +33,8 @@ interface ExpenseSourceSum {
   templateUrl: './contract-item.component.html',
   styleUrls: ['./contract-item.component.scss'],
 })
-export class ContractItemComponent implements OnInit {
+export class ContractItemComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   @Input() iContract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();
@@ -270,6 +271,16 @@ export class ContractItemComponent implements OnInit {
         this.isEditionGranted = isGranted;
         this.loadTableExpenses();
       });
+    this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      setTimeout(() => {
+        this.contract.status = this.iContract.status;
+      }, 100);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updateContract(): void {
