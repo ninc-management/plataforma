@@ -75,9 +75,12 @@ export class ChecklistItemComponent implements OnInit {
     const itemStartDate = new Date(this.checklistItem.startDate);
     const end = new Date(this.checklistItem.endDate);
     if (isBefore(today, itemStartDate)) {
-      return differenceInCalendarDays(end, itemStartDate);
+      const difference = differenceInCalendarDays(end, itemStartDate);
+      return difference >= 0 ? difference : 0;
     }
-    return differenceInCalendarDays(end, today);
+
+    const difference = differenceInCalendarDays(end, today);
+    return difference >= 0 ? difference : 0;
   }
 
   getPercentualItemProgress(): number {
