@@ -2,10 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
-import {
-  ContractService,
-  CONTRACT_STATOOS,
-} from 'app/shared/services/contract.service';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -73,17 +70,12 @@ export class ReceiptItemComponent implements OnInit {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
       this.toLiquid(this.receipt.value);
     } else {
-      if (
-        this.contract.total &&
-        this.contract.receipts.length === +this.contract.total - 1
-      ) {
+      if (this.contract.total && this.contract.receipts.length === +this.contract.total - 1) {
         this.receipt.value = this.notPaid();
         this.toLiquid(this.receipt.value);
       } else {
         if (this.contract.invoice) {
-          const invoice = this.invoiceService.idToInvoice(
-            this.contract.invoice
-          );
+          const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
           const stage = invoice.stages[this.contract.receipts.length];
           if (stage) {
             this.receipt.value = stage.value;
@@ -100,9 +92,7 @@ export class ReceiptItemComponent implements OnInit {
       (this.contract.receipts.length >= 1 && this.receiptIndex == undefined)
     ) {
       isOtherPaid = this.contract.receipts
-        .filter(
-          (receipt: ContractReceipt, idx: number) => this.receiptIndex != idx
-        )
+        .filter((receipt: ContractReceipt, idx: number) => this.receiptIndex != idx)
         .every((receipt: ContractReceipt) => receipt.paid);
     }
 
@@ -116,25 +106,13 @@ export class ReceiptItemComponent implements OnInit {
     if (
       isOtherPaid &&
       this.receipt.paid &&
-      this.contract.total == this.contract.receipts.length.toString() &&
-      this.contract.status != CONTRACT_STATOOS.CONCLUIDO
-    ) {
-      this.contract.status = CONTRACT_STATOOS.CONCLUIDO;
-      this.updateContractStatusHistory();
-    }
-    if (
-      isOtherPaid &&
-      this.receipt.paid &&
       this.contract.total != this.contract.receipts.length.toString() &&
       this.contract.status != CONTRACT_STATOOS.EM_ANDAMENTO
     ) {
       this.contract.status = CONTRACT_STATOOS.EM_ANDAMENTO;
       this.updateContractStatusHistory();
     }
-    if (
-      (!isOtherPaid || !this.receipt.paid) &&
-      this.contract.status != CONTRACT_STATOOS.A_RECEBER
-    ) {
+    if ((!isOtherPaid || !this.receipt.paid) && this.contract.status != CONTRACT_STATOOS.A_RECEBER) {
       this.contract.status = CONTRACT_STATOOS.A_RECEBER;
       this.updateContractStatusHistory();
     }
@@ -156,23 +134,17 @@ export class ReceiptItemComponent implements OnInit {
     let result =
       this.stringUtil.moneyToNumber(
         this.contractService.subtractComissions(
-          this.stringUtil.removePercentage(
-            this.contract.value,
-            this.contract.ISS
-          ),
+          this.stringUtil.removePercentage(this.contract.value, this.contract.ISS),
           this.contract
         )
       ) -
       this.contract.receipts.reduce(
-        (sum: number, receipt: ContractReceipt) =>
-          (sum += this.stringUtil.moneyToNumber(receipt.value)),
+        (sum: number, receipt: ContractReceipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
         0
       );
 
     if (this.receiptIndex != undefined)
-      result += this.stringUtil.moneyToNumber(
-        this.contract.receipts[this.receiptIndex].value
-      );
+      result += this.stringUtil.moneyToNumber(this.contract.receipts[this.receiptIndex].value);
 
     return this.stringUtil.numberToMoney(result);
   }
@@ -180,10 +152,8 @@ export class ReceiptItemComponent implements OnInit {
   lastPayment(): string {
     if (
       this.contract.total &&
-      ((this.receiptIndex === undefined &&
-        this.contract.receipts.length != +this.contract.total - 1) ||
-        (this.receiptIndex !== undefined &&
-          this.contract.receipts.length - 1 != +this.contract.total - 1))
+      ((this.receiptIndex === undefined && this.contract.receipts.length != +this.contract.total - 1) ||
+        (this.receiptIndex !== undefined && this.contract.receipts.length - 1 != +this.contract.total - 1))
     )
       return '';
     return this.notPaid();

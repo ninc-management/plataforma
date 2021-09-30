@@ -53,6 +53,7 @@ export class ContractService implements OnDestroy {
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
+  edited$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
@@ -91,14 +92,29 @@ export class ContractService implements OnDestroy {
     const req = {
       contract: contract,
     };
+    if (
+      contract.status != CONTRACT_STATOOS.CONCLUIDO &&
+      contract.status != CONTRACT_STATOOS.ARQUIVADO &&
+      contract.balance == '0,00' &&
+      contract.total == contract.receipts.filter((receipt) => receipt.paid).length.toString()
+    ) {
+      console.log('entrei');
+      contract.status = CONTRACT_STATOOS.CONCLUIDO;
+      const lastStatusIndex = contract.statusHistory.length - 1;
+      contract.lastUpdate = new Date();
+      contract.statusHistory[lastStatusIndex].end = contract.lastUpdate;
+      contract.statusHistory.push({
+        status: contract.status,
+        start: contract.lastUpdate,
+      });
+    }
     const history = cloneDeep(contract.statusHistory);
-    const isMoved = history
-      .splice(0, history.length - 1)
-      .find((el: StatusHistoryItem) => el.status === 'Concluído');
+    const isMoved = history.splice(0, history.length - 1).find((el: StatusHistoryItem) => el.status === 'Concluído');
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
+        this.edited$.next();
         if (
           contract.status === 'Concluído' &&
           !isMoved &&
@@ -124,8 +140,7 @@ export class ContractService implements OnDestroy {
         .pipe(take(1))
         .subscribe((contracts: any) => {
           const tmp = JSON.parse(JSON.stringify(contracts), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate'].includes(k))
-              return parseISO(v);
+            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
             return v;
           });
           this.contracts$.next(tmp as Contract[]);
@@ -133,9 +148,7 @@ export class ContractService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.contracts$, 'contracts')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.contracts$, 'contracts'));
     }
     return this.contracts$;
   }
@@ -151,8 +164,7 @@ export class ContractService implements OnDestroy {
   }
 
   idToContract(id: string | Contract): Contract {
-    if (this.utils.isOfType<Contract>(id, ['_id', 'invoice', 'status']))
-      return id;
+    if (this.utils.isOfType<Contract>(id, ['_id', 'invoice', 'status'])) return id;
     const tmp = this.contracts$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
@@ -176,9 +188,7 @@ export class ContractService implements OnDestroy {
     const paid = this.toNetValue(
       this.stringUtil.numberToMoney(
         contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid)
-            accumulator =
-              accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
           return accumulator;
         }, 0)
       ),
@@ -191,30 +201,20 @@ export class ContractService implements OnDestroy {
       this.stringUtil.round(
         this.stringUtil.moneyToNumber(paid) -
           contract.payments.reduce((accumulator: number, payment: any) => {
-            if (payment.paid)
-              accumulator =
-                accumulator + this.stringUtil.moneyToNumber(payment.value);
+            if (payment.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(payment.value);
             return accumulator;
           }, 0) -
           expenseContribution.global.expense +
-          expenseContribution.global.contribution +
-          expenseContribution.global.cashback
+          expenseContribution.global.contribution
       )
     );
   }
 
-  netValueBalance(
-    distribution: string,
-    contract: Contract,
-    user: User | string | undefined
-  ): string {
+  netValueBalance(distribution: string, contract: Contract, user: User | string | undefined): string {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract.expenses
       .filter(
-        (expense) =>
-          expense.paid &&
-          expense.source &&
-          this.userService.idToUser(expense.source)._id != CLIENT._id
+        (expense) => expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id
       )
       .reduce(
         (sum, expense) => {
@@ -234,8 +234,7 @@ export class ContractService implements OnDestroy {
         { expense: 0, contribution: 0, contract: 0 }
       );
     const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(contract.liquid) *
-        this.stringUtil.toMultiplyPercentage(distribution) -
+      this.stringUtil.moneyToNumber(contract.liquid) * this.stringUtil.toMultiplyPercentage(distribution) -
         expenseContribution.contract +
         expenseContribution.expense +
         expenseContribution.contribution
@@ -255,32 +254,20 @@ export class ContractService implements OnDestroy {
     /* eslint-enable @typescript-eslint/indent */
     return contract.expenses.reduce(
       (accumulator, expense: ContractExpense) => {
-        if (
-          expense.paid &&
-          expense.source &&
-          this.userService.idToUser(expense.source)._id != CLIENT._id
-        ) {
-          if (
-            expense.source &&
-            this.userService.idToUser(expense.source)._id ==
-              CONTRACT_BALANCE._id
-          ) {
+        if (expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id) {
+          if (expense.source && this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id) {
             const expenseValue = this.stringUtil.moneyToNumber(expense.value);
             const member = expense.team.find((el) => {
               return this.userService.isEqual(el.user, user);
             });
             if (member) {
-              accumulator.user.expense += this.stringUtil.moneyToNumber(
-                member.value
-              );
+              accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
             }
             accumulator.global.expense += expenseValue;
           }
 
           if (expense.type == EXPENSE_TYPES.APORTE) {
-            const contributionValue = this.stringUtil.moneyToNumber(
-              expense.value
-            );
+            const contributionValue = this.stringUtil.moneyToNumber(expense.value);
             if (this.userService.isEqual(expense.author, user)) {
               accumulator.user.contribution += contributionValue;
             }
@@ -289,25 +276,12 @@ export class ContractService implements OnDestroy {
 
           if (expense.nf) {
             let cashbackValue = -1;
-            if (
-              expense.paidDate &&
-              isBefore(expense.paidDate, new Date('2021/09/01'))
-            ) {
-              if (
-                expense.uploadedFiles.length >=
-                (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1)
-              )
-                cashbackValue = this.stringUtil.moneyToNumber(
-                  this.stringUtil.applyPercentage(expense.value, '15,00')
-                );
+            if (expense.paidDate && isBefore(expense.paidDate, new Date('2021/09/01'))) {
+              if (expense.uploadedFiles.length >= (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1))
+                cashbackValue = this.stringUtil.moneyToNumber(this.stringUtil.applyPercentage(expense.value, '15,00'));
             } else {
-              if (
-                expense.uploadedFiles.length >= 1 &&
-                expense.type == EXPENSE_TYPES.MATERIAL
-              )
-                cashbackValue = this.stringUtil.moneyToNumber(
-                  this.stringUtil.applyPercentage(expense.value, '15,00')
-                );
+              if (expense.uploadedFiles.length >= 1 && expense.type == EXPENSE_TYPES.MATERIAL)
+                cashbackValue = this.stringUtil.moneyToNumber(this.stringUtil.applyPercentage(expense.value, '15,00'));
             }
             if (cashbackValue != -1) {
               const member = expense.team.find((el) => {
@@ -315,10 +289,7 @@ export class ContractService implements OnDestroy {
               });
               if (member) {
                 accumulator.user.cashback += this.stringUtil.moneyToNumber(
-                  this.stringUtil.applyPercentage(
-                    this.stringUtil.numberToMoney(cashbackValue),
-                    member.percentage
-                  )
+                  this.stringUtil.applyPercentage(this.stringUtil.numberToMoney(cashbackValue), member.percentage)
                 );
               }
               accumulator.global.cashback += cashbackValue;
@@ -334,24 +305,12 @@ export class ContractService implements OnDestroy {
     );
   }
 
-  percentageToReceive(
-    distribution: string,
-    user: User | string | undefined,
-    contract: Contract,
-    decimals = 2
-  ): string {
+  percentageToReceive(distribution: string, user: User | string | undefined, contract: Contract, decimals = 2): string {
     let sum = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(contract.notPaid) +
-        this.stringUtil.moneyToNumber(contract.balance)
+      this.stringUtil.moneyToNumber(contract.notPaid) + this.stringUtil.moneyToNumber(contract.balance)
     );
     if (contract.balance[0] == '-') sum = contract.notPaid;
-    return this.stringUtil
-      .toPercentage(
-        this.notPaidValue(distribution, user, contract),
-        sum,
-        decimals
-      )
-      .slice(0, -1);
+    return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 
   receivedValue(user: User | string | undefined, contract: Contract): string {
@@ -360,45 +319,31 @@ export class ContractService implements OnDestroy {
       .map((payment) => payment.team)
       .flat()
       .reduce((sum, member) => {
-        if (this.userService.isEqual(member.user, user))
-          sum += this.stringUtil.moneyToNumber(member.value);
+        if (this.userService.isEqual(member.user, user)) sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);
     return this.stringUtil.numberToMoney(received);
   }
 
-  notPaidValue(
-    distribution: string,
-    user: User | string | undefined,
-    contract: Contract
-  ): string {
+  notPaidValue(distribution: string, user: User | string | undefined, contract: Contract): string {
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(
-        this.netValueBalance(distribution, contract, user)
-      ) - this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
+      this.stringUtil.moneyToNumber(this.netValueBalance(distribution, contract, user)) -
+        this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
     );
   }
 
   toGrossValue(netValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.revertPercentage(
-      this.stringUtil.revertPercentage(netValue, NF),
-      nortanPercentage
-    );
+    return this.stringUtil.revertPercentage(this.stringUtil.revertPercentage(netValue, NF), nortanPercentage);
   }
 
   toNetValue(grossValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.removePercentage(
-      this.stringUtil.removePercentage(grossValue, NF),
-      nortanPercentage
-    );
+    return this.stringUtil.removePercentage(this.stringUtil.removePercentage(grossValue, NF), nortanPercentage);
   }
 
   subtractComissions(contractValue: string, contract: Contract): string {
     const comissionsSum = this.getComissionsSum(contract);
 
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(contractValue) - comissionsSum
-    );
+    return this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(contractValue) - comissionsSum);
   }
 
   getComissionsSum(contract: Contract): number {
@@ -410,10 +355,7 @@ export class ContractService implements OnDestroy {
     }, 0);
   }
 
-  getMemberExpensesSum(
-    user: User | string | undefined,
-    contract: Contract
-  ): string {
+  getMemberExpensesSum(user: User | string | undefined, contract: Contract): string {
     const filteredExpenses = contract.expenses
       .filter((expense) => {
         return (
@@ -437,38 +379,26 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(expensesSum);
   }
 
-  getMemberBalance(
-    user: User | string | undefined,
-    contract: Contract
-  ): string {
+  getMemberBalance(user: User | string | undefined, contract: Contract): string {
     const receivedSum = this.receivedValue(user, contract);
     const expensesSum = this.getMemberExpensesSum(user, contract);
     const cashBack = this.expensesContributions(contract, user).user.cashback;
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(receivedSum) -
-        this.stringUtil.moneyToNumber(expensesSum) +
-        cashBack
+      this.stringUtil.moneyToNumber(receivedSum) - this.stringUtil.moneyToNumber(expensesSum) + cashBack
     );
   }
 
   checkEditPermission(invoice: Invoice): Observable<boolean> {
     return this.userService.currentUser$.pipe(
       map((user: User) => {
-        return (
-          this.isUserAnAER(user, invoice) ||
-          this.userService.isEqual(user, invoice.team[0].user)
-        );
+        return this.isUserAnAER(user, invoice) || this.userService.isEqual(user, invoice.team[0].user);
       })
     );
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {
     if (user.AER && user.AER.length != 0) {
-      return (
-        user.AER.find((member) =>
-          this.userService.isEqual(member, invoice.team[0].user)
-        ) != undefined
-      );
+      return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
     }
     return false;
   }
