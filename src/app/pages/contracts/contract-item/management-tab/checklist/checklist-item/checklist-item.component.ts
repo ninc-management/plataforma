@@ -3,6 +3,7 @@ import { Contract, ContractChecklistItem } from '@models/contract';
 import { User } from '@models/user';
 import { NbCalendarRange, NbDialogService } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
+import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { differenceInCalendarDays, isBefore } from 'date-fns';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -43,7 +44,8 @@ export class ChecklistItemComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private contractService: ContractService
   ) {}
 
   ngOnInit(): void {
@@ -105,5 +107,13 @@ export class ChecklistItemComponent implements OnInit {
       .subscribe(() => {
         this.isDialogBlocked.next(false);
       });
+  }
+
+  onSelectedChange(newStatus: string): void {
+    if (this.itemIndex !== undefined) {
+      this.checklistItem.status = newStatus;
+      this.contract.checklist[this.itemIndex] = this.checklistItem;
+      this.contractService.editContract(this.contract);
+    }
   }
 }
