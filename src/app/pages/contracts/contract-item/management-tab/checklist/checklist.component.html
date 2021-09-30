@@ -9,13 +9,13 @@
 <form #form="ngForm" aria-labelledby="title">
   <div class="row">
     <div class="col-3">
-      <label class="label" for="input-action-name">Ação:</label>
+      <label class="label" for="input-item-name">Ação:</label>
       <input
         nbInput
         [(ngModel)]="newChecklistItem.name"
         #nameInput="ngModel"
-        id="input-action-name"
-        name="action-name"
+        id="input-item-name"
+        name="input-item-name"
         fullWidth
         fieldSize="large"
         [required]="validation.checklist.name"
@@ -28,13 +28,13 @@
       />
     </div>
     <div class="col-3">
-      <label class="label" for="input-action-range">Prazo:</label>
+      <label class="label" for="input-item-range">Prazo:</label>
       <input
         nbInput
         [(ngModel)]="itemRange"
         #rangeInput="ngModel"
-        id="input-action-range"
-        name="action-range"
+        id="input-item-range"
+        name="input-item-range"
         fullWidth
         fieldSize="large"
         [required]="validation.checklist.startDate"
@@ -53,14 +53,14 @@
       <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
     </div>
     <div class="col-3">
-      <label class="label" for="input-action-responsible">Responsável:</label>
+      <label class="label" for="input-item-responsible">Responsável:</label>
       <nb-completer
         [(ngModel)]="responsibleSearch"
         #invoiceModelList="ngModel"
         (selected)="newChecklistItem.responsible = $event"
-        id="input-action-responsible"
-        name="action-responsible"
-        inputName="actionResponsible"
+        id="input-item-responsible"
+        name="input-item-responsible"
+        inputName="itemResponsible"
         nameField="fullName"
         [data$]="avaliableResponsibles"
         [placeholder]="'Digite o nome do responsável pela ação'"
@@ -73,12 +73,12 @@
       ></nb-completer>
     </div>
     <div class="col-2">
-      <label class="label" for="input-action-status">Status:</label>
+      <label class="label" for="input-item-status">Status:</label>
       <nb-select
-        id="input-action-status"
+        id="input-item-status"
         [(ngModel)]="newChecklistItem.status"
         #statusInput="ngModel"
-        name="action-status"
+        name="input-item-status"
         fullWidth
         size="large"
         [required]="validation.checklist.status"
@@ -93,10 +93,7 @@
           statusInput.invalid && statusInput.touched ? true : null
         "
       >
-        <nb-option
-          *ngFor="let status of avaliableActionStatus"
-          [value]="status"
-        >
+        <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
           {{ status }}
         </nb-option>
       </nb-select>

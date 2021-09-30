@@ -26,7 +26,7 @@ export class ChecklistComponent implements OnInit {
   contractEndDate!: Date;
   itemRange!: NbCalendarRange<Date>;
 
-  avaliableActionStatus = [
+  avaliableItemStatus = [
     'Briefing',
     'Anteprojeto',
     'Estudo preliminar',
