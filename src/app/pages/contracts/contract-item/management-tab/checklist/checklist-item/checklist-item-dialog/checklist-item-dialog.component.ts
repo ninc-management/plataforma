@@ -56,4 +56,12 @@ export class ChecklistItemDialogComponent
       this.contractService.editContract(this.contract);
     }
   }
+
+  onSelectedChange(newStatus: string): void {
+    if (this.itemIndex !== undefined) {
+      this.checklistItem.status = newStatus;
+      this.contract.checklist[this.itemIndex] = this.checklistItem;
+      this.contractService.editContract(this.contract);
+    }
+  }
 }
