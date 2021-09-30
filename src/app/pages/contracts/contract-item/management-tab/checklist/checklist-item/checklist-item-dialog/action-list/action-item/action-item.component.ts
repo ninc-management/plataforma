@@ -3,6 +3,7 @@ import { ChecklistItemAction, Contract } from '@models/contract';
 import { NbCalendarRange } from '@nebular/theme';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 
 @Component({
@@ -20,7 +21,8 @@ export class ActionItemComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private utils: UtilsService
   ) {}
 
   ngOnInit(): void {
@@ -54,5 +56,16 @@ export class ActionItemComponent implements OnInit {
         this.action;
       this.contractService.editContract(this.contract);
     }
+  }
+
+  getFormattedRange(): string | undefined {
+    if (this.itemRange.end) {
+      return (
+        this.utils.formatDate(this.itemRange.start) +
+        ' - ' +
+        this.utils.formatDate(this.itemRange.end)
+      );
+    }
+    return this.utils.formatDate(this.itemRange.start);
   }
 }
