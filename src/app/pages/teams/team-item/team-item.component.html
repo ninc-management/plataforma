@@ -29,17 +29,9 @@
         />
       </div>
       <ng-container *ngIf="name.invalid && name.touched">
-        <p class="caption status-danger" *ngIf="name.errors?.required">
-          O nome do time é obrigatório!
-        </p>
-        <p
-          class="caption status-danger"
-          *ngIf="name.errors?.minlength || name.errors?.maxlength"
-        >
-          O nome do time deve conter entre
-          {{ validation.name.minLength }} a
-          {{ validation.name.maxLength }}
-          caracteres
+        <p class="caption status-danger" *ngIf="name.errors?.required">O nome do time é obrigatório!</p>
+        <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+          O nome do time deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength }} caracteres
         </p>
       </ng-container>
     </div>
@@ -64,7 +56,7 @@
           #leaderList="ngModel"
           id="input-leader"
           name="leaderList"
-          placeholder="Digite e selecione o nome do líder do time"
+          placeholder="Digite o nome do líder dentro os membros do time"
           textNoResults="
           Não foi possível achar um associado com o nome digitado
           "
@@ -121,12 +113,7 @@
           "
           [disabled]="false"
         >
-          <nb-option
-            *ngFor="let coordination of COORDINATIONS"
-            [value]="coordination"
-          >
-            {{ coordination }}
-          </nb-option>
+          <nb-option *ngFor="let coordination of COORDINATIONS" [value]="coordination">{{ coordination }}</nb-option>
         </nb-select>
         <ng-container *ngIf="expertise.invalid && expertise.touched">
           <p class="caption status-danger" *ngIf="expertise.errors?.required">
@@ -216,13 +203,7 @@
       </div>
     </nb-list-item>
   </nb-list>
-  <button
-    nbButton
-    fullWidth
-    status="primary"
-    size="large"
-    [disabled]="!form.valid"
-  >
+  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">
     {{ editing ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>
