@@ -3,9 +3,6 @@
     <input
       nbInput
       [(ngModel)]="action.name"
-      #nameInput="ngModel"
-      id="action-name"
-      name="action-name"
       fullWidth
       fieldSize="large"
       [readonly]="action.isFinished"
@@ -15,9 +12,6 @@
     <input
       nbInput
       [(ngModel)]="itemRange"
-      #rangeInput="ngModel"
-      id="action-range"
-      name="action-range"
       fullWidth
       fieldSize="large"
       [nbDatepicker]="rangePicker"
@@ -28,9 +22,6 @@
     <input
       nbInput
       [ngModel]="getFormattedRange()"
-      #rangeInput="ngModel"
-      id="action-range"
-      name="action-range"
       fullWidth
       fieldSize="large"
       [readonly]="action.isFinished"
@@ -40,19 +31,16 @@
     <input
       nbInput
       [ngModel]="this.userService.idToName(action.responsible)"
-      #responsible="ngModel"
-      id="action-responsible"
-      name="action-responsible"
       fullWidth
       fieldSize="large"
       [readonly]="true"
     />
   </div>
   <div class="col-1 btn-container flex-column">
-    <label class="label" for="input-action-responsible">Finalizada?</label>
+    <label class="label">Finalizada?</label>
     <nb-checkbox
       [checked]="action.isFinished"
-      (checkedChange)="onCheckedChange()"
+      (checkedChange)="action.isFinished = !action.isFinished"
     ></nb-checkbox>
   </div>
   <div class="col-1 btn-container">
@@ -62,7 +50,7 @@
       status="danger"
       icon="trash-2-outline"
       pack="eva"
-      (click)="removeAction()"
+      (click)="removeActionItem()"
       [options]="{ animation: { type: 'shake' } }"
     ></nb-icon>
   </div>

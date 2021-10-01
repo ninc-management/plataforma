@@ -1,10 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ChecklistItemAction, Contract } from '@models/contract';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChecklistItemAction } from '@models/contract';
 import { NbCalendarRange } from '@nebular/theme';
-import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'ngx-action-item',
@@ -12,50 +10,21 @@ import { cloneDeep } from 'lodash';
   styleUrls: ['./action-item.component.scss'],
 })
 export class ActionItemComponent implements OnInit {
-  @Input() contract: Contract = new Contract();
-  @Input() itemIndex!: number;
-  @Input() actionIndex!: number;
-  action: ChecklistItemAction = new ChecklistItemAction();
+  @Input() action: ChecklistItemAction = new ChecklistItemAction();
+  @Output() actionRemoved = new EventEmitter();
   itemRange!: NbCalendarRange<Date>;
   yesterday: Date = new Date();
 
-  constructor(
-    public userService: UserService,
-    private contractService: ContractService,
-    private utils: UtilsService
-  ) {}
+  constructor(public userService: UserService, private utils: UtilsService) {}
 
   ngOnInit(): void {
-    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
-      this.action = cloneDeep(
-        this.contract.checklist[this.itemIndex].actionList[this.actionIndex]
-      );
-      this.itemRange = {
-        start: new Date(this.action.startDate),
-        end: new Date(this.action.endDate),
-      };
-    }
+    this.itemRange = {
+      start: new Date(this.action.startDate),
+      end: new Date(this.action.endDate),
+    };
+
     const today = new Date();
     this.yesterday.setDate(today.getDate() - 1);
-  }
-
-  removeAction(): void {
-    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
-      this.contract.checklist[this.itemIndex].actionList.splice(
-        this.actionIndex,
-        1
-      );
-      this.contractService.editContract(this.contract);
-    }
-  }
-
-  onCheckedChange(): void {
-    if (this.itemIndex !== undefined && this.actionIndex !== undefined) {
-      this.action.isFinished = true;
-      this.contract.checklist[this.itemIndex].actionList[this.actionIndex] =
-        this.action;
-      this.contractService.editContract(this.contract);
-    }
   }
 
   getFormattedRange(): string | undefined {
@@ -67,5 +36,9 @@ export class ActionItemComponent implements OnInit {
       );
     }
     return this.utils.formatDate(this.itemRange.start);
+  }
+
+  removeActionItem(): void {
+    this.actionRemoved.emit();
   }
 }
