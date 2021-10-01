@@ -95,9 +95,8 @@
     *ngFor="let item of contract.checklist[itemIndex].actionList; let i = index"
   >
     <ngx-action-item
-      [contract]="contract"
-      [itemIndex]="itemIndex"
-      [actionIndex]="i"
+      [action]="item"
+      (actionRemoved)="removeAction(i)"
       class="w-100"
     ></ngx-action-item>
   </nb-list-item>

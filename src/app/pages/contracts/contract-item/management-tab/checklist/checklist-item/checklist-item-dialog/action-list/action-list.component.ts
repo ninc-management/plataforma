@@ -65,4 +65,8 @@ export class ActionListComponent implements OnInit {
       this.itemRange = { start: new Date() };
     }
   }
+
+  removeAction(index: number): void {
+    this.contract.checklist[this.itemIndex].actionList.splice(index, 1);
+  }
 }
