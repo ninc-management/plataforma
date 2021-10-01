@@ -61,8 +61,10 @@ export class DepartmentService {
       user.eletrica ? true : false,
       user.civil ? true : false,
       user.sanitaria ? true : false,
+      user.incendio ? true : false,
     ];
     const allCoords = this.buildAllCoordinationsList();
+    //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.
     return allCoords.filter((cd: string, idx: number) => {
       return active[idx];
     });

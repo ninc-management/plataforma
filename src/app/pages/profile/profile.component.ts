@@ -237,8 +237,10 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       this.user.eletrica ? this.user.eletrica : false,
       this.user.civil ? this.user.civil : false,
       this.user.sanitaria ? this.user.sanitaria : false,
+      this.user.incendio ? this.user.incendio : false,
     ];
     this.ACTIVE_EXPERTISE = [];
+    //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.
     this.COORDINATIONS.filter((cd: string, idx: number) => {
       return active[idx];
     }).map((cd: string) => {

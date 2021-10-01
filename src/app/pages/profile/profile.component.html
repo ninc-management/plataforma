@@ -757,6 +757,17 @@
                         Sistemas Hidrosanitários
                       </nb-checkbox>
                       <br />
+                      <nb-checkbox
+                        [(ngModel)]="user.incendio"
+                        #incendio="ngModel"
+                        name="incendio"
+                        [status]="incendio.value ? 'success' : 'basic'"
+                        [disabled]="!isEditing"
+                        (ngModelChange)="refreshExpertises()"
+                      >
+                        Sistemas de Incêndio
+                      </nb-checkbox>
+                      <br />
                     </div>
                   </div>
                 </div>

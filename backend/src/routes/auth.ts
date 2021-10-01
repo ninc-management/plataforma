@@ -17,6 +17,7 @@ router.post('/register', (req, res, next) => {
     design: req.body.design ? req.body.design : false,
     civil: req.body.civil ? req.body.civil : false,
     eletrica: req.body.eletrica ? req.body.eletrica : false,
+    incendio: req.body.incendio ? req.body.incendio : false,
     sanitaria: req.body.sanitaria ? req.body.sanitaria : false,
     impermeabilizacao: req.body.impermeabilizacao ? req.body.impermeabilizacao : false,
     ambiental: req.body.ambiental ? req.body.ambiental : false,

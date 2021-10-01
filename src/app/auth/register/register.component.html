@@ -253,6 +253,16 @@
           </nb-checkbox>
           <br />
           <nb-checkbox
+            [(ngModel)]="user.incendio"
+            #incendio="ngModel"
+            name="incendio"
+            checked="false"
+            [status]="incendio.value ? 'success' : 'basic'"
+          >
+            Sistemas de Incêndio
+          </nb-checkbox>
+          <br />
+          <nb-checkbox
             [(ngModel)]="user.impermeabilizacao"
             #impermeabilizacao="ngModel"
             name="impermeabilizacao"
