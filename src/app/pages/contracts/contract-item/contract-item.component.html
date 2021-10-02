@@ -146,8 +146,8 @@
                   O nome do cliente é obrigatório!
                 </p>
                 <p class="caption status-danger" *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength">
-                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a
-                  {{ validation.contractor.maxLength }} caracteres
+                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a {{
+                  validation.contractor.maxLength }} caracteres
                 </p>
               </ng-container>
             </div>
@@ -193,8 +193,8 @@
           <ng-container *ngIf="name.invalid && name.touched">
             <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
             <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
-              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a
-              {{ validation.name.maxLength }} caracteres
+              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength
+              }} caracteres
             </p>
           </ng-container>
         </div>
@@ -737,8 +737,7 @@
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
             <b>
-              {{
-                contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
+              {{ contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
               }}
             </b>
           </p>
@@ -795,13 +794,8 @@
             <div class="col-md-3">{{ userService.idToName(member.user) }}</div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
-                {{
-                  contractService.toGrossValue(
-                    contractService.netValueBalance(member.distribution, contract, member.user),
-                    options.notaFiscal,
-                    options.nortanPercentage
-                  )
-                }}
+                {{ contractService.toGrossValue( contractService.netValueBalance(member.distribution, contract,
+                member.user), options.notaFiscal, options.nortanPercentage ) }}
               </div>
               <div class="col-md-3">
                 {{ contractService.netValueBalance(member.distribution, contract, member.user) }}
@@ -812,12 +806,9 @@
               <div class="col-md-3">{{ contractService.receivedValue(member.user, contract) }}</div>
             </div>
             <div class="col-md-4 d-flex">
+              <div class="col-md-3">{{ contractService.notPaidValue(member.distribution, member.user, contract) }}</div>
               <div class="col-md-3">
-                {{ contractService.notPaidValue(member.distribution, member.user, contract) }}
-              </div>
-              <div class="col-md-3">
-                {{
-                  stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
+                {{ stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
                 }}
               </div>
               <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>
@@ -951,8 +942,17 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
+          <div class="col-2 col-md-1" style="text-align: right">
+            <span
+              class="mr-1"
+              [nbTooltip]="receipt.paid ? 'Pago' : 'Não pago'"
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
+            >
+              {{ receipt.paid ? '✅' : '❌' }}
+            </span>
             <nb-icon
+              *ngIf="isEditionGranted"
               class="xIcon"
               status="basic"
               icon="trash-2-outline"
@@ -991,8 +991,17 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
+          <div class="col-2 col-md-1" style="text-align: right">
+            <span
+              class="mr-1"
+              [nbTooltip]="payment.paid ? 'Pago' : 'Não pago'"
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
+            >
+              {{ payment.paid ? '✅' : '❌' }}
+            </span>
             <nb-icon
+              *ngIf="isEditionGranted"
               class="xIcon"
               status="basic"
               icon="trash-2-outline"
