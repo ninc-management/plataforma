@@ -68,15 +68,15 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
             link: '/pages/promotions',
             pathMatch: 'full',
           });
-          this.menu.push({
-            title: 'Cursos',
-            icon: {
-              icon: 'courses',
-              pack: 'fac',
-            },
-            link: '/pages/courses',
-            pathMatch: 'full',
-          });
+          // this.menu.push({
+          //   title: 'Cursos',
+          //   icon: {
+          //     icon: 'courses',
+          //     pack: 'fac',
+          //   },
+          //   link: '/pages/courses',
+          //   pathMatch: 'full',
+          // });
         }
       });
 
