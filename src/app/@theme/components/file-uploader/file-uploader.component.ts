@@ -4,23 +4,10 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ElementRef,
-  ViewChild,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
 
 import { NbFileUploaderService } from './file-uploader.service';
-import {
-  NbFileUploaderOptions,
-  StorageProvider,
-  NbFileItem,
-} from './file-uploader.model';
+import { NbFileUploaderOptions, StorageProvider, NbFileItem } from './file-uploader.model';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
@@ -63,8 +50,7 @@ export class NbFileUploaderComponent implements OnInit, OnDestroy {
   /* eslint-enable @typescript-eslint/indent */
 
   get accept(): string {
-    if (this.options.allowedFileTypes)
-      return this.options.allowedFileTypes.join(',');
+    if (this.options.allowedFileTypes) return this.options.allowedFileTypes.join(',');
     return '';
   }
 

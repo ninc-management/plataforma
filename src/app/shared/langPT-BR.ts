@@ -37,29 +37,8 @@ export default {
       'Novembro',
       'Dezembro',
     ],
-    monthAbbr: [
-      'Jan',
-      'Fev',
-      'Mar',
-      'Abr',
-      'Mai',
-      'Jun',
-      'Jul',
-      'Ago',
-      'Set',
-      'Out',
-      'Nov',
-      'Dez',
-    ],
-    dayOfWeek: [
-      'Domingo',
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
-      'Sábado',
-    ],
+    monthAbbr: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    dayOfWeek: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
     dayOfWeekAbbr: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   },
   legend: {
@@ -144,8 +123,7 @@ export default {
       },
       multiple: {
         prefix: '. It consists of {seriesCount} series count.',
-        withName:
-          ' The {seriesId} series is a {seriesType} representing {seriesName}.',
+        withName: ' The {seriesId} series is a {seriesType} representing {seriesName}.',
         withoutName: ' The {seriesId} series is a {seriesType}.',
         separator: {
           middle: '',

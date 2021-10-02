@@ -16,8 +16,7 @@ router.post('/expense', (req, res, next) => {
     expense
       .save()
       .then((savedExpense) => {
-        if (requested)
-          expensesMap[savedExpense._id] = cloneDeep(savedExpense.toJSON());
+        if (requested) expensesMap[savedExpense._id] = cloneDeep(savedExpense.toJSON());
         release();
         return res.status(201).json({
           message: 'Gasto cadastrado!',

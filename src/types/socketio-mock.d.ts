@@ -5,10 +5,7 @@ type Emitter = {
   listeners: (event: string) => Function[];
   hasListeners: (event: string) => boolean;
   on: (event: string, callback: (payload?: unknown) => void) => Emitter;
-  addEventListener: (
-    event: string,
-    callback: (payload?: unknown) => void
-  ) => Emitter;
+  addEventListener: (event: string, callback: (payload?: unknown) => void) => Emitter;
   off: (event?: string, fn?: Function) => Emitter;
   removeListener: (event: string, fn: Function) => Emitter;
   removeAllListeners: () => Emitter;
@@ -38,10 +35,7 @@ export type SocketMock = Emitter & {
   };
   _emitFn: () => void;
   emitEvent: (eventKey: string, payload?: unknown, ack?: () => void) => void;
-  onEmit: (
-    eventKey: string,
-    callback: (payload?: string, roomKey?: string) => void
-  ) => void;
+  onEmit: (eventKey: string, callback: (payload?: string, roomKey?: string) => void) => void;
   emit: (eventKey: string, payload?: unknown) => void;
   join: (roomKey: string) => void;
   leave: (roomKey: string) => void;

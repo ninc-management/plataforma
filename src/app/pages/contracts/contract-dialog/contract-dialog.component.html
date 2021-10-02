@@ -18,10 +18,7 @@
   >
     <nb-card
       *ngIf="
-        !this.isPayable &&
-          componentType === types.RECEIPT &&
-          paymentIndex === undefined &&
-          receiptIndex === undefined;
+        !this.isPayable && componentType === types.RECEIPT && paymentIndex === undefined && receiptIndex === undefined;
         else paymentCheck
       "
       [ngStyle]="{
@@ -69,11 +66,7 @@
               nbButton
               ghost
               nbTooltip="Fechar"
-              [nbTooltipTrigger]="
-                utils.isPhone()
-                  ? utils.tooltipTriggers.NOOP
-                  : utils.tooltipTriggers.HINT
-              "
+              [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
               nbTooltipPlacement="bottom"
               nbTooltipStatus="info"
               (click)="dismiss()"
@@ -105,36 +98,24 @@
             {{ title }}
             <div class="buttons">
               <a
-                *ngIf="
-                  onedriveUrl.length > 0 && componentType == types.CONTRACT
-                "
+                *ngIf="onedriveUrl.length > 0 && componentType == types.CONTRACT"
                 nbButton
                 ghost
                 [href]="onedriveUrl"
                 target="_blank"
                 nbTooltip="Abrir no Onedrive"
-                [nbTooltipTrigger]="
-                  utils.isPhone()
-                    ? utils.tooltipTriggers.NOOP
-                    : utils.tooltipTriggers.HINT
-                "
+                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
                 nbTooltipPlacement="bottom"
                 nbTooltipStatus="info"
               >
                 <nb-icon icon="onedrive" pack="fac"></nb-icon>
               </a>
               <button
-                *ngIf="
-                  onedriveUrl?.length === 0 && componentType == types.CONTRACT
-                "
+                *ngIf="onedriveUrl?.length === 0 && componentType == types.CONTRACT"
                 nbButton
                 ghost
                 nbTooltip="Criar pasta no Onedrive"
-                [nbTooltipTrigger]="
-                  utils.isPhone()
-                    ? utils.tooltipTriggers.NOOP
-                    : utils.tooltipTriggers.HINT
-                "
+                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
                 nbTooltipPlacement="bottom"
                 nbTooltipStatus="info"
                 (click)="addToOnedrive()"
@@ -145,11 +126,7 @@
                 nbButton
                 ghost
                 nbTooltip="Visualizar orçamento em outra aba"
-                [nbTooltipTrigger]="
-                  utils.isPhone()
-                    ? utils.tooltipTriggers.NOOP
-                    : utils.tooltipTriggers.HINT
-                "
+                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
                 nbTooltipPlacement="bottom"
                 nbTooltipStatus="info"
                 (click)="openPDFnewtab()"
@@ -160,11 +137,7 @@
                 nbButton
                 ghost
                 nbTooltip="Fechar"
-                [nbTooltipTrigger]="
-                  utils.isPhone()
-                    ? utils.tooltipTriggers.NOOP
-                    : utils.tooltipTriggers.HINT
-                "
+                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
                 nbTooltipPlacement="bottom"
                 nbTooltipStatus="info"
                 (click)="dismiss()"

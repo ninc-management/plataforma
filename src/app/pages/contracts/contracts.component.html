@@ -4,13 +4,7 @@
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row">
           <div class="col-2" style="padding-left: 0; padding-right: 0">
-            <button
-              nbButton
-              fullWidth
-              status="primary"
-              style="height: 100%"
-              (click)="downloadReport()"
-            >
+            <button nbButton fullWidth status="primary" style="height: 100%" (click)="downloadReport()">
               <i class="icon-file-csv" style="font-size: 1.5rem"></i>
             </button>
           </div>
@@ -48,9 +42,7 @@
       </ng-template>
       <ng-template #phone>
         <nb-list>
-          <nb-list-item
-            *ngFor="let contract of filtredContracts; let i = index"
-          >
+          <nb-list-item *ngFor="let contract of filtredContracts; let i = index">
             <a (click)="contractDialog({ data: contract }, true)">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
@@ -63,22 +55,14 @@
                 </div>
                 <div class="col-6">
                   <p>
-                    <nb-icon
-                      icon="dollar-sign"
-                      pack="fa"
-                      status="success"
-                    ></nb-icon>
+                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                     <span style="vertical-align: 0.1em">
                       {{ contract.value }}
                     </span>
                   </p>
                 </div>
                 <div class="col-6">
-                  <nb-icon
-                    icon="clock"
-                    pack="fa"
-                    [status]="statusColor(contract.status)"
-                  ></nb-icon>
+                  <nb-icon icon="clock" pack="fa" [status]="statusColor(contract.status)"></nb-icon>
                   <span style="vertical-align: 0.1em">
                     {{ contract.status }}
                   </span>

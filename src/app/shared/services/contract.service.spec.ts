@@ -1,18 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
-import {
-  ContractService,
-  CONTRACT_STATOOS,
-  EXPENSE_TYPES,
-  SPLIT_TYPES,
-} from './contract.service';
+import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES, SPLIT_TYPES } from './contract.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import {
-  Contract,
-  ContractReceipt,
-  ContractExpense,
-  ContractPayment,
-} from '@models/contract';
+import { Contract, ContractReceipt, ContractExpense, ContractPayment } from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
@@ -34,21 +24,14 @@ describe('ContractService', () => {
   let mockedContracts: Contract[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const authServiceSpy = jasmine.createSpyObj<AuthService>(
-    'AuthService',
-    ['userEmail'],
-    { onUserChange$: new Subject<void>() }
-  );
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', [
-    'fromEvent',
-  ]);
+  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
+    onUserChange$: new Subject<void>(),
+  });
+  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
-  const baseTest = (
-    name: string,
-    test: (expectedContracts: Contract[]) => void
-  ) => {
+  const baseTest = (name: string, test: (expectedContracts: Contract[]) => void) => {
     it(name, (done: DoneFn) => {
       let i = 1;
 
@@ -64,14 +47,10 @@ describe('ContractService', () => {
             }
             case 2: {
               i += 1;
-              const expectedContracts = JSON.parse(
-                JSON.stringify(mockedContracts),
-                (k, v) => {
-                  if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                    return parseISO(v);
-                  return v;
-                }
-              ) as Contract[];
+              const expectedContracts = JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
+                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+                return v;
+              }) as Contract[];
               expect(contracts.length).toBe(2);
               expect(contracts).toEqual(expectedContracts);
               test(expectedContracts);
@@ -286,8 +265,7 @@ describe('ContractService', () => {
             expect(contracts.length).toBe(2);
             expect(contracts).toEqual(
               JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
+                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
                 return v;
               }) as Contract[]
             );
@@ -308,14 +286,11 @@ describe('ContractService', () => {
             mockedContracts.push(tmpContract);
             expect(contracts).toEqual(
               JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
+                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
                 return v;
               }) as Contract[]
             );
-            const req3 = httpMock.expectOne(
-              'https://graph.microsoft.com/v1.0/drive/items/0/copy'
-            );
+            const req3 = httpMock.expectOne('https://graph.microsoft.com/v1.0/drive/items/0/copy');
             expect(req3.request.method).toBe('POST');
             req3.flush(null);
             done();
@@ -368,8 +343,7 @@ describe('ContractService', () => {
             expect(contracts.length).toBe(2);
             expect(contracts).toEqual(
               JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
+                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
                 return v;
               }) as Contract[]
             );
@@ -435,13 +409,9 @@ describe('ContractService', () => {
 
   baseTest('idToContract should work', (expectedContracts: Contract[]) => {
     expect(service.idToContract('0')).toEqual(expectedContracts[0]);
-    expect(service.idToContract(expectedContracts[0])).toEqual(
-      expectedContracts[0]
-    );
+    expect(service.idToContract(expectedContracts[0])).toEqual(expectedContracts[0]);
     expect(service.idToContract('1')).toEqual(expectedContracts[1]);
-    expect(service.idToContract(expectedContracts[1])).toEqual(
-      expectedContracts[1]
-    );
+    expect(service.idToContract(expectedContracts[1])).toEqual(expectedContracts[1]);
   });
 
   baseTest('hasReceipts should work', (expectedContracts: Contract[]) => {
@@ -471,87 +441,49 @@ describe('ContractService', () => {
   });
 
   it('netValueBalance should work', () => {
-    expect(
-      service.netValueBalance('60,00', mockedContracts[0], mockedUsers[0])
-    ).toBe('1.480,00');
-    expect(service.netValueBalance('40,00', mockedContracts[0], '1')).toBe(
-      '520,00'
-    );
-    expect(service.netValueBalance('60,00', mockedContracts[1], '0')).toBe(
-      '1.200,00'
-    );
-    expect(
-      service.netValueBalance('40,00', mockedContracts[1], mockedUsers[1])
-    ).toBe('800,00');
+    expect(service.netValueBalance('60,00', mockedContracts[0], mockedUsers[0])).toBe('1.480,00');
+    expect(service.netValueBalance('40,00', mockedContracts[0], '1')).toBe('520,00');
+    expect(service.netValueBalance('60,00', mockedContracts[1], '0')).toBe('1.200,00');
+    expect(service.netValueBalance('40,00', mockedContracts[1], mockedUsers[1])).toBe('800,00');
   });
 
   it('percentageToReceive should work', () => {
-    expect(
-      service.percentageToReceive('60,00', mockedUsers[0], mockedContracts[0])
-    ).toBe('74,00');
-    expect(service.percentageToReceive('40,00', '1', mockedContracts[0])).toBe(
-      '26,00'
-    );
-    expect(service.percentageToReceive('60,00', '0', mockedContracts[1])).toBe(
-      '45,00'
-    );
-    expect(
-      service.percentageToReceive('40,00', mockedUsers[1], mockedContracts[1])
-    ).toBe('55,00');
+    expect(service.percentageToReceive('60,00', mockedUsers[0], mockedContracts[0])).toBe('74,00');
+    expect(service.percentageToReceive('40,00', '1', mockedContracts[0])).toBe('26,00');
+    expect(service.percentageToReceive('60,00', '0', mockedContracts[1])).toBe('45,00');
+    expect(service.percentageToReceive('40,00', mockedUsers[1], mockedContracts[1])).toBe('55,00');
   });
 
   it('receivedValue should work', () => {
-    expect(service.receivedValue(mockedUsers[0], mockedContracts[0])).toBe(
-      '0,00'
-    );
+    expect(service.receivedValue(mockedUsers[0], mockedContracts[0])).toBe('0,00');
     expect(service.receivedValue('1', mockedContracts[0])).toBe('0,00');
     expect(service.receivedValue('0', mockedContracts[1])).toBe('750,00');
-    expect(service.receivedValue(mockedUsers[1], mockedContracts[1])).toBe(
-      '250,00'
-    );
+    expect(service.receivedValue(mockedUsers[1], mockedContracts[1])).toBe('250,00');
   });
 
   it('notPaidValue should work', () => {
-    expect(
-      service.notPaidValue('60,00', mockedUsers[0], mockedContracts[0])
-    ).toBe('1.480,00');
-    expect(service.notPaidValue('40,00', '1', mockedContracts[0])).toBe(
-      '520,00'
-    );
-    expect(service.notPaidValue('60,00', '0', mockedContracts[1])).toBe(
-      '450,00'
-    );
-    expect(
-      service.notPaidValue('40,00', mockedUsers[1], mockedContracts[1])
-    ).toBe('550,00');
+    expect(service.notPaidValue('60,00', mockedUsers[0], mockedContracts[0])).toBe('1.480,00');
+    expect(service.notPaidValue('40,00', '1', mockedContracts[0])).toBe('520,00');
+    expect(service.notPaidValue('60,00', '0', mockedContracts[1])).toBe('450,00');
+    expect(service.notPaidValue('40,00', mockedUsers[1], mockedContracts[1])).toBe('550,00');
   });
 
   it('toGrossValue should work', () => {
     expect(service.toGrossValue('100,00', '0', '0')).toBe('100,00');
     expect(service.toGrossValue('1.000,00', '0,00', '0,00')).toBe('1.000,00');
-    expect(service.toGrossValue('100.000,00', '8,5', '15,00')).toBe(
-      '128.576,02'
-    );
-    expect(service.toGrossValue('1.000.000,00', '15,5', '17,00')).toBe(
-      '1.425.821,63'
-    );
+    expect(service.toGrossValue('100.000,00', '8,5', '15,00')).toBe('128.576,02');
+    expect(service.toGrossValue('1.000.000,00', '15,5', '17,00')).toBe('1.425.821,63');
   });
 
   it('toNetValue should work', () => {
     expect(service.toNetValue('100,00', '0', '0')).toBe('100,00');
     expect(service.toNetValue('1.000,00', '0,00', '0,00')).toBe('1.000,00');
     expect(service.toNetValue('128.576,02', '8,5', '15,00')).toBe('100.000,00');
-    expect(service.toNetValue('1.425.821,63', '15,5', '17,00')).toBe(
-      '1.000.000,00'
-    );
+    expect(service.toNetValue('1.425.821,63', '15,5', '17,00')).toBe('1.000.000,00');
   });
 
   it('subtractComissions should work', () => {
-    expect(service.subtractComissions('1.000,00', mockedContracts[0])).toBe(
-      '800,00'
-    );
-    expect(service.subtractComissions('2.000,00', mockedContracts[1])).toBe(
-      '2.000,00'
-    );
+    expect(service.subtractComissions('1.000,00', mockedContracts[0])).toBe('800,00');
+    expect(service.subtractComissions('2.000,00', mockedContracts[1])).toBe('2.000,00');
   });
 });

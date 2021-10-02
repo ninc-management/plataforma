@@ -22,21 +22,14 @@ describe('InvoiceService', () => {
   let mockedInvoices: Invoice[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const authServiceSpy = jasmine.createSpyObj<AuthService>(
-    'AuthService',
-    ['userEmail'],
-    { onUserChange$: new Subject<void>() }
-  );
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', [
-    'fromEvent',
-  ]);
+  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
+    onUserChange$: new Subject<void>(),
+  });
+  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
-  const baseTest = (
-    name: string,
-    test: (expectedInvoices: Invoice[]) => void
-  ) => {
+  const baseTest = (name: string, test: (expectedInvoices: Invoice[]) => void) => {
     it(name, (done: DoneFn) => {
       let i = 1;
 
@@ -51,13 +44,10 @@ describe('InvoiceService', () => {
               break;
             }
             case 2: {
-              const expectedInvoices = JSON.parse(
-                JSON.stringify(mockedInvoices),
-                (k, v) => {
-                  if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                  return v;
-                }
-              ) as Invoice[];
+              const expectedInvoices = JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
+                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
+                return v;
+              }) as Invoice[];
               expect(invoices.length).toBe(2);
               expect(invoices).toEqual(expectedInvoices);
               test(expectedInvoices);
@@ -313,13 +303,9 @@ describe('InvoiceService', () => {
 
   baseTest('idToInvoice should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToInvoice('0')).toEqual(expectedInvoices[0]);
-    expect(service.idToInvoice(expectedInvoices[0])).toEqual(
-      expectedInvoices[0]
-    );
+    expect(service.idToInvoice(expectedInvoices[0])).toEqual(expectedInvoices[0]);
     expect(service.idToInvoice('1')).toEqual(expectedInvoices[1]);
-    expect(service.idToInvoice(expectedInvoices[1])).toEqual(
-      expectedInvoices[1]
-    );
+    expect(service.idToInvoice(expectedInvoices[1])).toEqual(expectedInvoices[1]);
   });
 
   baseTest('idToCode should work', (expectedInvoices: Invoice[]) => {
@@ -334,26 +320,20 @@ describe('InvoiceService', () => {
     expect(service.isInvoiceAuthor('0', '0')).toBe(true);
     expect(service.isInvoiceAuthor(expectedInvoices[1], '1')).toBe(true);
     expect(service.isInvoiceAuthor('0', mockedUsers[1])).toBe(false);
-    expect(service.isInvoiceAuthor(expectedInvoices[1], mockedUsers[0])).toBe(
-      false
-    );
+    expect(service.isInvoiceAuthor(expectedInvoices[1], mockedUsers[0])).toBe(false);
   });
 
   baseTest('isInvoiceMember should work', (expectedInvoices: Invoice[]) => {
     expect(service.isInvoiceMember('1', '0')).toBe(true);
     expect(service.isInvoiceMember(expectedInvoices[0], '1')).toBe(true);
     expect(service.isInvoiceMember('1', mockedUsers[1])).toBe(false);
-    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])).toBe(
-      false
-    );
+    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])).toBe(false);
   });
 
   baseTest('role should work', (expectedInvoices: Invoice[]) => {
     expect(service.role(expectedInvoices[0], mockedUsers[0])).toBe('Gestor');
     expect(service.role(expectedInvoices[0], mockedUsers[1])).toBe('Equipe');
-    expect(service.role(expectedInvoices[0], CONTRACT_BALANCE as User)).toBe(
-      'Nenhum'
-    );
+    expect(service.role(expectedInvoices[0], CONTRACT_BALANCE as User)).toBe('Nenhum');
     expect(service.role(expectedInvoices[1], mockedUsers[1])).toBe('Gestor');
     expect(service.role(expectedInvoices[1], mockedUsers[0])).toBe('Equipe');
   });

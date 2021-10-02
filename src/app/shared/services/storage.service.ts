@@ -1,7 +1,4 @@
-import {
-  AngularFireStorage,
-  AngularFireUploadTask,
-} from '@angular/fire/storage';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
@@ -41,15 +38,10 @@ export class StorageService implements OnDestroy {
     switch (provider) {
       case StorageProvider.FIREBASE: {
         const filePath = `${mediaFolderPath}/${fileName}`;
-        const uploadTask: AngularFireUploadTask = this.storage.upload(
-          filePath,
-          fileToUpload
-        );
+        const uploadTask: AngularFireUploadTask = this.storage.upload(filePath, fileToUpload);
         return {
           downloadUrl$: this.getDownloadUrl$(uploadTask, filePath),
-          uploadProgress$: uploadTask
-            .percentageChanges()
-            .pipe(filter((p): p is number => p != undefined)),
+          uploadProgress$: uploadTask.percentageChanges().pipe(filter((p): p is number => p != undefined)),
         };
       }
       case StorageProvider.ONEDRIVE: {
@@ -84,12 +76,7 @@ export class StorageService implements OnDestroy {
     }
   }
 
-  private getDownloadUrl$(
-    uploadTask: AngularFireUploadTask,
-    path: string
-  ): Observable<string> {
-    return from(uploadTask).pipe(
-      switchMap((_) => this.storage.ref(path).getDownloadURL())
-    );
+  private getDownloadUrl$(uploadTask: AngularFireUploadTask, path: string): Observable<string> {
+    return from(uploadTask).pipe(switchMap((_) => this.storage.ref(path).getDownloadURL()));
   }
 }

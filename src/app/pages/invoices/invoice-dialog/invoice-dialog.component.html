@@ -16,23 +16,15 @@
           <button
             nbButton
             ghost
-            *ngIf="
-              utils.isPhone() && invoice._id !== undefined && !invoice.model
-            "
+            *ngIf="utils.isPhone() && invoice._id !== undefined && !invoice.model"
             (click)="generatePDF()"
           >
-            <nb-icon
-              icon="file-pdf"
-              pack="far"
-              style="font-size: 18px"
-            ></nb-icon>
+            <nb-icon icon="file-pdf" pack="far" style="font-size: 18px"></nb-icon>
           </button>
           <button
             nbButton
             ghost
-            *ngIf="
-              !utils.isPhone() && invoice._id !== undefined && !invoice.model
-            "
+            *ngIf="!utils.isPhone() && invoice._id !== undefined && !invoice.model"
             nbTooltip="Visualizar orçamento"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
@@ -45,11 +37,7 @@
             ghost
             *ngIf="invoice._id !== undefined && !invoice.model"
             nbTooltip="Usar como modelo"
-            [nbTooltipTrigger]="
-              utils.isPhone()
-                ? utils.tooltipTriggers.NOOP
-                : utils.tooltipTriggers.HINT
-            "
+            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="useAsModel()"
@@ -60,11 +48,7 @@
             nbButton
             ghost
             nbTooltip="Fechar"
-            [nbTooltipTrigger]="
-              utils.isPhone()
-                ? utils.tooltipTriggers.NOOP
-                : utils.tooltipTriggers.HINT
-            "
+            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="dismiss()"

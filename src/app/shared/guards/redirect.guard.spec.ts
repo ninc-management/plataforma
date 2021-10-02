@@ -27,18 +27,12 @@ describe('RedirectGuard', () => {
 
   it('Can active return true', () => {
     guard.useWindow(localWindow);
-    expect(guard.canActivate(next, stateSpy)).toBe(
-      true,
-      'Can activate always return true'
-    );
+    expect(guard.canActivate(next, stateSpy)).toBe(true, 'Can activate always return true');
   });
 
   it('Should rediret to google', () => {
     guard.useWindow(localWindow);
     guard.canActivate(next, stateSpy);
-    expect(localWindow.location.href).toBe(
-      'https://google.com',
-      'Should be redirected to google'
-    );
+    expect(localWindow.location.href).toBe('https://google.com', 'Should be redirected to google');
   });
 });

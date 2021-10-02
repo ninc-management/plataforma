@@ -44,10 +44,7 @@ export class TeamItemComponent implements OnInit {
       this.team = cloneDeep(this.iTeam);
       this.leaderSearch = this.userService.idToName(this.team.leader);
     }
-    this.availableUsers = combineLatest([
-      this.userService.getUsers(),
-      this.memberChanged$,
-    ]).pipe(
+    this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
           return this.team.members.find((member: User | string | undefined) =>
@@ -59,10 +56,7 @@ export class TeamItemComponent implements OnInit {
       })
     );
 
-    this.avaliableLeaders = combineLatest([
-      this.userService.getUsers(),
-      this.memberChanged$,
-    ]).pipe(
+    this.avaliableLeaders = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
           return this.team.members.find((member: User | string | undefined) =>

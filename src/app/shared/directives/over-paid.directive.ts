@@ -23,8 +23,7 @@ export class OverPaidDirective implements Validator {
   validate(control: AbstractControl): { [key: string]: any } | null {
     if (!control.value) return null;
     const forbidden =
-      this.stringUtilService.moneyToNumber(control.value) >
-      this.stringUtilService.moneyToNumber(this.maxMoney);
+      this.stringUtilService.moneyToNumber(control.value) > this.stringUtilService.moneyToNumber(this.maxMoney);
     return forbidden ? { overpaid: { value: control.value } } : null;
   }
 }

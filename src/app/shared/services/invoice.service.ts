@@ -54,8 +54,7 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res['invoice'];
-        if (savedInvoice.status === INVOICE_STATOOS.FECHADO)
-          this.contractService.saveContract(savedInvoice);
+        if (savedInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(savedInvoice);
       });
   }
 
@@ -82,9 +81,7 @@ export class InvoiceService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.invoices$, 'invoices')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.invoices$, 'invoices'));
     }
 
     return this.invoices$;
@@ -101,17 +98,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   idToInvoice(id: string | Invoice): Invoice {
-    if (
-      this.utils.isOfType<Invoice>(id, [
-        '_id',
-        'author',
-        'department',
-        'coordination',
-        'code',
-        'type',
-        'contractor',
-      ])
-    )
+    if (this.utils.isOfType<Invoice>(id, ['_id', 'author', 'department', 'coordination', 'code', 'type', 'contractor']))
       return id;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
@@ -129,11 +116,7 @@ export class InvoiceService implements OnDestroy {
   isInvoiceMember(iId: string | Invoice, uId: string | User): boolean {
     const invoice = this.idToInvoice(iId);
     if (invoice.team)
-      return invoice.team.filter((member) =>
-        this.userService.isEqual(member.user, uId)
-      ).length > 0
-        ? true
-        : false;
+      return invoice.team.filter((member) => this.userService.isEqual(member.user, uId)).length > 0 ? true : false;
     return false;
   }
 
@@ -144,10 +127,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   setDefaultDistribution(invoice: Invoice): Invoice {
-    const defaultDistribution = this.stringUtil.numberToString(
-      100 / invoice.team.length,
-      20
-    );
+    const defaultDistribution = this.stringUtil.numberToString(100 / invoice.team.length, 20);
 
     const tmpInvoice = cloneDeep(invoice);
     tmpInvoice.team = invoice.team.map((member) => ({

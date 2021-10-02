@@ -29,9 +29,7 @@
               ? 'success'
               : 'basic'
           "
-          [attr.aria-invalid]="
-            contractList.invalid && contractList.touched ? true : null
-          "
+          [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
         ></nb-completer>
       </div>
     </div>
@@ -91,30 +89,20 @@
             <p class="caption">Valor em caixa: R$ {{ contract.balance }}</p>
             <p
               class="caption status-danger"
-              *ngIf="
-                value.errors?.overpaid &&
-                value.invalid &&
-                (value.dirty || value.touched)
-              "
+              *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
             >
               O valor do empenho é superior ao valor em caixa no contrato!
             </p>
             <p
               class="caption status-danger"
-              *ngIf="
-                value.errors?.required &&
-                value.invalid &&
-                (value.dirty || value.touched)
-              "
+              *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
             >
               O valor do empenho é obrigatório!
             </p>
             <p
               class="caption status-danger"
               *ngIf="
-                (value.errors?.minlength || value.errors?.maxlength) &&
-                value.invalid &&
-                (value.dirty || value.touched)
+                (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
               "
             >
               O valor do empenho deve conter entre {{ validation.value.minLength }} a {{ validation.value.maxLength }}
@@ -137,16 +125,8 @@
             size="large"
             (ngModelChange)="updatePaidDate()"
             [required]="validation.paidCheck.required"
-            [status]="
-              paidCheck.dirty
-                ? 'success'
-                : paymentIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              paidCheck.invalid && paidCheck.touched ? true : null
-            "
+            [status]="paidCheck.dirty ? 'success' : paymentIndex === undefined ? 'success' : 'basic'"
+            [attr.aria-invalid]="paidCheck.invalid && paidCheck.touched ? true : null"
           >
             <nb-option [value]="false">NÃO</nb-option>
             <nb-option [value]="true">SIM</nb-option>
@@ -177,9 +157,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              paidDate.invalid && paidDate.touched ? true : null
-            "
+            [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
           <ng-template #withdate>
             <input
@@ -203,9 +181,7 @@
                   ? 'success'
                   : 'basic'
               "
-              [attr.aria-invalid]="
-                paidDate.invalid && paidDate.touched ? true : null
-              "
+              [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
             />
             <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
           </ng-template>
@@ -235,9 +211,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              created.invalid && created.touched ? true : null
-            "
+            [attr.aria-invalid]="created.invalid && created.touched ? true : null"
           />
           <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
         </div>
@@ -265,9 +239,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              updated.invalid && updated.touched ? true : null
-            "
+            [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
           />
         </div>
       </div>
@@ -286,18 +258,14 @@
             [required]="validation.service.required"
             [minlength]="validation.service.minLength"
             [maxlength]="validation.service.maxLength"
-            [status]="
-              service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
-            "
-            [attr.aria-invalid]="
-              service.invalid && service.touched ? true : null
-            "
+            [status]="service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="service.invalid && service.touched ? true : null"
           ></textarea>
           <ng-container *ngIf="service.invalid && service.touched">
             <p class="caption status-danger" *ngIf="service.errors?.required">O campo de serviço é obrigatório!</p>
             <p class="caption status-danger" *ngIf="service.errors?.minlength || service.errors?.maxlength">
-              O campo de serviço deve conter entre {{ validation.service.minLength }} a {{ validation.service.maxLength
-              }} caracteres
+              O campo de serviço deve conter entre {{ validation.service.minLength }} a
+              {{ validation.service.maxLength }} caracteres
             </p>
           </ng-container>
         </div>
@@ -331,21 +299,11 @@
             [data$]="availableUsers"
             [minSearchLength]="0"
             [placeholder]="'Digite o nome do colaborador'"
-            [textNoResults]="
-              'Não foi possível achar um colaborador com o nome digitado'
-            "
+            [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
             [fullWidth]="true"
             [fieldSize]="'large'"
-            [status]="
-              userList.dirty && userSearch
-                ? userList.invalid
-                  ? 'danger'
-                  : 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              userList.invalid && userList.touched ? true : null
-            "
+            [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
           ></nb-completer>
         </div>
       </div>
@@ -362,9 +320,7 @@
             fullWidth
             size="large"
             [status]="coordination.value ? 'success' : 'basic'"
-            [attr.aria-invalid]="
-              coordination.invalid && coordination.touched ? true : null
-            "
+            [attr.aria-invalid]="coordination.invalid && coordination.touched ? true : null"
           >
             <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
               {{ coordination }}
@@ -425,13 +381,7 @@
       </div>
     </div>
     <nb-list style="width: 100%; padding: 10px 0">
-      <nb-list-item
-        *ngFor="
-          let userPayment of payment.team;
-          let i = index;
-          trackBy: utils.trackByIndex
-        "
-      >
+      <nb-list-item *ngFor="let userPayment of payment.team; let i = index; trackBy: utils.trackByIndex">
         <div class="row paymentRow">
           <div class="col-12 col-md-4">
             {{ userService.idToName(userPayment.user) }}
@@ -451,11 +401,7 @@
               fullWidth
             >
               <nb-option
-                *ngFor="
-                  let coordination of departmentService.userCoordinations(
-                    payment.team[i].user
-                  )
-                "
+                *ngFor="let coordination of departmentService.userCoordinations(payment.team[i].user)"
                 [value]="coordination"
               >
                 {{ coordination }}
@@ -562,9 +508,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="
-        submitted || !form.valid || isTeamEmpty() || total !== payment.value
-      "
+      [disabled]="submitted || !form.valid || isTeamEmpty() || total !== payment.value"
       [class.btn-pulse]="submitted"
     >
       {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}

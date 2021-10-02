@@ -19,13 +19,8 @@
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
         />
         <ng-container *ngIf="name.invalid && name.touched">
-          <p class="caption status-danger" *ngIf="name.errors?.required">
-            O nome da promoção é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="name.errors?.minlength || name.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="name.errors?.required">O nome da promoção é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
             O nome da promoção deve conter entre
             {{ validation.name.minLength }} a
             {{ validation.name.maxLength }}
@@ -36,9 +31,7 @@
     </div>
     <div class="col-4">
       <div class="form-control-group">
-        <label class="label" for="input-cashback">
-          Porcentagem de cashback:
-        </label>
+        <label class="label" for="input-cashback">Porcentagem de cashback:</label>
         <input
           nbInput
           [(ngModel)]="promotion.cashback"
@@ -58,14 +51,10 @@
           }"
           ngxSelectAllText
           [status]="validateStatus(cashback)"
-          [attr.aria-invalid]="
-            cashback.invalid && cashback.touched ? true : null
-          "
+          [attr.aria-invalid]="cashback.invalid && cashback.touched ? true : null"
         />
         <ng-container *ngIf="cashback.invalid && cashback.touched">
-          <p class="caption status-danger" *ngIf="cashback.errors?.required">
-            O cashback da promoção é obrigatório!
-          </p>
+          <p class="caption status-danger" *ngIf="cashback.errors?.required">O cashback da promoção é obrigatório!</p>
         </ng-container>
       </div>
     </div>
@@ -170,9 +159,7 @@
           [nbDatepicker]="lastUpdateDatePicker"
           [required]="validation.lastUpdate.required"
           [status]="validateStatus(lastUpdate)"
-          [attr.aria-invalid]="
-            lastUpdate.invalid && lastUpdate.touched ? true : null
-          "
+          [attr.aria-invalid]="lastUpdate.invalid && lastUpdate.touched ? true : null"
           [readonly]="true"
         />
         <nb-datepicker #lastUpdateDatePicker [max]="today"></nb-datepicker>
@@ -202,9 +189,7 @@
           size="large"
           [required]="validation.ruleObject"
           [status]="validateStatus(ruleObject)"
-          [attr.aria-invalid]="
-            ruleObject.invalid && ruleObject.touched ? true : null
-          "
+          [attr.aria-invalid]="ruleObject.invalid && ruleObject.touched ? true : null"
         >
           <nb-option *ngFor="let ruleObject of pObjTypes" [value]="ruleObject">
             {{ ruleObject }}
@@ -226,14 +211,9 @@
           size="large"
           [required]="validation.ruleOperator"
           [status]="validateStatus(ruleOperator)"
-          [attr.aria-invalid]="
-            ruleOperator.invalid && ruleOperator.touched ? true : null
-          "
+          [attr.aria-invalid]="ruleOperator.invalid && ruleOperator.touched ? true : null"
         >
-          <nb-option
-            *ngFor="let ruleOperator of pOpTypes"
-            [value]="ruleOperator"
-          >
+          <nb-option *ngFor="let ruleOperator of pOpTypes" [value]="ruleOperator">
             {{ ruleOperator }}
           </nb-option>
         </nb-select>
@@ -261,9 +241,7 @@
           }"
           ngxSelectAllText
           [status]="validateStatus(ruleValue)"
-          [attr.aria-invalid]="
-            ruleValue.invalid && ruleValue.touched ? true : null
-          "
+          [attr.aria-invalid]="ruleValue.invalid && ruleValue.touched ? true : null"
         />
       </div>
     </div>
@@ -284,13 +262,6 @@
   ></ng2-smart-table>
   <ng-template #phone></ng-template>
 </form>
-<button
-  (click)="registerPromotion()"
-  nbButton
-  fullWidth
-  status="primary"
-  size="large"
-  [disabled]="form.invalid"
->
+<button (click)="registerPromotion()" nbButton fullWidth status="primary" size="large" [disabled]="form.invalid">
   {{ editing ? 'Atualizar' : 'Cadastrar' }}
 </button>

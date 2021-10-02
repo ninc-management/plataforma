@@ -5,19 +5,10 @@ import { map, take } from 'rxjs/operators';
 import { startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
-import {
-  MetricsService,
-  TimeSeries,
-} from 'app/shared/services/metrics.service';
+import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
-import {
-  COMPONENT_TYPES,
-  ContractDialogComponent,
-} from '../contracts/contract-dialog/contract-dialog.component';
-import {
-  DashboardDialogComponent,
-  DASHBOARD_COMPONENT_TYPES,
-} from './dashboard-dialog/dashboard-dialog.component';
+import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
+import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard-dialog/dashboard-dialog.component';
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -86,57 +77,49 @@ export class DashboardComponent {
         this.metricsService.expensesTimeSeries(user._id),
         this.metricsService.contractValueTimeSeries(user._id),
       ]).pipe(
-        map(
-          ([
-            receivedSeriesItems,
-            expensesSeriesItems,
-            contractValueSeriesItems,
-          ]) => {
-            const received: TimeSeries = {
-              name: 'Recebido',
-              type: 'bar',
-              smooth: false,
-              cumulative: false,
-              symbol: 'none',
-              barGap: '-100%',
-              barMaxWidth: 25,
-              isMoney: true,
-              data: receivedSeriesItems,
-            };
-            const expenses: TimeSeries = {
-              name: 'Despesas',
-              type: 'bar',
-              smooth: false,
-              cumulative: false,
-              symbol: 'none',
-              barGap: '-100%',
-              barMaxWidth: 25,
-              isMoney: true,
-              data: expensesSeriesItems,
-            };
-            const contractsValue: TimeSeries = {
-              name: 'Total em contratos',
-              type: 'line',
-              smooth: false,
-              cumulative: true,
-              symbol: 'circle',
-              isMoney: true,
-              data: contractValueSeriesItems,
-            };
-            const balance: TimeSeries = {
-              name: 'Balanço',
-              type: 'line',
-              smooth: false,
-              cumulative: true,
-              symbol: 'circle',
-              isMoney: true,
-              data: this.utils.groupByDateTimeSerie(
-                receivedSeriesItems.concat(expensesSeriesItems)
-              ),
-            };
-            return [received, expenses, contractsValue, balance];
-          }
-        )
+        map(([receivedSeriesItems, expensesSeriesItems, contractValueSeriesItems]) => {
+          const received: TimeSeries = {
+            name: 'Recebido',
+            type: 'bar',
+            smooth: false,
+            cumulative: false,
+            symbol: 'none',
+            barGap: '-100%',
+            barMaxWidth: 25,
+            isMoney: true,
+            data: receivedSeriesItems,
+          };
+          const expenses: TimeSeries = {
+            name: 'Despesas',
+            type: 'bar',
+            smooth: false,
+            cumulative: false,
+            symbol: 'none',
+            barGap: '-100%',
+            barMaxWidth: 25,
+            isMoney: true,
+            data: expensesSeriesItems,
+          };
+          const contractsValue: TimeSeries = {
+            name: 'Total em contratos',
+            type: 'line',
+            smooth: false,
+            cumulative: true,
+            symbol: 'circle',
+            isMoney: true,
+            data: contractValueSeriesItems,
+          };
+          const balance: TimeSeries = {
+            name: 'Balanço',
+            type: 'line',
+            smooth: false,
+            cumulative: true,
+            symbol: 'circle',
+            isMoney: true,
+            data: this.utils.groupByDateTimeSerie(receivedSeriesItems.concat(expensesSeriesItems)),
+          };
+          return [received, expenses, contractsValue, balance];
+        })
       );
     });
   }

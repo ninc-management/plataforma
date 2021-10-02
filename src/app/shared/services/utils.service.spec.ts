@@ -77,9 +77,7 @@ describe('UtilsService', () => {
     expect(service.isValidDate(subYears(date, 1), 'Ano')).toBe(true);
     expect(service.isValidDate(date, 'Ano')).toBe(false);
     expect(service.isValidDate(subMonths(date, 2), 'Mês', 2)).toBe(true);
-    expect(
-      service.isValidDate(subDays(subMonths(date, 2), 1), 'Mês', 2, true)
-    ).toBe(false);
+    expect(service.isValidDate(subDays(subMonths(date, 2), 1), 'Mês', 2, true)).toBe(false);
   });
 
   it('formatDate should work', () => {
@@ -92,15 +90,9 @@ describe('UtilsService', () => {
     const start = new Date('Jun 01, 2021');
     const end = new Date('Jun 31, 2021');
     expect(service.isWithinInterval(date, start, end)).toBe(true);
-    expect(service.isWithinInterval(addMonths(date, 1), start, end)).toBe(
-      false
-    );
-    expect(
-      service.isWithinInterval(date, addMonths(start, 1), addMonths(end, 1))
-    ).toBe(false);
-    expect(
-      service.isWithinInterval(date, subMonths(start, 1), subMonths(end, 1))
-    ).toBe(false);
+    expect(service.isWithinInterval(addMonths(date, 1), start, end)).toBe(false);
+    expect(service.isWithinInterval(date, addMonths(start, 1), addMonths(end, 1))).toBe(false);
+    expect(service.isWithinInterval(date, subMonths(start, 1), subMonths(end, 1))).toBe(false);
     expect(service.isWithinInterval(date, subMonths(start, 1), end)).toBe(true);
     expect(service.isWithinInterval(date, start, addMonths(end, 1))).toBe(true);
   });
@@ -153,9 +145,7 @@ describe('UtilsService', () => {
   it('isOfType should work', () => {
     let test: TestComponent | User = new User();
     expect(service.isOfType<User>(test, ['position', 'expertise'])).toBe(true);
-    expect(service.isOfType<TestComponent>(test, ['value', 'items'])).toBe(
-      false
-    );
+    expect(service.isOfType<TestComponent>(test, ['value', 'items'])).toBe(false);
   });
 
   it('nfPercentage should work', () => {

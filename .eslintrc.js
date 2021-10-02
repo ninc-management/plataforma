@@ -4,10 +4,7 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: [
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-  ],
+  extends: ['plugin:@typescript-eslint/eslint-recommended', 'plugin:@typescript-eslint/recommended'],
   globals: {},
   parser: '@typescript-eslint/parser',
   parserOptions: {

@@ -20,16 +20,7 @@ import { environment } from 'app/../environments/environment';
         tag="menu-sidebar"
         responsive
         start
-        [compactedBreakpoints]="[
-          'xs',
-          'is',
-          'sm',
-          'md',
-          'lg',
-          'xl',
-          'xxl',
-          'xxxl'
-        ]"
+        [compactedBreakpoints]="['xs', 'is', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl']"
         #sidebar
       >
         <ng-content select="[slot=main]"></ng-content>
@@ -51,8 +42,6 @@ export class OneColumnLayoutComponent {
   sidebarRef!: ElementRef<HTMLElement>;
 
   headerColor(): string {
-    return environment.demo != undefined
-      ? 'var(--alert-accent-danger-color)'
-      : 'var(--header-background-color)';
+    return environment.demo != undefined ? 'var(--alert-accent-danger-color)' : 'var(--header-background-color)';
   }
 }

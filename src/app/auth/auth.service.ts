@@ -1,11 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import {
-  MSAL_GUARD_CONFIG,
-  MsalGuardConfiguration,
-  MsalService,
-  MsalBroadcastService,
-} from '@azure/msal-angular';
+import { MSAL_GUARD_CONFIG, MsalGuardConfiguration, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { filter, take, map, takeUntil } from 'rxjs/operators';
 import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { HttpClient } from '@angular/common/http';
@@ -36,9 +31,7 @@ export class AuthService {
       )
       .subscribe((msg: EventMessage) => {
         this.onUserChange$.next();
-        this.msAuthService.instance.setActiveAccount(
-          (msg.payload as any).account
-        );
+        this.msAuthService.instance.setActiveAccount((msg.payload as any).account);
       });
   }
 
@@ -47,9 +40,7 @@ export class AuthService {
     if (acc) return acc.username;
     else {
       if (this.msAuthService.instance.getAllAccounts().length > 0) {
-        this.msAuthService.instance.setActiveAccount(
-          this.msAuthService.instance.getAllAccounts()[0]
-        );
+        this.msAuthService.instance.setActiveAccount(this.msAuthService.instance.getAllAccounts()[0]);
         acc = this.msAuthService.instance.getActiveAccount();
         if (acc) return acc.username;
       }
@@ -58,9 +49,7 @@ export class AuthService {
   }
 
   msLogin(): Observable<EventMessage> {
-    this.msAuthService
-      .loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest)
-      .subscribe();
+    this.msAuthService.loginPopup({ ...this.msalGuardConfig.authRequest } as PopupRequest).subscribe();
 
     return this.msalBroadcastService.msalSubject$.pipe(
       filter(

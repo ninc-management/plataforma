@@ -15,17 +15,8 @@ import { FileDropDirective } from './file-drop.directive';
 
 @NgModule({
   imports: [CommonModule, NbProgressBarModule, NbButtonModule],
-  declarations: [
-    NbFileUploaderComponent,
-    NbUploadQueueComponent,
-    NbUploadQueueItemComponent,
-    FileDropDirective,
-  ],
-  exports: [
-    NbFileUploaderComponent,
-    NbUploadQueueComponent,
-    NbUploadQueueItemComponent,
-  ],
+  declarations: [NbFileUploaderComponent, NbUploadQueueComponent, NbUploadQueueItemComponent, FileDropDirective],
+  exports: [NbFileUploaderComponent, NbUploadQueueComponent, NbUploadQueueItemComponent],
   providers: [],
 })
 export class NbFileUploaderModule {}

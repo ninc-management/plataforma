@@ -31,18 +31,11 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     // canActive can return Observable<boolean>, which is exactly what isAuthenticated returns
     return this.authService.isAuthenticated().pipe(
       tap((authenticated) => {
-        if (
-          !authenticated ||
-          this.msAuthService.instance.getAllAccounts().length === 0
-        ) {
+        if (!authenticated || this.msAuthService.instance.getAllAccounts().length === 0) {
           this.router.navigate(['auth/login']);
         }
       })
@@ -52,18 +45,12 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     if (childRoute.data?.permission == undefined) return true;
-    return this.accessChecker
-      .isGranted(childRoute.data.permission, childRoute.data.resource)
-      .pipe(
-        tap((isGranted) => {
-          if (!isGranted) this.router.navigate(['/']);
-        })
-      );
+    return this.accessChecker.isGranted(childRoute.data.permission, childRoute.data.resource).pipe(
+      tap((isGranted) => {
+        if (!isGranted) this.router.navigate(['/']);
+      })
+    );
   }
 }

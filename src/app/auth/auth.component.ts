@@ -9,11 +9,7 @@ import { AuthService } from './auth.service';
   styleUrls: ['./auth.component.scss'],
 })
 export class NgxAuthComponent extends NbAuthComponent {
-  constructor(
-    protected auth: NbAuthService,
-    protected location: Location,
-    public authService: AuthService
-  ) {
+  constructor(protected auth: NbAuthService, protected location: Location, public authService: AuthService) {
     super(auth, location);
   }
 }

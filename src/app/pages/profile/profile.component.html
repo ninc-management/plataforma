@@ -46,29 +46,15 @@
                       [required]="validation.fullName.required"
                       [minlength]="validation.fullName.minLength"
                       [maxlength]="validation.fullName.maxLength"
-                      [status]="
-                        fullName.dirty
-                          ? fullName.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        fullName.invalid && fullName.touched ? true : null
-                      "
+                      [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
                       [disabled]="!isEditing"
                     />
                     <ng-container *ngIf="fullName.invalid && fullName.touched">
                       <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="
-                          fullName.errors?.minlength ||
-                          fullName.errors?.maxlength
-                        "
-                      >
-                        O nome deve conter entre {{ validation.fullName.minLength }} a {{ validation.fullName.maxLength
-                        }} caracteres
+                      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
+                        O nome deve conter entre {{ validation.fullName.minLength }} a
+                        {{ validation.fullName.maxLength }} caracteres
                       </p>
                     </ng-container>
                   </div>
@@ -89,30 +75,17 @@
                       [required]="validation.exibitionName.required"
                       [minlength]="validation.exibitionName.minLength"
                       [maxlength]="validation.exibitionName.maxLength"
-                      [status]="
-                        exibitionName.dirty
-                          ? exibitionName.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        exibitionName.invalid && exibitionName.touched
-                          ? true
-                          : null
-                      "
+                      [status]="exibitionName.dirty ? (exibitionName.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="exibitionName.invalid && exibitionName.touched ? true : null"
                       [disabled]="!isEditing"
                     />
                     <ng-container *ngIf="exibitionName.invalid && exibitionName.touched">
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          exibitionName.errors?.minlength ||
-                          exibitionName.errors?.maxlength
-                        "
+                        *ngIf="exibitionName.errors?.minlength || exibitionName.errors?.maxlength"
                       >
-                        O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a {{
-                        validation.exibitionName.maxLength }} caracteres
+                        O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a
+                        {{ validation.exibitionName.maxLength }} caracteres
                       </p>
                     </ng-container>
                   </div>
@@ -130,19 +103,9 @@
                       fullWidth
                       size="large"
                       [required]="validation.themeSelector.required"
-                      [status]="
-                        themeSelector.dirty
-                          ? themeSelector.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
+                      [status]="themeSelector.dirty ? (themeSelector.invalid ? 'danger' : 'success') : 'basic'"
                       (selectedChange)="changeTheme()"
-                      [attr.aria-invalid]="
-                        themeSelector.invalid && themeSelector.touched
-                          ? true
-                          : null
-                      "
+                      [attr.aria-invalid]="themeSelector.invalid && themeSelector.touched ? true : null"
                       [disabled]="!isEditing"
                     >
                       <nb-option *ngFor="let theme of THEMES" [value]="theme.value">{{ theme.name }}</nb-option>
@@ -165,17 +128,9 @@
                       placeholder="Endereço de email"
                       fullWidth
                       fieldSize="large"
-                      [status]="
-                        email.dirty
-                          ? email.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
+                      [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
                       [required]="validation.email.required"
-                      [attr.aria-invalid]="
-                        email.invalid && email.touched ? true : null
-                      "
+                      [attr.aria-invalid]="email.invalid && email.touched ? true : null"
                       [disabled]="true"
                     />
                     <ng-container *ngIf="email.invalid && email.touched">
@@ -198,17 +153,9 @@
                       placeholder="Endereço de emailNortan"
                       fullWidth
                       fieldSize="large"
-                      [status]="
-                        emailNortan.dirty
-                          ? emailNortan.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
+                      [status]="emailNortan.dirty ? (emailNortan.invalid ? 'danger' : 'success') : 'basic'"
                       [required]="validation.emailNortan.required"
-                      [attr.aria-invalid]="
-                        emailNortan.invalid && emailNortan.touched ? true : null
-                      "
+                      [attr.aria-invalid]="emailNortan.invalid && emailNortan.touched ? true : null"
                       [disabled]="!isEditing"
                     />
                     <ng-container *ngIf="emailNortan.invalid && emailNortan.touched">
@@ -241,27 +188,13 @@
                       [required]="validation.document.required"
                       [minlength]="validation.document.minLength"
                       [maxlength]="validation.document.maxLength"
-                      [status]="
-                        document.dirty
-                          ? document.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        document.invalid && document.touched ? true : null
-                      "
+                      [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="document.invalid && document.touched ? true : null"
                       [disabled]="!isEditing"
                     />
                     <ng-container *ngIf="document.invalid && document.touched">
                       <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="
-                          document.errors?.minlength ||
-                          document.errors?.maxlength
-                        "
-                      >
+                      <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
                         O CPF/CNPJ deve ter 11 ou 14 caracteres
                       </p>
                     </ng-container>
@@ -284,28 +217,15 @@
                       [required]="validation.phone.required"
                       [minlength]="validation.phone.minLength"
                       [maxlength]="validation.phone.maxLength"
-                      [status]="
-                        phone.dirty
-                          ? phone.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        phone.invalid && phone.touched ? true : null
-                      "
+                      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
                       [disabled]="!isEditing"
                     />
                     <ng-container *ngIf="phone.invalid && phone.touched">
                       <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="
-                          phone.errors?.minlength || phone.errors?.maxlength
-                        "
-                      >
-                        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a {{
-                        validation.phone.maxLength - 4 }} números
+                      <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+                        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a
+                        {{ validation.phone.maxLength - 4 }} números
                       </p>
                     </ng-container>
                   </div>
@@ -322,21 +242,9 @@
                       fullWidth
                       size="large"
                       [required]="validation.article.required"
-                      [status]="
-                        article.dirty
-                          ? article.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        article.invalid && article.touched ? true : null
-                      "
-                      (selectedChange)="
-                        buildPositionsList();
-                        buildLevelList();
-                        fixPositionAndLevel()
-                      "
+                      [status]="article.dirty ? (article.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="article.invalid && article.touched ? true : null"
+                      (selectedChange)="buildPositionsList(); buildLevelList(); fixPositionAndLevel()"
                       [disabled]="!isEditing"
                     >
                       <nb-option value="a">A</nb-option>
@@ -359,16 +267,8 @@
                       fullWidth
                       size="large"
                       [required]="validation.state.required"
-                      [status]="
-                        state.dirty
-                          ? state.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        state.invalid && state.touched ? true : null
-                      "
+                      [status]="state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="state.invalid && state.touched ? true : null"
                       (selectedChange)="buildCityList(state.value)"
                       [disabled]="!isEditing"
                     >
@@ -388,16 +288,8 @@
                       fullWidth
                       size="large"
                       [required]="validation.city.required"
-                      [status]="
-                        city.dirty
-                          ? city.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        city.invalid && city.touched ? true : null
-                      "
+                      [status]="city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="city.invalid && city.touched ? true : null"
                       [disabled]="!isEditing"
                     >
                       <nb-option *ngFor="let city of cities" [value]="city">{{ city }}</nb-option>
@@ -431,16 +323,8 @@
                       multiple
                       size="large"
                       [required]="validation.position.required"
-                      [status]="
-                        position.dirty
-                          ? position.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        position.invalid && position.touched ? true : null
-                      "
+                      [status]="position.dirty ? (position.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="position.invalid && position.touched ? true : null"
                       [disabled]="!isEditing || !isEloPrincipal"
                     >
                       <nb-option *ngFor="let position of POSITIONS" [value]="position">{{ position }}</nb-option>
@@ -452,14 +336,7 @@
                     <label class="label" for="input-level">
                       Enquadramento:
                       <nb-icon
-                        *ngIf="
-                          NOT(
-                            accessChecker.isGranted(
-                              permissions.ELO_PRINCIPAL,
-                              'edit-level'
-                            )
-                          ) | async
-                        "
+                        *ngIf="NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
                         status="info"
                         icon="info"
                         pack="eva"
@@ -478,16 +355,8 @@
                       fullWidth
                       size="large"
                       [required]="validation.level.required"
-                      [status]="
-                        level.dirty
-                          ? level.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        level.invalid && level.touched ? true : null
-                      "
+                      [status]="level.dirty ? (level.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="level.invalid && level.touched ? true : null"
                       [disabled]="!isEditing || !isEloPrincipal"
                     >
                       <nb-option *ngFor="let level of LEVELS" [value]="level">{{ level }}</nb-option>
@@ -507,16 +376,8 @@
                   fullWidth
                   size="large"
                   [required]="validation.mainDepartment.required"
-                  [status]="
-                    department.dirty
-                      ? department.invalid
-                        ? 'danger'
-                        : 'success'
-                      : 'basic'
-                  "
-                  [attr.aria-invalid]="
-                    department.invalid && department.touched ? true : null
-                  "
+                  [status]="department.dirty ? (department.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="department.invalid && department.touched ? true : null"
                   [disabled]="!isEditing"
                 >
                   <nb-option *ngFor="let department of DEPARTMENTS" [value]="department">{{ department }}</nb-option>
@@ -539,22 +400,12 @@
                       [data$]="availableUsers"
                       [minSearchLength]="0"
                       [placeholder]="'Digite e selecione o nome do colaborador'"
-                      [textNoResults]="
-                        'Não foi possível achar um colaborador com o nome digitado'
-                      "
+                      [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
                       [fullWidth]="true"
                       [fieldSize]="'large'"
                       [disabled]="!isEditing"
-                      [status]="
-                        userList.dirty && userSearch
-                          ? userList.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        userList.invalid && userList.touched ? true : null
-                      "
+                      [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
                     ></nb-completer>
                   </div>
                 </div>
@@ -573,13 +424,7 @@
                   </button>
                 </div>
                 <nb-list style="width: 100%; padding: 10px 0">
-                  <nb-list-item
-                    *ngFor="
-                      let AERuser of user.AER;
-                      let i = index;
-                      trackBy: utils.trackByIndex
-                    "
-                  >
+                  <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
                     <div class="row irow">
                       <div class="col">{{ userService.idToName(AERuser) }}</div>
                       <div class="col-auto" style="text-align: right" *ngIf="isEditing">
@@ -588,12 +433,7 @@
                           status="basic"
                           icon="trash-2-outline"
                           pack="eva"
-                          (click)="
-                            user
-                              ? userService.idToUser(user).AER.splice(i, 1)
-                              : '';
-                            memberChanged$.next(true)
-                          "
+                          (click)="user ? userService.idToUser(user).AER.splice(i, 1) : ''; memberChanged$.next(true)"
                           [options]="{ animation: { type: 'shake' } }"
                         ></nb-icon>
                       </div>
@@ -610,11 +450,7 @@
                 </div>
                 <nb-list style="width: 100%">
                   <nb-list-item
-                    *ngFor="
-                      let teamName of teamService.userToTeams(user);
-                      let i = index;
-                      trackBy: utils.trackByIndex
-                    "
+                    *ngFor="let teamName of teamService.userToTeams(user); let i = index; trackBy: utils.trackByIndex"
                   >
                     <div class="row irow">
                       <div class="col">{{ teamName }}</div>
@@ -795,48 +631,29 @@
                       [required]="validation.shortExpertise.required"
                       [minlength]="validation.shortExpertise.minLength"
                       [maxlength]="validation.shortExpertise.maxLength"
-                      [status]="
-                        shortExpertise.dirty
-                          ? shortExpertise.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        shortExpertise.invalid && shortExpertise.touched
-                          ? true
-                          : null
-                      "
+                      [status]="shortExpertise.dirty ? (shortExpertise.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="shortExpertise.invalid && shortExpertise.touched ? true : null"
                       [disabled]="!isEditing"
                     ></textarea>
                     <ng-container *ngIf="shortExpertise.invalid && shortExpertise.touched">
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.required &&
-                          user.expertise[idx].shortExpertise.length != 0
-                        "
+                        *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length != 0"
                       >
                         É necessário preencher todas as especialidades!
                       </p>
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.required &&
-                          user.expertise[idx].shortExpertise.length == 0
-                        "
+                        *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length == 0"
                       >
                         A especialidade em {{ user.expertise[idx].coordination }} é obrigatória!
                       </p>
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.minlength ||
-                          expertise.errors?.maxlength
-                        "
+                        *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
                       >
-                        A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a {{
-                        validation.shortExpertise.maxLength }} caracteres
+                        A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a
+                        {{ validation.shortExpertise.maxLength }} caracteres
                       </p>
                     </ng-container>
                     <label class="label" for="input-expertise">Perfil de atuação:</label>
@@ -847,54 +664,35 @@
                       #expertise="ngModel"
                       id="input-expertise"
                       name="expertise"
-                      placeholder="Descreva o seu perfil de atuação na {{
-                        user.expertise[idx].coordination
-                      }}"
+                      placeholder="Descreva o seu perfil de atuação na {{ user.expertise[idx].coordination }}"
                       fullWidth
                       fieldSize="large"
                       [required]="validation.expertise.required"
                       [minlength]="validation.expertise.minLength"
                       [maxlength]="validation.expertise.maxLength"
-                      [status]="
-                        expertise.dirty
-                          ? expertise.invalid
-                            ? 'danger'
-                            : 'success'
-                          : 'basic'
-                      "
-                      [attr.aria-invalid]="
-                        expertise.invalid && expertise.touched ? true : null
-                      "
+                      [status]="expertise.dirty ? (expertise.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="expertise.invalid && expertise.touched ? true : null"
                       [disabled]="!isEditing"
                     ></textarea>
                     <ng-container *ngIf="expertise.invalid && expertise.touched">
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.required &&
-                          user.expertise[idx].text.length != 0
-                        "
+                        *ngIf="expertise.errors?.required && user.expertise[idx].text.length != 0"
                       >
                         É necessário preencher todos os perfis de atuação!
                       </p>
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.required &&
-                          user.expertise[idx].text.length == 0
-                        "
+                        *ngIf="expertise.errors?.required && user.expertise[idx].text.length == 0"
                       >
                         O perfil de atuação na {{ user.expertise[idx].coordination }} é obrigatório!
                       </p>
                       <p
                         class="caption status-danger"
-                        *ngIf="
-                          expertise.errors?.minlength ||
-                          expertise.errors?.maxlength
-                        "
+                        *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
                       >
-                        O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a {{
-                        validation.expertise.maxLength }} caracteres
+                        O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a
+                        {{ validation.expertise.maxLength }} caracteres
                       </p>
                     </ng-container>
                   </nb-tab>

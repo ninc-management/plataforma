@@ -9,10 +9,7 @@ import { Promotion } from '@models/promotion';
   templateUrl: './promotion-dialog.component.html',
   styleUrls: ['./promotion-dialog.component.scss'],
 })
-export class PromotionDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class PromotionDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() promotion = new Promotion();
 

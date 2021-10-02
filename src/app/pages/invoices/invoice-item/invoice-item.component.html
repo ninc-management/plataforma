@@ -2,18 +2,13 @@
   <nb-tabset fullWidth>
     <nb-tab tabTitle="Principal">
       <div class="row">
-        <div
-          class="col-12"
-          *ngIf="accessChecker.isGranted('aer', 'invoice-author') | async"
-        >
+        <div class="col-12" *ngIf="accessChecker.isGranted('aer', 'invoice-author') | async">
           <div class="form-control-group">
             <label class="label" for="input-author">Autor:</label>
             <nb-completer
               [(ngModel)]="authorSearch"
               [inputName]="'authorListCompleter'"
-              (selected)="
-                tempInvoice.author = $event; tempInvoice.team[0].user = $event
-              "
+              (selected)="tempInvoice.author = $event; tempInvoice.team[0].user = $event"
               #authorList="ngModel"
               id="input-author"
               name="authorList"
@@ -21,25 +16,13 @@
               pictureField="profilePicture"
               [data$]="authorData"
               [minSearchLength]="0"
-              [placeholder]="
-                'Digite e selecione o nome do colaborador do orçamento'
-              "
-              [textNoResults]="
-                'Não foi possível achar um colaborador com o nome digitado'
-              "
+              [placeholder]="'Digite e selecione o nome do colaborador do orçamento'"
+              [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [required]="validation.author.required"
-              [status]="
-                authorList.dirty && authorSearch
-                  ? authorList.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                authorList.invalid && authorList.touched ? true : null
-              "
+              [status]="authorList.dirty && authorSearch ? (authorList.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="authorList.invalid && authorList.touched ? true : null"
             ></nb-completer>
           </div>
         </div>
@@ -55,23 +38,12 @@
               fullWidth
               size="large"
               [required]="validation.department.required"
-              [status]="
-                department.dirty
-                  ? department.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                department.invalid && department.touched ? true : null
-              "
+              [status]="department.dirty ? (department.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="department.invalid && department.touched ? true : null"
               [disabled]="editing"
               (selectedChange)="onDepartmentChange()"
             >
-              <nb-option
-                *ngFor="let department of DEPARTMENTS"
-                [value]="department"
-              >
+              <nb-option *ngFor="let department of DEPARTMENTS" [value]="department">
                 {{ department }}
               </nb-option>
             </nb-select>
@@ -90,22 +62,11 @@
               fullWidth
               size="large"
               [required]="validation.coordination.required"
-              [status]="
-                coordination.dirty
-                  ? coordination.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                coordination.invalid && coordination.touched ? true : null
-              "
+              [status]="coordination.dirty ? (coordination.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="coordination.invalid && coordination.touched ? true : null"
               [disabled]="false"
             >
-              <nb-option
-                *ngFor="let coordination of COORDINATIONS"
-                [value]="coordination"
-              >
+              <nb-option *ngFor="let coordination of COORDINATIONS" [value]="coordination">
                 {{ coordination }}
               </nb-option>
             </nb-select>
@@ -126,9 +87,7 @@
               [required]="validation.code.required"
               [minlength]="validation.code.minLength"
               [maxlength]="validation.code.maxLength"
-              [status]="
-                code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'
-              "
+              [status]="code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="code.invalid && code.touched ? true : null"
               [disabled]="true"
             />
@@ -136,9 +95,7 @@
         </div>
         <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-administration">
-              Administração do contrato:
-            </label>
+            <label class="label" for="input-administration">Administração do contrato:</label>
             <nb-select
               [(ngModel)]="tempInvoice.administration"
               #administration="ngModel"
@@ -148,16 +105,8 @@
               fullWidth
               size="large"
               [required]="validation.administration.required"
-              [status]="
-                administration.dirty
-                  ? administration.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                administration.invalid && administration.touched ? true : null
-              "
+              [status]="administration.dirty ? (administration.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="administration.invalid && administration.touched ? true : null"
             >
               <nb-option value="nortan">Suporte Empresarial</nb-option>
               <nb-option value="pessoal">Intermediação de Negócios</nb-option>
@@ -167,9 +116,7 @@
       </div>
 
       <div class="form-control-group">
-        <label class="label" for="input-type">
-          Tipologia do empreendimento:
-        </label>
+        <label class="label" for="input-type">Tipologia do empreendimento:</label>
         <input
           nbInput
           [(ngModel)]="tempInvoice.type"
@@ -183,9 +130,7 @@
           [required]="validation.type.required"
           [minlength]="validation.type.minLength"
           [maxlength]="validation.type.maxLength"
-          [status]="
-            type.dirty ? (type.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="type.dirty ? (type.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
           [disabled]="false"
         />
@@ -193,10 +138,7 @@
           <p class="caption status-danger" *ngIf="type.errors?.required">
             A tipologia do empreendimento é obrigatória!
           </p>
-          <p
-            class="caption status-danger"
-            *ngIf="type.errors?.minlength || type.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="type.errors?.minlength || type.errors?.maxlength">
             A tipologia do empreendimento deve conter entre
             {{ validation.type.minLength }} a
             {{ validation.type.maxLength }}
@@ -219,20 +161,13 @@
           [required]="validation.service.required"
           [minlength]="validation.service.minLength"
           [maxlength]="validation.service.maxLength"
-          [status]="
-            service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="service.dirty ? (service.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="service.invalid && service.touched ? true : null"
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="service.invalid && service.touched">
-          <p class="caption status-danger" *ngIf="service.errors?.required">
-            A descrição do serviço é obrigatória!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="service.errors?.minlength || service.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="service.errors?.required">A descrição do serviço é obrigatória!</p>
+          <p class="caption status-danger" *ngIf="service.errors?.minlength || service.errors?.maxlength">
             A descrição do serviço deve conter entre
             {{ validation.service.minLength }} a
             {{ validation.service.maxLength }}
@@ -260,12 +195,8 @@
               nameField="fullName"
               [data$]="contractorData"
               [minSearchLength]="0"
-              [placeholder]="
-                'Digite e selecione o nome do cliente do orçamento'
-              "
-              [textNoResults]="
-                'Não foi possível achar um cliente com o nome digitado'
-              "
+              [placeholder]="'Digite e selecione o nome do cliente do orçamento'"
+              [textNoResults]="'Não foi possível achar um cliente com o nome digitado'"
               [fullWidth]="true"
               [fieldSize]="'large'"
               [isPhone]="utils.isPhone()"
@@ -273,16 +204,8 @@
               [tooltipFunction]="tooltipText"
               [inputObject]="tempInvoice.contractor"
               [required]="validation.contractor.required"
-              [status]="
-                contractor.dirty
-                  ? contractor.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                contractor.invalid && contractor.touched ? true : null
-              "
+              [status]="contractor.dirty ? (contractor.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="contractor.invalid && contractor.touched ? true : null"
             ></nb-completer>
           </div>
         </div>
@@ -296,11 +219,7 @@
               size="large"
               style="margin-top: 28px"
               nbTooltip="Adicionar cliente"
-              [nbTooltipTrigger]="
-                utils.isPhone()
-                  ? utils.tooltipTriggers.NOOP
-                  : utils.tooltipTriggers.HINT
-              "
+              [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
               nbTooltipPlacement="top"
               nbTooltipStatus="info"
               (click)="addContractor()"
@@ -325,20 +244,13 @@
           [required]="validation.name.required"
           [minlength]="validation.name.minLength"
           [maxlength]="validation.name.maxLength"
-          [status]="
-            name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
           [disabled]="false"
         />
         <ng-container *ngIf="name.invalid && name.touched">
-          <p class="caption status-danger" *ngIf="name.errors?.required">
-            O nome do empreendimento é obrigatório!
-          </p>
-          <p
-            class="caption status-danger"
-            *ngIf="name.errors?.minlength || name.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
             O nome do empreendimento deve conter entre
             {{ validation.name.minLength }} a
             {{ validation.name.maxLength }}
@@ -350,9 +262,7 @@
       <div class="row">
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-value">
-              Valor bruto do contrato:
-            </label>
+            <label class="label" for="input-value">Valor bruto do contrato:</label>
             <input
               nbInput
               [(ngModel)]="tempInvoice.value"
@@ -372,9 +282,7 @@
               [required]="validation.value.required"
               [minlength]="validation.value.minLength"
               [maxlength]="validation.value.maxLength"
-              [status]="
-                value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'
-              "
+              [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="value.invalid && value.touched ? true : null"
               [disabled]="false"
               (focus)="updateLastValues()"
@@ -386,13 +294,8 @@
               "
             />
             <ng-container *ngIf="value.invalid && value.touched">
-              <p class="caption status-danger" *ngIf="value.errors?.required">
-                O valor do contrato é obrigatório!
-              </p>
-              <p
-                class="caption status-danger"
-                *ngIf="value.errors?.minlength || value.errors?.maxlength"
-              >
+              <p class="caption status-danger" *ngIf="value.errors?.required">O valor do contrato é obrigatório!</p>
+              <p class="caption status-danger" *ngIf="value.errors?.minlength || value.errors?.maxlength">
                 O valor do contrato deve conter entre
                 {{ validation.value.minLength }} a
                 {{ validation.value.maxLength }}
@@ -404,9 +307,7 @@
 
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-net-value">
-              Valor líquido do contrato:
-            </label>
+            <label class="label" for="input-net-value">Valor líquido do contrato:</label>
             <input
               nbInput
               [(ngModel)]="options.netValue"
@@ -426,16 +327,8 @@
               [required]="validation.value.required"
               [minlength]="validation.value.minLength"
               [maxlength]="validation.value.maxLength"
-              [status]="
-                netValue.dirty
-                  ? netValue.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                netValue.invalid && netValue.touched ? true : null
-              "
+              [status]="netValue.dirty ? (netValue.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="netValue.invalid && netValue.touched ? true : null"
               (ngModelChange)="
                 updateGrossValue();
                 updateDependentValues(tempInvoice.products, 'product');
@@ -459,12 +352,8 @@
               fullWidth
               size="large"
               [required]="validation.status.required"
-              [status]="
-                status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'
-              "
-              [attr.aria-invalid]="
-                status.invalid && status.touched ? true : null
-              "
+              [status]="status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="status.invalid && status.touched ? true : null"
               [disabled]="oldStatus == tStatus.FECHADO"
             >
               <nb-option *ngFor="let status of STATOOS" [value]="status">
@@ -492,9 +381,7 @@
               fullWidth
               fieldSize="large"
               [required]="validation.date.required"
-              [status]="
-                date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'
-              "
+              [status]="date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="date.invalid && date.touched ? true : null"
               [readonly]="true"
             />
@@ -511,9 +398,7 @@
                 (ngModelChange)="fixHours()"
                 [nbDatepicker]="datepicker"
                 [required]="validation.date.required"
-                [status]="
-                  date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'
-                "
+                [status]="date.dirty ? (date.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="date.invalid && date.touched ? true : null"
                 [readonly]="true"
               />
@@ -533,11 +418,7 @@
         </div>
         <div class="col-12">
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-invoice-type"
-              style="display: flex; margin-top: 4px"
-            >
+            <label class="label" for="input-invoice-type" style="display: flex; margin-top: 4px">
               <span style="margin-right: 10px">Tipo:</span>
               <nb-radio-group
                 [(ngModel)]="tempInvoice.invoiceType"
@@ -546,12 +427,8 @@
                 name="invoiceType"
                 style="height: 16px"
               >
-                <nb-radio value="projeto" style="height: 16px">
-                  Projeto
-                </nb-radio>
-                <nb-radio value="serviço" style="height: 16px">
-                  Serviço
-                </nb-radio>
+                <nb-radio value="projeto" style="height: 16px">Projeto</nb-radio>
+                <nb-radio value="serviço" style="height: 16px">Serviço</nb-radio>
               </nb-radio-group>
             </label>
           </div>
@@ -578,23 +455,12 @@
           fieldSize="large"
           [minlength]="validation.subtitle1.minLength"
           [maxlength]="validation.subtitle1.maxLength"
-          [status]="
-            subtitle1.dirty
-              ? subtitle1.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            subtitle1.invalid && subtitle1.touched ? true : null
-          "
+          [status]="subtitle1.dirty ? (subtitle1.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="subtitle1.invalid && subtitle1.touched ? true : null"
           [disabled]="false"
         />
         <ng-container *ngIf="subtitle1.invalid && subtitle1.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="subtitle1.errors?.minlength || subtitle1.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="subtitle1.errors?.minlength || subtitle1.errors?.maxlength">
             O subtítulo 1 deve conter entre
             {{ validation.subtitle1.minLength }} a
             {{ validation.subtitle1.maxLength }}
@@ -615,23 +481,12 @@
           fieldSize="large"
           [minlength]="validation.subtitle2.minLength"
           [maxlength]="validation.subtitle2.maxLength"
-          [status]="
-            subtitle2.dirty
-              ? subtitle2.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            subtitle2.invalid && subtitle2.touched ? true : null
-          "
+          [status]="subtitle2.dirty ? (subtitle2.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="subtitle2.invalid && subtitle2.touched ? true : null"
           [disabled]="false"
         />
         <ng-container *ngIf="subtitle2.invalid && subtitle2.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="subtitle2.errors?.minlength || subtitle2.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="subtitle2.errors?.minlength || subtitle2.errors?.maxlength">
             O subtítulo 2 deve conter entre
             {{ validation.subtitle2.minLength }} a
             {{ validation.subtitle2.maxLength }}
@@ -650,9 +505,7 @@
       <div class="row">
         <div class="col-md-9">
           <div class="form-control-group">
-            <label class="label" for="input-contactName">
-              Primeiro nome do contato:
-            </label>
+            <label class="label" for="input-contactName">Primeiro nome do contato:</label>
             <input
               nbInput
               [(ngModel)]="tempInvoice.contactName"
@@ -664,25 +517,12 @@
               fieldSize="large"
               [minlength]="validation.contactName.minLength"
               [maxlength]="validation.contactName.maxLength"
-              [status]="
-                contactName.dirty
-                  ? contactName.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                contactName.invalid && contactName.touched ? true : null
-              "
+              [status]="contactName.dirty ? (contactName.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="contactName.invalid && contactName.touched ? true : null"
               [disabled]="false"
             />
             <ng-container *ngIf="contactName.invalid && contactName.touched">
-              <p
-                class="caption status-danger"
-                *ngIf="
-                  contactName.errors?.minlength || contactName.errors?.maxlength
-                "
-              >
+              <p class="caption status-danger" *ngIf="contactName.errors?.minlength || contactName.errors?.maxlength">
                 O nome do contato deve conter entre
                 {{ validation.contactName.minLength }} a
                 {{ validation.contactName.maxLength }}
@@ -723,26 +563,12 @@
           fieldSize="large"
           [minlength]="validation.contractorName.minLength"
           [maxlength]="validation.contractorName.maxLength"
-          [status]="
-            contractorName.dirty
-              ? contractorName.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            contractorName.invalid && contractorName.touched ? true : null
-          "
+          [status]="contractorName.dirty ? (contractorName.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="contractorName.invalid && contractorName.touched ? true : null"
           [disabled]="false"
         />
         <ng-container *ngIf="contractorName.invalid && contractorName.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="
-              contractorName.errors?.minlength ||
-              contractorName.errors?.maxlength
-            "
-          >
+          <p class="caption status-danger" *ngIf="contractorName.errors?.minlength || contractorName.errors?.maxlength">
             O nome do contratante deve conter entre
             {{ validation.contractorName.minLength }} a
             {{ validation.contractorName.maxLength }}
@@ -757,10 +583,7 @@
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
-              (selected)="
-                teamMember.user = $event;
-                USER_COORDINATIONS = updateUserCoordinations()
-              "
+              (selected)="teamMember.user = $event; USER_COORDINATIONS = updateUserCoordinations()"
               #userList="ngModel"
               id="input-user"
               name="userList"
@@ -768,32 +591,18 @@
               pictureField="profilePicture"
               [data$]="availableUsers"
               [minSearchLength]="0"
-              [placeholder]="
-                'Digite e selecione o nome do colaborador do orçamento'
-              "
-              [textNoResults]="
-                'Não foi possível achar um colaborador com o nome digitado'
-              "
+              [placeholder]="'Digite e selecione o nome do colaborador do orçamento'"
+              [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
               [fullWidth]="true"
               [fieldSize]="'large'"
-              [status]="
-                userList.dirty && userSearch
-                  ? userList.invalid
-                    ? 'danger'
-                    : 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="
-                userList.invalid && userList.touched ? true : null
-              "
+              [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
             ></nb-completer>
           </div>
         </div>
         <div class="col-md-5">
           <div class="form-control-group">
-            <label class="label" for="input-memberCoordination">
-              Coordenação:
-            </label>
+            <label class="label" for="input-memberCoordination">Coordenação:</label>
             <nb-select
               [(ngModel)]="teamMember.coordination"
               #memberCoordination="ngModel"
@@ -802,19 +611,10 @@
               placeholder="Coordenação"
               fullWidth
               size="large"
-              [status]="
-                memberCoordination.value?.length > 0 ? 'success' : 'basic'
-              "
-              [attr.aria-invalid]="
-                memberCoordination.invalid && memberCoordination.touched
-                  ? true
-                  : null
-              "
+              [status]="memberCoordination.value?.length > 0 ? 'success' : 'basic'"
+              [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
             >
-              <nb-option
-                *ngFor="let coordination of USER_COORDINATIONS"
-                [value]="coordination"
-              >
+              <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
                 {{ coordination }}
               </nb-option>
             </nb-select>
@@ -836,13 +636,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let member of tempInvoice.team;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
               {{ userService.idToName(member.user) }}
@@ -857,30 +651,20 @@
                 fullWidth
               >
                 <nb-option
-                  *ngFor="
-                    let coordination of departmentService.userCoordinations(
-                      tempInvoice.team[i].user
-                    )
-                  "
+                  *ngFor="let coordination of departmentService.userCoordinations(tempInvoice.team[i].user)"
                   [value]="coordination"
                 >
                   {{ coordination }}
                 </nb-option>
               </nb-select>
             </div>
-            <div
-              class="col-2 col-md-1"
-              style="text-align: right"
-              *ngIf="i != 0"
-            >
+            <div class="col-2 col-md-1" style="text-align: right" *ngIf="i != 0">
               <nb-icon
                 class="xIcon"
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="
-                  tempInvoice.team.splice(i, 1); memberChanged$.next(true)
-                "
+                (click)="tempInvoice.team.splice(i, 1); memberChanged$.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -888,11 +672,7 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label
-          class="label"
-          for="input-subject"
-          style="width: 100%; display: flex; justify-content: space-between"
-        >
+        <label class="label" for="input-subject" style="width: 100%; display: flex; justify-content: space-between">
           Assunto: (Pontuação final necessária)
           <span>(Negrito: *!texto*)</span>
         </label>
@@ -907,17 +687,12 @@
           fieldSize="large"
           [minlength]="validation.subject.minLength"
           [maxlength]="validation.subject.maxLength"
-          [status]="
-            subject.dirty ? (subject.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="subject.dirty ? (subject.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="subject.invalid && subject.touched ? true : null"
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="subject.invalid && subject.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="subject.errors?.minlength || subject.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="subject.errors?.minlength || subject.errors?.maxlength">
             O assunto deve conter entre
             {{ validation.subject.minLength }} a
             {{ validation.subject.maxLength }}
@@ -934,9 +709,7 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peep">
-          Período de execução: (Já está entre parênteses)
-        </label>
+        <label class="label" for="input-peep">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peep"
@@ -948,17 +721,12 @@
           fieldSize="large"
           [minlength]="validation.peep.minLength"
           [maxlength]="validation.peep.maxLength"
-          [status]="
-            peep.dirty ? (peep.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="peep.dirty ? (peep.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="peep.invalid && peep.touched ? true : null"
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="peep.invalid && peep.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="peep.errors?.minlength || peep.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="peep.errors?.minlength || peep.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.peep.minLength }} a
             {{ validation.peep.maxLength }}
@@ -969,9 +737,7 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aep">
-              Atividades: (Pontuação final automática)
-            </label>
+            <label class="label" for="input-aep">Atividades: (Pontuação final automática)</label>
             <input
               nbInput
               [(ngModel)]="options.aep"
@@ -1002,13 +768,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let activity of tempInvoice.laep;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let activity of tempInvoice.laep; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <input
@@ -1035,9 +795,7 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dep">
-          Detalhes: (Pontuação final necessária)
-        </label>
+        <label class="label" for="input-dep">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dep"
@@ -1054,10 +812,7 @@
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="dep.invalid && dep.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="dep.errors?.minlength || dep.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="dep.errors?.minlength || dep.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.dep.minLength }} a
             {{ validation.dep.maxLength }}
@@ -1074,9 +829,7 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peee">
-          Período de execução: (Já está entre parênteses)
-        </label>
+        <label class="label" for="input-peee">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peee"
@@ -1088,17 +841,12 @@
           fieldSize="large"
           [minlength]="validation.peee.minLength"
           [maxlength]="validation.peee.maxLength"
-          [status]="
-            peee.dirty ? (peee.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="peee.dirty ? (peee.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="peee.invalid && peee.touched ? true : null"
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="peee.invalid && peee.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="peee.errors?.minlength || peee.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="peee.errors?.minlength || peee.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.peee.minLength }} a
             {{ validation.peee.maxLength }}
@@ -1109,9 +857,7 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aee">
-              Atividades: (Pontuação final automática)
-            </label>
+            <label class="label" for="input-aee">Atividades: (Pontuação final automática)</label>
             <input
               nbInput
               [(ngModel)]="options.aee"
@@ -1142,13 +888,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let activity of tempInvoice.laee;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let activity of tempInvoice.laee; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <input
@@ -1175,9 +915,7 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dee">
-          Detalhes: (Pontuação final necessária)
-        </label>
+        <label class="label" for="input-dee">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dee"
@@ -1194,10 +932,7 @@
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="dee.invalid && dee.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="dee.errors?.minlength || dee.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="dee.errors?.minlength || dee.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.dee.minLength }} a
             {{ validation.dee.maxLength }}
@@ -1214,9 +949,7 @@
         </div>
       </div>
       <div class="form-control-group">
-        <label class="label" for="input-peec">
-          Período de execução: (Já está entre parênteses)
-        </label>
+        <label class="label" for="input-peec">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.peec"
@@ -1228,17 +961,12 @@
           fieldSize="large"
           [minlength]="validation.peec.minLength"
           [maxlength]="validation.peec.maxLength"
-          [status]="
-            peec.dirty ? (peec.invalid ? 'danger' : 'success') : 'basic'
-          "
+          [status]="peec.dirty ? (peec.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="peec.invalid && peec.touched ? true : null"
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="peec.invalid && peec.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="peec.errors?.minlength || peec.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="peec.errors?.minlength || peec.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.peec.minLength }} a
             {{ validation.peec.maxLength }}
@@ -1249,9 +977,7 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-aec">
-              Atividades: (Pontuação final automática)
-            </label>
+            <label class="label" for="input-aec">Atividades: (Pontuação final automática)</label>
             <input
               nbInput
               [(ngModel)]="options.aec"
@@ -1283,11 +1009,7 @@
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item
-          *ngFor="
-            let activity of tempInvoice.laec ? tempInvoice.laec : [];
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
+          *ngFor="let activity of tempInvoice.laec ? tempInvoice.laec : []; let i = index; trackBy: utils.trackByIndex"
         >
           <div class="row irow">
             <div class="col-10 col-md-11">
@@ -1315,9 +1037,7 @@
         </nb-list-item>
       </nb-list>
       <div class="form-control-group">
-        <label class="label" for="input-dec">
-          Detalhes: (Pontuação final necessária)
-        </label>
+        <label class="label" for="input-dec">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
           [(ngModel)]="tempInvoice.dec"
@@ -1334,10 +1054,7 @@
           [disabled]="false"
         ></textarea>
         <ng-container *ngIf="dec.invalid && dec.touched">
-          <p
-            class="caption status-danger"
-            *ngIf="dec.errors?.minlength || dec.errors?.maxlength"
-          >
+          <p class="caption status-danger" *ngIf="dec.errors?.minlength || dec.errors?.maxlength">
             O período de execução deve conter entre
             {{ validation.dec.minLength }} a
             {{ validation.dec.maxLength }}
@@ -1356,13 +1073,7 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-product-type"
-              style="display: flex; margin-top: 4px"
-            >
-              Tipo da lista
-            </label>
+            <label class="label" for="input-product-type" style="display: flex; margin-top: 4px">Tipo da lista</label>
             <nb-radio-group
               [(ngModel)]="tempInvoice.productListType"
               (ngModelChange)="options.valueType = '$'"
@@ -1395,9 +1106,7 @@
               fullWidth
               fieldSize="large"
               [status]="product.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                product.invalid && product.touched ? true : null
-              "
+              [attr.aria-invalid]="product.invalid && product.touched ? true : null"
             />
           </div>
         </div>
@@ -1422,9 +1131,7 @@
               }"
               ngxSelectAllText
               [status]="productAmount.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                productAmount.invalid && productAmount.touched ? true : null
-              "
+              [attr.aria-invalid]="productAmount.invalid && productAmount.touched ? true : null"
             />
           </div>
         </div>
@@ -1440,9 +1147,8 @@
               fullWidth
               size="large"
             >
-              [required]="validation.unit.required" [status]=" unit.dirty ?
-              (unit.invalid ? 'danger' : 'success') : 'basic' "
-              [attr.aria-invalid]="unit.invalid && unit.touched ? true : null"
+              [required]="validation.unit.required" [status]=" unit.dirty ? (unit.invalid ? 'danger' : 'success') :
+              'basic' " [attr.aria-invalid]="unit.invalid && unit.touched ? true : null"
               <nb-option *ngFor="let unit of UNITx" [value]="unit">
                 {{ unit }}
               </nb-option>
@@ -1458,11 +1164,7 @@
           }"
         >
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-paid"
-              style="display: flex; margin-top: 4px"
-            >
+            <label class="label" for="input-paid" style="display: flex; margin-top: 4px">
               <span style="margin-right: 10px">Valor:</span>
               <nb-radio-group
                 *ngIf="tempInvoice.productListType == '1'"
@@ -1519,9 +1221,7 @@
               }"
               ngxSelectAllText
               [status]="productTotal.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                productTotal.invalid && productTotal.touched ? true : null
-              "
+              [attr.aria-invalid]="productTotal.invalid && productTotal.touched ? true : null"
             />
           </div>
         </div>
@@ -1541,13 +1241,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let product of tempInvoice.products;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let product of tempInvoice.products; let i = index; trackBy: utils.trackByIndex">
           <div class="row paymentRow">
             <div
               [ngClass]="{
@@ -1563,24 +1257,12 @@
                 name="product-{{ i }}"
                 placeholder="produto"
                 fullWidth
-                [status]="
-                  tempInvoice.products[i].name.length == 0 ? 'danger' : 'basic'
-                "
-                (focusout)="
-                  tempInvoice.products[i].name =
-                    tempInvoice.products[i].name.toUpperCase()
-                "
+                [status]="tempInvoice.products[i].name.length == 0 ? 'danger' : 'basic'"
+                (focusout)="tempInvoice.products[i].name = tempInvoice.products[i].name.toUpperCase()"
               />
-              <nb-list
-                class="subproducts-list"
-                *ngIf="product.subproducts.length > 0"
-              >
+              <nb-list class="subproducts-list" *ngIf="product.subproducts.length > 0">
                 <nb-list-item
-                  *ngFor="
-                    let subproduct of product.subproducts;
-                    let j = index;
-                    trackBy: utils.trackByIndex
-                  "
+                  *ngFor="let subproduct of product.subproducts; let j = index; trackBy: utils.trackByIndex"
                 >
                   <div class="row paymentRow">
                     <div class="col-10 col-md-11">
@@ -1591,15 +1273,8 @@
                         name="subproduct-{{ i }}-{{ j }}"
                         placeholder="produto"
                         fullWidth
-                        [status]="
-                          product.subproducts[j].length == 0
-                            ? 'danger'
-                            : 'basic'
-                        "
-                        (focusout)="
-                          product.subproducts[j] =
-                            product.subproducts[j].toUpperCase()
-                        "
+                        [status]="product.subproducts[j].length == 0 ? 'danger' : 'basic'"
+                        (focusout)="product.subproducts[j] = product.subproducts[j].toUpperCase()"
                       />
                     </div>
                     <div class="col-2 col-md-1" style="text-align: right">
@@ -1616,17 +1291,11 @@
                 </nb-list-item>
               </nb-list>
             </div>
-            <div
-              class="col-3 col-md-2"
-              *ngIf="tempInvoice.productListType == '2'"
-            >
+            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].amount"
-                (ngModelChange)="
-                  updateItemTotal(tempInvoice.products, i);
-                  updateTotal('product')
-                "
+                (ngModelChange)="updateItemTotal(tempInvoice.products, i); updateTotal('product')"
                 id="input-productAmount-{{ i }}"
                 name="productAmount-{{ i }}"
                 placeholder="Quantidade"
@@ -1641,10 +1310,7 @@
                 [status]="tempInvoice.products[i].amount ? 'success' : 'basic'"
               />
             </div>
-            <div
-              class="col-3 col-md-2"
-              *ngIf="tempInvoice.productListType == '2'"
-            >
+            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               <nb-select
                 [(ngModel)]="tempInvoice.products[i].unit"
                 #unit="ngModel"
@@ -1697,9 +1363,7 @@
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].percentage"
-                (ngModelChange)="
-                  updateValue(tempInvoice.products, i); updateTotal('product')
-                "
+                (ngModelChange)="updateValue(tempInvoice.products, i); updateTotal('product')"
                 id="input-productPercentage-{{ i }}"
                 name="productPercentage-{{ i }}"
                 placeholder="Porcentagem"
@@ -1715,10 +1379,7 @@
               />
               %
             </div>
-            <div
-              class="col-3 col-md-2"
-              *ngIf="tempInvoice.productListType == '2'"
-            >
+            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               {{ product.total }}
             </div>
             <div class="col-3 col-md-1" style="text-align: right">
@@ -1735,9 +1396,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="
-                  tempInvoice.products.splice(i, 1); updateTotal('product')
-                "
+                (click)="tempInvoice.products.splice(i, 1); updateTotal('product')"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1745,9 +1404,7 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-4 col-md-7" style="text-align: right">
-              Subtotal:
-            </div>
+            <div class="col-4 col-md-7" style="text-align: right">Subtotal:</div>
             <div class="col-4 col-md-2">
               {{ options.subtotal }}
             </div>
@@ -1768,9 +1425,7 @@
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.discount"
-                (ngModelChange)="
-                  updateDiscountPercentage(); updateTotal('product')
-                "
+                (ngModelChange)="updateDiscountPercentage(); updateTotal('product')"
                 #discountValue="ngModel"
                 id="input-discountValue"
                 name="discountValue"
@@ -1783,22 +1438,11 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="
-                  discountValue.dirty
-                    ? discountValue.value
-                      ? 'success'
-                      : 'basic'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  discountValue.invalid && discountValue.touched ? true : null
-                "
+                [status]="discountValue.dirty ? (discountValue.value ? 'success' : 'basic') : 'basic'"
+                [attr.aria-invalid]="discountValue.invalid && discountValue.touched ? true : null"
               />
             </div>
-            <div
-              class="col-6 col-md-2"
-              style="display: flex; align-items: center"
-            >
+            <div class="col-6 col-md-2" style="display: flex; align-items: center">
               <input
                 nbInput
                 [(ngModel)]="options.discountPercentage"
@@ -1815,18 +1459,8 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="
-                  discountPercentage.dirty
-                    ? discountPercentage.value
-                      ? 'success'
-                      : 'basic'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  discountPercentage.invalid && discountPercentage.touched
-                    ? true
-                    : null
-                "
+                [status]="discountPercentage.dirty ? (discountPercentage.value ? 'success' : 'basic') : 'basic'"
+                [attr.aria-invalid]="discountPercentage.invalid && discountPercentage.touched ? true : null"
               />
               %
             </div>
@@ -1836,9 +1470,7 @@
         <nb-list-item>
           <div class="row paymentRow">
             <div class="col-6 col-md-3">Contrato: {{ tempInvoice.value }}</div>
-            <div class="col-6 col-md-3">
-              Restante: {{ remainingBalance('product') }}
-            </div>
+            <div class="col-6 col-md-3">Restante: {{ remainingBalance('product') }}</div>
             <div class="col-4 col-md-1" style="text-align: right">Total:</div>
             <div
               class="col-4 col-md-2"
@@ -1882,11 +1514,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-paid"
-              style="display: flex; margin-top: 4px"
-            >
+            <label class="label" for="input-paid" style="display: flex; margin-top: 4px">
               <span style="margin-right: 10px">Valor:</span>
               <nb-radio-group
                 [(ngModel)]="options.stageValueType"
@@ -1916,9 +1544,7 @@
               }"
               ngxSelectAllText
               [status]="stagePaid.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                stagePaid.invalid && stagePaid.touched ? true : null
-              "
+              [attr.aria-invalid]="stagePaid.invalid && stagePaid.touched ? true : null"
             />
           </div>
         </div>
@@ -1938,13 +1564,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let stage of tempInvoice.stages;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: utils.trackByIndex">
           <div class="row paymentRow">
             <div class="col-12 col-md-7">
               <input
@@ -1954,18 +1574,14 @@
                 name="stage-{{ i }}"
                 placeholder="parcelamento"
                 fullWidth
-                [status]="
-                  tempInvoice.stages[i].name.length == 0 ? 'danger' : 'basic'
-                "
+                [status]="tempInvoice.stages[i].name.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-5 col-md-2">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.stages[i].value"
-                (ngModelChange)="
-                  updatePercentage(tempInvoice.stages, i); updateTotal('stage')
-                "
+                (ngModelChange)="updatePercentage(tempInvoice.stages, i); updateTotal('stage')"
                 id="input-stageValue-{{ i }}"
                 name="stageValue-{{ i }}"
                 placeholder="Valor"
@@ -1980,16 +1596,11 @@
                 [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
               />
             </div>
-            <div
-              class="col-5 col-md-2"
-              style="display: flex; align-items: center"
-            >
+            <div class="col-5 col-md-2" style="display: flex; align-items: center">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.stages[i].percentage"
-                (ngModelChange)="
-                  updateValue(tempInvoice.stages, i); updateTotal('stage')
-                "
+                (ngModelChange)="updateValue(tempInvoice.stages, i); updateTotal('stage')"
                 id="input-stagePercentage-{{ i }}"
                 name="stagePercentage-{{ i }}"
                 placeholder="Porcentagem"
@@ -2019,19 +1630,13 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-12 col-md-4">
-              Restante: {{ remainingBalance('stage') }}
-            </div>
+            <div class="col-12 col-md-4">Restante: {{ remainingBalance('stage') }}</div>
             <div class="col-4 col-md-4" style="text-align: right">Total:</div>
             <div
               class="col-4 col-md-2"
               [ngClass]="{
-                danger:
-                  options.stageTotal !== tempInvoice.value &&
-                  options.stageTotal !== '0',
-                success:
-                  options.stageTotal === tempInvoice.value &&
-                  options.stageTotal !== '0'
+                danger: options.stageTotal !== tempInvoice.value && options.stageTotal !== '0',
+                success: options.stageTotal === tempInvoice.value && options.stageTotal !== '0'
               }"
             >
               {{ options.stageTotal }}
@@ -2039,17 +1644,11 @@
             <div
               class="col-4 col-md-1"
               [ngClass]="{
-                danger:
-                  options.stageTotal !== tempInvoice.value &&
-                  options.stageTotal !== '0',
-                success:
-                  options.stageTotal === tempInvoice.value &&
-                  options.stageTotal !== '0'
+                danger: options.stageTotal !== tempInvoice.value && options.stageTotal !== '0',
+                success: options.stageTotal === tempInvoice.value && options.stageTotal !== '0'
               }"
             >
-              {{
-                stringUtil.toPercentage(options.stageTotal, tempInvoice.value)
-              }}
+              {{ stringUtil.toPercentage(options.stageTotal, tempInvoice.value) }}
             </div>
             <div class="col-md-1"></div>
           </div>
@@ -2058,9 +1657,7 @@
       <div class="row">
         <div class="col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-important">
-              Importante: (Pontuação final automática)
-            </label>
+            <label class="label" for="input-important">Importante: (Pontuação final automática)</label>
             <textarea
               nbInput
               [(ngModel)]="options.important"
@@ -2071,9 +1668,7 @@
               fullWidth
               fieldSize="large"
               [status]="important.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                important.invalid && important.touched ? true : null
-              "
+              [attr.aria-invalid]="important.invalid && important.touched ? true : null"
             ></textarea>
           </div>
         </div>
@@ -2086,23 +1681,14 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!important.value"
-            (click)="
-              tempInvoice.importants.push(options.important);
-              options.important = ''
-            "
+            (click)="tempInvoice.importants.push(options.important); options.important = ''"
           >
             +
           </button>
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let activity of tempInvoice.importants;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let activity of tempInvoice.importants; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <textarea
@@ -2112,9 +1698,7 @@
                 name="important-{{ i }}"
                 placeholder="detalhe importante"
                 fullWidth
-                [status]="
-                  tempInvoice.importants[i].length == 0 ? 'danger' : 'basic'
-                "
+                [status]="tempInvoice.importants[i].length == 0 ? 'danger' : 'basic'"
               ></textarea>
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -2141,13 +1725,7 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
-            <label
-              class="label"
-              for="input-material-type"
-              style="display: flex; margin-top: 4px"
-            >
-              Tipo da lista:
-            </label>
+            <label class="label" for="input-material-type" style="display: flex; margin-top: 4px">Tipo da lista:</label>
             <nb-radio-group
               [(ngModel)]="tempInvoice.materialListType"
               (ngModelChange)="updateMaterialList()"
@@ -2180,9 +1758,7 @@
               fullWidth
               fieldSize="large"
               [status]="material.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                material.invalid && material.touched ? true : null
-              "
+              [attr.aria-invalid]="material.invalid && material.touched ? true : null"
             />
           </div>
         </div>
@@ -2208,9 +1784,7 @@
               fullWidth
               fieldSize="large"
               [status]="materialAmount.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                materialAmount.invalid && materialAmount.touched ? true : null
-              "
+              [attr.aria-invalid]="materialAmount.invalid && materialAmount.touched ? true : null"
             />
             <ng-template #inputMask>
               <input
@@ -2231,18 +1805,14 @@
                 }"
                 ngxSelectAllText
                 [status]="materialAmount.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  materialAmount.invalid && materialAmount.touched ? true : null
-                "
+                [attr.aria-invalid]="materialAmount.invalid && materialAmount.touched ? true : null"
               />
             </ng-template>
           </div>
         </div>
         <div class="col-6 col-md-2" *ngIf="tempInvoice.materialListType == '2'">
           <div class="form-control-group">
-            <label class="label" for="input-materialValue">
-              Valor unitário:
-            </label>
+            <label class="label" for="input-materialValue">Valor unitário:</label>
             <input
               nbInput
               [(ngModel)]="options.material.value"
@@ -2261,16 +1831,11 @@
               }"
               ngxSelectAllText
               [status]="materialValue.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                materialValue.invalid && materialValue.touched ? true : null
-              "
+              [attr.aria-invalid]="materialValue.invalid && materialValue.touched ? true : null"
             />
           </div>
         </div>
-        <div
-          class="col-10 col-md-3"
-          *ngIf="tempInvoice.materialListType == '2'"
-        >
+        <div class="col-10 col-md-3" *ngIf="tempInvoice.materialListType == '2'">
           <div class="form-control-group">
             <label class="label" for="input-materialTotal">Total:</label>
             <input
@@ -2291,9 +1856,7 @@
               }"
               ngxSelectAllText
               [status]="materialTotal.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="
-                materialTotal.invalid && materialTotal.touched ? true : null
-              "
+              [attr.aria-invalid]="materialTotal.invalid && materialTotal.touched ? true : null"
             />
           </div>
         </div>
@@ -2313,13 +1876,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item
-          *ngFor="
-            let material of tempInvoice.materials;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+        <nb-list-item *ngFor="let material of tempInvoice.materials; let i = index; trackBy: utils.trackByIndex">
           <div class="row paymentRow">
             <div
               [ngClass]="{
@@ -2335,9 +1892,7 @@
                 name="material-{{ i }}"
                 placeholder="produto"
                 fullWidth
-                [status]="
-                  tempInvoice.materials[i].name.length == 0 ? 'danger' : 'basic'
-                "
+                [status]="tempInvoice.materials[i].name.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div
@@ -2350,29 +1905,19 @@
             >
               <input
                 nbInput
-                *ngIf="
-                  tempInvoice.materialListType == '1';
-                  else nbInputMaskTest
-                "
+                *ngIf="tempInvoice.materialListType == '1'; else nbInputMaskTest"
                 [(ngModel)]="tempInvoice.materials[i].amount"
                 id="input-materialAmount-{{ i }}"
                 name="materialAmount-{{ i }}"
                 placeholder="Quantidade"
                 fullWidth
-                [status]="
-                  tempInvoice.materials[i].amount.length == 0
-                    ? 'danger'
-                    : 'basic'
-                "
+                [status]="tempInvoice.materials[i].amount.length == 0 ? 'danger' : 'basic'"
               />
               <ng-template #nbInputMaskTest>
                 <input
                   nbInput
                   [(ngModel)]="tempInvoice.materials[i].amount"
-                  (ngModelChange)="
-                    updateItemTotal(tempInvoice.materials, i);
-                    updateTotal('material')
-                  "
+                  (ngModelChange)="updateItemTotal(tempInvoice.materials, i); updateTotal('material')"
                   id="input-materialAmount-{{ i }}"
                   name="materialAmount-{{ i }}"
                   placeholder="Quantidade"
@@ -2384,25 +1929,15 @@
                     decimal: 2
                   }"
                   ngxSelectAllText
-                  [status]="
-                    tempInvoice.materials[i].amount.length == 0
-                      ? 'danger'
-                      : 'basic'
-                  "
+                  [status]="tempInvoice.materials[i].amount.length == 0 ? 'danger' : 'basic'"
                 />
               </ng-template>
             </div>
-            <div
-              class="col-3 col-md-2"
-              *ngIf="tempInvoice.materialListType == '2'"
-            >
+            <div class="col-3 col-md-2" *ngIf="tempInvoice.materialListType == '2'">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.materials[i].value"
-                (ngModelChange)="
-                  updateItemTotal(tempInvoice.materials, i);
-                  updateTotal('material')
-                "
+                (ngModelChange)="updateItemTotal(tempInvoice.materials, i); updateTotal('material')"
                 id="input-materialValue-{{ i }}"
                 name="materialValue-{{ i }}"
                 placeholder="Valor"
@@ -2414,17 +1949,10 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="
-                  tempInvoice.materials[i].value.length == 0
-                    ? 'danger'
-                    : 'basic'
-                "
+                [status]="tempInvoice.materials[i].value.length == 0 ? 'danger' : 'basic'"
               />
             </div>
-            <div
-              class="col-4 col-md-3"
-              *ngIf="tempInvoice.materialListType == '2'"
-            >
+            <div class="col-4 col-md-3" *ngIf="tempInvoice.materialListType == '2'">
               {{ material.total }}
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -2433,9 +1961,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="
-                  tempInvoice.materials.splice(i, 1); updateTotal('material')
-                "
+                (click)="tempInvoice.materials.splice(i, 1); updateTotal('material')"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>

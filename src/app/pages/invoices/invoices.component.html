@@ -4,13 +4,7 @@
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row">
           <div class="col-2" style="padding-left: 0; padding-right: 0">
-            <button
-              nbButton
-              fullWidth
-              status="primary"
-              (click)="invoiceDialog({})"
-              style="height: 100%"
-            >
+            <button nbButton fullWidth status="primary" (click)="invoiceDialog({})" style="height: 100%">
               <nb-icon icon="plus"></nb-icon>
             </button>
           </div>
@@ -61,22 +55,14 @@
                 </div>
                 <div class="col-6">
                   <p>
-                    <nb-icon
-                      icon="dollar-sign"
-                      pack="fa"
-                      status="success"
-                    ></nb-icon>
+                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                     <span style="vertical-align: 0.1em">
                       {{ invoice.value }}
                     </span>
                   </p>
                 </div>
                 <div class="col-6">
-                  <nb-icon
-                    icon="clock"
-                    pack="fa"
-                    [status]="statusColor(invoice.status)"
-                  ></nb-icon>
+                  <nb-icon icon="clock" pack="fa" [status]="statusColor(invoice.status)"></nb-icon>
                   <span style="vertical-align: 0.1em">
                     {{ invoice.status }}
                   </span>

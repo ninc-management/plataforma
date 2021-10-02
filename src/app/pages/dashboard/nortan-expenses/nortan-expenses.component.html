@@ -9,13 +9,7 @@
 <ng-template #phone>
   <div class="row">
     <div class="col-2" style="padding-left: 0; padding-right: 0">
-      <button
-        nbButton
-        fullWidth
-        status="primary"
-        style="height: 100%"
-        (click)="openDialog()"
-      >
+      <button nbButton fullWidth status="primary" style="height: 100%" (click)="openDialog()">
         <i class="nb-plus" style="font-size: 1.5rem"></i>
       </button>
     </div>
@@ -39,12 +33,7 @@
           <div class="irow row">
             <a
               (click)="openDialog(expenseIndex(expense.code))"
-              style="
-                width: 100%;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-              "
+              style="width: 100%; cursor: pointer; display: flex; align-items: center"
             >
               <div class="col-auto">
                 <nb-user
@@ -58,21 +47,13 @@
                 {{ expense.description }}
               </div>
               <div class="col-md-auto">
-                <nb-icon
-                  icon="dollar-sign"
-                  pack="fa"
-                  status="success"
-                ></nb-icon>
+                <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                 <span style="vertical-align: 0.1em">
                   {{ expense.value }}
                 </span>
               </div>
               <div class="col-md-auto">
-                <nb-icon
-                  icon="calendar-alt"
-                  pack="fa"
-                  status="primary"
-                ></nb-icon>
+                <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
                 <span style="vertical-align: 0.1em">
                   {{ utils.formatDate(expense.created) }}
                 </span>

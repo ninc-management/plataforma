@@ -29,10 +29,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import {
-  InvoiceItemComponent,
-  TextInputDialog,
-} from './invoices/invoice-item/invoice-item.component';
+import { InvoiceItemComponent, TextInputDialog } from './invoices/invoice-item/invoice-item.component';
 import { InvoiceDialogComponent } from './invoices/invoice-dialog/invoice-dialog.component';
 import { PaymentItemComponent } from './contracts/contract-item/payment-item/payment-item.component';
 import { ContractorsComponent } from './contractors/contractors.component';

@@ -7,10 +7,7 @@ import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
   templateUrl: './confirmation-dialog.component.html',
   styleUrls: ['./confirmation-dialog.component.scss'],
 })
-export class ConfirmationDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class ConfirmationDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() question = '';
 
   constructor(

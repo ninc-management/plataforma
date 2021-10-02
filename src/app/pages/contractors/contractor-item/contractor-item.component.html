@@ -14,19 +14,12 @@
       [required]="validation.fullName.required"
       [minlength]="validation.fullName.minLength"
       [maxlength]="validation.fullName.maxLength"
-      [status]="
-        fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'
-      "
+      [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
       [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
     />
     <ng-container *ngIf="fullName.invalid && fullName.touched">
-      <p class="caption status-danger" *ngIf="fullName.errors?.required">
-        O nome é obrigatório!
-      </p>
-      <p
-        class="caption status-danger"
-        *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength"
-      >
+      <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
         O nome deve conter entre
         {{ validation.fullName.minLength }} a
         {{ validation.fullName.maxLength }}
@@ -52,12 +45,8 @@
       [attr.aria-invalid]="email.invalid && email.touched ? true : null"
     />
     <ng-container *ngIf="email.invalid && email.touched">
-      <p class="caption status-danger" *ngIf="email.errors?.required">
-        O email é obrigatório!
-      </p>
-      <p class="caption status-danger" *ngIf="email.errors?.pattern">
-        Digite um email válido!
-      </p>
+      <p class="caption status-danger" *ngIf="email.errors?.required">O email é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="email.errors?.pattern">Digite um email válido!</p>
     </ng-container>
   </div>
   <div class="form-control-group">
@@ -76,19 +65,12 @@
       [required]="validation.document.required"
       [minlength]="validation.document.minLength"
       [maxlength]="validation.document.maxLength"
-      [status]="
-        document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'
-      "
+      [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
       [attr.aria-invalid]="document.invalid && document.touched ? true : null"
     />
     <ng-container *ngIf="document.invalid && document.touched">
-      <p class="caption status-danger" *ngIf="document.errors?.required">
-        O CPF/CNPJ é obrigatório!
-      </p>
-      <p
-        class="caption status-danger"
-        *ngIf="document.errors?.minlength || document.errors?.maxlength"
-      >
+      <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
         O CPF/CNPJ deve ter 11 ou 14 caracteres
       </p>
     </ng-container>
@@ -107,19 +89,12 @@
       [required]="validation.address.required"
       [minlength]="validation.address.minLength"
       [maxlength]="validation.address.maxLength"
-      [status]="
-        address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'
-      "
+      [status]="address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'"
       [attr.aria-invalid]="address.invalid && address.touched ? true : null"
     ></textarea>
     <ng-container *ngIf="address.invalid && address.touched">
-      <p class="caption status-danger" *ngIf="address.errors?.required">
-        O endereço é obrigatório!
-      </p>
-      <p
-        class="caption status-danger"
-        *ngIf="address.errors?.minlength || address.errors?.maxlength"
-      >
+      <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
         O endereço deve conter entre
         {{ validation.address.minLength }} a
         {{ validation.address.maxLength }}

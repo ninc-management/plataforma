@@ -4,13 +4,7 @@
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row">
           <div class="col-2" style="padding-left: 0; padding-right: 0">
-            <button
-              nbButton
-              fullWidth
-              status="primary"
-              (click)="contractorDialog({})"
-              style="height: 100%"
-            >
+            <button nbButton fullWidth status="primary" (click)="contractorDialog({})" style="height: 100%">
               <nb-icon icon="plus"></nb-icon>
             </button>
           </div>
@@ -46,17 +40,11 @@
       </ng-template>
       <ng-template #phone>
         <nb-list>
-          <nb-list-item
-            *ngFor="let contractor of filtredContractors; let i = index"
-          >
+          <nb-list-item *ngFor="let contractor of filtredContractors; let i = index">
             <a (click)="contractorDialog({ data: contractor })">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
-                  <nb-user
-                    size="giant"
-                    [name]="contractor.fullName"
-                    [title]="contractor.document"
-                  ></nb-user>
+                  <nb-user size="giant" [name]="contractor.fullName" [title]="contractor.document"></nb-user>
                 </div>
                 <div class="col-12">
                   <p>

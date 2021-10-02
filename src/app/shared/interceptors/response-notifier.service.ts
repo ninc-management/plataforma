@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpErrorResponse,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { NbGlobalPhysicalPosition, NbToastrService } from '@nebular/theme';
 
@@ -27,11 +21,7 @@ export class ResponseNotifierService implements HttpInterceptor {
     return next.handle(request).pipe(
       tap(
         (event) => {
-          if (
-            event instanceof HttpResponse &&
-            event.body &&
-            event.body.message !== undefined
-          ) {
+          if (event instanceof HttpResponse && event.body && event.body.message !== undefined) {
             this.toastrService.show('', event.body.message, {
               position: NbGlobalPhysicalPosition.TOP_RIGHT,
               status: 'success',

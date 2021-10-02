@@ -38,11 +38,7 @@ export class NortanService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private expenses$ = new BehaviorSubject<Expense[]>([]);
 
-  constructor(
-    private http: HttpClient,
-    private wsService: WebSocketService,
-    private socket: Socket
-  ) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -71,8 +67,7 @@ export class NortanService implements OnDestroy {
         .pipe(take(1))
         .subscribe((expenses: any) => {
           const tmp = JSON.parse(JSON.stringify(expenses), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate'].includes(k))
-              return parseISO(v);
+            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
             return v;
           });
           this.expenses$.next(tmp as Expense[]);
@@ -80,9 +75,7 @@ export class NortanService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.expenses$, 'expenses')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.expenses$, 'expenses'));
     }
     return this.expenses$;
   }

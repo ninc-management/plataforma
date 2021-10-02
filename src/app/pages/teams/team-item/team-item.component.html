@@ -16,15 +16,7 @@
           [required]="validation.name.required"
           [minlength]="validation.name.minLength"
           [maxlength]="validation.name.maxLength"
-          [status]="
-            name.touched
-              ? name.invalid
-                ? 'danger'
-                : 'success'
-              : editing
-              ? 'success'
-              : 'basic'
-          "
+          [status]="name.touched ? (name.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
         />
       </div>
@@ -76,9 +68,7 @@
               ? 'success'
               : 'basic'
           "
-          [attr.aria-invalid]="
-            leaderList.invalid && leaderList.touched ? true : null
-          "
+          [attr.aria-invalid]="leaderList.invalid && leaderList.touched ? true : null"
         ></nb-completer>
         <ng-container *ngIf="leaderList.invalid && leaderList.touched">
           <p class="caption status-danger" *ngIf="leaderList.errors?.required">
@@ -99,18 +89,8 @@
           fullWidth
           size="large"
           [required]="validation.expertise.required"
-          [status]="
-            expertise.touched
-              ? expertise.invalid
-                ? 'danger'
-                : 'success'
-              : editing
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            expertise.invalid && expertise.touched ? true : null
-          "
+          [status]="expertise.touched ? (expertise.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
+          [attr.aria-invalid]="expertise.invalid && expertise.touched ? true : null"
           [disabled]="false"
         >
           <nb-option *ngFor="let coordination of COORDINATIONS" [value]="coordination">{{ coordination }}</nb-option>
@@ -137,21 +117,11 @@
           [data$]="availableUsers"
           [minSearchLength]="0"
           [placeholder]="'Digite e selecione o nome do membro do time'"
-          [textNoResults]="
-            'Não foi possível achar um membro com o nome digitado'
-          "
+          [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
           [fullWidth]="true"
           [fieldSize]="'large'"
-          [status]="
-            memberList.dirty && memberSearch
-              ? memberList.invalid
-                ? 'danger'
-                : 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="
-            memberList.invalid && memberList.touched ? true : null
-          "
+          [status]="memberList.dirty && memberSearch ? (memberList.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="memberList.invalid && memberList.touched ? true : null"
         ></nb-completer>
       </div>
     </div>
@@ -171,13 +141,7 @@
     </div>
   </div>
   <nb-list style="width: 100%; padding: 10px 0">
-    <nb-list-item
-      *ngFor="
-        let member of team.members;
-        let i = index;
-        trackBy: utils.trackByIndex
-      "
-    >
+    <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
       <div class="row irow">
         <div class="col-10 col-md-5">
           <nb-user
@@ -193,11 +157,7 @@
           status="basic"
           icon="trash-2-outline"
           pack="eva"
-          (click)="
-            handleLeader(i);
-            team.members.splice(i, 1);
-            memberChanged$.next(true)
-          "
+          (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
           [options]="{ animation: { type: 'shake' } }"
         ></nb-icon>
       </div>

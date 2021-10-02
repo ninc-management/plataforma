@@ -22,11 +22,7 @@ export class OnedriveService {
     DRM: '05-DRM',
   };
 
-  constructor(
-    private http: HttpClient,
-    private userService: UserService,
-    private utils: UtilsService
-  ) {}
+  constructor(private http: HttpClient, private userService: UserService, private utils: UtilsService) {}
 
   private generateBasePath(invoice: Invoice, concluded = false): string {
     let path = this.departmentPath[invoice['department'].slice(0, 3)];
@@ -37,9 +33,7 @@ export class OnedriveService {
   private generateFolderName(invoice: Invoice): string {
     const slices = invoice.code.replace(/\//g, '_').split('-');
     const numberSlices = slices[1].split('_');
-    const authorName = invoice.author
-      ? this.userService.idToShortName(invoice.author)
-      : '';
+    const authorName = invoice.author ? this.userService.idToShortName(invoice.author) : '';
 
     return (
       slices[0] +
@@ -55,10 +49,7 @@ export class OnedriveService {
   }
 
   generatePath(invoice: Invoice, concluded = false): string {
-    return (
-      this.generateBasePath(invoice, concluded) +
-      this.generateFolderName(invoice)
-    );
+    return this.generateBasePath(invoice, concluded) + this.generateFolderName(invoice);
   }
 
   generateNortanExpensesPath(nortanExpense: Expense): string {
@@ -72,14 +63,11 @@ export class OnedriveService {
   oneDriveURI(isAdm?: boolean): string {
     let URI = '';
     if (environment.onedriveUri) {
-      if (environment.onedriveUri.match(/root/g)?.length)
-        URI = environment.onedriveUri;
+      if (environment.onedriveUri.match(/root/g)?.length) URI = environment.onedriveUri;
       else {
         URI =
           environment.onedriveUri +
-          (isAdm !== undefined
-            ? environment.onedriveAdmID
-            : environment.onedriveNortanID) +
+          (isAdm !== undefined ? environment.onedriveAdmID : environment.onedriveNortanID) +
           ':/';
       }
     }
@@ -104,8 +92,7 @@ export class OnedriveService {
         };
         if (environment.onedriveUri) {
           let copyURI: string;
-          if (environment.onedriveUri.match(/root/g)?.length)
-            copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
+          if (environment.onedriveUri.match(/root/g)?.length) copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
           else copyURI = environment.onedriveUri;
           this.http
             .post(copyURI + metadata.id + '/copy', body)
@@ -150,12 +137,10 @@ export class OnedriveService {
     ) {
       const invoice = contract.invoice;
       const concluded = invoice.status === 'Concluído';
-      return this.http
-        .get(this.oneDriveURI() + this.generatePath(invoice, concluded))
-        .pipe(
-          take(1),
-          map((metadata: any): string => metadata.webUrl)
-        );
+      return this.http.get(this.oneDriveURI() + this.generatePath(invoice, concluded)).pipe(
+        take(1),
+        map((metadata: any): string => metadata.webUrl)
+      );
     }
     return of('');
   }

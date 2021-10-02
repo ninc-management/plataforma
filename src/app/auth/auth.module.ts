@@ -42,11 +42,6 @@ import { SharedModule } from '../shared/shared.module';
     SharedModule,
     NbAuthModule,
   ],
-  declarations: [
-    NgxAuthComponent,
-    NgxLoginComponent,
-    NgxLogoutComponent,
-    NgxRegisterComponent,
-  ],
+  declarations: [NgxAuthComponent, NgxLoginComponent, NgxLogoutComponent, NgxRegisterComponent],
 })
 export class NgxAuthModule {}

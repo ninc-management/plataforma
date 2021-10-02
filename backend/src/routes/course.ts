@@ -15,8 +15,7 @@ router.post('/', (req, res, next) => {
     course
       .save()
       .then((savedCourse) => {
-        if (requested)
-          coursesMap[savedCourse._id] = cloneDeep(savedCourse.toJSON());
+        if (requested) coursesMap[savedCourse._id] = cloneDeep(savedCourse.toJSON());
         release();
         return res.status(201).json({
           message: 'Curso cadastrado!',

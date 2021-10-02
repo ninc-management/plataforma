@@ -58,9 +58,7 @@ export class ContractorService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.contractors$, 'contractors')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.contractors$, 'contractors'));
     }
     return this.contractors$;
   }
@@ -71,16 +69,7 @@ export class ContractorService implements OnDestroy {
   }
 
   idToContractor(id: string | Contractor): Contractor {
-    if (
-      this.utils.isOfType<Contractor>(id, [
-        '_id',
-        'fullName',
-        'document',
-        'email',
-        'address',
-      ])
-    )
-      return id;
+    if (this.utils.isOfType<Contractor>(id, ['_id', 'fullName', 'document', 'email', 'address'])) return id;
     const tmp = this.contractors$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

@@ -2,28 +2,16 @@ import { Component, OnInit, Input } from '@angular/core';
 import { take, takeUntil, skip } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
-import {
-  ContractService,
-  EXPENSE_TYPES,
-  SPLIT_TYPES,
-} from 'app/shared/services/contract.service';
+import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
-import {
-  UserService,
-  CONTRACT_BALANCE,
-  CLIENT,
-} from 'app/shared/services/user.service';
+import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import {
-  ContractExpenseTeamMember,
-  ContractExpense,
-  Contract,
-} from '@models/contract';
+import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as expense_validation from 'app/shared/expense-validation.json';
@@ -33,10 +21,7 @@ import * as expense_validation from 'app/shared/expense-validation.json';
   templateUrl: './expense-item.component.html',
   styleUrls: ['./expense-item.component.scss'],
 })
-export class ExpenseItemComponent
-  extends BaseExpenseComponent
-  implements OnInit
-{
+export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @Input()
   contract = new Contract();
   @Input() expenseIndex?: number;
@@ -100,9 +85,7 @@ export class ExpenseItemComponent
   get sMemberIndex(): number {
     return this.expense.team.findIndex(
       (member: ContractExpenseTeamMember) =>
-        member.user &&
-        this.userService.idToUser(member.user)?._id ==
-          this.splitSelectedMember?._id
+        member.user && this.userService.idToUser(member.user)?._id == this.splitSelectedMember?._id
     );
   }
 
@@ -124,12 +107,9 @@ export class ExpenseItemComponent
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
 
-    this.formRef.control.statusChanges
-      .pipe(skip(1), takeUntil(this.destroy$))
-      .subscribe((status) => {
-        if (status === 'VALID' && this.expense.nf === true)
-          this.updateUploaderOptions();
-      });
+    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (status === 'VALID' && this.expense.nf === true) this.updateUploaderOptions();
+    });
   }
 
   fillContractData(): void {
@@ -138,8 +118,7 @@ export class ExpenseItemComponent
 
     this.updateUploaderOptions();
 
-    if (this.contract.invoice !== undefined)
-      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.contract.invoice !== undefined) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
 
     const tmp = this.invoice.team
       .map((member: InvoiceTeamMember): User | undefined => {
@@ -154,33 +133,22 @@ export class ExpenseItemComponent
 
     if (this.expenseIndex !== undefined) {
       this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
-      if (this.expense.author)
-        this.expense.author = this.userService.idToUser(this.expense.author);
+      if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) {
         this.expense.source = this.userService.idToUser(this.expense.source);
-        this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-          this.expense.source._id
-        );
+        this.USER_COORDINATIONS = this.departmentService.userCoordinations(this.expense.source._id);
       }
-      this.uploadedFiles = cloneDeep(
-        this.expense.uploadedFiles
-      ) as UploadedFile[];
-      if (this.expense.type === EXPENSE_TYPES.APORTE)
-        this.removeContractBalanceMember();
+      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
+      if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
       this.lastType = this.expense.type as EXPENSE_TYPES;
       if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
-        const sMember = this.expense.team.find(
-          (member) => member.percentage === '100,00'
-        );
-        if (sMember && sMember.user)
-          this.splitSelectedMember = this.userService.idToUser(sMember.user);
+        const sMember = this.expense.team.find((member) => member.percentage === '100,00');
+        if (sMember && sMember.user) this.splitSelectedMember = this.userService.idToUser(sMember.user);
       }
     } else {
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         const member = this.invoice.team.find(
-          (member: InvoiceTeamMember) =>
-            member.user &&
-            this.userService.idToUser(member.user)._id == author._id
+          (member: InvoiceTeamMember) => member.user && this.userService.idToUser(member.user)._id == author._id
         );
         if (member) this.expense.author = member.user;
       });
@@ -194,31 +162,21 @@ export class ExpenseItemComponent
       });
 
     if (!this.expense.team || this.expense.team.length == 0)
-      this.expense.team = this.invoice.team.map(
-        (member: InvoiceTeamMember) => ({
-          user: member.user,
-          value: '0,00',
-          percentage: member.distribution,
-          coordination: member.coordination,
-        })
-      );
+      this.expense.team = this.invoice.team.map((member: InvoiceTeamMember) => ({
+        user: member.user,
+        value: '0,00',
+        percentage: member.distribution,
+        coordination: member.coordination,
+      }));
 
     this.sourceData = this.sourceArray;
-    this.userSearch = this.expense.author
-      ? this.userService.idToUser(this.expense.author)?.fullName
-      : '';
-    this.sourceSearch = this.expense.source
-      ? this.userService.idToUser(this.expense.source)?.fullName
-      : '';
+    this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
+    this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
 
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
       if (this.splitSelectedMember._id == undefined)
-        this.splitSelectedMember = this.userService.idToUser(
-          this.expense.team[0].user
-        );
-      this.USER_COORDINATIONS = this.departmentService.userCoordinations(
-        this.splitSelectedMember._id
-      );
+        this.splitSelectedMember = this.userService.idToUser(this.expense.team[0].user);
+      this.USER_COORDINATIONS = this.departmentService.userCoordinations(this.splitSelectedMember._id);
     }
     if (this.expenseIndex == undefined) this.updateTeamValues();
   }
@@ -226,14 +184,10 @@ export class ExpenseItemComponent
   updateUploaderOptions(): void {
     if (this.contract.invoice) {
       const mediaFolderPath =
-        this.onedrive.generatePath(
-          this.invoiceService.idToInvoice(this.contract.invoice)
-        ) + '/Recibos';
+        this.onedrive.generatePath(this.invoiceService.idToInvoice(this.contract.invoice)) + '/Recibos';
       const fn = (name: string) => {
         const item = (
-          this.expenseIndex !== undefined
-            ? this.expenseIndex + 1
-            : this.contract.expenses.length + 1
+          this.expenseIndex !== undefined ? this.expenseIndex + 1 : this.contract.expenses.length + 1
         ).toString();
         const type = this.expense.type;
         const value = this.expense.value.replace(/\./g, '');
@@ -258,28 +212,17 @@ export class ExpenseItemComponent
   }
 
   handleContractMember(): void {
-    if (
-      this.expense.type === EXPENSE_TYPES.APORTE &&
-      this.lastType !== EXPENSE_TYPES.APORTE
-    ) {
+    if (this.expense.type === EXPENSE_TYPES.APORTE && this.lastType !== EXPENSE_TYPES.APORTE) {
       this.removeContractBalanceMember();
-      if (
-        this.expense.source &&
-        this.userService.idToUser(this.expense.source)._id ===
-          CONTRACT_BALANCE._id
-      ) {
+      if (this.expense.source && this.userService.idToUser(this.expense.source)._id === CONTRACT_BALANCE._id) {
         this.sourceSearch = '';
         this.expense.source = undefined;
       }
     }
-    if (
-      this.expense.type !== EXPENSE_TYPES.APORTE &&
-      this.lastType === EXPENSE_TYPES.APORTE
-    ) {
+    if (this.expense.type !== EXPENSE_TYPES.APORTE && this.lastType === EXPENSE_TYPES.APORTE) {
       this.addContractBalanceMember();
     }
-    if (this.expense.type === EXPENSE_TYPES.APORTE)
-      this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
+    if (this.expense.type === EXPENSE_TYPES.APORTE) this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
     this.lastType = this.expense.type as EXPENSE_TYPES;
   }
 
@@ -316,11 +259,7 @@ export class ExpenseItemComponent
   }
 
   overPaid(): string {
-    if (
-      this.expense.source &&
-      this.userService.idToUser(this.expense.source)?._id ===
-        CONTRACT_BALANCE._id
-    ) {
+    if (this.expense.source && this.userService.idToUser(this.expense.source)?._id === CONTRACT_BALANCE._id) {
       return this.contract.balance;
     }
     return this.stringUtil.numberToMoney(Number.MAX_VALUE);
@@ -340,19 +279,14 @@ export class ExpenseItemComponent
   }
 
   updateLastValues(): void {
-    this.options.lastValue = this.expense.value
-      ? this.expense.value.slice()
-      : '0';
+    this.options.lastValue = this.expense.value ? this.expense.value.slice() : '0';
     this.options.lastTeam = cloneDeep(this.expense.team);
   }
 
   calculateTeamValues(): void {
     if (this.expense.value !== '0') {
       this.expense.team.map((member) => {
-        member.value = this.stringUtil.applyPercentage(
-          this.expense.value,
-          member.percentage
-        );
+        member.value = this.stringUtil.applyPercentage(this.expense.value, member.percentage);
         return member;
       });
     }
@@ -380,8 +314,7 @@ export class ExpenseItemComponent
       }
       case SPLIT_TYPES.PROPORCIONAL: {
         for (let index = 0; index < this.expense.team.length; index++) {
-          this.expense.team[index].percentage =
-            this.invoice.team[index].distribution;
+          this.expense.team[index].percentage = this.invoice.team[index].distribution;
           this.expense.team[index].value = this.stringUtil.applyPercentage(
             this.expense.value,
             this.expense.team[index].percentage

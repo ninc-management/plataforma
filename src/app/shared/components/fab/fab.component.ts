@@ -77,9 +77,7 @@ export class FabComponent implements AfterContentInit, OnDestroy {
       i += 1;
       const style = btn.elementref.nativeElement.style;
 
-      btn.contentref.nativeElement.style.display = this.state.getValue().display
-        ? 'block'
-        : 'none';
+      btn.contentref.nativeElement.style.display = this.state.getValue().display ? 'block' : 'none';
 
       if (eventType !== 'directionChanged' && this.state.getValue().display) {
         style['transform'] = 'scale(1)';
@@ -91,12 +89,8 @@ export class FabComponent implements AfterContentInit, OnDestroy {
       }
 
       setTimeout(() => {
-        style['transition-duration'] = this.state.getValue().display
-          ? `${90 + 100 * i}ms`
-          : '';
-        style['transform'] = this.state.getValue().display
-          ? this.getTranslate(i)
-          : '';
+        style['transition-duration'] = this.state.getValue().display ? `${90 + 100 * i}ms` : '';
+        style['transform'] = this.state.getValue().display ? this.getTranslate(i) : '';
       }, 50);
 
       if (eventType !== 'directionChanged' && !this.state.getValue().display) {
@@ -113,24 +107,16 @@ export class FabComponent implements AfterContentInit, OnDestroy {
 
     switch (this.direction) {
       case 'right':
-        animation = `translate3d(${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0,0)`;
+        animation = `translate3d(${this.state.getValue().spaceBetweenButtons * i}px,0,0)`;
         break;
       case 'bottom':
-        animation = `translate3d(0,${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0)`;
+        animation = `translate3d(0,${this.state.getValue().spaceBetweenButtons * i}px,0)`;
         break;
       case 'left':
-        animation = `translate3d(-${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0,0)`;
+        animation = `translate3d(-${this.state.getValue().spaceBetweenButtons * i}px,0,0)`;
         break;
       default:
-        animation = `translate3d(0,-${
-          this.state.getValue().spaceBetweenButtons * i
-        }px,0)`;
+        animation = `translate3d(0,-${this.state.getValue().spaceBetweenButtons * i}px,0)`;
         break;
     }
 

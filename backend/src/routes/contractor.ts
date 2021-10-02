@@ -15,10 +15,7 @@ router.post('/', (req, res, next) => {
     contractor
       .save()
       .then((savedContractor) => {
-        if (requested)
-          contractorsMap[savedContractor._id] = cloneDeep(
-            savedContractor.toJSON()
-          );
+        if (requested) contractorsMap[savedContractor._id] = cloneDeep(savedContractor.toJSON());
         release();
         res.status(201).json({
           message: 'Cliente cadastrado!',
@@ -47,9 +44,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          contractorsMap[req.body.contractor._id] = cloneDeep(
-            savedContractor.toJSON()
-          );
+          contractorsMap[req.body.contractor._id] = cloneDeep(savedContractor.toJSON());
         });
       }
       return res.status(200).json({
@@ -62,9 +57,7 @@ router.post('/update', async (req, res, next) => {
 router.post('/all', async (req, res) => {
   if (!requested) {
     const contractors: Contractor[] = await ContractorModel.find({});
-    contractors.map(
-      (contractor) => (contractorsMap[contractor._id] = cloneDeep(contractor))
-    );
+    contractors.map((contractor) => (contractorsMap[contractor._id] = cloneDeep(contractor)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(contractorsMap)));

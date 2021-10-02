@@ -8,11 +8,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import {
-  NortanService,
-  NORTAN_EXPENSE_TYPES,
-  NORTAN_FIXED_EXPENSE_TYPES,
-} from 'app/shared/services/nortan.service';
+import { NortanService, NORTAN_EXPENSE_TYPES, NORTAN_FIXED_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
 import { Expense } from '@models/expense';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
@@ -24,10 +20,7 @@ import { of } from 'rxjs/internal/observable/of';
   templateUrl: './nortan-expense-item.component.html',
   styleUrls: ['./nortan-expense-item.component.scss'],
 })
-export class NortanExpenseItemComponent
-  extends BaseExpenseComponent
-  implements OnInit
-{
+export class NortanExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
   @Input() iExpense?: Expense;
@@ -66,13 +59,9 @@ export class NortanExpenseItemComponent
     this.sourceData = of(tmp);
     if (this.iExpense != undefined) {
       this.expense = cloneDeep(this.iExpense);
-      if (this.expense.author)
-        this.expense.author = this.userService.idToUser(this.expense.author);
-      if (this.expense.source)
-        this.expense.source = this.userService.idToUser(this.expense.source);
-      this.uploadedFiles = cloneDeep(
-        this.expense.uploadedFiles
-      ) as UploadedFile[];
+      if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
+      if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
+      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
     } else {
       this.nortanService
         .expensesSize()
@@ -86,21 +75,15 @@ export class NortanExpenseItemComponent
       this.updatePaidDate();
     }
 
-    this.userSearch = this.expense.author
-      ? this.userService.idToUser(this.expense.author)?.fullName
-      : '';
-    this.sourceSearch = this.expense.source
-      ? this.userService.idToUser(this.expense.source)?.fullName
-      : '';
+    this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
+    this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
 
-    this.formRef.control.statusChanges
-      .pipe(skip(1), takeUntil(this.destroy$))
-      .subscribe((status) => {
-        if (status === 'VALID' && this.expense.nf === true)
-          setTimeout(() => {
-            this.updateUploaderOptions();
-          }, 5);
-      });
+    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (status === 'VALID' && this.expense.nf === true)
+        setTimeout(() => {
+          this.updateUploaderOptions();
+        }, 5);
+    });
   }
 
   registerExpense(): void {
@@ -126,9 +109,7 @@ export class NortanExpenseItemComponent
   }
 
   updateUploaderOptions(): void {
-    const mediaFolderPath = this.onedrive.generateNortanExpensesPath(
-      this.expense
-    );
+    const mediaFolderPath = this.onedrive.generateNortanExpensesPath(this.expense);
     const fn = (name: string) => {
       const type = this.expense.type;
       const date = this.utils.formatDate(new Date(), '-');
@@ -143,8 +124,7 @@ export class NortanExpenseItemComponent
   }
 
   handleTypeChange(): void {
-    if (this.expense.type !== NORTAN_EXPENSE_TYPES.GASTOS_FIXOS)
-      this.expense.fixedType = '';
+    if (this.expense.type !== NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) this.expense.fixedType = '';
   }
 
   updatePaidDate(): void {

@@ -23,9 +23,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   get filtredPromotions(): Promotion[] {
     if (this.searchQuery !== '')
       return this.promotions.filter((promotion) => {
-        return promotion.name
-          .toLowerCase()
-          .includes(this.searchQuery.toLowerCase());
+        return promotion.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
     return this.promotions.sort((a, b) => {
       return this.utils.nameSort(1, a.name, b.name);
@@ -34,8 +32,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
 
   settings = {
     mode: 'external',
-    noDataMessage:
-      'Não encontramos nenhuma promoção para o filtro selecionado.',
+    noDataMessage: 'Não encontramos nenhuma promoção para o filtro selecionado.',
     add: {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
@@ -102,11 +99,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   promotionDialog(event: { data?: Promotion }): void {
     this.dialogService.open(PromotionDialogComponent, {
       context: {
-        title: event.data
-          ? this.utils.isPhone()
-            ? 'EDIÇÃO'
-            : 'EDIÇÃO DE PROMOÇÃO'
-          : 'CADASTRO DE PROMOÇÃO',
+        title: event.data ? (this.utils.isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE PROMOÇÃO') : 'CADASTRO DE PROMOÇÃO',
         promotion: event.data ? event.data : new Promotion(),
       },
       dialogClass: 'my-dialog',

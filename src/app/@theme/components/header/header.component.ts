@@ -1,10 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  NbMediaBreakpointsService,
-  NbMenuService,
-  NbSidebarService,
-  NbThemeService,
-} from '@nebular/theme';
+import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
 
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -42,12 +37,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.userService.currentUser$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user: any) => {
-        this.user = user;
-        this.changeTheme();
-      });
+    this.userService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user: any) => {
+      this.user = user;
+      this.changeTheme();
+    });
 
     const { sm, xl } = this.breakpointService.getBreakpointsMap();
     this.themeService
@@ -56,20 +49,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
         map(([, currentBreakpoint]) => currentBreakpoint.width < xl),
         takeUntil(this.destroy$)
       )
-      .subscribe(
-        (isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl)
-      );
+      .subscribe((isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl));
 
     this.menuService
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
-        if (
-          document.documentElement.clientWidth <= sm &&
-          event.tag === 'main'
-        ) {
-          this.menuTitle =
-            event.item.title === 'Início' ? 'Nortan' : event.item.title;
+        if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
+          this.menuTitle = event.item.title === 'Início' ? 'Nortan' : event.item.title;
         }
       });
 
@@ -82,9 +69,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .onThemeChange()
       .pipe(takeUntil(this.destroy$))
       .subscribe((theme) => {
-        this.logoIcon = ['dark', 'cosmic'].includes(theme.name)
-          ? 'logoNoFill'
-          : 'logo';
+        this.logoIcon = ['dark', 'cosmic'].includes(theme.name) ? 'logoNoFill' : 'logo';
       });
   }
 
@@ -94,9 +79,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   changeTheme(): void {
-    this.themeService.changeTheme(
-      this.user.theme == undefined ? 'default' : this.user.theme
-    );
+    this.themeService.changeTheme(this.user.theme == undefined ? 'default' : this.user.theme);
   }
 
   toggleSidebar(): boolean {

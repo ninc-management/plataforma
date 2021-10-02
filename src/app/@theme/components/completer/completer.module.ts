@@ -7,13 +7,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  NbAutocompleteModule,
-  NbInputModule,
-  NbListModule,
-  NbTooltipModule,
-  NbUserModule,
-} from '@nebular/theme';
+import { NbAutocompleteModule, NbInputModule, NbListModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 
 import { NbCompleterComponent } from './completer.component';
 

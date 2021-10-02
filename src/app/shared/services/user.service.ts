@@ -82,11 +82,9 @@ export class UserService implements OnDestroy {
     private socket: Socket,
     private utils: UtilsService
   ) {
-    this.authService.onUserChange$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.refreshCurrentUser();
-      });
+    this.authService.onUserChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.refreshCurrentUser();
+    });
     this.refreshCurrentUser();
   }
 
@@ -136,9 +134,7 @@ export class UserService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.users$, 'users')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.users$, 'users'));
     }
     return this.users$;
   }
@@ -182,8 +178,7 @@ export class UserService implements OnDestroy {
   }
 
   idToUser(id: string | User): User {
-    if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone']))
-      return id;
+    if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone'])) return id;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     if (id == CLIENT._id) return CLIENT as User;
     if (id == NORTAN._id) return NORTAN as User;
@@ -198,10 +193,7 @@ export class UserService implements OnDestroy {
     return author.profilePicture;
   }
 
-  isEqual(
-    u1: string | User | undefined,
-    u2: string | User | undefined
-  ): boolean {
+  isEqual(u1: string | User | undefined, u2: string | User | undefined): boolean {
     if (u1 == undefined || u2 == undefined) return false;
     return this.idToUser(u1)._id == this.idToUser(u2)._id;
   }

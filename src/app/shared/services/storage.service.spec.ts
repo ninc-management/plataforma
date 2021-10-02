@@ -39,12 +39,7 @@ describe('StorageService', () => {
   });
 
   it('should upload file to firebase', (done: DoneFn) => {
-    const metadata = service.uploadFileAndGetMetadata(
-      '',
-      emptyFile,
-      'test',
-      StorageProvider.FIREBASE
-    );
+    const metadata = service.uploadFileAndGetMetadata('', emptyFile, 'test', StorageProvider.FIREBASE);
     combineLatest(metadata.downloadUrl$, metadata.uploadProgress$)
       .toPromise()
       .then(([url, progress]) => {

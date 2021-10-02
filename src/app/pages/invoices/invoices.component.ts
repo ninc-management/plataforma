@@ -1,20 +1,10 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
-import {
-  InvoiceService,
-  INVOICE_STATOOS,
-} from 'app/shared/services/invoice.service';
+import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -35,31 +25,20 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
         return (
-          invoice.fullName
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor.fullName
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor.document
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.value
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          invoice.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.invoices.sort((a, b) =>
-      this.utils.codeSort(-1, a.code, b.code)
-    );
+    return this.invoices.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',
-    noDataMessage:
-      'Não encontramos nenhum orçamento para o filtro selecionado.',
+    noDataMessage: 'Não encontramos nenhum orçamento para o filtro selecionado.',
     add: {
       addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
@@ -172,12 +151,8 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(([invoices, contractors, user]) => {
         if (invoices.length > 0 && contractors.length > 0) {
           this.invoices = invoices.map((invoice: Invoice) => {
-            if (invoice.author)
-              invoice.fullName = this.userService.idToShortName(invoice.author);
-            if (invoice.contractor)
-              invoice.contractorName = this.contractorService.idToName(
-                invoice.contractor
-              );
+            if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
+            if (invoice.contractor) invoice.contractorName = this.contractorService.idToName(invoice.contractor);
             invoice.role = this.invoiceService.role(invoice, user);
             return invoice;
           });
@@ -187,17 +162,10 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    combineLatest([
-      this.invoiceService.getInvoices(),
-      this.contractorService.getContractors(),
-    ])
+    combineLatest([this.invoiceService.getInvoices(), this.contractorService.getContractors()])
       .pipe(take(3))
       .subscribe(([invoices, contractors]) => {
-        if (
-          invoices.length > 0 &&
-          contractors.length > 0 &&
-          !this.utils.isPhone()
-        ) {
+        if (invoices.length > 0 && contractors.length > 0 && !this.utils.isPhone()) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
@@ -218,11 +186,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialogService
       .open(InvoiceDialogComponent, {
         context: {
-          title: event.data
-            ? this.utils.isPhone()
-              ? 'EDIÇÃO'
-              : 'EDIÇÃO DE ORÇAMENTO'
-            : 'CADASTRO DE ORÇAMENTO',
+          title: event.data ? (this.utils.isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE ORÇAMENTO') : 'CADASTRO DE ORÇAMENTO',
           invoice: event.data ? event.data : new Invoice(),
         },
         dialogClass: 'my-dialog',

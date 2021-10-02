@@ -167,105 +167,49 @@ export class MetricsService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  userDepartmentRepresentation(
-    department: string,
-    userDepartment: FilteredUserAndDepartments
-  ): string {
-    const departmentsAbrevs = this.departmentService
-      .buildDepartmentList()
-      .map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
+  userDepartmentRepresentation(department: string, userDepartment: FilteredUserAndDepartments): string {
+    const departmentsAbrevs = this.departmentService.buildDepartmentList().map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
     switch (department) {
       case departmentsAbrevs[0]:
-        return this.stringUtil.toPercentageNumber(
-          userDepartment.user.DAD,
-          userDepartment.global.DAD
-        );
+        return this.stringUtil.toPercentageNumber(userDepartment.user.DAD, userDepartment.global.DAD);
       case departmentsAbrevs[1]:
-        return this.stringUtil.toPercentageNumber(
-          userDepartment.user.DEC,
-          userDepartment.global.DEC
-        );
+        return this.stringUtil.toPercentageNumber(userDepartment.user.DEC, userDepartment.global.DEC);
       case departmentsAbrevs[2]:
-        return this.stringUtil.toPercentageNumber(
-          userDepartment.user.DAQ,
-          userDepartment.global.DAQ
-        );
+        return this.stringUtil.toPercentageNumber(userDepartment.user.DAQ, userDepartment.global.DAQ);
       case departmentsAbrevs[3]:
-        return this.stringUtil.toPercentageNumber(
-          userDepartment.user.DPC,
-          userDepartment.global.DPC
-        );
+        return this.stringUtil.toPercentageNumber(userDepartment.user.DPC, userDepartment.global.DPC);
       case departmentsAbrevs[4]:
-        return this.stringUtil.toPercentageNumber(
-          userDepartment.user.DRM,
-          userDepartment.global.DRM
-        );
+        return this.stringUtil.toPercentageNumber(userDepartment.user.DRM, userDepartment.global.DRM);
       default:
         return '';
     }
   }
 
-  userCoordRepresentation(
-    coord: string,
-    userCoord: FilteredUserAndCoordinations
-  ): string {
+  userCoordRepresentation(coord: string, userCoord: FilteredUserAndCoordinations): string {
     const coords = this.departmentService.buildAllCoordinationsList();
     switch (coord) {
       case coords[0]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CADM,
-          userCoord.global.CADM
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CADM, userCoord.global.CADM);
       case coords[1]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CDI,
-          userCoord.global.CDI
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CDI, userCoord.global.CDI);
       case coords[2]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CGO,
-          userCoord.global.CGO
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CGO, userCoord.global.CGO);
       case coords[3]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CIMP,
-          userCoord.global.CIMP
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CIMP, userCoord.global.CIMP);
       case coords[4]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CINST,
-          userCoord.global.CINST
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CINST, userCoord.global.CINST);
       case coords[5]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CMA,
-          userCoord.global.CMA
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CMA, userCoord.global.CMA);
       case coords[6]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CPA,
-          userCoord.global.CPA
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CPA, userCoord.global.CPA);
       case coords[7]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CRH,
-          userCoord.global.CRH
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CRH, userCoord.global.CRH);
       case coords[8]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CSE,
-          userCoord.global.CSE
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CSE, userCoord.global.CSE);
       case coords[9]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CSEST,
-          userCoord.global.CSEST
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CSEST, userCoord.global.CSEST);
       case coords[10]:
-        return this.stringUtil.toPercentageNumber(
-          userCoord.user.CSH,
-          userCoord.global.CSH
-        );
+        return this.stringUtil.toPercentageNumber(userCoord.user.CSH, userCoord.global.CSH);
       default:
         return '';
     }
@@ -277,14 +221,10 @@ export class MetricsService implements OnDestroy {
         return number > 1 ? 'Nos últimos ' + number + ' dias' : 'Ontem';
       }
       case 'Mês': {
-        return number > 1
-          ? 'Nos últimos ' + number + ' meses'
-          : 'No mês passado';
+        return number > 1 ? 'Nos últimos ' + number + ' meses' : 'No mês passado';
       }
       case 'Ano': {
-        return number > 1
-          ? 'Nos últimos ' + number + ' anos'
-          : 'No ano passado';
+        return number > 1 ? 'Nos últimos ' + number + ' anos' : 'No ano passado';
       }
       default: {
         return '';
@@ -298,13 +238,8 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -346,9 +281,7 @@ export class MetricsService implements OnDestroy {
                 this.utils.isValidDate(created, last, number, fromToday)
               ) {
                 metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(
-                  invoice.value
-                );
+                metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
               }
               return metricInfo;
             },
@@ -365,13 +298,8 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<MetricInfo> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -413,9 +341,7 @@ export class MetricsService implements OnDestroy {
                 this.utils.isValidDate(created, last, number, fromToday)
               ) {
                 metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(
-                  invoice.value
-                );
+                metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
               }
               return metricInfo;
             },
@@ -426,149 +352,86 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueByCoordinations(
-    start: Date,
-    end: Date,
-    uId?: string
-  ): Observable<UserAndCoordinations> {
+  receivedValueByCoordinations(start: Date, end: Date, uId?: string): Observable<UserAndCoordinations> {
     return this.contractService.getContracts().pipe(
       filter((contracts) => contracts.length > 0),
       map((contracts) => {
         return contracts.reduce((received: UserAndCoordinations, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
-            const value = contract.payments.reduce(
-              (paid: UserAndCoordinations, payment) => {
-                if (payment.paid) {
-                  const paidDate = payment.paidDate;
-                  if (
-                    paidDate &&
-                    this.utils.isWithinInterval(paidDate, start, end)
-                  ) {
-                    const uCPayments = payment.team.reduce(
-                      (upaid: UserAndCoordinations, member) => {
-                        const coords =
-                          this.departmentService.buildAllCoordinationsList();
-                        switch (member.coordination) {
-                          case coords[0]:
-                            upaid.global.CADM += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CADM += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[1]:
-                            upaid.global.CDI += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CDI += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[2]:
-                            upaid.global.CGO += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CGO += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[3]:
-                            upaid.global.CIMP += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CIMP += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[4]:
-                            upaid.global.CINST += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CINST += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[5]:
-                            upaid.global.CMA += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CMA += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[6]:
-                            upaid.global.CPA += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CPA += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[7]:
-                            upaid.global.CRH += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CRH += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[8]:
-                            upaid.global.CRH += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CRH += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[9]:
-                            upaid.global.CSEST += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CSEST += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          case coords[10]:
-                            upaid.global.CSH += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
-                            if (this.userService.isEqual(member.user, uId))
-                              upaid.user.CSH += this.stringUtil.moneyToNumber(
-                                member.value
-                              );
-                            break;
-                          default:
-                            break;
-                        }
+            const value = contract.payments.reduce((paid: UserAndCoordinations, payment) => {
+              if (payment.paid) {
+                const paidDate = payment.paidDate;
+                if (paidDate && this.utils.isWithinInterval(paidDate, start, end)) {
+                  const uCPayments = payment.team.reduce((upaid: UserAndCoordinations, member) => {
+                    const coords = this.departmentService.buildAllCoordinationsList();
+                    switch (member.coordination) {
+                      case coords[0]:
+                        upaid.global.CADM += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CADM += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[1]:
+                        upaid.global.CDI += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CDI += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[2]:
+                        upaid.global.CGO += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CGO += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[3]:
+                        upaid.global.CIMP += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CIMP += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[4]:
+                        upaid.global.CINST += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CINST += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[5]:
+                        upaid.global.CMA += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CMA += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[6]:
+                        upaid.global.CPA += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CPA += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[7]:
+                        upaid.global.CRH += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CRH += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[8]:
+                        upaid.global.CRH += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CRH += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[9]:
+                        upaid.global.CSEST += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CSEST += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      case coords[10]:
+                        upaid.global.CSH += this.stringUtil.moneyToNumber(member.value);
+                        if (this.userService.isEqual(member.user, uId))
+                          upaid.user.CSH += this.stringUtil.moneyToNumber(member.value);
+                        break;
+                      default:
+                        break;
+                    }
 
-                        return upaid;
-                      },
-                      cloneDeep(this.defaultUserCoordValue)
-                    );
-                    paid.user = mergeWith({}, paid.user, uCPayments.user, add);
-                    paid.global = mergeWith(
-                      {},
-                      paid.global,
-                      uCPayments.global,
-                      add
-                    );
-                  }
+                    return upaid;
+                  }, cloneDeep(this.defaultUserCoordValue));
+                  paid.user = mergeWith({}, paid.user, uCPayments.user, add);
+                  paid.global = mergeWith({}, paid.global, uCPayments.global, add);
                 }
-                return paid;
-              },
-              cloneDeep(this.defaultUserCoordValue)
-            );
+              }
+              return paid;
+            }, cloneDeep(this.defaultUserCoordValue));
             received.user = mergeWith({}, received.user, value.user, add);
             received.global = mergeWith({}, received.global, value.global, add);
           }
@@ -583,108 +446,63 @@ export class MetricsService implements OnDestroy {
                   source._id != CONTRACT_BALANCE._id &&
                   source._id != CLIENT._id
                 ) {
-                  const coords =
-                    this.departmentService.buildAllCoordinationsList();
+                  const coords = this.departmentService.buildAllCoordinationsList();
                   for (const member of expense.team) {
                     switch (member.coordination) {
                       case coords[0]:
-                        received.global.CADM -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CADM -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CADM -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CADM -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[1]:
-                        received.global.CDI -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CDI -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CDI -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CDI -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[2]:
-                        received.global.CGO -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CGO -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CGO -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CGO -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[3]:
-                        received.global.CIMP -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CIMP -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CIMP -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CIMP -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[4]:
-                        received.global.CINST -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CINST -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CINST -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CINST -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[5]:
-                        received.global.CMA -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CMA -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CMA -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CMA -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[6]:
-                        received.global.CPA -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CPA -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CPA -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CPA -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[7]:
-                        received.global.CRH -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CRH -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CRH -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CRH -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[8]:
-                        received.global.CRH -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CRH -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CRH -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CRH -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[9]:
-                        received.global.CSEST -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CSEST -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CSEST -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CSEST -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       case coords[10]:
-                        received.global.CSH -= this.stringUtil.moneyToNumber(
-                          member.value
-                        );
+                        received.global.CSH -= this.stringUtil.moneyToNumber(member.value);
                         if (this.userService.isEqual(member.user, uId))
-                          received.user.CSH -= this.stringUtil.moneyToNumber(
-                            member.value
-                          );
+                          received.user.CSH -= this.stringUtil.moneyToNumber(member.value);
                         break;
                       default:
                         break;
@@ -701,11 +519,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueByCoordinationsFiltered(
-    start: Date,
-    end: Date,
-    uId?: string
-  ): Observable<FilteredUserAndCoordinations> {
+  receivedValueByCoordinationsFiltered(start: Date, end: Date, uId?: string): Observable<FilteredUserAndCoordinations> {
     return this.receivedValueByCoordinations(start, end, uId).pipe(
       map((userCoord: UserAndCoordinations) => {
         if (userCoord == undefined) return userCoord;
@@ -766,11 +580,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueByDepartments(
-    start: Date,
-    end: Date,
-    uId?: string
-  ): Observable<UserAndDepartments> {
+  receivedValueByDepartments(start: Date, end: Date, uId?: string): Observable<UserAndDepartments> {
     return this.receivedValueByCoordinations(start, end, uId).pipe(
       map((userCoord: UserAndCoordinations) => {
         const userDepartment = cloneDeep(this.defaultUserDepartmentValue);
@@ -812,11 +622,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueByDepartmentsFiltered(
-    start: Date,
-    end: Date,
-    uId?: string
-  ): Observable<FilteredUserAndDepartments> {
+  receivedValueByDepartmentsFiltered(start: Date, end: Date, uId?: string): Observable<FilteredUserAndDepartments> {
     return this.receivedValueByDepartments(start, end, uId).pipe(
       map((userDepartment: UserAndDepartments) => {
         const filtered: FilteredUserAndDepartments = { user: {}, global: {} };
@@ -824,114 +630,48 @@ export class MetricsService implements OnDestroy {
           const coords = this.departmentService.buildAllCoordinationsList();
           switch (coord) {
             case coords[0]:
-              filtered.user.DAD = this.utils.assingOrIncrement(
-                filtered.user.DAD,
-                userDepartment.user.DAD
-              );
-              filtered.global.DAD = this.utils.assingOrIncrement(
-                filtered.global.DAD,
-                userDepartment.global.DAD
-              );
+              filtered.user.DAD = this.utils.assingOrIncrement(filtered.user.DAD, userDepartment.user.DAD);
+              filtered.global.DAD = this.utils.assingOrIncrement(filtered.global.DAD, userDepartment.global.DAD);
               break;
             case coords[1]:
-              filtered.user.DAQ = this.utils.assingOrIncrement(
-                filtered.user.DAQ,
-                userDepartment.user.DAQ
-              );
-              filtered.global.DAQ = this.utils.assingOrIncrement(
-                filtered.global.DAQ,
-                userDepartment.global.DAQ
-              );
+              filtered.user.DAQ = this.utils.assingOrIncrement(filtered.user.DAQ, userDepartment.user.DAQ);
+              filtered.global.DAQ = this.utils.assingOrIncrement(filtered.global.DAQ, userDepartment.global.DAQ);
               break;
             case coords[2]:
-              filtered.user.DEC = this.utils.assingOrIncrement(
-                filtered.user.DEC,
-                userDepartment.user.DEC
-              );
-              filtered.global.DEC = this.utils.assingOrIncrement(
-                filtered.global.DEC,
-                userDepartment.global.DEC
-              );
+              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
+              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
               break;
             case coords[3]:
-              filtered.user.DEC = this.utils.assingOrIncrement(
-                filtered.user.DEC,
-                userDepartment.user.DEC
-              );
-              filtered.global.DEC = this.utils.assingOrIncrement(
-                filtered.global.DEC,
-                userDepartment.global.DEC
-              );
+              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
+              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
               break;
             case coords[4]:
-              filtered.user.DEC = this.utils.assingOrIncrement(
-                filtered.user.DEC,
-                userDepartment.user.DEC
-              );
-              filtered.global.DEC = this.utils.assingOrIncrement(
-                filtered.global.DEC,
-                userDepartment.global.DEC
-              );
+              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
+              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
               break;
             case coords[5]:
-              filtered.user.DRM = this.utils.assingOrIncrement(
-                filtered.user.DRM,
-                userDepartment.user.DRM
-              );
-              filtered.global.DRM = this.utils.assingOrIncrement(
-                filtered.global.DRM,
-                userDepartment.global.DRM
-              );
+              filtered.user.DRM = this.utils.assingOrIncrement(filtered.user.DRM, userDepartment.user.DRM);
+              filtered.global.DRM = this.utils.assingOrIncrement(filtered.global.DRM, userDepartment.global.DRM);
               break;
             case coords[6]:
-              filtered.user.DAQ = this.utils.assingOrIncrement(
-                filtered.user.DAQ,
-                userDepartment.user.DAQ
-              );
-              filtered.global.DAQ = this.utils.assingOrIncrement(
-                filtered.global.DAQ,
-                userDepartment.global.DAQ
-              );
+              filtered.user.DAQ = this.utils.assingOrIncrement(filtered.user.DAQ, userDepartment.user.DAQ);
+              filtered.global.DAQ = this.utils.assingOrIncrement(filtered.global.DAQ, userDepartment.global.DAQ);
               break;
             case coords[7]:
-              filtered.user.DRM = this.utils.assingOrIncrement(
-                filtered.user.DRM,
-                userDepartment.user.DRM
-              );
-              filtered.global.DRM = this.utils.assingOrIncrement(
-                filtered.global.DRM,
-                userDepartment.global.DRM
-              );
+              filtered.user.DRM = this.utils.assingOrIncrement(filtered.user.DRM, userDepartment.user.DRM);
+              filtered.global.DRM = this.utils.assingOrIncrement(filtered.global.DRM, userDepartment.global.DRM);
               break;
             case coords[8]:
-              filtered.user.DPC = this.utils.assingOrIncrement(
-                filtered.user.DPC,
-                userDepartment.user.DPC
-              );
-              filtered.global.DPC = this.utils.assingOrIncrement(
-                filtered.global.DPC,
-                userDepartment.global.DPC
-              );
+              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
+              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
               break;
             case coords[9]:
-              filtered.user.DPC = this.utils.assingOrIncrement(
-                filtered.user.DPC,
-                userDepartment.user.DPC
-              );
-              filtered.global.DPC = this.utils.assingOrIncrement(
-                filtered.global.DPC,
-                userDepartment.global.DPC
-              );
+              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
+              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
               break;
             case coords[10]:
-              filtered.user.DPC = this.utils.assingOrIncrement(
-                filtered.user.DPC,
-                userDepartment.user.DPC
-              );
-              filtered.global.DPC = this.utils.assingOrIncrement(
-                filtered.global.DPC,
-                userDepartment.global.DPC
-              );
+              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
+              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
               break;
             default:
               break;
@@ -942,34 +682,19 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueNortan(
-    start: Date,
-    end: Date,
-    uId?: string
-  ): Observable<UserAndGlobalMetric> {
+  receivedValueNortan(start: Date, end: Date, uId?: string): Observable<UserAndGlobalMetric> {
     return this.receivedValueByDepartments(start, end, uId).pipe(
       map((userDepartment: UserAndDepartments) => {
         const result: UserAndGlobalMetric = { user: 0, global: 0 };
-        result.user = Object.values(userDepartment.user).reduce(
-          (acc, value) => acc + value
-        );
-        result.global = Object.values(userDepartment.global).reduce(
-          (acc, value) => acc + value
-        );
+        result.user = Object.values(userDepartment.user).reduce((acc, value) => acc + value);
+        result.global = Object.values(userDepartment.global).reduce((acc, value) => acc + value);
         return result;
       })
     );
   }
 
-  receivedValueList(
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
-  ): Observable<any> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.userService.getUsers(),
-    ]).pipe(
+  receivedValueList(last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje', number = 1, fromToday = false): Observable<any> {
+    return combineLatest([this.contractService.getContracts(), this.userService.getUsers()]).pipe(
       map(([contracts, users]) => {
         if (contracts.length > 0 && users.length > 0) {
           const partial = contracts.reduce((received: any, contract) => {
@@ -977,25 +702,15 @@ export class MetricsService implements OnDestroy {
               const value = contract.payments.reduce((paid: any, payment) => {
                 if (payment.paid) {
                   const paidDate = payment.paidDate;
-                  if (
-                    paidDate &&
-                    this.utils.isValidDate(paidDate, last, number, fromToday)
-                  ) {
-                    const uCPayments = payment.team.reduce(
-                      (upaid: any, member) => {
-                        if (member.user) {
-                          const author = this.userService.idToName(member.user);
-                          const value = this.stringUtil.moneyToNumber(
-                            member.value
-                          );
-                          upaid[author] = upaid[author]
-                            ? upaid[author] + value
-                            : value;
-                        }
-                        return upaid;
-                      },
-                      {}
-                    );
+                  if (paidDate && this.utils.isValidDate(paidDate, last, number, fromToday)) {
+                    const uCPayments = payment.team.reduce((upaid: any, member) => {
+                      if (member.user) {
+                        const author = this.userService.idToName(member.user);
+                        const value = this.stringUtil.moneyToNumber(member.value);
+                        upaid[author] = upaid[author] ? upaid[author] + value : value;
+                      }
+                      return upaid;
+                    }, {});
                     paid = mergeWith({}, paid, uCPayments, add);
                   }
                 }
@@ -1036,15 +751,10 @@ export class MetricsService implements OnDestroy {
           ]);
     /* eslint-enable @typescript-eslint/indent */
     return combined$.pipe(
-      filter(
-        ([contracts, invoices]) =>
-          contracts != undefined && invoices != undefined
-      ),
+      filter(([contracts, invoices]) => contracts != undefined && invoices != undefined),
       map(([contracts, invoices]) => {
         return this.stringUtil.moneyToNumber(
-          this.stringUtil
-            .toPercentageNumber(contracts.count, invoices.count)
-            .slice(0, -1)
+          this.stringUtil.toPercentageNumber(contracts.count, invoices.count).slice(0, -1)
         );
       }),
       takeUntil(this.destroy$)
@@ -1071,15 +781,10 @@ export class MetricsService implements OnDestroy {
           ]);
     /* eslint-enable @typescript-eslint/indent */
     return combined$.pipe(
-      filter(
-        ([contracts, invoices]) =>
-          contracts != undefined && invoices != undefined
-      ),
+      filter(([contracts, invoices]) => contracts != undefined && invoices != undefined),
       map(([contracts, invoices]) => {
         return this.stringUtil.moneyToNumber(
-          this.stringUtil
-            .toPercentageNumber(contracts.value, invoices.value)
-            .slice(0, -1)
+          this.stringUtil.toPercentageNumber(contracts.value, invoices.value).slice(0, -1)
         );
       }),
       takeUntil(this.destroy$)
@@ -1101,10 +806,7 @@ export class MetricsService implements OnDestroy {
                 .filter((r) => r.paid)
                 .reduce((acc, receipt) => {
                   const paidDate = receipt.paidDate;
-                  if (
-                    paidDate &&
-                    this.utils.isValidDate(paidDate, last, number, fromToday)
-                  )
+                  if (paidDate && this.utils.isValidDate(paidDate, last, number, fromToday))
                     acc += this.stringUtil.moneyToNumber(
                       this.contractService.toNetValue(
                         receipt.value,
@@ -1125,13 +827,8 @@ export class MetricsService implements OnDestroy {
   }
 
   contracts(uId: string, start: Date, end: Date): Observable<MetricInfo> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -1170,9 +867,7 @@ export class MetricsService implements OnDestroy {
                         (upaid: MetricInfo, member) => {
                           if (this.userService.isEqual(member.user, uId)) {
                             upaid.count += 1;
-                            upaid.value += this.stringUtil.moneyToNumber(
-                              member.value
-                            );
+                            upaid.value += this.stringUtil.moneyToNumber(member.value);
                           }
                           return upaid;
                         },
@@ -1204,13 +899,8 @@ export class MetricsService implements OnDestroy {
     type: 'nortan' | 'taxes' = 'nortan',
     uId?: string
   ): Observable<UserAndGlobalMetric> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: UserAndGlobalMetric, contract) => {
@@ -1220,26 +910,14 @@ export class MetricsService implements OnDestroy {
                 .reduce(
                   (paid: UserAndGlobalMetric, receipt) => {
                     const paidDate = receipt.paidDate;
-                    if (
-                      paidDate &&
-                      this.utils.isWithinInterval(paidDate, start, end)
-                    ) {
+                    if (paidDate && this.utils.isWithinInterval(paidDate, start, end)) {
                       const value = this.stringUtil.moneyToNumber(
                         this.stringUtil.applyPercentage(
                           receipt.value,
-                          type == 'nortan'
-                            ? receipt.nortanPercentage
-                            : receipt.notaFiscal
+                          type == 'nortan' ? receipt.nortanPercentage : receipt.notaFiscal
                         )
                       );
-                      if (
-                        uId &&
-                        contract.invoice &&
-                        this.invoiceService.isInvoiceAuthor(
-                          contract.invoice,
-                          uId
-                        )
-                      )
+                      if (uId && contract.invoice && this.invoiceService.isInvoiceAuthor(contract.invoice, uId))
                         paid.user += value;
                       paid.global += value;
                     }
@@ -1267,10 +945,7 @@ export class MetricsService implements OnDestroy {
           .reduce(
             (acc, expense) => {
               const paidDate = expense.paidDate;
-              if (
-                paidDate &&
-                this.utils.isWithinInterval(paidDate, start, end)
-              ) {
+              if (paidDate && this.utils.isWithinInterval(paidDate, start, end)) {
                 acc.count += 1;
                 acc.value += this.stringUtil.moneyToNumber(expense.value);
               }
@@ -1282,12 +957,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  cashbackValue(
-    uId: string,
-    percentage: string,
-    start: Date,
-    end: Date
-  ): Observable<MetricInfo> {
+  cashbackValue(uId: string, percentage: string, start: Date, end: Date): Observable<MetricInfo> {
     return this.nortanValue(start, end, 'nortan', uId).pipe(
       map((metricInfo): MetricInfo => {
         metricInfo.user *= this.stringUtil.toMultiplyPercentage(percentage);
@@ -1297,13 +967,8 @@ export class MetricsService implements OnDestroy {
   }
 
   countContracts(status: CONTRACT_STATOOS): Observable<MetricInfo> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -1326,9 +991,7 @@ export class MetricsService implements OnDestroy {
   receivedValueTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
     return this.contractService.getContracts().pipe(
       map((contracts) => {
-        const fContracts = contracts.filter((contract) =>
-          this.contractService.hasPayments(contract)
-        );
+        const fContracts = contracts.filter((contract) => this.contractService.hasPayments(contract));
         const timeSeriesItems = fContracts.map((contract) => {
           let fPayments = contract.payments.filter((payment) => payment.paid);
           if (uId != undefined) {
@@ -1344,13 +1007,8 @@ export class MetricsService implements OnDestroy {
             });
           }
           return fPayments.map((payment) => {
-            const date: string = payment.paidDate
-              ? format(payment.paidDate, 'yyyy/MM/dd')
-              : '';
-            return [
-              date,
-              this.stringUtil.moneyToNumber(payment.value),
-            ] as TimeSeriesItem;
+            const date: string = payment.paidDate ? format(payment.paidDate, 'yyyy/MM/dd') : '';
+            return [date, this.stringUtil.moneyToNumber(payment.value)] as TimeSeriesItem;
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
@@ -1362,9 +1020,7 @@ export class MetricsService implements OnDestroy {
   expensesTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
     return this.contractService.getContracts().pipe(
       map((contracts) => {
-        const fContracts = contracts.filter((contract) =>
-          this.contractService.hasExpenses(contract)
-        );
+        const fContracts = contracts.filter((contract) => this.contractService.hasExpenses(contract));
         const timeSeriesItems = fContracts.map((contract) => {
           let fExpenses = contract.expenses.filter(
             (expense) =>
@@ -1384,13 +1040,8 @@ export class MetricsService implements OnDestroy {
             });
           }
           return fExpenses.map((expense) => {
-            const date: string = expense.paidDate
-              ? format(expense.paidDate, 'yyyy/MM/dd')
-              : '';
-            return [
-              date,
-              -1 * this.stringUtil.moneyToNumber(expense.value),
-            ] as TimeSeriesItem;
+            const date: string = expense.paidDate ? format(expense.paidDate, 'yyyy/MM/dd') : '';
+            return [date, -1 * this.stringUtil.moneyToNumber(expense.value)] as TimeSeriesItem;
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
@@ -1400,20 +1051,12 @@ export class MetricsService implements OnDestroy {
   }
 
   contractValueTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
-    return combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-    ]).pipe(
-      filter(
-        ([contracts, invoices]) => contracts.length > 0 && invoices.length > 0
-      ),
+    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
+      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         let fContracts = contracts.map((iContract) => {
           const contract = cloneDeep(iContract);
-          if (contract.invoice)
-            contract.value = this.invoiceService.idToInvoice(
-              contract.invoice
-            ).value;
+          if (contract.invoice) contract.value = this.invoiceService.idToInvoice(contract.invoice).value;
           return contract;
         });
         if (uId != undefined) {
@@ -1421,32 +1064,22 @@ export class MetricsService implements OnDestroy {
             if (contract.invoice === undefined) return false;
             return this.invoiceService
               .idToInvoice(contract.invoice)
-              .team.map(
-                (team) =>
-                  this.userService.isEqual(team.user, uId) &&
-                  team.distribution != undefined
-              )
+              .team.map((team) => this.userService.isEqual(team.user, uId) && team.distribution != undefined)
               .filter((isSameUser) => isSameUser).length;
           });
           fContracts = fContracts.map((contract) => {
             if (contract.invoice !== undefined) {
               contract.value = this.stringUtil.applyPercentage(
                 contract.value,
-                this.invoiceService.idToInvoice(contract.invoice).team[0]
-                  .distribution
+                this.invoiceService.idToInvoice(contract.invoice).team[0].distribution
               );
             }
             return contract;
           });
         }
         const timeSeriesItems = fContracts.map((contract) => {
-          const date: string = contract.created
-            ? format(contract.created, 'yyyy/MM/dd')
-            : '';
-          return [
-            date,
-            this.stringUtil.moneyToNumber(contract.value),
-          ] as TimeSeriesItem;
+          const date: string = contract.created ? format(contract.created, 'yyyy/MM/dd') : '';
+          return [date, this.stringUtil.moneyToNumber(contract.value)] as TimeSeriesItem;
         });
         return this.utils.groupByDateTimeSerie(timeSeriesItems);
       })

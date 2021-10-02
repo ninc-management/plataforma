@@ -8,11 +8,7 @@ import { take } from 'rxjs/operators';
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 
-import {
-  NortanService,
-  NORTAN_EXPENSE_TYPES,
-  NORTAN_FIXED_EXPENSE_TYPES,
-} from './nortan.service';
+import { NortanService, NORTAN_EXPENSE_TYPES, NORTAN_FIXED_EXPENSE_TYPES } from './nortan.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { NORTAN } from './user.service';
 import { Expense } from '@models/expense';
@@ -25,16 +21,11 @@ describe('NortanService', () => {
   let mockedExpenses: Expense[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', [
-    'fromEvent',
-  ]);
+  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
-  const baseTest = (
-    name: string,
-    test: (expectedExpenses: Expense[], done: DoneFn) => void
-  ) => {
+  const baseTest = (name: string, test: (expectedExpenses: Expense[], done: DoneFn) => void) => {
     it(name, (done: DoneFn) => {
       let i = 1;
 
@@ -49,14 +40,10 @@ describe('NortanService', () => {
               break;
             }
             case 2: {
-              const expectedExpenses = JSON.parse(
-                JSON.stringify(mockedExpenses),
-                (k, v) => {
-                  if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                    return parseISO(v);
-                  return v;
-                }
-              ) as Expense[];
+              const expectedExpenses = JSON.parse(JSON.stringify(mockedExpenses), (k, v) => {
+                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+                return v;
+              }) as Expense[];
               expect(expenses.length).toBe(2);
               expect(expenses).toEqual(expectedExpenses);
               test(expectedExpenses, done);
@@ -157,14 +144,10 @@ describe('NortanService', () => {
           }
           case 2: {
             i += 1;
-            const expectedExpenses = JSON.parse(
-              JSON.stringify(mockedExpenses),
-              (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
-                return v;
-              }
-            ) as Expense[];
+            const expectedExpenses = JSON.parse(JSON.stringify(mockedExpenses), (k, v) => {
+              if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+              return v;
+            }) as Expense[];
             expect(expenses.length).toBe(mockedExpenses.length);
             expect(expenses).toEqual(expectedExpenses);
             service.saveExpense(tmpExpense);
@@ -177,14 +160,10 @@ describe('NortanService', () => {
           case 3: {
             expect(expenses.length).toBe(3);
             mockedExpenses.push(tmpExpense);
-            const expectedExpenses = JSON.parse(
-              JSON.stringify(mockedExpenses),
-              (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
-                return v;
-              }
-            ) as Expense[];
+            const expectedExpenses = JSON.parse(JSON.stringify(mockedExpenses), (k, v) => {
+              if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+              return v;
+            }) as Expense[];
             expect(expenses).toEqual(expectedExpenses);
             done();
             break;
@@ -234,14 +213,10 @@ describe('NortanService', () => {
           }
           case 2: {
             i += 1;
-            const expectedExpenses = JSON.parse(
-              JSON.stringify(mockedExpenses),
-              (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k))
-                  return parseISO(v);
-                return v;
-              }
-            ) as Expense[];
+            const expectedExpenses = JSON.parse(JSON.stringify(mockedExpenses), (k, v) => {
+              if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+              return v;
+            }) as Expense[];
             expect(expenses.length).toBe(mockedExpenses.length);
             expect(expenses).toEqual(expectedExpenses);
             service.editExpense(tmpExpense);
@@ -271,23 +246,17 @@ describe('NortanService', () => {
     }, 50);
   });
 
-  baseTest(
-    'getExpenses should work',
-    (expectedExpenses: Expense[], done: DoneFn) => {
-      done();
-    }
-  );
+  baseTest('getExpenses should work', (expectedExpenses: Expense[], done: DoneFn) => {
+    done();
+  });
 
-  baseTest(
-    'expensesSize should work',
-    (expectedExpenses: Expense[], done: DoneFn) => {
-      service
-        .expensesSize()
-        .pipe(take(1))
-        .subscribe((size) => {
-          expect(size).toBe(expectedExpenses.length);
-          done();
-        });
-    }
-  );
+  baseTest('expensesSize should work', (expectedExpenses: Expense[], done: DoneFn) => {
+    service
+      .expensesSize()
+      .pipe(take(1))
+      .subscribe((size) => {
+        expect(size).toBe(expectedExpenses.length);
+        done();
+      });
+  });
 });

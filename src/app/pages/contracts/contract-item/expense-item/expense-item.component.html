@@ -29,9 +29,7 @@
               ? 'success'
               : 'basic'
           "
-          [attr.aria-invalid]="
-            contractList.invalid && contractList.touched ? true : null
-          "
+          [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
         ></nb-completer>
       </div>
     </div>
@@ -67,9 +65,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              userList.invalid && userList.touched ? true : null
-            "
+            [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
           ></nb-completer>
         </div>
       </div>
@@ -128,30 +124,20 @@
             </p>
             <p
               class="caption status-danger"
-              *ngIf="
-                value.errors?.overpaid &&
-                value.invalid &&
-                (value.dirty || value.touched)
-              "
+              *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
             >
               O valor do empenho é superior ao valor em caixa no contrato!
             </p>
             <p
               class="caption status-danger"
-              *ngIf="
-                value.errors?.required &&
-                value.invalid &&
-                (value.dirty || value.touched)
-              "
+              *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
             >
               O valor da despesa é obrigatório!
             </p>
             <p
               class="caption status-danger"
               *ngIf="
-                (value.errors?.minlength || value.errors?.maxlength) &&
-                value.invalid &&
-                (value.dirty || value.touched)
+                (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
               "
             >
               O valor da despesa deve conter entre
@@ -186,13 +172,7 @@
             size="large"
             [disabled]="!isEditionGranted"
             [required]="validation.nf.required"
-            [status]="
-              nf.dirty
-                ? 'success'
-                : expenseIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
+            [status]="nf.dirty ? 'success' : expenseIndex === undefined ? 'success' : 'basic'"
             [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           >
             <nb-option [value]="false">NÃO</nb-option>
@@ -205,9 +185,7 @@
           <label class="label" for="input-source">Fonte de pagamento:</label>
           <nb-completer
             [(ngModel)]="sourceSearch"
-            (selected)="
-              expense.source = $event; utils.forceValidatorUpdate(value)
-            "
+            (selected)="expense.source = $event; utils.forceValidatorUpdate(value)"
             inputName="sourceListCompleter"
             #sourceList="ngModel"
             id="input-source"
@@ -231,9 +209,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              sourceList.invalid && sourceList.touched ? true : null
-            "
+            [attr.aria-invalid]="sourceList.invalid && sourceList.touched ? true : null"
           ></nb-completer>
         </div>
       </div>
@@ -250,13 +226,7 @@
             size="large"
             [disabled]="!isEditionGranted"
             [required]="validation.type.required"
-            [status]="
-              type.dirty
-                ? 'success'
-                : expenseIndex === undefined && type.value !== ''
-                ? 'success'
-                : 'basic'
-            "
+            [status]="type.dirty ? 'success' : expenseIndex === undefined && type.value !== '' ? 'success' : 'basic'"
             [attr.aria-invalid]="type.invalid && type.touched ? true : null"
             (selectedChange)="handleContractMember()"
           >
@@ -275,11 +245,7 @@
             display: utils.isPhone() ? 'contents' : 'flex'
           }"
         >
-          <label
-            class="label"
-            for="input-split-type"
-            style="margin-bottom: 0; margin-right: 10px"
-          >
+          <label class="label" for="input-split-type" style="margin-bottom: 0; margin-right: 10px">
             Tipo da despesa:
           </label>
           <nb-radio-group
@@ -294,11 +260,7 @@
               display: utils.isPhone() ? 'contents' : 'flex'
             }"
           >
-            <nb-radio
-              *ngFor="let type of sTypes"
-              [value]="type"
-              style="height: 16px"
-            >
+            <nb-radio *ngFor="let type of sTypes" [value]="type" style="height: 16px">
               {{ type }}
             </nb-radio>
           </nb-radio-group>
@@ -306,17 +268,12 @@
       </div>
       <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL" class="col-6">
         <div class="form-group">
-          <label class="label" for="input-selected-member">
-            Selecione o associado:
-          </label>
+          <label class="label" for="input-selected-member">Selecione o associado:</label>
           <nb-select
             [(ngModel)]="splitSelectedMember"
             [disabled]="!isEditionGranted"
             (selectedChange)="
-              updateTeamValues();
-              USER_COORDINATIONS = departmentService.userCoordinations(
-                splitSelectedMember._id
-              )
+              updateTeamValues(); USER_COORDINATIONS = departmentService.userCoordinations(splitSelectedMember._id)
             "
             #selectedMember="ngModel"
             id="input-selected-member"
@@ -325,16 +282,8 @@
             fullWidth
             size="large"
             [required]="validation.selectedMember.required"
-            [status]="
-              selectedMember.dirty
-                ? 'success'
-                : expenseIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              selectedMember.invalid && selectedMember.touched ? true : null
-            "
+            [status]="selectedMember.dirty ? 'success' : expenseIndex === undefined ? 'success' : 'basic'"
+            [attr.aria-invalid]="selectedMember.invalid && selectedMember.touched ? true : null"
           >
             <nb-option *ngFor="let user of teamUsers" [value]="user">
               {{ user.fullName }}
@@ -342,17 +291,9 @@
           </nb-select>
         </div>
       </div>
-      <div
-        *ngIf="
-          expense.splitType === splitTypes.INDIVIDUAL &&
-          this.expense.team.length > 0
-        "
-        class="col-6"
-      >
+      <div *ngIf="expense.splitType === splitTypes.INDIVIDUAL && this.expense.team.length > 0" class="col-6">
         <div class="form-control-group">
-          <label class="label" for="input-memberCoordination">
-            Coordenação:
-          </label>
+          <label class="label" for="input-memberCoordination">Coordenação:</label>
           <nb-select
             [(ngModel)]="this.expense.team[this.sMemberIndex].coordination"
             #memberCoordination="ngModel"
@@ -363,39 +304,17 @@
             size="large"
             [disabled]="!isEditionGranted"
             [required]="validation.coordination.required"
-            [status]="
-              memberCoordination.dirty
-                ? 'success'
-                : expenseIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              memberCoordination.invalid && memberCoordination.touched
-                ? true
-                : null
-            "
+            [status]="memberCoordination.dirty ? 'success' : expenseIndex === undefined ? 'success' : 'basic'"
+            [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
           >
-            <nb-option
-              *ngFor="let coordination of USER_COORDINATIONS"
-              [value]="coordination"
-            >
+            <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
               {{ coordination.split(' ')[0] }}
             </nb-option>
           </nb-select>
         </div>
       </div>
-      <nb-list
-        *ngIf="expense.splitType === splitTypes.PERSONALIZADO"
-        style="width: 100%; padding: 10px 0"
-      >
-        <nb-list-item
-          *ngFor="
-            let member of expense.team;
-            let i = index;
-            trackBy: utils.trackByIndex
-          "
-        >
+      <nb-list *ngIf="expense.splitType === splitTypes.PERSONALIZADO" style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let member of expense.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-4 list-name">
               {{ userService.idToShortName(teamUsers[i]) }}
@@ -412,11 +331,7 @@
                 [status]="expense.team[i].coordination ? 'success' : 'basic'"
               >
                 <nb-option
-                  *ngFor="
-                    let coordination of departmentService.userCoordinations(
-                      teamUsers[i]._id
-                    )
-                  "
+                  *ngFor="let coordination of departmentService.userCoordinations(teamUsers[i]._id)"
                   [value]="coordination"
                 >
                   {{ coordination.split(' ')[0] }}
@@ -443,10 +358,7 @@
                 [status]="is100 ? 'success' : 'basic'"
               />
             </div>
-            <div
-              class="col-6 col-md-3"
-              style="display: flex; align-items: center"
-            >
+            <div class="col-6 col-md-3" style="display: flex; align-items: center">
               <input
                 nbInput
                 [(ngModel)]="expense.team[i].percentage"
@@ -485,30 +397,14 @@
             [required]="validation.service.required"
             [minlength]="validation.service.minLength"
             [maxlength]="validation.service.maxLength"
-            [status]="
-              description.dirty
-                ? description.invalid
-                  ? 'danger'
-                  : 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              description.invalid && description.touched ? true : null
-            "
+            [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="description.invalid && description.touched ? true : null"
           ></textarea>
           <ng-container *ngIf="description.invalid && description.touched">
-            <p
-              class="caption status-danger"
-              *ngIf="description.errors?.required"
-            >
+            <p class="caption status-danger" *ngIf="description.errors?.required">
               O campo de descrição é obrigatório!
             </p>
-            <p
-              class="caption status-danger"
-              *ngIf="
-                description.errors?.minlength || description.errors?.maxlength
-              "
-            >
+            <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
               O campo de descrição deve conter entre
               {{ validation.service.minLength }} a
               {{ validation.service.maxLength }}
@@ -531,16 +427,8 @@
             (ngModelChange)="updatePaidDate()"
             [disabled]="!isEditionGranted"
             [required]="validation.paidCheck.required"
-            [status]="
-              paidCheck.dirty
-                ? 'success'
-                : expenseIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              paidCheck.invalid && paidCheck.touched ? true : null
-            "
+            [status]="paidCheck.dirty ? 'success' : expenseIndex === undefined ? 'success' : 'basic'"
+            [attr.aria-invalid]="paidCheck.invalid && paidCheck.touched ? true : null"
           >
             <nb-option [value]="false">NÃO</nb-option>
             <nb-option [value]="true">SIM</nb-option>
@@ -572,9 +460,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              paidDate.invalid && paidDate.touched ? true : null
-            "
+            [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
           <ng-template #withdate>
             <input
@@ -598,9 +484,7 @@
                   ? 'success'
                   : 'basic'
               "
-              [attr.aria-invalid]="
-                paidDate.invalid && paidDate.touched ? true : null
-              "
+              [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
             />
             <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
           </ng-template>
@@ -630,9 +514,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              created.invalid && created.touched ? true : null
-            "
+            [attr.aria-invalid]="created.invalid && created.touched ? true : null"
           />
           <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
         </div>
@@ -660,17 +542,13 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              updated.invalid && updated.touched ? true : null
-            "
+            [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
           />
         </div>
       </div>
       <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
         <div class="form-control-group">
-          <label class="label" for="input-description">
-            Comprovantes anexados:
-          </label>
+          <label class="label" for="input-description">Comprovantes anexados:</label>
           <nb-list>
             <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
               <div class="row irow" style="width: 100%">
@@ -687,11 +565,7 @@
                     </a>
                   </div>
                 </div>
-                <div
-                  class="col-2 col-md-1"
-                  style="text-align: right"
-                  *ngIf="isEditionGranted"
-                >
+                <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
                   <nb-icon
                     class="xIcon"
                     status="danger"
@@ -730,12 +604,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="
-        !form.valid ||
-        (expense.nf && uploadedFiles.length == 0) ||
-        !is100 ||
-        !isEditionGranted
-      "
+      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted"
       (click)="registerExpense()"
     >
       {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
@@ -747,12 +616,7 @@
       fullWidth
       status="success"
       size="large"
-      [disabled]="
-        !form.valid ||
-        (expense.nf && uploadedFiles.length == 0) ||
-        !is100 ||
-        !isEditionGranted
-      "
+      [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted"
       (click)="addAndClean()"
     >
       Adicionar Outro

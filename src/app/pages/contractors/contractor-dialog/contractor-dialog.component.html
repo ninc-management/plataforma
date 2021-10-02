@@ -17,11 +17,7 @@
             nbButton
             ghost
             nbTooltip="Fechar"
-            [nbTooltipTrigger]="
-              utils.isPhone()
-                ? utils.tooltipTriggers.NOOP
-                : utils.tooltipTriggers.HINT
-            "
+            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="dismiss()"
@@ -31,10 +27,7 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-contractor-item
-          [iContractor]="contractor"
-          (submit)="dismiss()"
-        ></ngx-contractor-item>
+        <ngx-contractor-item [iContractor]="contractor" (submit)="dismiss()"></ngx-contractor-item>
       </nb-card-body>
     </nb-card>
   </div>

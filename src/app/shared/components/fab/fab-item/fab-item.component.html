@@ -1,8 +1,4 @@
-<div
-  #elementref
-  class="item {{ disabled ? 'disabled' : '' }}"
-  (click)="emitClickEvent($event)"
->
+<div #elementref class="item {{ disabled ? 'disabled' : '' }}" (click)="emitClickEvent($event)">
   <div class="content-wrapper" #contentref>
     <div class="content" [style.display]="content ? 'flex' : 'none'">
       {{ content }}

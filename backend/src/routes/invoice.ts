@@ -20,15 +20,11 @@ router.post('/', (req, res, next) => {
         });
       } else {
         const count = result + 1;
-        invoice.code = invoice.code.replace(
-          /-(\d+)\//g,
-          '-' + count.toString() + '/'
-        );
+        invoice.code = invoice.code.replace(/-(\d+)\//g, '-' + count.toString() + '/');
         invoice
           .save()
           .then((savedInvoice) => {
-            if (requested)
-              invoicesMap[savedInvoice._id] = cloneDeep(savedInvoice.toJSON());
+            if (requested) invoicesMap[savedInvoice._id] = cloneDeep(savedInvoice.toJSON());
             release();
             res.status(201).json({
               message: 'Orçamento cadastrado!',

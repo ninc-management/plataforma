@@ -42,8 +42,7 @@
       align-self: center;
       width: fit-content;
       background-color: nb-theme(card-background-color);
-      border: nb-theme(card-border-width) nb-theme(card-border-style)
-        nb-theme(card-border-color);
+      border: nb-theme(card-border-width) nb-theme(card-border-style) nb-theme(card-border-color);
       border-radius: nb-theme(card-border-radius);
       box-shadow: nb-theme(card-shadow);
     }

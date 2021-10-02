@@ -55,19 +55,11 @@ const config: SocketIoConfig = {
   },
 };
 
-const isIE =
-  window.navigator.userAgent.indexOf('MSIE ') > -1 ||
-  window.navigator.userAgent.indexOf('Trident/') > -1;
+const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
 const authRequest = {
   authority: 'https://login.microsoftonline.com/consumers',
-  scopes: [
-    'user.read',
-    'Files.Read',
-    'Files.Read.All',
-    'Files.ReadWrite',
-    'Files.ReadWrite.All',
-  ],
+  scopes: ['user.read', 'Files.Read', 'Files.Read.All', 'Files.ReadWrite', 'Files.ReadWrite.All'],
 };
 
 export function loggerCallback(logLevel: LogLevel, message: string): void {

@@ -21,12 +21,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
         return (
-          user.fullName
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          user.document
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          user.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          user.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           user.phone.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
@@ -80,11 +76,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(
-    private dialogService: NbDialogService,
-    private userService: UserService,
-    public utils: UtilsService
-  ) {}
+  constructor(private dialogService: NbDialogService, private userService: UserService, public utils: UtilsService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();

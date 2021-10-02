@@ -7,11 +7,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject, EMPTY, BehaviorSubject } from 'rxjs';
 
-import {
-  NbFileUploaderOptions,
-  NbFileItem,
-  FilterFunction,
-} from './file-uploader.model';
+import { NbFileUploaderOptions, NbFileItem, FilterFunction } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
 import { takeUntil, catchError, map, filter } from 'rxjs/operators';
 
@@ -35,10 +31,8 @@ export class NbFileUploaderService implements OnDestroy {
   /* eslint-disable @typescript-eslint/indent */
   get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
     return this.uploadQueue$.pipe(
-      map(
-        (
-          fileList: BehaviorSubject<NbFileItem>[]
-        ): BehaviorSubject<NbFileItem> | undefined => fileList.slice(-1).pop()
+      map((fileList: BehaviorSubject<NbFileItem>[]): BehaviorSubject<NbFileItem> | undefined =>
+        fileList.slice(-1).pop()
       ),
       filter((file): file is BehaviorSubject<NbFileItem> => file != undefined)
     );
@@ -49,31 +43,21 @@ export class NbFileUploaderService implements OnDestroy {
     return obj.name !== undefined;
   }
 
-  getPreparedFiles(
-    files: FileList,
-    filter: FilterFunction
-  ): BehaviorSubject<NbFileItem>[] {
+  getPreparedFiles(files: FileList, filter: FilterFunction): BehaviorSubject<NbFileItem>[] {
     if (filter) {
       return Array.from(files)
         .filter(filter.fn)
         .map((file: File) => new BehaviorSubject(new NbFileItem(file)));
     }
-    return Array.from(files).map(
-      (file: File) => new BehaviorSubject(new NbFileItem(file))
-    );
+    return Array.from(files).map((file: File) => new BehaviorSubject(new NbFileItem(file)));
   }
 
   uploadAll(fileList: FileList, options: NbFileUploaderOptions): void {
     if (!options.filter) return;
-    const files: BehaviorSubject<NbFileItem>[] = this.getPreparedFiles(
-      fileList,
-      options.filter
-    );
+    const files: BehaviorSubject<NbFileItem>[] = this.getPreparedFiles(fileList, options.filter);
     if (!files) return;
     this.addToQueue(files);
-    files.forEach((file: BehaviorSubject<NbFileItem>) =>
-      this.upload(file, options)
-    );
+    files.forEach((file: BehaviorSubject<NbFileItem>) => this.upload(file, options));
   }
 
   private addToQueue(files: BehaviorSubject<NbFileItem>[]) {
@@ -84,30 +68,23 @@ export class NbFileUploaderService implements OnDestroy {
     });
   }
 
-  private upload(
-    file: BehaviorSubject<NbFileItem>,
-    options: NbFileUploaderOptions
-  ) {
+  private upload(file: BehaviorSubject<NbFileItem>, options: NbFileUploaderOptions) {
     const tempFile = file.getValue();
     tempFile.onBeforeUpload();
-    if (options.name != undefined)
-      tempFile.name = options.name.fn(tempFile.name);
+    if (options.name != undefined) tempFile.name = options.name.fn(tempFile.name);
 
-    const { downloadUrl$, uploadProgress$ } =
-      this.storageService.uploadFileAndGetMetadata(
-        options.mediaFolderPath,
-        tempFile.rawFile,
-        tempFile.name,
-        options.storageProvider,
-        options.isAdmFolder
-      );
+    const { downloadUrl$, uploadProgress$ } = this.storageService.uploadFileAndGetMetadata(
+      options.mediaFolderPath,
+      tempFile.rawFile,
+      tempFile.name,
+      options.storageProvider,
+      options.isAdmFolder
+    );
 
-    uploadProgress$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((progress: number) => {
-        tempFile.onProgress(progress);
-        file.getValue().onProgress(progress);
-      });
+    uploadProgress$.pipe(takeUntil(this.destroy$)).subscribe((progress: number) => {
+      tempFile.onProgress(progress);
+      file.getValue().onProgress(progress);
+    });
 
     downloadUrl$
       .pipe(

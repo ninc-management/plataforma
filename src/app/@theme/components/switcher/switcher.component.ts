@@ -10,11 +10,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       </span>
 
       <div class="switch">
-        <input
-          type="checkbox"
-          [checked]="isSecondValue()"
-          (change)="changeValue()"
-        />
+        <input type="checkbox" [checked]="isSecondValue()" (change)="changeValue()" />
         <span class="slider"></span>
       </div>
 

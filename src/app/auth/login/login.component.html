@@ -1,22 +1,14 @@
 <h1 id="title" class="title">Plataforma Nortan</h1>
 <p class="sub-title">Seja bem vindo!</p>
 
-<nb-alert
-  *ngIf="showMessages.error && myErrors?.length"
-  outline="danger"
-  role="alert"
->
+<nb-alert *ngIf="showMessages.error && myErrors?.length" outline="danger" role="alert">
   <p class="alert-title"><b>Oh não!</b></p>
   <ul class="alert-message-list">
     <li *ngFor="let error of myErrors" class="alert-message">{{ error }}</li>
   </ul>
 </nb-alert>
 
-<nb-alert
-  *ngIf="showMessages.success && myMessages?.length"
-  outline="success"
-  role="alert"
->
+<nb-alert *ngIf="showMessages.success && myMessages?.length" outline="success" role="alert">
   <p class="alert-title"><b>Deu tudo certo!</b></p>
   <ul class="alert-message-list">
     <li *ngFor="let message of myMessages" class="alert-message">
@@ -25,14 +17,7 @@
   </ul>
 </nb-alert>
 
-<button
-  nbButton
-  fullWidth
-  status="primary"
-  size="large"
-  [class.btn-pulse]="submitted"
-  (click)="login()"
->
+<button nbButton fullWidth status="primary" size="large" [class.btn-pulse]="submitted" (click)="login()">
   <i class="fab fa-windows fa-2x" style="margin-right: 10px"></i>
   Entrar com conta Microsoft
 </button>
@@ -41,19 +26,13 @@
   <a
     class="text-link"
     (click)="logoutMicrosoft()"
-    style="
-      color: var(--text-hint-color);
-      text-decoration: var(--link-text-decoration);
-    "
-    >sair contas Microsoft</a
+    style="color: var(--text-hint-color); text-decoration: var(--link-text-decoration)"
   >
+    sair contas Microsoft
+  </a>
 </div>
 
-<section
-  *ngIf="socialLinks && socialLinks.length > 0"
-  class="links"
-  aria-label="Social sign in"
->
+<section *ngIf="socialLinks && socialLinks.length > 0" class="links" aria-label="Social sign in">
   ou entre com:
   <div class="socials">
     <ng-container *ngFor="let socialLink of socialLinks">
@@ -64,10 +43,7 @@
         [attr.class]="socialLink.icon"
         [class.with-icon]="socialLink.icon"
       >
-        <nb-icon
-          *ngIf="socialLink.icon; else title"
-          [icon]="socialLink.icon"
-        ></nb-icon>
+        <nb-icon *ngIf="socialLink.icon; else title" [icon]="socialLink.icon"></nb-icon>
         <ng-template #title>{{ socialLink.title }}</ng-template>
       </a>
       <a
@@ -77,10 +53,7 @@
         [attr.class]="socialLink.icon"
         [class.with-icon]="socialLink.icon"
       >
-        <nb-icon
-          *ngIf="socialLink.icon; else title"
-          [icon]="socialLink.icon"
-        ></nb-icon>
+        <nb-icon *ngIf="socialLink.icon; else title" [icon]="socialLink.icon"></nb-icon>
         <ng-template #title>{{ socialLink.title }}</ng-template>
       </a>
     </ng-container>

@@ -9,10 +9,7 @@ import { AuthService } from 'app/auth/auth.service';
 
 @Injectable()
 export class RoleProvider implements NbRoleProvider {
-  constructor(
-    private userService: UserService,
-    private authService: AuthService
-  ) {}
+  constructor(private userService: UserService, private authService: AuthService) {}
 
   getRole(): Observable<string | string[]> {
     const email = this.authService.userEmail();
@@ -21,9 +18,7 @@ export class RoleProvider implements NbRoleProvider {
         take(2),
         filter((user): user is User => user !== undefined),
         map((user: User): string | string[] => {
-          return user.position?.length > 0
-            ? user.position
-            : Permissions.ASSOCIADO;
+          return user.position?.length > 0 ? user.position : Permissions.ASSOCIADO;
         })
       );
     } else return of([]);

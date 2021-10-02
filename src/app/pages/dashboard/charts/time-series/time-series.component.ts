@@ -25,11 +25,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   };
   currentTheme = {};
 
-  constructor(
-    private theme: NbThemeService,
-    private utils: UtilsService,
-    private stringUtil: StringUtilService
-  ) {}
+  constructor(private theme: NbThemeService, private utils: UtilsService, private stringUtil: StringUtilService) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -39,18 +35,12 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     this.echartsInstance = event;
   }
 
-  handleCumulativeSeries(
-    series: TimeSeries[],
-    start: Date,
-    end: Date
-  ): TimeSeries[] {
+  handleCumulativeSeries(series: TimeSeries[], start: Date, end: Date): TimeSeries[] {
     return cloneDeep(series).map((serie) => {
       if (!serie.cumulative) return serie;
       let lastValue = 0;
       serie.data = serie.data
-        .filter((seriesItem) =>
-          this.utils.isWithinInterval(new Date(seriesItem[0]), start, end)
-        )
+        .filter((seriesItem) => this.utils.isWithinInterval(new Date(seriesItem[0]), start, end))
         .map((seriesItem) => {
           const accumulated = seriesItem[1] + lastValue;
           lastValue = accumulated;
@@ -63,16 +53,8 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
       } else {
         if (!isSameDay(new Date(timeSeriesItems[0][0]), start))
           timeSeriesItems.unshift([format(start, 'yyyy/MM/dd'), 0]);
-        if (
-          !isSameDay(
-            new Date(timeSeriesItems[timeSeriesItems.length - 1][0]),
-            end
-          )
-        )
-          timeSeriesItems.push([
-            format(end, 'yyyy/MM/dd'),
-            timeSeriesItems[timeSeriesItems.length - 1][1],
-          ]);
+        if (!isSameDay(new Date(timeSeriesItems[timeSeriesItems.length - 1][0]), end))
+          timeSeriesItems.push([format(end, 'yyyy/MM/dd'), timeSeriesItems[timeSeriesItems.length - 1][1]]);
       }
       serie.data = timeSeriesItems;
       return serie;
@@ -85,11 +67,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
     const zoomStart: Date = addDays(new Date(dataZoom.startValue), 1);
     const zoomEnd: Date = dataZoom.endValue;
 
-    this.handleCumulativeSeries(
-      this.currentTimeSeries,
-      zoomStart,
-      zoomEnd
-    ).forEach((serie, index) => {
+    this.handleCumulativeSeries(this.currentTimeSeries, zoomStart, zoomEnd).forEach((serie, index) => {
       currentOptions.series[index].data = serie.data;
     });
 
@@ -97,10 +75,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.themeSubscription = combineLatest([
-      this.theme.getJsTheme(),
-      this.series$,
-    ])
+    this.themeSubscription = combineLatest([this.theme.getJsTheme(), this.series$])
       .pipe(filter(([config, series]) => series[0].data.length > 0))
       .subscribe(([config, series]) => {
         const colors: any = config.variables;
@@ -112,13 +87,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
         this.options = {
           tooltip: {
             trigger: 'axis',
-            position: (
-              pos: any,
-              params: any,
-              dom: any,
-              rect: any,
-              size: any
-            ) => {
+            position: (pos: any, params: any, dom: any, rect: any, size: any) => {
               // tooltip will be fixed on the right if mouse hovering on the left,
               // and on the left if h: anyovering on the right.
               let obj: any = { top: '5%' };
@@ -127,13 +96,9 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
               const canvasWidth = size.viewSize[0];
 
               let left = 0;
-              if (
-                mouseX >= Math.round(tooltipWidth / 2) &&
-                mouseX <= canvasWidth - Math.round(tooltipWidth / 2)
-              )
+              if (mouseX >= Math.round(tooltipWidth / 2) && mouseX <= canvasWidth - Math.round(tooltipWidth / 2))
                 left = mouseX - Math.round(tooltipWidth / 2);
-              if (mouseX > canvasWidth - Math.round(tooltipWidth / 2))
-                left = canvasWidth - tooltipWidth;
+              if (mouseX > canvasWidth - Math.round(tooltipWidth / 2)) left = canvasWidth - tooltipWidth;
               obj['left'] = left;
 
               return obj;
@@ -143,13 +108,9 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
                 return parseInt(b.value[1]) - parseInt(a.value[1]);
               });
               const date = params[0].data[0];
-              let output =
-                '<div style="text-align:center">' +
-                this.utils.formatDate(new Date(date)) +
-                '</div>';
+              let output = '<div style="text-align:center">' + this.utils.formatDate(new Date(date)) + '</div>';
               for (let i = 0; i < params.length; i++) {
-                const value = this.currentTimeSeries[params[i].seriesIndex]
-                  .isMoney
+                const value = this.currentTimeSeries[params[i].seriesIndex].isMoney
                   ? this.stringUtil.numberToMoney(params[i].value[1])
                   : params[i].value[1];
                 output +=

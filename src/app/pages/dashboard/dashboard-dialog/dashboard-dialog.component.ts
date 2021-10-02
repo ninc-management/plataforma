@@ -14,10 +14,7 @@ export enum DASHBOARD_COMPONENT_TYPES {
   templateUrl: './dashboard-dialog.component.html',
   styleUrls: ['./dashboard-dialog.component.scss'],
 })
-export class DashboardDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class DashboardDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() iExpense?: Expense;
   @Input() componentType = DASHBOARD_COMPONENT_TYPES.EXPENSES;

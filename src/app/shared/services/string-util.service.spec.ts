@@ -28,9 +28,7 @@ describe('StringUtilService', () => {
     expect(service.sumMoney('1', '2,333', 3)).toBe('3,333');
     expect(service.sumMoney('1,00', '2,00')).toBe('3,00');
     expect(service.sumMoney('1.000,00', '2.000,00')).toBe('3.000,00');
-    expect(service.sumMoney('1.000.000,00', '2.000.000,00')).toBe(
-      '3.000.000,00'
-    );
+    expect(service.sumMoney('1.000.000,00', '2.000.000,00')).toBe('3.000.000,00');
   });
 
   it('subtractMoney shoud work', () => {
@@ -45,9 +43,7 @@ describe('StringUtilService', () => {
     expect(service.subtractMoney('1', '2,333', 3)).toBe('-1,333');
     expect(service.subtractMoney('1,00', '2,00')).toBe('-1,00');
     expect(service.subtractMoney('1.000,00', '2.000,00')).toBe('-1.000,00');
-    expect(service.subtractMoney('1.000.000,00', '2.000.000,00')).toBe(
-      '-1.000.000,00'
-    );
+    expect(service.subtractMoney('1.000.000,00', '2.000.000,00')).toBe('-1.000.000,00');
   });
 
   it('applyPercentage shoud work', () => {
@@ -58,9 +54,7 @@ describe('StringUtilService', () => {
     expect(service.applyPercentage('100', '10')).toBe('10,00');
     expect(service.applyPercentage('100,00', '200,00')).toBe('200,00');
     expect(service.applyPercentage('1.000,00', '100,00')).toBe('1.000,00');
-    expect(service.applyPercentage('1.000.000,00', '100,00')).toBe(
-      '1.000.000,00'
-    );
+    expect(service.applyPercentage('1.000.000,00', '100,00')).toBe('1.000.000,00');
   });
 
   it('removePercentage shoud work', () => {
@@ -82,9 +76,7 @@ describe('StringUtilService', () => {
     expect(service.revertPercentage('80', '20')).toBe('100,00');
     expect(service.revertPercentage('100,00', '200,00')).toBe('-100,00');
     expect(service.revertPercentage('1.000,00', '50,00')).toBe('2.000,00');
-    expect(service.revertPercentage('1.000.000,00', '50,00')).toBe(
-      '2.000.000,00'
-    );
+    expect(service.revertPercentage('1.000.000,00', '50,00')).toBe('2.000.000,00');
   });
 
   it('moneyToNumber shoud work', () => {

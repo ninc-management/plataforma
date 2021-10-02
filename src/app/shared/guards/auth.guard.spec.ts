@@ -25,21 +25,17 @@ describe('AuthGuard', () => {
 
   it('should be not athenticated and redirected to auth/login', (done: DoneFn) => {
     spyOn(router, 'navigate');
-    (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe(
-      (result) => {
-        expect(result).toBe(false, 'user is authenticated');
-        expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
-        done();
-      }
-    );
+    (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
+      expect(result).toBe(false, 'user is authenticated');
+      expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
+      done();
+    });
   });
 
   it('should allow navigate to childRoute', (done: DoneFn) => {
     childRoute.data = { permission: 'elo-principal', resource: 'test' };
     spyOn(router, 'navigate');
-    (
-      guard.canActivateChild(childRoute, stateSpy) as Observable<boolean>
-    ).subscribe((result) => {
+    (guard.canActivateChild(childRoute, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(true);
       expect(router.navigate).not.toHaveBeenCalled();
       done();
@@ -49,9 +45,7 @@ describe('AuthGuard', () => {
   it('should deny navigate to childRoute', (done: DoneFn) => {
     childRoute.data = { permission: 'test', resource: 'test' };
     spyOn(router, 'navigate');
-    (
-      guard.canActivateChild(childRoute, stateSpy) as Observable<boolean>
-    ).subscribe((result) => {
+    (guard.canActivateChild(childRoute, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(false);
       expect(router.navigate).toHaveBeenCalledWith(['/']);
       done();

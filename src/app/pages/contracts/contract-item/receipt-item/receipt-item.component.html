@@ -29,9 +29,7 @@
               ? 'success'
               : 'basic'
           "
-          [attr.aria-invalid]="
-            contractList.invalid && contractList.touched ? true : null
-          "
+          [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
         ></nb-completer>
       </div>
     </div>
@@ -92,17 +90,11 @@
               {{ notPaid() }})!
             </p>
             <p class="caption status-danger" *ngIf="value.errors?.lastpayment">
-              O valor do pagamento da última parcela deve ser igual ao valor
-              restante a ser pago (R$
+              O valor do pagamento da última parcela deve ser igual ao valor restante a ser pago (R$
               {{ notPaid() }})!
             </p>
-            <p class="caption status-danger" *ngIf="value.errors?.required">
-              O valor do pagamento é obrigatório!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="value.errors?.minlength || value.errors?.maxlength"
-            >
+            <p class="caption status-danger" *ngIf="value.errors?.required">O valor do pagamento é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="value.errors?.minlength || value.errors?.maxlength">
               O valor do pagamento deve conter entre
               {{ validation.value.minLength }} a
               {{ validation.value.maxLength }}
@@ -131,15 +123,7 @@
             }"
             ngxSelectAllText
             [required]="validation.nf.required"
-            [status]="
-              nf.dirty
-                ? nf.invalid
-                  ? 'danger'
-                  : 'success'
-                : receiptIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
+            [status]="nf.dirty ? (nf.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'"
             [disabled]="receipt.paid && receiptIndex !== undefined"
             [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
             (ngModelChange)="toLiquid(receipt.value)"
@@ -167,13 +151,7 @@
             ngxSelectAllText
             [required]="validation.nortan.required"
             [status]="
-              nortan.dirty
-                ? nortan.invalid
-                  ? 'danger'
-                  : 'success'
-                : receiptIndex === undefined
-                ? 'success'
-                : 'basic'
+              nortan.dirty ? (nortan.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'
             "
             [disabled]="receipt.paid && receiptIndex !== undefined"
             [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
@@ -230,30 +208,12 @@
             [required]="validation.service.required"
             [minlength]="validation.service.minLength"
             [maxlength]="validation.service.maxLength"
-            [status]="
-              description.dirty
-                ? description.invalid
-                  ? 'danger'
-                  : 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              description.invalid && description.touched ? true : null
-            "
+            [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="description.invalid && description.touched ? true : null"
           ></textarea>
           <ng-container *ngIf="description.invalid && description.touched">
-            <p
-              class="caption status-danger"
-              *ngIf="description.errors?.required"
-            >
-              O campo de serviço é obrigatório!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="
-                description.errors?.minlength || description.errors?.maxlength
-              "
-            >
+            <p class="caption status-danger" *ngIf="description.errors?.required">O campo de serviço é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
               O campo de serviço deve conter entre
               {{ validation.service.minLength }} a
               {{ validation.service.maxLength }}
@@ -276,16 +236,8 @@
             (ngModelChange)="updatePaidDate()"
             [disabled]="!isEditionGranted"
             [required]="validation.paidCheck.required"
-            [status]="
-              paidCheck.dirty
-                ? 'success'
-                : receiptIndex === undefined
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="
-              paidCheck.invalid && paidCheck.touched ? true : null
-            "
+            [status]="paidCheck.dirty ? 'success' : receiptIndex === undefined ? 'success' : 'basic'"
+            [attr.aria-invalid]="paidCheck.invalid && paidCheck.touched ? true : null"
           >
             <nb-option [value]="false">NÃO</nb-option>
             <nb-option [value]="true">SIM</nb-option>
@@ -317,9 +269,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              paidDate.invalid && paidDate.touched ? true : null
-            "
+            [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
           <ng-template #withdate>
             <input
@@ -343,9 +293,7 @@
                   ? 'success'
                   : 'basic'
               "
-              [attr.aria-invalid]="
-                paidDate.invalid && paidDate.touched ? true : null
-              "
+              [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
             />
             <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
           </ng-template>
@@ -375,9 +323,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              created.invalid && created.touched ? true : null
-            "
+            [attr.aria-invalid]="created.invalid && created.touched ? true : null"
           />
           <nb-datepicker #cDatepicker [max]="today"></nb-datepicker>
         </div>
@@ -405,21 +351,13 @@
                 ? 'success'
                 : 'basic'
             "
-            [attr.aria-invalid]="
-              updated.invalid && updated.touched ? true : null
-            "
+            [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
           />
         </div>
       </div>
     </div>
 
-    <button
-      nbButton
-      fullWidth
-      status="primary"
-      size="large"
-      [disabled]="!form.valid || !isEditionGranted"
-    >
+    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !isEditionGranted">
       {{ receiptIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
     </button>
   </fieldset>

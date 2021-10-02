@@ -1,16 +1,6 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ElementRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { NbDialogService, NbComponentStatus } from '@nebular/theme';
-import {
-  ContractDialogComponent,
-  COMPONENT_TYPES,
-} from './contract-dialog/contract-dialog.component';
+import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -42,27 +32,15 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
         return (
-          contract.fullName
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contract.code
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contract.contractor
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contract.name
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contract.value
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          contract.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.contracts.sort((a, b) =>
-      this.utils.codeSort(-1, a.code, b.code)
-    );
+    return this.contracts.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',
@@ -194,9 +172,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         takeUntil(this.destroy$),
         filter(
           ([contracts, invoices, contractors, user]) =>
-            contracts.length > 0 &&
-            invoices.length > 0 &&
-            contractors.length > 0
+            contracts.length > 0 && invoices.length > 0 && contractors.length > 0
         )
       )
       .subscribe(([contracts, invoices, contractors, user]) => {
@@ -205,22 +181,15 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             const invoice = this.invoiceService.idToInvoice(contract.invoice);
             contract.invoice = invoice;
             if (invoice.author) {
-              contract.fullName = this.userService.idToShortName(
-                invoice.author
-              );
+              contract.fullName = this.userService.idToShortName(invoice.author);
             }
             if (invoice.contractor) {
-              contract.contractor = this.contractorService.idToName(
-                invoice.contractor
-              );
+              contract.contractor = this.contractorService.idToName(invoice.contractor);
             }
-            contract.code = this.invoiceService.idToInvoice(
-              contract.invoice
-            ).code;
+            contract.code = this.invoiceService.idToInvoice(contract.invoice).code;
             contract.name = invoice.name;
             contract.value = invoice.value;
-            contract.interests =
-              contract.receipts.length.toString() + '/' + contract.total;
+            contract.interests = contract.receipts.length.toString() + '/' + contract.total;
             contract.role = this.invoiceService.role(invoice, user);
           }
           return contract;
@@ -242,12 +211,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     ])
       .pipe(take(4))
       .subscribe(([contracts, invoices, contractors]) => {
-        if (
-          contracts.length > 0 &&
-          invoices.length > 0 &&
-          contractors.length > 0 &&
-          !this.utils.isPhone()
-        ) {
+        if (contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && !this.utils.isPhone()) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
@@ -269,9 +233,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       context: {
         title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
         contract: event.data ? event.data : new Contract(),
-        componentType: isEditing
-          ? COMPONENT_TYPES.CONTRACT
-          : COMPONENT_TYPES.RECEIPT,
+        componentType: isEditing ? COMPONENT_TYPES.CONTRACT : COMPONENT_TYPES.RECEIPT,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

@@ -1,11 +1,4 @@
-import {
-  discardPeriodicTasks,
-  fakeAsync,
-  flush,
-  flushMicrotasks,
-  TestBed,
-  tick,
-} from '@angular/core/testing';
+import { discardPeriodicTasks, fakeAsync, flush, flushMicrotasks, TestBed, tick } from '@angular/core/testing';
 
 import { UserService, CONTRACT_BALANCE } from './user.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
@@ -25,21 +18,14 @@ describe('UserService', () => {
   let mockedUsers: User[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const authServiceSpy = jasmine.createSpyObj<AuthService>(
-    'AuthService',
-    ['userEmail'],
-    { onUserChange$: new Subject<void>() }
-  );
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', [
-    'fromEvent',
-  ]);
+  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
+    onUserChange$: new Subject<void>(),
+  });
+  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
-  const baseTest = (
-    name: string,
-    test: (expectedUsers: User[], done: DoneFn) => void
-  ) => {
+  const baseTest = (name: string, test: (expectedUsers: User[], done: DoneFn) => void) => {
     it(name, (done: DoneFn) => {
       service
         .getUsers()
@@ -130,9 +116,7 @@ describe('UserService', () => {
       });
   });
 
-  baseTest('getUsers should work', (expectdUsers: User[], done: DoneFn) =>
-    done()
-  );
+  baseTest('getUsers should work', (expectdUsers: User[], done: DoneFn) => done());
 
   baseTest('getUsersList should work', (expectdUsers: User[], done: DoneFn) => {
     expect(service.getUsersList()).toEqual(mockedUsers);
@@ -369,49 +353,31 @@ describe('UserService', () => {
     expect(service.idToName('0')).toBe(mockedUsers[0].fullName);
     expect(service.idToName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
     expect(service.idToName(undefined)).toBe('');
-    expect(service.idToName('000000000000000000000000')).toBe(
-      'Caixa do contrato'
-    );
+    expect(service.idToName('000000000000000000000000')).toBe('Caixa do contrato');
     done();
   });
 
-  baseTest(
-    'idToShortName should work',
-    (expectedUsers: User[], done: DoneFn) => {
-      expect(expectedUsers).toEqual(mockedUsers);
-      expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
-      expect(service.idToShortName(mockedUsers[0])).toBe(
-        mockedUsers[0].fullName
-      );
-      expect(service.idToShortName('000000000000000000000000')).toBe(
-        'Caixa do contrato'
-      );
-      done();
-    }
-  );
+  baseTest('idToShortName should work', (expectedUsers: User[], done: DoneFn) => {
+    expect(expectedUsers).toEqual(mockedUsers);
+    expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
+    expect(service.idToShortName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
+    expect(service.idToShortName('000000000000000000000000')).toBe('Caixa do contrato');
+    done();
+  });
 
-  baseTest(
-    'idToProfilePicture should work',
-    (expectedUsers: User[], done: DoneFn) => {
-      expect(expectedUsers).toEqual(mockedUsers);
-      expect(service.idToProfilePicture('0')).toBe('');
-      expect(service.idToProfilePicture(mockedUsers[1])).toBe(
-        mockedUsers[1].profilePicture as string
-      );
-      expect(service.idToProfilePicture('000000000000000000000000')).toBe(
-        CONTRACT_BALANCE.profilePicture as string
-      );
-      done();
-    }
-  );
+  baseTest('idToProfilePicture should work', (expectedUsers: User[], done: DoneFn) => {
+    expect(expectedUsers).toEqual(mockedUsers);
+    expect(service.idToProfilePicture('0')).toBe('');
+    expect(service.idToProfilePicture(mockedUsers[1])).toBe(mockedUsers[1].profilePicture as string);
+    expect(service.idToProfilePicture('000000000000000000000000')).toBe(CONTRACT_BALANCE.profilePicture as string);
+    done();
+  });
 
   baseTest('idToUser should work', (expectedUsers: User[], done: DoneFn) => {
     expect(expectedUsers).toEqual(mockedUsers);
     expect(service.idToUser('0')).toEqual(mockedUsers[0]);
     expect(service.idToUser(mockedUsers[0])).toEqual(mockedUsers[0]);
-    expect(service.idToUser('000000000000000000000000')).toEqual(
-      CONTRACT_BALANCE as User
-    );
+    expect(service.idToUser('000000000000000000000000')).toEqual(CONTRACT_BALANCE as User);
     done();
   });
 
@@ -422,9 +388,7 @@ describe('UserService', () => {
     expect(service.isEqual('0', undefined)).toBe(false);
     expect(service.isEqual(mockedUsers[0], '0')).toBe(true);
     expect(service.isEqual('1', mockedUsers[1])).toBe(true);
-    expect(
-      service.isEqual('000000000000000000000000', CONTRACT_BALANCE as User)
-    ).toBe(true);
+    expect(service.isEqual('000000000000000000000000', CONTRACT_BALANCE as User)).toBe(true);
     done();
   });
 });

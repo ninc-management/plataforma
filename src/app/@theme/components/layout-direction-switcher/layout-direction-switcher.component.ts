@@ -14,8 +14,7 @@ import { Subject } from 'rxjs';
       [value]="currentDirection"
       (valueChange)="toggleDirection($event)"
       [vertical]="vertical"
-    >
-    </ngx-switcher>
+    ></ngx-switcher>
   `,
 })
 export class LayoutDirectionSwitcherComponent implements OnDestroy {

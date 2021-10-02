@@ -1,10 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  NbLogoutComponent,
-  NbAuthService,
-  NB_AUTH_OPTIONS,
-} from '@nebular/auth';
+import { NbLogoutComponent, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
 import { AuthService } from '../auth.service';
 
 @Component({

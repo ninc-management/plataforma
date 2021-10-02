@@ -12,10 +12,7 @@ export class BaseDialogComponent implements OnInit {
   protected destroy$ = new Subject<void>();
   isBlocked = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    @Inject(NB_DOCUMENT) protected document: Document,
-    @Optional() protected ref: NbDialogRef<any>
-  ) {}
+  constructor(@Inject(NB_DOCUMENT) protected document: Document, @Optional() protected ref: NbDialogRef<any>) {}
 
   ngOnInit(): void {
     fromEvent<KeyboardEvent>(this.document, 'keyup')

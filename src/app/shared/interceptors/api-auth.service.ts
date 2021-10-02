@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { environment } from 'environments/environment';
 
 @Injectable({
@@ -14,10 +9,7 @@ import { environment } from 'environments/environment';
 export class ApiAuthService implements HttpInterceptor {
   constructor() {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const urlCheck = request.url.split('/').filter((el) => el.length > 0);
     if (urlCheck.length > 0 && urlCheck[0] == 'api')
       request = request.clone({

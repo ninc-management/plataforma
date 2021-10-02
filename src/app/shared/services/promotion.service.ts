@@ -51,8 +51,7 @@ export class PromotionService implements OnDestroy {
         .pipe(take(1))
         .subscribe((promotions: any) => {
           const tmp = JSON.parse(JSON.stringify(promotions), (k, v) => {
-            if (['created', 'lastUpdate', 'start', 'end'].includes(k))
-              return parseISO(v);
+            if (['created', 'lastUpdate', 'start', 'end'].includes(k)) return parseISO(v);
             return v;
           });
           this.promotions$.next(tmp as Promotion[]);
@@ -60,9 +59,7 @@ export class PromotionService implements OnDestroy {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) =>
-          this.wsService.handle(data, this.promotions$, 'promotions')
-        );
+        .subscribe((data: any) => this.wsService.handle(data, this.promotions$, 'promotions'));
     }
     return this.promotions$;
   }
@@ -72,16 +69,7 @@ export class PromotionService implements OnDestroy {
   }
 
   idToPromotion(id: string | Promotion): Promotion {
-    if (
-      this.utils.isOfType<Promotion>(id, [
-        '_id',
-        'name',
-        'start',
-        'end',
-        'rules',
-      ])
-    )
-      return id;
+    if (this.utils.isOfType<Promotion>(id, ['_id', 'name', 'start', 'end', 'rules'])) return id;
     const tmp = this.promotions$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

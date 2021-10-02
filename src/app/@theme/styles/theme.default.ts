@@ -4,17 +4,7 @@ import { ChartThemeFactory } from './echarts.theme';
 let theme = baseTheme;
 if (baseTheme.variables) {
   const baseThemeVariables = baseTheme.variables;
-  const pallete = [
-    '#37A2DA',
-    '#9FE6B8',
-    '#FFDB5C',
-    '#ff9f7f',
-    '#fb7293',
-    '#E062AE',
-    '#E690D1',
-    '#e7bcf3',
-    '#9d96f5',
-  ];
+  const pallete = ['#37A2DA', '#9FE6B8', '#FFDB5C', '#ff9f7f', '#fb7293', '#E062AE', '#E690D1', '#e7bcf3', '#9d96f5'];
   theme = {
     name: 'default',
     base: 'default',

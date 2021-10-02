@@ -68,12 +68,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { AngularFireStorage } from '@angular/fire/storage';
-import {
-  NbAccessChecker,
-  NbRoleProvider,
-  NbAclService,
-  NbSecurityModule,
-} from '@nebular/security';
+import { NbAccessChecker, NbRoleProvider, NbAclService, NbSecurityModule } from '@nebular/security';
 import { of } from 'rxjs';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { Permissions } from 'app/shared/services/utils.service';
@@ -128,13 +123,7 @@ const msalInstance = new PublicClientApplication({
 
 const authRequest = {
   authority: 'https://login.microsoftonline.com/consumers',
-  scopes: [
-    'user.read',
-    'Files.Read',
-    'Files.Read.All',
-    'Files.ReadWrite',
-    'Files.ReadWrite.All',
-  ],
+  scopes: ['user.read', 'Files.Read', 'Files.Read.All', 'Files.ReadWrite', 'Files.ReadWrite.All'],
 };
 
 function MSALGuardConfigFactory(): MsalGuardConfiguration {

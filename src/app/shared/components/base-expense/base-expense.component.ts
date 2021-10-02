@@ -1,18 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { User } from '@models/user';
-import {
-  NbFileItem,
-  NbFileUploaderOptions,
-  StorageProvider,
-} from 'app/@theme/components';
+import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -75,11 +64,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateUploaderOptions(
-    folderPath: string,
-    nameFn: (name: string) => string,
-    isAdmFolder?: boolean
-  ): void {
+  updateUploaderOptions(folderPath: string, nameFn: (name: string) => string, isAdmFolder?: boolean): void {
     this.uploaderOptions = {
       multiple: true,
       directory: false,
@@ -95,11 +80,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
           if (item.size / 1024 / 1024 > this.maxFileSize) {
             return false;
           }
-          const itemType =
-            item.name.substring(
-              item.name.lastIndexOf('.') + 1,
-              item.name.length
-            ) || item.name;
+          const itemType = item.name.substring(item.name.lastIndexOf('.') + 1, item.name.length) || item.name;
           if (!this.fileTypesAllowed.includes(itemType)) {
             return false;
           }
@@ -116,8 +97,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
     uploadedFile$.pipe(takeUntil(this.newExpense$)).subscribe((file$) => {
       if (file$)
         file$.pipe(take(2)).subscribe((file) => {
-          if (file$.getValue().isSuccess)
-            this.uploadedFiles.push({ name: file.name, url: file.url });
+          if (file$.getValue().isSuccess) this.uploadedFiles.push({ name: file.name, url: file.url });
         });
     });
   }

@@ -92,8 +92,7 @@ export class UtilsService {
     if (this.isOfType<Invoice>(document, ['administration'])) {
       invoice = document;
     } else {
-      if (document.receipts?.length > 0)
-        return document.receipts[0].nortanPercentage;
+      if (document.receipts?.length > 0) return document.receipts[0].nortanPercentage;
       if (
         this.isOfType<Invoice>(document.invoice, [
           '_id',
@@ -108,11 +107,7 @@ export class UtilsService {
         invoice = document.invoice;
       else return '0';
     }
-    if (
-      invoice.department == 'DAD' ||
-      invoice.department == 'DAD - Diretoria de Administração'
-    )
-      return '0';
+    if (invoice.department == 'DAD' || invoice.department == 'DAD - Diretoria de Administração') return '0';
     return invoice.administration == 'nortan' ? '15' : '17';
   }
 
@@ -123,39 +118,22 @@ export class UtilsService {
     return result;
   }
 
-  isValidDate(
-    date: Date,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
-    number = 1,
-    fromToday = false
-  ): boolean {
+  isValidDate(date: Date, last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje', number = 1, fromToday = false): boolean {
     switch (last) {
       case 'Hoje': {
         return isSameMonth(new Date(), date);
       }
       case 'Dia': {
-        return this.isWithinInterval(
-          date,
-          subDays(new Date(), number),
-          new Date()
-        );
+        return this.isWithinInterval(date, subDays(new Date(), number), new Date());
       }
       case 'Mês': {
-        const lastMonthStart = fromToday
-          ? subMonths(new Date(), number)
-          : startOfMonth(subMonths(new Date(), number));
-        const lastMonthEnd = fromToday
-          ? new Date()
-          : endOfMonth(addMonths(lastMonthStart, number - 1));
+        const lastMonthStart = fromToday ? subMonths(new Date(), number) : startOfMonth(subMonths(new Date(), number));
+        const lastMonthEnd = fromToday ? new Date() : endOfMonth(addMonths(lastMonthStart, number - 1));
         return this.isWithinInterval(date, lastMonthStart, lastMonthEnd);
       }
       case 'Ano': {
-        const lastYearStart = fromToday
-          ? subYears(new Date(), number)
-          : startOfYear(subYears(new Date(), number));
-        const lastYearEnd = fromToday
-          ? new Date()
-          : endOfYear(addYears(lastYearStart, number - 1));
+        const lastYearStart = fromToday ? subYears(new Date(), number) : startOfYear(subYears(new Date(), number));
+        const lastYearEnd = fromToday ? new Date() : endOfYear(addYears(lastYearStart, number - 1));
         return this.isWithinInterval(date, lastYearStart, lastYearEnd);
       }
       default: {
@@ -197,16 +175,14 @@ export class UtilsService {
         count: tmp.count[0].match(/\d+/g),
         year: tmp.year[0].match(/\d+/g),
       };
-    if (tmp.count && tmp.year)
-      first = { count: +tmp.count[0], year: +tmp.year[0] };
+    if (tmp.count && tmp.year) first = { count: +tmp.count[0], year: +tmp.year[0] };
     tmp = { count: b.match(/-(\d+)\//g), year: b.match(/\/(\d+)-/g) };
     if (tmp.count && tmp.year)
       tmp = {
         count: tmp.count[0].match(/\d+/g),
         year: tmp.year[0].match(/\d+/g),
       };
-    if (tmp.count && tmp.year)
-      second = { count: +tmp.count[0], year: +tmp.year[0] };
+    if (tmp.count && tmp.year) second = { count: +tmp.count[0], year: +tmp.year[0] };
 
     if (first.year < second.year) return -1 * direction;
 
@@ -222,10 +198,7 @@ export class UtilsService {
   groupByDateTimeSerie(serie: TimeSeriesItem[]): TimeSeriesItem[] {
     return Object.entries(groupBy(serie, '0'))
       .map((objs) => {
-        return [
-          objs[0],
-          objs[1].reduce((acc, obj) => acc + obj[1], 0),
-        ] as TimeSeriesItem;
+        return [objs[0], objs[1].reduce((acc, obj) => acc + obj[1], 0)] as TimeSeriesItem;
       })
       .sort((a, b) => {
         return a[0] < b[0] ? -1 : 1;

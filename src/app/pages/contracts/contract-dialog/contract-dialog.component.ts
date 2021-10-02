@@ -9,10 +9,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { UserService } from 'app/shared/services/user.service';
-import {
-  ContractService,
-  CONTRACT_STATOOS,
-} from 'app/shared/services/contract.service';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
 
@@ -28,10 +25,7 @@ export enum COMPONENT_TYPES {
   templateUrl: './contract-dialog.component.html',
   styleUrls: ['./contract-dialog.component.scss'],
 })
-export class ContractDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class ContractDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() contract = new Contract();
   @Input() paymentIndex?: number;
@@ -61,9 +55,7 @@ export class ContractDialogComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.isPayable =
-      this.contract.total != undefined &&
-      this.contract.receipts.length < +this.contract.total;
+    this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
@@ -75,28 +67,19 @@ export class ContractDialogComponent
               contracts = contracts.filter(
                 (contract) =>
                   contract.invoice &&
-                  (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO ||
-                    contract.status == CONTRACT_STATOOS.A_RECEBER) &&
-                  (this.invoiceService.isInvoiceAuthor(
-                    contract.invoice,
-                    user
-                  ) ||
+                  (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER) &&
+                  (this.invoiceService.isInvoiceAuthor(contract.invoice, user) ||
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => {
                 if (contract.invoice != undefined) {
-                  contract.invoice = this.invoiceService.idToInvoice(
-                    contract.invoice
-                  );
+                  contract.invoice = this.invoiceService.idToInvoice(contract.invoice);
                   contract.value = contract.invoice.value;
                   contract.code = contract.invoice.code;
                   contract.balance = this.contractService.balance(contract);
                   contract.liquid = this.contractService.toNetValue(
                     this.contractService.subtractComissions(
-                      this.stringUtil.removePercentage(
-                        contract.value,
-                        contract.ISS
-                      ),
+                      this.stringUtil.removePercentage(contract.value, contract.ISS),
                       contract
                     ),
                     this.utils.nfPercentage(contract),
@@ -104,42 +87,28 @@ export class ContractDialogComponent
                   );
                   const paid = this.contractService.toNetValue(
                     this.stringUtil.numberToMoney(
-                      contract.receipts.reduce(
-                        (accumulator: number, recipt: any) => {
-                          if (recipt.paid)
-                            accumulator =
-                              accumulator +
-                              this.stringUtil.moneyToNumber(recipt.value);
-                          return accumulator;
-                        },
-                        0
-                      )
+                      contract.receipts.reduce((accumulator: number, recipt: any) => {
+                        if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+                        return accumulator;
+                      }, 0)
                     ),
                     this.utils.nfPercentage(contract),
                     this.utils.nortanPercentage(contract)
                   );
                   contract.notPaid = this.stringUtil.numberToMoney(
-                    this.stringUtil.moneyToNumber(contract.liquid) -
-                      this.stringUtil.moneyToNumber(paid)
+                    this.stringUtil.moneyToNumber(contract.liquid) - this.stringUtil.moneyToNumber(paid)
                   );
                   if (contract.invoice) {
-                    const invoice = this.invoiceService.idToInvoice(
-                      contract.invoice
-                    );
+                    const invoice = this.invoiceService.idToInvoice(contract.invoice);
                     if (invoice.author) {
-                      const managerPicture = this.userService.idToUser(
-                        invoice.author
-                      ).profilePicture;
-                      if (managerPicture)
-                        contract.managerPicture = managerPicture;
+                      const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
+                      if (managerPicture) contract.managerPicture = managerPicture;
                     }
                   }
                 }
                 return contract;
               });
-              return contracts.sort((a, b) =>
-                this.utils.codeSort(-1, a.code, b.code)
-              );
+              return contracts.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
             })
           )
           .subscribe((contracts) => {
@@ -147,19 +116,15 @@ export class ContractDialogComponent
             else {
               if (this.componentType == COMPONENT_TYPES.RECEIPT) {
                 this.availableContracts = contracts.filter(
-                  (contract) =>
-                    contract.total !== contract.receipts.length.toString()
+                  (contract) => contract.total !== contract.receipts.length.toString()
                 );
-                if (this.availableContracts.length === 0)
-                  this.isPayable = false;
+                if (this.availableContracts.length === 0) this.isPayable = false;
               }
               if (this.componentType == COMPONENT_TYPES.PAYMENT) {
                 this.availableContracts = contracts.filter(
-                  (contract) =>
-                    this.stringUtil.moneyToNumber(contract.balance) > 0
+                  (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
                 );
-                if (this.availableContracts.length === 0)
-                  this.hasBalance = false;
+                if (this.availableContracts.length === 0) this.hasBalance = false;
                 else this.hasBalance = true;
               }
             }
@@ -200,11 +165,6 @@ export class ContractDialogComponent
         });
   }
   openPDFnewtab(): void {
-    if (this.contract.invoice)
-      this.pdf.generate(
-        this.invoiceService.idToInvoice(this.contract.invoice),
-        false,
-        true
-      );
+    if (this.contract.invoice) this.pdf.generate(this.invoiceService.idToInvoice(this.contract.invoice), false, true);
   }
 }

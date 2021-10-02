@@ -15,20 +15,14 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
   themeSubscription: any;
   currentTheme = {};
 
-  constructor(
-    private theme: NbThemeService,
-    private stringUtil: StringUtilService
-  ) {}
+  constructor(private theme: NbThemeService, private stringUtil: StringUtilService) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
-    this.themeSubscription = combineLatest([
-      this.theme.getJsTheme(),
-      this.value$,
-    ]).subscribe(([config, dataValue]) => {
+    this.themeSubscription = combineLatest([this.theme.getJsTheme(), this.value$]).subscribe(([config, dataValue]) => {
       const colors: any = config.variables;
       this.currentTheme = colors.echarts;
       let color: string;

@@ -1,8 +1,5 @@
 <div class="header-container">
-  <div
-    class="logo-container"
-    [ngStyle]="{ 'margin-top.px': utils.isPhone() ? 0 : -7 }"
-  >
+  <div class="logo-container" [ngStyle]="{ 'margin-top.px': utils.isPhone() ? 0 : -7 }">
     <a
       class="sidebar-toggle hamburger hamburger--collapse"
       cursor="pointer"
@@ -24,13 +21,7 @@
       matRipple
       [matRippleUnbounded]="false"
       [matRippleCentered]="false"
-      style="
-        height: 42px;
-        display: flex;
-        border-radius: 0.17rem;
-        align-items: center;
-        font-family: marcellus;
-      "
+      style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center; font-family: marcellus"
     >
       <nb-icon
         [icon]="logoIcon"

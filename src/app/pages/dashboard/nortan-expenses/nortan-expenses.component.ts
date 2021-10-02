@@ -1,20 +1,14 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Expense } from '@models/expense';
 import { NbDialogService } from '@nebular/theme';
-import {
-  NortanService,
-  NORTAN_EXPENSE_TYPES,
-} from 'app/shared/services/nortan.service';
+import { NortanService, NORTAN_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import {
-  DashboardDialogComponent,
-  DASHBOARD_COMPONENT_TYPES,
-} from '../dashboard-dialog/dashboard-dialog.component';
+import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from '../dashboard-dialog/dashboard-dialog.component';
 
 @Component({
   selector: 'ngx-nortan-expenses',
@@ -31,26 +25,14 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.expenses.filter((expense) => {
         return (
-          expense.description
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          expense.value
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
+          expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            this.userService
-              .idToName(expense.author)
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
+            this.userService.idToName(expense.author).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            this.userService
-              .idToName(expense.source)
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
-          this.utils
-            .formatDate(expense.created)
-            .includes(this.searchQuery.toLowerCase())
+            this.userService.idToName(expense.source).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.expenses;
@@ -155,10 +137,7 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(DashboardDialogComponent, {
         context: {
-          title:
-            index !== undefined
-              ? 'EDITAR GASTO NORTAN'
-              : 'ADICIONAR GASTO NORTAN',
+          title: index !== undefined ? 'EDITAR GASTO NORTAN' : 'ADICIONAR GASTO NORTAN',
           iExpense: index !== undefined ? this.expenses[index] : undefined,
           componentType: DASHBOARD_COMPONENT_TYPES.EXPENSE,
         },

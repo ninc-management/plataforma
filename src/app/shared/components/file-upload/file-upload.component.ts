@@ -1,10 +1,6 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import {
-  NbFileUploaderOptions,
-  StorageProvider,
-  NbFileItem,
-} from '../../../@theme/components';
+import { NbFileUploaderOptions, StorageProvider, NbFileItem } from '../../../@theme/components';
 import { take, takeUntil } from 'rxjs/operators';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
@@ -31,9 +27,7 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
       if (item.size / 1024 / 1024 > this.maxFileSize) {
         return false;
       }
-      const itemType =
-        item.name.substring(item.name.lastIndexOf('.') + 1, item.name.length) ||
-        item.name;
+      const itemType = item.name.substring(item.name.lastIndexOf('.') + 1, item.name.length) || item.name;
       if (!this.fileTypesAllowed.includes(itemType)) {
         return false;
       }

@@ -20,22 +20,13 @@ import { ContractorDialogComponent } from '../../contractors/contractor-dialog/c
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DepartmentService } from 'app/shared/services/department.service';
-import {
-  InvoiceService,
-  INVOICE_STATOOS,
-} from 'app/shared/services/invoice.service';
+import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import {
-  Invoice,
-  InvoiceTeamMember,
-  InvoiceMaterial,
-  InvoiceProduct,
-  InvoiceStage,
-} from '@models/invoice';
+import { Invoice, InvoiceTeamMember, InvoiceMaterial, InvoiceProduct, InvoiceStage } from '@models/invoice';
 import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
@@ -151,25 +142,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.tempInvoice.created = new Date();
         this.tempInvoice.lastUpdate = new Date();
       }
-      this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-        this.tempInvoice.department
-      );
-      this.tempInvoice.department = this.departmentService.composedName(
-        this.tempInvoice.department
-      );
+      this.COORDINATIONS = this.departmentService.buildCoordinationsList(this.tempInvoice.department);
+      this.tempInvoice.department = this.departmentService.composedName(this.tempInvoice.department);
       this.contractorSearch = this.tempInvoice.contractor
         ? this.contractorService.idToName(this.tempInvoice.contractor)
         : '';
-      this.revision = +this.tempInvoice.code?.slice(
-        this.tempInvoice.code.length - 2
-      );
+      this.revision = +this.tempInvoice.code?.slice(this.tempInvoice.code.length - 2);
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
-      if (this.tempInvoice.materialListType == undefined)
-        this.tempInvoice.materialListType = '1';
-      if (this.tempInvoice.productListType == undefined)
-        this.tempInvoice.productListType = '2';
-      if (this.tempInvoice.invoiceType == undefined)
-        this.tempInvoice.invoiceType = 'projeto';
+      if (this.tempInvoice.materialListType == undefined) this.tempInvoice.materialListType = '1';
+      if (this.tempInvoice.productListType == undefined) this.tempInvoice.productListType = '2';
+      if (this.tempInvoice.invoiceType == undefined) this.tempInvoice.invoiceType = 'projeto';
       this.updateDiscountPercentage();
       this.updateLastValues();
       this.updateDependentValues(this.tempInvoice.products, 'product');
@@ -183,9 +165,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         if (this.tempInvoice.team.length === 0) {
           this.tempInvoice.team.push({
             user: user,
-            coordination: this.tempInvoice.coordination
-              ? this.tempInvoice.coordination
-              : '',
+            coordination: this.tempInvoice.coordination ? this.tempInvoice.coordination : '',
             distribution: '',
             netValue: '',
             grossValue: '',
@@ -193,8 +173,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         }
       });
     }
-    if (this.tempInvoice.contactPlural == undefined)
-      this.tempInvoice.contactPlural = false;
+    if (this.tempInvoice.contactPlural == undefined) this.tempInvoice.contactPlural = false;
     if (this.tempInvoice.peep == undefined)
       this.tempInvoice.peep =
         '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';
@@ -202,8 +181,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.dep =
         'Serão feitas reunião inicial para identificação das necessidades e uma reunião para cada alteração da proposta. Serão apresentadas imagens em 3D para melhor entendimento do projeto.\nToda e qualquer alteração é feita nessa etapa.';
     if (this.tempInvoice.peee == undefined)
-      this.tempInvoice.peee =
-        'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
+      this.tempInvoice.peee = 'início após aprovação da proposta preliminar, 30 dias úteis para finalização';
     if (this.tempInvoice.dee == undefined)
       this.tempInvoice.dee =
         'Os itens acima compõem o produto final a ser entregue contando com todas as informações técnicas necessárias e suficientes para a realização da obra.';
@@ -211,8 +189,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.tempInvoice.peec =
         'será acompanhando o processo de aprovação do projeto junto ao órgão municipal competente';
     if (this.tempInvoice.dec == undefined)
-      this.tempInvoice.dec =
-        'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
+      this.tempInvoice.dec = 'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
     if (this.tempInvoice.importants.length == 0)
       this.tempInvoice.importants = [
         'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato',
@@ -231,10 +208,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
     this.contractorData = this.contractorService.getContractors();
 
-    this.availableUsers = combineLatest([
-      this.userService.getUsers(),
-      this.memberChanged$,
-    ]).pipe(
+    this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
           return this.tempInvoice.team.find((member: InvoiceTeamMember) =>
@@ -255,19 +229,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
             if (u.AER) {
               u.AER.unshift(u._id);
               this.authorData = of(
-                u.AER.filter((u): u is User | string => u != undefined).map(
-                  (u) => this.userService.idToUser(u)
-                )
+                u.AER.filter((u): u is User | string => u != undefined).map((u) => this.userService.idToUser(u))
               );
-              if (
-                this.tempInvoice.author &&
-                u.AER.includes(
-                  this.userService.idToUser(this.tempInvoice.author)?._id
-                )
-              )
-                this.authorSearch = this.userService.idToName(
-                  this.tempInvoice.author
-                );
+              if (this.tempInvoice.author && u.AER.includes(this.userService.idToUser(this.tempInvoice.author)?._id))
+                this.authorSearch = this.userService.idToName(this.tempInvoice.author);
               else {
                 this.authorSearch = '';
                 this.tempInvoice.author = undefined;
@@ -283,25 +248,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   registerInvoice(): void {
     const department = this.tempInvoice.department;
-    this.tempInvoice.department = this.departmentService.extractAbreviation(
-      this.tempInvoice.department
-    );
+    this.tempInvoice.department = this.departmentService.extractAbreviation(this.tempInvoice.department);
     if (this.editing) {
       if (!isEqual(this.iInvoice, this.tempInvoice)) {
-        if (
-          !this.tempInvoice.team
-            .map((member) => member.distribution)
-            .every((distribution) => distribution !== '')
-        )
-          this.tempInvoice = this.invoiceService.setDefaultDistribution(
-            this.tempInvoice
-          );
+        if (!this.tempInvoice.team.map((member) => member.distribution).every((distribution) => distribution !== ''))
+          this.tempInvoice = this.invoiceService.setDefaultDistribution(this.tempInvoice);
         this.updateRevision();
         this.tempInvoice.lastUpdate = new Date();
         if (this.oldStatus !== this.tempInvoice.status) {
           const lastStatusIndex = this.tempInvoice.statusHistory.length - 1;
-          this.tempInvoice.statusHistory[lastStatusIndex].end =
-            this.tempInvoice.lastUpdate;
+          this.tempInvoice.statusHistory[lastStatusIndex].end = this.tempInvoice.lastUpdate;
           this.tempInvoice.statusHistory.push({
             status: this.tempInvoice.status,
             start: this.tempInvoice.lastUpdate,
@@ -309,8 +265,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         }
         this.invoiceService.editInvoice(this.tempInvoice);
         if (this.oldStatus !== this.tempInvoice.status) {
-          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO)
-            this.contractService.saveContract(this.tempInvoice);
+          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(this.tempInvoice);
         }
         this.tempInvoice.contractorName = this.tempInvoice.contractor
           ? this.contractorService.idToName(this.tempInvoice.contractor)
@@ -330,9 +285,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateLastValues(): void {
-    this.options.lastValue = this.tempInvoice.value
-      ? this.tempInvoice.value.slice()
-      : '0';
+    this.options.lastValue = this.tempInvoice.value ? this.tempInvoice.value.slice() : '0';
     this.options.lastProducts = cloneDeep(this.tempInvoice.products);
     this.options.lastStages = cloneDeep(this.tempInvoice.stages);
   }
@@ -340,12 +293,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   updateDependentValues(array: any[], type: 'stage' | 'product'): void {
     if (type === 'product' && this.tempInvoice.productListType == '2') return;
     if (this.tempInvoice.value !== '0') {
-      const lastArray =
-        type == 'stage' ? this.options.lastStages : this.options.lastProducts;
+      const lastArray = type == 'stage' ? this.options.lastStages : this.options.lastProducts;
       array.map((item, index) => {
-        const p = this.stringUtil
-          .toPercentage(lastArray[index].value, this.options.lastValue, 20)
-          .slice(0, -1);
+        const p = this.stringUtil.toPercentage(lastArray[index].value, this.options.lastValue, 20).slice(0, -1);
         item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
 
         item.percentage = p;
@@ -379,8 +329,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateUserCoordinations(): string[] {
     this.teamMember.coordination = '';
-    if (this.teamMember.user)
-      return this.departmentService.userCoordinations(this.teamMember.user);
+    if (this.teamMember.user) return this.departmentService.userCoordinations(this.teamMember.user);
     return [];
   }
 
@@ -393,11 +342,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         '/' +
         new Date().getFullYear() +
         '-NRT/' +
-        (this.tempInvoice.department
-          ? this.departmentService.extractAbreviation(
-              this.tempInvoice.department
-            )
-          : '') +
+        (this.tempInvoice.department ? this.departmentService.extractAbreviation(this.tempInvoice.department) : '') +
         '-00';
     }
   }
@@ -405,8 +350,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   updateRevision(): void {
     this.tempInvoice.code =
-      this.tempInvoice.code.slice(0, this.tempInvoice.code.length - 2) +
-      this.revision.toString().padStart(2, '0');
+      this.tempInvoice.code.slice(0, this.tempInvoice.code.length - 2) + this.revision.toString().padStart(2, '0');
   }
 
   addContractor(): void {
@@ -427,10 +371,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   confirmationDialog(): void {
     this.isDialogBlocked.next(true);
-    if (
-      this.oldStatus !== this.tempInvoice.status &&
-      this.tempInvoice.status === 'Fechado'
-    ) {
+    if (this.oldStatus !== this.tempInvoice.status && this.tempInvoice.status === 'Fechado') {
       this.dialogService
         .open(ConfirmationDialogComponent, {
           context: {
@@ -501,10 +442,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   isAddMaterialDisabled(): boolean {
     if (this.tempInvoice.materialListType == '1')
-      return (
-        this.options.material.name.length == 0 ||
-        this.options.material.amount.length == 0
-      );
+      return this.options.material.name.length == 0 || this.options.material.amount.length == 0;
     return (
       this.options.material.name.length == 0 ||
       this.options.material.amount.length == 0 ||
@@ -514,10 +452,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   isAddProductDisabled(): boolean {
     if (this.tempInvoice.productListType == '1')
-      return (
-        this.options.product.name.length == 0 ||
-        this.options.product.value.length == 0
-      );
+      return this.options.product.name.length == 0 || this.options.product.value.length == 0;
     return (
       this.options.product.name.length == 0 ||
       this.options.product.amount.length == 0 ||
@@ -540,10 +475,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         this.stringUtil.moneyToNumber(
           this.options.valueType == '$'
             ? this.options.product.value
-            : this.stringUtil.toValue(
-                this.options.product.value,
-                this.tempInvoice.value
-              )
+            : this.stringUtil.toValue(this.options.product.value, this.tempInvoice.value)
         ) * this.stringUtil.moneyToNumber(this.options.product.amount)
       );
   }
@@ -551,21 +483,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   addProduct(): void {
     if (this.options.valueType === '%')
-      this.options.product.value = this.stringUtil.toValue(
-        this.options.product.value,
-        this.tempInvoice.value
-      );
+      this.options.product.value = this.stringUtil.toValue(this.options.product.value, this.tempInvoice.value);
     if (this.tempInvoice.productListType == '1') {
       this.options.product.amount = '1';
       this.options.product.total = this.options.product.value;
     }
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(this.options.product);
-    const lastItem =
-      this.tempInvoice.products[this.tempInvoice.products.length - 1];
-    lastItem.percentage = this.stringUtil
-      .toPercentage(lastItem.value, this.tempInvoice.value, 20)
-      .slice(0, -1);
+    const lastItem = this.tempInvoice.products[this.tempInvoice.products.length - 1];
+    lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.product = new InvoiceProduct();
     this.updateTotal('product');
   }
@@ -593,8 +519,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         .toPercentageNumber(
           this.stringUtil.moneyToNumber(this.tempInvoice.discount),
           this.tempInvoice.products.reduce(
-            (accumulator: number, product: any) =>
-              accumulator + this.stringUtil.moneyToNumber(product.value),
+            (accumulator: number, product: any) => accumulator + this.stringUtil.moneyToNumber(product.value),
             0
           )
         )
@@ -604,8 +529,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   updateDiscountValue(): void {
     const total = this.stringUtil.numberToMoney(
       this.tempInvoice.products.reduce(
-        (accumulator: number, product: any) =>
-          accumulator + this.stringUtil.moneyToNumber(product.value),
+        (accumulator: number, product: any) => accumulator + this.stringUtil.moneyToNumber(product.value),
         0
       )
     );
@@ -617,25 +541,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   addStage(): void {
     if (this.options.stageValueType === '%')
-      this.options.stage.value = this.stringUtil.toValue(
-        this.options.stage.value,
-        this.tempInvoice.value
-      );
+      this.options.stage.value = this.stringUtil.toValue(this.options.stage.value, this.tempInvoice.value);
     this.options.stage.name = this.options.stage.name;
     this.tempInvoice.stages.push(this.options.stage);
-    const lastItem =
-      this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
-    lastItem.percentage = this.stringUtil
-      .toPercentage(lastItem.value, this.tempInvoice.value, 20)
-      .slice(0, -1);
+    const lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
+    lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
   }
 
   remainingBalance(base: string): string {
     if (this.tempInvoice.value == undefined) return '0,00';
-    const total =
-      base === 'product' ? this.options.total : this.options.stageTotal;
+    const total = base === 'product' ? this.options.total : this.options.stageTotal;
 
     if (this.tempInvoice.discount) {
       return this.stringUtil.subtractMoney(
@@ -667,11 +584,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         const subtotal = this.tempInvoice.products.reduce(
           (accumulator: number, product: any) =>
             accumulator +
-            this.stringUtil.moneyToNumber(
-              this.tempInvoice.productListType == '1'
-                ? product.value
-                : product.total
-            ),
+            this.stringUtil.moneyToNumber(this.tempInvoice.productListType == '1' ? product.value : product.total),
           0
         );
         if (this.tempInvoice.discount)
@@ -685,8 +598,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       case 'stage': {
         this.options.stageTotal = this.stringUtil.numberToMoney(
           this.tempInvoice.stages.reduce(
-            (accumulator: number, stage: any) =>
-              accumulator + this.stringUtil.moneyToNumber(stage.value),
+            (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
             0
           )
         );
@@ -695,8 +607,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       case 'material': {
         this.options.materialTotal = this.stringUtil.numberToMoney(
           this.tempInvoice.materials.reduce(
-            (accumulator: number, material: any) =>
-              accumulator + this.stringUtil.moneyToNumber(material.total),
+            (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
             0
           )
         );
@@ -709,16 +620,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateValue(array: any[], idx: number): void {
-    array[idx].value = this.stringUtil.applyPercentage(
-      this.tempInvoice.value,
-      array[idx].percentage
-    );
+    array[idx].value = this.stringUtil.applyPercentage(this.tempInvoice.value, array[idx].percentage);
   }
 
   updatePercentage(array: any[], idx: number): void {
-    array[idx].percentage = this.stringUtil
-      .toPercentage(array[idx].value, this.tempInvoice.value)
-      .slice(0, -1);
+    array[idx].percentage = this.stringUtil.toPercentage(array[idx].value, this.tempInvoice.value).slice(0, -1);
   }
 
   updateItemTotal(array: any[], idx: number): void {
@@ -731,8 +637,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       array[idx].total = '0,00';
     else
       array[idx].total = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(array[idx].value) *
-          this.stringUtil.moneyToNumber(array[idx].amount)
+        this.stringUtil.moneyToNumber(array[idx].value) * this.stringUtil.moneyToNumber(array[idx].amount)
       );
   }
 
@@ -760,34 +665,22 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
   isTotalOK(): boolean {
     if (this.tempInvoice.discount) {
-      const result = this.stringUtil.subtractMoney(
-        this.tempInvoice.value,
-        this.tempInvoice.discount
-      );
+      const result = this.stringUtil.subtractMoney(this.tempInvoice.value, this.tempInvoice.discount);
       return this.options.total !== '0' && this.options.total === result;
     }
 
-    return (
-      this.options.total !== '0' &&
-      this.options.total === this.tempInvoice.value
-    );
+    return this.options.total !== '0' && this.options.total === this.tempInvoice.value;
   }
 
   getRemainingPercentage(): string {
     if (this.tempInvoice.discount) {
       return this.stringUtil.toPercentage(
         this.options.total,
-        this.stringUtil.subtractMoney(
-          this.tempInvoice.value,
-          this.tempInvoice.discount
-        )
+        this.stringUtil.subtractMoney(this.tempInvoice.value, this.tempInvoice.discount)
       );
     }
 
-    return this.stringUtil.toPercentage(
-      this.options.total,
-      this.tempInvoice.value
-    );
+    return this.stringUtil.toPercentage(this.options.total, this.tempInvoice.value);
   }
 }
 
@@ -804,22 +697,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         <input #name nbInput fullWidth placeholder="Digite o subproduto" />
       </nb-card-body>
       <nb-card-footer>
-        <button
-          nbButton
-          fullWidth
-          status="primary"
-          (click)="dismiss(name.value)"
-        >
-          Adicionar
-        </button>
+        <button nbButton fullWidth status="primary" (click)="dismiss(name.value)">Adicionar</button>
       </nb-card-footer>
     </nb-card>
   `,
 })
-export class TextInputDialog
-  extends BaseDialogComponent
-  implements AfterViewInit
-{
+export class TextInputDialog extends BaseDialogComponent implements AfterViewInit {
   @ViewChild('name', { read: ElementRef }) inputRef!: ElementRef;
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,

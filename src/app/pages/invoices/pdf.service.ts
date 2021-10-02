@@ -37,19 +37,12 @@ export class PdfService {
     private contractorService: ContractorService
   ) {}
 
-  private applyVerticalAlignment(
-    node: ContentTable,
-    rowIndex: number,
-    align: string
-  ): void {
-    const allCellHeights = node.table.body[rowIndex].map(
-      (innerNode, columnIndex) => {
-        let width = 0;
-        if (node.table.widths != undefined)
-          width = (node.table.widths[columnIndex] as any)._calcWidth;
-        return this.findInlineHeight(innerNode, width).height;
-      }
-    );
+  private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
+    const allCellHeights = node.table.body[rowIndex].map((innerNode, columnIndex) => {
+      let width = 0;
+      if (node.table.widths != undefined) width = (node.table.widths[columnIndex] as any)._calcWidth;
+      return this.findInlineHeight(innerNode, width).height;
+    });
     const maxRowHeight = Math.max(...allCellHeights);
     node.table.body[rowIndex].forEach((cell, ci) => {
       if (allCellHeights[ci] && maxRowHeight > allCellHeights[ci]) {
@@ -74,14 +67,8 @@ export class PdfService {
     });
   }
 
-  private findInlineHeight(
-    cell: TableCell,
-    maxWidth: number,
-    usedWidth = 0
-  ): any {
-    const calcLines = (
-      inlines: { height: number; width: number; lineEnd: any }[]
-    ) => {
+  private findInlineHeight(cell: TableCell, maxWidth: number, usedWidth = 0): any {
+    const calcLines = (inlines: { height: number; width: number; lineEnd: any }[]) => {
       if (inlines == undefined)
         return {
           height: 0,
@@ -123,18 +110,12 @@ export class PdfService {
     } else if ((cell as any).table) {
       let currentMaxHeight = 0;
       for (const currentTableBodies of (cell as any).table.body) {
-        const innerTableHeights = currentTableBodies.map(
-          (innerTableCell: TableCell) => {
-            const findInlineHeight = this.findInlineHeight(
-              innerTableCell,
-              maxWidth,
-              usedWidth
-            );
+        const innerTableHeights = currentTableBodies.map((innerTableCell: TableCell) => {
+          const findInlineHeight = this.findInlineHeight(innerTableCell, maxWidth, usedWidth);
 
-            usedWidth = findInlineHeight.width;
-            return findInlineHeight.height;
-          }
-        );
+          usedWidth = findInlineHeight.width;
+          return findInlineHeight.height;
+        });
         currentMaxHeight = Math.max(...innerTableHeights, currentMaxHeight);
       }
       return {
@@ -188,11 +169,7 @@ export class PdfService {
       paddingBottom: function (i: number, node: ContentTable) {
         return i == node.table.body.length - 1 ? 10 : 0;
       },
-      fillColor: function (
-        rowIndex: number,
-        node: ContentTable,
-        columnIndex: number
-      ) {
+      fillColor: function (rowIndex: number, node: ContentTable, columnIndex: number) {
         return color;
       },
     };
@@ -219,21 +196,13 @@ export class PdfService {
       vLineColor: function (i: number, node: ContentTable) {
         return lineColor;
       },
-      fillColor: function (
-        rowIndex: number,
-        node: ContentTable,
-        columnIndex: number
-      ) {
+      fillColor: function (rowIndex: number, node: ContentTable, columnIndex: number) {
         return tableColor;
       },
     };
   }
 
-  async generate(
-    invoice: Invoice,
-    preview = false,
-    openPdf = false
-  ): Promise<void> {
+  async generate(invoice: Invoice, preview = false, openPdf = false): Promise<void> {
     const pdf = new PdfMakeWrapper();
 
     // Metadata definition
@@ -311,13 +280,9 @@ export class PdfService {
           },
           {
             text:
-              (invoice.subtitle1 == undefined
-                ? ''
-                : invoice.subtitle1.toLowerCase()) +
+              (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
               '\n' +
-              (invoice.subtitle2 == undefined
-                ? ''
-                : invoice.subtitle2.toLowerCase()),
+              (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
             fontSize: 12,
             alignment: 'right',
             color: '#052E41',
@@ -351,9 +316,7 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    const author = invoice.author
-      ? this.userService.idToUser(invoice.author)
-      : new User();
+    const author = invoice.author ? this.userService.idToUser(invoice.author) : new User();
 
     /* eslint-disable @typescript-eslint/indent*/
     pdf.add({
@@ -366,11 +329,8 @@ export class PdfService {
         author.fullName +
         ', ' +
         (author.expertise
-          ? author.expertise[
-              author.expertise.findIndex(
-                (el) => el.coordination == invoice.coordination.split(' ')[0]
-              )
-            ]?.shortExpertise
+          ? author.expertise[author.expertise.findIndex((el) => el.coordination == invoice.coordination.split(' ')[0])]
+              ?.shortExpertise
           : '') +
         ', será ' +
         (author.article == 'a' ? 'sua' : 'seu') +
@@ -419,10 +379,7 @@ export class PdfService {
             ', ' +
             (author.expertise
               ? author.expertise[
-                  author.expertise.findIndex(
-                    (el) =>
-                      el.coordination == invoice.coordination.split(' ')[0]
-                  )
+                  author.expertise.findIndex((el) => el.coordination == invoice.coordination.split(' ')[0])
                 ]?.text
               : ''),
           alignment: 'left',
@@ -447,9 +404,7 @@ export class PdfService {
     if (invoice.team.length > 1) {
       const team = invoice.team.slice(1);
       for (const [index, member] of team.entries()) {
-        const user = member.user
-          ? this.userService.idToUser(member.user)
-          : new User();
+        const user = member.user ? this.userService.idToUser(member.user) : new User();
         /* eslint-disable @typescript-eslint/indent*/
         pdf.add({
           columns: [
@@ -478,10 +433,7 @@ export class PdfService {
                 ', ' +
                 (user.expertise
                   ? user.expertise[
-                      user.expertise.findIndex(
-                        (el) =>
-                          el.coordination == member.coordination.split(' ')[0]
-                      )
+                      user.expertise.findIndex((el) => el.coordination == member.coordination.split(' ')[0])
                     ]?.text
                   : ''),
               alignment: 'left',
@@ -523,11 +475,7 @@ export class PdfService {
           fontSize: 8,
         },
       ],
-      pageBreak: invoice.team
-        ? invoice.team.length == 5
-          ? 'after'
-          : 'none'
-        : 'none',
+      pageBreak: invoice.team ? (invoice.team.length == 5 ? 'after' : 'none') : 'none',
       style: 'insideText',
     });
 
@@ -563,11 +511,7 @@ export class PdfService {
           color: '#79BA9E',
         },
       ],
-      pageBreak: invoice.team
-        ? invoice.team.length == 3 || invoice.team.length == 4
-          ? 'before'
-          : 'none'
-        : 'none',
+      pageBreak: invoice.team ? (invoice.team.length == 3 || invoice.team.length == 4 ? 'before' : 'none') : 'none',
     });
 
     pdf.add(pdf.ln(1));
@@ -627,11 +571,7 @@ export class PdfService {
       text: subject,
       style: 'insideText',
       alignment: 'justify',
-      pageBreak: invoice.team
-        ? invoice.team.length > 2
-          ? 'none'
-          : 'after'
-        : 'after',
+      pageBreak: invoice.team ? (invoice.team.length > 2 ? 'none' : 'after') : 'after',
     });
 
     // Body - Invoice Info Early Stage - Page 2
@@ -660,11 +600,7 @@ export class PdfService {
           [{ text: 'ETAPA PRELIMINAR' }],
           [
             {
-              text: invoice.peep
-                ? invoice.peep.length > 0
-                  ? '(' + invoice.peep + ')'
-                  : ''
-                : '',
+              text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -707,11 +643,7 @@ export class PdfService {
           [{ text: 'ETAPA EXECUTIVA' }],
           [
             {
-              text: invoice.peee
-                ? invoice.peee?.length > 0
-                  ? '(' + invoice.peee + ')'
-                  : ''
-                : '',
+              text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
               fontSize: 8,
               alignment: 'justify',
             },
@@ -759,11 +691,7 @@ export class PdfService {
             [{ text: 'ETAPA COMPLEMENTAR' }],
             [
               {
-                text: invoice.peec
-                  ? invoice.peec?.length > 0
-                    ? '(' + invoice.peec + ')'
-                    : ''
-                  : '',
+                text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
                 fontSize: 8,
                 alignment: 'justify',
               },
@@ -815,8 +743,7 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     let extensoValue = extenso(invoice.value, { mode: 'currency' });
-    if (extensoValue.split(' ')[0] == 'mil')
-      extensoValue = 'um ' + extensoValue;
+    if (extensoValue.split(' ')[0] == 'mil') extensoValue = 'um ' + extensoValue;
     pdf.add({
       style: 'insideText',
       table: {
@@ -827,11 +754,7 @@ export class PdfService {
             {
               text: [
                 {
-                  text:
-                    'VALOR DO ' +
-                    invoice.invoiceType.toUpperCase() +
-                    ': R$ ' +
-                    invoice.value,
+                  text: 'VALOR DO ' + invoice.invoiceType.toUpperCase() + ': R$ ' + invoice.value,
                   bold: true,
                 },
                 '  (' + extensoValue + ')',
@@ -987,10 +910,7 @@ export class PdfService {
       const total = this.stringUtil.numberToMoney(
         invoice.products.reduce(
           (accumulator: number, product: any) =>
-            accumulator +
-            this.stringUtil.moneyToNumber(
-              invoice.productListType == '1' ? product.value : product.total
-            ),
+            accumulator + this.stringUtil.moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
           0
         ) - this.stringUtil.moneyToNumber(invoice.discount)
       );
@@ -1011,8 +931,7 @@ export class PdfService {
           bold: true,
         },
       ];
-      if (invoice.productListType == '2')
-        productTotal.splice(1, 0, ...[{}, {}, {}]);
+      if (invoice.productListType == '2') productTotal.splice(1, 0, ...[{}, {}, {}]);
       result.push(productTotal);
       return result;
     };
@@ -1020,10 +939,7 @@ export class PdfService {
     pdf.add({
       style: 'insideText',
       table: {
-        widths:
-          invoice.productListType == '1'
-            ? ['*', 50]
-            : ['*', 'auto', 'auto', 'auto', 50],
+        widths: invoice.productListType == '1' ? ['*', 50] : ['*', 'auto', 'auto', 'auto', 50],
         dontBreakRows: true,
         body: [productHeader(), ...products, ...footer()],
       },
@@ -1038,10 +954,7 @@ export class PdfService {
         body: [
           [
             {
-              text:
-                'PARCELAMENTO DE HONORÁRIOS PELAS ETAPAS DO ' +
-                invoice.invoiceType.toUpperCase() +
-                ':',
+              text: 'PARCELAMENTO DE HONORÁRIOS PELAS ETAPAS DO ' + invoice.invoiceType.toUpperCase() + ':',
               bold: true,
             },
           ],
@@ -1071,8 +984,7 @@ export class PdfService {
     });
     const total = this.stringUtil.numberToMoney(
       invoice.stages.reduce(
-        (accumulator: number, stage: any) =>
-          accumulator + this.stringUtil.moneyToNumber(stage.value),
+        (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
         0
       )
     );
@@ -1218,8 +1130,7 @@ export class PdfService {
       };
       const total = this.stringUtil.numberToMoney(
         invoice.materials.reduce(
-          (accumulator: number, material: any) =>
-            accumulator + this.stringUtil.moneyToNumber(material.total),
+          (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
           0
         )
       );
@@ -1264,8 +1175,7 @@ export class PdfService {
       pdf.add({
         style: 'insideText',
         table: {
-          widths:
-            invoice.materialListType == '1' ? ['*', '*'] : ['*', '*', '*', '*'],
+          widths: invoice.materialListType == '1' ? ['*', '*'] : ['*', '*', '*', '*'],
           dontBreakRows: true,
           body: [header(), ...materials],
         },
@@ -1321,10 +1231,7 @@ export class PdfService {
     pdf.add(pdf.ln(2));
 
     pdf.add({
-      text: [
-        { text: 'Nortan', bold: true },
-        ', Solução Integrada em Projetos.',
-      ],
+      text: [{ text: 'Nortan', bold: true }, ', Solução Integrada em Projetos.'],
       style: 'insideText',
     });
 
@@ -1372,10 +1279,7 @@ export class PdfService {
     } else {
       if (openPdf) {
         pdf.create().open();
-      } else
-        pdf
-          .create()
-          .download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
+      } else pdf.create().download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
     }
   }
 }

@@ -1,9 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
-import {
-  NbRegisterComponent,
-  NbAuthService,
-  NB_AUTH_OPTIONS,
-} from '@nebular/auth';
+import { NbRegisterComponent, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
 
 import { Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
@@ -19,10 +15,7 @@ import * as user_validation from 'app/shared/user-validation.json';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class NgxRegisterComponent
-  extends NbRegisterComponent
-  implements OnInit
-{
+export class NgxRegisterComponent extends NbRegisterComponent implements OnInit {
   cities: string[] = [];
   states: string[] = [];
   myMessages: string[] = [];
@@ -50,18 +43,13 @@ export class NgxRegisterComponent
       .msLogin()
       .pipe(takeUntil(this.destroy$))
       .subscribe((result: EventMessage) => {
-        if (
-          result.eventType === EventType.LOGIN_SUCCESS ||
-          result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
-        ) {
+        if (result.eventType === EventType.LOGIN_SUCCESS || result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
           this.user.email = (result.payload as any).account.username;
         } else if (
           result.eventType === EventType.LOGIN_FAILURE ||
           result.eventType === EventType.ACQUIRE_TOKEN_FAILURE
         ) {
-          this.setupError(
-            'Não foi possível autenticar em sua conta Microsoft.'
-          );
+          this.setupError('Não foi possível autenticar em sua conta Microsoft.');
         }
       });
   }

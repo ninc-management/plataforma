@@ -1,23 +1,8 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 import * as promotion_validation from 'app/shared/promotion-validation.json';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import {
-  BehaviorSubject,
-  Subject,
-  Observable,
-  of,
-  forkJoin,
-  combineLatest,
-} from 'rxjs';
+import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
@@ -113,9 +98,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
       )
     );
     this.source.load(this.userTableItems.value);
-    this.userTableItems
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((tableItems) => this.source.load(tableItems));
+    this.userTableItems.pipe(takeUntil(this.destroy$)).subscribe((tableItems) => this.source.load(tableItems));
     this.loadTableSettings();
   }
 
@@ -132,14 +115,8 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     const { obj, cashback } = this.userService
       .getUsersList()
       .map((u) => ({
-        obj:
-          this.promotion.start && this.promotion.end
-            ? this.objectRule(u._id)
-            : of('0'),
-        cashback:
-          this.promotion.start && this.promotion.end
-            ? this.cashbackRule(u._id)
-            : of('0,00'),
+        obj: this.promotion.start && this.promotion.end ? this.objectRule(u._id) : of('0'),
+        cashback: this.promotion.start && this.promotion.end ? this.cashbackRule(u._id) : of('0,00'),
       }))
       .reduce(
         (final, o) => {
@@ -152,19 +129,17 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
           cashback: [] as Observable<string>[],
         }
       );
-    combineLatest([forkJoin(obj), forkJoin(cashback)]).subscribe(
-      ([objCount, cashbackValue]) => {
-        const objArray = this.userTableItems.value;
-        this.userTableItems.next(
-          objArray.map((item, i) => {
-            item.object = objCount[i];
-            item.isValid = this.isValidRule(item.object) ? 'Sim' : 'Não';
-            item.cashbackValue = cashbackValue[i];
-            return item;
-          })
-        );
-      }
-    );
+    combineLatest([forkJoin(obj), forkJoin(cashback)]).subscribe(([objCount, cashbackValue]) => {
+      const objArray = this.userTableItems.value;
+      this.userTableItems.next(
+        objArray.map((item, i) => {
+          item.object = objCount[i];
+          item.isValid = this.isValidRule(item.object) ? 'Sim' : 'Não';
+          item.cashbackValue = cashbackValue[i];
+          return item;
+        })
+      );
+    });
   }
 
   objectRule(uId: string): Observable<string> {
@@ -188,12 +163,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
 
   cashbackRule(uId: string): Observable<string> {
     return this.metricsService
-      .cashbackValue(
-        uId,
-        this.promotion.cashback,
-        this.promotion.start,
-        this.promotion.end
-      )
+      .cashbackValue(uId, this.promotion.cashback, this.promotion.start, this.promotion.end)
       .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
   }
 
@@ -201,29 +171,19 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     let isValid = false;
     switch (this.promotion.rules[0].operator) {
       case RULE_OPERATORS.IGUAL:
-        isValid =
-          this.stringUtil.moneyToNumber(value) ==
-          this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = this.stringUtil.moneyToNumber(value) == this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MAIOR:
-        isValid =
-          this.stringUtil.moneyToNumber(value) >
-          this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = this.stringUtil.moneyToNumber(value) > this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MAIOR_IGUAL:
-        isValid =
-          this.stringUtil.moneyToNumber(value) >=
-          this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = this.stringUtil.moneyToNumber(value) >= this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MENOR:
-        isValid =
-          this.stringUtil.moneyToNumber(value) <
-          this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = this.stringUtil.moneyToNumber(value) < this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MENOR_IGUAL:
-        isValid =
-          this.stringUtil.moneyToNumber(value) <=
-          this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = this.stringUtil.moneyToNumber(value) <= this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
         break;
       default:
         break;
@@ -234,8 +194,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   loadTableSettings(): void {
     this.settings = {
       mode: 'external',
-      noDataMessage:
-        'Não encontramos nenhum associado para o filtro selecionado.',
+      noDataMessage: 'Não encontramos nenhum associado para o filtro selecionado.',
       add: {
         addButtonContent: '<i class="nb-plus"></i>',
         createButtonContent: '<i class="nb-checkmark"></i>',

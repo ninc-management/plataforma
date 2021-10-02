@@ -16,16 +16,8 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.author.required"
-                [status]="
-                  author.dirty
-                    ? author.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  author.invalid && author.touched ? true : null
-                "
+                [status]="author.dirty ? (author.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="author.invalid && author.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -43,16 +35,8 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.version.required"
-                [status]="
-                  version.dirty
-                    ? version.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  version.invalid && version.touched ? true : null
-                "
+                [status]="version.dirty ? (version.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="version.invalid && version.touched ? true : null"
                 [readonly]="true"
                 [disabled]="!isEditionGranted"
               />
@@ -70,16 +54,8 @@
                 fullWidth
                 size="large"
                 [required]="validation.status.required"
-                [status]="
-                  status.dirty
-                    ? status.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  status.invalid && status.touched ? true : null
-                "
+                [status]="status.dirty ? (status.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="status.invalid && status.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
                 <nb-option *ngFor="let status of STATOOS" [value]="status">{{ status }}</nb-option>
@@ -101,9 +77,7 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.code.required"
-                [status]="
-                  code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'
-                "
+                [status]="code.dirty ? (code.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="code.invalid && code.touched ? true : null"
                 [readonly]="true"
               />
@@ -122,16 +96,8 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.department.required"
-                [status]="
-                  department.dirty
-                    ? department.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  department.invalid && department.touched ? true : null
-                "
+                [status]="department.dirty ? (department.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="department.invalid && department.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -149,16 +115,8 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.coordination.required"
-                [status]="
-                  coordination.dirty
-                    ? coordination.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  coordination.invalid && coordination.touched ? true : null
-                "
+                [status]="coordination.dirty ? (coordination.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="coordination.invalid && coordination.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -179,30 +137,17 @@
                 nbTooltipPlacement="top"
                 nbTooltipStatus="primary"
                 [required]="validation.contractor.required"
-                [status]="
-                  contractor.dirty
-                    ? contractor.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  contractor.invalid && contractor.touched ? true : null
-                "
+                [status]="contractor.dirty ? (contractor.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="contractor.invalid && contractor.touched ? true : null"
                 [readonly]="true"
               />
               <ng-container *ngIf="contractor.invalid && contractor.touched">
                 <p class="caption status-danger" *ngIf="contractor.errors?.required">
                   O nome do cliente é obrigatório!
                 </p>
-                <p
-                  class="caption status-danger"
-                  *ngIf="
-                    contractor.errors?.minlength || contractor.errors?.maxlength
-                  "
-                >
-                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a {{
-                  validation.contractor.maxLength }} caracteres
+                <p class="caption status-danger" *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength">
+                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a
+                  {{ validation.contractor.maxLength }} caracteres
                 </p>
               </ng-container>
             </div>
@@ -219,16 +164,8 @@
                 fullWidth
                 size="large"
                 [disabled]="true"
-                [status]="
-                  administration.dirty
-                    ? administration.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  administration.invalid && administration.touched ? true : null
-                "
+                [status]="administration.dirty ? (administration.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="administration.invalid && administration.touched ? true : null"
               >
                 <nb-option value="nortan">Suporte Empresarial</nb-option>
                 <nb-option value="pessoal">Intermediação de Negócios</nb-option>
@@ -249,17 +186,15 @@
             fullWidth
             fieldSize="large"
             [required]="validation.name.required"
-            [status]="
-              name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'
-            "
+            [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
             [attr.aria-invalid]="name.invalid && name.touched ? true : null"
             [readonly]="true"
           />
           <ng-container *ngIf="name.invalid && name.touched">
             <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
             <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
-              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength
-              }} caracteres
+              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a
+              {{ validation.name.maxLength }} caracteres
             </p>
           </ng-container>
         </div>
@@ -322,16 +257,8 @@
                 (ngModelChange)="contract.lastUpdate = today"
                 [nbDatepicker]="datepicker"
                 [required]="validation.created.required"
-                [status]="
-                  created.dirty
-                    ? created.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  created.invalid && created.touched ? true : null
-                "
+                [status]="created.dirty ? (created.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="created.invalid && created.touched ? true : null"
                 [readonly]="true"
               />
               <nb-datepicker #datepicker [max]="today"></nb-datepicker>
@@ -350,16 +277,8 @@
                 fullWidth
                 fieldSize="large"
                 [required]="validation.lastUpdate.required"
-                [status]="
-                  updated.dirty
-                    ? updated.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  updated.invalid && updated.touched ? true : null
-                "
+                [status]="updated.dirty ? (updated.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -383,9 +302,7 @@
                 [inputName]="'userListCompleter'"
                 (selected)="
                   teamMember.user = $event;
-                  USER_COORDINATIONS = departmentService.userCoordinations(
-                    teamMember.user._id
-                  );
+                  USER_COORDINATIONS = departmentService.userCoordinations(teamMember.user._id);
                   teamMember.coordination = undefined
                 "
                 #userList="ngModel"
@@ -396,21 +313,11 @@
                 [data$]="availableUsers"
                 [minSearchLength]="0"
                 [placeholder]="'Digite e selecione o nome do colaborador'"
-                [textNoResults]="
-                  'Não foi possível achar um colaborador com o nome digitado'
-                "
+                [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
                 [fullWidth]="true"
                 [fieldSize]="'large'"
-                [status]="
-                  userList.dirty && userSearch
-                    ? userList.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  userList.invalid && userList.touched ? true : null
-                "
+                [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
               ></nb-completer>
             </div>
           </div>
@@ -426,11 +333,7 @@
                 fullWidth
                 size="large"
                 [status]="memberCoordination.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  memberCoordination.invalid && memberCoordination.touched
-                    ? true
-                    : null
-                "
+                [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
                 <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
@@ -459,9 +362,7 @@
                   decimal: 2
                 }"
                 [status]="grossValue.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  grossValue.invalid && grossValue.touched ? true : null
-                "
+                [attr.aria-invalid]="grossValue.invalid && grossValue.touched ? true : null"
               />
             </div>
           </div>
@@ -486,9 +387,7 @@
                 }"
                 ngxSelectAllText
                 [status]="netValue.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  netValue.invalid && netValue.touched ? true : null
-                "
+                [attr.aria-invalid]="netValue.invalid && netValue.touched ? true : null"
               />
             </div>
           </div>
@@ -513,9 +412,7 @@
                 }"
                 ngxSelectAllText
                 [status]="distribution.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="
-                  distribution.invalid && distribution.touched ? true : null
-                "
+                [attr.aria-invalid]="distribution.invalid && distribution.touched ? true : null"
               />
             </div>
           </div>
@@ -527,22 +424,14 @@
               status="primary"
               size="large"
               style="margin-top: 28px"
-              [disabled]="
-                !memberCoordination.value || !userList.value || !netValue.value
-              "
+              [disabled]="!memberCoordination.value || !userList.value || !netValue.value"
               (click)="addColaborator()"
             >
               +
             </button>
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item
-              *ngFor="
-                let member of invoice.team;
-                let i = index;
-                trackBy: utils.trackByIndex
-              "
-            >
+            <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: utils.trackByIndex">
               <div class="row irow">
                 <div class="col-12 col-md-3 list-name">
                   {{ member.user ? userService.idToShortName(member.user) : '' }}
@@ -557,11 +446,7 @@
                     [disabled]="!isEditionGranted"
                   >
                     <nb-option
-                      *ngFor="
-                        let coordination of departmentService.userCoordinations(
-                          invoice.team[i].user
-                        )
-                      "
+                      *ngFor="let coordination of departmentService.userCoordinations(invoice.team[i].user)"
                       [value]="coordination"
                     >
                       {{ coordination.split(' ')[0] }}
@@ -631,11 +516,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="
-                      invoice.team.splice(i, 1);
-                      updateTeamTotal();
-                      memberChanged$.next(true)
-                    "
+                    (click)="invoice.team.splice(i, 1); updateTeamTotal(); memberChanged$.next(true)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -643,7 +524,7 @@
             </nb-list-item>
             <nb-list-item *ngIf="!utils.isPhone()">
               <div class="row irow totalRow">
-                <div class="col-2">Restante: {{ stringUtil.subtractMoney( contract.liquid, teamTotal.netValue ) }}</div>
+                <div class="col-2">Restante: {{ stringUtil.subtractMoney(contract.liquid, teamTotal.netValue) }}</div>
                 <div class="col-3" style="text-align: right">Total:</div>
                 <div
                   class="col-2"
@@ -688,20 +569,9 @@
                 fullWidth
                 size="large"
                 [required]="validation.hasISS?.required"
-                [status]="
-                  hasISS.dirty
-                    ? hasISS.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  hasISS.invalid && hasISS.touched ? true : null
-                "
-                (selectedChange)="
-                  contract.ISS = hasISS.value ? iss.value : '0,00';
-                  updateLiquid()
-                "
+                [status]="hasISS.dirty ? (hasISS.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="hasISS.invalid && hasISS.touched ? true : null"
+                (selectedChange)="contract.ISS = hasISS.value ? iss.value : '0,00'; updateLiquid()"
                 [disabled]="!isEditionGranted"
               >
                 <nb-option [value]="true">Sim</nb-option>
@@ -730,9 +600,7 @@
                 ngxSelectAllText
                 [disabled]="!hasISS.value"
                 [required]="validation.ISS?.required"
-                [status]="
-                  iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'
-                "
+                [status]="iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
                 (ngModelChange)="updateLiquid()"
               />
@@ -758,14 +626,8 @@
                 }"
                 ngxSelectAllText
                 [required]="validation.balance?.required"
-                [status]="
-                  balance.invalid || contract.balance[0] == '-'
-                    ? 'danger'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  balance.invalid && balance.touched ? true : null
-                "
+                [status]="balance.invalid || contract.balance[0] == '-' ? 'danger' : 'basic'"
+                [attr.aria-invalid]="balance.invalid && balance.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -790,9 +652,7 @@
                 }"
                 ngxSelectAllText
                 [required]="validation.paid?.required"
-                [status]="
-                  paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'
-                "
+                [status]="paid.dirty ? (paid.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="paid.invalid && paid.touched ? true : null"
                 [readonly]="true"
               />
@@ -813,16 +673,8 @@
                 [required]="validation.interest?.required"
                 [minlength]="validation.interest?.minLength"
                 [maxlength]="validation.interest?.maxLength"
-                [status]="
-                  interest.dirty
-                    ? interest.invalid
-                      ? 'danger'
-                      : 'success'
-                    : 'basic'
-                "
-                [attr.aria-invalid]="
-                  interest.invalid && interest.touched ? true : null
-                "
+                [status]="interest.dirty ? (interest.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="interest.invalid && interest.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -839,12 +691,8 @@
                 fullWidth
                 size="large"
                 [required]="validation.total?.required"
-                [status]="
-                  total.dirty ? (total.invalid ? 'danger' : 'success') : 'basic'
-                "
-                [attr.aria-invalid]="
-                  total.invalid && total.touched ? true : null
-                "
+                [status]="total.dirty ? (total.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="total.invalid && total.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
                 <nb-option *ngFor="let interest of INTERESTS" [value]="interest">{{ interest }}</nb-option>
@@ -889,8 +737,9 @@
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
             <b>
-              {{ contractService.subtractComissions( stringUtil.removePercentage(contract.value, contract.ISS), contract
-              ) }}
+              {{
+                contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
+              }}
             </b>
           </p>
         </div>
@@ -940,37 +789,36 @@
           </div>
         </div>
       </nb-list-item>
-      <nb-list-item
-        *ngFor="
-          let member of invoice.team;
-          let i = index;
-          trackBy: utils.trackByIndex
-        "
-        class="noPadding"
-      >
+      <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: utils.trackByIndex" class="noPadding">
         <div class="row irow">
           <div class="col-md-12 d-flex">
             <div class="col-md-3">{{ userService.idToName(member.user) }}</div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
-                {{ contractService.toGrossValue( contractService.netValueBalance( member.distribution, contract,
-                member.user ), options.notaFiscal, options.nortanPercentage ) }}
+                {{
+                  contractService.toGrossValue(
+                    contractService.netValueBalance(member.distribution, contract, member.user),
+                    options.notaFiscal,
+                    options.nortanPercentage
+                  )
+                }}
               </div>
               <div class="col-md-3">
-                {{ contractService.netValueBalance( member.distribution, contract, member.user ) }}
+                {{ contractService.netValueBalance(member.distribution, contract, member.user) }}
               </div>
               <div class="col-md-3">
-                {{ contractService.percentageToReceive( member.distribution, member.user, contract ) }}
+                {{ contractService.percentageToReceive(member.distribution, member.user, contract) }}
               </div>
               <div class="col-md-3">{{ contractService.receivedValue(member.user, contract) }}</div>
             </div>
             <div class="col-md-4 d-flex">
               <div class="col-md-3">
-                {{ contractService.notPaidValue( member.distribution, member.user, contract ) }}
+                {{ contractService.notPaidValue(member.distribution, member.user, contract) }}
               </div>
               <div class="col-md-3">
-                {{ stringUtil.numberToMoney( contractService.expensesContributions(contract, member.user) .user.cashback
-                ) }}
+                {{
+                  stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
+                }}
               </div>
               <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>
               <div class="col-md-3">{{ contractService.getMemberBalance(member.user, contract) }}</div>
@@ -1040,13 +888,7 @@
           <div class="col-md-6">
             <div class="form-control-group">
               <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-                <nb-list-item
-                  *ngFor="
-                    let expense of expenseTypesSum();
-                    let i = index;
-                    trackBy: utils.trackByIndex
-                  "
-                >
+                <nb-list-item *ngFor="let expense of expenseTypesSum(); let i = index; trackBy: utils.trackByIndex">
                   <div class="row irow">
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
@@ -1060,13 +902,7 @@
           <div class="col-md-6">
             <div class="form-control-group">
               <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-                <nb-list-item
-                  *ngFor="
-                    let expense of expenseSourceSum();
-                    let i = index;
-                    trackBy: utils.trackByIndex
-                  "
-                >
+                <nb-list-item *ngFor="let expense of expenseSourceSum(); let i = index; trackBy: utils.trackByIndex">
                   <div class="row irow">
                     <div class="col-md-6">
                       <b>{{ expense.user }}</b>
@@ -1084,13 +920,7 @@
           <div class="col-12" style="text-align: center">
             <div class="form-control-group">
               <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-                <nb-list-item
-                  *ngFor="
-                    let expense of expenseTypesSum(true);
-                    let i = index;
-                    trackBy: utils.trackByIndex
-                  "
-                >
+                <nb-list-item *ngFor="let expense of expenseTypesSum(true); let i = index; trackBy: utils.trackByIndex">
                   <div class="row irow">
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
@@ -1139,9 +969,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="
-        contract.receipts.length == +contract.total || !isEditionGranted
-      "
+      [disabled]="contract.receipts.length == +contract.total || !isEditionGranted"
       (click)="paymentDialog(types.RECEIPT)"
     >
       Nova Ordem de Empenho
@@ -1195,9 +1023,7 @@
       [source]="source"
       (create)="paymentDialog(types.EXPENSE)"
       (edit)="paymentDialog(types.EXPENSE, expenseIndex($event.data.code))"
-      (delete)="
-        confirmationDialog(expenseIndex($event.data.code), types.EXPENSE)
-      "
+      (delete)="confirmationDialog(expenseIndex($event.data.code), types.EXPENSE)"
     ></ng2-smart-table>
     <ng-template #phone>
       <div class="row">
@@ -1233,12 +1059,7 @@
               <div class="irow row">
                 <a
                   (click)="paymentDialog(types.EXPENSE, i)"
-                  style="
-                    width: 100%;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                  "
+                  style="width: 100%; cursor: pointer; display: flex; align-items: center"
                 >
                   <div class="col-auto">
                     <nb-user

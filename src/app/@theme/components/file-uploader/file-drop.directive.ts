@@ -1,12 +1,4 @@
-import {
-  Directive,
-  EventEmitter,
-  ElementRef,
-  HostListener,
-  Output,
-  OnInit,
-  Input,
-} from '@angular/core';
+import { Directive, EventEmitter, ElementRef, HostListener, Output, OnInit, Input } from '@angular/core';
 import { NbFileUploaderService } from './file-uploader.service';
 import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 
@@ -24,10 +16,7 @@ export class FileDropDirective implements OnInit {
 
   protected element: ElementRef;
 
-  public constructor(
-    element: ElementRef,
-    private uploader: NbFileUploaderService
-  ) {
+  public constructor(element: ElementRef, private uploader: NbFileUploaderService) {
     this.element = element;
   }
 
@@ -84,9 +73,7 @@ export class FileDropDirective implements OnInit {
   }
 
   protected _getTransfer(event: any): any {
-    return event.dataTransfer
-      ? event.dataTransfer
-      : event.originalEvent.dataTransfer; // jQuery fix;
+    return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
   }
 
   protected _preventAndStop(event: any): any {

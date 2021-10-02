@@ -1,9 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MatRippleModule,
-  MAT_RIPPLE_GLOBAL_OPTIONS,
-} from '@angular/material/core';
+import { MatRippleModule, MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
 import {
   NbActionsModule,
   NbLayoutModule,
@@ -29,18 +26,8 @@ import {
   NbCompleterModule,
   NbFileUploaderModule,
 } from './components';
-import {
-  CapitalizePipe,
-  PluralPipe,
-  RoundPipe,
-  TimingPipe,
-  NumberWithCommasPipe,
-} from './pipes';
-import {
-  OneColumnLayoutComponent,
-  ThreeColumnsLayoutComponent,
-  TwoColumnsLayoutComponent,
-} from './layouts';
+import { CapitalizePipe, PluralPipe, RoundPipe, TimingPipe, NumberWithCommasPipe } from './pipes';
+import { OneColumnLayoutComponent, ThreeColumnsLayoutComponent, TwoColumnsLayoutComponent } from './layouts';
 import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { CORPORATE_THEME } from './styles/theme.corporate';
@@ -72,13 +59,7 @@ const COMPONENTS = [
   ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
 ];
-const PIPES = [
-  CapitalizePipe,
-  PluralPipe,
-  RoundPipe,
-  TimingPipe,
-  NumberWithCommasPipe,
-];
+const PIPES = [CapitalizePipe, PluralPipe, RoundPipe, TimingPipe, NumberWithCommasPipe];
 
 const themeProviders = NbThemeModule.forRoot(
   {
@@ -91,9 +72,7 @@ const themeProviders = NbThemeModule.forRoot(
   imports: [CommonModule, MatRippleModule, ...NB_MODULES],
   exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
-  providers: [
-    { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService },
-  ],
+  providers: [{ provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService }],
 })
 export class ThemeModule {
   static forRoot(): ModuleWithProviders<ThemeModule> {

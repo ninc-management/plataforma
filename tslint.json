@@ -42,13 +42,7 @@
     "no-unnecessary-initializer": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
-    "one-line": [
-      true,
-      "check-open-brace",
-      "check-catch",
-      "check-else",
-      "check-whitespace"
-    ],
+    "one-line": [true, "check-open-brace", "check-catch", "check-else", "check-whitespace"],
     "prefer-const": true,
     "quotemark": [true, "single"],
     "radix": true,
@@ -67,14 +61,7 @@
     "typeof-compare": true,
     "unified-signatures": true,
     "variable-name": false,
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-separator",
-      "check-type"
-    ],
+    "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-separator", "check-type"],
     "directive-selector": [true, "attribute", "ngx", "camelCase"],
     "component-selector": [true, "element", "ngx", "kebab-case"],
     "ban": [

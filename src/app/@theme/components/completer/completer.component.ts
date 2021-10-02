@@ -1,14 +1,5 @@
 'use strict';
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  ViewChild,
-  forwardRef,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, forwardRef, ElementRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -77,17 +68,13 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
           this.searchActive = true;
           const filterValue = this.prepareString(this.searchStr);
           return objs.filter((obj: any) => {
-            const result = this.prepareString(obj[this.nameField]).includes(
-              filterValue
-            );
+            const result = this.prepareString(obj[this.nameField]).includes(filterValue);
             this.searchActive = false;
             return result;
           });
         })
       );
-      this.filteredDataIsEmpty$ = this.filteredData$.pipe(
-        map((objs) => objs.length === 0)
-      );
+      this.filteredDataIsEmpty$ = this.filteredData$.pipe(map((objs) => objs.length === 0));
     }
   }
 

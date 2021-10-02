@@ -1,18 +1,8 @@
-import {
-  Component,
-  DoCheck,
-  AfterViewInit,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
+import { Component, DoCheck, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 
 import { MENU_ITEMS, SOCIAL_ITEMS } from './pages-menu';
 import { Router } from '@angular/router';
-import {
-  NbIconLibraries,
-  NbSidebarService,
-  NbMenuService,
-} from '@nebular/theme';
+import { NbIconLibraries, NbSidebarService, NbMenuService } from '@nebular/theme';
 import { LayoutService } from '../@core/utils';
 import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -151,8 +141,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
-        if (this.layout.sidebarRef.nativeElement.classList.contains('expanded'))
-          this.toggleSidebar();
+        if (this.layout.sidebarRef.nativeElement.classList.contains('expanded')) this.toggleSidebar();
       });
   }
 

@@ -17,10 +17,7 @@ import { User } from '@models/user';
   templateUrl: './invoice-dialog.component.html',
   styleUrls: ['./invoice-dialog.component.scss'],
 })
-export class InvoiceDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class InvoiceDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() invoice = new Invoice();
   tempInvoice: Invoice = new Invoice();
@@ -50,9 +47,7 @@ export class InvoiceDialogComponent
   useAsModel(): void {
     const oInvoice = cloneDeep(this.invoice);
     if (oInvoice.department.length > 3)
-      oInvoice.department = this.departmentService.extractAbreviation(
-        oInvoice.department
-      );
+      oInvoice.department = this.departmentService.extractAbreviation(oInvoice.department);
     oInvoice.code = '';
     if (oInvoice.products.length > 0)
       oInvoice.products.map((product: InvoiceProduct) => {

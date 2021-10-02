@@ -1,11 +1,5 @@
 import { NgModule } from '@angular/core';
-import {
-  NbCardModule,
-  NbButtonModule,
-  NbIconModule,
-  NbSpinnerModule,
-  NbTooltipModule,
-} from '@nebular/theme';
+import { NbCardModule, NbButtonModule, NbIconModule, NbSpinnerModule, NbTooltipModule } from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
 import { CommonModule } from '@angular/common';

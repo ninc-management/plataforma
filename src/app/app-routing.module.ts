@@ -9,13 +9,11 @@ export const routes: Routes = [
     path: 'pages',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
-    loadChildren: () =>
-      import('./pages/pages.module').then((m) => m.PagesModule),
+    loadChildren: () => import('./pages/pages.module').then((m) => m.PagesModule),
   },
   {
     path: 'auth',
-    loadChildren: () =>
-      import('./auth/auth.module').then((m) => m.NgxAuthModule),
+    loadChildren: () => import('./auth/auth.module').then((m) => m.NgxAuthModule),
   },
   {
     path: 'externalRedirect',

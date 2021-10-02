@@ -9,10 +9,7 @@ import { Contractor } from '@models/contractor';
   templateUrl: './contractor-dialog.component.html',
   styleUrls: ['./contractor-dialog.component.scss'],
 })
-export class ContractorDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class ContractorDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() contractor = new Contractor();
 

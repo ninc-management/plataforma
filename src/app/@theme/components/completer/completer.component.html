@@ -13,11 +13,7 @@
   [disabled]="disabled"
   [placeholder]="placeholder"
   [nbTooltip]="tooltipFunction(this.inputObject)"
-  [nbTooltipTrigger]="
-    isPhone || tooltipFunction(this.inputObject) == ''
-      ? tooltipTriggers.NOOP
-      : tooltipTriggers.HINT
-  "
+  [nbTooltipTrigger]="isPhone || tooltipFunction(this.inputObject) == '' ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
   nbTooltipPlacement="top"
   nbTooltipStatus="primary"
   nbTooltipAdjustment="noop"
@@ -28,16 +24,10 @@
 />
 
 <nb-autocomplete #autoNgModel (selectedChange)="onSelect($event)">
-  <nb-option
-    *ngIf="searchActive && displaySearching"
-    class="completer-searching"
-  >
+  <nb-option *ngIf="searchActive && displaySearching" class="completer-searching">
     {{ textSearching }}
   </nb-option>
-  <nb-option
-    *ngIf="!searchActive && (!data$ || (filteredDataIsEmpty$ | async))"
-    class="completer-no-results"
-  >
+  <nb-option *ngIf="!searchActive && (!data$ || (filteredDataIsEmpty$ | async))" class="completer-no-results">
     {{ textNoResults }}
   </nb-option>
   <nb-option
@@ -46,9 +36,7 @@
     [value]="item"
     [nbTooltip]="tooltipFunction(item)"
     [nbTooltipTrigger]="
-      isPhone || tooltipFunction(this.inputObject) == ''
-        ? tooltipTriggers.NOOP
-        : tooltipTriggers.HINT
+      isPhone || tooltipFunction(this.inputObject) == '' ? tooltipTriggers.NOOP : tooltipTriggers.HINT
     "
     nbTooltipPlacement="top"
     nbTooltipStatus="primary"

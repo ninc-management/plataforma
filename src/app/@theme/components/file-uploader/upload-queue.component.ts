@@ -10,10 +10,7 @@ import { BehaviorSubject } from 'rxjs';
 @Component({
   selector: 'nb-upload-queue',
   template: `
-    <nb-upload-queue-item
-      *ngFor="let queueItem of items"
-      [item]="queueItem"
-    ></nb-upload-queue-item>
+    <nb-upload-queue-item *ngFor="let queueItem of items" [item]="queueItem"></nb-upload-queue-item>
   `,
   styleUrls: ['./upload-queue.component.scss'],
 })

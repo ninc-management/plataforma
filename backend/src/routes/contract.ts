@@ -15,8 +15,7 @@ router.post('/', (req, res, next) => {
     contract
       .save()
       .then((savedContract) => {
-        if (requested)
-          contractsMap[savedContract._id] = cloneDeep(savedContract.toJSON());
+        if (requested) contractsMap[savedContract._id] = cloneDeep(savedContract.toJSON());
         release();
         return res.status(201).json({
           message: 'Contrato cadastrado!',
@@ -45,9 +44,7 @@ router.post('/update', async (req, res, next) => {
         });
       if (requested) {
         await mutex.runExclusive(async () => {
-          contractsMap[req.body.contract._id] = cloneDeep(
-            savedContract.toJSON()
-          );
+          contractsMap[req.body.contract._id] = cloneDeep(savedContract.toJSON());
         });
       }
       return res.status(200).json({
@@ -66,9 +63,7 @@ router.post('/count', (req, res) => {
 router.post('/all', async (req, res) => {
   if (!requested) {
     const contracts: Contract[] = await ContractModel.find({});
-    contracts.map(
-      (contract) => (contractsMap[contract._id] = cloneDeep(contract))
-    );
+    contracts.map((contract) => (contractsMap[contract._id] = cloneDeep(contract)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(contractsMap)));

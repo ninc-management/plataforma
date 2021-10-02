@@ -15,10 +15,7 @@ import { NbComponentStatus } from '@nebular/theme';
       <span>{{ item.getValue().name }}</span>
       <span class="file-progress">{{ item.getValue().progress + '%' }}</span>
     </span>
-    <nb-progress-bar
-      [value]="item.getValue().progress"
-      [status]="status"
-    ></nb-progress-bar>
+    <nb-progress-bar [value]="item.getValue().progress" [status]="status"></nb-progress-bar>
   `,
   styleUrls: ['./upload-queue-item.component.scss'],
 })

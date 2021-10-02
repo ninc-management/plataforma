@@ -1,10 +1,6 @@
 import { Component, ChangeDetectorRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  NbLoginComponent,
-  NbAuthService,
-  NB_AUTH_OPTIONS,
-} from '@nebular/auth';
+import { NbLoginComponent, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
 
 import * as user_validation from 'app/shared/user-validation.json';
 import { AuthService } from '../auth.service';
@@ -52,21 +48,14 @@ export class NgxLoginComponent extends NbLoginComponent {
       .msLogin()
       .pipe(takeUntil(this.destroy$))
       .subscribe((result: EventMessage) => {
-        if (
-          result.eventType === EventType.LOGIN_SUCCESS ||
-          result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS
-        ) {
+        if (result.eventType === EventType.LOGIN_SUCCESS || result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
           delete this.showMessages.error;
           delete this.showMessages.success;
           this.showMessages.success = true;
           this.myMessages = ['Acesso liberado para a plataforma.'];
           combineLatest([
-            this.authService.isUserRegistred(
-              (result.payload as any).account.username
-            ),
-            this.authService.isUserProspect(
-              (result.payload as any).account.username
-            ),
+            this.authService.isUserRegistred((result.payload as any).account.username),
+            this.authService.isUserProspect((result.payload as any).account.username),
           ]).subscribe(([isRegistered, isProspect]) => {
             if (isRegistered != undefined && isProspect != undefined) {
               if (isRegistered) super.login();
@@ -83,9 +72,7 @@ export class NgxLoginComponent extends NbLoginComponent {
           result.eventType === EventType.LOGIN_FAILURE ||
           result.eventType === EventType.ACQUIRE_TOKEN_FAILURE
         ) {
-          this.setupError(
-            'Não foi possível autenticar em sua conta Microsoft.'
-          );
+          this.setupError('Não foi possível autenticar em sua conta Microsoft.');
         }
       });
   }

@@ -21,18 +21,10 @@ export class ContractorsComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.contractors.filter((contractor) => {
         return (
-          contractor.fullName
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contractor.document
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contractor.address
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          contractor.email
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase())
+          contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contractor.address.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contractor.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.contractors.sort((a, b) => {

@@ -6,12 +6,8 @@ import { Component } from '@angular/core';
   template: `
     <span class="created-by">
       © {{ year }} Nortan Projetos. Template criado com ❤️ por
-      <a
-        href="https://akveo.page.link/8V2f"
-        target="_blank"
-        style="text-decoration: none;"
-        >Akveo</a
-      >.
+      <a href="https://akveo.page.link/8V2f" target="_blank" style="text-decoration: none;">Akveo</a>
+      .
     </span>
   `,
 })
