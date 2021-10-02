@@ -290,7 +290,8 @@
               (ngModelChange)="
                 updateDependentValues(tempInvoice.products, 'product');
                 updateDependentValues(tempInvoice.stages, 'stage');
-                updateNetValue()
+                updateNetValue();
+                updateTotal('product')
               "
             />
             <ng-container *ngIf="value.invalid && value.touched">
@@ -1295,7 +1296,11 @@
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].amount"
-                (ngModelChange)="updateItemTotal(tempInvoice.products, i); updateTotal('product')"
+                (ngModelChange)="
+                  updateItemTotal(tempInvoice.products, i);
+                  updatePercentage(tempInvoice.products, i);
+                  updateTotal('product')
+                "
                 id="input-productAmount-{{ i }}"
                 name="productAmount-{{ i }}"
                 placeholder="Quantidade"
@@ -1336,9 +1341,8 @@
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].value"
                 (ngModelChange)="
-                  tempInvoice.productListType == '2'
-                    ? updateItemTotal(tempInvoice.products, i)
-                    : updatePercentage(tempInvoice.products, i);
+                  tempInvoice.productListType == '2' ? updateItemTotal(tempInvoice.products, i) : '';
+                  updatePercentage(tempInvoice.products, i);
                   updateTotal('product')
                 "
                 id="input-productValue-{{ i }}"
@@ -1469,7 +1473,21 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-6 col-md-3">Contrato: {{ tempInvoice.value }}</div>
+            <div class="col-6 col-md-3">
+              <nb-icon
+                class="addIcon mr-1"
+                status="basic"
+                icon="refresh-outline"
+                nbTooltip="Atualizar valor bruto do contrato"
+                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+                pack="eva"
+                (click)="updateInvoiceValue()"
+                [options]="{animation: {type: 'pulse'}}"
+              ></nb-icon>
+              Contrato: {{ tempInvoice.value }}
+            </div>
             <div class="col-6 col-md-3">Restante: {{ remainingBalance('product') }}</div>
             <div class="col-4 col-md-1" style="text-align: right">Total:</div>
             <div

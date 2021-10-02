@@ -156,6 +156,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.updateLastValues();
       this.updateDependentValues(this.tempInvoice.products, 'product');
       this.updateDependentValues(this.tempInvoice.stages, 'stage');
+      this.updateLastValues();
       this.updateTotal('material');
       this.updateNetValue();
     } else {
@@ -291,15 +292,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateDependentValues(array: any[], type: 'stage' | 'product'): void {
-    if (type === 'product' && this.tempInvoice.productListType == '2') return;
     if (this.tempInvoice.value !== '0') {
       const lastArray = type == 'stage' ? this.options.lastStages : this.options.lastProducts;
       array.map((item, index) => {
-        const p = this.stringUtil.toPercentage(lastArray[index].value, this.options.lastValue, 20).slice(0, -1);
-        item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
+        const last = lastArray[index];
+        const p = last.percentage ? last.percentage : this.toPercentage(last);
+        let relativeP = p;
+        if (
+          type === 'product' &&
+          this.tempInvoice.productListType == '2' &&
+          this.utils.isOfType<InvoiceProduct>(last, ['amount'])
+        ) {
+          const amount = this.stringUtil.moneyToNumber(last.amount);
+          relativeP = this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(p) / (amount == 0 ? 1 : amount));
+        }
+        item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, relativeP);
 
         item.percentage = p;
-
+        if (type == 'product') this.updateItemTotal(this.tempInvoice.products, index);
         return item;
       });
     }
@@ -507,7 +517,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe((name) => {
-        console.log(name);
         if (name) product.subproducts.push(name.toUpperCase());
         this.isDialogBlocked.next(false);
       });
@@ -518,21 +527,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
       this.options.discountPercentage = this.stringUtil
         .toPercentageNumber(
           this.stringUtil.moneyToNumber(this.tempInvoice.discount),
-          this.tempInvoice.products.reduce(
-            (accumulator: number, product: any) => accumulator + this.stringUtil.moneyToNumber(product.value),
-            0
-          )
+          this.stringUtil.moneyToNumber(this.options.subtotal)
         )
         .slice(0, -1);
   }
 
   updateDiscountValue(): void {
-    const total = this.stringUtil.numberToMoney(
-      this.tempInvoice.products.reduce(
-        (accumulator: number, product: any) => accumulator + this.stringUtil.moneyToNumber(product.value),
-        0
-      )
-    );
+    const total = this.options.subtotal;
     this.tempInvoice.discount = this.stringUtil.subtractMoney(
       total,
       this.stringUtil.removePercentage(total, this.options.discountPercentage)
@@ -550,17 +551,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     this.updateTotal('stage');
   }
 
-  remainingBalance(base: string): string {
+  remainingBalance(base: 'product' | 'stage'): string {
     if (this.tempInvoice.value == undefined) return '0,00';
-    const total = base === 'product' ? this.options.total : this.options.stageTotal;
-
-    if (this.tempInvoice.discount) {
-      return this.stringUtil.subtractMoney(
-        this.stringUtil.subtractMoney(this.tempInvoice.value, total),
-        this.tempInvoice.discount
-      );
-    }
-    return this.stringUtil.subtractMoney(this.tempInvoice.value, total);
+    return this.stringUtil.subtractMoney(
+      this.tempInvoice.value,
+      base === 'product' ? this.options.total : this.options.stageTotal
+    );
   }
 
   updateMaterialList(): void {
@@ -624,7 +620,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updatePercentage(array: any[], idx: number): void {
-    array[idx].percentage = this.stringUtil.toPercentage(array[idx].value, this.tempInvoice.value).slice(0, -1);
+    array[idx].percentage = this.toPercentage(array[idx]);
+  }
+
+  toPercentage(item: InvoiceProduct | InvoiceStage): string {
+    let p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
+    if (this.tempInvoice.productListType == '2' && this.utils.isOfType<InvoiceProduct>(item, ['amount']))
+      p = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(item.amount) * this.stringUtil.moneyToNumber(p),
+        20
+      );
+    return p;
   }
 
   updateItemTotal(array: any[], idx: number): void {
@@ -664,23 +670,30 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   isTotalOK(): boolean {
-    if (this.tempInvoice.discount) {
-      const result = this.stringUtil.subtractMoney(this.tempInvoice.value, this.tempInvoice.discount);
-      return this.options.total !== '0' && this.options.total === result;
-    }
-
     return this.options.total !== '0' && this.options.total === this.tempInvoice.value;
   }
 
   getRemainingPercentage(): string {
+    return this.stringUtil.toPercentage(this.options.total, this.tempInvoice.value);
+  }
+
+  updateInvoiceValue(): void {
     if (this.tempInvoice.discount) {
-      return this.stringUtil.toPercentage(
-        this.options.total,
-        this.stringUtil.subtractMoney(this.tempInvoice.value, this.tempInvoice.discount)
+      const originalValue = (this.tempInvoice.value = this.contractService.toGrossValue(
+        this.options.netValue,
+        this.utils.nfPercentage(this.tempInvoice),
+        this.utils.nortanPercentage(this.tempInvoice)
+      ));
+      this.tempInvoice.value = this.stringUtil.subtractMoney(originalValue, this.tempInvoice.discount);
+      this.updateTotal('product');
+    } else {
+      this.tempInvoice.value = this.contractService.toGrossValue(
+        this.options.netValue,
+        this.utils.nfPercentage(this.tempInvoice),
+        this.utils.nortanPercentage(this.tempInvoice)
       );
     }
-
-    return this.stringUtil.toPercentage(this.options.total, this.tempInvoice.value);
+    this.updateDependentValues(this.tempInvoice.stages, 'stage');
   }
 }
 
