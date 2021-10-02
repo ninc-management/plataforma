@@ -100,6 +100,27 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
         title: 'Data',
         type: 'string',
       },
+      paid: {
+        title: 'Pago?',
+        type: 'string',
+        valuePrepareFunction: (value: any) => (value ? '✅' : '❌'),
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              {
+                value: true,
+                title: '✅',
+              },
+              {
+                value: false,
+                title: '❌',
+              },
+            ],
+          },
+        },
+      },
     },
   };
 
