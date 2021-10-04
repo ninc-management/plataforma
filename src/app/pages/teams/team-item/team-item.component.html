@@ -79,36 +79,19 @@
     </div>
     <div class="col-12">
       <div class="form-control-group">
-        <label class="label" for="input-expertise">Área de atuação:</label>
-        <nb-select
-          [(ngModel)]="team.expertise"
-          #expertise="ngModel"
-          id="input-expertise"
-          name="expertise"
-          placeholder="Selecione a área de atuação"
-          fullWidth
-          size="large"
-          [required]="validation.expertise.required"
-          [status]="expertise.touched ? (expertise.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
-          [attr.aria-invalid]="expertise.invalid && expertise.touched ? true : null"
-          [disabled]="false"
-        >
-          <nb-option *ngFor="let coordination of COORDINATIONS" [value]="coordination">{{ coordination }}</nb-option>
-        </nb-select>
-        <ng-container *ngIf="expertise.invalid && expertise.touched">
-          <p class="caption status-danger" *ngIf="expertise.errors?.required">
-            A escolha do líder do time é obrigatória!
-          </p>
-        </ng-container>
+        <label class="label" for="input-expertise">Áreas de atuação:</label>
+        <ul>
+          <li *ngFor="let coordination of COORDINATIONS">{{ coordination }}</li>
+        </ul>
       </div>
     </div>
-    <div class="col-10 col-md-11">
+    <div class="col-12 col-md-6">
       <div class="form-control-group">
-        <label class="label" for="input-member">Membros:</label>
+        <label class="label" for="input-member">Membro:</label>
         <nb-completer
           [(ngModel)]="memberSearch"
           [inputName]="'memberListCompleter'"
-          (selected)="currentMember = $event"
+          (selected)="currentMember.user = $event; updateUserCoordinations()"
           #memberList="ngModel"
           id="input-member"
           name="memberList"
@@ -125,7 +108,27 @@
         ></nb-completer>
       </div>
     </div>
-    <div class="col-2 col-md-1">
+    <div class="col-12 col-md-5">
+      <div class="form-control-group">
+        <label class="label" for="input-memberCoordination">Coordenação:</label>
+        <nb-select
+          [(ngModel)]="currentMember.coordination"
+          #memberCoordination="ngModel"
+          id="input-memberCoordination"
+          name="memberCoordination"
+          placeholder="Coordenação"
+          fullWidth
+          size="large"
+          [status]="memberCoordination.value?.length > 0 ? 'success' : 'basic'"
+          [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
+        >
+          <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
+            {{ coordination }}
+          </nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-12 col-md-1">
       <button
         nbButton
         type="button"
@@ -133,7 +136,7 @@
         status="primary"
         size="large"
         style="margin-top: 28px"
-        [disabled]="!memberList.value || currentMember._id === undefined"
+        [disabled]="!memberList.value || currentMember.user === undefined"
         (click)="addMember()"
       >
         +
@@ -143,13 +146,14 @@
   <nb-list style="width: 100%; padding: 10px 0">
     <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
       <div class="row irow">
-        <div class="col-10 col-md-5">
+        <div class="col-5 col-md-6">
           <nb-user
             size="giant"
-            [name]="userService.idToName(member)"
-            [picture]="userService.idToProfilePicture(member)"
+            [name]="userService.idToName(member.user)"
+            [picture]="userService.idToProfilePicture(member.user)"
           ></nb-user>
         </div>
+        <div class="col-5 col-md-5">{{ member.coordination }}</div>
       </div>
       <div class="col-2 col-md-1" style="text-align: right">
         <nb-icon

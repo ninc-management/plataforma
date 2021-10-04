@@ -74,7 +74,7 @@ export class TeamService implements OnDestroy {
 
   isMember(uId: string | User | undefined, teamId: string | Team): boolean {
     if (uId == undefined) return false;
-    return this.idToTeam(teamId).members.find((member) => this.userService.isEqual(member, uId)) == undefined
+    return this.idToTeam(teamId).members.find((member) => this.userService.isEqual(member.user, uId)) == undefined
       ? false
       : true;
   }

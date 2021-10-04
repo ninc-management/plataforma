@@ -2,6 +2,14 @@ import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { User } from './user';
 
+export class TeamMember {
+  @prop({ required: true, ref: () => User })
+  user!: Ref<User>;
+
+  @prop({ required: true })
+  coordination!: string;
+}
+
 export class Team extends Base<string> {
   @prop({ required: true })
   name!: string;
@@ -12,8 +20,8 @@ export class Team extends Base<string> {
   @prop({ required: true })
   expertise!: string;
 
-  @prop({ ref: () => User })
-  members: Ref<User>[] = [];
+  @prop({ type: () => [TeamMember] })
+  members: TeamMember[] = [];
 
   leaderName = '';
 }
