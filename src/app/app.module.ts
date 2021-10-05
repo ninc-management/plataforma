@@ -46,6 +46,7 @@ import {
   InteractionType,
 } from '@azure/msal-browser';
 import { interceptorProviders } from './shared/interceptors/interceptors';
+import { NumberToMoneyPipe } from './shared/pipes/string-util.pipe';
 
 const config: SocketIoConfig = {
   url: '',
@@ -168,6 +169,7 @@ registerLocaleData(ptBr);
     MsalService,
     MsalGuard,
     MsalBroadcastService,
+    NumberToMoneyPipe,
   ],
   bootstrap: [AppComponent],
 })
