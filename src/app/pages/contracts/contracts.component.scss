@@ -48,8 +48,9 @@
   .payment {
     font-size: 1.5rem;
   }
-
-  .ng2-smart-action-delete-delete:hover {
-    color: nb-theme(icon-success-color) !important;
+  .contracts {
+    .ng2-smart-action-delete-delete:hover {
+      color: nb-theme(icon-success-color) !important;
+    }
   }
 }
