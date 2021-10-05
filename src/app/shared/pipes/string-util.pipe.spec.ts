@@ -8,7 +8,7 @@ describe('StringUtilPipes', inject([BrMaskDirective], (brMask: BrMaskDirective) 
     expect(pipe).toBeTruthy();
   });
 
-  it('numberToMoney shoud work', () => {
+  it('numberToMoneyPipe shoud work', () => {
     const pipe = new NumberToMoneyPipe(brMask);
     expect(pipe.transform(100.0)).toBe('100,00');
     expect(pipe.transform(0.0)).toBe('0,00');
