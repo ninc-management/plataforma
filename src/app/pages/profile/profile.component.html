@@ -53,8 +53,8 @@
                     <ng-container *ngIf="fullName.invalid && fullName.touched">
                       <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
                       <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
-                        O nome deve conter entre {{ validation.fullName.minLength }} a
-                        {{ validation.fullName.maxLength }} caracteres
+                        O nome deve conter entre {{ validation.fullName.minLength }} a {{ validation.fullName.maxLength
+                        }} caracteres
                       </p>
                     </ng-container>
                   </div>
@@ -84,8 +84,8 @@
                         class="caption status-danger"
                         *ngIf="exibitionName.errors?.minlength || exibitionName.errors?.maxlength"
                       >
-                        O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a
-                        {{ validation.exibitionName.maxLength }} caracteres
+                        O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a {{
+                        validation.exibitionName.maxLength }} caracteres
                       </p>
                     </ng-container>
                   </div>
@@ -224,8 +224,8 @@
                     <ng-container *ngIf="phone.invalid && phone.touched">
                       <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
                       <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
-                        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a
-                        {{ validation.phone.maxLength - 4 }} números
+                        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a {{
+                        validation.phone.maxLength - 4 }} números
                       </p>
                     </ng-container>
                   </div>
@@ -450,10 +450,14 @@
                 </div>
                 <nb-list style="width: 100%">
                   <nb-list-item
-                    *ngFor="let teamName of teamService.userToTeams(user); let i = index; trackBy: utils.trackByIndex"
+                    *ngFor="
+                      let team of teamService.userToTeamsMembersFiltered(user);
+                      let i = index;
+                      trackBy: utils.trackByIndex
+                    "
                   >
                     <div class="row irow">
-                      <div class="col">{{ teamName }}</div>
+                      <div class="col">{{ team.name }} - {{ team.members[0].coordination }}</div>
                     </div>
                   </nb-list-item>
                 </nb-list>
@@ -652,8 +656,8 @@
                         class="caption status-danger"
                         *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
                       >
-                        A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a
-                        {{ validation.shortExpertise.maxLength }} caracteres
+                        A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a {{
+                        validation.shortExpertise.maxLength }} caracteres
                       </p>
                     </ng-container>
                     <label class="label" for="input-expertise">Perfil de atuação:</label>
@@ -691,8 +695,8 @@
                         class="caption status-danger"
                         *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
                       >
-                        O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a
-                        {{ validation.expertise.maxLength }} caracteres
+                        O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a {{
+                        validation.expertise.maxLength }} caracteres
                       </p>
                     </ng-container>
                   </nb-tab>

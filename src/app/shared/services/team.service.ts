@@ -3,6 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
@@ -79,11 +80,16 @@ export class TeamService implements OnDestroy {
       : true;
   }
 
-  userToTeams(uId: string | User | undefined): string[] {
+  userToTeams(uId: string | User | undefined): Team[] {
     if (uId == undefined) return [];
-    return this.teams$
-      .getValue()
-      .filter((team) => this.isMember(uId, team))
-      .map((team) => team.name);
+    return this.teams$.getValue().filter((team) => this.isMember(uId, team));
+  }
+
+  userToTeamsMembersFiltered(uId: string | User | undefined): Team[] {
+    if (uId == undefined) return [];
+    return cloneDeep(this.userToTeams(uId)).map((team) => {
+      team.members = team.members.filter((member) => this.userService.isEqual(member.user, uId));
+      return team;
+    });
   }
 }
