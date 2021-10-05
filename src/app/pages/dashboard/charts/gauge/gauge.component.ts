@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { combineLatest, Observable } from 'rxjs';
 
@@ -15,7 +16,11 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
   themeSubscription: any;
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private stringUtil: StringUtilService) {}
+  constructor(
+    private theme: NbThemeService,
+    private stringUtil: StringUtilService,
+    private numberToMoney: NumberToMoneyPipe
+  ) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -109,7 +114,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
               offsetCenter: [0, '-10%'],
               valueAnimation: true,
               formatter: (value: number) => {
-                return this.stringUtil.numberToMoney(value);
+                return this.numberToMoney.transform(value);
               },
               color: color,
             },

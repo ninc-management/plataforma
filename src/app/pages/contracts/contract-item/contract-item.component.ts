@@ -17,6 +17,7 @@ import { ContractExpense, Contract } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 interface ExpenseTypesSum {
   type: string;
@@ -233,7 +234,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     public contractService: ContractService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnInit(): void {
@@ -403,7 +405,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
     this.options.paid = this.contractService.toNetValue(
-      this.stringUtil.numberToMoney(
+      this.numberToMoney.transform(
         this.contract.receipts.reduce((accumulator: number, recipt: any) => {
           if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
           return accumulator;
@@ -412,7 +414,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.options.notaFiscal,
       this.options.nortanPercentage
     );
-    this.contract.notPaid = this.stringUtil.numberToMoney(
+    this.contract.notPaid = this.numberToMoney.transform(
       this.stringUtil.moneyToNumber(this.contract.liquid) - this.stringUtil.moneyToNumber(this.options.paid)
     );
   }
@@ -522,7 +524,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.options.notaFiscal,
       this.options.nortanPercentage
     );
-    this.contract.cashback = this.stringUtil.numberToMoney(
+    this.contract.cashback = this.numberToMoney.transform(
       this.contractService.expensesContributions(this.contract).global.cashback
     );
   }
@@ -629,7 +631,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   isGrossValueOK(): boolean {
     return (
-      this.stringUtil.numberToMoney(
+      this.numberToMoney.transform(
         this.stringUtil.moneyToNumber(this.teamTotal.grossValue) + this.contractService.getComissionsSum(this.contract)
       ) === this.contract.value && this.teamTotal.grossValue !== '0,00'
     );
@@ -640,7 +642,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.teamTotal.netValue ===
         this.stringUtil.sumMoney(
           this.contract.liquid,
-          this.stringUtil.numberToMoney(this.contractService.expensesContributions(this.contract).global.cashback)
+          this.numberToMoney.transform(this.contractService.expensesContributions(this.contract).global.cashback)
         ) && this.teamTotal.netValue !== '0,00'
     );
   }

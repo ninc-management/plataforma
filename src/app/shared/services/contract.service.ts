@@ -14,6 +14,7 @@ import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { StatusHistoryItem } from '@models/baseStatusHistory';
+import { NumberToMoneyPipe } from '../pipes/string-util.pipe';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -62,7 +63,8 @@ export class ContractService implements OnDestroy {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private socket: Socket,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnDestroy(): void {
@@ -186,7 +188,7 @@ export class ContractService implements OnDestroy {
 
   balance(contract: Contract): string {
     const paid = this.toNetValue(
-      this.stringUtil.numberToMoney(
+      this.numberToMoney.transform(
         contract.receipts.reduce((accumulator: number, recipt: any) => {
           if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
           return accumulator;
@@ -197,7 +199,7 @@ export class ContractService implements OnDestroy {
     );
 
     const expenseContribution = this.expensesContributions(contract);
-    return this.stringUtil.numberToMoney(
+    return this.numberToMoney.transform(
       this.stringUtil.round(
         this.stringUtil.moneyToNumber(paid) -
           contract.payments.reduce((accumulator: number, payment: any) => {
@@ -240,7 +242,7 @@ export class ContractService implements OnDestroy {
         expenseContribution.contribution
     );
 
-    return this.stringUtil.numberToMoney(result);
+    return this.numberToMoney.transform(result);
   }
 
   /* eslint-disable @typescript-eslint/indent */
@@ -289,7 +291,7 @@ export class ContractService implements OnDestroy {
               });
               if (member) {
                 accumulator.user.cashback += this.stringUtil.moneyToNumber(
-                  this.stringUtil.applyPercentage(this.stringUtil.numberToMoney(cashbackValue), member.percentage)
+                  this.stringUtil.applyPercentage(this.numberToMoney.transform(cashbackValue), member.percentage)
                 );
               }
               accumulator.global.cashback += cashbackValue;
@@ -306,7 +308,7 @@ export class ContractService implements OnDestroy {
   }
 
   percentageToReceive(distribution: string, user: User | string | undefined, contract: Contract, decimals = 2): string {
-    let sum = this.stringUtil.numberToMoney(
+    let sum = this.numberToMoney.transform(
       this.stringUtil.moneyToNumber(contract.notPaid) + this.stringUtil.moneyToNumber(contract.balance)
     );
     if (contract.balance[0] == '-') sum = contract.notPaid;
@@ -322,11 +324,11 @@ export class ContractService implements OnDestroy {
         if (this.userService.isEqual(member.user, user)) sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);
-    return this.stringUtil.numberToMoney(received);
+    return this.numberToMoney.transform(received);
   }
 
   notPaidValue(distribution: string, user: User | string | undefined, contract: Contract): string {
-    return this.stringUtil.numberToMoney(
+    return this.numberToMoney.transform(
       this.stringUtil.moneyToNumber(this.netValueBalance(distribution, contract, user)) -
         this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
     );
@@ -343,7 +345,7 @@ export class ContractService implements OnDestroy {
   subtractComissions(contractValue: string, contract: Contract): string {
     const comissionsSum = this.getComissionsSum(contract);
 
-    return this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(contractValue) - comissionsSum);
+    return this.numberToMoney.transform(this.stringUtil.moneyToNumber(contractValue) - comissionsSum);
   }
 
   getComissionsSum(contract: Contract): number {
@@ -376,14 +378,14 @@ export class ContractService implements OnDestroy {
       return sum;
     }, 0);
 
-    return this.stringUtil.numberToMoney(expensesSum);
+    return this.numberToMoney.transform(expensesSum);
   }
 
   getMemberBalance(user: User | string | undefined, contract: Contract): string {
     const receivedSum = this.receivedValue(user, contract);
     const expensesSum = this.getMemberExpensesSum(user, contract);
     const cashBack = this.expensesContributions(contract, user).user.cashback;
-    return this.stringUtil.numberToMoney(
+    return this.numberToMoney.transform(
       this.stringUtil.moneyToNumber(receivedSum) - this.stringUtil.moneyToNumber(expensesSum) + cashBack
     );
   }

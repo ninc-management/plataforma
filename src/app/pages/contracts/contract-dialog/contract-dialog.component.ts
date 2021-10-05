@@ -12,6 +12,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -48,7 +49,8 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private contractService: ContractService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {
     super(derivedDocument, derivedRef);
   }
@@ -86,7 +88,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.utils.nortanPercentage(contract)
                   );
                   const paid = this.contractService.toNetValue(
-                    this.stringUtil.numberToMoney(
+                    this.numberToMoney.transform(
                       contract.receipts.reduce((accumulator: number, recipt: any) => {
                         if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
                         return accumulator;
@@ -95,7 +97,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.utils.nfPercentage(contract),
                     this.utils.nortanPercentage(contract)
                   );
-                  contract.notPaid = this.stringUtil.numberToMoney(
+                  contract.notPaid = this.numberToMoney.transform(
                     this.stringUtil.moneyToNumber(contract.liquid) - this.stringUtil.moneyToNumber(paid)
                   );
                   if (contract.invoice) {

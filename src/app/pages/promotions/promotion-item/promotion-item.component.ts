@@ -12,6 +12,7 @@ import { Promotion } from '@models/promotion';
 import { NbComponentStatus } from '@nebular/theme';
 import { NgModel } from '@angular/forms';
 import { cloneDeep } from 'lodash';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -71,7 +72,8 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private promotionService: PromotionService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnDestroy(): void {
@@ -153,7 +155,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
       case RULE_OBJECTS.VALOR_RECEBIDO:
         objCount = this.metricsService
           .receivedValue(uId, this.promotion.start, this.promotion.end)
-          .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
+          .pipe(map((mI) => this.numberToMoney.transform(mI.value)));
         break;
       default:
         break;
@@ -164,7 +166,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   cashbackRule(uId: string): Observable<string> {
     return this.metricsService
       .cashbackValue(uId, this.promotion.cashback, this.promotion.start, this.promotion.end)
-      .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
+      .pipe(map((mI) => this.numberToMoney.transform(mI.value)));
   }
 
   isValidRule(value: string): boolean {

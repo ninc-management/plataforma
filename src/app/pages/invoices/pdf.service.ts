@@ -11,6 +11,7 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 pdfMake.fonts = {
   Sans: {
@@ -34,7 +35,8 @@ export class PdfService {
   constructor(
     private stringUtil: StringUtilService,
     private userService: UserService,
-    private contractorService: ContractorService
+    private contractorService: ContractorService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -907,7 +909,7 @@ export class PdfService {
         if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}]);
         result.push(discount);
       }
-      const total = this.stringUtil.numberToMoney(
+      const total = this.numberToMoney.transform(
         invoice.products.reduce(
           (accumulator: number, product: any) =>
             accumulator + this.stringUtil.moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
@@ -982,7 +984,7 @@ export class PdfService {
         },
       ];
     });
-    const total = this.stringUtil.numberToMoney(
+    const total = this.numberToMoney.transform(
       invoice.stages.reduce(
         (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
         0
@@ -1128,7 +1130,7 @@ export class PdfService {
           },
         ];
       };
-      const total = this.stringUtil.numberToMoney(
+      const total = this.numberToMoney.transform(
         invoice.materials.reduce(
           (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
           0

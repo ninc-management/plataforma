@@ -15,6 +15,7 @@ import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/co
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as expense_validation from 'app/shared/expense-validation.json';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -96,7 +97,8 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {
     super(stringUtil, onedrive, userService);
   }
@@ -262,7 +264,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.expense.source && this.userService.idToUser(this.expense.source)?._id === CONTRACT_BALANCE._id) {
       return this.contract.balance;
     }
-    return this.stringUtil.numberToMoney(Number.MAX_VALUE);
+    return this.numberToMoney.transform(Number.MAX_VALUE);
   }
 
   updateValue(idx: number): void {

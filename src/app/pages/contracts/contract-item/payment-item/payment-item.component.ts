@@ -15,6 +15,7 @@ import { ContractUserPayment, ContractPayment, Contract } from '@models/contract
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as contract_validation from 'app/shared/payment-validation.json';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -83,7 +84,8 @@ export class PaymentItemComponent implements OnInit {
     public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnInit(): void {
@@ -230,7 +232,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateTotal(): void {
-    this.total = this.stringUtil.numberToMoney(
+    this.total = this.numberToMoney.transform(
       this.payment.team.reduce(
         (accumulator: number, userPayment: any) => accumulator + this.stringUtil.moneyToNumber(userPayment.value),
         0
@@ -239,7 +241,7 @@ export class PaymentItemComponent implements OnInit {
   }
 
   remainingBalance(): string {
-    return this.stringUtil.numberToMoney(
+    return this.numberToMoney.transform(
       this.stringUtil.moneyToNumber(this.payment.value) - this.stringUtil.moneyToNumber(this.total)
     );
   }
@@ -278,7 +280,7 @@ export class PaymentItemComponent implements OnInit {
     if (this.payment.value !== '0') {
       this.payment.team.map((member, index) => {
         if (this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1)
-          member.value = this.stringUtil.numberToMoney(
+          member.value = this.numberToMoney.transform(
             this.stringUtil.moneyToNumber(this.payment.value) *
               this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
           );

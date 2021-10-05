@@ -808,8 +808,7 @@
             <div class="col-md-4 d-flex">
               <div class="col-md-3">{{ contractService.notPaidValue(member.distribution, member.user, contract) }}</div>
               <div class="col-md-3">
-                {{ stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
-                }}
+                {{ contractService.expensesContributions(contract, member.user).user.cashback | numberToMoney }}
               </div>
               <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>
               <div class="col-md-3">{{ contractService.getMemberBalance(member.user, contract) }}</div>

@@ -6,7 +6,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 @Component({
   selector: 'ngx-time-series',
@@ -25,7 +25,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   };
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private utils: UtilsService, private stringUtil: StringUtilService) {}
+  constructor(private theme: NbThemeService, private utils: UtilsService, private numberToMoney: NumberToMoneyPipe) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -90,7 +90,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
             position: (pos: any, params: any, dom: any, rect: any, size: any) => {
               // tooltip will be fixed on the right if mouse hovering on the left,
               // and on the left if h: anyovering on the right.
-              let obj: any = { top: '5%' };
+              const obj: any = { top: '5%' };
               const mouseX = pos[0];
               const tooltipWidth = size.contentSize[0];
               const canvasWidth = size.viewSize[0];
@@ -111,7 +111,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
               let output = '<div style="text-align:center">' + this.utils.formatDate(new Date(date)) + '</div>';
               for (let i = 0; i < params.length; i++) {
                 const value = this.currentTimeSeries[params[i].seriesIndex].isMoney
-                  ? this.stringUtil.numberToMoney(params[i].value[1])
+                  ? this.numberToMoney.transform(params[i].value[1])
                   : params[i].value[1];
                 output +=
                   '<div style="display: flex; justify-content: space-between"><span>' +

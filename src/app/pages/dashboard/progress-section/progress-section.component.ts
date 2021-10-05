@@ -16,6 +16,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { startOfMonth, subMonths } from 'date-fns';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 interface MetricItem {
   title: string;
@@ -50,7 +51,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private metricsService: MetricsService,
     private userService: UserService,
     private stringUtil: StringUtilService,
-    private departmentService: DepartmentService
+    private departmentService: DepartmentService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnDestroy(): void {
@@ -70,13 +72,13 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
           value: this.metricsService
             .receivedValueNortan(monthStart, today, user._id)
-            .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
+            .pipe(map((x) => 'R$ ' + this.numberToMoney.transform(x.user))),
           description: this.metricsService.receivedValueNortan(previousMonth, monthStart, user._id).pipe(
             map((pastPayments) => {
               return (
                 this.metricsService.plural('Mês', 1) +
                 ' você recebeu R$ ' +
-                this.stringUtil.numberToMoney(pastPayments.user)
+                this.numberToMoney.transform(pastPayments.user)
               );
             })
           ),

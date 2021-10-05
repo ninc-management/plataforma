@@ -7,7 +7,6 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { format, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -17,6 +16,7 @@ import { Subject, combineLatest } from 'rxjs';
 import { NbAccessChecker } from '@nebular/security';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 @Component({
   selector: 'ngx-contracts',
@@ -150,9 +150,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private invoiceService: InvoiceService,
     private userService: UserService,
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnDestroy(): void {
@@ -290,7 +290,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           locale: ptBR,
         });
         const csv = Object.keys(data).map((key) => {
-          return key + ';' + this.stringUtil.numberToMoney(data[key]);
+          return key + ';' + this.numberToMoney.transform(data[key]);
         });
 
         const csvArray = csv.join('\r\n');

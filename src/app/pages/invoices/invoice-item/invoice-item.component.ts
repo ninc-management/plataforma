@@ -31,6 +31,7 @@ import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -127,7 +128,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
-    private brMask: BrMaskDirective
+    private brMask: BrMaskDirective,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnDestroy(): void {
@@ -304,7 +306,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           this.utils.isOfType<InvoiceProduct>(last, ['amount'])
         ) {
           const amount = this.stringUtil.moneyToNumber(last.amount);
-          relativeP = this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(p) / (amount == 0 ? 1 : amount));
+          relativeP = this.numberToMoney.transform(this.stringUtil.moneyToNumber(p) / (amount == 0 ? 1 : amount));
         }
         item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, relativeP);
 
@@ -433,7 +435,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     )
       this.options.material.total = '0,00';
     else
-      this.options.material.total = this.stringUtil.numberToMoney(
+      this.options.material.total = this.numberToMoney.transform(
         this.stringUtil.moneyToNumber(this.options.material.value) *
           this.stringUtil.moneyToNumber(this.options.material.amount)
       );
@@ -481,7 +483,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     )
       this.options.product.total = '0,00';
     else
-      this.options.product.total = this.stringUtil.numberToMoney(
+      this.options.product.total = this.numberToMoney.transform(
         this.stringUtil.moneyToNumber(
           this.options.valueType == '$'
             ? this.options.product.value
@@ -584,15 +586,15 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
           0
         );
         if (this.tempInvoice.discount)
-          this.options.total = this.stringUtil.numberToMoney(
+          this.options.total = this.numberToMoney.transform(
             subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
           );
-        else this.options.total = this.stringUtil.numberToMoney(subtotal);
-        this.options.subtotal = this.stringUtil.numberToMoney(subtotal);
+        else this.options.total = this.numberToMoney.transform(subtotal);
+        this.options.subtotal = this.numberToMoney.transform(subtotal);
         break;
       }
       case 'stage': {
-        this.options.stageTotal = this.stringUtil.numberToMoney(
+        this.options.stageTotal = this.numberToMoney.transform(
           this.tempInvoice.stages.reduce(
             (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
             0
@@ -601,7 +603,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
         break;
       }
       case 'material': {
-        this.options.materialTotal = this.stringUtil.numberToMoney(
+        this.options.materialTotal = this.numberToMoney.transform(
           this.tempInvoice.materials.reduce(
             (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
             0
@@ -626,7 +628,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   toPercentage(item: InvoiceProduct | InvoiceStage): string {
     let p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
     if (this.tempInvoice.productListType == '2' && this.utils.isOfType<InvoiceProduct>(item, ['amount']))
-      p = this.stringUtil.numberToMoney(
+      p = this.numberToMoney.transform(
         this.stringUtil.moneyToNumber(item.amount) * this.stringUtil.moneyToNumber(p),
         20
       );
@@ -642,7 +644,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
     )
       array[idx].total = '0,00';
     else
-      array[idx].total = this.stringUtil.numberToMoney(
+      array[idx].total = this.numberToMoney.transform(
         this.stringUtil.moneyToNumber(array[idx].value) * this.stringUtil.moneyToNumber(array[idx].amount)
       );
   }

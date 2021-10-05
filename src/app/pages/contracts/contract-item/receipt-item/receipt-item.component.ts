@@ -8,6 +8,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import * as contract_validation from '../../../../shared/payment-validation.json';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -45,7 +46,8 @@ export class ReceiptItemComponent implements OnInit {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +148,7 @@ export class ReceiptItemComponent implements OnInit {
     if (this.receiptIndex != undefined)
       result += this.stringUtil.moneyToNumber(this.contract.receipts[this.receiptIndex].value);
 
-    return this.stringUtil.numberToMoney(result);
+    return this.numberToMoney.transform(result);
   }
 
   lastPayment(): string {
