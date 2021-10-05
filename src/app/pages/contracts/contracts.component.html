@@ -31,6 +31,7 @@
       ></div>
       <ng-template #table>
         <ng2-smart-table
+          class="contracts"
           *ngIf="!utils.isPhone(); else phone"
           #smartTable
           [settings]="settings"
