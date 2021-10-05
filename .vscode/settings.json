@@ -26,6 +26,7 @@
   "prettier.printWidth": 120,
   "prettier.bracketSpacing": true,
   "prettier.singleQuote": true,
+  "prettier.htmlWhitespaceSensitivity": "ignore",
   "files.autoSave": "onFocusChange",
   "files.hotExit": "onExit",
   "files.defaultLanguage": "",
@@ -178,5 +179,5 @@
       "statusBarItem.remoteBackground": "#FFA000"
     }
   },
-  "materialTheme.accent": "Yellow"
+  "materialTheme.accent": "Yellow",
 }
