@@ -11,7 +11,7 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-
 import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard-dialog/dashboard-dialog.component';
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -51,14 +51,14 @@ export class DashboardComponent {
 
   constructor(
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private numberToMoney: NumberToMoneyPipe
   ) {
     this.expenses$ = metricsService
       .teamExpenses(startOfMonth(new Date()), new Date())
-      .pipe(map((metricInfo) => stringUtil.numberToMoney(metricInfo.value)));
+      .pipe(map((metricInfo) => this.numberToMoney.transform(metricInfo.value)));
     this.open$ = metricsService
       .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
       .pipe(map((metricInfo) => metricInfo.count));
