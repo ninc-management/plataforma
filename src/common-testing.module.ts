@@ -82,6 +82,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { PagesModule } from 'app/pages/pages.module';
 import { CommonModule } from '@angular/common';
 import { TeamService } from 'app/shared/services/team.service';
+import { NumberToMoneyPipe } from 'app/shared/pipes/string-util.pipe';
 
 const roles = Object.values(Permissions);
 
@@ -233,6 +234,7 @@ const PROVIDERS = [
   UserService,
   UtilsService,
   WebSocketService,
+  NumberToMoneyPipe,
 ];
 
 @NgModule({
