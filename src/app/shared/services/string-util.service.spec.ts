@@ -98,16 +98,6 @@ describe('StringUtilService', () => {
     expect(service.numberToString(1000000.0)).toBe('1000000,0000');
   });
 
-  it('numberToMoney shoud work', () => {
-    expect(service.numberToMoney(100.0)).toBe('100,00');
-    expect(service.numberToMoney(0.0)).toBe('0,00');
-    expect(service.numberToMoney(1000.0)).toBe('1.000,00');
-    expect(service.numberToMoney(1000.0, 4)).toBe('1.000,0000');
-    expect(service.numberToMoney(-1000.0)).toBe('-1.000,00');
-    expect(service.numberToMoney(350000.0)).toBe('350.000,00');
-    expect(service.numberToMoney(1000000.0)).toBe('1.000.000,00');
-  });
-
   it('round shoud work', () => {
     expect(service.round(100.999)).toBe(101.0);
     expect(service.round(0.0)).toBe(0.0);
