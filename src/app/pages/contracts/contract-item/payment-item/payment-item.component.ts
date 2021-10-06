@@ -15,6 +15,7 @@ import { ContractUserPayment, ContractPayment, Contract } from '@models/contract
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as contract_validation from 'app/shared/payment-validation.json';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -83,7 +84,8 @@ export class PaymentItemComponent implements OnInit {
     public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe
   ) {}
 
   ngOnInit(): void {

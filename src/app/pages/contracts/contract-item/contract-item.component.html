@@ -269,7 +269,7 @@
               <label class="label" for="input-updated">Última atualização:</label>
               <input
                 nbInput
-                [ngModel]="utils.formatDate(contract.lastUpdate)"
+                [ngModel]="formatDatePipe.transform(contract.lastUpdate)"
                 #updated="ngModel"
                 id="input-updated"
                 name="updated"
@@ -1085,7 +1085,7 @@
                   </div>
                   <div class="col-md-auto">
                     <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
-                    <span style="vertical-align: 0.1em">{{ utils.formatDate(expense.created) }}</span>
+                    <span style="vertical-align: 0.1em">{{ formatDatePipe.transform(expense.created) }}</span>
                   </div>
                 </a>
               </div>

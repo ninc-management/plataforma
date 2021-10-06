@@ -8,6 +8,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import * as contract_validation from '../../../../shared/payment-validation.json';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -45,7 +46,8 @@ export class ReceiptItemComponent implements OnInit {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe
   ) {}
 
   ngOnInit(): void {

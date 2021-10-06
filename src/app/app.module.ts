@@ -36,7 +36,7 @@ import {
   MSAL_INTERCEPTOR_CONFIG,
   MsalService,
   MsalGuard,
-  MsalBroadcastService,
+  MsalBroadcastService
 } from '@azure/msal-angular';
 import {
   LogLevel,
@@ -46,6 +46,7 @@ import {
   InteractionType,
 } from '@azure/msal-browser';
 import { interceptorProviders } from './shared/interceptors/interceptors';
+import { FormatDatePipe } from './shared/pipes/utils.pipe';
 
 const config: SocketIoConfig = {
   url: '',
@@ -168,6 +169,7 @@ registerLocaleData(ptBr);
     MsalService,
     MsalGuard,
     MsalBroadcastService,
+    FormatDatePipe
   ],
   bootstrap: [AppComponent],
 })

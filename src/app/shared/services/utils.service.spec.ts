@@ -80,11 +80,6 @@ describe('UtilsService', () => {
     expect(service.isValidDate(subDays(subMonths(date, 2), 1), 'Mês', 2, true)).toBe(false);
   });
 
-  it('formatDate should work', () => {
-    const date = new Date('Jun 17, 2021');
-    expect(service.formatDate(date)).toBe('17/06/2021');
-  });
-
   it('isWithinInterval should work', () => {
     const date = new Date('Jun 17, 2021');
     const start = new Date('Jun 01, 2021');

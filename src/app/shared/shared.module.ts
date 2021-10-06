@@ -14,6 +14,7 @@ import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
+import { FormatDatePipe } from './pipes/utils.pipe';
 
 @NgModule({
   imports: [
@@ -46,6 +47,7 @@ import { SelectAllTextDirective } from './directives/select-all-text.directive';
     FabItemComponent,
     BaseExpenseComponent,
     SelectAllTextDirective,
+    FormatDatePipe
   ],
 })
 export class SharedModule {}

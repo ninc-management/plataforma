@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Expense } from '@models/expense';
 import { NbDialogService } from '@nebular/theme';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 import { NortanService, NORTAN_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -32,7 +33,7 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
             this.userService.idToName(expense.author).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
             this.userService.idToName(expense.source).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+          this.formatDatePipe.transform(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.expenses;
@@ -128,7 +129,8 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
     private nortanService: NortanService,
     private dialogService: NbDialogService,
     public userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe
   ) {}
 
   ngOnDestroy(): void {
@@ -146,7 +148,7 @@ export class NortanExpensesComponent implements OnInit, OnDestroy {
           expenses.map((expense: any) => {
             const tmp = cloneDeep(expense);
             tmp.source = this.userService.idToShortName(tmp.source);
-            tmp.created = this.utils.formatDate(tmp.created);
+            tmp.created = this.formatDatePipe.transform(tmp.created);
             return tmp;
           })
         );

@@ -55,7 +55,7 @@
               <div class="col-md-auto">
                 <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
                 <span style="vertical-align: 0.1em">
-                  {{ utils.formatDate(expense.created) }}
+                  {{ formatDatePipe.transform(expense.created) }}
                 </span>
               </div>
             </a>

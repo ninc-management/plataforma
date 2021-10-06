@@ -17,6 +17,7 @@ import { ContractExpense, Contract } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 
 interface ExpenseTypesSum {
   type: string;
@@ -88,7 +89,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
             this.userService.idToName(expense.author).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
             this.userService.idToName(expense.source).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+          this.formatDatePipe.transform(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.contract.expenses;
@@ -233,7 +234,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     public contractService: ContractService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe,
   ) {}
 
   ngOnInit(): void {
@@ -617,7 +619,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.contract.expenses.map((expense: any, index: number) => {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
-        tmp.created = this.utils.formatDate(tmp.created);
+        tmp.created = this.formatDatePipe.transform(tmp.created);
         return tmp;
       })
     );

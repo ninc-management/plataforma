@@ -14,6 +14,7 @@ import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
 import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 
 @Component({
   selector: 'ngx-nortan-expense-item',
@@ -44,7 +45,8 @@ export class NortanExpenseItemComponent extends BaseExpenseComponent implements 
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe
   ) {
     super(stringUtil, onedrive, userService);
     this.expense.code = '#0';
@@ -112,7 +114,7 @@ export class NortanExpenseItemComponent extends BaseExpenseComponent implements 
     const mediaFolderPath = this.onedrive.generateNortanExpensesPath(this.expense);
     const fn = (name: string) => {
       const type = this.expense.type;
-      const date = this.utils.formatDate(new Date(), '-');
+      const date = this.formatDatePipe.transform(new Date(), '-');
       const extension = name.match('[.].+');
       if (this.expense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
         const subType = this.expense.fixedType;

@@ -142,10 +142,6 @@ export class UtilsService {
     }
   }
 
-  formatDate(date: Date, divider = '/'): string {
-    return format(date, 'dd' + divider + 'MM' + divider + 'yyyy');
-  }
-
   isWithinInterval(date: Date, start: Date, end: Date): boolean {
     return isWithinInterval(date, {
       start: start,

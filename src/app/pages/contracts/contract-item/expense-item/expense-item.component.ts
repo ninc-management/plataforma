@@ -15,6 +15,7 @@ import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/co
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import * as expense_validation from 'app/shared/expense-validation.json';
+import { FormatDatePipe } from 'app/shared/pipes/utils.pipe';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -96,7 +97,8 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public formatDatePipe: FormatDatePipe
   ) {
     super(stringUtil, onedrive, userService);
   }
@@ -191,7 +193,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         ).toString();
         const type = this.expense.type;
         const value = this.expense.value.replace(/\./g, '');
-        const date = this.utils.formatDate(new Date(), '-');
+        const date = this.formatDatePipe.transform(new Date(), '-');
         const extension = name.match('[.].+');
         return item + '-' + type + '-' + value + '-' + date + extension;
       };
