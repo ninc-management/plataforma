@@ -4,6 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
+import { DepartmentService } from './department.service';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
@@ -23,7 +24,8 @@ export class TeamService implements OnDestroy {
     private wsService: WebSocketService,
     private userService: UserService,
     private socket: Socket,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private departmentService: DepartmentService
   ) {}
 
   ngOnDestroy(): void {
@@ -91,5 +93,17 @@ export class TeamService implements OnDestroy {
       team.members = team.members.filter((member) => this.userService.isEqual(member.user, uId));
       return team;
     });
+  }
+
+  usedCoordinations(uId: string | User | undefined): string[] {
+    if (uId == undefined) return [];
+    return this.userToTeamsMembersFiltered(uId).map((team) => team.members[0].coordination);
+  }
+
+  availableCoordinations(uId: string | User | undefined): string[] {
+    if (uId == undefined) return [];
+    const coordinations = this.departmentService.userCoordinations(uId);
+    const userTeamCoordinations = this.usedCoordinations(uId);
+    return coordinations.filter((coordination) => !userTeamCoordinations.includes(coordination));
   }
 }

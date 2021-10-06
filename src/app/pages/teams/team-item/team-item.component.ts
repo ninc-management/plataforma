@@ -49,10 +49,18 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) ===
-            undefined
-            ? true
-            : false;
+          if (this.teamService.availableCoordinations(user).length == 0) return false;
+          const isUserInTeam =
+            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) === undefined
+              ? false
+              : true;
+
+          const hasTeamInCoordination = this.teamService.usedCoordinations(user).some((coordination) => {
+            //a coordenacao do usuario é igual a alguma coordenacao do time?
+            return this.COORDINATIONS.includes(coordination);
+          });
+
+          return !isUserInTeam && !hasTeamInCoordination;
         });
       })
     );
@@ -102,6 +110,6 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   }
 
   updateUserCoordinations(): void {
-    this.USER_COORDINATIONS = this.departamentService.userCoordinations(this.currentMember.user);
+    this.USER_COORDINATIONS = this.teamService.availableCoordinations(this.currentMember.user);
   }
 }
