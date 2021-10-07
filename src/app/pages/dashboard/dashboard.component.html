@@ -46,12 +46,18 @@
       </div>
     </nb-card>
   </nb-tab>
-  <nb-tab
-    *ngFor="let teamName of teamsNames"
-    [tabTitle]="utils.isPhone() ? '' : teamName"
-    [tabIcon]="teamIcon"
-    responsive
-  ></nb-tab>
+  <nb-tab *ngFor="let team of teams" [tabTitle]="utils.isPhone() ? '' : team.name" [tabIcon]="teamIcon" responsive>
+    <nb-card>
+      <div class="row">
+        <div class="col-12 col-md-12" style="text-align: center">
+          <h2 style="margin-top: 15px; display: flex; align-items: flex-start; justify-content: center">
+            R$ {{ team.balance }}
+          </h2>
+          <p>Caixa do time</p>
+        </div>
+      </div>
+    </nb-card>
+  </nb-tab>
 </nb-tabset>
 <ngx-fab icon="plus">
   <ngx-fab-item

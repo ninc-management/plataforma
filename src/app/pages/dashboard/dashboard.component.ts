@@ -13,6 +13,7 @@ import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { Team } from '@models/team';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -53,7 +54,7 @@ export class DashboardComponent {
   contractsBalance$!: Observable<number>;
   taxesBalance$!: Observable<number>;
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
-  teamsNames: string[] = [];
+  teams: Team[] = [];
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
@@ -82,7 +83,7 @@ export class DashboardComponent {
         .getTeams()
         .pipe(take(2))
         .subscribe(() => {
-          this.teamsNames = this.teamService.userToTeams(user).map((team) => team.name);
+          this.teams = this.teamService.userToTeams(user);
         });
       this.timeSeries$ = combineLatest([
         this.metricsService.receivedValueTimeSeries(user._id),

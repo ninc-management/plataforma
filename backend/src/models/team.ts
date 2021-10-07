@@ -23,6 +23,9 @@ export class Team extends Base<string> {
   @prop({ type: () => [TeamMember] })
   members: TeamMember[] = [];
 
+  @prop({ required: true })
+  balance: string = '0,00';
+
   leaderName = '';
 }
 
