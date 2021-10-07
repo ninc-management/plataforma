@@ -87,6 +87,7 @@ export class NortanExpenseItemComponent extends BaseExpenseComponent implements 
   }
 
   registerExpense(): void {
+    this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.iExpense !== undefined) {
       this.expense.lastUpdate = new Date();
       this.nortanService.editExpense(cloneDeep(this.expense));
@@ -97,6 +98,7 @@ export class NortanExpenseItemComponent extends BaseExpenseComponent implements 
   }
 
   addAndClean(): void {
+    this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     this.nortanService.saveExpense(cloneDeep(this.expense));
     this.sourceSearch = '';
     this.expense.source = '';
