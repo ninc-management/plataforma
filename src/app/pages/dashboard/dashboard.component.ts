@@ -6,6 +6,7 @@ import { startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
+import { TeamService } from 'app/shared/services/team.service';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard-dialog/dashboard-dialog.component';
@@ -40,6 +41,10 @@ export class DashboardComponent {
     icon: 'logoNoFill',
     pack: 'fac',
   };
+  teamIcon = {
+    icon: 'users',
+    pack: 'fa',
+  };
   start = startOfMonth(new Date());
   end = new Date();
   open$!: Observable<number>;
@@ -48,12 +53,13 @@ export class DashboardComponent {
   contractsBalance$!: Observable<number>;
   taxesBalance$!: Observable<number>;
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
-
+  teamsNames: string[] = [];
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
+    private teamService: TeamService,
     public utils: UtilsService
   ) {
     this.expenses$ = metricsService
@@ -72,6 +78,12 @@ export class DashboardComponent {
       .nortanValue(this.start, this.end, 'taxes')
       .pipe(map((metricInfo) => metricInfo.global));
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.teamService
+        .getTeams()
+        .pipe(take(2))
+        .subscribe(() => {
+          this.teamsNames = this.teamService.userToTeams(user).map((team) => team.name);
+        });
       this.timeSeries$ = combineLatest([
         this.metricsService.receivedValueTimeSeries(user._id),
         this.metricsService.expensesTimeSeries(user._id),

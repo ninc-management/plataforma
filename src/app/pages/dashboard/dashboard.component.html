@@ -46,6 +46,12 @@
       </div>
     </nb-card>
   </nb-tab>
+  <nb-tab
+    *ngFor="let teamName of teamsNames"
+    [tabTitle]="utils.isPhone() ? '' : teamName"
+    [tabIcon]="teamIcon"
+    responsive
+  ></nb-tab>
 </nb-tabset>
 <ngx-fab icon="plus">
   <ngx-fab-item
