@@ -77,6 +77,33 @@
         </ng-container>
       </div>
     </div>
+    <div class="col-12 col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-purpose">Propósito do time:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="team.purpose"
+          #purpose="ngModel"
+          id="input-purpose"
+          name="purpose"
+          placeholder="Insira o propósito do time"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.purpose.required"
+          [minlength]="validation.purpose.minLength"
+          [maxlength]="validation.purpose.maxLength"
+          [status]="purpose.touched ? (purpose.invalid ? 'danger' : 'success') : editing && team.purpose ? 'success' : 'basic'"
+          [attr.aria-invalid]="purpose.invalid && purpose.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="purpose.invalid && purpose.touched">
+          <p class="caption status-danger" *ngIf="purpose.errors?.required">O propósito do time é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="purpose.errors?.minlength || purpose.errors?.maxlength">
+            O propósito do time deve conter entre {{ validation.purpose.minLength }} a {{ validation.purpose.maxLength
+            }} caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
     <div class="col-12">
       <div class="form-control-group">
         <label class="label" for="input-expertise">Áreas de atuação:</label>

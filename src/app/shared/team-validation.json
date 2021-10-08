@@ -4,6 +4,11 @@
     "minLength": 3,
     "maxLength": 100
   },
+  "purpose": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 1000
+  },
   "expertise": { "required": true },
   "leader": { "required": true }
 }

@@ -10,6 +10,23 @@ export class TeamMember {
   coordination!: string;
 }
 
+export class TeamFinancialTransaction {
+  @prop({ required: true, ref: () => User })
+  from!: Ref<User>;
+
+  @prop({ required: true, ref: () => Team })
+  to!: Ref<Team>;
+
+  @prop({ required: true })
+  date: Date = new Date();
+
+  @prop({ required: true })
+  description!: string;
+
+  @prop({ required: true })
+  value!: string;
+}
+
 export class Team extends Base<string> {
   @prop({ required: true })
   name!: string;
@@ -23,8 +40,16 @@ export class Team extends Base<string> {
   @prop({ type: () => [TeamMember] })
   members: TeamMember[] = [];
 
+  @prop({ type: () => [TeamFinancialTransaction] })
+  transactions: TeamFinancialTransaction[] = [];
+
   @prop({ required: true })
-  balance: string = '0,00';
+  created: Date = new Date();
+
+  @prop({ required: true })
+  purpose!: string;
+
+  balance = '0,00';
 
   leaderName = '';
 }

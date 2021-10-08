@@ -5,6 +5,7 @@ import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { DepartmentService } from './department.service';
+import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
@@ -23,6 +24,7 @@ export class TeamService implements OnDestroy {
     private http: HttpClient,
     private wsService: WebSocketService,
     private userService: UserService,
+    private stringUtil: StringUtilService,
     private socket: Socket,
     private utils: UtilsService,
     private departmentService: DepartmentService
@@ -55,6 +57,7 @@ export class TeamService implements OnDestroy {
         .pipe(take(1))
         .subscribe((teams: any) => {
           const tmp = JSON.parse(JSON.stringify(teams));
+          this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
         });
       this.socket
@@ -105,5 +108,16 @@ export class TeamService implements OnDestroy {
     const coordinations = this.departmentService.userCoordinations(uId);
     const userTeamCoordinations = this.usedCoordinations(uId);
     return coordinations.filter((coordination) => !userTeamCoordinations.includes(coordination));
+  }
+
+  keepUpdatingBalance(): void {
+    this.teams$.pipe(takeUntil(this.destroy$)).subscribe((teams) => {
+      teams.map((team) => {
+        team.balance = this.stringUtil.numberToMoney(
+          team.transactions.reduce((accumulator, t) => (accumulator += this.stringUtil.moneyToNumber(t.value)), 0)
+        );
+        return team;
+      });
+    });
   }
 }
