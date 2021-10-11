@@ -9,7 +9,7 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { take, map, startWith, takeUntil } from 'rxjs/operators';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -64,6 +64,14 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     const previousMonth = subMonths(monthStart, 1);
     this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
       if (user._id != undefined) {
+        // TODO: Recalcular a cada nova transação
+        this.METRICS.push({
+          title: 'Caixa',
+          tooltip: 'Dinheiro do associado em custódia da Nortan',
+          value: this.userService.currentUser$.pipe(map((user) => 'R$ ' + this.userService.balance(user))),
+          description: of(''),
+          loading: this.userService.currentUser$.pipe(map((user) => user._id == undefined)),
+        });
         this.METRICS.push({
           title: 'Balanço do mês',
           tooltip:
