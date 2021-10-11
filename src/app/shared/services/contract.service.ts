@@ -391,6 +391,7 @@ export class ContractService implements OnDestroy {
   checkEditPermission(invoice: Invoice): Observable<boolean> {
     return this.userService.currentUser$.pipe(
       map((user: User) => {
+        if (invoice.team.length == 0) return true;
         return this.isUserAnAER(user, invoice) || this.userService.isEqual(user, invoice.team[0].user);
       })
     );
