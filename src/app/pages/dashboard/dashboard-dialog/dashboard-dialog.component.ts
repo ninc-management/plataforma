@@ -7,6 +7,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 export enum DASHBOARD_COMPONENT_TYPES {
   EXPENSES,
   EXPENSE,
+  TRANSFER,
 }
 
 @Component({

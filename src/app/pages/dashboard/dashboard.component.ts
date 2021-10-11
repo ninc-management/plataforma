@@ -18,6 +18,7 @@ import { Team } from '@models/team';
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
   NORTAN = 'Nortan',
+  TEAM = 'Time',
 }
 
 enum DIALOG_TYPES {
@@ -27,6 +28,7 @@ enum DIALOG_TYPES {
   EXPENSE,
   CLIENT,
   NORTAN_EXPENSE_TABLE,
+  TRANSFER,
 }
 
 @Component({
@@ -234,6 +236,20 @@ export class DashboardComponent {
         break;
       }
 
+      case DIALOG_TYPES.TRANSFER: {
+        this.dialogService.open(DashboardDialogComponent, {
+          context: {
+            title: 'TRANSFERÊNCIA',
+            componentType: DASHBOARD_COMPONENT_TYPES.TRANSFER,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
       default:
         break;
     }
@@ -250,7 +266,7 @@ export class DashboardComponent {
         break;
       }
       default: {
-        this.activeTab = TAB_TITLES.PESSOAL;
+        this.activeTab = TAB_TITLES.TEAM;
         break;
       }
     }
