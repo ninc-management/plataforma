@@ -40,7 +40,9 @@
         <ngx-nortan-expenses
           *ngIf="componentType === dTypes.EXPENSES"
           [isDialogBlocked]="isBlocked"
+          (submit)="dismiss()"
         ></ngx-nortan-expenses>
+        <ngx-user-transaction *ngIf="componentType === dTypes.TRANSFER" (submit)="dismiss()"></ngx-user-transaction>
       </nb-card-body>
     </nb-card>
   </div>

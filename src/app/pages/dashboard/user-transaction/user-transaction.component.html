@@ -1,0 +1,134 @@
+<form #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-control-group">
+        <label class="label" for="input-transaction-source">Origem</label>
+        <input
+          nbInput
+          [ngModel]="currentUser"
+          #transactionSource="ngModel"
+          id="input-transaction-source"
+          name="transactionSource"
+          fieldSize="large"
+          [fullWidth]="true"
+          [status]="
+            transactionSource.dirty
+              ? transactionSource.invalid
+                ? 'danger'
+                : 'success'
+              : iTransaction === undefined
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="transactionSource.invalid && transactionSource.touched ? true : null"
+        />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-control-group">
+        <label class="label" for="input-destination">Destino</label>
+        <nb-completer
+          [(ngModel)]="teamSearch"
+          (selected)="currentDestination = $event"
+          inputName="teamListCompleter"
+          #teamList="ngModel"
+          id="input-destination"
+          name="teamList"
+          placeholder="Digite e selecione o time"
+          textNoResults="
+            Não foi possível achar um time com o nome digitado
+            "
+          fieldSize="large"
+          nameField="name"
+          [data$]="teamData"
+          [minSearchLength]="0"
+          [fullWidth]="true"
+          [status]="
+            teamList.dirty
+              ? teamList.invalid
+                ? 'danger'
+                : 'success'
+              : iTransaction === undefined && teamSearch !== ''
+              ? 'success'
+              : 'basic'
+          "
+          [attr.aria-invalid]="teamList.invalid && teamList.touched ? true : null"
+        ></nb-completer>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-control-group">
+        <label class="label" for="input-description">Descrição:</label>
+        <textarea
+          nbInput
+          [(ngModel)]="transaction.description"
+          #description="ngModel"
+          id="input-description"
+          name="description"
+          placeholder="Descreva sua transferência"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.transaction.required"
+          [minlength]="validation.transaction.minLength"
+          [maxlength]="validation.transaction.maxLength"
+          [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="description.invalid && description.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="description.invalid && description.touched">
+          <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
+            A formação deve conter entre {{ validation.transaction.minLength }} a {{ validation.transaction.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="form-control-group">
+        <label class="label" for="input-transaction-value">Valor:</label>
+        <input
+          nbInput
+          [(ngModel)]="transaction.value"
+          #transactionValue="ngModel"
+          id="input-transaction-value"
+          name="transaction-value"
+          placeholder="Valor da transferência"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: 2
+          }"
+          ngxSelectAllText
+          [required]="validation.value.required"
+          [status]="
+            transactionValue.dirty
+              ? transactionValue.invalid
+                ? 'danger'
+                : 'success'
+              : transaction.value && transaction.value !== '' && iTransaction === undefined
+              ? 'success'
+              : 'basic'
+          "
+          [disabled]="iTransaction !== undefined"
+          [attr.aria-invalid]="transactionValue.invalid && transactionValue.touched ? true : null"
+        />
+      </div>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col-12">
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="!form.valid || iTransaction !== undefined"
+      (click)="registerTransaction()"
+    >
+      ADICIONAR
+    </button>
+  </div>
+</div>

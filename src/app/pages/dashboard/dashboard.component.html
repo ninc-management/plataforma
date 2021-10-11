@@ -67,18 +67,21 @@
     (clicked)="openDialog(dialogTypes.EXPENSE)"
   ></ngx-fab-item>
   <ngx-fab-item
+    *ngIf="activeTab != tabTitles.NORTAN"
     icon="dollar-sign"
     pack="fa"
     content="Ordem de Pagamento"
     (clicked)="openDialog(dialogTypes.PAYMENT)"
   ></ngx-fab-item>
   <ngx-fab-item
+    *ngIf="activeTab != tabTitles.NORTAN"
     icon="receipt"
     pack="fac"
     content="Ordem de Empenho"
     (clicked)="openDialog(dialogTypes.RECEIPT)"
   ></ngx-fab-item>
   <ngx-fab-item
+    *ngIf="activeTab != tabTitles.NORTAN"
     icon="file-invoice-dollar"
     pack="fac"
     content="Orçamento"
@@ -90,5 +93,12 @@
     content="Cliente"
     iconLeft="1"
     (clicked)="openDialog(dialogTypes.CLIENT)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab != tabTitles.NORTAN && activeTab != tabTitles.PESSOAL"
+    icon="person-add-outline"
+    content="Transferência"
+    iconLeft="1"
+    (clicked)="openDialog(dialogTypes.TRANSFER)"
   ></ngx-fab-item>
 </ngx-fab>
