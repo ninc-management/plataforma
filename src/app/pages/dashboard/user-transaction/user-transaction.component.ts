@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Team } from '@models/team';
+import { Team, TeamFinancialTransaction } from '@models/team';
 import { User, UserFinancialTransaction } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
 import { Observable, of } from 'rxjs';
 import * as transaction_validation from 'app/shared/transaction-validation.json';
+import { UserService } from 'app/shared/services/user.service';
+import { take } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'ngx-user-transaction',
@@ -11,7 +14,7 @@ import * as transaction_validation from 'app/shared/transaction-validation.json'
   styleUrls: ['./user-transaction.component.scss'],
 })
 export class UserTransactionComponent implements OnInit {
-  @Input() iTransaction = new UserFinancialTransaction();
+  @Input() transactionIndex?: number;
   currentUser!: User;
   currentDestination!: Team;
   transaction = new UserFinancialTransaction();
@@ -19,11 +22,15 @@ export class UserTransactionComponent implements OnInit {
   teamData: Observable<Team[]> = of([]);
   validation = (transaction_validation as any).default;
 
-  constructor(private teamService: TeamService) {}
+  constructor(private teamService: TeamService, private userService: UserService) {}
 
   ngOnInit(): void {
-    this.teamData = this.teamService.getTeams();
+    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.currentUser = user
+      this.teamData = of(this.teamService.userToTeamsMembersFiltered(this.currentUser))
+    })
   }
 
-  registerTransaction(): void {}
+  registerTransaction(): void {
+  }
 }
