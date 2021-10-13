@@ -50,6 +50,7 @@ export class CoursesComponent implements OnInit {
       },
       speaker: {
         title: 'Ministrante',
+        valuePrepareFunction: (speaker: string): string => this.userService.idToName(speaker),
         type: 'string',
       },
       participantsQuantity: {
@@ -91,9 +92,6 @@ export class CoursesComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((courses: Course[]) => {
         this.courses = courses.map((course: Course) => {
-          if (course.speaker) {
-            course.speaker = this.userService.idToName(course.speaker);
-          }
           course.participantsQuantity = course.participants.length.toString();
           return course;
         });
