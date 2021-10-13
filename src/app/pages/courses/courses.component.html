@@ -1,1 +1,58 @@
-<p>courses works!</p>
+<div class="row">
+  <div class="col-12">
+    <nb-card>
+      <nb-card-header *ngIf="pageWidth() < 576">
+        <div class="row">
+          <div class="col-10">
+            <input
+              nbInput
+              [(ngModel)]="searchQuery"
+              #code="ngModel"
+              id="input-code"
+              name="code"
+              placeholder="Busque aqui..."
+              fullWidth
+              fieldSize="large"
+            />
+          </div>
+        </div>
+      </nb-card-header>
+      <div
+        *ngIf="courses.length == 0; else table"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+        style="width: 100%; height: 654px"
+      ></div>
+      <ng-template #table>
+        <ng2-smart-table
+          *ngIf="!utils.isPhone(); else phone"
+          #smartTable
+          [settings]="settings"
+          [source]="source"
+        ></ng2-smart-table>
+      </ng-template>
+      <ng-template #phone>
+        <nb-list>
+          <nb-list-item *ngFor="let course of courses; let i = index">
+            <a>
+              <div class="row">
+                <div class="col-12" style="margin-bottom: 10px">
+                  <nb-user size="giant" [title]="course.name"></nb-user>
+                </div>
+                <div class="col-6">
+                  <p>
+                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                    <span style="vertical-align: 0.1em">
+                      {{ course.price }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </a>
+          </nb-list-item>
+        </nb-list>
+      </ng-template>
+    </nb-card>
+  </div>
+</div>
