@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Course } from '@models/course';
-import { parseISO } from 'date-fns';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -35,7 +34,7 @@ export class CourseService {
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.courses$, 'contracts'));
+        .subscribe((data: any) => this.wsService.handle(data, this.courses$, 'courses'));
     }
     return this.courses$;
   }
