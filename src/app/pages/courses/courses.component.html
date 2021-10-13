@@ -38,14 +38,30 @@
             <a>
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
-                  <nb-user size="giant" [title]="course.name"></nb-user>
+                  <nb-user size="giant" [name]="course.name"></nb-user>
                 </div>
-                <div class="col-6">
+              </div>
+              <div class="row">
+                <div class="col-12">
                   <p>
-                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                    <nb-icon icon="user-tie" pack="fa" status="success"></nb-icon>
                     <span style="vertical-align: 0.1em">
-                      {{ course.price }}
+                      {{ course.speaker }}
                     </span>
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-8">
+                  <p>
+                    <nb-icon icon="users" pack="fa" status="success" style="margin-right: 0.5rem"></nb-icon>
+                    <span style="vertical-align: 0.1em">{{ course.participantsQuantity }} participante(s)</span>
+                  </p>
+                </div>
+                <div class="col-4">
+                  <p>
+                    <nb-icon icon="award" pack="fa" status="success"></nb-icon>
+                    <span style="vertical-align: 0.1em">{{ course.hasCertificate ? '✅' : '❌' }}</span>
                   </p>
                 </div>
               </div>

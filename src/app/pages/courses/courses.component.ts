@@ -18,7 +18,7 @@ export class CoursesComponent implements OnInit {
   courses: Course[] = [];
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(public utils: UtilsService, private courseService: CourseService, private userService: UserService) {}
+  constructor(public utils: UtilsService, public userService: UserService, private courseService: CourseService) {}
 
   settings = {
     mode: 'external',
