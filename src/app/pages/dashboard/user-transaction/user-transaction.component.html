@@ -5,21 +5,13 @@
         <label class="label" for="input-transaction-source">Origem</label>
         <input
           nbInput
-          [ngModel]="currentUser"
+          [ngModel]="currentUser.fullName"
           #transactionSource="ngModel"
           id="input-transaction-source"
           name="transactionSource"
           fieldSize="large"
           [fullWidth]="true"
-          [status]="
-            transactionSource.dirty
-              ? transactionSource.invalid
-                ? 'danger'
-                : 'success'
-              : iTransaction === undefined
-              ? 'success'
-              : 'basic'
-          "
+          [readonly]="true"
           [attr.aria-invalid]="transactionSource.invalid && transactionSource.touched ? true : null"
         />
       </div>
@@ -48,7 +40,7 @@
               ? teamList.invalid
                 ? 'danger'
                 : 'success'
-              : iTransaction === undefined && teamSearch !== ''
+              : transactionIndex === undefined && teamSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -107,11 +99,11 @@
               ? transactionValue.invalid
                 ? 'danger'
                 : 'success'
-              : transaction.value && transaction.value !== '' && iTransaction === undefined
+              : transaction.value && transaction.value !== '' && transactionIndex === undefined
               ? 'success'
               : 'basic'
           "
-          [disabled]="iTransaction !== undefined"
+          [disabled]="transactionIndex !== undefined"
           [attr.aria-invalid]="transactionValue.invalid && transactionValue.touched ? true : null"
         />
       </div>
@@ -125,7 +117,7 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="!form.valid || iTransaction !== undefined"
+      [disabled]="!form.valid || transactionIndex !== undefined"
       (click)="registerTransaction()"
     >
       ADICIONAR
