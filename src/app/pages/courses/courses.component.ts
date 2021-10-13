@@ -24,7 +24,7 @@ export class CoursesComponent implements OnInit {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum curso para o filtro selecionado.',
     add: {
-      addButtonContent: '<i class="icon-file-csv"></i>',
+      addButtonContent: '<i class="nb-plus"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
     },
@@ -34,7 +34,7 @@ export class CoursesComponent implements OnInit {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="fa fa-dollar-sign payment"></i>',
+      deleteButtonContent: '<i class="fa fa-user-plus addParticipantIcon"></i>',
       confirmDelete: false,
     },
     actions: {
