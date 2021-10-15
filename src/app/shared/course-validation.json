@@ -1,0 +1,16 @@
+{
+  "name": {
+    "required": true,
+    "minLength": 5,
+    "maxLength": 100
+  },
+  "certificate": { "required": true },
+  "speaker": { "required": true },
+  "startDate": { "required": true },
+  "courseHours": { "required": true },
+  "place": {
+    "required": true,
+    "minLength": 5
+  },
+  "price": { "required": true }
+}
