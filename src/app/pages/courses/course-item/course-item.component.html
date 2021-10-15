@@ -1,1 +1,184 @@
-<p>course-item works!</p>
+<form (ngSubmit)="createCourse()" #form="ngForm" aria-labelledby="title">
+  <div class="row">
+    <div class="col-9">
+      <div class="form-control-group">
+        <label class="label" for="input-course-name">Nome do curso:</label>
+        <input
+          nbInput
+          [(ngModel)]="course.name"
+          #name="ngModel"
+          id="input-course-name"
+          name="course-name"
+          placeholder="Nome do curso"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.name.required"
+          [minlength]="validation.name.minLength"
+          [maxlength]="validation.name.maxLength"
+          [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+        />
+      </div>
+      <ng-container *ngIf="name.invalid && name.touched">
+        <p class="caption status-danger" *ngIf="name.errors?.required">O nome do curso é obrigatório!</p>
+        <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+          O nome do time deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength }} caracteres
+        </p>
+      </ng-container>
+    </div>
+    <div class="col-3">
+      <div class="form-control-group">
+        <label class="label" for="input-certificate">Possui certificado?</label>
+        <nb-select
+          [(ngModel)]="course.hasCertificate"
+          #certificate="ngModel"
+          id="input-certificate"
+          name="certificate"
+          placeholder="Certificado?"
+          fullWidth
+          size="large"
+          [required]="validation.certificate.required"
+          [status]="certificate.dirty ? 'success' : 'basic'"
+          [attr.aria-invalid]="certificate.invalid && certificate.touched ? true : null"
+        >
+          <nb-option [value]="false">NÃO</nb-option>
+          <nb-option [value]="true">SIM</nb-option>
+        </nb-select>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="form-control-group">
+        <label class="label" for="input-speaker">Ministrante:</label>
+        <input
+          nbInput
+          [(ngModel)]="course.speaker"
+          #speaker="ngModel"
+          id="input-speaker"
+          name="speaker"
+          placeholder="Ministrante"
+          fullWidth
+          fieldSize="large"
+          [readonly]="true"
+          [attr.aria-invalid]="price.invalid && price.touched ? true : null"
+        />
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="form-control-group">
+        <label class="label" for="input-start-date">Data de realização:</label>
+        <input
+          nbInput
+          [(ngModel)]="course.startDate"
+          #startDate="ngModel"
+          id="input-start-date"
+          name="startDate"
+          placeholder="Escolha uma data"
+          fullWidth
+          fieldSize="large"
+          [nbDatepicker]="datepicker"
+          [required]="validation.startDate.required"
+          [status]="startDate.dirty ? (startDate.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="startDate.invalid && startDate.touched ? true : null"
+        />
+        <nb-datepicker #datepicker></nb-datepicker>
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="form-group-control">
+        <label class="label" for="input-course-hours">Carga horária:</label>
+        <input
+          nbInput
+          [(ngModel)]="course.courseHours"
+          #courseHours="ngModel"
+          id="input-course-hours"
+          name="courseHours"
+          placeholder="Em horas"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.courseHours.required"
+          [status]="courseHours.dirty ? (courseHours.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="courseHours.invalid && courseHours.touched ? true : null"
+        />
+      </div>
+    </div>
+    <div class="col-10">
+      <div class="form-control-group">
+        <label class="label" for="input-place">Local</label>
+        <input
+          nbInput
+          [(ngModel)]="course.place"
+          #place="ngModel"
+          id="input-place"
+          name="place"
+          placeholder="Local"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.place.required"
+          [minlength]="validation.place.minLength"
+          [status]="place.dirty ? (place.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="place.invalid && place.touched ? true : null"
+        />
+      </div>
+    </div>
+    <div class="col-2">
+      <div class="form-control-group">
+        <label class="label" for="input-price">Valor por pessoa</label>
+        <input
+          nbInput
+          [(ngModel)]="course.price"
+          #price="ngModel"
+          id="input-price"
+          name="price"
+          placeholder="Valor"
+          fullWidth
+          fieldSize="large"
+          [required]="validation.price.required"
+          [brmasker]="{
+            money: true,
+            thousand: '.',
+            decimalCaracter: ',',
+            decimal: 2
+          }"
+          [status]="price.dirty ? (price.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="price.invalid && price.touched ? true : null"
+        />
+      </div>
+    </div>
+    <div class="col-md-12">
+      <button
+        nbButton
+        type="button"
+        fullWidth
+        status="primary"
+        size="large"
+        style="margin-top: 28px"
+        (click)="addParticipant()"
+      >
+        {{ editing ? 'Adicionar aluno' : 'Adicionar ministrante' }}
+      </button>
+    </div>
+
+    <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list-item *ngFor="let participant of course.participants; let i = index; trackBy: utils.trackByIndex">
+        <div class="row irow">
+          <div class="col-10 col-md-11">
+            {{ userService.idToName(participant.name) }}
+          </div>
+          <div class="col-2 col-md-1" style="text-align: right">
+            <nb-icon
+              class="xIcon"
+              status="basic"
+              icon="trash-2-outline"
+              pack="eva"
+              (click)="course.participants.splice(i, 1)"
+              [options]="{ animation: { type: 'shake' } }"
+            ></nb-icon>
+          </div>
+        </div>
+      </nb-list-item>
+    </nb-list>
+    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">
+      {{ editing ? 'Atualizar' : 'Adicionar' }}
+    </button>
+  </div>
+</form>
