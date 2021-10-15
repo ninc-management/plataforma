@@ -38,4 +38,11 @@ export class CourseService {
     }
     return this.courses$;
   }
+
+  saveCourse(course: Course) {
+    const req = {
+      course: course,
+    };
+    this.http.post('/api/course/', req).pipe(take(1)).subscribe();
+  }
 }
