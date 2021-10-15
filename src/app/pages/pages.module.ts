@@ -48,6 +48,7 @@ import { TeamItemComponent } from './teams/team-item/team-item.component';
 import { CourseItemComponent } from './courses/course-item/course-item.component';
 import { CourseDialogComponent } from './courses/course-dialog/course-dialog.component';
 import { CoursesComponent } from './courses/courses.component';
+import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
 
 @NgModule({
   imports: [
@@ -101,6 +102,7 @@ import { CoursesComponent } from './courses/courses.component';
     CourseItemComponent,
     CourseDialogComponent,
     CoursesComponent,
+    ParticipantItemComponent,
   ],
 })
 export class PagesModule {}

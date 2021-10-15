@@ -1,0 +1,29 @@
+{
+  "name": {
+    "required": true,
+    "minLength": 5,
+    "maxLength": 100
+  },
+  "email": { "required": true },
+  "date": { "required": true },
+  "phone": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 15
+  },
+  "address": {
+    "required": true,
+    "minLength": 5,
+    "maxLength": 100
+  },
+  "CPF": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 14
+  },
+  "job": {
+    "required": true,
+    "minLength": 5,
+    "maxLength": 30
+  }
+}
