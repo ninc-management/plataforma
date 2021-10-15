@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Course } from '@models/course';
+import { NbDialogService } from '@nebular/theme';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CourseDialogComponent } from './course-dialog/course-dialog.component';
 
 @Component({
   selector: 'ngx-courses',
@@ -18,7 +20,12 @@ export class CoursesComponent implements OnInit {
   courses: Course[] = [];
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(public utils: UtilsService, public userService: UserService, private courseService: CourseService) {}
+  constructor(
+    public utils: UtilsService,
+    public userService: UserService,
+    private dialogService: NbDialogService,
+    private courseService: CourseService
+  ) {}
 
   settings = {
     mode: 'external',
@@ -99,6 +106,18 @@ export class CoursesComponent implements OnInit {
       });
   }
 
+  openDialog(event: { data?: Course }): void {
+    this.dialogService.open(CourseDialogComponent, {
+      context: {
+        title: event.data ? 'EDIÇÃO DE CURSO' : 'CADASTRO DE CURSO',
+        course: event.data ? event.data : new Course(),
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
+  }
   pageWidth(): number {
     return window.innerWidth;
   }
