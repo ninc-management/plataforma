@@ -4,8 +4,29 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 export class CourseParticipant {
-  @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  isSpeaker!: boolean;
+
+  @prop({required: true })
+  email!: string;
+
+  @prop({required: true })
+  date!: Date;
+
+  @prop({required: true })
+  phone!: string;
+
+  @prop({ required: true })
+  CPF!: string;
+
+  @prop({ required: true })
+  address!: string;
+
+  @prop({ required: true })
+  job!: string;
 }
 
 @plugin(mongooseUniqueValidator)
