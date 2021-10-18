@@ -13,8 +13,8 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { take, map, startWith, takeUntil } from 'rxjs/operators';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
+import { FinancialService } from 'app/shared/services/financial.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { startOfMonth, subMonths } from 'date-fns';
 
 interface MetricItem {
@@ -50,7 +50,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private metricsService: MetricsService,
     private userService: UserService,
     private stringUtil: StringUtilService,
-    private departmentService: DepartmentService
+    private financialService: FinancialService
   ) {}
 
   ngOnDestroy(): void {
@@ -68,7 +68,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
         this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Nortan',
-          value: this.userService.currentUser$.pipe(map((user) => 'R$ ' + this.userService.balance(user))),
+          value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
           description: of(''),
           loading: this.userService.currentUser$.pipe(map((user) => user._id == undefined)),
         });
