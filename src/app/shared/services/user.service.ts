@@ -8,7 +8,6 @@ import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { UtilsService } from './utils.service';
-import { StringUtilService } from './string-util.service';
 import { User } from '@models/user';
 
 export const CONTRACT_BALANCE = {
@@ -81,8 +80,7 @@ export class UserService implements OnDestroy {
     private authService: AuthService,
     private wsService: WebSocketService,
     private socket: Socket,
-    private utils: UtilsService,
-    private stringUtil: StringUtilService
+    private utils: UtilsService
   ) {
     this.authService.onUserChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.refreshCurrentUser();
@@ -198,13 +196,5 @@ export class UserService implements OnDestroy {
   isEqual(u1: string | User | undefined, u2: string | User | undefined): boolean {
     if (u1 == undefined || u2 == undefined) return false;
     return this.idToUser(u1)._id == this.idToUser(u2)._id;
-  }
-
-  balance(uId: string | User | undefined): string {
-    if (uId == undefined) return '0,00';
-    return this.idToUser(uId).transactions.reduce(
-      (sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)),
-      '0,00'
-    );
   }
 }

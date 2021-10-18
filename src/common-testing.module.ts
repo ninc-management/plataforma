@@ -82,6 +82,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { PagesModule } from 'app/pages/pages.module';
 import { CommonModule } from '@angular/common';
 import { TeamService } from 'app/shared/services/team.service';
+import { FinancialService } from 'app/shared/services/financial.service';
 
 const roles = Object.values(Permissions);
 
@@ -211,6 +212,7 @@ const PROVIDERS = [
   ContractorService,
   ContractService,
   DepartmentService,
+  FinancialService,
   InvoiceService,
   MetricsService,
   MsalBroadcastService,

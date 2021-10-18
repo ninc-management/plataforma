@@ -26,11 +26,18 @@ export class UserTransactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.currentUser = user
-      this.teamData = of(this.teamService.userToTeamsMembersFiltered(this.currentUser))
-    })
+      this.currentUser = user;
+      this.teamData = of(this.teamService.userToTeamsMembersFiltered(this.currentUser));
+    });
   }
 
   registerTransaction(): void {
+    const teamTransaction = new TeamFinancialTransaction();
+    teamTransaction.from = this.currentUser;
+    teamTransaction.to = this.currentDestination;
+    teamTransaction.description = this.transaction.description;
+    teamTransaction.value = this.transaction.value;
+    this.currentDestination.transactions.push(cloneDeep(teamTransaction));
+    this.teamService.editTeam(this.currentDestination);
   }
 }
