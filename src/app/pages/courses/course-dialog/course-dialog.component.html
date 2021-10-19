@@ -36,6 +36,7 @@
         <ngx-participant-item
           *ngIf="componentType == dTypes.PARTICIPANT"
           (submit)="dismiss()"
+          [iCourse]="course"
           [iParticipant]="participant"
         ></ngx-participant-item>
       </nb-card-body>
