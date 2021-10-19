@@ -32,6 +32,7 @@
           [source]="source"
           (create)="openDialog({})"
           (edit)="openDialog($event)"
+          (delete)="openParticipantDialog($event)"
         ></ng2-smart-table>
       </ng-template>
       <ng-template #phone>
