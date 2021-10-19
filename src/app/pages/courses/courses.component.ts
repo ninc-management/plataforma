@@ -7,7 +7,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CourseDialogComponent } from './course-dialog/course-dialog.component';
+import { CourseDialogComponent, DIALOG_TYPES } from './course-dialog/course-dialog.component';
 
 @Component({
   selector: 'ngx-courses',
@@ -118,7 +118,22 @@ export class CoursesComponent implements OnInit {
       autoFocus: false,
     });
   }
+
   pageWidth(): number {
     return window.innerWidth;
+  }
+
+  openParticipantDialog(event: { data: Course }): void {
+    this.dialogService.open(CourseDialogComponent, {
+      context: {
+        title: 'REGISTRAR PARTICIPANTE',
+        course: event.data,
+        componentType: DIALOG_TYPES.PARTICIPANT,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }

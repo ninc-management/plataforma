@@ -45,7 +45,7 @@ export class CourseService {
     return this.courses$;
   }
 
-  saveCourse(course: Course) {
+  saveCourse(course: Course): void {
     const req = {
       course: course,
     };
@@ -64,5 +64,12 @@ export class CourseService {
       .map((course) => course.participants)
       .flat();
     return tmp[tmp.findIndex((el) => el._id === id)];
+  }
+
+  editCourse(course: Course): void {
+    const req = {
+      course: course,
+    };
+    this.http.post('/api/course/update', req).pipe(take(1)).subscribe();
   }
 }
