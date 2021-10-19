@@ -59,7 +59,7 @@
           fullWidth
           fieldSize="large"
           [readonly]="true"
-          [attr.aria-invalid]="price.invalid && price.touched ? true : null"
+          [attr.aria-invalid]="speaker.invalid && speaker.touched ? true : null"
         />
       </div>
     </div>
@@ -144,7 +144,7 @@
         />
       </div>
     </div>
-    <div class="col-md-12">
+    <div class="col-md-12" *ngIf="editing == true || course.participants.length == 0">
       <button
         nbButton
         type="button"
@@ -160,20 +160,16 @@
 
     <nb-list style="width: 100%; padding: 10px 0">
       <nb-list-item *ngFor="let participant of course.participants; let i = index; trackBy: utils.trackByIndex">
-        <div class="row irow">
-          <div class="col-10 col-md-11">
-            {{ userService.idToName(participant.name) }}
-          </div>
-          <div class="col-2 col-md-1" style="text-align: right">
-            <nb-icon
-              class="xIcon"
-              status="basic"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="course.participants.splice(i, 1)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
+        <div class="col-10 col-md-11">{{ participant.name }}</div>
+        <div class="col-2 col-md-1" style="text-align: right">
+          <nb-icon
+            class="xIcon"
+            status="basic"
+            icon="trash-2-outline"
+            pack="eva"
+            (click)="course.participants.splice(i, 1)"
+            [options]="{ animation: { type: 'shake' } }"
+          ></nb-icon>
         </div>
       </nb-list-item>
     </nb-list>

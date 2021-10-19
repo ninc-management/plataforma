@@ -56,6 +56,7 @@ export class CourseItemComponent implements OnInit {
       .open(CourseDialogComponent, {
         context: {
           title: 'REGISTRAR' + this.editing ? 'PARTICIPANTE' : 'MINISTRANTE',
+          course: this.course,
           componentType: DIALOG_TYPES.PARTICIPANT,
         },
         dialogClass: 'my-dialog',
@@ -65,6 +66,9 @@ export class CourseItemComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
+        if (this.course.participants.length != 0) {
+          this.course.speaker = cloneDeep(this.course.participants[0]);
+        }
         this.isDialogBlocked.next(false);
       });
   }
