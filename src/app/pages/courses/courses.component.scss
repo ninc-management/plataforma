@@ -35,4 +35,10 @@
   .icon-file-csv::before {
     content: '\e900';
   }
+
+  .coursesTable {
+    .ng2-smart-action-delete-delete:hover {
+      color: nb-theme(icon-success-color) !important;
+    }
+  }
 }
