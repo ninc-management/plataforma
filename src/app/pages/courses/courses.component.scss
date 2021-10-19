@@ -13,29 +13,6 @@
 }
 
 ::ng-deep {
-  .addParticipantIcon {
-    font-size: 1.4rem;
-    margin-left: 0.25rem;
-  }
-
-  .icon-file-csv {
-    font-family: 'icons' !important;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-    font-size: 2.25rem;
-
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  .icon-file-csv::before {
-    content: '\e900';
-  }
-
   .coursesTable {
     .ng2-smart-action-delete-delete:hover {
       color: nb-theme(icon-success-color) !important;
