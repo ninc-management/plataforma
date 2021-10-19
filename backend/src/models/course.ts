@@ -10,13 +10,13 @@ export class CourseParticipant {
   @prop({ required: true })
   isSpeaker!: boolean;
 
-  @prop({required: true })
+  @prop({ required: true })
   email!: string;
 
-  @prop({required: true })
+  @prop({ required: true })
   date!: Date;
 
-  @prop({required: true })
+  @prop({ required: true })
   phone!: string;
 
   @prop({ required: true })
@@ -40,8 +40,8 @@ export class Course extends Base<string> {
   @prop({ required: true })
   courseHours!: string;
 
-  @prop({ required: true, ref: () => User })
-  speaker: Ref<User>;
+  @prop({ required: true, ref: () => CourseParticipant })
+  speaker: Ref<CourseParticipant>;
 
   @prop({ required: true })
   startDate!: Date;
