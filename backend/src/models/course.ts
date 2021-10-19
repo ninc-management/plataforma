@@ -1,9 +1,8 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { User } from './user';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
-export class CourseParticipant {
+export class CourseParticipant extends Base<string> {
   @prop({ required: true })
   name!: string;
 

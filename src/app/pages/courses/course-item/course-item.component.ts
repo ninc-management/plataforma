@@ -27,7 +27,14 @@ export class CourseItemComponent implements OnInit {
   participantsSearch = '';
   avaliableSpeakers: Observable<User[]> = of([]);
   avaliableParticipants: Observable<User[]> = of([]);
-  currentParticipant = new CourseParticipant();
+
+  get speakerName() {
+    if (this.iCourse._id != undefined) {
+      return this.courseService.idToParticipantName(this.course.speaker);
+    } else {
+      return (this.course.speaker as any)?.name;
+    }
+  }
 
   constructor(
     private courseService: CourseService,
@@ -42,8 +49,7 @@ export class CourseItemComponent implements OnInit {
   }
 
   createCourse() {
-    console.log(this.course);
-    // this.courseService.saveCourse(this.course);
+    this.courseService.saveCourse(this.course);
   }
 
   addSpeaker() {
