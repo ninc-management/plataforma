@@ -26,6 +26,7 @@
       ></div>
       <ng-template #table>
         <ng2-smart-table
+          class="coursesTable"
           *ngIf="!utils.isPhone(); else phone"
           #smartTable
           [settings]="settings"
