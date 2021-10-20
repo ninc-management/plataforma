@@ -8,3 +8,9 @@
     border-top: 1px solid nb-theme(text-hint-color);
   }
 }
+
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

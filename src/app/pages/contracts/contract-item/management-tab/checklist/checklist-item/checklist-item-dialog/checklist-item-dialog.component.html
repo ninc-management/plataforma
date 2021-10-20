@@ -20,10 +20,7 @@
             fullWidth
             size="large"
           >
-            <nb-option
-              *ngFor="let status of avaliableActionStatus"
-              [value]="status"
-            >
+            <nb-option *ngFor="let status of avaliableActionStatus" [value]="status">
               {{ status }}
             </nb-option>
           </nb-select>
@@ -41,40 +38,7 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <form
-          (ngSubmit)="updateItemNotes()"
-          #form="ngForm"
-          aria-labelledby="title"
-        >
-          <div class="form-control-group">
-            <label class="label" for="item-description">Descrição:</label>
-            <textarea
-              nbInput
-              [(ngModel)]="checklistItem.description"
-              id="item-description"
-              name="item-description"
-              fullWidth
-              fieldSize="large"
-            ></textarea>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <button
-                nbButton
-                fullWidth
-                status="primary"
-                size="large"
-                [disabled]="!form.valid || !form.dirty"
-              >
-                Atualizar
-              </button>
-            </div>
-          </div>
-        </form>
-        <ngx-action-list
-          [contract]="contract"
-          [itemIndex]="itemIndex"
-        ></ngx-action-list>
+        <ngx-action-list [contract]="contract" [itemIndex]="itemIndex"></ngx-action-list>
       </nb-card-body>
     </nb-card>
   </div>
