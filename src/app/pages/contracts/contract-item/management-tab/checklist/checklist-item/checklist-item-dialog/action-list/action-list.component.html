@@ -1,75 +1,70 @@
-<div class="row mt-3">
-  <div class="col-auto">
-    <h6>Ações</h6>
+<form #form="ngForm" (ngSubmit)="updateAction()" aria-labelledby="title">
+  <div class="form-control-group">
+    <label class="label" for="item-description">Descrição:</label>
+    <textarea
+      nbInput
+      [(ngModel)]="checklistItem.description"
+      id="item-description"
+      name="item-description"
+      fullWidth
+      fieldSize="large"
+    ></textarea>
   </div>
-  <div class="col">
-    <hr />
+  <div class="row mt-3">
+    <div class="col-auto">
+      <h6>Ações</h6>
+    </div>
+    <div class="col">
+      <hr />
+    </div>
   </div>
-</div>
-<form #form="ngForm" aria-labelledby="title">
   <div class="row">
     <div class="col-4">
       <label class="label" for="input-action-name">Ação:</label>
       <input
         nbInput
         [(ngModel)]="action.name"
-        #nameInput="ngModel"
-        id="input-action-name"
-        name="action-name"
+        #newNameInput="ngModel"
+        id="new-action-name"
+        name="new-action-name"
         fullWidth
         fieldSize="large"
-        [required]="validation.checklist.action.name"
-        [status]="
-          nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'
-        "
-        [attr.aria-invalid]="
-          nameInput.invalid && nameInput.touched ? true : null
-        "
+        [status]="newNameInput.dirty ? (newNameInput.invalid ? 'danger' : 'success') : 'basic'"
+        [attr.aria-invalid]="newNameInput.invalid && newNameInput.touched ? true : null"
       />
     </div>
     <div class="col-3">
       <label class="label" for="input-action-range">Prazo:</label>
       <input
         nbInput
-        [(ngModel)]="itemRange"
-        #rangeInput="ngModel"
-        id="input-action-range"
-        name="action-range"
+        [(ngModel)]="newActionRange"
+        #newRangeInput="ngModel"
+        id="new-action-range"
+        name="new-action-range"
         fullWidth
         fieldSize="large"
-        [required]="validation.checklist.action.dateRange"
         [nbDatepicker]="rangePicker"
-        [status]="
-          rangeInput.dirty
-            ? rangeInput.invalid
-              ? 'danger'
-              : 'success'
-            : 'basic'
-        "
-        [attr.aria-invalid]="
-          rangeInput.invalid && rangeInput.touched ? true : null
-        "
+        [status]="newRangeInput.dirty ? (newRangeInput.invalid ? 'danger' : 'success') : 'basic'"
+        [attr.aria-invalid]="newRangeInput.invalid && newRangeInput.touched ? true : null"
       />
-      <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
+
+      <nb-rangepicker #rangePicker></nb-rangepicker>
     </div>
     <div class="col-4">
-      <label class="label" for="input-action-responsible">Responsável:</label>
+      <label class="label" for="new-action-responsible">Responsável:</label>
       <nb-completer
         [(ngModel)]="responsibleSearch"
-        #invoiceModelList="ngModel"
+        #newActionResponsible="ngModel"
         (selected)="action.responsible = $event"
-        id="input-action-responsible"
-        name="action-responsible"
+        id="new-action-responsible"
+        name="new-action-responsible"
         inputName="actionResponsible"
         nameField="fullName"
         [data$]="avaliableResponsibles"
         [placeholder]="'Digite o nome do responsável pela ação'"
         [fullWidth]="true"
         [fieldSize]="'large'"
-        [required]="validation.checklist.action.responsible"
-        [textNoResults]="
-          'Não foi possível achar um colaborador com o nome digitado'
-        "
+        [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
         [minSearchLength]="0"
       ></nb-completer>
     </div>
@@ -82,22 +77,93 @@
         size="large"
         style="margin-top: 28px"
         (click)="registerAction()"
-        [disabled]="!form.valid || !form.dirty"
+        [disabled]="!newNameInput.value || !newRangeInput.value || !newActionResponsible.value"
       >
         +
       </button>
     </div>
   </div>
+  <nb-list class="overflow-hidden py-3">
+    <nb-list-item class="pt-3 px-0" *ngFor="let item of actionList; let i = index">
+      <div class="row">
+        <div class="col-4">
+          <input
+            nbInput
+            [(ngModel)]="actionList[i].name"
+            #actionName="ngModel"
+            id="action-name-{{ i }}"
+            name="action-name-{{ i }}"
+            fullWidth
+            fieldSize="large"
+            [readonly]="actionList[i].isFinished"
+          />
+        </div>
+        <div class="col-3" *ngIf="!actionList[i].isFinished">
+          <input
+            nbInput
+            [(ngModel)]="actionList[i].range"
+            #actionRange="ngModel"
+            id="action-range-{{ i }}"
+            name="action-range-{{ i }}"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="rangePicker"
+          />
+          <nb-rangepicker #rangePicker [min]="yesterday"></nb-rangepicker>
+        </div>
+        <div class="col-3" *ngIf="actionList[i].isFinished">
+          <input
+            nbInput
+            [ngModel]="getFormattedRange(actionList[i].range)"
+            #finishedActionRange="ngModel"
+            id="action-range-{{ i }}"
+            name="action-range-{{ i }}"
+            fullWidth
+            fieldSize="large"
+            [readonly]="actionList[i].isFinished"
+          />
+        </div>
+        <div class="col-3">
+          <input
+            nbInput
+            [ngModel]="userService.idToName(actionList[i].responsible)"
+            #actionResponsible="ngModel"
+            id="action-responsible-{{ i }}"
+            name="action-responsible-{{ i }}"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
+        </div>
+        <div class="col-1 btn-container flex-column">
+          <label class="label">Finalizada?</label>
+          <nb-checkbox
+            [(ngModel)]="actionList[i].isFinished"
+            id="action-checked-{{ i }}"
+            name="action-checked-{{ i }}"
+            #actionChecked="ngModel"
+            [checked]="actionList[i].isFinished"
+          ></nb-checkbox>
+        </div>
+        <div class="col-1 btn-container">
+          <nb-icon
+            *ngIf="!actionList[i].isFinished"
+            class="xIcon"
+            status="danger"
+            icon="trash-2-outline"
+            pack="eva"
+            [options]="{ animation: { type: 'shake' } }"
+            (click)="removeAction(i)"
+          ></nb-icon>
+        </div>
+      </div>
+    </nb-list-item>
+  </nb-list>
+  <div class="row">
+    <div class="col-12">
+      <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">
+        Atualizar
+      </button>
+    </div>
+  </div>
 </form>
-<nb-list class="overflow-hidden py-3">
-  <nb-list-item
-    class="pt-3 px-0"
-    *ngFor="let item of contract.checklist[itemIndex].actionList; let i = index"
-  >
-    <ngx-action-item
-      [action]="item"
-      (actionRemoved)="removeAction(i)"
-      class="w-100"
-    ></ngx-action-item>
-  </nb-list-item>
-</nb-list>
