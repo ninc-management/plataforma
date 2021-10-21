@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Course, CourseParticipant } from '@models/course';
+import { Course } from '@models/course';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 
@@ -44,15 +44,19 @@ export class CourseItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.iCourse._id != undefined) {
+      this.course = cloneDeep(this.iCourse);
+      this.course.startDate = new Date(this.course.startDate);
+    }
     this.avaliableSpeakers = this.userService.getUsers();
     this.avaliableParticipants = this.userService.getUsers();
   }
 
-  createCourse() {
+  createCourse(): void {
     this.courseService.saveCourse(this.course);
   }
 
-  addSpeaker() {
+  addSpeaker(): void {
     console.log('added');
   }
 
