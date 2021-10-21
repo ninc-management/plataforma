@@ -13,6 +13,19 @@
       <nb-card-header>
         {{ title }}
         <div class="buttons">
+          <a
+            *ngIf="course._id != undefined"
+            nbButton
+            ghost
+            target="_blank"
+            nbTooltip="Exportar para CSV"
+            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="exportCSV()"
+          >
+            <i class="icon-file-csv" style="font-size: 1.25rem"></i>
+          </a>
           <button
             nbButton
             ghost

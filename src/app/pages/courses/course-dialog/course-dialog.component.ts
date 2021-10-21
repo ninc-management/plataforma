@@ -35,4 +35,14 @@ export class CourseDialogComponent extends BaseDialogComponent implements OnInit
   dismiss(): void {
     super.dismiss();
   }
+
+  exportCSV(): void {
+    let csv = 'Nome,Participacao\r\n';
+    csv += this.course.participants
+      .map((participant) => participant.name + ',' + (participant.isSpeaker ? 'Ministrante' : 'Ouvinte'))
+      .join('\r\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'participantes-' + this.course.name.replace(/\s+/g, '-').toLowerCase() + '.csv');
+  }
 }
