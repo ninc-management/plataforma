@@ -1,22 +1,40 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { Contract, ContractChecklistItem } from '@models/contract';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { ChecklistItemAction, Contract, ContractChecklistItem } from '@models/contract';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { User } from '@models/user';
+import { NbCalendarRange, NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
+import { Observable, of } from 'rxjs';
+
+interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+interface ActionItem extends ChecklistItemAction {
+  range?: DateRange;
+}
 
 @Component({
   selector: 'ngx-checklist-item-dialog',
   templateUrl: './checklist-item-dialog.component.html',
   styleUrls: ['./checklist-item-dialog.component.scss'],
 })
-export class ChecklistItemDialogComponent
-  extends BaseDialogComponent
-  implements OnInit
-{
+export class ChecklistItemDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() itemIndex!: number;
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
+  action: ActionItem = new ChecklistItemAction();
+  newActionRange!: NbCalendarRange<Date>;
+  responsibleSearch = '';
+  avaliableResponsibles: Observable<User[]> = of([]);
+  actionList!: ActionItem[];
+  invoice: Invoice = new Invoice();
 
   avaliableActionStatus = [
     'Briefing',
@@ -35,19 +53,44 @@ export class ChecklistItemDialogComponent
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private utils: UtilsService,
+    private invoiceService: InvoiceService,
+    public userService: UserService
   ) {
     super(derivedDocument, derivedRef);
   }
 
   ngOnInit(): void {
+    if (this.contract.invoice) {
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    }
     if (this.itemIndex !== undefined) {
       this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
+      this.actionList = cloneDeep(this.checklistItem.actionList);
+      this.actionList = this.actionList.map((action) => {
+        action.range = {
+          start: new Date(action.startDate),
+          end: new Date(action.endDate),
+        } as DateRange;
+        return action;
+      });
     }
+    this.avaliableResponsibles = this.getAvaliableResponsibles();
   }
 
   dismiss(): void {
     super.dismiss();
+  }
+
+  getAvaliableResponsibles(): Observable<User[]> {
+    return of(
+      this.invoice.team
+        .map((member: InvoiceTeamMember) => {
+          return member.user ? this.userService.idToUser(member.user) : undefined;
+        })
+        .filter((user: User | undefined): user is User => user !== undefined)
+    );
   }
 
   updateItemNotes(): void {
@@ -63,5 +106,40 @@ export class ChecklistItemDialogComponent
       this.contract.checklist[this.itemIndex] = this.checklistItem;
       this.contractService.editContract(this.contract);
     }
+  }
+
+  registerAction(): void {
+    this.action.startDate = this.newActionRange.start;
+    this.action.range = {
+      start: this.newActionRange.start,
+    } as DateRange;
+    if (this.newActionRange.end) {
+      this.action.endDate = this.newActionRange.end;
+      this.action.range.end = this.newActionRange.end;
+    }
+
+    if (this.itemIndex !== undefined) {
+      this.actionList.push(cloneDeep(this.action));
+      this.action = new ChecklistItemAction();
+      this.responsibleSearch = '';
+      this.newActionRange = { start: new Date() };
+    }
+  }
+
+  removeAction(index: number): void {
+    this.actionList.splice(index, 1);
+  }
+
+  updateAction(): void {
+    this.checklistItem.actionList = this.actionList;
+    this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
+    this.contractService.editContract(this.contract);
+  }
+
+  getFormattedRange(range: DateRange): string | undefined {
+    if (range.end) {
+      return this.utils.formatDate(range.start) + ' - ' + this.utils.formatDate(range.end);
+    }
+    return this.utils.formatDate(range.start);
   }
 }
