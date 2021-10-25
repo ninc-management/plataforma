@@ -22,6 +22,10 @@ export class ParticipantItemComponent implements OnInit {
   }
 
   createParticipant(): void {
+    if (this.iCourse.participants.length == 0) {
+      this.participant.isSpeaker = true;
+    }
+    this.iParticipant = cloneDeep(this.participant);
     this.iCourse.participants.push(cloneDeep(this.participant));
     this.courseService.editCourse(this.iCourse);
   }

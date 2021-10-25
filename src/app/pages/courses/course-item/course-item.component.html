@@ -1,4 +1,4 @@
-<form (ngSubmit)="createCourse()" #form="ngForm" aria-labelledby="title">
+<form (ngSubmit)="registerCourse()" #form="ngForm" aria-labelledby="title">
   <div class="row">
     <div class="col-9">
       <div class="form-control-group">
@@ -133,12 +133,7 @@
           fullWidth
           fieldSize="large"
           [required]="validation.price.required"
-          [brmasker]="{
-            money: true,
-            thousand: '.',
-            decimalCaracter: ',',
-            decimal: 2
-          }"
+          [brmasker]="{ money: true, thousand: '.', decimalCaracter: ',', decimal: 2 }"
           [status]="price.dirty ? (price.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="price.invalid && price.touched ? true : null"
         />
@@ -158,9 +153,14 @@
       </button>
     </div>
 
+    <div class="col-12">
+      <label class="label mt-3 mb-0">Participantes</label>
+    </div>
     <nb-list style="width: 100%; padding: 10px 0">
       <nb-list-item *ngFor="let participant of course.participants; let i = index; trackBy: utils.trackByIndex">
-        <div class="col-10 col-md-11">{{ participant.name }}</div>
+        <div class="col-10 col-md-11">
+          {{ participant.name }} - {{ participant.isSpeaker ? 'Ministrante' : 'Ouvinte' }}
+        </div>
         <div class="col-2 col-md-1" style="text-align: right">
           <nb-icon
             class="xIcon"

@@ -39,8 +39,8 @@ export class Course extends Base<string> {
   @prop({ required: true })
   courseHours!: string;
 
-  @prop({ required: true, ref: () => CourseParticipant })
-  speaker: Ref<CourseParticipant>;
+  @prop({ required: true, type: () => CourseParticipant })
+  speaker!: CourseParticipant;
 
   @prop({ required: true })
   startDate!: Date;

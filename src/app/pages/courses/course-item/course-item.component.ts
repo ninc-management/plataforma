@@ -28,7 +28,7 @@ export class CourseItemComponent implements OnInit {
   avaliableSpeakers: Observable<User[]> = of([]);
   avaliableParticipants: Observable<User[]> = of([]);
 
-  get speakerName() {
+  get speakerName(): string {
     if (this.iCourse._id != undefined) {
       return this.courseService.idToParticipantName(this.course.speaker);
     } else {
@@ -47,13 +47,18 @@ export class CourseItemComponent implements OnInit {
     if (this.iCourse._id != undefined) {
       this.course = cloneDeep(this.iCourse);
       this.course.startDate = new Date(this.course.startDate);
+      this.editing = true;
     }
     this.avaliableSpeakers = this.userService.getUsers();
     this.avaliableParticipants = this.userService.getUsers();
   }
 
-  createCourse(): void {
-    this.courseService.saveCourse(this.course);
+  registerCourse(): void {
+    if (this.iCourse._id != undefined) {
+      this.courseService.editCourse(this.course);
+    } else {
+      this.courseService.saveCourse(this.course);
+    }
   }
 
   addSpeaker(): void {
@@ -76,9 +81,6 @@ export class CourseItemComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        if (this.course.participants.length != 0) {
-          this.course.speaker = cloneDeep(this.course.participants[0]);
-        }
         this.isDialogBlocked.next(false);
       });
   }
