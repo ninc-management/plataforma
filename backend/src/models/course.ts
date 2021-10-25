@@ -7,7 +7,7 @@ export class CourseParticipant extends Base<string> {
   name!: string;
 
   @prop({ required: true })
-  isSpeaker: boolean = false;
+  isSpeaker = false;
 
   @prop({ required: true })
   email!: string;
