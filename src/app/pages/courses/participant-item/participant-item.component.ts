@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Course, CourseParticipant } from '@models/course';
 import * as participant_validation from 'app/shared/participant-validation.json';
-import { CourseService } from 'app/shared/services/course.service';
 import { cloneDeep } from 'lodash';
 
 @Component({
@@ -15,14 +14,12 @@ export class ParticipantItemComponent implements OnInit {
   participant = new CourseParticipant();
   validation = (participant_validation as any).default;
 
-  constructor(private courseService: CourseService) {}
+  constructor() {}
 
-  ngOnInit(): void {
-    this.participant = cloneDeep(this.iParticipant);
-  }
+  ngOnInit(): void {}
 
-  createParticipant(): void {
+  createParticipant() {
+    this.iParticipant = cloneDeep(this.participant);
     this.iCourse.participants.push(cloneDeep(this.participant));
-    this.courseService.editCourse(this.iCourse);
   }
 }
