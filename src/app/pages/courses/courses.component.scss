@@ -1,6 +1,11 @@
 @import 'app/@theme/styles/themes';
 
 ::ng-deep {
+  .addParticipantIcon {
+    font-size: 1.4rem;
+    margin-left: 0.25rem;
+  }
+
   .coursesTable {
     .ng2-smart-action-delete-delete:hover {
       color: nb-theme(icon-success-color) !important;

@@ -41,7 +41,7 @@ export class CoursesComponent implements OnInit {
       cancelButtonContent: '<i class="nb-close"></i>',
     },
     delete: {
-      deleteButtonContent: '<i class="eva eva-person-add-outline"></i>',
+      deleteButtonContent: '<i class="fa fa-user-plus addParticipantIcon"></i>',
       confirmDelete: false,
     },
     actions: {
