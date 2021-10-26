@@ -1,6 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Contract, ContractChecklistItem } from '@models/contract';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { User } from '@models/user';
+import { NbCalendarRange } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -8,6 +11,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays } from 'date-fns';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -20,8 +24,26 @@ export class ManagementTabComponent implements OnInit {
   invoice: Invoice = new Invoice();
   responsible = '';
   deadline!: Date | undefined;
+  itemRange!: NbCalendarRange<Date>;
+  newChecklistItem = new ContractChecklistItem();
+  itemResponsibleSearch = '';
+  avaliableResponsibles: Observable<User[]> = of([]);
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
+
+  avaliableItemStatus = [
+    'Briefing',
+    'Anteprojeto',
+    'Estudo preliminar',
+    'Projeto básico',
+    'Projeto executivo',
+    'Campo',
+    'Prioridade',
+    'Análise externa',
+    'Espera',
+    'Finalização',
+    'Concluído',
+  ];
 
   constructor(
     private invoiceService: InvoiceService,
@@ -37,6 +59,7 @@ export class ManagementTabComponent implements OnInit {
     }
     this.responsible = this.userService.idToName(this.invoice.author);
     this.deadline = this.contractService.getDeadline(this.contract);
+    this.avaliableResponsibles = this.getAvaliableResponsibles();
   }
 
   tooltipText(): string {
@@ -88,5 +111,32 @@ export class ManagementTabComponent implements OnInit {
       return +((progress / total) * 100).toFixed(2);
     }
     return 0;
+  }
+
+  getAvaliableResponsibles(): Observable<User[]> {
+    return of(
+      this.invoice.team
+        .map((member: InvoiceTeamMember) => {
+          return member.user ? this.userService.idToUser(member.user) : undefined;
+        })
+        .filter((user: User | undefined): user is User => user !== undefined)
+    );
+  }
+
+  registerChecklistItem(): void {
+    this.newChecklistItem.startDate = this.itemRange.start;
+    if (this.itemRange.end) {
+      this.newChecklistItem.endDate = this.itemRange.end;
+    }
+    this.contract.checklist.push(this.newChecklistItem);
+    this.contractService.editContract(this.contract);
+    this.newChecklistItem = new ContractChecklistItem();
+    this.itemResponsibleSearch = '';
+    this.itemRange = { start: new Date() };
+  }
+
+  removeChecklistItem(index: number): void {
+    this.contract.checklist.splice(index, 1);
+    this.contractService.editContract(this.contract);
   }
 }
