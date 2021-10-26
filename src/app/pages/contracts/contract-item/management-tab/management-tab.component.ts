@@ -3,15 +3,27 @@ import { NgForm } from '@angular/forms';
 import { Contract, ContractChecklistItem } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
-import { NbCalendarRange } from '@nebular/theme';
+import { NbCalendarRange, NbDialogService } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { differenceInCalendarDays } from 'date-fns';
-import { Observable, of } from 'rxjs';
+import { differenceInCalendarDays, isBefore } from 'date-fns';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { ChecklistItemDialogComponent } from './checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
+
+interface DateRange {
+  start: Date;
+  end: Date;
+}
+
+interface Item extends ContractChecklistItem {
+  range?: DateRange;
+}
 
 @Component({
   selector: 'ngx-management-tab',
@@ -20,6 +32,7 @@ import { Observable, of } from 'rxjs';
 })
 export class ManagementTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   validation = (contract_validation as any).default;
   invoice: Invoice = new Invoice();
   responsible = '';
@@ -28,6 +41,7 @@ export class ManagementTabComponent implements OnInit {
   newChecklistItem = new ContractChecklistItem();
   itemResponsibleSearch = '';
   avaliableResponsibles: Observable<User[]> = of([]);
+  checklist!: Item[];
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
@@ -46,11 +60,12 @@ export class ManagementTabComponent implements OnInit {
   ];
 
   constructor(
+    public userService: UserService,
+    public utils: UtilsService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
-    private userService: UserService,
-    public utils: UtilsService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private dialogService: NbDialogService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +75,14 @@ export class ManagementTabComponent implements OnInit {
     this.responsible = this.userService.idToName(this.invoice.author);
     this.deadline = this.contractService.getDeadline(this.contract);
     this.avaliableResponsibles = this.getAvaliableResponsibles();
+    this.checklist = cloneDeep(this.contract.checklist);
+    this.checklist = this.checklist.map((item) => {
+      item.range = {
+        start: new Date(item.startDate),
+        end: new Date(item.endDate),
+      } as DateRange;
+      return item;
+    });
   }
 
   tooltipText(): string {
@@ -138,5 +161,55 @@ export class ManagementTabComponent implements OnInit {
   removeChecklistItem(index: number): void {
     this.contract.checklist.splice(index, 1);
     this.contractService.editContract(this.contract);
+  }
+
+  getItemTotalDays(item: ContractChecklistItem): number {
+    return differenceInCalendarDays(new Date(item.endDate), new Date(item.startDate));
+  }
+
+  getItemRemainingDays(item: ContractChecklistItem): number {
+    const today = new Date();
+    const itemStartDate = new Date(item.startDate);
+    const end = new Date(item.endDate);
+    if (isBefore(today, itemStartDate)) {
+      const difference = differenceInCalendarDays(end, itemStartDate);
+      return difference >= 0 ? difference : 0;
+    }
+
+    const difference = differenceInCalendarDays(end, today);
+    return difference >= 0 ? difference : 0;
+  }
+
+  getPercentualItemProgress(item: ContractChecklistItem): number {
+    const total = this.getItemTotalDays(item);
+    const remaining = this.getItemRemainingDays(item);
+    if (total != 0) {
+      const progress = total - remaining;
+      return +((progress / total) * 100).toFixed(2);
+    }
+    return 0;
+  }
+
+  openItemDialog(index: number): void {
+    this.isDialogBlocked.next(true);
+    this.dialogService
+      .open(ChecklistItemDialogComponent, {
+        context: {
+          contract: this.contract,
+          itemIndex: index,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => {
+        this.isDialogBlocked.next(false);
+      });
+  }
+
+  removeItem(index: number): void {
+    this.checklist.splice(index, 1);
   }
 }
