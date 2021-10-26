@@ -21,14 +21,7 @@ export class ManagementTabComponent implements OnInit {
   responsible = '';
   deadline!: Date | undefined;
 
-  avaliableStatus = [
-    'Produção',
-    'Análise Externa',
-    'Espera',
-    'Prioridade',
-    'Finalização',
-    'Concluído',
-  ];
+  avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
   constructor(
     private invoiceService: InvoiceService,
