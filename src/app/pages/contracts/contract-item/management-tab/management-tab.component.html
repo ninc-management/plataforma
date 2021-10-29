@@ -220,7 +220,6 @@
             <input
               nbInput
               [(ngModel)]="checklist[i].name"
-              (click)="openItemDialog(i)"
               #nameInput="ngModel"
               id="item-name-{{ i }}"
               name="item-name-{{ i }}"
@@ -231,7 +230,7 @@
               [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
             />
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <input
               nbInput
               [(ngModel)]="checklist[i].range"
@@ -276,7 +275,15 @@
               </nb-option>
             </nb-select>
           </div>
-          <div class="col-1 trash-icon-container">
+          <div class="col-1 icon-container">
+            <nb-icon
+              icon="external-link-outline"
+              pack="eva"
+              [options]="{ animation: { type: 'pulse' } }"
+              (click)="openItemDialog(i)"
+            ></nb-icon>
+          </div>
+          <div class="col-1 icon-container">
             <nb-icon
               class="xIcon"
               status="danger"
