@@ -213,7 +213,7 @@
       </div>
     </div>
 
-    <nb-list class="overflow-hidden py-3">
+    <nb-list class="row overflow-hidden py-3">
       <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of checklist; let i = index">
         <div class="row w-100">
           <div class="col-3">
@@ -287,7 +287,7 @@
             ></nb-icon>
           </div>
         </div>
-        <div class="row no-gutters w-100">
+        <div class="row w-100">
           <div class="col-12 mt-3">
             <nb-progress-bar
               [status]="getPercentualItemProgress(checklist[i]) == 100 ? 'success' : 'primary'"

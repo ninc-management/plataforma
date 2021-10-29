@@ -54,8 +54,6 @@ import { CoursesComponent } from './courses/courses.component';
 import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
 import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
-import { ChecklistComponent } from './contracts/contract-item/management-tab/checklist/checklist.component';
-import { ChecklistItemComponent } from './contracts/contract-item/management-tab/checklist/checklist-item/checklist-item.component';
 import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
 
 @NgModule({
@@ -116,8 +114,6 @@ import { ChecklistItemDialogComponent } from './contracts/contract-item/manageme
     ReportConfigDialogComponent,
     ResourceItemComponent,
     ManagementTabComponent,
-    ChecklistComponent,
-    ChecklistItemComponent,
     ChecklistItemDialogComponent,
   ],
 })
