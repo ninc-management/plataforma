@@ -132,7 +132,7 @@
                     [readonly]="actionList[i].isFinished"
                   />
                 </div>
-                <div class="col-3">
+                <div class="col-3" *ngIf="!actionList[i].isFinished">
                   <input
                     nbInput
                     [(ngModel)]="actionList[i].range"
@@ -144,6 +144,18 @@
                     [nbDatepicker]="rangePicker"
                   />
                   <nb-rangepicker #rangePicker></nb-rangepicker>
+                </div>
+                <div class="col-3" *ngIf="actionList[i].isFinished">
+                  <input
+                    nbInput
+                    [ngModel]="getFormattedRange(actionList[i].range)"
+                    #finishedActionRange="ngModel"
+                    id="action-range-{{ i }}"
+                    name="action-range-{{ i }}"
+                    fullWidth
+                    fieldSize="large"
+                    [readonly]="actionList[i].isFinished"
+                  />
                 </div>
                 <div class="col-3">
                   <input
