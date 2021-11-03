@@ -101,6 +101,7 @@ export class ManagementTabComponent implements OnInit {
   }
 
   updateContractManagement(): void {
+    this.contract.checklist = cloneDeep(this.checklist);
     this.contractService.editContract(this.contract);
   }
 
@@ -150,8 +151,7 @@ export class ManagementTabComponent implements OnInit {
     if (this.itemRange.end) {
       this.newChecklistItem.endDate = this.itemRange.end;
     }
-    this.contract.checklist.push(this.newChecklistItem);
-    this.contractService.editContract(this.contract);
+    this.checklist.push(this.newChecklistItem);
     this.newChecklistItem = new ContractChecklistItem();
     this.itemResponsibleSearch = '';
     this.itemRange = { start: new Date() };
