@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { ChecklistItemAction, Contract, ContractChecklistItem } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
 import { NbCalendarRange, NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
@@ -11,15 +11,6 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { Observable, of } from 'rxjs';
 
-interface DateRange {
-  start: Date;
-  end: Date;
-}
-
-interface ActionItem extends ChecklistItemAction {
-  range?: DateRange;
-}
-
 @Component({
   selector: 'ngx-checklist-item-dialog',
   templateUrl: './checklist-item-dialog.component.html',
@@ -28,13 +19,12 @@ interface ActionItem extends ChecklistItemAction {
 export class ChecklistItemDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() itemIndex!: number;
+  invoice: Invoice = new Invoice();
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
-  action: ActionItem = new ChecklistItemAction();
-  newActionRange!: NbCalendarRange<Date>;
+  actionList!: ChecklistItemAction[];
+  newAction: ChecklistItemAction = new ChecklistItemAction();
   responsibleSearch = '';
   avaliableResponsibles: Observable<User[]> = of([]);
-  actionList!: ActionItem[];
-  invoice: Invoice = new Invoice();
 
   avaliableActionStatus = [
     'Briefing',
@@ -69,10 +59,8 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
       this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
       this.actionList = cloneDeep(this.checklistItem.actionList);
       this.actionList = this.actionList.map((action) => {
-        action.range = {
-          start: new Date(action.startDate),
-          end: new Date(action.endDate),
-        } as DateRange;
+        action.range.start = new Date(action.range.start);
+        if (action.range.end) action.range.end = new Date(action.range.end);
         return action;
       });
     }
@@ -109,20 +97,11 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   }
 
   registerAction(): void {
-    this.action.startDate = this.newActionRange.start;
-    this.action.range = {
-      start: this.newActionRange.start,
-    } as DateRange;
-    if (this.newActionRange.end) {
-      this.action.endDate = this.newActionRange.end;
-      this.action.range.end = this.newActionRange.end;
-    }
-
     if (this.itemIndex !== undefined) {
-      this.actionList.push(cloneDeep(this.action));
-      this.action = new ChecklistItemAction();
+      this.newAction.range = this.newAction.range as DateRange;
+      this.actionList.push(cloneDeep(this.newAction));
+      this.newAction = new ChecklistItemAction();
       this.responsibleSearch = '';
-      this.newActionRange = { start: new Date() };
     }
   }
 
@@ -134,12 +113,5 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     this.checklistItem.actionList = this.actionList;
     this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
     this.contractService.editContract(this.contract);
-  }
-
-  getFormattedRange(range: DateRange): string | undefined {
-    if (range.end) {
-      return this.utils.formatDate(range.start) + ' - ' + this.utils.formatDate(range.end);
-    }
-    return this.utils.formatDate(range.start);
   }
 }

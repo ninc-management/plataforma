@@ -57,7 +57,7 @@
               <label class="label" for="input-action-name">Ação:</label>
               <input
                 nbInput
-                [(ngModel)]="action.name"
+                [(ngModel)]="newAction.name"
                 #newNameInput="ngModel"
                 id="new-action-name"
                 name="new-action-name"
@@ -71,7 +71,7 @@
               <label class="label" for="input-action-range">Prazo:</label>
               <input
                 nbInput
-                [(ngModel)]="newActionRange"
+                [(ngModel)]="newAction.range"
                 #newRangeInput="ngModel"
                 id="new-action-range"
                 name="new-action-range"
@@ -89,7 +89,7 @@
               <nb-completer
                 [(ngModel)]="responsibleSearch"
                 #newActionResponsible="ngModel"
-                (selected)="action.responsible = $event"
+                (selected)="newAction.responsible = $event"
                 id="new-action-responsible"
                 name="new-action-responsible"
                 inputName="actionResponsible"
@@ -132,7 +132,7 @@
                     [readonly]="actionList[i].isFinished"
                   />
                 </div>
-                <div class="col-3" *ngIf="!actionList[i].isFinished">
+                <div class="col-3">
                   <input
                     nbInput
                     [(ngModel)]="actionList[i].range"
@@ -144,18 +144,6 @@
                     [nbDatepicker]="rangePicker"
                   />
                   <nb-rangepicker #rangePicker></nb-rangepicker>
-                </div>
-                <div class="col-3" *ngIf="actionList[i].isFinished">
-                  <input
-                    nbInput
-                    [ngModel]="getFormattedRange(actionList[i].range!)"
-                    #finishedActionRange="ngModel"
-                    id="action-range-{{ i }}"
-                    name="action-range-{{ i }}"
-                    fullWidth
-                    fieldSize="large"
-                    [readonly]="actionList[i].isFinished"
-                  />
                 </div>
                 <div class="col-3">
                   <input

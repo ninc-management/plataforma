@@ -125,15 +125,20 @@ export class ContractReceipt {
   paidDate?: Date;
 }
 
+export class DateRange {
+  @prop({ required: true })
+  start!: Date;
+
+  @prop({ required: true })
+  end?: Date;
+}
+
 export class ChecklistItemAction {
   @prop({ required: true })
   name!: string;
 
-  @prop({ required: true })
-  startDate: Date = new Date();
-
-  @prop({ required: true })
-  endDate!: Date;
+  @prop({ required: true, _id: false })
+  range!: DateRange;
 
   @prop({ required: true, ref: () => User })
   responsible: Ref<User>;
