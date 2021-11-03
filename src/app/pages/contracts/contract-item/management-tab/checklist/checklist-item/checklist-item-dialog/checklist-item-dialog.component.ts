@@ -99,4 +99,11 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
     this.contractService.editContract(this.contract);
   }
+
+  getFormattedRange(range: DateRange): string | undefined {
+    if (range.end) {
+      return this.utils.formatDate(range.start) + ' - ' + this.utils.formatDate(range.end);
+    }
+    return this.utils.formatDate(range.start);
+  }
 }
