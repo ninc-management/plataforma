@@ -512,9 +512,11 @@ export class ContractService implements OnDestroy {
   private getLatestEndDate(contract: Contract): Date {
     let latestDate = new Date(contract.created);
     for (const item of contract.checklist) {
-      const currentDate = new Date(item.endDate);
-      if (isAfter(currentDate, latestDate)) {
-        latestDate = new Date(item.endDate);
+      if (item.range.end) {
+        const currentDate = new Date(item.range.end);
+        if (isAfter(currentDate, latestDate)) {
+          latestDate = new Date(item.range.end);
+        }
       }
     }
     return latestDate;

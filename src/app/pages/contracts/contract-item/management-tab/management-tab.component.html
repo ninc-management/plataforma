@@ -84,7 +84,14 @@
       <div class="col-3">
         <div class="form-control-group">
           <label class="label" for="responsible">Responsável:</label>
-          <input nbInput [ngModel]="responsible" name="responsible" fullWidth fieldSize="large" [readonly]="true" />
+          <input
+            nbInput
+            [ngModel]="managementResponsible"
+            name="responsible"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
         </div>
       </div>
       <div class="col-3">
@@ -150,7 +157,7 @@
         <label class="label" for="input-item-range">Prazo:</label>
         <input
           nbInput
-          [(ngModel)]="itemRange"
+          [(ngModel)]="newChecklistItem.range"
           #rangeInput="ngModel"
           id="input-item-range"
           name="input-item-range"
@@ -165,7 +172,7 @@
       <div class="col-3">
         <label class="label" for="input-item-responsible">Responsável:</label>
         <nb-completer
-          [(ngModel)]="itemResponsibleSearch"
+          [(ngModel)]="responsibleSearch"
           #itemResponsibleList="ngModel"
           (selected)="newChecklistItem.responsible = $event"
           id="input-item-responsible"

@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Contract, ContractChecklistItem } from '@models/contract';
+import { Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
-import { NbCalendarRange, NbDialogService } from '@nebular/theme';
+import { NbDialogService } from '@nebular/theme';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -15,15 +15,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
 
-interface DateRange {
-  start: Date;
-  end: Date;
-}
-
-interface Item extends ContractChecklistItem {
-  range?: DateRange;
-}
-
 @Component({
   selector: 'ngx-management-tab',
   templateUrl: './management-tab.component.html',
@@ -32,15 +23,14 @@ interface Item extends ContractChecklistItem {
 export class ManagementTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  validation = (contract_validation as any).default;
   invoice: Invoice = new Invoice();
-  responsible = '';
-  deadline!: Date | undefined;
-  itemRange!: NbCalendarRange<Date>;
   newChecklistItem = new ContractChecklistItem();
-  itemResponsibleSearch = '';
+  deadline!: Date | undefined;
   avaliableResponsibles: Observable<User[]> = of([]);
-  checklist!: Item[];
+  checklist!: ContractChecklistItem[];
+  validation = (contract_validation as any).default;
+  managementResponsible = '';
+  responsibleSearch = '';
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
@@ -71,15 +61,13 @@ export class ManagementTabComponent implements OnInit {
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
-    this.responsible = this.userService.idToName(this.invoice.author);
+    this.managementResponsible = this.userService.idToName(this.invoice.author);
     this.deadline = this.contractService.getDeadline(this.contract);
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.checklist = cloneDeep(this.contract.checklist);
     this.checklist = this.checklist.map((item) => {
-      item.range = {
-        start: new Date(item.startDate),
-        end: new Date(item.endDate),
-      } as DateRange;
+      item.range.start = new Date(item.range.start);
+      if (item.range.end) item.range.end = new Date(item.range.end);
       return item;
     });
   }
@@ -147,37 +135,37 @@ export class ManagementTabComponent implements OnInit {
   }
 
   registerChecklistItem(): void {
-    this.newChecklistItem.startDate = this.itemRange.start;
-    if (this.itemRange.end) {
-      this.newChecklistItem.endDate = this.itemRange.end;
-    }
+    this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
     this.checklist.push(this.newChecklistItem);
     this.newChecklistItem = new ContractChecklistItem();
-    this.itemResponsibleSearch = '';
-    this.itemRange = { start: new Date() };
+    this.responsibleSearch = '';
   }
 
-  getItemTotalDays(item: ContractChecklistItem): number {
-    return differenceInCalendarDays(new Date(item.endDate), new Date(item.startDate));
+  getItemTotalDays(item: ContractChecklistItem): number | undefined {
+    if (item.range.end) return differenceInCalendarDays(new Date(item.range.end), new Date(item.range.end));
+    return;
   }
 
-  getItemRemainingDays(item: ContractChecklistItem): number {
-    const today = new Date();
-    const itemStartDate = new Date(item.startDate);
-    const end = new Date(item.endDate);
-    if (isBefore(today, itemStartDate)) {
-      const difference = differenceInCalendarDays(end, itemStartDate);
+  getItemRemainingDays(item: ContractChecklistItem): number | undefined {
+    if (item.range.end) {
+      const today = new Date();
+      const itemStartDate = new Date(item.range.start);
+      const end = new Date(item.range.end);
+      if (isBefore(today, itemStartDate)) {
+        const difference = differenceInCalendarDays(end, itemStartDate);
+        return difference >= 0 ? difference : 0;
+      }
+
+      const difference = differenceInCalendarDays(end, today);
       return difference >= 0 ? difference : 0;
     }
-
-    const difference = differenceInCalendarDays(end, today);
-    return difference >= 0 ? difference : 0;
+    return;
   }
 
   getPercentualItemProgress(item: ContractChecklistItem): number {
     const total = this.getItemTotalDays(item);
     const remaining = this.getItemRemainingDays(item);
-    if (total != 0) {
+    if (total != 0 && total && remaining) {
       const progress = total - remaining;
       return +((progress / total) * 100).toFixed(2);
     }
