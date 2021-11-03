@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
-import { NbCalendarRange, NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -79,21 +79,6 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
         })
         .filter((user: User | undefined): user is User => user !== undefined)
     );
-  }
-
-  updateItemNotes(): void {
-    if (this.itemIndex !== undefined) {
-      this.contract.checklist[this.itemIndex] = this.checklistItem;
-      this.contractService.editContract(this.contract);
-    }
-  }
-
-  onSelectedChange(newStatus: string): void {
-    if (this.itemIndex !== undefined) {
-      this.checklistItem.status = newStatus;
-      this.contract.checklist[this.itemIndex] = this.checklistItem;
-      this.contractService.editContract(this.contract);
-    }
   }
 
   registerAction(): void {

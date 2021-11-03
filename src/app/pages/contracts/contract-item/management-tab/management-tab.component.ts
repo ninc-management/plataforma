@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
 import { Contract, ContractChecklistItem } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
@@ -156,11 +155,6 @@ export class ManagementTabComponent implements OnInit {
     this.newChecklistItem = new ContractChecklistItem();
     this.itemResponsibleSearch = '';
     this.itemRange = { start: new Date() };
-  }
-
-  removeChecklistItem(index: number): void {
-    this.contract.checklist.splice(index, 1);
-    this.contractService.editContract(this.contract);
   }
 
   getItemTotalDays(item: ContractChecklistItem): number {
