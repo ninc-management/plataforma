@@ -11,7 +11,7 @@ export class InvoiceProduct {
   @prop({ required: true })
   amount: string = '';
 
-  @prop({ required: true })
+  @prop()
   unit: string = '';
 
   @prop({ required: true })
