@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { NbAccessChecker } from '@nebular/security';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -22,6 +23,7 @@ export class ReceiptItemComponent implements OnInit {
   validation = (contract_validation as any).default;
   today = new Date();
   isEditionGranted = false;
+  isFinancialManager = false;
   receipt: ContractReceipt = {
     notaFiscal: '15.5', // Porcentagem da nota fiscal
     nortanPercentage: '15',
@@ -45,12 +47,17 @@ export class ReceiptItemComponent implements OnInit {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
+    this.accessChecker
+      .isGranted('df', 'receipt-financial-manager')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   fillContractData(): void {

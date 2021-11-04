@@ -1,8 +1,9 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -37,6 +38,7 @@ export class PaymentItemComponent implements OnInit {
   today = new Date();
   submitted = false;
   isEditionGranted = false;
+  isFinancialManager = false;
   payment: ContractPayment = {
     team: [],
     paid: false,
@@ -83,13 +85,18 @@ export class PaymentItemComponent implements OnInit {
     public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
+    this.accessChecker
+      .isGranted('df', 'payment-financial-manager')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   confirmationDialog(index: number): void {
