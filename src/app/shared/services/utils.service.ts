@@ -19,6 +19,8 @@ import { Invoice } from '@models/invoice';
 import { at, groupBy } from 'lodash';
 import { TimeSeriesItem } from './metrics.service';
 import { NgModel } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -218,5 +220,9 @@ export class UtilsService {
   isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is T {
     const values = at(obj, properties);
     return !values.includes(undefined);
+  }
+
+  NOT(o$: Observable<boolean>): Observable<boolean> {
+    return o$.pipe(map((result: boolean) => !result));
   }
 }

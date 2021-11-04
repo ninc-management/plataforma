@@ -234,7 +234,7 @@
             fullWidth
             size="large"
             (ngModelChange)="updatePaidDate()"
-            [disabled]="!isEditionGranted"
+            [disabled]="!isFinancialManager"
             [required]="validation.paidCheck.required"
             [status]="paidCheck.dirty ? 'success' : receiptIndex === undefined ? 'success' : 'basic'"
             [attr.aria-invalid]="paidCheck.invalid && paidCheck.touched ? true : null"

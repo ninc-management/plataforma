@@ -336,7 +336,7 @@
                     <label class="label" for="input-level">
                       Enquadramento:
                       <nb-icon
-                        *ngIf="NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
+                        *ngIf="utils.NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
                         status="info"
                         icon="info"
                         pack="eva"

@@ -366,8 +366,4 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     this.userSearch = '';
     this.memberChanged$.next(true);
   }
-
-  NOT(o$: Observable<boolean>): Observable<boolean> {
-    return o$.pipe(map((result: boolean) => !result));
-  }
 }

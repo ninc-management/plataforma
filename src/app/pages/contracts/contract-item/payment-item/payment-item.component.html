@@ -116,7 +116,7 @@
           <label class="label" for="input-paidCheck">Pago?</label>
           <nb-select
             [(ngModel)]="payment.paid"
-            [disabled]="!isEditionGranted"
+            [disabled]="!isFinancialManager"
             #paidCheck="ngModel"
             id="input-paidCheck"
             name="paidCheck"
