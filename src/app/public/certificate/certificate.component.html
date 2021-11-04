@@ -1,0 +1,61 @@
+<header>
+  <h2 class="header-subtitle">Comprovante de Conclusão</h2>
+</header>
+<main class="w-100">
+  <h2 class="main-text">
+    Certificamos que {{ participant?.name }} {{ participant?.isSpeaker ? 'ministrou' : 'concluiu' }} com sucesso o curso
+    {{ course?.name }} com duração de {{ course?.courseHours }} horas.
+  </h2>
+  <section>
+    <h3 class="section-label">Inscrito</h3>
+    <div class="section-info">
+      <div>
+        <label>Nome</label>
+        <p>
+          {{ participant?.name }}
+        </p>
+      </div>
+      <div class="info-right">
+        <label>Email</label>
+        <p>
+          {{ participant?.email }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="section-label">Curso</h3>
+    <div class="section-info">
+      <div>
+        <label>Ministrante do curso</label>
+        <p>
+          {{ course?.speaker?.name }}
+        </p>
+      </div>
+      <div class="info-right">
+        <label>Data de início</label>
+        <p>
+          {{ courseStartDate }}
+        </p>
+      </div>
+    </div>
+
+    <div class="section-info">
+      <div>
+        <label>Local do curso</label>
+        <p>
+          {{ course?.place }}
+        </p>
+      </div>
+      <div class="info-right">
+        <label>Carga horária do curso</label>
+        <p>{{ course?.courseHours }} horas</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Comprovante de conclusão gerado em {{ today }} às {{ now }}</p>
+  </footer>
+</main>

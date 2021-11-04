@@ -1,0 +1,31 @@
+<nb-layout>
+  <nb-layout-column>
+    <nb-layout-header fixed style="background-color: #fff">
+      <div class="logo-container" style="margin-top: -7px">
+        <span
+          class="logo"
+          style="
+            height: 42px;
+            display: flex;
+            border-radius: 0.17rem;
+            align-items: center;
+            font-family: marcellus;
+            font-size: 30px;
+          "
+        >
+          <nb-icon
+            icon="logo"
+            pack="fac"
+            style="width: 30px; height: 30px; margin-bottom: 4px; margin-right: 8px"
+          ></nb-icon>
+          Nortan
+        </span>
+      </div>
+    </nb-layout-header>
+    <nb-card>
+      <nb-card-body id="cardBody">
+        <router-outlet></router-outlet>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+</nb-layout>

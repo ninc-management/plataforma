@@ -1,0 +1,63 @@
+/*!
+ * @license
+ * Copyright Akveo. All Rights Reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ */
+
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+
+:host {
+  $auth-layout-padding: 2.5rem;
+
+  nb-card {
+    margin: 0;
+    margin-top: 80px;
+  }
+
+  .navigation .link {
+    display: inline-block;
+    text-decoration: none;
+
+    nb-icon {
+      font-size: 2rem;
+      vertical-align: middle;
+    }
+  }
+
+  .links nb-icon {
+    font-size: 2.5rem;
+  }
+
+  nb-card-body {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  @include media-breakpoint-down(sm) {
+    nb-card {
+      border-radius: 0;
+      height: 100vh;
+    }
+  }
+
+  ::ng-deep {
+    li {
+      white-space: pre-line;
+    }
+
+    nb-layout-header .fixed {
+      justify-content: center;
+      align-items: center;
+    }
+
+    nb-layout .layout .layout-container .content .columns nb-layout-column {
+      padding: $auth-layout-padding;
+
+      @include media-breakpoint-down(sm) {
+        padding: 0;
+      }
+    }
+  }
+}

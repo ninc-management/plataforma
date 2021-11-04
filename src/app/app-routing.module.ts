@@ -6,6 +6,10 @@ import { RedirectGuard } from './shared/guards/redirect.guard';
 
 export const routes: Routes = [
   {
+    path: 'public',
+    loadChildren: () => import('./public/public.module').then((m) => m.NgxPublicModule),
+  },
+  {
     path: 'pages',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
