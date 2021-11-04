@@ -146,8 +146,8 @@
                   O nome do cliente é obrigatório!
                 </p>
                 <p class="caption status-danger" *ngIf="contractor.errors?.minlength || contractor.errors?.maxlength">
-                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a {{
-                  validation.contractor.maxLength }} caracteres
+                  O nome do cliente deve conter entre {{ validation.contractor.minLength }} a
+                  {{ validation.contractor.maxLength }} caracteres
                 </p>
               </ng-container>
             </div>
@@ -193,8 +193,8 @@
           <ng-container *ngIf="name.invalid && name.touched">
             <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
             <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
-              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength
-              }} caracteres
+              O nome do empreendimento deve conter entre {{ validation.name.minLength }} a
+              {{ validation.name.maxLength }} caracteres
             </p>
           </ng-container>
         </div>
@@ -242,7 +242,23 @@
               />
             </div>
           </div>
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md-2">
+            <div class="form-control-group">
+              <label class="label" for="input-value">Valor de comissão:</label>
+              <input
+                nbInput
+                [ngModel]="comissionSum"
+                #comissionValue="ngModel"
+                id="comission-value"
+                name="comission-value"
+                placeholder="Valor de comissão"
+                fullWidth
+                fieldSize="large"
+                [readonly]="true"
+              />
+            </div>
+          </div>
+          <div class="col-6 col-md-2">
             <div class="form-control-group">
               <label class="label" for="input-created">Data de criação:</label>
               <input
@@ -264,7 +280,7 @@
               <nb-datepicker #datepicker [max]="today"></nb-datepicker>
             </div>
           </div>
-          <div class="col-6 col-md-3">
+          <div class="col-6 col-md-2">
             <div class="form-control-group">
               <label class="label" for="input-updated">Última atualização:</label>
               <input
@@ -737,7 +753,8 @@
           <label class="label" for="input-liquid">Contrato Bruto</label>
           <p>
             <b>
-              {{ contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
+              {{
+                contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
               }}
             </b>
           </p>
@@ -794,8 +811,13 @@
             <div class="col-md-3">{{ userService.idToName(member.user) }}</div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
-                {{ contractService.toGrossValue( contractService.netValueBalance(member.distribution, contract,
-                member.user), options.notaFiscal, options.nortanPercentage ) }}
+                {{
+                  contractService.toGrossValue(
+                    contractService.netValueBalance(member.distribution, contract, member.user),
+                    options.notaFiscal,
+                    options.nortanPercentage
+                  )
+                }}
               </div>
               <div class="col-md-3">
                 {{ contractService.netValueBalance(member.distribution, contract, member.user) }}
@@ -808,7 +830,8 @@
             <div class="col-md-4 d-flex">
               <div class="col-md-3">{{ contractService.notPaidValue(member.distribution, member.user, contract) }}</div>
               <div class="col-md-3">
-                {{ stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
+                {{
+                  stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
                 }}
               </div>
               <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>

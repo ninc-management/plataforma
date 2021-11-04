@@ -55,6 +55,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     nortanPercentage: '0',
   };
   isEditionGranted = false;
+  comissionSum = '';
 
   get invoiceAdministration(): string {
     if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
@@ -254,6 +255,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.calculateBalance();
     this.applyDistribution();
     this.updateTeamTotal();
+    this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
@@ -340,7 +342,10 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.calculatePaidValue();
         this.calculateBalance();
-        if (componentType === COMPONENT_TYPES.EXPENSE) this.loadTableExpenses();
+        if (componentType === COMPONENT_TYPES.EXPENSE) {
+          this.loadTableExpenses();
+          this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
+        }
         this.isDialogBlocked.next(false);
       });
   }
