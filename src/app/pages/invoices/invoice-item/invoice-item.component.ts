@@ -678,21 +678,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
   }
 
   updateInvoiceValue(): void {
-    if (this.tempInvoice.discount) {
-      const originalValue = (this.tempInvoice.value = this.contractService.toGrossValue(
-        this.options.netValue,
-        this.utils.nfPercentage(this.tempInvoice),
-        this.utils.nortanPercentage(this.tempInvoice)
-      ));
-      this.tempInvoice.value = this.stringUtil.subtractMoney(originalValue, this.tempInvoice.discount);
-      this.updateTotal('product');
-    } else {
-      this.tempInvoice.value = this.contractService.toGrossValue(
-        this.options.netValue,
-        this.utils.nfPercentage(this.tempInvoice),
-        this.utils.nortanPercentage(this.tempInvoice)
-      );
-    }
+    this.tempInvoice.value = this.options.total;
+    this.updateNetValue();
     this.updateDependentValues(this.tempInvoice.stages, 'stage');
   }
 }
