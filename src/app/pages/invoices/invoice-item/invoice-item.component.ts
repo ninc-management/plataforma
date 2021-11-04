@@ -37,6 +37,7 @@ export enum UNIT_OF_MEASURE {
   KILO = 'km',
   HECTO = 'ha',
   DIA = 'dia',
+  UNIT = 'unidade',
 }
 
 @Component({
