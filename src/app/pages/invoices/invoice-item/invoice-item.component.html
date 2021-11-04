@@ -288,10 +288,7 @@
               (focus)="updateLastValues()"
               (focusout)="updateLastValues()"
               (ngModelChange)="
-                updateDependentValues(tempInvoice.products, 'product');
-                updateDependentValues(tempInvoice.stages, 'stage');
-                updateNetValue();
-                updateTotal('product')
+                updateDependentValues(tempInvoice.stages, 'stage'); updateNetValue(); updateTotal('product')
               "
             />
             <ng-container *ngIf="value.invalid && value.touched">
@@ -330,11 +327,7 @@
               [maxlength]="validation.value.maxLength"
               [status]="netValue.dirty ? (netValue.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="netValue.invalid && netValue.touched ? true : null"
-              (ngModelChange)="
-                updateGrossValue();
-                updateDependentValues(tempInvoice.products, 'product');
-                updateDependentValues(tempInvoice.stages, 'stage')
-              "
+              (ngModelChange)="updateGrossValue(); updateDependentValues(tempInvoice.stages, 'stage')"
             />
           </div>
         </div>
@@ -1484,7 +1477,7 @@
                 nbTooltipStatus="info"
                 pack="eva"
                 (click)="updateInvoiceValue()"
-                [options]="{animation: {type: 'pulse'}}"
+                [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               Contrato: {{ tempInvoice.value }}
             </div>
