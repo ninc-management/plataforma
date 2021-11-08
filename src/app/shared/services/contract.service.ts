@@ -276,7 +276,7 @@ export class ContractService implements OnDestroy {
 
           if (expense.nf) {
             let cashbackValue = -1;
-            if (expense.paidDate && isBefore(expense.paidDate, new Date('2021/09/01'))) {
+            if (expense.paidDate && isBefore(expense.paidDate, new Date('2021/11/01'))) {
               if (expense.uploadedFiles.length >= (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1))
                 cashbackValue = this.stringUtil.moneyToNumber(this.stringUtil.applyPercentage(expense.value, '15,00'));
             } else {
