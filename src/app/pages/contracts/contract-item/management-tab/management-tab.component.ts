@@ -3,6 +3,7 @@ import { Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -27,10 +28,12 @@ export class ManagementTabComponent implements OnInit {
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
   avaliableResponsibles: Observable<User[]> = of([]);
+  avaliableContracts: Observable<Contract[]> = of([]);
   checklist!: ContractChecklistItem[];
   validation = (contract_validation as any).default;
   managementResponsible = '';
   responsibleSearch = '';
+  modelSearch = '';
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
@@ -64,6 +67,7 @@ export class ManagementTabComponent implements OnInit {
     this.managementResponsible = this.userService.idToName(this.invoice.author);
     this.deadline = this.contractService.getDeadline(this.contract);
     this.avaliableResponsibles = this.getAvaliableResponsibles();
+    this.avaliableContracts = this.contractService.getContracts();
     this.checklist = cloneDeep(this.contract.checklist);
   }
 
@@ -185,5 +189,30 @@ export class ManagementTabComponent implements OnInit {
 
   removeItem(index: number): void {
     this.checklist.splice(index, 1);
+  }
+
+  applyManagementModel(contract: Contract): void {
+    this.dialogService
+      .open(ConfirmationDialogComponent, {
+        context: {
+          question:
+            'Você tem certeza que deseja importar a checklist do contrato ' +
+            contract.code +
+            '? Os dados atuais serão apagados.',
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((response) => {
+        if (response) {
+          this.checklist = cloneDeep(contract.checklist);
+          this.contract.checklist = this.checklist;
+        } else {
+          this.modelSearch = '';
+        }
+      });
   }
 }

@@ -36,8 +36,20 @@
       <div class="col-3">
         <div class="form-control-group">
           <label class="label" for="model">Modelo:</label>
-          <!-- Aguardar o Augusto terminar o novo completer -->
-          <input nbInput name="model" placeholder="Modelo" fullWidth fieldSize="large" [readonly]="true" />
+          <nb-completer
+            [(ngModel)]="modelSearch"
+            #managementModelList="ngModel"
+            (selected)="applyManagementModel($event)"
+            id="management-model"
+            name="management-model"
+            nameField="code"
+            [data$]="avaliableContracts"
+            [placeholder]="'Digite o código do contrato'"
+            [fullWidth]="true"
+            [fieldSize]="'large'"
+            [textNoResults]="'Não foi possível achar um contrato com o código digitado'"
+            [minSearchLength]="0"
+          ></nb-completer>
         </div>
       </div>
     </div>
