@@ -52,6 +52,11 @@
           [iCourse]="course"
           [iParticipant]="participant"
         ></ngx-participant-item>
+        <ngx-resource-item
+          *ngIf="componentType == dTypes.RESOURCE"
+          (submit)="dismiss()"
+          [iCourse]="course"
+        ></ngx-resource-item>
       </nb-card-body>
     </nb-card>
   </div>

@@ -27,6 +27,7 @@ export class CourseItemComponent implements OnInit {
   participantsSearch = '';
   avaliableSpeakers: Observable<User[]> = of([]);
   avaliableParticipants: Observable<User[]> = of([]);
+  dTypes = DIALOG_TYPES;
 
   get speakerName(): string {
     if (this.iCourse._id != undefined) {
@@ -65,14 +66,25 @@ export class CourseItemComponent implements OnInit {
     console.log('added');
   }
 
-  addParticipant(): void {
+  openDialog(type: DIALOG_TYPES): void {
+    let title = '';
     this.isDialogBlocked.next(true);
+    switch (type) {
+      case DIALOG_TYPES.RESOURCE:
+        title = 'ADICIONAR RECURSO';
+        break;
+      case DIALOG_TYPES.PARTICIPANT:
+        title = 'REGISTRAR' + this.editing ? 'PARTICIPANTE' : 'MINISTRANTE';
+        break;
+      default:
+        break;
+    }
     this.dialogService
       .open(CourseDialogComponent, {
         context: {
-          title: 'REGISTRAR' + this.editing ? 'PARTICIPANTE' : 'MINISTRANTE',
+          title: title,
           course: this.course,
-          componentType: DIALOG_TYPES.PARTICIPANT,
+          componentType: type,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

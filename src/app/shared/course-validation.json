@@ -12,5 +12,9 @@
     "required": true,
     "minLength": 5
   },
-  "price": { "required": true }
+  "price": { "required": true },
+  "resource": {
+    "name": true,
+    "URL": true
+  }
 }

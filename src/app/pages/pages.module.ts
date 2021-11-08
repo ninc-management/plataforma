@@ -17,6 +17,7 @@ import {
   NbTooltipModule,
   NbDatepickerModule,
   NbAlertModule,
+  NbFormFieldModule,
 } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
@@ -49,6 +50,7 @@ import { CourseItemComponent } from './courses/course-item/course-item.component
 import { CourseDialogComponent } from './courses/course-dialog/course-dialog.component';
 import { CoursesComponent } from './courses/courses.component';
 import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
+import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
 
 @NgModule({
   imports: [
@@ -60,6 +62,7 @@ import { ParticipantItemComponent } from './courses/participant-item/participant
     NbCheckboxModule,
     NbDatepickerModule,
     NbFileUploaderModule,
+    NbFormFieldModule,
     NbIconModule,
     NbInputModule,
     NbListModule,
@@ -103,6 +106,7 @@ import { ParticipantItemComponent } from './courses/participant-item/participant
     CourseDialogComponent,
     CoursesComponent,
     ParticipantItemComponent,
+    ResourceItemComponent,
   ],
 })
 export class PagesModule {}

@@ -7,6 +7,7 @@ import { Course, CourseParticipant } from '@models/course';
 export enum DIALOG_TYPES {
   COURSE,
   PARTICIPANT,
+  RESOURCE,
 }
 @Component({
   selector: 'ngx-course-dialog',

@@ -2,6 +2,14 @@ import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
+export class CourseResource extends Base<string> {
+  @prop({ required: true })
+  name: string = '';
+
+  @prop({ required: true })
+  url: string = '';
+}
+
 export class CourseParticipant extends Base<string> {
   @prop({ required: true })
   name!: string;
@@ -53,6 +61,9 @@ export class Course extends Base<string> {
 
   @prop({ type: () => [CourseParticipant] })
   participants: CourseParticipant[] = [];
+
+  @prop({ required: true, type: () => [CourseResource] })
+  resources: CourseResource[] = [];
 
   participantsQuantity = '';
 }

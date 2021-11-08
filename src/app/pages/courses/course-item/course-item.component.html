@@ -147,7 +147,7 @@
         status="primary"
         size="large"
         style="margin-top: 28px"
-        (click)="addParticipant()"
+        (click)="openDialog(dTypes.PARTICIPANT)"
       >
         {{ editing ? 'Adicionar aluno' : 'Adicionar ministrante' }}
       </button>
@@ -168,6 +168,31 @@
             icon="trash-2-outline"
             pack="eva"
             (click)="course.participants.splice(i, 1)"
+            [options]="{ animation: { type: 'shake' } }"
+          ></nb-icon>
+        </div>
+      </nb-list-item>
+    </nb-list>
+    <div class="col-10 col-md-11">
+      <label class="label mt-3 mb-0">Lista de Materiais</label>
+    </div>
+    <div class="col-1">
+      <button nbButton type="button" fullWidth status="primary" size="large" (click)="openDialog(dTypes.RESOURCE)">
+        <nb-icon icon="plus"></nb-icon>
+      </button>
+    </div>
+    <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list-item *ngFor="let resource of course.resources; let i = index; trackBy: utils.trackByIndex">
+        <div class="col-10 col-md-11">
+          <a [href]="resource.url" target="_blank">{{ resource.name }}</a>
+        </div>
+        <div class="col-2 col-md-1" style="text-align: right">
+          <nb-icon
+            class="xIcon"
+            status="basic"
+            icon="trash-2-outline"
+            pack="eva"
+            (click)="course.resources.splice(i, 1)"
             [options]="{ animation: { type: 'shake' } }"
           ></nb-icon>
         </div>
