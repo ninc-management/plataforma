@@ -136,7 +136,7 @@ export class ContractService implements OnDestroy {
         .pipe(take(1))
         .subscribe((contracts: any) => {
           const tmp = JSON.parse(JSON.stringify(contracts), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+            if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(k)) return parseISO(v);
             return v;
           });
           this.contracts$.next(tmp as Contract[]);

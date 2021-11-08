@@ -58,11 +58,6 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     if (this.itemIndex !== undefined) {
       this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
       this.actionList = cloneDeep(this.checklistItem.actionList);
-      this.actionList = this.actionList.map((action) => {
-        action.range.start = new Date(action.range.start);
-        if (action.range.end) action.range.end = new Date(action.range.end);
-        return action;
-      });
     }
     this.avaliableResponsibles = this.getAvaliableResponsibles();
   }
