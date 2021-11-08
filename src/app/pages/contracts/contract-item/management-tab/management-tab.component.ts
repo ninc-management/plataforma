@@ -65,11 +65,6 @@ export class ManagementTabComponent implements OnInit {
     this.deadline = this.contractService.getDeadline(this.contract);
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.checklist = cloneDeep(this.contract.checklist);
-    this.checklist = this.checklist.map((item) => {
-      item.range.start = new Date(item.range.start);
-      if (item.range.end) item.range.end = new Date(item.range.end);
-      return item;
-    });
   }
 
   tooltipText(): string {
@@ -96,8 +91,7 @@ export class ManagementTabComponent implements OnInit {
   getTotalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
-      const start = new Date(this.contract.created);
-      return differenceInCalendarDays(this.deadline, start);
+      return differenceInCalendarDays(this.deadline, this.contract.created);
     }
     return undefined;
   }
@@ -142,21 +136,19 @@ export class ManagementTabComponent implements OnInit {
   }
 
   getItemTotalDays(item: ContractChecklistItem): number | undefined {
-    if (item.range.end) return differenceInCalendarDays(new Date(item.range.end), new Date(item.range.end));
+    if (item.range.end) return differenceInCalendarDays(item.range.end, item.range.start);
     return;
   }
 
   getItemRemainingDays(item: ContractChecklistItem): number | undefined {
     if (item.range.end) {
       const today = new Date();
-      const itemStartDate = new Date(item.range.start);
-      const end = new Date(item.range.end);
-      if (isBefore(today, itemStartDate)) {
-        const difference = differenceInCalendarDays(end, itemStartDate);
+      if (isBefore(today, item.range.start)) {
+        const difference = differenceInCalendarDays(item.range.end, item.range.start);
         return difference >= 0 ? difference : 0;
       }
 
-      const difference = differenceInCalendarDays(end, today);
+      const difference = differenceInCalendarDays(item.range.end, today);
       return difference >= 0 ? difference : 0;
     }
     return;
