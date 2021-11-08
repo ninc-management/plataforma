@@ -14,7 +14,7 @@ import { differenceInCalendarDays, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { ChecklistItemDialogComponent } from './checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
+import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 
 @Component({
   selector: 'ngx-management-tab',

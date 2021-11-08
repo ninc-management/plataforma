@@ -54,7 +54,7 @@ import { CoursesComponent } from './courses/courses.component';
 import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
 import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
-import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist/checklist-item/checklist-item-dialog/checklist-item-dialog.component';
+import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist-item-dialog/checklist-item-dialog.component';
 
 @NgModule({
   imports: [
