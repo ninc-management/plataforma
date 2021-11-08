@@ -23,7 +23,7 @@ import { ChecklistItemDialogComponent } from './checklist/checklist-item/checkli
 })
 export class ManagementTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
-  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() isDialogBlocked!: BehaviorSubject<boolean>;
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
@@ -178,7 +178,7 @@ export class ManagementTabComponent implements OnInit {
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
-        closeOnEsc: false,
+        closeOnEsc: true,
         autoFocus: false,
       })
       .onClose.pipe(take(1))
@@ -192,6 +192,7 @@ export class ManagementTabComponent implements OnInit {
   }
 
   applyManagementModel(contract: Contract): void {
+    this.isDialogBlocked.next(true);
     this.dialogService
       .open(ConfirmationDialogComponent, {
         context: {
@@ -213,6 +214,7 @@ export class ManagementTabComponent implements OnInit {
         } else {
           this.modelSearch = '';
         }
+        this.isDialogBlocked.next(false);
       });
   }
 }
