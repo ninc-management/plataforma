@@ -71,7 +71,33 @@
     <ng-container *ngIf="document.invalid && document.touched">
       <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
       <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
-        O CPF/CNPJ deve ter 11 ou 14 caracteres
+        O CPF/CNPJ deve ter {{ validation.document.minLength }} ou {{ validation.document.maxLength }} caracteres
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-phone">Melhor telefone para contato:</label>
+    <input
+      nbInput
+      [(ngModel)]="contractor.phone"
+      #phone="ngModel"
+      id="input-phone"
+      name="input-phone"
+      placeholder="Telefone para contato"
+      fullWidth
+      fieldSize="large"
+      [brmasker]="{ phone: true }"
+      ngxSelectAllText
+      [required]="validation.phone.required"
+      [minlength]="validation.phone.minLength"
+      [maxlength]="validation.phone.maxLength"
+      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
+    />
+    <ng-container *ngIf="phone.invalid && phone.touched">
+      <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+        O telefone deve ter {{ validation.phone.minLength }} ou {{ validation.phone.maxLength }} caracteres
       </p>
     </ng-container>
   </div>
