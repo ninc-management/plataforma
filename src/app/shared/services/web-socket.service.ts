@@ -17,7 +17,7 @@ export class WebSocketService {
     if (data == new Object()) return;
     if (data.ns.coll != coll) return;
     data = JSON.parse(JSON.stringify(data), (k, v) => {
-      if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+      if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(k)) return parseISO(v);
       return v;
     });
     switch (data.operationType) {
