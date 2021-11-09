@@ -262,7 +262,12 @@ export class PaymentItemComponent implements OnInit {
       .idToInvoice(this.contract.invoice)
       .team.find((member) => this.userService.isEqual(member.user, paymentMember.user));
     if (invoiceMember) {
-      let result = this.contractService.notPaidValue(invoiceMember.distribution, invoiceMember.user, this.contract);
+      let result = this.stringUtil.sumMoney(
+        this.contractService.notPaidValue(invoiceMember.distribution, invoiceMember.user, this.contract),
+        this.stringUtil.numberToMoney(
+          this.contractService.expensesContributions(this.contract, invoiceMember.user).user.cashback
+        )
+      );
       if (this.paymentIndex !== undefined) {
         const initialUser = this.options.initialTeam.find((member) =>
           this.userService.isEqual(member.user, paymentMember.user)
