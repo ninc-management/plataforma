@@ -205,7 +205,8 @@ export class ContractService implements OnDestroy {
             return accumulator;
           }, 0) -
           expenseContribution.global.expense +
-          expenseContribution.global.contribution
+          expenseContribution.global.contribution +
+          expenseContribution.global.cashback
       )
     );
   }
@@ -382,9 +383,8 @@ export class ContractService implements OnDestroy {
   getMemberBalance(user: User | string | undefined, contract: Contract): string {
     const receivedSum = this.receivedValue(user, contract);
     const expensesSum = this.getMemberExpensesSum(user, contract);
-    const cashBack = this.expensesContributions(contract, user).user.cashback;
     return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(receivedSum) - this.stringUtil.moneyToNumber(expensesSum) + cashBack
+      this.stringUtil.moneyToNumber(receivedSum) - this.stringUtil.moneyToNumber(expensesSum)
     );
   }
 
