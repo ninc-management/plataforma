@@ -14,5 +14,10 @@
     "required": true,
     "minLength": 14,
     "maxLength": 18
+  },
+  "phone": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 15
   }
 }

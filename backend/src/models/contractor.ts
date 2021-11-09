@@ -15,6 +15,9 @@ export class Contractor extends Base<string> {
 
   @prop({ required: true })
   address!: string;
+
+  @prop({ required: true })
+  phone!: string;
 }
 
 export default getModelForClass(Contractor);
