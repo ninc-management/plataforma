@@ -169,7 +169,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         },
       },
       created: {
-        title: 'Data',
+        title: 'Criação',
         type: 'string',
       },
       paid: {
@@ -192,6 +192,11 @@ export class ContractItemComponent implements OnInit, OnDestroy {
             ],
           },
         },
+      },
+      paidDate: {
+        title: 'Pagamento',
+        valuePrepareFunction: (value?: Date): string => (value ? value.toLocaleDateString() : ''),
+        type: 'string',
       },
     },
   };
