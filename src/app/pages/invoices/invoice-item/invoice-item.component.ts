@@ -31,6 +31,7 @@ import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import * as invoice_validation from 'app/shared/invoice-validation.json';
+import { NgModel, ValidatorFn, Validators } from '@angular/forms';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -45,11 +46,14 @@ export enum UNIT_OF_MEASURE {
   templateUrl: './invoice-item.component.html',
   styleUrls: ['./invoice-item.component.scss'],
 })
-export class InvoiceItemComponent implements OnInit, OnDestroy {
+export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() iInvoice = new Invoice();
   @Input() tempInvoice = new Invoice();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
+  @ViewChild('contractor', { static: true })
+  contractorFieldRef!: NgModel;
+  private CONTRACTOR_NAME = 'teste';
   teamMember: InvoiceTeamMember = {
     user: undefined,
     coordination: '',
@@ -247,6 +251,22 @@ export class InvoiceItemComponent implements OnInit, OnDestroy {
 
     this.DEPARTMENTS = this.departmentService.buildDepartmentList();
     this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+  }
+
+  ngAfterViewInit(): void {
+    //TODO: Trocar para addValidator no Angular 12
+    this.contractorFieldRef.control.setValidators([Validators.required, this.isTestContractor()]);
+  }
+
+  isTestContractor(): ValidatorFn {
+    return () => {
+      return this.contractorFieldRef.control.value == this.CONTRACTOR_NAME &&
+        this.tempInvoice.status === INVOICE_STATOOS.FECHADO
+        ? {
+            isTestUser: true,
+          }
+        : null;
+    };
   }
 
   registerInvoice(): void {
