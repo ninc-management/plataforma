@@ -42,7 +42,7 @@ export class OnedriveService {
       '_' +
       numberSlices[1] +
       '-' +
-      invoice['name'] +
+      invoice['name'].replace(/\//g, '-') +
       '-' +
       authorName
     );
