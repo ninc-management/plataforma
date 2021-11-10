@@ -258,14 +258,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isTestContractor(): ValidatorFn {
-    return () => {
-      return this.contractorFieldRef.control.value == this.CONTRACTOR_NAME &&
-        this.tempInvoice.status === INVOICE_STATOOS.FECHADO
-        ? {
-            isTestUser: true,
-          }
+    return () =>
+      this.contractorFieldRef.control.value == this.CONTRACTOR_NAME &&
+      this.tempInvoice.status === INVOICE_STATOOS.FECHADO
+        ? { isTestUser: true }
         : null;
-    };
   }
 
   registerInvoice(): void {
