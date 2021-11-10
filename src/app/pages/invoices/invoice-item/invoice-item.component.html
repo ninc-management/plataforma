@@ -207,6 +207,11 @@
               [status]="contractor.dirty ? (contractor.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="contractor.invalid && contractor.touched ? true : null"
             ></nb-completer>
+            <ng-container *ngIf="contractor.invalid">
+              <p class="caption status-danger" *ngIf="contractor.errors?.isTestUser">
+                Para fechar o contrato é necessário selecionar um cliente diferente do cliente teste.
+              </p>
+            </ng-container>
           </div>
         </div>
         <div class="col-3 col-md-1">
@@ -339,6 +344,7 @@
             <label class="label" for="input-status">Status:</label>
             <nb-select
               [(ngModel)]="tempInvoice.status"
+              (ngModelChange)="utils.forceValidatorUpdate(contractor)"
               #status="ngModel"
               id="input-status"
               name="status"
