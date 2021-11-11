@@ -65,12 +65,11 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   lastType = EXPENSE_TYPES.MATERIAL;
 
   get is100(): boolean {
-    return (
-      this.expense.team.reduce((sum, m) => {
-        sum = this.stringUtil.sumMoney(sum, m.percentage);
-        return sum;
-      }, '0,00') === '100,00'
-    );
+    const total = this.expense.team.reduce((sum, m) => {
+      sum = this.stringUtil.sumMoney(sum, m.percentage);
+      return sum;
+    }, '0,00');
+    return total === '99,99' || total === '100,00' || total === '100,01';
   }
 
   get teamUsers(): User[] {
