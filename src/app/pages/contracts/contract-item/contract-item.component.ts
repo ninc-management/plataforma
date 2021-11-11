@@ -438,6 +438,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         return (
           `CPF/CNPJ: ` +
           this.contractorService.idToContractor(invoice.contractor).document +
+          `\nTelefone: ` +
+          this.contractorService.idToContractor(invoice.contractor).phone +
           `\nEmail: ` +
           this.contractorService.idToContractor(invoice.contractor).email +
           `\nEndereço: ` +

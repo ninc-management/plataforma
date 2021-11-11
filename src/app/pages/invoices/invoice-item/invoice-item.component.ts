@@ -428,6 +428,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     return (
       `CPF/CNPJ: ` +
       this.contractorService.idToContractor(contractorItem).document +
+      `\nTelefone: ` +
+      this.contractorService.idToContractor(contractorItem).phone +
       `\nEmail: ` +
       this.contractorService.idToContractor(contractorItem).email +
       `\nEndereço: ` +
