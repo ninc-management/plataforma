@@ -315,20 +315,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       const lastArray = type == 'stage' ? this.options.lastStages : this.options.lastProducts;
       array.map((item, index) => {
         const last = lastArray[index];
-        const p = last.percentage ? last.percentage : this.toPercentage(last);
-        let relativeP = p;
-        if (
-          type === 'product' &&
-          this.tempInvoice.productListType == '2' &&
-          this.utils.isOfType<InvoiceProduct>(last, ['amount'])
-        ) {
-          const amount = this.stringUtil.moneyToNumber(last.amount);
-          relativeP = this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(p) / (amount == 0 ? 1 : amount));
+        let p = last.percentage ? last.percentage : this.toPercentage(last);
+        if (type == 'product') {
+          p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value, 20);
         }
-        item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, relativeP);
-
+        if (type == 'stage') {
+          item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
+        }
         item.percentage = p;
-        if (type == 'product') this.updateItemTotal(this.tempInvoice.products, index);
         return item;
       });
     }
@@ -518,11 +512,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       this.options.product.total = this.options.product.value;
     }
     this.options.product.name = this.options.product.name.toUpperCase();
-    this.tempInvoice.products.push(this.options.product);
+    this.tempInvoice.products.push(cloneDeep(this.options.product));
     const lastItem = this.tempInvoice.products[this.tempInvoice.products.length - 1];
     lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.product = new InvoiceProduct();
     this.updateTotal('product');
+    this.updateLastValues();
   }
 
   addSubproduct(product: InvoiceProduct): void {
@@ -563,11 +558,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.options.stageValueType === '%')
       this.options.stage.value = this.stringUtil.toValue(this.options.stage.value, this.tempInvoice.value);
     this.options.stage.name = this.options.stage.name;
-    this.tempInvoice.stages.push(this.options.stage);
+    this.tempInvoice.stages.push(cloneDeep(this.options.stage));
     const lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
     lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
+    this.updateLastValues();
   }
 
   remainingBalance(base: 'product' | 'stage'): string {
@@ -700,6 +696,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tempInvoice.value = this.options.total;
     this.updateNetValue();
     this.updateDependentValues(this.tempInvoice.stages, 'stage');
+    this.updateDependentValues(this.tempInvoice.products, 'product');
+    this.updateLastValues();
   }
 }
 
