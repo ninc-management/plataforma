@@ -210,7 +210,6 @@ export class ManagementTabComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.checklist = cloneDeep(contract.checklist);
-          this.contract.checklist = this.checklist;
         } else {
           this.modelSearch = '';
         }
