@@ -174,6 +174,7 @@ export class ManagementTabComponent implements OnInit {
       .open(ChecklistItemDialogComponent, {
         context: {
           contract: this.contract,
+          checklist: this.checklist,
           itemIndex: index,
         },
         dialogClass: 'my-dialog',
