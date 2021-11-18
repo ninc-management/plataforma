@@ -43,6 +43,7 @@ export interface ExpenseParts {
   expense: number;
   contribution: number;
   cashback: number;
+  comission: number;
 }
 
 @Injectable({
@@ -215,7 +216,11 @@ export class ContractService implements OnDestroy {
     if (distribution == undefined) return '0,00';
     const expenseContribution = contract.expenses
       .filter(
-        (expense) => expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id
+        (expense) =>
+          expense.paid &&
+          expense.source &&
+          this.userService.idToUser(expense.source)._id != CLIENT._id &&
+          expense.type != EXPENSE_TYPES.COMISSAO
       )
       .reduce(
         (sum, expense) => {
@@ -253,18 +258,27 @@ export class ContractService implements OnDestroy {
     global: ExpenseParts;
   } {
     /* eslint-enable @typescript-eslint/indent */
-    return contract.expenses.reduce(
-      (accumulator, expense: ContractExpense) => {
-        if (expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id) {
+    return contract.expenses
+      .filter(
+        (expense) => expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id
+      )
+      .reduce(
+        (accumulator, expense: ContractExpense) => {
           if (expense.source && this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id) {
             const expenseValue = this.stringUtil.moneyToNumber(expense.value);
             const member = expense.team.find((el) => {
               return this.userService.isEqual(el.user, user);
             });
-            if (member) {
-              accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
+
+            if (expense.type == EXPENSE_TYPES.COMISSAO) {
+              accumulator.user.comission += this.stringUtil.moneyToNumber(expense.team[0].value);
+              accumulator.global.comission += this.stringUtil.moneyToNumber(expense.value);
+            } else {
+              if (member) {
+                accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
+              }
+              accumulator.global.expense += expenseValue;
             }
-            accumulator.global.expense += expenseValue;
           }
 
           if (expense.type == EXPENSE_TYPES.APORTE) {
@@ -296,14 +310,13 @@ export class ContractService implements OnDestroy {
               accumulator.global.cashback += cashbackValue;
             }
           }
+          return accumulator;
+        },
+        {
+          user: { expense: 0, contribution: 0, cashback: 0, comission: 0 },
+          global: { expense: 0, contribution: 0, cashback: 0, comission: 0 },
         }
-        return accumulator;
-      },
-      {
-        user: { expense: 0, contribution: 0, cashback: 0 },
-        global: { expense: 0, contribution: 0, cashback: 0 },
-      }
-    );
+      );
   }
 
   percentageToReceive(distribution: string, user: User | string | undefined, contract: Contract, decimals = 2): string {
@@ -348,12 +361,7 @@ export class ContractService implements OnDestroy {
   }
 
   getComissionsSum(contract: Contract): number {
-    return contract.expenses.reduce((sum, expense) => {
-      if (expense.type == EXPENSE_TYPES.COMISSAO && expense.paid) {
-        sum += this.stringUtil.moneyToNumber(expense.value);
-      }
-      return sum;
-    }, 0);
+    return this.expensesContributions(contract).global.comission;
   }
 
   getMemberExpensesSum(user: User | string | undefined, contract: Contract): string {
