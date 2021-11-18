@@ -414,6 +414,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     } else {
       this.registerInvoice();
+      this.isDialogBlocked.next(false);
     }
   }
 
