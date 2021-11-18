@@ -316,7 +316,8 @@
         <div class="row w-100">
           <div class="col-12 mt-3">
             <nb-progress-bar
-              [status]="getPercentualItemProgress(checklist[i]) == 100 ? 'success' : 'primary'"
+              [status]="getItemProgressStatus(checklist[i])"
+              [class]="'progress-border ' + getItemProgressStatus(checklist[i])"
               [size]="'tiny'"
               [displayValue]="true"
               [value]="getPercentualItemProgress(checklist[i])"

@@ -159,13 +159,29 @@ export class ManagementTabComponent implements OnInit {
   }
 
   getPercentualItemProgress(item: ContractChecklistItem): number {
-    const total = this.getItemTotalDays(item);
-    const remaining = this.getItemRemainingDays(item);
-    if (total != 0 && total && remaining) {
-      const progress = total - remaining;
-      return +((progress / total) * 100).toFixed(2);
+    if (item.actionList.length > 0) {
+      const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
+      return +((completedActionsQtd / item.actionList.length) * 100).toFixed(2);
     }
     return 0;
+  }
+
+  getItemProgressStatus(item: ContractChecklistItem): string {
+    const progress = this.getPercentualItemProgress(item);
+    if (progress == 100) {
+      return 'success';
+    } else {
+      const remainingDays = this.getItemRemainingDays(item);
+      if (remainingDays != undefined) {
+        if (remainingDays <= 2) {
+          return 'danger';
+        }
+        if (remainingDays <= 7) {
+          return 'warning';
+        }
+      }
+    }
+    return 'primary';
   }
 
   openItemDialog(index: number): void {

@@ -1,6 +1,37 @@
+@import 'src/app/@theme/styles/themes.scss';
+
 .icon-container {
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+@include nb-install-component() {
+  .progress-border {
+    border: 2px solid;
+    border-radius: nb-theme(progress-bar-border-radius);
+  }
+
+  .success {
+    border-color: nb-theme(progress-bar-success-filled-background-color);
+  }
+
+  .primary {
+    border-color: nb-theme(progress-bar-primary-filled-background-color);
+  }
+
+  .warning {
+    border-color: nb-theme(progress-bar-warning-filled-background-color);
+  }
+
+  .danger {
+    border-color: nb-theme(progress-bar-danger-filled-background-color);
+  }
+
+  ::ng-deep {
+    .progress-container {
+      border-radius: 0;
+    }
+  }
 }
