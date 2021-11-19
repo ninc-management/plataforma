@@ -34,7 +34,7 @@
       </div>
     </div>
   </div>
-  <fieldset [disabled]="!isEditionGranted">
+  <fieldset [disabled]="!isEditionGranted && !isFinancialManager">
     <div class="row">
       <div class="col-md-4">
         <div class="form-control-group">
@@ -508,7 +508,13 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="submitted || !form.valid || isTeamEmpty() || total !== payment.value"
+      [disabled]="
+        submitted ||
+        !form.valid ||
+        isTeamEmpty() ||
+        total !== payment.value ||
+        (!isEditionGranted && !isFinancialManager)
+      "
       [class.btn-pulse]="submitted"
     >
       {{ paymentIndex !== undefined ? 'Atualizar' : 'Adicionar' }}

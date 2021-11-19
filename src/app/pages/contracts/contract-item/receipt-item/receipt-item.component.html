@@ -34,7 +34,7 @@
       </div>
     </div>
   </div>
-  <fieldset [disabled]="!isEditionGranted">
+  <fieldset [disabled]="!isEditionGranted && !isFinancialManager">
     <div class="row">
       <div class="col-md-4">
         <div class="form-control-group">
@@ -357,7 +357,13 @@
       </div>
     </div>
 
-    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !isEditionGranted">
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="!form.valid || (!isEditionGranted && !isFinancialManager)"
+    >
       {{ receiptIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
     </button>
   </fieldset>
