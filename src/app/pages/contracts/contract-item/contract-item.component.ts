@@ -641,7 +641,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return (
       this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(this.teamTotal.grossValue) + this.contractService.getComissionsSum(this.contract)
-      ) === this.contract.value && this.teamTotal.grossValue !== '0,00'
+      ) === this.stringUtil.removePercentage(this.contract.value, this.contract.ISS) &&
+      this.teamTotal.grossValue !== '0,00'
     );
   }
 
