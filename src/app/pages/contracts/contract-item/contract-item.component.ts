@@ -537,6 +537,14 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.contract.cashback = this.stringUtil.numberToMoney(
       this.contractService.expensesContributions(this.contract).global.cashback
     );
+    if (this.contract.invoice != undefined) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      invoice.team.map((member, index) => {
+        member.netValue = this.stringUtil.applyPercentage(this.contract.liquid, member.distribution);
+        this.updateGrossValue(index);
+        this.updateTeamTotal();
+      });
+    }
   }
 
   updateGrossValue(idx?: number): void {
@@ -649,13 +657,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   }
 
   isNetValueOK(): boolean {
-    return (
-      this.teamTotal.netValue ===
-        this.stringUtil.sumMoney(
-          this.contract.liquid,
-          this.stringUtil.numberToMoney(this.contractService.expensesContributions(this.contract).global.cashback)
-        ) && this.teamTotal.netValue !== '0,00'
-    );
+    return this.teamTotal.netValue === this.contract.liquid && this.teamTotal.netValue !== '0,00';
   }
 
   applyDistribution(): void {
