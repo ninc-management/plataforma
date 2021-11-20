@@ -93,22 +93,6 @@ export class ContractService implements OnDestroy {
     const req = {
       contract: contract,
     };
-    if (
-      contract.status != CONTRACT_STATOOS.CONCLUIDO &&
-      contract.status != CONTRACT_STATOOS.ARQUIVADO &&
-      contract.balance == '0,00' &&
-      contract.total == contract.receipts.filter((receipt) => receipt.paid).length.toString()
-    ) {
-      console.log('entrei');
-      contract.status = CONTRACT_STATOOS.CONCLUIDO;
-      const lastStatusIndex = contract.statusHistory.length - 1;
-      contract.lastUpdate = new Date();
-      contract.statusHistory[lastStatusIndex].end = contract.lastUpdate;
-      contract.statusHistory.push({
-        status: contract.status,
-        start: contract.lastUpdate,
-      });
-    }
     const history = cloneDeep(contract.statusHistory);
     const isMoved = history.splice(0, history.length - 1).find((el: StatusHistoryItem) => el.status === 'Concluído');
     this.http
