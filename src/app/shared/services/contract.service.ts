@@ -271,14 +271,12 @@ export class ContractService implements OnDestroy {
             });
 
             if (expense.type == EXPENSE_TYPES.COMISSAO) {
-              accumulator.user.comission += this.stringUtil.moneyToNumber(expense.team[0].value);
               accumulator.global.comission += this.stringUtil.moneyToNumber(expense.value);
-            } else {
-              if (member) {
-                accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
-              }
-              accumulator.global.expense += expenseValue;
             }
+            if (member && expense.type != EXPENSE_TYPES.COMISSAO) {
+              accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
+            }
+            accumulator.global.expense += expenseValue;
           }
 
           if (expense.type == EXPENSE_TYPES.APORTE) {
