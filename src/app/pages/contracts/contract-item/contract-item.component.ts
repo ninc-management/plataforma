@@ -554,6 +554,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
+      this.updateTeamTotal();
     } else {
       this.teamMember.grossValue = this.contractService.toGrossValue(
         this.teamMember.netValue,
