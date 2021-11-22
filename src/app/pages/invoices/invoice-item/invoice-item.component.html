@@ -98,6 +98,7 @@
             <label class="label" for="input-administration">Administração do contrato:</label>
             <nb-select
               [(ngModel)]="tempInvoice.administration"
+              (ngModelChange)="updateNetValue()"
               #administration="ngModel"
               id="input-administration"
               name="administration"
