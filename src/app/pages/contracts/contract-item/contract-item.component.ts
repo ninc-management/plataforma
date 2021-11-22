@@ -328,6 +328,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         break;
     }
 
+    const previousComissionSum = this.comissionSum;
     this.dialogService
       .open(ContractDialogComponent, {
         context: {
@@ -350,6 +351,9 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         if (componentType === COMPONENT_TYPES.EXPENSE) {
           this.loadTableExpenses();
           this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
+          if (previousComissionSum != this.comissionSum) {
+            this.updateLiquid();
+          }
         }
         this.isDialogBlocked.next(false);
       });
