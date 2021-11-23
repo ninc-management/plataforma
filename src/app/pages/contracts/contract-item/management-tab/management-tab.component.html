@@ -335,4 +335,80 @@
       </div>
     </div>
   </form>
+  <div class="row mt-3">
+    <div class="col-auto">
+      <h6>Comentários</h6>
+    </div>
+    <div class="col">
+      <hr />
+    </div>
+  </div>
+  <nb-list class="row">
+    <nb-list-item
+      *ngFor="let comment of comments; let i = index; trackBy: utils.trackByIndex"
+      style="align-items: flex-start"
+    >
+      <nb-user
+        size="large"
+        [picture]="userService.idToProfilePicture(comment.author)"
+        onlyPicture
+        shape="rectangle"
+      ></nb-user>
+      <div>
+        <div style="margin-bottom: 3px">
+          <span>
+            <b>{{ comment.author.fullName }}</b>
+          </span>
+          <span class="label" style="margin-left: 0.5rem">{{ comment.created.toLocaleString() }}</span>
+        </div>
+        {{ comment.body }}
+      </div>
+    </nb-list-item>
+  </nb-list>
+  <div class="row" style="margin-top: 1rem">
+    <div class="col-11">
+      <div class="form-control-group">
+        <nb-completer
+          class="targetSelection"
+          *ngIf="isMemberListActive"
+          [(ngModel)]="commentTargetSearch"
+          #commentTargetList="ngModel"
+          (selected)="onTargetSelected($event)"
+          id="input-comment-target"
+          name="input-comment-target"
+          inputName="commentTarget"
+          nameField="fullName"
+          [data$]="avaliableResponsibles"
+          [placeholder]="'Digite o nome de um membro do contrato'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
+          [minSearchLength]="0"
+        ></nb-completer>
+        <label class="label" for="new-comment">Novo comentário</label>
+        <textarea
+          [(ngModel)]="newComment.body"
+          #newCommentInput
+          nbInput
+          fullWidth
+          fieldSize="large"
+          (keypress)="isAtSign($event)"
+        ></textarea>
+      </div>
+    </div>
+    <div class="col-1">
+      <button
+        nbButton
+        type="button"
+        fullWidth
+        status="primary"
+        size="large"
+        style="margin-top: 28px"
+        (click)="registerNewComment()"
+        [disabled]="!newCommentInput.value"
+      >
+        +
+      </button>
+    </div>
+  </div>
 </div>

@@ -16,6 +16,13 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 
+//Tipo local para testes
+class ChatComment {
+  body: string = '';
+  author!: User;
+  created!: Date;
+}
+
 @Component({
   selector: 'ngx-management-tab',
   templateUrl: './management-tab.component.html',
@@ -34,6 +41,11 @@ export class ManagementTabComponent implements OnInit {
   managementResponsible = '';
   responsibleSearch = '';
   modelSearch = '';
+  newComment: ChatComment = new ChatComment();
+  isMemberListActive = false;
+  commentTargetSearch = '';
+  commentTarget!: User;
+  comments: ChatComment[] = [];
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
@@ -69,6 +81,9 @@ export class ManagementTabComponent implements OnInit {
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.avaliableContracts = this.contractService.getContracts();
     this.checklist = cloneDeep(this.contract.checklist);
+    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.newComment.author = user;
+    });
   }
 
   tooltipText(): string {
@@ -232,5 +247,21 @@ export class ManagementTabComponent implements OnInit {
         }
         this.isDialogBlocked.next(false);
       });
+  }
+
+  isAtSign($event: KeyboardEvent): void {
+    if ($event.key == '@') this.isMemberListActive = true;
+  }
+
+  onTargetSelected($event: User): void {
+    this.newComment.body += $event.fullName.replace(/\s/g, '') + ' ';
+    this.commentTargetSearch = '';
+    this.isMemberListActive = false;
+  }
+
+  registerNewComment(): void {
+    this.newComment.created = new Date();
+    this.comments.push(cloneDeep(this.newComment));
+    this.newComment.body = '';
   }
 }
