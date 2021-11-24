@@ -146,7 +146,7 @@ describe('ContractService', () => {
     tmpContract.invoice = mockedInvoices[0];
     tmpContract.liquid = '732,00';
     tmpContract.balance = '800,00';
-    tmpContract.notPaid = '932,00';
+    tmpContract.notPaid = '915,00';
     let tmpExpense = new ContractExpense();
     tmpExpense.author = mockedUsers[0];
     tmpExpense.source = mockedUsers[0];
@@ -488,8 +488,8 @@ describe('ContractService', () => {
   it('percentageToReceive should work', () => {
     expect(
       service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
-    ).toBe('83,09');
-    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('16,91');
+    ).toBe('83,92');
+    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('17,07');
     expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('44,38');
     expect(
       service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
