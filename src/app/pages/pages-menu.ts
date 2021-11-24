@@ -58,7 +58,7 @@ export const SOCIAL_ITEMS: NbMenuItem[] = [
       icon: 'gtown',
       pack: 'fac',
     },
-    url: 'https://gather.town/app/CzwGbYHrwlxlllet/N-Work',
+    url: 'https://gather.town/app/rAq1yeIE6vKvuc9n/Nortan%20Engenharia',
     target: '_blank,',
     pathMatch: 'full',
     selected: false,
