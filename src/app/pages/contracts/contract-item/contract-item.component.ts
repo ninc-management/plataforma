@@ -423,9 +423,9 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.options.nortanPercentage
     );
     this.contract.notPaid = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.contract.liquid) +
-        this.contractService.expensesContributions(this.contract, undefined).global.comission -
-        this.stringUtil.moneyToNumber(this.options.paid)
+      this.stringUtil.moneyToNumber(
+        this.contractService.toNetValue(this.contract.value, this.options.notaFiscal, this.options.nortanPercentage)
+      ) - this.stringUtil.moneyToNumber(this.options.paid)
     );
   }
 
