@@ -22,8 +22,7 @@ import * as expense_validation from 'app/shared/expense-validation.json';
   styleUrls: ['./expense-item.component.scss'],
 })
 export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit {
-  @Input()
-  contract = new Contract();
+  @Input() contract = new Contract();
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
   invoice = new Invoice();
@@ -259,7 +258,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   overPaid(): string {
     if (this.expense.source && this.userService.idToUser(this.expense.source)?._id === CONTRACT_BALANCE._id) {
-      return this.contract.balance;
+      if (this.expenseIndex != undefined)
+        return this.stringUtil.sumMoney(this.contract.balance, this.contract.expenses[this.expenseIndex].value);
+      else return this.contract.balance;
     }
     return this.stringUtil.numberToMoney(Number.MAX_VALUE);
   }
