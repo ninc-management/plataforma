@@ -313,7 +313,7 @@
           </nb-select>
         </div>
       </div>
-      <nb-list *ngIf="expense.splitType === splitTypes.PERSONALIZADO" style="width: 100%; padding: 10px 0">
+      <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let member of expense.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-4 list-name">
@@ -327,7 +327,7 @@
                 placeholder="Coordenação"
                 fullWidth
                 size="large"
-                [disabled]="!isEditionGranted"
+                [disabled]="!isEditionGranted || expense.splitType != splitTypes.PERSONALIZADO"
                 [status]="expense.team[i].coordination ? 'success' : 'basic'"
               >
                 <nb-option
@@ -348,6 +348,7 @@
                 placeholder="Valor do gasto"
                 fieldSize="large"
                 fullWidth
+                [disabled]="expense.splitType != splitTypes.PERSONALIZADO"
                 [brmasker]="{
                   money: true,
                   thousand: '.',
@@ -368,6 +369,7 @@
                 placeholder="Porcentagem do gasto"
                 fieldSize="large"
                 fullWidth
+                [disabled]="expense.splitType != splitTypes.PERSONALIZADO"
                 [brmasker]="{
                   money: true,
                   thousand: '.',
