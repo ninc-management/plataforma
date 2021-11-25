@@ -370,9 +370,13 @@
       <div class="form-control-group">
         <nb-completer
           class="targetSelection"
-          *ngIf="isMemberListActive"
+          [ngStyle]="{
+            visibility: isTargetSelectionActive ? 'visible' : 'hidden',
+            top: caretPosition ? caretPosition.top + 'px' : '0',
+            left: caretPosition ? caretPosition.left + 'px' : '0'
+          }"
           [(ngModel)]="commentTargetSearch"
-          #commentTargetList="ngModel"
+          #targetSelection="ngModel"
           (selected)="onTargetSelected($event)"
           id="input-comment-target"
           name="input-comment-target"

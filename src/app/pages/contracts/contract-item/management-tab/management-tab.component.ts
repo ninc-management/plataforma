@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
@@ -15,6 +15,7 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
+import { Caret } from 'textarea-caret-ts';
 
 //Tipo local para testes
 class ChatComment {
@@ -29,6 +30,7 @@ class ChatComment {
   styleUrls: ['./management-tab.component.scss'],
 })
 export class ManagementTabComponent implements OnInit {
+  @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
   @Input() contract: Contract = new Contract();
   @Input() isDialogBlocked!: BehaviorSubject<boolean>;
   invoice: Invoice = new Invoice();
@@ -42,10 +44,11 @@ export class ManagementTabComponent implements OnInit {
   responsibleSearch = '';
   modelSearch = '';
   newComment: ChatComment = new ChatComment();
-  isMemberListActive = false;
+  isTargetSelectionActive = false;
   commentTargetSearch = '';
   commentTarget!: User;
   comments: ChatComment[] = [];
+  caretPosition!: Caret.Position;
 
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
@@ -250,13 +253,18 @@ export class ManagementTabComponent implements OnInit {
   }
 
   isAtSign($event: KeyboardEvent): void {
-    if ($event.key == '@') this.isMemberListActive = true;
+    if ($event.key == '@') {
+      this.isTargetSelectionActive = true;
+      this.caretPosition = Caret.getRelativePosition(this.commentInput.nativeElement);
+      this.caretPosition.top += 14;
+      this.caretPosition.left += 33;
+    }
   }
 
   onTargetSelected($event: User): void {
     this.newComment.body += $event.fullName.replace(/\s/g, '') + ' ';
     this.commentTargetSearch = '';
-    this.isMemberListActive = false;
+    this.isTargetSelectionActive = false;
   }
 
   registerNewComment(): void {
