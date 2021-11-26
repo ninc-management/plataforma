@@ -30,7 +30,7 @@ import { ContractsComponent } from './contracts/contracts.component';
 import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import { InvoiceItemComponent, TextInputDialog } from './invoices/invoice-item/invoice-item.component';
+import { InvoiceItemComponent } from './invoices/invoice-item/invoice-item.component';
 import { InvoiceDialogComponent } from './invoices/invoice-dialog/invoice-dialog.component';
 import { PaymentItemComponent } from './contracts/contract-item/payment-item/payment-item.component';
 import { ContractorsComponent } from './contractors/contractors.component';
@@ -51,6 +51,7 @@ import { CourseDialogComponent } from './courses/course-dialog/course-dialog.com
 import { CoursesComponent } from './courses/courses.component';
 import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
 import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
+import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 
 @NgModule({
   imports: [
@@ -86,7 +87,6 @@ import { ResourceItemComponent } from './courses/resource-item/resource-item.com
     ContractItemComponent,
     InvoicesComponent,
     InvoiceItemComponent,
-    TextInputDialog,
     InvoiceDialogComponent,
     PaymentItemComponent,
     ContractorsComponent,
@@ -107,6 +107,7 @@ import { ResourceItemComponent } from './courses/resource-item/resource-item.com
     CoursesComponent,
     ParticipantItemComponent,
     ResourceItemComponent,
+    TextInputDialogComponent,
   ],
 })
 export class PagesModule {}

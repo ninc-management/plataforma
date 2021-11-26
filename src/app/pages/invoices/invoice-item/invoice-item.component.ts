@@ -19,6 +19,7 @@ import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -524,7 +525,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   addSubproduct(product: InvoiceProduct): void {
     this.isDialogBlocked.next(true);
     this.dialogService
-      .open(TextInputDialog, {
+      .open(TextInputDialogComponent, {
+        context: {
+          title: 'ADICIONAR SUBPRODUTO',
+          placeholder: 'Digite o nome do subproduto',
+        },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
         closeOnEsc: false,
@@ -699,45 +704,5 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.stages, 'stage');
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
-  }
-}
-
-@Component({
-  selector: 'ngx-text-input-dialog',
-  template: `
-    <nb-card
-      [ngStyle]="{
-        'width.px': dialogWidth()
-      }"
-    >
-      <nb-card-header>Subproduto:</nb-card-header>
-      <nb-card-body>
-        <input #name nbInput fullWidth placeholder="Digite o subproduto" />
-      </nb-card-body>
-      <nb-card-footer>
-        <button nbButton fullWidth status="primary" (click)="dismiss(name.value)">Adicionar</button>
-      </nb-card-footer>
-    </nb-card>
-  `,
-})
-export class TextInputDialog extends BaseDialogComponent implements AfterViewInit {
-  @ViewChild('name', { read: ElementRef }) inputRef!: ElementRef;
-  constructor(
-    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    @Optional() protected derivedRef: NbDialogRef<TextInputDialog>
-  ) {
-    super(derivedDocument, derivedRef);
-  }
-
-  dismiss(name: string): void {
-    this.derivedRef.close(name);
-  }
-
-  ngAfterViewInit(): void {
-    this.inputRef.nativeElement.focus();
-  }
-
-  dialogWidth(): number {
-    return window.innerWidth * 0.5;
   }
 }

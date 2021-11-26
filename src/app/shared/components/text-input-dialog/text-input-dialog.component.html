@@ -1,0 +1,13 @@
+<nb-card
+  [ngStyle]="{
+    'width.px': dialogWidth()
+  }"
+>
+  <nb-card-header>{{ title }}</nb-card-header>
+  <nb-card-body>
+    <input #name nbInput fullWidth [placeholder]="placeholder" />
+  </nb-card-body>
+  <nb-card-footer>
+    <button nbButton fullWidth status="primary" (click)="dismiss(name.value)">Adicionar</button>
+  </nb-card-footer>
+</nb-card>
