@@ -224,6 +224,9 @@ describe('ContractorService', () => {
 
   baseTest('idToName should work', (expectedContractors: Contractor[]) => {
     expect(service.idToName('0')).toEqual('Test1');
+    expect(service.idToName(expectedContractors[0])).toEqual('Test1');
+    expect(service.idToName('1')).toEqual('Test2');
+    expect(service.idToName(undefined)).toEqual('');
   });
 
   baseTest('idToContractor should work', (expectedContractors: Contractor[]) => {
