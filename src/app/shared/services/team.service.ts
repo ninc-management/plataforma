@@ -11,6 +11,7 @@ import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { Team } from '@models/team';
 import { User } from '@models/user';
+import { parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +57,10 @@ export class TeamService implements OnDestroy {
         .post('/api/team/all', {})
         .pipe(take(1))
         .subscribe((teams: any) => {
-          const tmp = JSON.parse(JSON.stringify(teams));
+          const tmp = JSON.parse(JSON.stringify(teams), (k, v) => {
+            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+            return v;
+          });
           this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
         });
@@ -110,7 +114,7 @@ export class TeamService implements OnDestroy {
     return coordinations.filter((coordination) => !userTeamCoordinations.includes(coordination));
   }
 
-  keepUpdatingBalance(): void {
+  private keepUpdatingBalance(): void {
     this.teams$.pipe(takeUntil(this.destroy$)).subscribe((teams) => {
       teams.map((team) => {
         team.balance = this.stringUtil.numberToMoney(
