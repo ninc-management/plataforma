@@ -4,9 +4,20 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { User } from '@models/user';
+import { Contract } from '@models/contract';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+
+type IndividualData = {
+  payments: string;
+  expenses: string;
+  sent_invoices: string;
+  concluded_contracts: string;
+};
 
 @Component({
   selector: 'ngx-users',
@@ -35,7 +46,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum usuário para o filtro selecionado.',
     add: {
-      addButtonContent: '<i class="nb-plus"></i>',
+      addButtonContent: '<i class="icon-file-csv"></i>',
       createButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
     },
@@ -50,7 +61,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     },
     actions: {
       columnTitle: 'Ações',
-      add: false,
+      add: true,
       edit: true,
       delete: false,
     },
@@ -76,7 +87,14 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(private dialogService: NbDialogService, private userService: UserService, public utils: UtilsService) {}
+  constructor(
+    private dialogService: NbDialogService,
+    private userService: UserService,
+    public utils: UtilsService,
+    private contractService: ContractService,
+    private invoiceService: InvoiceService,
+    private stringUtil: StringUtilService
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -104,5 +122,80 @@ export class UsersComponent implements OnInit, OnDestroy {
       closeOnEsc: false,
       autoFocus: false,
     });
+  }
+
+  createReportObject(): any {
+    const data: any = [];
+
+    this.users.forEach((user) => {
+      data[user._id.toString()] = [];
+      for (let i = 1; i <= 12; i++) {
+        data[user._id.toString()].push({
+          payments: '0,00',
+          expenses: '0',
+          sent_invoices: 0,
+          concluded_contracts: 0,
+        });
+      }
+    });
+
+    return data;
+  }
+
+  // getPayments(): void {
+  //   this.contractService
+  //     .getContracts()
+  //     .pipe(take(2))
+  //     .subscribe((contracts) => {
+  //       contracts.forEach((contract) => {
+  //         contract.payments.forEach((payment) => {
+  //           payment.team.find((member) => {
+  //             if (member.user) {
+  //               if (payment.paid && payment.paidDate) {
+  //                 const paidDate = new Date(payment.paidDate);
+  //                 data[member.user.toString()][paidDate.getMonth() - 1].payments = this.stringUtil.sumMoney(
+  //                   data[member.user.toString()].payments,
+  //                   member.value
+  //                 );
+  //               }
+  //             }
+  //           });
+  //         });
+  //       });
+  //     });
+
+  //   console.log(data);
+  // }
+
+  downloadReport(): void {
+    this.generateCSV();
+  }
+
+  generateCSV(): void {
+    const data = this.createReportObject();
+    const header = [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ];
+    let csv = header.join(';');
+    csv += '\r\n';
+    const subHeader = 'Recebido | Despesas | Orcamentos Enviados | Contratos Fechados';
+    //['Recebido', 'Despesas', 'Orcamentos Enviados', 'Contratos Fechados'];
+    for (let i = 1; i <= 12; i++) {
+      csv += subHeader + ';';
+    }
+    csv += '\r\n';
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'report.csv');
   }
 }
