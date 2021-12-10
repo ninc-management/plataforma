@@ -4,20 +4,41 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
-import { take, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { User } from '@models/user';
-import { Contract } from '@models/contract';
-import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { cloneDeep } from 'lodash';
 
-type IndividualData = {
+interface IndividualData {
   payments: string;
   expenses: string;
-  sent_invoices: string;
-  concluded_contracts: string;
-};
+  sent_invoices_manager: number;
+  sent_invoices_team: number;
+  opened_contracts_manager: number;
+  opened_contracts_team: number;
+  concluded_contracts_manager: number;
+  concluded_contracts_team: number;
+}
+
+interface Overview {
+  payments: string;
+  expenses: string;
+  to_receive: string;
+  sent_invoices_manager: number;
+  sent_invoices_team: number;
+  opened_contracts_manager: number;
+  opened_contracts_team: number;
+  concluded_contracts_manager: number;
+  concluded_contracts_team: number;
+}
+
+interface ReportValue {
+  monthly_data: IndividualData[];
+  overview: Overview;
+}
 
 @Component({
   selector: 'ngx-users',
@@ -124,19 +145,38 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  createReportObject(): any {
-    const data: any = [];
+  createReportObject(): Record<string, ReportValue> {
+    const data: Record<string, ReportValue> = {};
+
+    const tmp: IndividualData[] = [];
+    for (let i = 1; i <= 12; i++) {
+      tmp.push({
+        payments: '0,00',
+        expenses: '0,00',
+        sent_invoices_manager: 0,
+        sent_invoices_team: 0,
+        opened_contracts_manager: 0,
+        opened_contracts_team: 0,
+        concluded_contracts_manager: 0,
+        concluded_contracts_team: 0,
+      });
+    }
 
     this.users.forEach((user) => {
-      data[user._id.toString()] = [];
-      for (let i = 1; i <= 12; i++) {
-        data[user._id.toString()].push({
+      data[user._id] = {
+        monthly_data: cloneDeep(tmp),
+        overview: {
           payments: '0,00',
-          expenses: '0',
-          sent_invoices: 0,
-          concluded_contracts: 0,
-        });
-      }
+          expenses: '0,00',
+          to_receive: '0,00',
+          sent_invoices_manager: 0,
+          sent_invoices_team: 0,
+          opened_contracts_manager: 0,
+          opened_contracts_team: 0,
+          concluded_contracts_manager: 0,
+          concluded_contracts_team: 0,
+        },
+      };
     });
 
     return data;
