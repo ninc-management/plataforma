@@ -1,19 +1,21 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
-import { Subject } from 'rxjs';
-import { LocalDataSource } from 'ng2-smart-table';
 import { NbDialogService } from '@nebular/theme';
-import { takeUntil } from 'rxjs/operators';
+import { LocalDataSource } from 'ng2-smart-table';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { cloneDeep, groupBy } from 'lodash';
+import { getMonth, getYear } from 'date-fns';
+import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { User } from '@models/user';
-import { ContractService } from 'app/shared/services/contract.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
+import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
+import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { cloneDeep } from 'lodash';
+import { User } from '@models/user';
+import { Invoice } from '@models/invoice';
 
 interface IndividualData {
-  payments: string;
+  received: string;
   expenses: string;
   sent_invoices_manager: number;
   sent_invoices_team: number;
@@ -24,7 +26,7 @@ interface IndividualData {
 }
 
 interface Overview {
-  payments: string;
+  received: string;
   expenses: string;
   to_receive: string;
   sent_invoices_manager: number;
@@ -148,25 +150,24 @@ export class UsersComponent implements OnInit, OnDestroy {
   createReportObject(): Record<string, ReportValue> {
     const data: Record<string, ReportValue> = {};
 
-    const tmp: IndividualData[] = [];
-    for (let i = 1; i <= 12; i++) {
-      tmp.push({
-        payments: '0,00',
-        expenses: '0,00',
-        sent_invoices_manager: 0,
-        sent_invoices_team: 0,
-        opened_contracts_manager: 0,
-        opened_contracts_team: 0,
-        concluded_contracts_manager: 0,
-        concluded_contracts_team: 0,
-      });
-    }
-
     this.users.forEach((user) => {
+      const tmp: IndividualData[] = [];
+      for (let i = 1; i <= 12; i++) {
+        tmp.push({
+          received: '0,00',
+          expenses: '0,00',
+          sent_invoices_manager: 0,
+          sent_invoices_team: 0,
+          opened_contracts_manager: 0,
+          opened_contracts_team: 0,
+          concluded_contracts_manager: 0,
+          concluded_contracts_team: 0,
+        });
+      }
       data[user._id] = {
         monthly_data: cloneDeep(tmp),
         overview: {
-          payments: '0,00',
+          received: '0,00',
           expenses: '0,00',
           to_receive: '0,00',
           sent_invoices_manager: 0,
@@ -179,63 +180,228 @@ export class UsersComponent implements OnInit, OnDestroy {
       };
     });
 
-    return data;
+    return cloneDeep(data);
   }
 
-  // getPayments(): void {
-  //   this.contractService
-  //     .getContracts()
-  //     .pipe(take(2))
-  //     .subscribe((contracts) => {
-  //       contracts.forEach((contract) => {
-  //         contract.payments.forEach((payment) => {
-  //           payment.team.find((member) => {
-  //             if (member.user) {
-  //               if (payment.paid && payment.paidDate) {
-  //                 const paidDate = new Date(payment.paidDate);
-  //                 data[member.user.toString()][paidDate.getMonth() - 1].payments = this.stringUtil.sumMoney(
-  //                   data[member.user.toString()].payments,
-  //                   member.value
-  //                 );
-  //               }
-  //             }
-  //           });
-  //         });
-  //       });
-  //     });
+  computeReportData(): Observable<Record<string, ReportValue>> {
+    const data = this.createReportObject();
 
-  //   console.log(data);
-  // }
+    return combineLatest([this.invoiceService.getInvoices(), this.contractService.getContracts()]).pipe(
+      filter(([invoices, contracts]) => invoices.length > 0 && contracts.length > 0),
+      map(([invoices, contracts]) => {
+        Object.values(
+          groupBy(
+            invoices
+              .filter((invoice) => getYear(invoice.created) == 2021 && invoice.status != INVOICE_STATOOS.INVALIDADO)
+              .map((invoice) => ({ id: invoice._id, month: getMonth(invoice.created) })),
+            '1'
+          )
+        ).forEach((monthInvoices) => {
+          monthInvoices.forEach((monthInvoice) => {
+            for (const uId of Object.keys(data)) {
+              if (this.invoiceService.isInvoiceAuthor(monthInvoice.id, uId)) {
+                data[uId].monthly_data[monthInvoice.month].sent_invoices_manager += 1;
+                data[uId].overview.sent_invoices_manager += 1;
+              } else if (this.invoiceService.isInvoiceMember(monthInvoice.id, uId)) {
+                data[uId].monthly_data[monthInvoice.month].sent_invoices_team += 1;
+                data[uId].overview.sent_invoices_team += 1;
+              }
+            }
+          });
+        });
+        Object.values(
+          groupBy(
+            contracts
+              .filter((contract) => getYear(contract.created) == 2021)
+              .map((contract) => ({ contract: contract, month: getMonth(contract.created) })),
+            '1'
+          )
+        ).forEach((monthContracts) => {
+          monthContracts.forEach((monthContract) => {
+            monthContract.contract.liquid = this.contractService.toNetValue(
+              this.contractService.subtractComissions(
+                this.stringUtil.removePercentage(
+                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,
+                  monthContract.contract.ISS
+                ),
+                monthContract.contract
+              ),
+              this.utils.nfPercentage(monthContract.contract),
+              this.utils.nortanPercentage(monthContract.contract)
+            );
+            for (const uId of Object.keys(data)) {
+              if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
+                data[uId].monthly_data[monthContract.month].opened_contracts_manager += 1;
+                data[uId].overview.opened_contracts_manager += 1;
+                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
+                  data[uId].monthly_data[monthContract.month].concluded_contracts_manager += 1;
+                  data[uId].overview.concluded_contracts_manager += 1;
+                }
+              } else if (this.invoiceService.isInvoiceMember(monthContract.contract.invoice as Invoice | string, uId)) {
+                data[uId].monthly_data[monthContract.month].opened_contracts_team += 1;
+                data[uId].overview.opened_contracts_team += 1;
+                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
+                  data[uId].monthly_data[monthContract.month].concluded_contracts_team += 1;
+                  data[uId].overview.concluded_contracts_team += 1;
+                }
+              }
+              // Sum expenses in related months
+              Object.values(
+                groupBy(
+                  monthContract.contract.expenses
+                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == 2021)
+                    .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                  '1'
+                )
+              ).forEach((monthExpenses) => {
+                monthExpenses.forEach((monthExpense) => {
+                  if (
+                    monthExpense.expense.paid &&
+                    monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
+                    monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
+                    !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
+                    !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                  ) {
+                    const userExpense = monthExpense.expense.team.reduce((sum, expense) => {
+                      if (this.userService.isEqual(expense.user, uId)) {
+                        sum = this.stringUtil.sumMoney(sum, expense.value);
+                      }
+                      return sum;
+                    }, '0,00');
+
+                    if (userExpense != '0,00') {
+                      data[uId].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
+                        data[uId].monthly_data[monthExpense.month].expenses,
+                        userExpense
+                      );
+                      data[uId].overview.expenses = this.stringUtil.sumMoney(data[uId].overview.expenses, userExpense);
+                    }
+                  }
+                });
+              });
+              // Sum payments in related months
+              Object.values(
+                groupBy(
+                  monthContract.contract.payments
+                    .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == 2021)
+                    .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
+                  '1'
+                )
+              ).forEach((monthPayments) => {
+                monthPayments.forEach((monthPayment) => {
+                  const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
+                    if (this.userService.isEqual(payment.user, uId)) {
+                      sum = this.stringUtil.sumMoney(sum, payment.value);
+                    }
+                    return sum;
+                  }, '0,00');
+
+                  if (userPayment != '0,00') {
+                    data[uId].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
+                      data[uId].monthly_data[monthPayment.month].received,
+                      userPayment
+                    );
+                    data[uId].overview.received = this.stringUtil.sumMoney(data[uId].overview.received, userPayment);
+                  }
+                });
+              });
+              // To receive value
+              if (monthContract.contract.invoice) {
+                const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
+                const memberId = invoice.team.findIndex((member) => this.userService.isEqual(member.user, uId));
+                if (memberId != -1) {
+                  const toReceive = this.stringUtil.sumMoney(
+                    this.contractService.notPaidValue(invoice.team[memberId].distribution, uId, monthContract.contract),
+                    this.stringUtil.numberToMoney(
+                      this.contractService.expensesContributions(monthContract.contract, uId).user.cashback
+                    )
+                  );
+                  data[uId].overview.to_receive = this.stringUtil.sumMoney(data[uId].overview.to_receive, toReceive);
+                }
+              }
+            }
+          });
+        });
+        return data;
+      })
+    );
+  }
 
   downloadReport(): void {
     this.generateCSV();
   }
 
   generateCSV(): void {
-    const data = this.createReportObject();
-    const header = [
-      'Janeiro',
-      'Fevereiro',
-      'Março',
-      'Abril',
-      'Maio',
-      'Junho',
-      'Julho',
-      'Setembro',
-      'Outubro',
-      'Novembro',
-      'Dezembro',
-    ];
-    let csv = header.join(';');
-    csv += '\r\n';
-    const subHeader = 'Recebido | Despesas | Orcamentos Enviados | Contratos Fechados';
-    //['Recebido', 'Despesas', 'Orcamentos Enviados', 'Contratos Fechados'];
-    for (let i = 1; i <= 12; i++) {
-      csv += subHeader + ';';
-    }
-    csv += '\r\n';
+    this.computeReportData()
+      .pipe(take(1))
+      .subscribe((data) => {
+        const header = [
+          '',
+          'Janeiro;;;;',
+          'Fevereiro;;;;',
+          'Março;;;;',
+          'Abril;;;;',
+          'Maio;;;;',
+          'Junho;;;;',
+          'Julho;;;;',
+          'Agosto;;;;',
+          'Setembro;;;;',
+          'Outubro;;;;',
+          'Novembro;;;;',
+          'Dezembro;;;;',
+          'Resumos;;;;;;;;',
+        ];
+        const monthlySubHeader = [
+          'Recebido',
+          'Despesas',
+          'Orçamentos Passados',
+          'Contratos Fechado',
+          'Contrato Finalizados',
+        ];
+        const overviewSubHeader = [
+          'Total Recebido',
+          'Total Despesas',
+          'A Receber',
+          'Total Orçamentos Gestor',
+          'Total Orçamentos Equipe',
+          'Total Contratos Gestor',
+          'Total Contratos Equipe',
+          'Total Contrato Finalizados Gestor',
+          'Total Contrato Finalizados Equipe',
+        ];
+        let csv = header.join(';');
+        csv += '\r\n';
+        csv += 'Associados;';
+        for (let i = 0; i < 12; i++) {
+          csv += monthlySubHeader.join(';') + ';';
+        }
+        csv += overviewSubHeader.join(';');
+        csv += '\r\n';
 
-    const blob = new Blob([csv], { type: 'text/csv' });
-    saveAs(blob, 'report.csv');
+        for (const key of Object.keys(data)) {
+          csv += this.userService.idToName(key) + ';';
+          data[key].monthly_data.forEach((individualData) => {
+            csv += individualData.received + ';';
+            csv += individualData.expenses + ';';
+            csv += (individualData.sent_invoices_manager + individualData.sent_invoices_team).toString() + ';';
+            csv += (individualData.opened_contracts_manager + individualData.opened_contracts_team).toString() + ';';
+            csv +=
+              (individualData.concluded_contracts_manager + individualData.concluded_contracts_team).toString() + ';';
+          });
+          csv += data[key].overview.received + ';';
+          csv += data[key].overview.expenses + ';';
+          csv += data[key].overview.to_receive + ';';
+          csv += data[key].overview.sent_invoices_manager.toString() + ';';
+          csv += data[key].overview.sent_invoices_team.toString() + ';';
+          csv += data[key].overview.opened_contracts_manager.toString() + ';';
+          csv += data[key].overview.opened_contracts_team.toString() + ';';
+          csv += data[key].overview.concluded_contracts_manager.toString() + ';';
+          csv += data[key].overview.concluded_contracts_team.toString();
+          csv += '\r\n';
+        }
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        saveAs(blob, 'relatorio geral.csv');
+      });
   }
 }

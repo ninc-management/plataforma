@@ -73,7 +73,7 @@ export class ExpenseType {
   @prop({ required: true })
   name!: string;
 
-  @prop({ required: true })
+  @prop({ required: true, type: () => [String] })
   subTypes: string[] = [];
 }
 
