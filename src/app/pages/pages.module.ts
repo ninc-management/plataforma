@@ -26,7 +26,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { PagesRoutingModule } from './pages-routing.module';
 import { ProfileComponent } from './profile/profile.component';
 import { SharedModule } from '../shared/shared.module';
-import { ContractsComponent } from './contracts/contracts.component';
+import { ContractsComponent, DepartmentInputDialogComponent } from './contracts/contracts.component';
 import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
 import { InvoicesComponent } from './invoices/invoices.component';
@@ -108,6 +108,7 @@ import { TextInputDialogComponent } from 'app/shared/components/text-input-dialo
     ParticipantItemComponent,
     ResourceItemComponent,
     TextInputDialogComponent,
+    DepartmentInputDialogComponent,
   ],
 })
 export class PagesModule {}
