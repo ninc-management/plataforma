@@ -1,20 +1,20 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { NbDialogService, NbComponentStatus } from '@nebular/theme';
-import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
+import { NbDialogService, NbComponentStatus, NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ContractService } from 'app/shared/services/contract.service';
+import { getYear } from 'date-fns';
+import { saveAs } from 'file-saver';
+import { take, takeUntil, filter } from 'rxjs/operators';
+import { Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { NbAccessChecker } from '@nebular/security';
+import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
-import { format, subMonths } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { saveAs } from 'file-saver';
-import { take, takeUntil, filter } from 'rxjs/operators';
-import { Subject, combineLatest } from 'rxjs';
-import { NbAccessChecker } from '@nebular/security';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { DepartmentService } from 'app/shared/services/department.service';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 
@@ -149,9 +149,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractorService: ContractorService,
     private invoiceService: InvoiceService,
     private userService: UserService,
-    private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
+    private departmentService: DepartmentService,
     public utils: UtilsService
   ) {}
 
@@ -281,22 +281,205 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     return pic;
   }
 
-  downloadReport(): void {
-    this.metricsService
-      .receivedValueList('Mês')
-      .pipe(take(1))
-      .subscribe((data) => {
-        const lastMonth = format(subMonths(new Date(), 1), 'MMMM-yyyy', {
-          locale: ptBR,
-        });
-        const csv = Object.keys(data).map((key) => {
-          return key + ';' + this.stringUtil.numberToMoney(data[key]);
-        });
+  getReportReceivedValue(contract: Contract): string {
+    return this.contractService.toNetValue(
+      this.stringUtil.numberToMoney(
+        contract.receipts.reduce((accumulator: number, recipt: any) => {
+          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          return accumulator;
+        }, 0)
+      ),
+      this.utils.nfPercentage(contract),
+      this.utils.nortanPercentage(contract)
+    );
+  }
 
-        const csvArray = csv.join('\r\n');
+  getReportExpensesValue(contract: Contract): string {
+    const filteredExpenses = contract.expenses.filter((expense) => {
+      return expense.paid && expense.paidDate && getYear(expense.paidDate) == 2021;
+    });
 
-        const blob = new Blob([csvArray], { type: 'text/csv' });
-        saveAs(blob, 'valoresRecebidos-' + lastMonth + '.csv');
+    let totalExpenseValue = '0,00';
+    filteredExpenses.map((expense) => {
+      totalExpenseValue = this.stringUtil.sumMoney(totalExpenseValue, expense.value);
+    });
+
+    return totalExpenseValue;
+  }
+
+  getReportContractNotPaid(contract: Contract, invoice: Invoice): string {
+    const paidValue = this.contractService.toNetValue(
+      this.stringUtil.numberToMoney(
+        contract.receipts.reduce((accumulator: number, recipt: any) => {
+          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          return accumulator;
+        }, 0)
+      ),
+      this.utils.nfPercentage(contract),
+      this.utils.nortanPercentage(contract)
+    );
+
+    return this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(
+        this.contractService.toNetValue(
+          invoice.value,
+          this.utils.nfPercentage(contract),
+          this.utils.nortanPercentage(contract)
+        )
+      ) - this.stringUtil.moneyToNumber(paidValue)
+    );
+  }
+
+  createReportObject(contracts: Contract[]): string {
+    const mainHeaders = [
+      'Nº do Contrato',
+      'Cliente',
+      'Empreendimento',
+      'Valor Bruto do Contrato',
+      'Total de Comissões',
+      'Valor Liquido do Contrato',
+      'Valor Recebido',
+      'Total de Despesas',
+      'Saldo',
+      'R$ em Caixa',
+      'Time',
+    ];
+
+    const subHeaders = [
+      '',
+      'Responsável',
+      'Situação',
+      'Data Prevista da Entrega',
+      'Data da Entrega',
+      'IFC ou .RVT no Onedrive?',
+      '% Conclusão',
+    ];
+
+    let csv = mainHeaders.join(';') + '\r\n';
+
+    contracts
+      .sort((a, b) => this.utils.codeSort(1, a.code, b.code))
+      .forEach((contract) => {
+        if (contract.invoice) {
+          const invoice = this.invoiceService.idToInvoice(contract.invoice);
+          csv += invoice.code + ';';
+          csv += this.contractorService.idToName(invoice.contractor) + ';';
+          csv += invoice.name + ';';
+          csv += invoice.value + ';';
+          csv += this.contractService.getComissionsSum(contract) + ';';
+          csv +=
+            this.contractService.toNetValue(
+              this.contractService.subtractComissions(
+                this.stringUtil.removePercentage(invoice.value, contract.ISS),
+                contract
+              ),
+              this.utils.nfPercentage(contract),
+              this.utils.nortanPercentage(contract)
+            ) + ';';
+          csv += this.getReportReceivedValue(contract) + ';';
+          csv += this.getReportExpensesValue(contract) + ';';
+          csv += this.getReportContractNotPaid(contract, invoice) + ';';
+          csv += this.contractService.balance(contract) + ';';
+          csv += invoice.team.map((member) => this.userService.idToName(member.user)).join(', ');
+          csv += '\r\n';
+          csv += subHeaders.join(';') + '\r\n';
+          csv += invoice.products.map((product) => product.name).join('\r\n') + '\r\n';
+          csv += '\r\n';
+        }
       });
+
+    return csv;
+  }
+
+  downloadReport(selectedDepartment: string): void {
+    const filteredContracts = this.contracts.filter((contract) => {
+      if (contract.invoice) {
+        const invoice = this.invoiceService.idToInvoice(contract.invoice);
+        return (
+          invoice.department == this.departmentService.extractAbreviation(selectedDepartment) &&
+          contract.status != CONTRACT_STATOOS.ARQUIVADO &&
+          contract.status != CONTRACT_STATOOS.CONCLUIDO
+        );
+      }
+      return false;
+    });
+
+    const csv = this.createReportObject(filteredContracts);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'relatorio_' + this.departmentService.extractAbreviation(selectedDepartment).toLowerCase() + '.csv');
+  }
+
+  openDepartmentDialog(): void {
+    this.dialogService
+      .open(DepartmentInputDialogComponent, {
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((department) => {
+        this.downloadReport(department);
+      });
+  }
+}
+
+@Component({
+  selector: 'ngx-department-selector-dialog',
+  template: `
+    <nb-card
+      [ngStyle]="{
+        'width.px': dialogWidth()
+      }"
+    >
+      <nb-card-header>Diretoria:</nb-card-header>
+      <nb-card-body>
+        <label class="label" for="input-department">Selecione a diretoria</label>
+        <nb-select
+          [(ngModel)]="selectedDepartment"
+          #departmentSelect="ngModel"
+          id="input-department"
+          name="department"
+          placeholder="Selecione a diretoria"
+          fullWidth
+          size="large"
+          (ngModelChange)="dismiss()"
+          [required]="true"
+          [status]="departmentSelect.dirty ? (departmentSelect.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="departmentSelect.invalid && departmentSelect.touched ? true : null"
+        >
+          <nb-option *ngFor="let department of avaliableDepartments" [value]="department">{{ department }}</nb-option>
+        </nb-select>
+      </nb-card-body>
+    </nb-card>
+  `,
+})
+export class DepartmentInputDialogComponent extends BaseDialogComponent implements OnInit, AfterViewInit {
+  @ViewChild('departmentSelect', { read: ElementRef }) inputRef!: ElementRef;
+  avaliableDepartments!: string[];
+  selectedDepartment = '';
+
+  constructor(
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<DepartmentInputDialogComponent>,
+    private departmentService: DepartmentService
+  ) {
+    super(derivedDocument, derivedRef);
+  }
+
+  ngOnInit(): void {
+    this.avaliableDepartments = this.departmentService.buildDepartmentList();
+  }
+
+  ngAfterViewInit(): void {
+    this.inputRef.nativeElement.focus();
+  }
+
+  dismiss(): void {
+    this.derivedRef.close(this.selectedDepartment);
+  }
+
+  dialogWidth(): number {
+    return window.innerWidth * 0.5;
   }
 }
