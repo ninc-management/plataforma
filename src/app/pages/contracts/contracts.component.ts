@@ -419,7 +419,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       .onClose.pipe(take(1))
       .subscribe((department) => {
-        this.downloadReport(department);
+        if (department) this.downloadReport(department);
       });
   }
 }
@@ -432,7 +432,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         'width.px': dialogWidth()
       }"
     >
-      <nb-card-header>Diretoria:</nb-card-header>
+      <nb-card-header>Relatório dos contratos abertos:</nb-card-header>
       <nb-card-body>
         <label class="label" for="input-department">Selecione a diretoria</label>
         <nb-select
@@ -468,6 +468,7 @@ export class DepartmentInputDialogComponent extends BaseDialogComponent implemen
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.avaliableDepartments = this.departmentService.buildDepartmentList();
   }
 
@@ -476,7 +477,7 @@ export class DepartmentInputDialogComponent extends BaseDialogComponent implemen
   }
 
   dismiss(): void {
-    this.derivedRef.close(this.selectedDepartment);
+    super.dismiss(this.selectedDepartment);
   }
 
   dialogWidth(): number {
