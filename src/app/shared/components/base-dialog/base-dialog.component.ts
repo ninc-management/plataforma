@@ -25,7 +25,7 @@ export class BaseDialogComponent implements OnInit {
   }
 
   dismiss(res: any = ''): void {
-    this.ref?.close();
+    this.ref?.close(res);
     this.destroy$.next();
     this.destroy$.complete();
   }
