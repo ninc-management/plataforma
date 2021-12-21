@@ -1,5 +1,13 @@
 import { NgModule } from '@angular/core';
-import { NbCardModule, NbButtonModule, NbIconModule, NbSpinnerModule, NbTooltipModule } from '@nebular/theme';
+import { FormsModule } from '@angular/forms';
+import {
+  NbCardModule,
+  NbButtonModule,
+  NbIconModule,
+  NbSelectModule,
+  NbSpinnerModule,
+  NbTooltipModule,
+} from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
 import { CommonModule } from '@angular/common';
@@ -14,16 +22,19 @@ import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
+import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 
 @NgModule({
   imports: [
+    CommonModule,
+    FormsModule,
     NbCardModule,
     NbButtonModule,
-    NbSpinnerModule,
-    NbTooltipModule,
-    CommonModule,
     NbFileUploaderModule,
     NbIconModule,
+    NbSelectModule,
+    NbSpinnerModule,
+    NbTooltipModule,
     PdfViewerModule,
   ],
   exports: [
@@ -46,6 +57,7 @@ import { SelectAllTextDirective } from './directives/select-all-text.directive';
     FabItemComponent,
     BaseExpenseComponent,
     SelectAllTextDirective,
+    SelectorDialogComponent,
   ],
 })
 export class SharedModule {}

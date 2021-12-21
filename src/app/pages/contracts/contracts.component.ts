@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit, Inject } from '@angular/core';
-import { NbDialogService, NbComponentStatus, NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
 import { getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { take, takeUntil, filter } from 'rxjs/operators';
-import { Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { NbAccessChecker } from '@nebular/security';
 import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
@@ -13,10 +13,10 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
 
 @Component({
   selector: 'ngx-contracts',
@@ -411,8 +411,14 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openDepartmentDialog(): void {
     this.dialogService
-      .open(DepartmentInputDialogComponent, {
+      .open(SelectorDialogComponent, {
         dialogClass: 'my-dialog',
+        context: {
+          selectorList: this.departmentService.buildDepartmentList(),
+          title: 'Relatório dos contratos abertos:',
+          label: 'Selecione a diretoria',
+          placeholder: 'Selecione a diretoria',
+        },
         closeOnBackdropClick: false,
         closeOnEsc: false,
         autoFocus: false,
@@ -421,66 +427,5 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((department) => {
         if (department) this.downloadReport(department);
       });
-  }
-}
-
-@Component({
-  selector: 'ngx-department-selector-dialog',
-  template: `
-    <nb-card
-      [ngStyle]="{
-        'width.px': dialogWidth()
-      }"
-    >
-      <nb-card-header>Relatório dos contratos abertos:</nb-card-header>
-      <nb-card-body>
-        <label class="label" for="input-department">Selecione a diretoria</label>
-        <nb-select
-          [(ngModel)]="selectedDepartment"
-          #departmentSelect="ngModel"
-          id="input-department"
-          name="department"
-          placeholder="Selecione a diretoria"
-          fullWidth
-          size="large"
-          (ngModelChange)="dismiss()"
-          [required]="true"
-          [status]="departmentSelect.dirty ? (departmentSelect.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="departmentSelect.invalid && departmentSelect.touched ? true : null"
-        >
-          <nb-option *ngFor="let department of avaliableDepartments" [value]="department">{{ department }}</nb-option>
-        </nb-select>
-      </nb-card-body>
-    </nb-card>
-  `,
-})
-export class DepartmentInputDialogComponent extends BaseDialogComponent implements OnInit, AfterViewInit {
-  @ViewChild('departmentSelect', { read: ElementRef }) inputRef!: ElementRef;
-  avaliableDepartments!: string[];
-  selectedDepartment = '';
-
-  constructor(
-    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<DepartmentInputDialogComponent>,
-    private departmentService: DepartmentService
-  ) {
-    super(derivedDocument, derivedRef);
-  }
-
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.avaliableDepartments = this.departmentService.buildDepartmentList();
-  }
-
-  ngAfterViewInit(): void {
-    this.inputRef.nativeElement.focus();
-  }
-
-  dismiss(): void {
-    super.dismiss(this.selectedDepartment);
-  }
-
-  dialogWidth(): number {
-    return window.innerWidth * 0.5;
   }
 }

@@ -1,0 +1,25 @@
+<nb-card
+  [ngStyle]="{
+    'width.px': dialogWidth()
+  }"
+>
+  <nb-card-header>{{ title }}</nb-card-header>
+  <nb-card-body>
+    <label class="label" for="input-selector">{{ label }}</label>
+    <nb-select
+      [(ngModel)]="selected"
+      #listSelector="ngModel"
+      id="input-selector"
+      name="selectorList"
+      [placeholder]="placeholder"
+      fullWidth
+      size="large"
+      (ngModelChange)="dismiss()"
+      [required]="true"
+      [status]="listSelector.dirty ? (listSelector.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="listSelector.invalid && listSelector.touched ? true : null"
+    >
+      <nb-option *ngFor="let item of selectorList" [value]="item">{{ item }}</nb-option>
+    </nb-select>
+  </nb-card-body>
+</nb-card>
