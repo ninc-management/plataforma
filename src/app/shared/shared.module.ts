@@ -22,6 +22,7 @@ import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
+import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 
 @NgModule({
@@ -57,6 +58,7 @@ import { SelectorDialogComponent } from './components/selector-dialog/selector-d
     FabItemComponent,
     BaseExpenseComponent,
     SelectAllTextDirective,
+    TextInputDialogComponent,
     SelectorDialogComponent,
   ],
 })

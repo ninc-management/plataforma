@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { Component, OnInit, OnDestroy, Inject, Input } from '@angular/core';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
@@ -13,6 +13,8 @@ import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.ser
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
+import { DepartmentService } from 'app/shared/services/department.service';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 
 interface IndividualData {
   received: string;
@@ -40,6 +42,17 @@ interface Overview {
 interface ReportValue {
   monthly_data: IndividualData[];
   overview: Overview;
+}
+
+enum REPORT_TYPES {
+  GERAL = 'Geral',
+  NORTAN = 'Suporte Administrativo',
+  PESSOAL = 'Administração Pessoal',
+}
+
+enum GROUP_BY {
+  USER = 'Usuário',
+  COORD = 'Coordenação',
 }
 
 @Component({
@@ -113,10 +126,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: NbDialogService,
     private userService: UserService,
-    public utils: UtilsService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    private stringUtil: StringUtilService
+    private stringUtil: StringUtilService,
+    private departmentService: DepartmentService,
+    public utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -183,7 +197,43 @@ export class UsersComponent implements OnInit, OnDestroy {
     return cloneDeep(data);
   }
 
-  computeReportData(): Observable<Record<string, ReportValue>> {
+  createReportObjectByCoordination(): Record<string, ReportValue> {
+    const data: Record<string, ReportValue> = {};
+
+    this.departmentService.buildAllCoordinationsList().forEach((coord) => {
+      const tmp: IndividualData[] = [];
+      for (let i = 1; i <= 12; i++) {
+        tmp.push({
+          received: '0,00',
+          expenses: '0,00',
+          sent_invoices_manager: 0,
+          sent_invoices_team: 0,
+          opened_contracts_manager: 0,
+          opened_contracts_team: 0,
+          concluded_contracts_manager: 0,
+          concluded_contracts_team: 0,
+        });
+      }
+      data[coord] = {
+        monthly_data: cloneDeep(tmp),
+        overview: {
+          received: '0,00',
+          expenses: '0,00',
+          to_receive: '0,00',
+          sent_invoices_manager: 0,
+          sent_invoices_team: 0,
+          opened_contracts_manager: 0,
+          opened_contracts_team: 0,
+          concluded_contracts_manager: 0,
+          concluded_contracts_team: 0,
+        },
+      };
+    });
+
+    return cloneDeep(data);
+  }
+
+  computeReportData(type: REPORT_TYPES, year: number): Observable<Record<string, ReportValue>> {
     const data = this.createReportObject();
 
     return combineLatest([this.invoiceService.getInvoices(), this.contractService.getContracts()]).pipe(
@@ -192,7 +242,12 @@ export class UsersComponent implements OnInit, OnDestroy {
         Object.values(
           groupBy(
             invoices
-              .filter((invoice) => getYear(invoice.created) == 2021 && invoice.status != INVOICE_STATOOS.INVALIDADO)
+              .filter((invoice) => {
+                let typeFilter = true;
+                if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
+                if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
+                return getYear(invoice.created) == year && invoice.status != INVOICE_STATOOS.INVALIDADO && typeFilter;
+              })
               .map((invoice) => ({ id: invoice._id, month: getMonth(invoice.created) })),
             '1'
           )
@@ -212,7 +267,16 @@ export class UsersComponent implements OnInit, OnDestroy {
         Object.values(
           groupBy(
             contracts
-              .filter((contract) => getYear(contract.created) == 2021)
+              .filter((contract) => {
+                if (contract.invoice) {
+                  const invoice = this.invoiceService.idToInvoice(contract.invoice);
+                  let typeFilter = true;
+                  if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
+                  if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
+                  return getYear(contract.created) == year && typeFilter;
+                }
+                return false;
+              })
               .map((contract) => ({ contract: contract, month: getMonth(contract.created) })),
             '1'
           )
@@ -249,7 +313,7 @@ export class UsersComponent implements OnInit, OnDestroy {
               Object.values(
                 groupBy(
                   monthContract.contract.expenses
-                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == 2021)
+                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
                     .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                   '1'
                 )
@@ -262,9 +326,9 @@ export class UsersComponent implements OnInit, OnDestroy {
                     !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
                     !this.userService.isEqual(monthExpense.expense.source, CLIENT)
                   ) {
-                    const userExpense = monthExpense.expense.team.reduce((sum, expense) => {
-                      if (this.userService.isEqual(expense.user, uId)) {
-                        sum = this.stringUtil.sumMoney(sum, expense.value);
+                    const userExpense = monthExpense.expense.team.reduce((sum, member) => {
+                      if (this.userService.isEqual(member.user, uId)) {
+                        sum = this.stringUtil.sumMoney(sum, member.value);
                       }
                       return sum;
                     }, '0,00');
@@ -283,7 +347,7 @@ export class UsersComponent implements OnInit, OnDestroy {
               Object.values(
                 groupBy(
                   monthContract.contract.payments
-                    .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == 2021)
+                    .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
                     .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
                   '1'
                 )
@@ -327,12 +391,203 @@ export class UsersComponent implements OnInit, OnDestroy {
     );
   }
 
-  downloadReport(): void {
-    this.generateCSV();
+  computeReportDataByCoordination(type: REPORT_TYPES, year: number): Observable<Record<string, ReportValue>> {
+    const data = this.createReportObjectByCoordination();
+
+    return combineLatest([this.invoiceService.getInvoices(), this.contractService.getContracts()]).pipe(
+      filter(([invoices, contracts]) => invoices.length > 0 && contracts.length > 0),
+      map(([invoices, contracts]) => {
+        Object.values(
+          groupBy(
+            invoices
+              .filter((invoice) => {
+                let typeFilter = true;
+                if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
+                if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
+                return getYear(invoice.created) == year && invoice.status != INVOICE_STATOOS.INVALIDADO && typeFilter;
+              })
+              .map((invoice) => ({ invoice: invoice, month: getMonth(invoice.created) })),
+            '1'
+          )
+        ).forEach((monthInvoices) => {
+          monthInvoices.forEach((monthInvoice) => {
+            for (const coord of Object.keys(data)) {
+              if (monthInvoice.invoice.coordination == coord) {
+                data[coord].monthly_data[monthInvoice.month].sent_invoices_manager += 1;
+                data[coord].overview.sent_invoices_manager += 1;
+              } else if (monthInvoice.invoice.team.filter((member) => member.coordination == coord).length > 0) {
+                data[coord].monthly_data[monthInvoice.month].sent_invoices_team += 1;
+                data[coord].overview.sent_invoices_team += 1;
+              }
+            }
+          });
+        });
+        Object.values(
+          groupBy(
+            contracts
+              .filter((contract) => {
+                if (contract.invoice) {
+                  const invoice = this.invoiceService.idToInvoice(contract.invoice);
+                  let typeFilter = true;
+                  if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
+                  if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
+                  return getYear(contract.created) == year && typeFilter;
+                }
+                return false;
+              })
+              .map((contract) => ({ contract: contract, month: getMonth(contract.created) })),
+            '1'
+          )
+        ).forEach((monthContracts) => {
+          monthContracts.forEach((monthContract) => {
+            monthContract.contract.liquid = this.contractService.toNetValue(
+              this.contractService.subtractComissions(
+                this.stringUtil.removePercentage(
+                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,
+                  monthContract.contract.ISS
+                ),
+                monthContract.contract
+              ),
+              this.utils.nfPercentage(monthContract.contract),
+              this.utils.nortanPercentage(monthContract.contract)
+            );
+            for (const coord of Object.keys(data)) {
+              if (
+                this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).coordination ==
+                coord
+              ) {
+                data[coord].monthly_data[monthContract.month].opened_contracts_manager += 1;
+                data[coord].overview.opened_contracts_manager += 1;
+                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
+                  data[coord].monthly_data[monthContract.month].concluded_contracts_manager += 1;
+                  data[coord].overview.concluded_contracts_manager += 1;
+                }
+              } else if (
+                this.invoiceService
+                  .idToInvoice(monthContract.contract.invoice as Invoice | string)
+                  .team.filter((member) => member.coordination == coord).length > 0
+              ) {
+                data[coord].monthly_data[monthContract.month].opened_contracts_team += 1;
+                data[coord].overview.opened_contracts_team += 1;
+                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
+                  data[coord].monthly_data[monthContract.month].concluded_contracts_team += 1;
+                  data[coord].overview.concluded_contracts_team += 1;
+                }
+              }
+              // Sum expenses in related months
+              Object.values(
+                groupBy(
+                  monthContract.contract.expenses
+                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
+                    .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                  '1'
+                )
+              ).forEach((monthExpenses) => {
+                monthExpenses.forEach((monthExpense) => {
+                  if (
+                    monthExpense.expense.paid &&
+                    monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
+                    monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
+                    !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
+                    !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                  ) {
+                    const userExpense = monthExpense.expense.team.reduce((sum, member) => {
+                      if (member.coordination == coord) {
+                        sum = this.stringUtil.sumMoney(sum, member.value);
+                      }
+                      return sum;
+                    }, '0,00');
+
+                    if (userExpense != '0,00') {
+                      data[coord].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
+                        data[coord].monthly_data[monthExpense.month].expenses,
+                        userExpense
+                      );
+                      data[coord].overview.expenses = this.stringUtil.sumMoney(
+                        data[coord].overview.expenses,
+                        userExpense
+                      );
+                    }
+                  }
+                });
+              });
+              // Sum payments in related months
+              Object.values(
+                groupBy(
+                  monthContract.contract.payments
+                    .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
+                    .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
+                  '1'
+                )
+              ).forEach((monthPayments) => {
+                monthPayments.forEach((monthPayment) => {
+                  const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
+                    if (payment.coordination == coord) {
+                      sum = this.stringUtil.sumMoney(sum, payment.value);
+                    }
+                    return sum;
+                  }, '0,00');
+
+                  if (userPayment != '0,00') {
+                    data[coord].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
+                      data[coord].monthly_data[monthPayment.month].received,
+                      userPayment
+                    );
+                    data[coord].overview.received = this.stringUtil.sumMoney(
+                      data[coord].overview.received,
+                      userPayment
+                    );
+                  }
+                });
+              });
+              // To receive value
+              if (monthContract.contract.invoice) {
+                const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
+                invoice.team.forEach((member) => {
+                  if (member.coordination == coord) {
+                    const toReceive = this.stringUtil.sumMoney(
+                      this.contractService.notPaidValue(member.distribution, member.user, monthContract.contract),
+                      this.stringUtil.numberToMoney(
+                        this.contractService.expensesContributions(monthContract.contract, member.user).user.cashback
+                      )
+                    );
+                    data[coord].overview.to_receive = this.stringUtil.sumMoney(
+                      data[coord].overview.to_receive,
+                      toReceive
+                    );
+                  }
+                });
+              }
+            }
+          });
+        });
+        return data;
+      })
+    );
   }
 
-  generateCSV(): void {
-    this.computeReportData()
+  downloadReport(): void {
+    this.dialogService
+      .open(ReportConfigDialogComponent, {
+        dialogClass: 'my-dialog',
+        context: {
+          selectorList: Object.values(REPORT_TYPES),
+          title: 'Relatório anual',
+          label: 'Selecione o tipo do relatório anual:',
+          placeholder: 'Selecione o tipo',
+        },
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((config) => {
+        if (config.selected) this.generateCSV(config.groupBy, config.selected, config.year);
+      });
+  }
+
+  generateCSV(groupBy: GROUP_BY, type: REPORT_TYPES, year: number): void {
+    (groupBy == GROUP_BY.USER ? this.computeReportData(type, year) : this.computeReportDataByCoordination(type, year))
       .pipe(take(1))
       .subscribe((data) => {
         const header = [
@@ -379,7 +634,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         csv += '\r\n';
 
         for (const key of Object.keys(data)) {
-          csv += this.userService.idToName(key) + ';';
+          csv += (groupBy == GROUP_BY.USER ? this.userService.idToName(key) : key) + ';';
           data[key].monthly_data.forEach((individualData) => {
             csv += individualData.received + ';';
             csv += individualData.expenses + ';';
@@ -403,5 +658,101 @@ export class UsersComponent implements OnInit, OnDestroy {
         const blob = new Blob([csv], { type: 'text/csv' });
         saveAs(blob, 'relatorio geral.csv');
       });
+  }
+}
+
+@Component({
+  selector: 'ngx-report-config-dialog',
+  template: `
+    <nb-card
+      [ngStyle]="{
+        'width.px': dialogWidth()
+      }"
+    >
+      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-body>
+        <label class="label" for="input-selector">Selecione o tipo de agrupamento dos dados:</label>
+        <nb-radio-group
+          [(ngModel)]="config.groupBy"
+          #groupBy="ngModel"
+          id="input-group-type"
+          name="groupBy"
+          style="display: flex"
+        >
+          <nb-radio [value]="groupByTypes.USER">{{ groupByTypes.USER }}</nb-radio>
+          <nb-radio [value]="groupByTypes.COORD">{{ groupByTypes.COORD }}</nb-radio>
+        </nb-radio-group>
+        <div class="row">
+          <div class="col-6">
+            <label class="label" for="input-selector">{{ label }}</label>
+            <nb-select
+              [(ngModel)]="config.selected"
+              #listSelector="ngModel"
+              id="input-selector"
+              name="selectorList"
+              [placeholder]="placeholder"
+              fullWidth
+              size="large"
+              (ngModelChange)="config.selected && config.year ? dismiss() : ''"
+              [required]="true"
+              [status]="listSelector.dirty ? (listSelector.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="listSelector.invalid && listSelector.touched ? true : null"
+            >
+              <nb-option *ngFor="let item of selectorList" [value]="item">{{ item }}</nb-option>
+            </nb-select>
+          </div>
+          <div class="col-6">
+            <label class="label" for="input-selector">Selecione o ano:</label>
+            <nb-select
+              [(ngModel)]="config.year"
+              #yearSelector="ngModel"
+              id="year-selector"
+              name="yearList"
+              placeholder="Selecione o ano"
+              fullWidth
+              size="large"
+              (ngModelChange)="config.selected && config.year ? dismiss() : ''"
+              [required]="true"
+              [status]="yearSelector.dirty ? (yearSelector.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="yearSelector.invalid && yearSelector.touched ? true : null"
+            >
+              <nb-option *ngFor="let year of years" [value]="year">{{ year }}</nb-option>
+            </nb-select>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  `,
+})
+export class ReportConfigDialogComponent extends BaseDialogComponent implements OnInit {
+  @Input() selectorList: string[] = [];
+  @Input() title: string = '';
+  @Input() label: string = '';
+  @Input() placeholder: string = '';
+  groupByTypes = GROUP_BY;
+  config = {
+    groupBy: GROUP_BY.USER,
+    selected: '',
+    year: '',
+  };
+  years = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
+
+  constructor(
+    @Inject(NB_DOCUMENT) protected derivedDocument: Document,
+    protected derivedRef: NbDialogRef<ReportConfigDialogComponent>
+  ) {
+    super(derivedDocument, derivedRef);
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
+
+  dismiss(): void {
+    super.dismiss(this.config);
+  }
+
+  dialogWidth(): number {
+    return window.innerWidth * 0.5;
   }
 }

@@ -115,8 +115,7 @@ export class InvoiceService implements OnDestroy {
 
   isInvoiceMember(iId: string | Invoice, uId: string | User): boolean {
     const invoice = this.idToInvoice(iId);
-    if (invoice.team)
-      return invoice.team.filter((member) => this.userService.isEqual(member.user, uId)).length > 0 ? true : false;
+    if (invoice.team) return invoice.team.filter((member) => this.userService.isEqual(member.user, uId)).length > 0;
     return false;
   }
 
