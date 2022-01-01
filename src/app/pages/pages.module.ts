@@ -38,7 +38,7 @@ import { ContractorDialogComponent } from './contractors/contractor-dialog/contr
 import { ContractorItemComponent } from './contractors/contractor-item/contractor-item.component';
 import { ReceiptItemComponent } from './contracts/contract-item/receipt-item/receipt-item.component';
 import { ExpenseItemComponent } from './contracts/contract-item/expense-item/expense-item.component';
-import { UsersComponent } from './users/users.component';
+import { ReportConfigDialogComponent, UsersComponent } from './users/users.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { PromotionDialogComponent } from './promotions/promotion-dialog/promotion-dialog.component';
@@ -51,7 +51,6 @@ import { CourseDialogComponent } from './courses/course-dialog/course-dialog.com
 import { CoursesComponent } from './courses/courses.component';
 import { ParticipantItemComponent } from './courses/participant-item/participant-item.component';
 import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
-import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 
 @NgModule({
   imports: [
@@ -106,8 +105,8 @@ import { TextInputDialogComponent } from 'app/shared/components/text-input-dialo
     CourseDialogComponent,
     CoursesComponent,
     ParticipantItemComponent,
+    ReportConfigDialogComponent,
     ResourceItemComponent,
-    TextInputDialogComponent,
   ],
 })
 export class PagesModule {}

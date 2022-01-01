@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
@@ -16,7 +16,7 @@ export class SelectorDialogComponent extends BaseDialogComponent implements OnIn
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    protected derivedRef: NbDialogRef<SelectorDialogComponent>
+    @Optional() protected derivedRef: NbDialogRef<SelectorDialogComponent>
   ) {
     super(derivedDocument, derivedRef);
   }
