@@ -103,7 +103,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   today = new Date();
   invoiceNumber = 0;
   revision = 0;
-  accumulatedLastYears = 375; //TODO: Get this value automatically, also change in backend
+  accumulatedLastYears = 1078; //TODO: Get this value automatically, also change in backend
   validation = (invoice_validation as any).default;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
