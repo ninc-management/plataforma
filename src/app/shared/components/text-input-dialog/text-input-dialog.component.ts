@@ -27,7 +27,7 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
     this.inputRef.nativeElement.focus();
   }
 
-  dismiss(response: boolean): void {
+  dismiss(response: string): void {
     this.derivedRef.close(response);
   }
 
