@@ -215,6 +215,22 @@
               />
             </div>
           </div>
+          <div class="col-6 col-md-2">
+            <div class="form-control-group">
+              <label class="label" for="input-value">Valor de comissão:</label>
+              <input
+                nbInput
+                [ngModel]="comissionSum"
+                #comissionValue="ngModel"
+                id="comission-value"
+                name="comission-value"
+                placeholder="Valor de comissão"
+                fullWidth
+                fieldSize="large"
+                [readonly]="true"
+              />
+            </div>
+          </div>
           <div class="col-6 col-md-3">
             <div class="form-control-group">
               <label class="label" for="input-liquid">
@@ -242,22 +258,7 @@
               />
             </div>
           </div>
-          <div class="col-6 col-md-2">
-            <div class="form-control-group">
-              <label class="label" for="input-value">Valor de comissão:</label>
-              <input
-                nbInput
-                [ngModel]="comissionSum"
-                #comissionValue="ngModel"
-                id="comission-value"
-                name="comission-value"
-                placeholder="Valor de comissão"
-                fullWidth
-                fieldSize="large"
-                [readonly]="true"
-              />
-            </div>
-          </div>
+
           <div class="col-6 col-md-2">
             <div class="form-control-group">
               <label class="label" for="input-created">Data de criação:</label>
