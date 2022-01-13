@@ -14,7 +14,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { DepartmentService } from 'app/shared/services/department.service';
-import { Contract } from '@models/contract';
+import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
 
@@ -166,35 +166,88 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
+      this.userService.getUsers(),
       this.userService.currentUser$,
     ])
       .pipe(
         takeUntil(this.destroy$),
         filter(
-          ([contracts, invoices, contractors, user]) =>
-            contracts.length > 0 && invoices.length > 0 && contractors.length > 0
+          ([contracts, invoices, contractors, users, user]) =>
+            contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && users.length > 0
         )
       )
-      .subscribe(([contracts, invoices, contractors, user]) => {
-        this.contracts = contracts.map((contract: Contract) => {
+      .subscribe(([contracts, invoices, contractors, users, user]) => {
+        invoices.map((invoice: Invoice, index: number) => {
+          invoice.service = 'Serviço #' + index.toString();
+          invoice.name = 'Orçamento #' + index.toString();
+          invoice.contractorFullName = undefined;
+          invoice.subject = undefined;
+          invoice.subtitle1 = undefined;
+          invoice.subtitle2 = undefined;
+          invoice.contactName = undefined;
+        });
+        this.contracts = contracts.map((contract: Contract, index: number) => {
           if (contract.invoice) {
             const invoice = this.invoiceService.idToInvoice(contract.invoice);
             contract.invoice = invoice;
-            if (invoice.author) {
-              contract.fullName = this.userService.idToShortName(invoice.author);
-            }
-            if (invoice.contractor) {
-              contract.contractor = this.contractorService.idToName(invoice.contractor);
-            }
+
+            contract.receipts.map((receipt: ContractReceipt, rIndex: number) => {
+              receipt.description = 'Ordem de Empenho #' + rIndex.toString() + ' do Contrato #' + index.toString();
+            });
+
+            contract.payments.map((payment: ContractPayment, pIndex: number) => {
+              payment.service = 'Ordem de Pagamento #' + pIndex.toString() + ' do Contrato #' + index.toString();
+            });
+
+            contract.expenses.map((expense: ContractExpense, eIndex: number) => {
+              expense.description = 'Despesa #' + eIndex.toString() + ' do Contrato #' + index.toString();
+            });
+
+            const nf = this.utils.nfPercentage(contract);
+            const nortan = this.utils.nortanPercentage(contract);
+            contract.ISS = contract.ISS ? contract.ISS : '0,00';
             contract.code = this.invoiceService.idToInvoice(contract.invoice).code;
-            contract.name = invoice.name;
+            contract.name = 'Contrato #' + index.toString();
             contract.value = invoice.value;
             contract.interests = contract.receipts.length.toString() + '/' + contract.total;
-            contract.role = this.invoiceService.role(invoice, user);
+            contract.balance = this.contractService.balance(contract);
+            contract.liquid = this.contractService.toNetValue(
+              this.contractService.subtractComissions(
+                this.stringUtil.removePercentage(contract.value, contract.ISS),
+                contract
+              ),
+              nf,
+              nortan
+            );
+            contract.cashback = this.stringUtil.numberToMoney(
+              this.contractService.expensesContributions(contract).global.cashback
+            );
+            const paid = this.contractService.toNetValue(
+              this.stringUtil.numberToMoney(
+                contract.receipts.reduce((accumulator: number, recipt: any) => {
+                  if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+                  return accumulator;
+                }, 0)
+              ),
+              nf,
+              nortan
+            );
+            contract.notPaid = this.stringUtil.numberToMoney(
+              this.stringUtil.moneyToNumber(this.contractService.toNetValue(contract.value, nf, nortan)) -
+                this.stringUtil.moneyToNumber(paid)
+            );
           }
           return contract;
         });
         this.source.load(this.contracts);
+
+        const data = {
+          contracts: contracts,
+          invoices: invoices,
+        };
+
+        const blob = new Blob([JSON.stringify(data)], { type: 'text/json' });
+        saveAs(blob, 'nortan.json');
       });
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
