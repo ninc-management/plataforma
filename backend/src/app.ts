@@ -16,8 +16,9 @@ import contractRoutes from './routes/contract';
 import invoiceRoutes from './routes/invoice';
 import promotionRoutes from './routes/promotion';
 import teamRoutes from './routes/team';
-import nortanRouter from './routes/nortan';
-import courseRouter from './routes/course';
+import nortanRoutes from './routes/nortan';
+import courseRoutes from './routes/course';
+import publicRoutes from './routes/public';
 
 class NortanAPI {
   public app;
@@ -59,6 +60,8 @@ class NortanAPI {
     this.app.use(express.urlencoded({ extended: false, limit: '50mb' }));
     this.app.use('/', express.static(path.join(__dirname, 'angular')));
 
+    // API Public Routes
+    this.app.use('/api/public', publicRoutes);
     // API tooken validation
     this.app.use(isUserAuthenticated);
     // API endpoint routes
@@ -70,8 +73,8 @@ class NortanAPI {
     this.app.use('/api/invoice', invoiceRoutes);
     this.app.use('/api/promotion', promotionRoutes);
     this.app.use('/api/team', teamRoutes);
-    this.app.use('/api/nortan', nortanRouter);
-    this.app.use('/api/course', courseRouter);
+    this.app.use('/api/nortan', nortanRoutes);
+    this.app.use('/api/course', courseRoutes);
 
     // For all GET requests, send back index.html
     // so that PathLocationStrategy can be used
