@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { take, takeUntil, skip } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import { cloneDeep } from 'lodash';
+import { Observable, of, Subject } from 'rxjs';
+import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
@@ -23,10 +23,11 @@ import { TeamService } from 'app/shared/services/team.service';
   templateUrl: './expense-item.component.html',
   styleUrls: ['./expense-item.component.scss'],
 })
-export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit {
+export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit, OnDestroy {
   @Input() contract = new Contract();
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
+  protected destroy$ = new Subject<void>();
   invoice = new Invoice();
   hasInitialContract = true;
   validation = expense_validation as any;
@@ -64,6 +65,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   }
 
   lastType = EXPENSE_TYPES.MATERIAL;
+
+  initialFiles: UploadedFile[] = [];
+  registered: boolean = false;
+  folderPath: string = '';
 
   get is100(): boolean {
     const total = this.expense.team.reduce((sum, m) => {
@@ -104,13 +109,15 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   ngOnInit(): void {
     super.ngOnInit();
-
+    this.registered = false;
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
 
     this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
       if (status === 'VALID' && this.expense.nf === true) this.updateUploaderOptions();
     });
+
+    this.initialFiles = cloneDeep(this.uploadedFiles);
   }
 
   fillContractData(): void {
@@ -196,6 +203,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         const extension = name.match('[.].+');
         return item + '-' + type + '-' + value + '-' + date + extension;
       };
+      this.folderPath = cloneDeep(mediaFolderPath);
       super.updateUploaderOptions(mediaFolderPath, fn);
     }
   }
@@ -228,6 +236,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   }
 
   registerExpense(): void {
+    this.registered = true;
     this.contract.createdExpenses += 1;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
@@ -342,5 +351,29 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     }
 
     return this.expense.type === EXPENSE_TYPES.APORTE;
+  }
+
+  compareFiles(file: UploadedFile): boolean {
+    let condition: boolean = false;
+    this.initialFiles.forEach((initialFile) => {
+      if (isEqual(initialFile, file)) condition = true;
+    });
+    return condition;
+  }
+
+  deleteFiles(): void {
+    const filesToRemove = this.uploadedFiles.filter((file) => !this.compareFiles(file));
+    filesToRemove.forEach((file) => {
+      this.onedrive.deleteFile(this.folderPath, file);
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      console.log('Não deveria salvar');
+      this.deleteFiles();
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
