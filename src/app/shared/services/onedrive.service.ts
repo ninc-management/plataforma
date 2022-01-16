@@ -9,6 +9,7 @@ import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
 import { TeamExpense } from '@models/team';
 import { TeamService } from './team.service';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
 @Injectable({
   providedIn: 'root',
@@ -141,5 +142,21 @@ export class OnedriveService {
       );
     }
     return of('');
+  }
+
+  deleteFile(path: string, file: UploadedFile): void {
+    this.http
+      .get(this.oneDriveURI() + path + ':/children')
+      .pipe(take(1))
+      .subscribe((metadata: any) => {
+        metadata.value.forEach((data: any) => {
+          if (data.name === file.name) {
+            this.http
+              .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
+              .pipe(take(1))
+              .subscribe(() => console.log('Arquivo apagado!'));
+          }
+        });
+      });
   }
 }
