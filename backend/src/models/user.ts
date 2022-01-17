@@ -135,6 +135,9 @@ export class User extends Base<string> {
 
   @prop({ type: () => [UserFinancialTransaction] })
   public transactions: UserFinancialTransaction[] = [];
+
+  @prop({ required: true })
+  public active: boolean = true;
 }
 
 export default getModelForClass(User);
