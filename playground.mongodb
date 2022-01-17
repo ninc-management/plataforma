@@ -83,6 +83,12 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+// Add active field to Users
+db.users.find().forEach((u) => {
+  u.active = true;
+  db.users.replaceOne({_id: u._id}, u);
+})
+
 // Fix payment value format
 db.contracts.find().forEach((c) => {
   if(c.payments){
