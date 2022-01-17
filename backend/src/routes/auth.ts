@@ -1,35 +1,36 @@
 import * as express from 'express';
 
-import Prospect from '../models/prospect';
-import User from '../models/user';
+import ProspectModel from '../models/prospect';
+import UserModel from '../models/user';
+import { Prospect } from '../models/prospect';
 
 const router = express.Router();
 
 router.post('/register', (req, res, next) => {
-  const prospect = new Prospect({
-    fullName: req.body.fullName,
-    email: req.body.email,
-    phone: req.body.phone,
-    state: req.body.state,
-    city: req.body.city,
-    education: req.body.education,
-    arquitetura: req.body.arquitetura ? req.body.arquitetura : false,
-    design: req.body.design ? req.body.design : false,
-    civil: req.body.civil ? req.body.civil : false,
-    eletrica: req.body.eletrica ? req.body.eletrica : false,
-    incendio: req.body.incendio ? req.body.incendio : false,
-    sanitaria: req.body.sanitaria ? req.body.sanitaria : false,
-    impermeabilizacao: req.body.impermeabilizacao ? req.body.impermeabilizacao : false,
-    ambiental: req.body.ambiental ? req.body.ambiental : false,
-    hidrico: req.body.hidrico ? req.body.hidrico : false,
-    more: req.body.more ? req.body.more : false,
-    meet: req.body.more ? req.body.meet : '',
-    emailNortan: req.body.emailNortan ? req.body.emailNortanortan : 'não definido',
-    article: req.body.article ? req.body.article : 'a',
-    level: req.body.level ? req.body.level : 'a',
-    mainDepartment: req.body.mainDepartment ? req.body.mainDepartment : 'a',
-  });
-  User.findOne({ email: req.body.email }).then((user) => {
+  const p = new Prospect();
+  p.fullName = req.body.fullName;
+  p.email = req.body.email;
+  p.phone = req.body.phone;
+  p.state = req.body.state;
+  p.city = req.body.city;
+  p.education = req.body.education;
+  p.arquitetura = req.body.arquitetura ? req.body.arquitetura : false;
+  p.design = req.body.design ? req.body.design : false;
+  p.civil = req.body.civil ? req.body.civil : false;
+  p.eletrica = req.body.eletrica ? req.body.eletrica : false;
+  p.incendio = req.body.incendio ? req.body.incendio : false;
+  p.sanitaria = req.body.sanitaria ? req.body.sanitaria : false;
+  p.impermeabilizacao = req.body.impermeabilizacao ? req.body.impermeabilizacao : false;
+  p.ambiental = req.body.ambiental ? req.body.ambiental : false;
+  p.hidrico = req.body.hidrico ? req.body.hidrico : false;
+  p.more = req.body.more ? req.body.more : false;
+  p.meet = req.body.more ? req.body.meet : '';
+  p.emailNortan = req.body.emailNortan ? req.body.emailNortanortan : 'não definido';
+  p.article = req.body.article ? req.body.article : 'a';
+  p.level = req.body.level ? req.body.level : 'a';
+  p.mainDepartment = req.body.mainDepartment ? req.body.mainDepartment : 'a';
+  const prospect = new ProspectModel(p);
+  UserModel.findOne({ email: req.body.email }).then((user) => {
     if (!user) {
       prospect
         .save()
@@ -50,7 +51,7 @@ router.post('/register', (req, res, next) => {
 });
 
 router.post('/isRegistered', (req, res, next) => {
-  User.findOne({ email: req.body.email }).then((user) => {
+  UserModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json({
       isRegistered: !!user,
     });
@@ -58,7 +59,7 @@ router.post('/isRegistered', (req, res, next) => {
 });
 
 router.post('/isProspect', (req, res, next) => {
-  Prospect.findOne({ email: req.body.email }).then((prospect) => {
+  ProspectModel.findOne({ email: req.body.email }).then((prospect) => {
     res.status(200).json({
       isRegistered: !!prospect,
     });

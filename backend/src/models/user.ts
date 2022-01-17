@@ -107,6 +107,9 @@ export class User extends Base<string> {
 
   @prop()
   public theme?: string;
+
+  @prop({ required: true })
+  public active: boolean = true;
 }
 
 export default getModelForClass(User);
