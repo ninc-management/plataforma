@@ -17,11 +17,12 @@ import {
 } from 'date-fns';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { at, groupBy } from 'lodash';
+import { at, groupBy, isEqual } from 'lodash';
 import { TimeSeriesItem } from './metrics.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Team } from '@models/team';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -267,5 +268,13 @@ export class UtilsService {
     }
 
     return out;
+  }
+
+  compareFiles(initialFiles: UploadedFile[], file: UploadedFile): boolean {
+    let condition: boolean = false;
+    initialFiles.forEach((initialFile) => {
+      if (isEqual(initialFile, file)) condition = true;
+    });
+    return condition;
   }
 }
