@@ -104,6 +104,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   addAndClean(): void {
+    this.registered = true;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     this.iTeam.expenses.push(cloneDeep(this.expense));
     this.teamService.editTeam(cloneDeep(this.iTeam));
