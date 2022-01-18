@@ -353,24 +353,13 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     return this.expense.type === EXPENSE_TYPES.APORTE;
   }
 
-  compareFiles(file: UploadedFile): boolean {
-    let condition: boolean = false;
-    this.initialFiles.forEach((initialFile) => {
-      if (isEqual(initialFile, file)) condition = true;
-    });
-    return condition;
-  }
-
   deleteFiles(): void {
-    const filesToRemove = this.uploadedFiles.filter((file) => !this.compareFiles(file));
-    filesToRemove.forEach((file) => {
-      this.onedrive.deleteFile(this.folderPath, file);
-    });
+    const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
+    this.onedrive.deleteFile(this.folderPath, filesToRemove);
   }
 
   ngOnDestroy(): void {
     if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
-      console.log('Não deveria salvar');
       this.deleteFiles();
     }
     this.destroy$.next();
