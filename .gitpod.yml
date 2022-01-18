@@ -28,3 +28,6 @@ vscode:
     - equinusocio.vsc-material-theme
     - github.vscode-pull-request-github
     - mongodb.mongodb-vscode
+ports:
+  - port: 4200
+    onOpen: open-browser
