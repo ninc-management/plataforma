@@ -18,6 +18,7 @@ import {
   NbDatepickerModule,
   NbAlertModule,
   NbFormFieldModule,
+  NbToggleModule,
 } from '@nebular/theme';
 import { ThemeModule } from '../@theme/theme.module';
 import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
@@ -73,6 +74,7 @@ import { ResourceItemComponent } from './courses/resource-item/resource-item.com
     NbTabsetModule,
     NbTooltipModule,
     NbUserModule,
+    NbToggleModule,
     Ng2SmartTableModule,
     PagesRoutingModule,
     SharedModule,

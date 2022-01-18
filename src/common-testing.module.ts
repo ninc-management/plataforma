@@ -4,50 +4,51 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed } from '@angular/core/testing';
 import {
+  NbActionsModule,
   NbAlertModule,
+  NbAutocompleteModule,
   NbButtonModule,
   NbCardModule,
   NbCheckboxModule,
+  NbContextMenuModule,
   NbDatepickerModule,
+  NbDialogModule,
+  NbDialogService,
+  NbIconLibraries,
   NbIconModule,
   NbInputModule,
   NbLayoutModule,
   NbListModule,
-  NbSelectModule,
-  NbThemeModule,
-  NbTooltipModule,
-  NbToastrService,
-  NbUserModule,
-  NbSpinnerModule,
-  NbProgressBarModule,
-  NbDialogService,
-  NbDialogModule,
-  NbOverlayService,
   NbMenuModule,
-  NbActionsModule,
-  NbSearchModule,
-  NbSidebarModule,
-  NbContextMenuModule,
+  NbOverlayService,
+  NbProgressBarModule,
   NbRadioModule,
-  NbIconLibraries,
+  NbSearchModule,
+  NbSelectModule,
+  NbSidebarModule,
+  NbSpinnerModule,
+  NbThemeModule,
   NbToastrModule,
-  NbAutocompleteModule,
+  NbToastrService,
+  NbToggleModule,
+  NbTooltipModule,
+  NbUserModule,
 } from '@nebular/theme';
 import {
   NbAuthModule,
   NbAuthService,
-  NbTokenService,
-  NbTokenLocalStorage,
-  NbTokenStorage,
   NbAuthTokenParceler,
   NbDummyAuthStrategy,
+  NbTokenLocalStorage,
+  NbTokenService,
+  NbTokenStorage,
 } from '@nebular/auth';
 import {
-  MsalModule,
   MSAL_GUARD_CONFIG,
-  MsalGuardConfiguration,
-  MsalService,
   MsalBroadcastService,
+  MsalGuardConfiguration,
+  MsalModule,
+  MsalService,
 } from '@azure/msal-angular';
 import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
 import { AuthService } from 'app/auth/auth.service';
@@ -83,6 +84,7 @@ import { PagesModule } from 'app/pages/pages.module';
 import { CommonModule } from '@angular/common';
 import { TeamService } from 'app/shared/services/team.service';
 import { FinancialService } from 'app/shared/services/financial.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const roles = Object.values(Permissions);
 
@@ -140,6 +142,7 @@ const IMPORTS = [
     protectedResourceMap: new Map(),
   }),
   AngularFireModule.initializeApp(environment.firebaseConfig),
+  BrowserAnimationsModule,
   CommonModule,
   FormsModule,
   HttpClientTestingModule,
@@ -170,8 +173,9 @@ const IMPORTS = [
   NbSidebarModule,
   NbSpinnerModule,
   NbThemeModule.forRoot(),
-  NbTooltipModule,
   NbToastrModule.forRoot(),
+  NbToggleModule,
+  NbTooltipModule,
   NbUserModule,
   PagesModule,
   PdfViewerModule,

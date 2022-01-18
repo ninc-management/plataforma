@@ -13,6 +13,14 @@
       <nb-card-header>
         {{ title }}
         <div class="buttons">
+          <nb-toggle
+            (ngModelChange)="handleUserStatusChange()"
+            [(ngModel)]="user.active"
+            name="isUserActive"
+            labelPosition="start"
+          >
+            Ativo?
+          </nb-toggle>
           <button
             nbButton
             ghost
