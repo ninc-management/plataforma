@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { cloneDeep } from 'lodash';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { cloneDeep, isEqual } from 'lodash';
 import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -37,6 +37,10 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   expense: TeamExpense = new TeamExpense();
 
+  initialFiles: UploadedFile[] = [];
+  registered: boolean = false;
+  folderPath: string = '';
+
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
@@ -52,6 +56,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   ngOnInit(): void {
     super.ngOnInit();
 
+    this.registered = false;
     const tmp = cloneDeep(this.userService.getUsers().value.filter((user) => user.active));
     this.userData = of(cloneDeep(tmp));
     this.types = this.iTeam.config.expenseTypes.map((eType) => eType.name);
@@ -63,6 +68,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       this.handleTypeChange();
+      this.initialFiles = cloneDeep(this.uploadedFiles);
     } else {
       this.expense.code = '#' + this.iTeam.expenses.length.toString();
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
@@ -84,6 +90,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   registerExpense(): void {
     let creatingExpense = false;
+    this.registered = true;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIdx !== undefined) {
       this.expense.lastUpdate = new Date();
@@ -122,6 +129,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       }
       return 'Comprovante-' + type + '-' + date + extension;
     };
+    this.folderPath = cloneDeep(mediaFolderPath);
     super.updateUploaderOptions(mediaFolderPath, fn, true);
   }
 
@@ -137,5 +145,18 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   updatePaidDate(): void {
     if (!this.expense.paid) this.expense.paidDate = undefined;
     else this.expense.paidDate = new Date();
+  }
+
+  deleteFiles(): void {
+    const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
+    this.onedrive.deleteFile(this.folderPath, filesToRemove);
+  }
+
+  ngOnDestroy(): void {
+    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      this.deleteFiles();
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
