@@ -144,19 +144,25 @@ export class OnedriveService {
     return of('');
   }
 
-  deleteFile(path: string, file: UploadedFile): void {
+  deleteFile(path: string, filesToRemove: UploadedFile[]): void {
     this.http
       .get(this.oneDriveURI() + path + ':/children')
       .pipe(take(1))
       .subscribe((metadata: any) => {
-        metadata.value.forEach((data: any) => {
-          if (data.name === file.name) {
-            this.http
-              .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
-              .pipe(take(1))
-              .subscribe(() => console.log('Arquivo apagado!'));
-          }
-        });
+        if (metadata.value) {
+          metadata.value.forEach((data: any) => {
+            filesToRemove.forEach((file) => {
+              if (file.name === data.name) {
+                this.http
+                  .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
+                  .pipe(take(1))
+                  .subscribe(() => console.log('Arquivo apagado!'));
+                const index = filesToRemove.indexOf(file, 0);
+                if (index > -1) filesToRemove.splice(index, 1);
+              }
+            });
+          });
+        }
       });
   }
 }
