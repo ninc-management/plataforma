@@ -11,12 +11,14 @@ const router = express.Router();
 router.post('/user/all', async (req, res) => {
   const users: User[] = await UserModel.find({});
   return res.status(200).json(
-    users.map((user) => ({
-      fullName: user.fullName,
-      profilePicture: user.profilePicture,
-      mainDepartment: user.mainDepartment,
-      exibitionName: user.exibitionName,
-    }))
+    users
+      .filter((user) => user.active)
+      .map((user) => ({
+        fullName: user.fullName,
+        profilePicture: user.profilePicture,
+        mainDepartment: user.mainDepartment,
+        exibitionName: user.exibitionName,
+      }))
   );
 });
 
@@ -29,7 +31,7 @@ router.post('/metric/all', async (req, res) => {
     openedContracts: contracts.filter((contract) => contract.status == 'Em andamento' || contract.status == 'A receber')
       .length,
     clients: contractors.length,
-    members: users.length,
+    members: users.filter((user) => user.active).length,
   });
 });
 
