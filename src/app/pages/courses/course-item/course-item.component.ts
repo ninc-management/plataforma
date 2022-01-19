@@ -9,7 +9,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { CourseDialogComponent, DIALOG_TYPES } from '../course-dialog/course-dialog.component';
 
 @Component({
@@ -25,8 +25,8 @@ export class CourseItemComponent implements OnInit {
   editing = false;
   speakerSearch = '';
   participantsSearch = '';
-  avaliableSpeakers: Observable<User[]> = of([]);
-  avaliableParticipants: Observable<User[]> = of([]);
+  availableSpeakers: Observable<User[]> = of([]);
+  availableParticipants: Observable<User[]> = of([]);
   dTypes = DIALOG_TYPES;
 
   get speakerName(): string {
@@ -50,8 +50,8 @@ export class CourseItemComponent implements OnInit {
       this.course.startDate = new Date(this.course.startDate);
       this.editing = true;
     }
-    this.avaliableSpeakers = this.userService.getUsers();
-    this.avaliableParticipants = this.userService.getUsers();
+    this.availableSpeakers = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+    this.availableParticipants = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
   }
 
   registerCourse(): void {

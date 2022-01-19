@@ -53,7 +53,7 @@ export class NortanExpenseItemComponent extends BaseExpenseComponent implements 
   ngOnInit(): void {
     super.ngOnInit();
 
-    const tmp = cloneDeep(this.userService.getUsers().value);
+    const tmp = cloneDeep(this.userService.getUsers().value.filter((user) => user.active));
     this.userData = of(cloneDeep(tmp));
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);

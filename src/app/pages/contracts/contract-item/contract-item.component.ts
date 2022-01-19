@@ -264,10 +264,10 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return this.invoice.team.find((member: InvoiceTeamMember) => this.userService.isEqual(user, member.user)) ===
-            undefined
-            ? true
-            : false;
+          return (
+            this.invoice.team.find((member: InvoiceTeamMember) => this.userService.isEqual(user, member.user)) ===
+              undefined && user.active
+          );
         });
       })
     );

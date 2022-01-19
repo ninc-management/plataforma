@@ -27,7 +27,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   memberSearch = '';
   currentMember = new TeamMember();
   availableUsers: Observable<User[]> = of([]);
-  avaliableLeaders: Observable<User[]> = of([]);
+  availableLeaders: Observable<User[]> = of([]);
   COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
 
@@ -51,27 +51,24 @@ export class TeamItemComponent implements OnInit, OnDestroy {
         return users.filter((user) => {
           if (this.teamService.availableCoordinations(user).length == 0) return false;
           const isUserInTeam =
-            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) === undefined
-              ? false
-              : true;
+            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) !== undefined;
 
           const hasTeamInCoordination = this.teamService.usedCoordinations(user).some((coordination) => {
             //a coordenacao do usuario é igual a alguma coordenacao do time?
             return this.COORDINATIONS.includes(coordination);
           });
 
-          return !isUserInTeam && !hasTeamInCoordination;
+          return !isUserInTeam && !hasTeamInCoordination && user.active;
         });
       })
     );
 
-    this.avaliableLeaders = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
+    this.availableLeaders = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
         return users.filter((user) => {
-          return this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) ===
-            undefined
-            ? false
-            : true;
+          return (
+            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) !== undefined
+          );
         });
       })
     );
