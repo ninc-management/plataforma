@@ -213,13 +213,14 @@ describe('TeamService', () => {
 
   baseTest('idToName should work', (expectedTeams: Team[]) => {
     expect(service.idToName('0')).toEqual(expectedTeams[0].name);
+    expect(service.idToName(mockedTeams[0])).toEqual(expectedTeams[0].name);
   });
 
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {
     expect(service.idToTeam('0')).toEqual(expectedTeams[0]);
-    expect(service.idToTeam(expectedTeams[0])).toEqual(expectedTeams[0]);
+    expect(service.idToTeam(mockedTeams[0])).toEqual(expectedTeams[0]);
     expect(service.idToTeam('1')).toEqual(expectedTeams[1]);
-    expect(service.idToTeam(expectedTeams[1])).toEqual(expectedTeams[1]);
+    expect(service.idToTeam(mockedTeams[1])).toEqual(expectedTeams[1]);
   });
 
   baseTest('isMember should work', (expectedTeams: Team[]) => {
@@ -248,6 +249,7 @@ describe('TeamService', () => {
   baseTest('usedToTeamsMembersFiltered should work', (expectedTeams: Team[]) => {
     const lastMember = expectedTeams[0].members.pop();
     expect(service.userToTeamsMembersFiltered('0')).toEqual([expectedTeams[0]]);
+    expect(service.userToTeamsMembersFiltered(mockedUsers[0])).toEqual([expectedTeams[0]]);
     expect(service.userToTeamsMembersFiltered(undefined)).toEqual([]);
   });
 
