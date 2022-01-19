@@ -1,23 +1,10 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
-  Inject,
-  Optional,
-} from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { map, take } from 'rxjs/operators';
 import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -217,12 +204,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
-        return users.filter((user) => {
-          return (
-            this.tempInvoice.team.find((member: InvoiceTeamMember) => this.userService.isEqual(user, member.user)) ===
-              undefined && user.active
-          );
-        });
+        return users.filter((user) => !this.userService.isUserInTeam(user, this.tempInvoice.team) && user.active);
       })
     );
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {

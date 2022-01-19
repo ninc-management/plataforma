@@ -130,7 +130,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           map(([users, _]) => {
             return users.filter((user) => {
               return (
-                this.user.AER.find((member) => this.userService.isEqual(user, member)) === undefined &&
+                !this.userService.isUserInTeam(user, this.user.AER) &&
                 !this.userService.isEqual(user, this.user) &&
                 user.active
               );
