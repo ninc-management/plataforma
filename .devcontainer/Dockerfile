@@ -13,6 +13,12 @@ RUN apt-get update && \
 # Instala o chromium para os testes
 RUN apt-get install -y chromium
 
+# Instala codecov
+RUN cd /usr/bin && \
+    sudo curl -Os https://uploader.codecov.io/latest/linux/codecov && \
+    sudo chmod +x codecov && \
+    cd -
+
 # Define pasta padrão
 WORKDIR /root/nortan
 

@@ -36,6 +36,7 @@ module.exports = function (config) {
       },
     },
     singleRun: false,
+    restartOnFileChange: true,
     captureTimeout: 210000,
     browserDisconnectTimeout: 210000,
     browserNoActivityTimeout: 210000,
