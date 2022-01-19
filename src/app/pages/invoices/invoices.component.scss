@@ -14,6 +14,10 @@
     font-size: 1.5rem;
   }
 
+  table {
+    text-align: center;
+  }
+
   .invoices {
     .ng2-smart-action-delete-delete:hover {
       color: nb-theme(icon-danger-color) !important;

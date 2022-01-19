@@ -26,6 +26,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  table {
+    text-align: center;
+  }
+
   .icon-file-csv::before {
     content: '\e900';
   }
