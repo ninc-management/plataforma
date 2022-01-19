@@ -118,6 +118,27 @@ export class UsersComponent implements OnInit, OnDestroy {
         title: 'Conta Microsoft',
         type: 'string',
       },
+      active: {
+        title: 'Ativos?',
+        type: 'string',
+        valuePrepareFunction: (value: any) => (value ? '✅' : '❌'),
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              {
+                value: true,
+                title: '✅',
+              },
+              {
+                value: false,
+                title: '❌',
+              },
+            ],
+          },
+        },
+      },
     },
   };
 
