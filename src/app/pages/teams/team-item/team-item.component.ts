@@ -50,9 +50,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
       map(([users, _]) => {
         return users.filter((user) => {
           if (this.teamService.availableCoordinations(user).length == 0) return false;
-          const isUserInTeam =
-            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) !== undefined;
-
+          const isUserInTeam = this.userService.isUserInTeam(user, this.team.members);
           const hasTeamInCoordination = this.teamService.usedCoordinations(user).some((coordination) => {
             //a coordenacao do usuario é igual a alguma coordenacao do time?
             return this.COORDINATIONS.includes(coordination);
@@ -65,11 +63,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
 
     this.availableLeaders = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
-        return users.filter((user) => {
-          return (
-            this.team.members.find((member: TeamMember) => this.userService.isEqual(user, member.user)) !== undefined
-          );
-        });
+        return users.filter((user) => this.userService.isUserInTeam(user, this.team.members));
       })
     );
 

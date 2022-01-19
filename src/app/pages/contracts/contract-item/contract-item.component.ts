@@ -16,7 +16,7 @@ import { ContractDialogComponent, COMPONENT_TYPES } from '../contract-dialog/con
 import { ContractExpense, Contract } from '@models/contract';
 import * as contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Invoice } from '@models/invoice';
 
 interface ExpenseTypesSum {
   type: string;
@@ -263,12 +263,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
-        return users.filter((user) => {
-          return (
-            this.invoice.team.find((member: InvoiceTeamMember) => this.userService.isEqual(user, member.user)) ===
-              undefined && user.active
-          );
-        });
+        return users.filter((user) => !this.userService.isUserInTeam(user, this.invoice.team) && user.active);
       })
     );
     this.contractService

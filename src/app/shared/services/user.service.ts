@@ -9,6 +9,9 @@ import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { UtilsService } from './utils.service';
 import { User } from '@models/user';
+import { InvoiceTeamMember } from '@models/invoice';
+import { TeamMember } from '@models/team';
+import { Ref } from '@typegoose/typegoose';
 
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
@@ -196,5 +199,21 @@ export class UserService implements OnDestroy {
   isEqual(u1: string | User | undefined, u2: string | User | undefined): boolean {
     if (u1 == undefined || u2 == undefined) return false;
     return this.idToUser(u1)._id == this.idToUser(u2)._id;
+  }
+
+  isUserInTeam(
+    u1: string | User | undefined,
+    team: InvoiceTeamMember[] | TeamMember[] | Ref<User, string | undefined>[] //AER
+  ): boolean {
+    if (u1 == undefined) return false;
+    return team.some((member: InvoiceTeamMember | TeamMember | Ref<User, string | undefined>) => {
+      if (
+        this.utils.isOfType<InvoiceTeamMember>(member, ['user', 'coordination', 'distribution']) ||
+        this.utils.isOfType<TeamMember>(member, ['user', 'coordination'])
+      ) {
+        return this.isEqual(u1, member.user);
+      }
+      return this.isEqual(u1, member);
+    });
   }
 }
