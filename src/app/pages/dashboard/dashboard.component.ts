@@ -85,7 +85,7 @@ export class DashboardComponent {
         .getTeams()
         .pipe(take(2))
         .subscribe(() => {
-          this.teams = this.teamService.userToTeams(user);
+          this.teams = this.teamService.userToTeams(user).filter((team) => team.name.toLocaleLowerCase() != 'nortan');
         });
       this.timeSeries$ = combineLatest([
         this.metricsService.receivedValueTimeSeries(user._id),
@@ -155,22 +155,23 @@ export class DashboardComponent {
       }
 
       case DIALOG_TYPES.EXPENSE: {
-        if (this.activeTab == TAB_TITLES.NORTAN) {
-          this.dialogService.open(DashboardDialogComponent, {
+        if (this.activeTab == TAB_TITLES.PESSOAL) {
+          this.dialogService.open(ContractDialogComponent, {
             context: {
-              title: 'ADICIONAR GASTO NORTAN',
-              componentType: DASHBOARD_COMPONENT_TYPES.EXPENSE,
+              title: 'ADICIONAR DESPESA',
+              componentType: COMPONENT_TYPES.EXPENSE,
             },
+
             dialogClass: 'my-dialog',
             closeOnBackdropClick: false,
             closeOnEsc: false,
             autoFocus: false,
           });
         } else {
-          this.dialogService.open(ContractDialogComponent, {
+          this.dialogService.open(DashboardDialogComponent, {
             context: {
-              title: 'ADICIONAR DESPESA',
-              componentType: COMPONENT_TYPES.EXPENSE,
+              title: this.activeTab === TAB_TITLES.NORTAN ? 'ADICIONAR GASTO NORTAN' : 'ADICIONAR DESPESA DO TIME',
+              componentType: DASHBOARD_COMPONENT_TYPES.EXPENSE,
             },
             dialogClass: 'my-dialog',
             closeOnBackdropClick: false,
@@ -256,12 +257,12 @@ export class DashboardComponent {
   }
 
   setActiveTab(event: NbTabComponent): void {
-    switch (event.tabTitle) {
-      case TAB_TITLES.PESSOAL: {
+    switch (event.tabTitle.toLowerCase()) {
+      case TAB_TITLES.PESSOAL.toLowerCase(): {
         this.activeTab = TAB_TITLES.PESSOAL;
         break;
       }
-      case TAB_TITLES.NORTAN: {
+      case TAB_TITLES.NORTAN.toLowerCase(): {
         this.activeTab = TAB_TITLES.NORTAN;
         break;
       }

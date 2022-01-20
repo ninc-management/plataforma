@@ -63,25 +63,31 @@
   <ngx-fab-item
     icon="minus"
     pack="fac"
-    [content]="activeTab == tabTitles.PESSOAL ? 'Despesas' : 'Gastos Administrativos'"
+    [content]="
+      activeTab == tabTitles.PESSOAL
+        ? 'Despesas'
+        : activeTab == tabTitles.NORTAN
+        ? 'Gastos Administrativos'
+        : 'Despesas do Time'
+    "
     (clicked)="openDialog(dialogTypes.EXPENSE)"
   ></ngx-fab-item>
   <ngx-fab-item
-    *ngIf="activeTab != tabTitles.NORTAN"
+    *ngIf="activeTab === tabTitles.PESSOAL"
     icon="dollar-sign"
     pack="fa"
     content="Ordem de Pagamento"
     (clicked)="openDialog(dialogTypes.PAYMENT)"
   ></ngx-fab-item>
   <ngx-fab-item
-    *ngIf="activeTab != tabTitles.NORTAN"
+    *ngIf="activeTab === tabTitles.PESSOAL"
     icon="receipt"
     pack="fac"
     content="Ordem de Empenho"
     (clicked)="openDialog(dialogTypes.RECEIPT)"
   ></ngx-fab-item>
   <ngx-fab-item
-    *ngIf="activeTab != tabTitles.NORTAN"
+    *ngIf="activeTab === tabTitles.PESSOAL"
     icon="file-invoice-dollar"
     pack="fac"
     content="Orçamento"
@@ -89,13 +95,14 @@
     (clicked)="openDialog(dialogTypes.INVOICE)"
   ></ngx-fab-item>
   <ngx-fab-item
+    *ngIf="activeTab === tabTitles.PESSOAL"
     icon="person-add-outline"
     content="Cliente"
     iconLeft="1"
     (clicked)="openDialog(dialogTypes.CLIENT)"
   ></ngx-fab-item>
   <ngx-fab-item
-    *ngIf="activeTab != tabTitles.NORTAN && activeTab != tabTitles.PESSOAL"
+    *ngIf="activeTab != tabTitles.PESSOAL"
     icon="person-add-outline"
     content="Transferência"
     iconLeft="1"

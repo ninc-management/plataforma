@@ -32,16 +32,16 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-nortan-expense-item
+        <ngx-team-expense-item
           *ngIf="componentType === dTypes.EXPENSE"
           [iExpense]="iExpense"
           (submit)="dismiss()"
-        ></ngx-nortan-expense-item>
-        <ngx-nortan-expenses
+        ></ngx-team-expense-item>
+        <ngx-team-expenses
           *ngIf="componentType === dTypes.EXPENSES"
           [isDialogBlocked]="isBlocked"
           (submit)="dismiss()"
-        ></ngx-nortan-expenses>
+        ></ngx-team-expenses>
         <ngx-user-transaction *ngIf="componentType === dTypes.TRANSFER" (submit)="dismiss()"></ngx-user-transaction>
       </nb-card-body>
     </nb-card>

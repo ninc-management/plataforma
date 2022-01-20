@@ -19,7 +19,9 @@ export class DashboardDialogComponent extends BaseDialogComponent implements OnI
   @Input() title = '';
   @Input() iExpense?: Expense;
   @Input() componentType = DASHBOARD_COMPONENT_TYPES.EXPENSES;
+
   dTypes = DASHBOARD_COMPONENT_TYPES;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<DashboardDialogComponent>,

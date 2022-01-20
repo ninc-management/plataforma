@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NortanExpenseItemComponent } from './nortan-expense-item.component';
+import { TeamExpenseItemComponent } from './team-expense-item.component';
 import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('NortanExpenseItemComponent', () => {
-  let component: NortanExpenseItemComponent;
-  let fixture: ComponentFixture<NortanExpenseItemComponent>;
+  let component: TeamExpenseItemComponent;
+  let fixture: ComponentFixture<TeamExpenseItemComponent>;
 
-  CommonTestingModule.setUpTestBed(NortanExpenseItemComponent);
+  CommonTestingModule.setUpTestBed(TeamExpenseItemComponent);
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NortanExpenseItemComponent);
+    fixture = TestBed.createComponent(TeamExpenseItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

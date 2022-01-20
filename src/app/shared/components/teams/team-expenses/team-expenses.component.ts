@@ -8,14 +8,17 @@ import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from '../dashboard-dialog/dashboard-dialog.component';
+import {
+  DashboardDialogComponent,
+  DASHBOARD_COMPONENT_TYPES,
+} from '../../../../pages/dashboard/dashboard-dialog/dashboard-dialog.component';
 
 @Component({
-  selector: 'ngx-nortan-expenses',
-  templateUrl: './nortan-expenses.component.html',
-  styleUrls: ['./nortan-expenses.component.scss'],
+  selector: 'ngx-team-expenses',
+  templateUrl: './team-expenses.component.html',
+  styleUrls: ['./team-expenses.component.scss'],
 })
-export class NortanExpensesComponent implements OnInit, OnDestroy {
+export class TeamExpensesComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   destroy$ = new Subject<void>();
   expenses: Expense[] = [];

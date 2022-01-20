@@ -23,8 +23,6 @@ import { DashboardComponent } from './dashboard.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { GaugeComponent } from './charts/gauge/gauge.component';
 import { SharedModule } from 'app/shared/shared.module';
-import { NortanExpensesComponent } from './nortan-expenses/nortan-expenses.component';
-import { NortanExpenseItemComponent } from './nortan-expenses/nortan-expense-item/nortan-expense-item.component';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { FormsModule } from '@angular/forms';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
@@ -61,10 +59,8 @@ echarts.registerLocale('PT-BR', langPTBR);
     DashboardComponent,
     ProgressSectionComponent,
     GaugeComponent,
-    NortanExpenseItemComponent,
     DashboardDialogComponent,
     TimeSeriesComponent,
-    NortanExpensesComponent,
     UserTransactionComponent,
   ],
 })

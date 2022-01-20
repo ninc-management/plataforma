@@ -7,11 +7,15 @@ import {
   NbSelectModule,
   NbSpinnerModule,
   NbTooltipModule,
+  NbInputModule,
+  NbListModule,
+  NbUserModule,
+  NbDatepickerModule,
 } from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
 import { CommonModule } from '@angular/common';
-import { NbFileUploaderModule } from '../@theme/components';
+import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
 import { OverPaidDirective } from './directives/over-paid.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
@@ -24,18 +28,27 @@ import { BaseExpenseComponent } from './components/base-expense/base-expense.com
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
+import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
+import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     NbCardModule,
+    NbCompleterModule,
+    NbDatepickerModule,
     NbButtonModule,
     NbFileUploaderModule,
     NbIconModule,
+    NbInputModule,
+    NbListModule,
     NbSelectModule,
     NbSpinnerModule,
     NbTooltipModule,
+    NbUserModule,
+    Ng2SmartTableModule,
     PdfViewerModule,
   ],
   exports: [
@@ -45,6 +58,8 @@ import { SelectorDialogComponent } from './components/selector-dialog/selector-d
     FabComponent,
     FabItemComponent,
     SelectAllTextDirective,
+    TeamExpensesComponent,
+    TeamExpenseItemComponent,
   ],
   declarations: [
     BrMaskDirective,
@@ -60,6 +75,8 @@ import { SelectorDialogComponent } from './components/selector-dialog/selector-d
     SelectAllTextDirective,
     TextInputDialogComponent,
     SelectorDialogComponent,
+    TeamExpensesComponent,
+    TeamExpenseItemComponent,
   ],
 })
 export class SharedModule {}

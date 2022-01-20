@@ -16,11 +16,11 @@ import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
 
 @Component({
-  selector: 'ngx-nortan-expense-item',
-  templateUrl: './nortan-expense-item.component.html',
-  styleUrls: ['./nortan-expense-item.component.scss'],
+  selector: 'ngx-team-expense-item',
+  templateUrl: './team-expense-item.component.html',
+  styleUrls: ['./team-expense-item.component.scss'],
 })
-export class NortanExpenseItemComponent extends BaseExpenseComponent implements OnInit {
+export class TeamExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
   @Input() iExpense?: Expense;
