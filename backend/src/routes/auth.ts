@@ -66,4 +66,12 @@ router.post('/isProspect', (req, res, next) => {
   });
 });
 
+router.post('/isActive', (req, res, next) => {
+  UserModel.findOne({ email: req.body.email }).then((user) => {
+    res.status(200).json({
+      isActive: user ? user.active : false,
+    });
+  });
+});
+
 export default router;

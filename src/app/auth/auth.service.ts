@@ -91,4 +91,14 @@ export class AuthService {
       map((res) => (res as any).isRegistered)
     );
   }
+
+  isUserActive(email: string): Observable<boolean> {
+    const body = {
+      email: email,
+    };
+    return this.http.post('api/auth/isActive', body).pipe(
+      take(1),
+      map((res) => (res as any).isActive)
+    );
+  }
 }

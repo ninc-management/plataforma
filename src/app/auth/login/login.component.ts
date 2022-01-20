@@ -56,10 +56,16 @@ export class NgxLoginComponent extends NbLoginComponent {
           combineLatest([
             this.authService.isUserRegistred((result.payload as any).account.username),
             this.authService.isUserProspect((result.payload as any).account.username),
-          ]).subscribe(([isRegistered, isProspect]) => {
-            if (isRegistered != undefined && isProspect != undefined) {
-              if (isRegistered) super.login();
-              else {
+            this.authService.isUserActive((result.payload as any).account.username),
+          ]).subscribe(([isRegistered, isProspect, isActive]) => {
+            if (isRegistered != undefined && isProspect != undefined && isActive != undefined) {
+              if (isRegistered) {
+                if (isActive) {
+                  super.login();
+                } else {
+                  this.setupError('Este usuário está desativado! Por favor, entre em contato com seu líder de equipe.');
+                }
+              } else {
                 if (isProspect)
                   this.setupError(
                     'Seu cadastro ainda não foi aprovado 😅\nNão se preocupe, em breve entraremos em contato com você!'
