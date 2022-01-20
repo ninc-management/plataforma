@@ -11,7 +11,6 @@ import { UtilsService } from './utils.service';
 import { User } from '@models/user';
 import { InvoiceTeamMember } from '@models/invoice';
 import { TeamMember } from '@models/team';
-import { Ref } from '@typegoose/typegoose';
 
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
@@ -203,10 +202,10 @@ export class UserService implements OnDestroy {
 
   isUserInTeam(
     u1: string | User | undefined,
-    team: InvoiceTeamMember[] | TeamMember[] | Ref<User, string | undefined>[] //AER
+    team: InvoiceTeamMember[] | TeamMember[] | (User | string | undefined)[] //AER
   ): boolean {
     if (u1 == undefined) return false;
-    return team.some((member: InvoiceTeamMember | TeamMember | Ref<User, string | undefined>) => {
+    return team.some((member: InvoiceTeamMember | TeamMember | User | string | undefined) => {
       if (
         this.utils.isOfType<InvoiceTeamMember>(member, ['user', 'coordination', 'distribution']) ||
         this.utils.isOfType<TeamMember>(member, ['user', 'coordination'])
