@@ -3,6 +3,14 @@ import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { Team } from '@models/team';
+import { Expense } from '@models/expense';
+
+export enum TEAM_COMPONENT_TYPES {
+  TEAM,
+  EXPENSES,
+  EXPENSE,
+  TRANSFER,
+}
 
 @Component({
   selector: 'ngx-team-dialog',
@@ -12,6 +20,10 @@ import { Team } from '@models/team';
 export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() team = new Team();
+  @Input() iExpense?: Expense;
+  @Input() componentType = TEAM_COMPONENT_TYPES.TEAM;
+
+  dTypes = TEAM_COMPONENT_TYPES;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -23,5 +35,9 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
 
   ngOnInit(): void {
     super.ngOnInit();
+  }
+
+  dismiss(): void {
+    super.dismiss();
   }
 }

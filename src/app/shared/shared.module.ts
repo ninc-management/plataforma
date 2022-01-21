@@ -31,6 +31,7 @@ import { SelectorDialogComponent } from './components/selector-dialog/selector-d
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     SelectAllTextDirective,
     TeamExpensesComponent,
     TeamExpenseItemComponent,
+    UserTransactionComponent,
   ],
   declarations: [
     BrMaskDirective,
@@ -77,6 +79,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     SelectorDialogComponent,
     TeamExpensesComponent,
     TeamExpenseItemComponent,
+    UserTransactionComponent,
   ],
 })
 export class SharedModule {}

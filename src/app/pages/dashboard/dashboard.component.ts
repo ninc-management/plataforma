@@ -8,12 +8,15 @@ import { UserService } from 'app/shared/services/user.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
-import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
-import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard-dialog/dashboard-dialog.component';
-import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
-import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
+import {
+  COMPONENT_TYPES,
+  ContractDialogComponent,
+} from 'app/pages/contracts/contract-dialog/contract-dialog.component';
+import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
+import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Team } from '@models/team';
+import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -142,9 +145,10 @@ export class DashboardComponent {
   openDialog(dType: DIALOG_TYPES): void {
     switch (dType) {
       case DIALOG_TYPES.NORTAN_EXPENSE_TABLE: {
-        this.dialogService.open(DashboardDialogComponent, {
+        this.dialogService.open(TeamDialogComponent, {
           context: {
             title: 'GASTOS NORTAN',
+            componentType: TEAM_COMPONENT_TYPES.EXPENSES,
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
@@ -168,10 +172,10 @@ export class DashboardComponent {
             autoFocus: false,
           });
         } else {
-          this.dialogService.open(DashboardDialogComponent, {
+          this.dialogService.open(TeamDialogComponent, {
             context: {
               title: this.activeTab === TAB_TITLES.NORTAN ? 'ADICIONAR GASTO NORTAN' : 'ADICIONAR DESPESA DO TIME',
-              componentType: DASHBOARD_COMPONENT_TYPES.EXPENSE,
+              componentType: TEAM_COMPONENT_TYPES.EXPENSE,
             },
             dialogClass: 'my-dialog',
             closeOnBackdropClick: false,
@@ -238,10 +242,10 @@ export class DashboardComponent {
       }
 
       case DIALOG_TYPES.TRANSFER: {
-        this.dialogService.open(DashboardDialogComponent, {
+        this.dialogService.open(TeamDialogComponent, {
           context: {
             title: 'TRANSFERÊNCIA',
-            componentType: DASHBOARD_COMPONENT_TYPES.TRANSFER,
+            componentType: TEAM_COMPONENT_TYPES.TRANSFER,
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,

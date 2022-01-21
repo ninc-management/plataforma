@@ -4,7 +4,12 @@
     'width.px': windowWidth()
   }"
 >
-  <div class="col-12 col-md-8">
+  <div
+    [ngClass]="{
+      'col-12 col-md-8': componentType != dTypes.EXPENSES,
+      'col-12 col-md-11': componentType === dTypes.EXPENSES
+    }"
+  >
     <nb-card
       [ngStyle]="{
         'max-height.px': windowHeight()
@@ -27,7 +32,18 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-team-item (submit)="dismiss()" [iTeam]="team"></ngx-team-item>
+        <ngx-team-item *ngIf="componentType === dTypes.TEAM" (submit)="dismiss()" [iTeam]="team"></ngx-team-item>
+        <ngx-team-expense-item
+          *ngIf="componentType === dTypes.EXPENSE"
+          [iExpense]="iExpense"
+          (submit)="dismiss()"
+        ></ngx-team-expense-item>
+        <ngx-team-expenses
+          *ngIf="componentType === dTypes.EXPENSES"
+          [isDialogBlocked]="isBlocked"
+          (submit)="dismiss()"
+        ></ngx-team-expenses>
+        <ngx-user-transaction *ngIf="componentType === dTypes.TRANSFER" (submit)="dismiss()"></ngx-user-transaction>
       </nb-card-body>
     </nb-card>
   </div>

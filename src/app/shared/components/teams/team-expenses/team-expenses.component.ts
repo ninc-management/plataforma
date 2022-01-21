@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Expense } from '@models/expense';
 import { NbDialogService } from '@nebular/theme';
+import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { NortanService, NORTAN_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -8,10 +9,6 @@ import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import {
-  DashboardDialogComponent,
-  DASHBOARD_COMPONENT_TYPES,
-} from '../../../../pages/dashboard/dashboard-dialog/dashboard-dialog.component';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -159,11 +156,11 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   openDialog(index?: number): void {
     this.isDialogBlocked.next(true);
     this.dialogService
-      .open(DashboardDialogComponent, {
+      .open(TeamDialogComponent, {
         context: {
           title: index !== undefined ? 'EDITAR GASTO NORTAN' : 'ADICIONAR GASTO NORTAN',
           iExpense: index !== undefined ? this.expenses[index] : undefined,
-          componentType: DASHBOARD_COMPONENT_TYPES.EXPENSE,
+          componentType: TEAM_COMPONENT_TYPES.EXPENSE,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
