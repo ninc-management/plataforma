@@ -144,7 +144,7 @@ export class OnedriveService {
     return of('');
   }
 
-  deleteFile(path: string, filesToRemove: UploadedFile[]): void {
+  deleteFiles(path: string, filesToRemove: UploadedFile[]): void {
     this.http
       .get(this.oneDriveURI() + path + ':/children')
       .pipe(take(1))

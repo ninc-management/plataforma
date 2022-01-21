@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { take, takeUntil, skip } from 'rxjs/operators';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -27,7 +27,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   @Input() contract = new Contract();
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
-  protected destroy$ = new Subject<void>();
   invoice = new Invoice();
   hasInitialContract = true;
   validation = expense_validation as any;
@@ -109,7 +108,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.registered = false;
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
 
@@ -118,6 +116,13 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     });
 
     this.initialFiles = cloneDeep(this.uploadedFiles);
+  }
+
+  ngOnDestroy(): void {
+    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      this.deleteFiles();
+    }
+    super.ngOnDestroy();
   }
 
   fillContractData(): void {
@@ -203,7 +208,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         const extension = name.match('[.].+');
         return item + '-' + type + '-' + value + '-' + date + extension;
       };
-      this.folderPath = cloneDeep(mediaFolderPath);
+      this.folderPath = mediaFolderPath;
       super.updateUploaderOptions(mediaFolderPath, fn);
     }
   }
@@ -349,20 +354,11 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
       return true;
     }
-
     return this.expense.type === EXPENSE_TYPES.APORTE;
   }
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
-    this.onedrive.deleteFile(this.folderPath, filesToRemove);
-  }
-
-  ngOnDestroy(): void {
-    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
-      this.deleteFiles();
-    }
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }

@@ -68,7 +68,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       this.handleTypeChange();
-      this.initialFiles = cloneDeep(this.uploadedFiles);
+      this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFile[];
     } else {
       this.expense.code = '#' + this.iTeam.expenses.length.toString();
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
@@ -86,6 +86,13 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
           this.updateUploaderOptions();
         }, 5);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      this.deleteFiles();
+    }
+    super.ngOnDestroy();
   }
 
   registerExpense(): void {
@@ -130,7 +137,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       }
       return 'Comprovante-' + type + '-' + date + extension;
     };
-    this.folderPath = cloneDeep(mediaFolderPath);
+    this.folderPath = mediaFolderPath;
     super.updateUploaderOptions(mediaFolderPath, fn, true);
   }
 
@@ -150,14 +157,6 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
-    this.onedrive.deleteFile(this.folderPath, filesToRemove);
-  }
-
-  ngOnDestroy(): void {
-    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
-      this.deleteFiles();
-    }
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }
