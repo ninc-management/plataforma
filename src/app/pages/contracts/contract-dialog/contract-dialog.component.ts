@@ -114,18 +114,28 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
           .subscribe((contracts) => {
             if (contracts.length === 0) this.isPayable = false;
             else {
-              if (this.componentType == COMPONENT_TYPES.RECEIPT) {
-                this.availableContracts = contracts.filter(
-                  (contract) => contract.total !== contract.receipts.length.toString()
-                );
-                if (this.availableContracts.length === 0) this.isPayable = false;
-              }
-              if (this.componentType == COMPONENT_TYPES.PAYMENT) {
-                this.availableContracts = contracts.filter(
-                  (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
-                );
-                if (this.availableContracts.length === 0) this.hasBalance = false;
-                else this.hasBalance = true;
+              switch (this.componentType) {
+                case COMPONENT_TYPES.RECEIPT:
+                  this.availableContracts = contracts.filter(
+                    (contract) => contract.total !== contract.receipts.length.toString()
+                  );
+                  if (this.availableContracts.length === 0) this.isPayable = false;
+                  break;
+                case COMPONENT_TYPES.PAYMENT:
+                  this.availableContracts = contracts.filter(
+                    (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
+                  );
+                  if (this.availableContracts.length === 0) this.hasBalance = false;
+                  break;
+                case COMPONENT_TYPES.EXPENSE:
+                  this.availableContracts = contracts.filter(
+                    (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
+                  );
+                  if (this.availableContracts.length === 0) this.hasBalance = false;
+                  break;
+                default:
+                  this.availableContracts = contracts;
+                  break;
               }
             }
           });
