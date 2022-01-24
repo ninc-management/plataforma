@@ -112,7 +112,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
             })
           )
           .subscribe((contracts) => {
-            if (contracts.length === 0) this.isPayable = false;
+            if (contracts.length === 0) this.isPayable = this.hasBalance = false;
             else {
               switch (this.componentType) {
                 case COMPONENT_TYPES.RECEIPT:
