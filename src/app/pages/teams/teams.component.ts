@@ -98,7 +98,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
     this.dialogService.open(TeamDialogComponent, {
       context: {
         title: event.data ? 'EDIÇÃO DE TIME' : 'CADASTRO DE TIME',
-        team: event.data ? event.data : new Team(),
+        iTeam: event.data ? event.data : new Team(),
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

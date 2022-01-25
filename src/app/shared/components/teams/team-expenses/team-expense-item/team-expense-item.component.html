@@ -25,7 +25,7 @@
               ? userList.invalid
                 ? 'danger'
                 : 'success'
-              : iExpense === undefined && userSearch !== ''
+              : expenseIdx === undefined && userSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -71,11 +71,11 @@
               ? value.invalid
                 ? 'danger'
                 : 'success'
-              : expense.value && expense.value !== '' && iExpense === undefined
+              : expense.value && expense.value !== '' && expenseIdx === undefined
               ? 'success'
               : 'basic'
           "
-          [disabled]="expense.paid && iExpense !== undefined"
+          [disabled]="expense.paid && expenseIdx !== undefined"
           [attr.aria-invalid]="value.invalid && value.touched ? true : null"
         />
         <ng-container>
@@ -122,7 +122,7 @@
           fullWidth
           size="large"
           [required]="validation.nf.required"
-          [status]="nf.dirty ? 'success' : iExpense === undefined ? 'success' : 'basic'"
+          [status]="nf.dirty ? 'success' : expenseIdx === undefined ? 'success' : 'basic'"
           [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
         >
           <nb-option [value]="false">NÃO</nb-option>
@@ -155,7 +155,7 @@
               ? sourceList.invalid
                 ? 'danger'
                 : 'success'
-              : iExpense === undefined && sourceSearch !== ''
+              : expenseIdx === undefined && sourceSearch !== ''
               ? 'success'
               : 'basic'
           "
@@ -182,7 +182,7 @@
           size="large"
           [required]="validation.type.required"
           [status]="
-            type.dirty ? 'success' : iExpense === undefined && type.value && type.value !== '' ? 'success' : 'basic'
+            type.dirty ? 'success' : expenseIdx === undefined && type.value && type.value !== '' ? 'success' : 'basic'
           "
           [attr.aria-invalid]="type.invalid && type.touched ? true : null"
         >
@@ -196,7 +196,7 @@
       <div class="form-control-group">
         <label class="label" for="input-fixed-type">Tipo de gasto fixo:</label>
         <nb-select
-          [(ngModel)]="expense.fixedType"
+          [(ngModel)]="expense.subType"
           #fixedType="ngModel"
           id="input-fixed-type"
           name="fixedType"
@@ -205,7 +205,7 @@
           size="large"
           [required]="true"
           [status]="
-            fixedType.dirty ? 'success' : iExpense === undefined && fixedType.value !== '' ? 'success' : 'basic'
+            fixedType.dirty ? 'success' : expenseIdx === undefined && fixedType.value !== '' ? 'success' : 'basic'
           "
           [attr.aria-invalid]="fixedType.invalid && fixedType.touched ? true : null"
         >
@@ -257,7 +257,7 @@
           size="large"
           (ngModelChange)="updatePaidDate()"
           [required]="validation.paidCheck.required"
-          [status]="paidCheck.dirty ? 'success' : iExpense === undefined ? 'success' : 'basic'"
+          [status]="paidCheck.dirty ? 'success' : expenseIdx === undefined ? 'success' : 'basic'"
           [attr.aria-invalid]="paidCheck.invalid && paidCheck.touched ? true : null"
         >
           <nb-option [value]="false">NÃO</nb-option>
@@ -282,7 +282,7 @@
           [readonly]="true"
           [disabled]="!expense.paid"
           [status]="
-            paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : iExpense === undefined ? 'success' : 'basic'
+            paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : expenseIdx === undefined ? 'success' : 'basic'
           "
           [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
         />
@@ -300,7 +300,13 @@
             [required]="validation.paidDate.required"
             [readonly]="true"
             [status]="
-              paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : iExpense === undefined ? 'success' : 'basic'
+              paidDate.dirty
+                ? paidDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : expenseIdx === undefined
+                ? 'success'
+                : 'basic'
             "
             [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
@@ -324,7 +330,7 @@
           [required]="validation.created.required"
           [readonly]="true"
           [status]="
-            created.dirty ? (created.invalid ? 'danger' : 'success') : iExpense === undefined ? 'success' : 'basic'
+            created.dirty ? (created.invalid ? 'danger' : 'success') : expenseIdx === undefined ? 'success' : 'basic'
           "
           [attr.aria-invalid]="created.invalid && created.touched ? true : null"
         />
@@ -346,7 +352,7 @@
           [required]="validation.lastUpdate.required"
           [readonly]="true"
           [status]="
-            updated.dirty ? (updated.invalid ? 'danger' : 'success') : iExpense === undefined ? 'success' : 'basic'
+            updated.dirty ? (updated.invalid ? 'danger' : 'success') : expenseIdx === undefined ? 'success' : 'basic'
           "
           [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
         />
@@ -395,8 +401,8 @@
 <div class="row">
   <div
     [ngClass]="{
-      'col-12': iExpense !== undefined,
-      'col-6': iExpense === undefined
+      'col-12': expenseIdx !== undefined,
+      'col-6': expenseIdx === undefined
     }"
   >
     <button
@@ -407,10 +413,10 @@
       [disabled]="!form.valid || (expense.nf && uploadedFiles.length == 0)"
       (click)="registerExpense()"
     >
-      {{ iExpense !== undefined ? 'Atualizar' : 'Adicionar' }}
+      {{ expenseIdx !== undefined ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
-  <div class="col-6" *ngIf="iExpense === undefined">
+  <div class="col-6" *ngIf="expenseIdx === undefined">
     <button
       nbButton
       fullWidth

@@ -8,12 +8,12 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { NortanService, NORTAN_EXPENSE_TYPES, NORTAN_FIXED_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
-import { Expense } from '@models/expense';
+import { TeamService, NORTAN_EXPENSE_TYPES, NORTAN_FIXED_EXPENSE_TYPES } from 'app/shared/services/team.service';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
 import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
+import { Team, TeamExpense } from '@models/team';
 
 @Component({
   selector: 'ngx-team-expense-item',
@@ -23,7 +23,8 @@ import { of } from 'rxjs/internal/observable/of';
 export class TeamExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
-  @Input() iExpense?: Expense;
+  @Input() iTeam!: Team;
+  @Input() expenseIdx?: number;
   validation = (expense_validation as any).default;
   types = Object.values(NORTAN_EXPENSE_TYPES).sort();
   fixedTypes = Object.values(NORTAN_FIXED_EXPENSE_TYPES).sort();
@@ -36,10 +37,10 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   };
   splitSelectedMember = new User();
 
-  expense: Expense = new Expense();
+  expense: TeamExpense = new TeamExpense();
 
   constructor(
-    private nortanService: NortanService,
+    private teamService: TeamService,
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
     public userService: UserService,
@@ -57,18 +58,13 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     this.userData = of(cloneDeep(tmp));
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);
-    if (this.iExpense != undefined) {
-      this.expense = cloneDeep(this.iExpense);
+    if (this.expenseIdx != undefined) {
+      this.expense = cloneDeep(this.iTeam.expenses[this.expenseIdx]);
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
     } else {
-      this.nortanService
-        .expensesSize()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((size) => {
-          this.expense.code = '#' + size.toString();
-        });
+      this.expense.code = '#' + this.iTeam.expenses.length.toString();
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
         this.expense.author = author;
       });
@@ -88,18 +84,20 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   registerExpense(): void {
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
-    if (this.iExpense !== undefined) {
+    if (this.expenseIdx !== undefined) {
       this.expense.lastUpdate = new Date();
-      this.nortanService.editExpense(cloneDeep(this.expense));
+      this.iTeam.expenses[this.expenseIdx] = cloneDeep(this.expense);
     } else {
-      this.nortanService.saveExpense(cloneDeep(this.expense));
+      this.iTeam.expenses.push(cloneDeep(this.expense));
     }
+    this.teamService.editTeam(cloneDeep(this.iTeam));
     this.submit.emit();
   }
 
   addAndClean(): void {
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
-    this.nortanService.saveExpense(cloneDeep(this.expense));
+    this.iTeam.expenses.push(cloneDeep(this.expense));
+    this.teamService.editTeam(cloneDeep(this.iTeam));
     this.sourceSearch = '';
     this.expense.source = '';
     this.expense.description = '';
@@ -117,7 +115,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       const date = this.utils.formatDate(new Date(), '-');
       const extension = name.match('[.].+');
       if (this.expense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
-        const subType = this.expense.fixedType;
+        const subType = this.expense.subType;
         return 'Comprovante-' + type + '-' + subType + '-' + date + extension;
       }
       return 'Comprovante-' + type + '-' + date + extension;
@@ -126,7 +124,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   handleTypeChange(): void {
-    if (this.expense.type !== NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) this.expense.fixedType = '';
+    if (this.expense.type !== NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) this.expense.subType = '';
   }
 
   updatePaidDate(): void {

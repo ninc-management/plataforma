@@ -2,8 +2,7 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { Team } from '@models/team';
-import { Expense } from '@models/expense';
+import { Team, TeamExpense } from '@models/team';
 
 export enum TEAM_COMPONENT_TYPES {
   TEAM,
@@ -19,8 +18,8 @@ export enum TEAM_COMPONENT_TYPES {
 })
 export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
-  @Input() team = new Team();
-  @Input() iExpense?: Expense;
+  @Input() iTeam = new Team();
+  @Input() expenseIdx?: number;
   @Input() componentType = TEAM_COMPONENT_TYPES.TEAM;
 
   dTypes = TEAM_COMPONENT_TYPES;

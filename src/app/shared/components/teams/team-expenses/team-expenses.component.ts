@@ -1,14 +1,13 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { Expense } from '@models/expense';
+import { Team, TeamExpense } from '@models/team';
 import { NbDialogService } from '@nebular/theme';
 import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
-import { NortanService, NORTAN_EXPENSE_TYPES } from 'app/shared/services/nortan.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -17,11 +16,12 @@ import { take, takeUntil } from 'rxjs/operators';
 })
 export class TeamExpensesComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() iTeam!: Team;
   destroy$ = new Subject<void>();
-  expenses: Expense[] = [];
+  expenses: TeamExpense[] = [];
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
-  get filtredExpenses(): Expense[] {
+  get filtredExpenses(): TeamExpense[] {
     if (this.searchQuery !== '')
       return this.expenses.filter((expense) => {
         return (
@@ -89,9 +89,9 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: Object.values(NORTAN_EXPENSE_TYPES).map((type) => ({
-              value: type,
-              title: type,
+            list: this.iTeam?.config.types.map((type) => ({
+              value: type.name,
+              title: type.name,
             })),
           },
         },
@@ -124,12 +124,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(
-    private nortanService: NortanService,
-    private dialogService: NbDialogService,
-    public userService: UserService,
-    public utils: UtilsService
-  ) {}
+  constructor(private dialogService: NbDialogService, public userService: UserService, public utils: UtilsService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -137,20 +132,15 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.nortanService
-      .getExpenses()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((expenses) => {
-        this.expenses = expenses;
-        this.source.load(
-          expenses.map((expense: any) => {
-            const tmp = cloneDeep(expense);
-            tmp.source = this.userService.idToShortName(tmp.source);
-            tmp.created = this.utils.formatDate(tmp.created);
-            return tmp;
-          })
-        );
-      });
+    this.expenses = cloneDeep(this.iTeam.expenses);
+    this.source.load(
+      this.expenses.map((expense: any) => {
+        const tmp = cloneDeep(expense);
+        tmp.source = this.userService.idToShortName(tmp.source);
+        tmp.created = this.utils.formatDate(tmp.created);
+        return tmp;
+      })
+    );
   }
 
   openDialog(index?: number): void {
@@ -159,7 +149,8 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       .open(TeamDialogComponent, {
         context: {
           title: index !== undefined ? 'EDITAR GASTO NORTAN' : 'ADICIONAR GASTO NORTAN',
-          iExpense: index !== undefined ? this.expenses[index] : undefined,
+          iTeam: this.iTeam,
+          expenseIdx: index,
           componentType: TEAM_COMPONENT_TYPES.EXPENSE,
         },
         dialogClass: 'my-dialog',

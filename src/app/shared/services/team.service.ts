@@ -11,6 +11,29 @@ import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { Team } from '@models/team';
 import { User } from '@models/user';
+import { parseISO } from 'date-fns';
+
+export enum NORTAN_EXPENSE_TYPES {
+  DIVISAO_DE_LUCRO = 'Divisão de lucro',
+  FOLHA_DE_PAGAMENTO = 'Folha de pagamento',
+  REEMBOLSO = 'Reembolso',
+  INVESTIMENTOS_PATRIMONIO = 'Investimentos/patrimônio',
+  ADIANTAMENTO_EMPRESTIMOS = 'Adiantamento/empréstimos',
+  DESPESAS = 'Despesas',
+  CUSTO_OPERACIONAL = 'Custo operacional',
+  GASTOS_FIXOS = 'Gastos fixos',
+  IMPOSTOS = 'Impostos',
+  RECEITA = 'Receita',
+}
+
+export enum NORTAN_FIXED_EXPENSE_TYPES {
+  ALUGUEL = 'Aluguel',
+  INTERNET = 'Internet',
+  ENERGIA = 'Energia',
+  MARKETING = 'Marketing',
+  ADMINISTRATIVO = 'Administrativo',
+  OUTROS = 'Outros',
+}
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +79,10 @@ export class TeamService implements OnDestroy {
         .post('/api/team/all', {})
         .pipe(take(1))
         .subscribe((teams: any) => {
-          const tmp = JSON.parse(JSON.stringify(teams));
+          const tmp = JSON.parse(JSON.stringify(teams), (k, v) => {
+            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
+            return v;
+          });
           this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
         });

@@ -78,7 +78,7 @@ export class ExpenseType {
 }
 
 export class TeamExpenseConfig {
-  @prop({ type: () => [ExpenseType] })
+  @prop({ required: true, type: () => [ExpenseType] })
   types: ExpenseType[] = [];
 }
 

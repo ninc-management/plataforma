@@ -60,6 +60,7 @@ export class DashboardComponent {
   taxesBalance$!: Observable<number>;
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   teams: Team[] = [];
+  nortanTeam!: Team;
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
@@ -68,9 +69,18 @@ export class DashboardComponent {
     private teamService: TeamService,
     public utils: UtilsService
   ) {
-    this.expenses$ = metricsService
-      .teamExpenses(startOfMonth(new Date()), new Date())
-      .pipe(map((metricInfo) => stringUtil.numberToMoney(metricInfo.value)));
+    this.teamService
+      .getTeams()
+      .pipe(take(2))
+      .subscribe((teams) => {
+        const nortanTeam = teams.find((team) => team.name == 'Nortan');
+        if (nortanTeam !== undefined) {
+          this.nortanTeam = nortanTeam;
+          this.expenses$ = metricsService
+            .teamExpenses(nortanTeam._id, startOfMonth(new Date()), new Date())
+            .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
+        }
+      });
     this.open$ = metricsService
       .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
       .pipe(map((metricInfo) => metricInfo.count));
@@ -148,6 +158,7 @@ export class DashboardComponent {
         this.dialogService.open(TeamDialogComponent, {
           context: {
             title: 'GASTOS NORTAN',
+            iTeam: this.nortanTeam,
             componentType: TEAM_COMPONENT_TYPES.EXPENSES,
           },
           dialogClass: 'my-dialog',
@@ -175,6 +186,7 @@ export class DashboardComponent {
           this.dialogService.open(TeamDialogComponent, {
             context: {
               title: this.activeTab === TAB_TITLES.NORTAN ? 'ADICIONAR GASTO NORTAN' : 'ADICIONAR DESPESA DO TIME',
+              iTeam: this.nortanTeam,
               componentType: TEAM_COMPONENT_TYPES.EXPENSE,
             },
             dialogClass: 'my-dialog',
@@ -245,6 +257,7 @@ export class DashboardComponent {
         this.dialogService.open(TeamDialogComponent, {
           context: {
             title: 'TRANSFERÊNCIA',
+            iTeam: this.nortanTeam,
             componentType: TEAM_COMPONENT_TYPES.TRANSFER,
           },
           dialogClass: 'my-dialog',

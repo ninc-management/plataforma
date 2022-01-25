@@ -8,9 +8,10 @@ import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
 import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
-import { NortanService } from './nortan.service';
 import { cloneDeep, mergeWith, add } from 'lodash';
 import { format } from 'date-fns';
+import { Team } from '@models/team';
+import { TeamService } from './team.service';
 
 export type TimeSeriesItem = [string, number];
 
@@ -153,13 +154,12 @@ export class MetricsService implements OnDestroy {
 
   constructor(
     private contractService: ContractService,
-    private contractorService: ContractorService,
-    private nortanService: NortanService,
     private invoiceService: InvoiceService,
     private userService: UserService,
     private departmentService: DepartmentService,
     private stringUtil: StringUtilService,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -937,11 +937,12 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  teamExpenses(start: Date, end: Date): Observable<MetricInfo> {
-    return this.nortanService.getExpenses().pipe(
-      map((expenses) => {
-        return expenses
-          .filter((expense) => expense.paid)
+  teamExpenses(tId: string, start: Date, end: Date): Observable<MetricInfo> {
+    return this.teamService.getTeams().pipe(
+      map((teams) => {
+        return this.teamService
+          .idToTeam(tId)
+          .expenses.filter((expense) => expense.paid)
           .reduce(
             (acc, expense) => {
               const paidDate = expense.paidDate;

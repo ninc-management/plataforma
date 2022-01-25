@@ -379,3 +379,13 @@ db.contracts.find().forEach(function (c) {
   });
   db.contracts.replaceOne({ _id: c._id }, c);
 });
+
+//Expense collection to team expense list
+var t = db.teams.findOne({name: 'Nortan'});
+db.expenses.find().forEach((e) => {
+  e.subType = e.fixedType;
+  delete e.fixedType;
+  t.expenses.push(e);
+});
+db.teams.replaceOne({_id: t._id}, t);
+db.expenses.drop();

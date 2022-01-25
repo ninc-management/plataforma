@@ -7,8 +7,8 @@ import { Invoice } from '@models/invoice';
 import { Contract } from '@models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
-import { Expense } from '@models/expense';
-import { NORTAN_EXPENSE_TYPES } from './nortan.service';
+import { NORTAN_EXPENSE_TYPES } from './team.service';
+import { TeamExpense } from '@models/team';
 
 @Injectable({
   providedIn: 'root',
@@ -52,10 +52,10 @@ export class OnedriveService {
     return this.generateBasePath(invoice, concluded) + this.generateFolderName(invoice);
   }
 
-  generateNortanExpensesPath(nortanExpense: Expense): string {
+  generateNortanExpensesPath(nortanExpense: TeamExpense): string {
     let path = '10-Financeiro/Comprovantes/' + nortanExpense.type;
     if (nortanExpense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
-      path += '/' + nortanExpense.fixedType;
+      path += '/' + nortanExpense.subType;
     }
     return path;
   }

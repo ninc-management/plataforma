@@ -16,7 +16,6 @@ import contractRoutes from './routes/contract';
 import invoiceRoutes from './routes/invoice';
 import promotionRoutes from './routes/promotion';
 import teamRoutes from './routes/team';
-import nortanRoutes from './routes/nortan';
 import courseRoutes from './routes/course';
 import publicRoutes from './routes/public';
 
@@ -73,7 +72,6 @@ class NortanAPI {
     this.app.use('/api/invoice', invoiceRoutes);
     this.app.use('/api/promotion', promotionRoutes);
     this.app.use('/api/team', teamRoutes);
-    this.app.use('/api/nortan', nortanRoutes);
     this.app.use('/api/course', courseRoutes);
 
     // For all GET requests, send back index.html
