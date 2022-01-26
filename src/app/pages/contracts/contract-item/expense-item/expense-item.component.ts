@@ -106,8 +106,16 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     super(stringUtil, onedrive, userService);
   }
 
+  ngOnDestroy(): void {
+    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      this.deleteFiles();
+    }
+    super.ngOnDestroy();
+  }
+
   ngOnInit(): void {
     super.ngOnInit();
+
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
 
@@ -116,13 +124,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     });
 
     this.initialFiles = cloneDeep(this.uploadedFiles);
-  }
-
-  ngOnDestroy(): void {
-    if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
-      this.deleteFiles();
-    }
-    super.ngOnDestroy();
   }
 
   fillContractData(): void {
@@ -359,6 +360,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
-    this.onedrive.deleteFiles(this.folderPath, filesToRemove);
+    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }
