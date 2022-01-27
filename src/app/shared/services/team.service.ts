@@ -13,28 +13,6 @@ import { Team } from '@models/team';
 import { User } from '@models/user';
 import { parseISO } from 'date-fns';
 
-export enum NORTAN_EXPENSE_TYPES {
-  DIVISAO_DE_LUCRO = 'Divisão de lucro',
-  FOLHA_DE_PAGAMENTO = 'Folha de pagamento',
-  REEMBOLSO = 'Reembolso',
-  INVESTIMENTOS_PATRIMONIO = 'Investimentos/patrimônio',
-  ADIANTAMENTO_EMPRESTIMOS = 'Adiantamento/empréstimos',
-  DESPESAS = 'Despesas',
-  CUSTO_OPERACIONAL = 'Custo operacional',
-  GASTOS_FIXOS = 'Gastos fixos',
-  IMPOSTOS = 'Impostos',
-  RECEITA = 'Receita',
-}
-
-export enum NORTAN_FIXED_EXPENSE_TYPES {
-  ALUGUEL = 'Aluguel',
-  INTERNET = 'Internet',
-  ENERGIA = 'Energia',
-  MARKETING = 'Marketing',
-  ADMINISTRATIVO = 'Administrativo',
-  OUTROS = 'Outros',
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -145,5 +123,9 @@ export class TeamService implements OnDestroy {
         return team;
       });
     });
+  }
+
+  hasSubTypes(team: Team, type: string): boolean {
+    return team.config.expenseTypes.some((eType) => eType.name === type && eType.subTypes.length > 0);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -8,7 +8,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { TeamService, NORTAN_EXPENSE_TYPES, NORTAN_FIXED_EXPENSE_TYPES } from 'app/shared/services/team.service';
+import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
 import * as expense_validation from 'app/shared/expense-validation.json';
 import { NgForm } from '@angular/forms';
@@ -23,13 +23,11 @@ import { Team, TeamExpense } from '@models/team';
 export class TeamExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
-  @Input() iTeam!: Team;
+  @Input() iTeam: Team = new Team();
   @Input() expenseIdx?: number;
   validation = (expense_validation as any).default;
-  types = Object.values(NORTAN_EXPENSE_TYPES).sort();
-  fixedTypes = Object.values(NORTAN_FIXED_EXPENSE_TYPES).sort();
-  expenseTypes = NORTAN_EXPENSE_TYPES;
-  fixedExpenseTypes = NORTAN_FIXED_EXPENSE_TYPES;
+  types: string[] = [];
+  subTypes: string[] = [];
 
   options = {
     lastValue: '0',
@@ -40,9 +38,9 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   expense: TeamExpense = new TeamExpense();
 
   constructor(
-    private teamService: TeamService,
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
+    public teamService: TeamService,
     public userService: UserService,
     public departmentService: DepartmentService,
     public utils: UtilsService
@@ -56,6 +54,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
     const tmp = cloneDeep(this.userService.getUsers().value.filter((user) => user.active));
     this.userData = of(cloneDeep(tmp));
+    this.types = this.iTeam.config.expenseTypes.map((eType) => eType.name);
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);
     if (this.expenseIdx != undefined) {
@@ -63,6 +62,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
+      this.handleTypeChange();
     } else {
       this.expense.code = '#' + this.iTeam.expenses.length.toString();
       this.userService.currentUser$.pipe(take(1)).subscribe((author) => {
@@ -114,7 +114,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       const type = this.expense.type;
       const date = this.utils.formatDate(new Date(), '-');
       const extension = name.match('[.].+');
-      if (this.expense.type === NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) {
+      if (this.teamService.hasSubTypes(this.iTeam, this.expense.type)) {
         const subType = this.expense.subType;
         return 'Comprovante-' + type + '-' + subType + '-' + date + extension;
       }
@@ -124,7 +124,12 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   handleTypeChange(): void {
-    if (this.expense.type !== NORTAN_EXPENSE_TYPES.GASTOS_FIXOS) this.expense.subType = '';
+    if (!this.teamService.hasSubTypes(this.iTeam, this.expense.type)) {
+      this.expense.subType = '';
+    } else {
+      const eType = this.iTeam.config.expenseTypes.find((type) => type.name === this.expense.type);
+      this.subTypes = eType!.subTypes;
+    }
   }
 
   updatePaidDate(): void {
