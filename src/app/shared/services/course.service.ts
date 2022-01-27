@@ -33,10 +33,7 @@ export class CourseService {
       this.http
         .post('/api/course/all', {})
         .pipe(take(1))
-        .subscribe((courses: any) => {
-          const tmp = JSON.parse(JSON.stringify(courses));
-          this.courses$.next(tmp as Course[]);
-        });
+        .subscribe((courses: any) => this.courses$.next(courses as Course[]));
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))

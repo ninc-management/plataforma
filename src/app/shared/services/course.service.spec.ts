@@ -4,8 +4,7 @@ import { Course, CourseParticipant } from '@models/course';
 import { User } from '@models/user';
 import { AuthService } from 'app/auth/auth.service';
 import { CommonTestingModule } from 'common-testing.module';
-import { parseISO } from 'date-fns';
-import { clone, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { Socket } from 'ngx-socket-io';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -42,7 +41,7 @@ describe('CourseService', () => {
               break;
             }
             case 2: {
-              const expectedCourses = JSON.parse(JSON.stringify(mockedCourses));
+              const expectedCourses = mockedCourses;
               expect(courses.length).toBe(2);
               expect(courses).toEqual(expectedCourses);
               test(expectedCourses);
@@ -163,7 +162,7 @@ describe('CourseService', () => {
           case 2: {
             i += 1;
             expect(courses.length).toBe(2);
-            expect(courses).toEqual(JSON.parse(JSON.stringify(mockedCourses)));
+            expect(courses).toEqual(mockedCourses);
             service.saveCourse(tmpCourse);
             const req1 = httpMock.expectOne('/api/course/');
             expect(req1.request.method).toBe('POST');
@@ -174,7 +173,7 @@ describe('CourseService', () => {
           case 3: {
             expect(courses.length).toBe(3);
             mockedCourses.push(tmpCourse);
-            expect(courses).toEqual(JSON.parse(JSON.stringify(mockedCourses)));
+            expect(courses).toEqual(mockedCourses);
             done();
             break;
           }
@@ -222,7 +221,7 @@ describe('CourseService', () => {
           case 2: {
             i += 1;
             expect(courses.length).toBe(2);
-            expect(courses).toEqual(JSON.parse(JSON.stringify(mockedCourses)));
+            expect(courses).toEqual(mockedCourses);
             service.editCourse(tmpCourse);
             const req1 = httpMock.expectOne('/api/course/update');
             expect(req1.request.method).toBe('POST');
