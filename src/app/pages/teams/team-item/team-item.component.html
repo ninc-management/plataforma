@@ -1,201 +1,320 @@
 <form (ngSubmit)="createOrUpdate()" #form="ngForm" aria-labelledby="title">
-  <div class="row">
-    <div class="col-12 col-md-6">
-      <div class="form-control-group">
-        <label class="label" for="input-name">Nome do time:</label>
-        <input
-          nbInput
-          autofocus
-          [(ngModel)]="team.name"
-          #name="ngModel"
-          id="input-name"
-          name="name"
-          placeholder="Escolha o nome do time"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.name.required"
-          [minlength]="validation.name.minLength"
-          [maxlength]="validation.name.maxLength"
-          [status]="name.touched ? (name.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
-          [attr.aria-invalid]="name.invalid && name.touched ? true : null"
-        />
-      </div>
-      <ng-container *ngIf="name.invalid && name.touched">
-        <p class="caption status-danger" *ngIf="name.errors?.required">O nome do time é obrigatório!</p>
-        <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
-          O nome do time deve conter entre {{ validation.name.minLength }} a {{ validation.name.maxLength }} caracteres
-        </p>
-      </ng-container>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="form-control-group">
-        <label class="label" for="input-leader">
-          Líder:
-          <nb-icon
-            status="info"
-            icon="info"
-            pack="eva"
-            [options]="{ animation: { type: 'pulse' } }"
-            nbTooltip="A lista de líder é preenchida com a lista de membros. O líder deve fazer parte do time."
-            nbTooltipPlacement="top"
-            nbTooltipStatus="info"
-          ></nb-icon>
-        </label>
-        <nb-completer
-          [(ngModel)]="leaderSearch"
-          (selected)="this.team.leader = $event"
-          inputName="leaderListCompleter"
-          #leaderList="ngModel"
-          id="input-leader"
-          name="leaderList"
-          placeholder="Digite o nome do líder dentro os membros do time"
-          textNoResults="
+  <nb-tabset fullWidth>
+    <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-name">Nome do time:</label>
+            <input
+              nbInput
+              autofocus
+              [(ngModel)]="team.name"
+              #name="ngModel"
+              id="input-name"
+              name="name"
+              placeholder="Escolha o nome do time"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.name.required"
+              [minlength]="validation.name.minLength"
+              [maxlength]="validation.name.maxLength"
+              [status]="name.touched ? (name.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
+              [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+            />
+          </div>
+          <ng-container *ngIf="name.invalid && name.touched">
+            <p class="caption status-danger" *ngIf="name.errors?.required">O nome do time é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+              O nome do time deve conter entre {{ validation.name.minLength }} a
+              {{ validation.name.maxLength }} caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-leader">
+              Líder:
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="A lista de líder é preenchida com a lista de membros. O líder deve fazer parte do time."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+            <nb-completer
+              [(ngModel)]="leaderSearch"
+              (selected)="this.team.leader = $event"
+              inputName="leaderListCompleter"
+              #leaderList="ngModel"
+              id="input-leader"
+              name="leaderList"
+              placeholder="Digite o nome do líder dentro os membros do time"
+              textNoResults="
           Não foi possível achar um associado com o nome digitado
           "
-          fieldSize="large"
-          nameField="fullName"
-          pictureField="profilePicture"
-          [data$]="availableLeaders"
-          [required]="validation.leader.required"
-          [minSearchLength]="0"
-          [fullWidth]="true"
-          [status]="
-            leaderList.touched
-              ? leaderList.invalid
-                ? 'danger'
-                : 'success'
-              : editing && leaderSearch !== ''
-              ? 'success'
-              : 'basic'
-          "
-          [attr.aria-invalid]="leaderList.invalid && leaderList.touched ? true : null"
-        ></nb-completer>
-        <ng-container *ngIf="leaderList.invalid && leaderList.touched">
-          <p class="caption status-danger" *ngIf="leaderList.errors?.required">
-            A escolha do líder do time é obrigatória!
-          </p>
-        </ng-container>
-      </div>
-    </div>
-    <div class="col-12 col-md-12">
-      <div class="form-control-group">
-        <label class="label" for="input-purpose">Propósito do time:</label>
-        <textarea
-          nbInput
-          [(ngModel)]="team.purpose"
-          #purpose="ngModel"
-          id="input-purpose"
-          name="purpose"
-          placeholder="Insira o propósito do time"
-          fullWidth
-          fieldSize="large"
-          [required]="validation.purpose.required"
-          [minlength]="validation.purpose.minLength"
-          [maxlength]="validation.purpose.maxLength"
-          [status]="
-            purpose.touched ? (purpose.invalid ? 'danger' : 'success') : editing && team.purpose ? 'success' : 'basic'
-          "
-          [attr.aria-invalid]="purpose.invalid && purpose.touched ? true : null"
-        ></textarea>
-        <ng-container *ngIf="purpose.invalid && purpose.touched">
-          <p class="caption status-danger" *ngIf="purpose.errors?.required">O propósito do time é obrigatório!</p>
-          <p class="caption status-danger" *ngIf="purpose.errors?.minlength || purpose.errors?.maxlength">
-            O propósito do time deve conter entre {{ validation.purpose.minLength }} a
-            {{ validation.purpose.maxLength }} caracteres
-          </p>
-        </ng-container>
-      </div>
-    </div>
-    <div class="col-12">
-      <div class="form-control-group">
-        <label class="label" for="input-expertise">Áreas de atuação:</label>
-        <ul>
-          <li *ngFor="let coordination of COORDINATIONS">{{ coordination }}</li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-12 col-md-6">
-      <div class="form-control-group">
-        <label class="label" for="input-member">Membro disponível:</label>
-        <nb-completer
-          [(ngModel)]="memberSearch"
-          [inputName]="'memberListCompleter'"
-          (selected)="currentMember.user = $event; updateUserCoordinations()"
-          #memberList="ngModel"
-          id="input-member"
-          name="memberList"
-          nameField="fullName"
-          pictureField="profilePicture"
-          [data$]="availableUsers"
-          [minSearchLength]="0"
-          [placeholder]="'Digite e selecione o nome do membro do time'"
-          [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
-          [fullWidth]="true"
-          [fieldSize]="'large'"
-          [status]="memberList.dirty && memberSearch ? (memberList.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="memberList.invalid && memberList.touched ? true : null"
-        ></nb-completer>
-      </div>
-    </div>
-    <div class="col-12 col-md-5">
-      <div class="form-control-group">
-        <label class="label" for="input-memberCoordination">Coordenação:</label>
-        <nb-select
-          [(ngModel)]="currentMember.coordination"
-          #memberCoordination="ngModel"
-          id="input-memberCoordination"
-          name="memberCoordination"
-          placeholder="Coordenação"
-          fullWidth
-          size="large"
-          [status]="memberCoordination.value?.length > 0 ? 'success' : 'basic'"
-          [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
-        >
-          <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
-            {{ coordination }}
-          </nb-option>
-        </nb-select>
-      </div>
-    </div>
-    <div class="col-12 col-md-1">
-      <button
-        nbButton
-        type="button"
-        fullWidth
-        status="primary"
-        size="large"
-        style="margin-top: 28px"
-        [disabled]="!memberList.value || currentMember.user === undefined"
-        (click)="addMember()"
-      >
-        +
-      </button>
-    </div>
-  </div>
-  <nb-list style="width: 100%; padding: 10px 0">
-    <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
-      <div class="row irow">
-        <div class="col-5 col-md-6">
-          <nb-user
-            size="giant"
-            [name]="userService.idToName(member.user)"
-            [picture]="userService.idToProfilePicture(member.user)"
-          ></nb-user>
+              fieldSize="large"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="availableLeaders"
+              [required]="validation.leader.required"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="
+                leaderList.touched
+                  ? leaderList.invalid
+                    ? 'danger'
+                    : 'success'
+                  : editing && leaderSearch !== ''
+                  ? 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="leaderList.invalid && leaderList.touched ? true : null"
+            ></nb-completer>
+            <ng-container *ngIf="leaderList.invalid && leaderList.touched">
+              <p class="caption status-danger" *ngIf="leaderList.errors?.required">
+                A escolha do líder do time é obrigatória!
+              </p>
+            </ng-container>
+          </div>
         </div>
-        <div class="col-5 col-md-5">{{ member.coordination }}</div>
+        <div class="col-12 col-md-12">
+          <div class="form-control-group">
+            <label class="label" for="input-purpose">Propósito do time:</label>
+            <textarea
+              nbInput
+              [(ngModel)]="team.purpose"
+              #purpose="ngModel"
+              id="input-purpose"
+              name="purpose"
+              placeholder="Insira o propósito do time"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.purpose.required"
+              [minlength]="validation.purpose.minLength"
+              [maxlength]="validation.purpose.maxLength"
+              [status]="
+                purpose.touched
+                  ? purpose.invalid
+                    ? 'danger'
+                    : 'success'
+                  : editing && team.purpose
+                  ? 'success'
+                  : 'basic'
+              "
+              [attr.aria-invalid]="purpose.invalid && purpose.touched ? true : null"
+            ></textarea>
+            <ng-container *ngIf="purpose.invalid && purpose.touched">
+              <p class="caption status-danger" *ngIf="purpose.errors?.required">O propósito do time é obrigatório!</p>
+              <p class="caption status-danger" *ngIf="purpose.errors?.minlength || purpose.errors?.maxlength">
+                O propósito do time deve conter entre {{ validation.purpose.minLength }} a
+                {{ validation.purpose.maxLength }} caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-expertise">Áreas de atuação:</label>
+            <ul>
+              <li *ngFor="let coordination of COORDINATIONS">{{ coordination }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-member">Membro disponível:</label>
+            <nb-completer
+              [(ngModel)]="memberSearch"
+              [inputName]="'memberListCompleter'"
+              (selected)="currentMember.user = $event; updateUserCoordinations()"
+              #memberList="ngModel"
+              id="input-member"
+              name="memberList"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="availableUsers"
+              [minSearchLength]="0"
+              [placeholder]="'Digite e selecione o nome do membro do time'"
+              [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
+              [fullWidth]="true"
+              [fieldSize]="'large'"
+              [status]="memberList.dirty && memberSearch ? (memberList.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="memberList.invalid && memberList.touched ? true : null"
+            ></nb-completer>
+          </div>
+        </div>
+        <div class="col-12 col-md-5">
+          <div class="form-control-group">
+            <label class="label" for="input-memberCoordination">Coordenação:</label>
+            <nb-select
+              [(ngModel)]="currentMember.coordination"
+              #memberCoordination="ngModel"
+              id="input-memberCoordination"
+              name="memberCoordination"
+              placeholder="Coordenação"
+              fullWidth
+              size="large"
+              [status]="memberCoordination.value?.length > 0 ? 'success' : 'basic'"
+              [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
+            >
+              <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
+                {{ coordination }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-12 col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!memberList.value || currentMember.user === undefined"
+            (click)="addMember()"
+          >
+            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+          </button>
+        </div>
       </div>
-      <div class="col-2 col-md-1" style="text-align: right">
-        <nb-icon
-          class="xIcon"
-          status="basic"
-          icon="trash-2-outline"
-          pack="eva"
-          (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
-          [options]="{ animation: { type: 'shake' } }"
-        ></nb-icon>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
+          <div class="row irow">
+            <div class="col-5 col-md-6">
+              <nb-user
+                size="giant"
+                [name]="userService.idToName(member.user)"
+                [picture]="userService.idToProfilePicture(member.user)"
+              ></nb-user>
+            </div>
+            <div class="col-5 col-md-5">{{ member.coordination }}</div>
+          </div>
+          <div class="col-2 col-md-1" style="text-align: right">
+            <nb-icon
+              class="xIcon"
+              status="basic"
+              icon="trash-2-outline"
+              pack="eva"
+              (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
+              [options]="{ animation: { type: 'shake' } }"
+            ></nb-icon>
+          </div>
+        </nb-list-item>
+      </nb-list>
+    </nb-tab>
+    <nb-tab tabTitle="Configuração" tabIcon="settings-outline" responsive>
+      <div class="row" style="margin-top: 8px">
+        <div class="col-auto">
+          <label class="label-divider">Lista de despesas</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
       </div>
-    </nb-list-item>
-  </nb-list>
+      <div class="row">
+        <div class="col-10 col-md-11">
+          <div class="form-control-group">
+            <label class="label" for="input-expense-type">Tipo da despesa:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.expenseType"
+              #expenseType="ngModel"
+              id="input-expense-type"
+              name="expenseType"
+              placeholder="Nome do tipo da despesa"
+              fullWidth
+              fieldSize="large"
+              [status]="expenseType.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="expenseType.invalid && expenseType.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-2 col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="expenseType.value.length == 0"
+            (click)="addExpenseType()"
+          >
+            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let eType of team.config.expenseTypes; let i = index; trackBy: utils.trackByIndex">
+          <div class="row typeRow">
+            <div class="col-9 col-md-11">
+              <input
+                nbInput
+                [(ngModel)]="eType.name"
+                id="input-expense-type-{{ i }}"
+                name="expense-type-{{ i }}"
+                placeholder="Nome do tipo da despesa"
+                fullWidth
+                [status]="team.config.expenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+              />
+              <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
+                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: utils.trackByIndex">
+                  <div class="row typeRow">
+                    <div class="col-10 col-md-11">
+                      <input
+                        nbInput
+                        [(ngModel)]="eType.subTypes[j]"
+                        id="input-subtype-{{ i }}-{{ j }}"
+                        name="subtype-{{ i }}-{{ j }}"
+                        placeholder="Nome do subtipo da despesa"
+                        fullWidth
+                        [status]="eType.subTypes[j].length == 0 ? 'danger' : 'basic'"
+                      />
+                    </div>
+                    <div class="col-2 col-md-1" style="text-align: right">
+                      <nb-icon
+                        class="xIcon"
+                        status="basic"
+                        icon="trash-2-outline"
+                        pack="eva"
+                        (click)="eType.subTypes.splice(j, 1)"
+                        [options]="{ animation: { type: 'shake' } }"
+                      ></nb-icon>
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
+            </div>
+            <div class="col-3 col-md-1" style="text-align: right">
+              <nb-icon
+                class="addIcon"
+                status="basic"
+                icon="plus-outline"
+                pack="eva"
+                (click)="eType.subTypes.push('')"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Adicionar subtipo da despesa"
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="team.config.expenseTypes.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+    </nb-tab>
+  </nb-tabset>
   <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">
     {{ editing ? 'Atualizar' : 'Adicionar' }}
   </button>

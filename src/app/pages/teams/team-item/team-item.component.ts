@@ -7,7 +7,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
-import { Team, TeamMember } from '@models/team';
+import { ExpenseType, Team, TeamMember } from '@models/team';
 import * as team_validation from 'app/shared/team-validation.json';
 
 @Component({
@@ -30,6 +30,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   availableLeaders: Observable<User[]> = of([]);
   COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
+  options = { expenseType: '' };
 
   constructor(
     private teamService: TeamService,
@@ -102,5 +103,13 @@ export class TeamItemComponent implements OnInit, OnDestroy {
 
   updateUserCoordinations(): void {
     this.USER_COORDINATIONS = this.teamService.availableCoordinations(this.currentMember.user);
+  }
+
+  addExpenseType(): void {
+    const eType = new ExpenseType();
+    eType.name = this.options.expenseType;
+    this.team.config.expenseTypes.push(eType);
+    console.log(this.team.config.expenseTypes);
+    this.options.expenseType = '';
   }
 }

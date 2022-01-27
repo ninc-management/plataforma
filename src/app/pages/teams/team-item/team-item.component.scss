@@ -6,6 +6,12 @@
     padding-right: 0 !important;
   }
 
+  .typeRow {
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+  }
+
   .irow {
     width: 100%;
     margin-left: 0;
@@ -14,5 +20,24 @@
 
   .xIcon:hover {
     color: nb-theme(icon-danger-color) !important;
+  }
+
+  .addIcon:hover {
+    color: nb-theme(icon-primary-color) !important;
+  }
+
+  .subtypes-list {
+    width: 100%;
+    padding-top: 10px;
+    margin-bottom: -17px;
+    .xIcon {
+      float: left;
+    }
+  }
+}
+
+::ng-deep {
+  .tabset .tab a {
+    align-items: center;
   }
 }

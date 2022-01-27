@@ -39,7 +39,7 @@ export class TeamExpense {
   description!: string;
 
   @prop({ required: true })
-  nf!: boolean;
+  nf: boolean = true;
 
   @prop({ required: true })
   type!: string;
@@ -77,9 +77,9 @@ export class ExpenseType {
   subTypes: string[] = [];
 }
 
-export class TeamExpenseConfig {
+export class TeamConfig {
   @prop({ required: true, type: () => [ExpenseType] })
-  types: ExpenseType[] = [];
+  expenseTypes: ExpenseType[] = [];
 }
 
 export class Team extends Base<string> {
@@ -108,7 +108,7 @@ export class Team extends Base<string> {
   expenses: TeamExpense[] = [];
 
   @prop({ required: true })
-  config: TeamExpenseConfig = new TeamExpenseConfig();
+  config: TeamConfig = new TeamConfig();
 
   balance = '0,00';
 

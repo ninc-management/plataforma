@@ -16,7 +16,7 @@ import { take } from 'rxjs/operators';
 })
 export class TeamExpensesComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Input() iTeam!: Team;
+  @Input() iTeam: Team = new Team();
   destroy$ = new Subject<void>();
   expenses: TeamExpense[] = [];
   source: LocalDataSource = new LocalDataSource();
@@ -89,7 +89,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: this.iTeam?.config.types.map((type) => ({
+            list: this.iTeam?.config.expenseTypes.map((type) => ({
               value: type.name,
               title: type.name,
             })),
