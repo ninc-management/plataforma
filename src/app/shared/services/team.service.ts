@@ -43,9 +43,10 @@ export class TeamService implements OnDestroy {
     this.http.post('/api/team/', req).pipe(take(1)).subscribe();
   }
 
-  editTeam(team: Team): void {
+  editTeam(team: Team, creatingExpense = false): void {
     const req = {
       team: team,
+      creatingExpense: creatingExpense,
     };
     this.http.post('/api/team/update', req).pipe(take(1)).subscribe();
   }

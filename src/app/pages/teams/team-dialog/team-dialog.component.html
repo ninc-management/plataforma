@@ -42,7 +42,7 @@
         <ngx-team-expenses
           *ngIf="componentType === dTypes.EXPENSES"
           [isDialogBlocked]="isBlocked"
-          [iTeam]="iTeam"
+          [iTeam]="iTeam._id"
           (submit)="dismiss()"
         ></ngx-team-expenses>
         <ngx-user-transaction *ngIf="componentType === dTypes.TRANSFER" (submit)="dismiss()"></ngx-user-transaction>

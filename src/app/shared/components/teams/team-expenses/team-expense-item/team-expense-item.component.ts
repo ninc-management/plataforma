@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { DepartmentService } from 'app/shared/services/department.service';
@@ -83,14 +83,16 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   registerExpense(): void {
+    let creatingExpense = false;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIdx !== undefined) {
       this.expense.lastUpdate = new Date();
       this.iTeam.expenses[this.expenseIdx] = cloneDeep(this.expense);
     } else {
+      creatingExpense = true;
       this.iTeam.expenses.push(cloneDeep(this.expense));
     }
-    this.teamService.editTeam(cloneDeep(this.iTeam));
+    this.teamService.editTeam(cloneDeep(this.iTeam), creatingExpense);
     this.submit.emit();
   }
 
