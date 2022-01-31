@@ -89,6 +89,11 @@ db.users.find().forEach((u) => {
   db.users.replaceOne({_id: u._id}, u);
 })
 
+db.teams.find().forEach((team) => {
+  team.config.sectors = []
+  db.teams.replaceOne({_id: team._id}, team);
+})
+
 // Fix payment value format
 db.contracts.find().forEach((c) => {
   if(c.payments){

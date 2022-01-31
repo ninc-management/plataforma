@@ -77,9 +77,20 @@ export class ExpenseType {
   subTypes: string[] = [];
 }
 
+export class Sector {
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  abrev!: string;
+}
+
 export class TeamConfig {
   @prop({ required: true, type: () => [ExpenseType] })
   expenseTypes: ExpenseType[] = [];
+
+  @prop({ required: true, type: () => [Sector] })
+  sectors: Sector[] = [];
 }
 
 export class Team extends Base<string> {
@@ -109,6 +120,9 @@ export class Team extends Base<string> {
 
   @prop({ required: true })
   config: TeamConfig = new TeamConfig();
+
+  @prop({ required: true })
+  abrev!: string;
 
   balance = '0,00';
 
