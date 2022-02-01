@@ -2,7 +2,7 @@
   <nb-tabset fullWidth>
     <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
       <div class="row">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-5">
           <div class="form-control-group">
             <label class="label" for="input-name">Nome do time:</label>
             <input
@@ -30,7 +30,35 @@
             </p>
           </ng-container>
         </div>
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-name">Abreviação:</label>
+            <input
+              nbInput
+              autofocus
+              [(ngModel)]="team.abrev"
+              #abrev="ngModel"
+              id="input-abrev"
+              name="abrev"
+              placeholder="Digite a abreviação do time"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.abrev.required"
+              [minlength]="validation.abrev.minLength"
+              [maxlength]="validation.abrev.maxLength"
+              [status]="abrev.touched ? (abrev.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
+              [attr.aria-invalid]="abrev.invalid && abrev.touched ? true : null"
+            />
+          </div>
+          <ng-container *ngIf="abrev.invalid && abrev.touched">
+            <p class="caption status-danger" *ngIf="abrev.errors?.required">O nome do time é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="abrev.errors?.minlength || abrev.errors?.maxlength">
+              O nome do time deve conter entre {{ validation.abrev.minLength }} a
+              {{ validation.abrev.maxLength }} caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-12 col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-leader">
               Líder:
@@ -207,6 +235,102 @@
       </nb-list>
     </nb-tab>
     <nb-tab tabTitle="Configuração" tabIcon="settings-outline" responsive>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Lista de setores</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-7">
+          <div class="form-control-group">
+            <label class="label" for="input-sector-name">Setor:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.sectorName"
+              #sectorNameInput="ngModel"
+              id="input-sector-name"
+              name="sector-name"
+              placeholder="Nome do setor"
+              fullWidth
+              fieldSize="large"
+              [status]="sectorNameInput.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="sectorNameInput.invalid && sectorNameInput.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-10 col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-sector-abrev">Abreviação:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.sectorAbrev"
+              #sectorAbrevInput="ngModel"
+              id="input-sector-abrev"
+              name="sector-abrev"
+              placeholder="Abreviação"
+              fullWidth
+              fieldSize="large"
+              [status]="sectorAbrevInput.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="sectorAbrevInput.invalid && sectorAbrevInput.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-2 col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="sectorNameInput.value.length == 0 && sectorAbrevInput.value.length == 0"
+            (click)="addSector()"
+          >
+            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let sector of team.config.sectors; let i = index; trackBy: utils.trackByIndex">
+          <div class="row typeRow">
+            <div class="col-12 col-md-7">
+              <input
+                nbInput
+                [(ngModel)]="sector.name"
+                id="input-sector-name-{{ i }}"
+                name="sector-name-{{ i }}"
+                placeholder="Nome do setor"
+                fullWidth
+                [status]="team.config.sectors[i].name.length == 0 ? 'danger' : 'basic'"
+              />
+            </div>
+            <div class="col-10 col-md-4">
+              <input
+                nbInput
+                [(ngModel)]="sector.abrev"
+                id="input-sector-abrev-{{ i }}"
+                name="sector-abrev-{{ i }}"
+                placeholder="Abreviação do setor"
+                fullWidth
+                [status]="team.config.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
+              />
+            </div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="team.config.sectors.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Lista de despesas</label>
