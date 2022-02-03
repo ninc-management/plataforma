@@ -156,7 +156,7 @@ export class Invoice extends StatusHistory {
   dec?: string;
 
   @prop()
-  discount?: string;
+  discount?: string = '0,00';
 
   @prop()
   materialListType: string = '1';

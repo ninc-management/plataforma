@@ -889,7 +889,7 @@ export class PdfService {
     // if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
     const footer = () => {
       const result: any[] = [];
-      if (invoice.discount) {
+      if (invoice.discount && invoice.discount != '0,00') {
         const discount: any[] = [
           {
             text: 'DESCONTO',
@@ -907,7 +907,7 @@ export class PdfService {
             bold: true,
           },
         ];
-        if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}]);
+        if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}, {}]);
         result.push(discount);
       }
       const total = this.stringUtil.numberToMoney(
