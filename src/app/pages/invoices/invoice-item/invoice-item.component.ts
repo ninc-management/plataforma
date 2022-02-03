@@ -699,6 +699,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
   }
+
+  updateDiscount(): void {
+    if (!this.tempInvoice.discount) {
+      this.tempInvoice.discount = '0,00';
+      this.updateDiscountValue();
+      this.updateDiscountPercentage();
+    }
+  }
 }
 
 @Component({

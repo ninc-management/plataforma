@@ -1444,6 +1444,8 @@
                 ngxSelectAllText
                 [status]="discountValue.dirty ? (discountValue.value ? 'success' : 'basic') : 'basic'"
                 [attr.aria-invalid]="discountValue.invalid && discountValue.touched ? true : null"
+                (focus)="updateDiscount()"
+                (focusout)="updateDiscount()"
               />
             </div>
             <div class="col-6 col-md-2" style="display: flex; align-items: center">
