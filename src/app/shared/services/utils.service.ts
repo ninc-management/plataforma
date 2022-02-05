@@ -225,4 +225,35 @@ export class UtilsService {
   NOT(o$: Observable<boolean>): Observable<boolean> {
     return o$.pipe(map((result: boolean) => !result));
   }
+
+  chunkify<T>(array: T[], split_size: number, balanced = true): T[][] {
+    if (split_size < 2) return [array];
+
+    const len = array.length;
+    const out: T[][] = [];
+    let i = 0;
+    let size: number = 0;
+
+    if (len % split_size === 0) {
+      size = Math.floor(len / split_size);
+      while (i < len) {
+        out.push(array.slice(i, (i += size)));
+      }
+    } else if (balanced) {
+      while (i < len) {
+        size = Math.ceil((len - i) / split_size--);
+        out.push(array.slice(i, (i += size)));
+      }
+    } else {
+      split_size--;
+      size = Math.floor(len / split_size);
+      if (len % size === 0) size--;
+      while (i < size * split_size) {
+        out.push(array.slice(i, (i += size)));
+      }
+      out.push(array.slice(size * split_size));
+    }
+
+    return out;
+  }
 }

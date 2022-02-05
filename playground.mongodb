@@ -8,27 +8,20 @@ function round(num) {
 }
 
 function toLiquid(value, nf, nortan) {
-  const result = round(
-    moneyToNumber(value) *
-    toMutiplyPercentage(nf) *
-    toMutiplyPercentage(nortan)
-  );
+  const result = round(moneyToNumber(value) * toMutiplyPercentage(nf) * toMutiplyPercentage(nortan));
   return numberToMoney(result);
-};
+}
 
 function toMutiplyPercentage(percentage) {
   return (100 - numberToNumber(percentage)) / 100;
 }
 
-function numberToString(number, decimals=2) {
+function numberToString(number, decimals = 2) {
   return number.toFixed(decimals).toString().replace('.', ',');
 }
 
 function setDefaultDistribution(invoice) {
-  var defaultDistribution = numberToString(
-    100 / invoice.team.length,
-    20
-  );
+  var defaultDistribution = numberToString(100 / invoice.team.length, 20);
 
   invoice.team = invoice.team.map((member) => ({
     user: member.user,
@@ -56,9 +49,7 @@ function moneyToNumber(money) {
 }
 
 function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
-  value = value
-    .replace(/\D/gi, '')
-    .replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), decimalCaracter + '$1');
+  value = value.replace(/\D/gi, '').replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), decimalCaracter + '$1');
   if (value.length === 1) {
     const dec = Array(decimal - 1).fill(0);
     return `0${decimalCaracter}${dec.join('')}${value}`;
@@ -74,10 +65,7 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   }
   if (thousand && value.length > Number(8) + Number(decimal)) {
     const valueTwo = `([0-9]{3})${thousand}([0-9]{3})${decimalCaracter}([0-9]{${decimal}}$)`;
-    value = value.replace(
-      new RegExp(`${valueTwo}`, `g`),
-      `${thousand}$1${thousand}$2${decimalCaracter}$3`
-    );
+    value = value.replace(new RegExp(`${valueTwo}`, `g`), `${thousand}$1${thousand}$2${decimalCaracter}$3`);
   }
 
   return value;
@@ -86,146 +74,168 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
 // Add active field to Users
 db.users.find().forEach((u) => {
   u.active = true;
-  db.users.replaceOne({_id: u._id}, u);
-})
+  db.users.replaceOne({ _id: u._id }, u);
+});
 
 db.teams.find().forEach((team) => {
-  team.config.sectors = []
-  db.teams.replaceOne({_id: team._id}, team);
-})
+  team.config.sectors = [];
+  db.teams.replaceOne({ _id: team._id }, team);
+});
 
 // Fix payment value format
 db.contracts.find().forEach((c) => {
-  if(c.payments){
+  if (c.payments) {
     c.payments.forEach((payment, i) => {
       c.payments[i].value = moneyMask(c.payments[i].value);
     });
-    db.contracts.replaceOne({_id: c._id}, c);
+    db.contracts.replaceOne({ _id: c._id }, c);
   }
-})
+});
 
 // Chance CSE to CBT
-var cbt = "C.B.T - Coordenação de Baixa Tensão";
-var cse = "C.S.E - Coordenação de Sistemas Elétricos";
+var cbt = 'C.B.T - Coordenação de Baixa Tensão';
+var cse = 'C.S.E - Coordenação de Sistemas Elétricos';
 db.users.find().forEach((u) => {
   u.mediaTensao = false;
   u.baixaTensao = u.eletrica;
   delete u.eletrica;
-  if(u.expertise) {
+  if (u.expertise) {
     u.expertise.forEach((e, idx) => {
-      if(e.coordination && e.coordination == cse)
-        u.expertise[idx].coordination = cbt;
+      if (e.coordination && e.coordination == cse) u.expertise[idx].coordination = cbt;
     });
   } else print('Não tem area de atuação no usuario ' + u.fullName);
-  db.users.replaceOne({_id: u._id}, u);
+  db.users.replaceOne({ _id: u._id }, u);
 });
 db.invoices.find().forEach((i) => {
   var changed = false;
-  if(i.coordination && i.coordination == cse){
+  if (i.coordination && i.coordination == cse) {
     i.coordination = cbt;
     changed = true;
   }
-  if(i.team) {
+  if (i.team) {
     i.team.forEach((member, idx) => {
-      if(member.coordination && member.coordination == cse) {
+      if (member.coordination && member.coordination == cse) {
         i.team[idx].coordination = cbt;
         changed = true;
       }
     });
   } else print('Não tem time no orçamento ' + i.code);
-  if(changed)
-    db.invoices.replaceOne({_id: i._id}, i);
+  if (changed) db.invoices.replaceOne({ _id: i._id }, i);
 });
-db.contracts.aggregate({$unwind: "$invoice"},
-  {$lookup: {
-    from:"invoices",
-    localField: "invoice",
-    foreignField: "_id",
-    as: "invoice"
-   }}).forEach((c) => {
-  var changed = false;
-  if(c.team) {
-    c.team.forEach((member, idx) => {
-      if(member.coordination && member.coordination == cse) {
-        c.team[idx].coordination = cbt;
-        changed = true;
-      }
-    });
-  } else print('Não tem time no conrato ' + c.invoice[0].code);
-  if(c.payments) {
-    c.payments.forEach((payment, i) => {
-      payment.team.forEach((member, idx) => {
-        if(member.coordination && member.coordination == cse) {
-          payment.team[idx].coordination = cbt;
+db.contracts
+  .aggregate(
+    { $unwind: '$invoice' },
+    {
+      $lookup: {
+        from: 'invoices',
+        localField: 'invoice',
+        foreignField: '_id',
+        as: 'invoice',
+      },
+    }
+  )
+  .forEach((c) => {
+    var changed = false;
+    if (c.team) {
+      c.team.forEach((member, idx) => {
+        if (member.coordination && member.coordination == cse) {
+          c.team[idx].coordination = cbt;
           changed = true;
         }
       });
-    });
-  } else print('Não tem arrays de pagamentos no conrato ' + c.invoice[0].code);
-  if(c.expenses) {
-  c.expenses.forEach((expense, i) => {
-    if(expense.team) {
-      expense.team.forEach((member, idx) => {
-        if(member.coordination && member.coordination == cse) {
-          expense.team[idx].coordination = cbt;
-          changed = true;
-        }
+    } else print('Não tem time no conrato ' + c.invoice[0].code);
+    if (c.payments) {
+      c.payments.forEach((payment, i) => {
+        payment.team.forEach((member, idx) => {
+          if (member.coordination && member.coordination == cse) {
+            payment.team[idx].coordination = cbt;
+            changed = true;
+          }
+        });
       });
-    } else print('Não tem arrays de time na despesa ' + expense.code + ' no conrato ' + c.invoice[0].code);
+    } else print('Não tem arrays de pagamentos no conrato ' + c.invoice[0].code);
+    if (c.expenses) {
+      c.expenses.forEach((expense, i) => {
+        if (expense.team) {
+          expense.team.forEach((member, idx) => {
+            if (member.coordination && member.coordination == cse) {
+              expense.team[idx].coordination = cbt;
+              changed = true;
+            }
+          });
+        } else print('Não tem arrays de time na despesa ' + expense.code + ' no conrato ' + c.invoice[0].code);
+      });
+    } else print('Não tem array de despesas no conrato ' + c.invoice[0].code);
+    if (changed) {
+      c.invoice = c.invoice[0]._id;
+      db.contracts.replaceOne({ _id: c._id }, c);
+    }
   });
-  } else print('Não tem array de despesas no conrato ' + c.invoice[0].code);
-  if(changed){
-    c.invoice = c.invoice[0]._id;
-    db.contracts.replaceOne({_id: c._id}, c);
-  }
-});
 
 // Merge invoice and contract teams
 db.invoices.find().forEach((i) => {
-  if(i.team && i.team.length > 0) {
-    if(i.status === "Fechado"){
-      var c = db.contracts.findOne({invoice: i._id});
-      if(c == null) print(i.code);
-      if(c.team && c.team.length > 0) {
-        i.team = c.team.map((member) => ({user: member.user, coordination: member.coordination, distribution: member.distribution, netValue: "", grossValue: ""}));
+  if (i.team && i.team.length > 0) {
+    if (i.status === 'Fechado') {
+      var c = db.contracts.findOne({ invoice: i._id });
+      if (c == null) print(i.code);
+      if (c.team && c.team.length > 0) {
+        i.team = c.team.map((member) => ({
+          user: member.user,
+          coordination: member.coordination,
+          distribution: member.distribution,
+          netValue: '',
+          grossValue: '',
+        }));
         delete c.team;
-        if (
-          !i.team
-            .map((member) => member.distribution)
-            .every((distribution) => !!distribution)
-        )
+        if (!i.team.map((member) => member.distribution).every((distribution) => !!distribution))
           setDefaultDistribution(i);
-        db.contracts.replaceOne({_id: c._id}, c);
+        db.contracts.replaceOne({ _id: c._id }, c);
       } else {
-        i.team.unshift({user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""});
+        i.team.unshift({
+          user: i.author,
+          coordination: i.coordination,
+          distribution: '100,00',
+          netValue: '',
+          grossValue: '',
+        });
         setDefaultDistribution(i);
       }
     } else {
-      i.team.unshift({user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""});
+      i.team.unshift({
+        user: i.author,
+        coordination: i.coordination,
+        distribution: '100,00',
+        netValue: '',
+        grossValue: '',
+      });
       setDefaultDistribution(i);
     }
   } else {
-    if(i.status === "Fechado"){
-      var c = db.contracts.findOne({invoice: i._id});
-      if(c == null) print(i.code);
-      if(c.team && c.team.length > 0) {
-        i.team = c.team.map((member) => ({user: member.user, coordination: member.coordination, distribution: member.distribution, netValue: "", grossValue: ""}));
+    if (i.status === 'Fechado') {
+      var c = db.contracts.findOne({ invoice: i._id });
+      if (c == null) print(i.code);
+      if (c.team && c.team.length > 0) {
+        i.team = c.team.map((member) => ({
+          user: member.user,
+          coordination: member.coordination,
+          distribution: member.distribution,
+          netValue: '',
+          grossValue: '',
+        }));
         delete c.team;
-        if (
-          !i.team
-            .map((member) => member.distribution)
-            .every((distribution) => !!distribution)
-        )
+        if (!i.team.map((member) => member.distribution).every((distribution) => !!distribution))
           setDefaultDistribution(i);
-        db.contracts.replaceOne({_id: c._id}, c);
+        db.contracts.replaceOne({ _id: c._id }, c);
       } else {
-        i.team = [{user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""}]
+        i.team = [
+          { user: i.author, coordination: i.coordination, distribution: '100,00', netValue: '', grossValue: '' },
+        ];
       }
     } else
-      i.team = [{user: i.author, coordination: i.coordination, distribution: "100,00", netValue: "", grossValue: ""}];
+      i.team = [{ user: i.author, coordination: i.coordination, distribution: '100,00', netValue: '', grossValue: '' }];
   }
-  db.invoices.replaceOne({_id: i._id}, i);
-})
+  db.invoices.replaceOne({ _id: i._id }, i);
+});
 
 // Fix invoice status history
 db.invoices.find().forEach((i) => {
@@ -234,98 +244,92 @@ db.invoices.find().forEach((i) => {
     status: i.status,
     start: i.lastUpdate,
   });
-  db.invoices.replaceOne({_id: i._id}, i);
-})
+  db.invoices.replaceOne({ _id: i._id }, i);
+});
 
 // Fix contract status history
 db.contracts.find().forEach((c) => {
   c.statusHistory = [];
   c.statusHistory.push({
     status: c.status,
-    start: c.status != "Em andamento" ? c.lastUpdate : c.created,
+    start: c.status != 'Em andamento' ? c.lastUpdate : c.created,
   });
-  db.contracts.replaceOne({_id: c._id}, c);
-})
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
 
 // Fix createdExpenses number and expense code
 db.contracts.find().forEach((c) => {
-  if(c.expenses){
+  if (c.expenses) {
     c.expenses.forEach((expense, i) => {
-      c.expenses[i].code = '#' + (i+1).toString();
+      c.expenses[i].code = '#' + (i + 1).toString();
     });
     c.createdExpenses = c.expenses.length;
-  }
-  else
-    c.createdExpenses = 0;
-  db.contracts.replaceOne({_id: c._id}, c);
-})
+  } else c.createdExpenses = 0;
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
 
 // Fix percentages strings
 db.contracts.find().forEach((c) => {
-  if(c.team){
+  if (c.team) {
     c.team.forEach((member, i) => {
-      if(member.distribution)
-        c.team[i].distribution = member.distribution.replace('.',',');
+      if (member.distribution) c.team[i].distribution = member.distribution.replace('.', ',');
     });
   }
-  if(c.receipts){
+  if (c.receipts) {
     c.receipts.forEach((receipt, i) => {
-      if((receipt.notaFiscal.match(/\./g) || []).length > 0)
-        print(receipt.notaFiscal);
-      c.receipts[i].notaFiscal = receipt.notaFiscal.replace('.',',');
-      c.receipts[i].nortanPercentage = receipt.nortanPercentage.replace('.',',');
+      if ((receipt.notaFiscal.match(/\./g) || []).length > 0) print(receipt.notaFiscal);
+      c.receipts[i].notaFiscal = receipt.notaFiscal.replace('.', ',');
+      c.receipts[i].nortanPercentage = receipt.nortanPercentage.replace('.', ',');
     });
   }
-  if(c.expenses){
+  if (c.expenses) {
     c.expenses.forEach((expense, i) => {
       c.expenses[i].team.forEach((member, j) => {
-        c.expenses[i].team[j].percentage = member.percentage.replace('.',',');
+        c.expenses[i].team[j].percentage = member.percentage.replace('.', ',');
       });
     });
   }
-  db.contracts.replaceOne({_id: c._id}, c);
-})
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
 
 db.contracts.find().forEach((c) => {
-  if(c.receipts){
+  if (c.receipts) {
     c.receipts.forEach((receipt, i) => {
-      if((receipt.notaFiscal.match(/\./g) || []).length > 0)
-        print(receipt.notaFiscal);
-      if((receipt.nortanPercentage.match(/\./g) || []).length > 0)
-        print(receipt.nortanPercentage);
+      if ((receipt.notaFiscal.match(/\./g) || []).length > 0) print(receipt.notaFiscal);
+      if ((receipt.nortanPercentage.match(/\./g) || []).length > 0) print(receipt.nortanPercentage);
     });
   }
-})
+});
 
 // Update Mongo contracts db
 
-db.contracts.find().forEach(function(c) {
-  c.payments.forEach(function(pid, i) {
-    c.payments[i] = db.payments.findOne({_id: pid},{ contract: 0 });
-    c.payments[i].team.forEach(function(tid, j) {
-      c.payments[i].team[j] = db.userpayments.findOne({_id: tid},{ payment: 0 });
-    })
-  })
-  db.contracts.replaceOne({_id: c._id}, c);
-})
+db.contracts.find().forEach(function (c) {
+  c.payments.forEach(function (pid, i) {
+    c.payments[i] = db.payments.findOne({ _id: pid }, { contract: 0 });
+    c.payments[i].team.forEach(function (tid, j) {
+      c.payments[i].team[j] = db.userpayments.findOne({ _id: tid }, { payment: 0 });
+    });
+  });
+  db.contracts.replaceOne({ _id: c._id }, c);
+});
 
 db.contracts.find().pretty();
 
 // Update author by code
 
-["168","186"].forEach(function(n) {
-  let code = "ORC-"+n+"/.*";
-  db.invoices.findOneAndUpdate({code: {$regex : code}}, {$set: {author: ObjectId("5f109c11a1a385001710104a")}});
-})
+['168', '186'].forEach(function (n) {
+  let code = 'ORC-' + n + '/.*';
+  db.invoices.findOneAndUpdate({ code: { $regex: code } }, { $set: { author: ObjectId('5f109c11a1a385001710104a') } });
+});
 
 // Update expense coordination
 
 db.contracts.find().forEach(function (c) {
-  if(c.expenses && c.expenses.length > 0) {
-    c.expenses = c.expenses.map((expense)=>{
+  if (c.expenses && c.expenses.length > 0) {
+    c.expenses = c.expenses.map((expense) => {
       expense.splitType = 'Proporcional';
       expense.team = [];
-      for(const member of c.team) {
+      for (const member of c.team) {
         expense.team.push({
           user: member.user,
           value: numberToMoney(moneyToNumber(expense.value) * toMutiplyPercentage(member.distribution)),
@@ -342,17 +346,17 @@ db.contracts.find().forEach(function (c) {
 
 // Update position to array
 
-db.users.find().forEach(function(u) {
+db.users.find().forEach(function (u) {
   u.position = [u.position];
-  db.users.replaceOne({_id: u._id}, u);
-})
+  db.users.replaceOne({ _id: u._id }, u);
+});
 
 // Split OE on to OE and OP
 
-db.invoices.find().forEach(function(i) {
-  i.administration = "nortan"
-  db.invoices.replaceOne({_id: i._id}, i);
-})
+db.invoices.find().forEach(function (i) {
+  i.administration = 'nortan';
+  db.invoices.replaceOne({ _id: i._id }, i);
+});
 
 db.contracts.find().forEach(function (c) {
   c.receipts = [];
@@ -386,11 +390,32 @@ db.contracts.find().forEach(function (c) {
 });
 
 //Expense collection to team expense list
-var t = db.teams.findOne({name: 'Nortan'});
+var t = db.teams.findOne({ name: 'Nortan' });
 db.expenses.find().forEach((e) => {
   e.subType = e.fixedType;
   delete e.fixedType;
   t.expenses.push(e);
 });
-db.teams.replaceOne({_id: t._id}, t);
+db.teams.replaceOne({ _id: t._id }, t);
 db.expenses.drop();
+
+//Refactor coordination to sectors
+db.users.find().forEach((u) => {
+  delete u.arquitetura;
+  delete u.instalacoes;
+  delete u.design;
+  delete u.civil;
+  delete u.eletrica;
+  delete u.incendio;
+  delete u.sanitaria;
+  delete u.obras;
+  delete u.impermeabilizacao;
+  delete u.ambiental;
+  delete u.hidrico;
+  delete u.adm;
+
+  u.sectors = [];
+  u.expertise = [];
+
+  db.users.replaceOne({ _id: u._id }, u);
+});

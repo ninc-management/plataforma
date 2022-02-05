@@ -39,34 +39,10 @@ function sendMail(user: User, callback: any): void {
       '<li>Formação: ' +
       user.education +
       '</li>' +
-      '<li>Interesses:' +
-      '<ul><li>Arquitetura: ' +
-      (user.arquitetura ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Design de Interiores: ' +
-      (user.design ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Engenharia Civil: ' +
-      (user.civil ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Engenharia Elétrica: ' +
-      (user.eletrica ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Sistema de Incêndio: ' +
-      (user.incendio ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Engenharia Sanitária: ' +
-      (user.sanitaria ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Impermeabilização: ' +
-      (user.impermeabilizacao ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Engenharia ambiental: ' +
-      (user.ambiental ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Recursos Hidricos: ' +
-      (user.hidrico ? '✔️' : '❌') +
-      '</li></ul></li>' +
+      '<li>Interesses: ' +
+      '<ul>' +
+      user.sectors.map((sector) => '<li> ' + sector.abrev + ' - ' + sector.name + ' ✔️ </li>').join() +
+      '</ul> </li>' +
       '<li>Quer ser contactado?: ' +
       (user.more ? '✔️' : '❌') +
       '</li>' +

@@ -16,7 +16,6 @@ router.post('/user/all', async (req, res) => {
       .map((user) => ({
         fullName: user.fullName,
         profilePicture: user.profilePicture,
-        mainDepartment: user.mainDepartment,
         exibitionName: user.exibitionName,
       }))
   );

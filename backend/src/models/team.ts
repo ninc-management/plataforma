@@ -77,12 +77,14 @@ export class ExpenseType {
   subTypes: string[] = [];
 }
 
-export class Sector {
+export class Sector extends Base<string> {
   @prop({ required: true })
   name!: string;
 
   @prop({ required: true })
   abrev!: string;
+
+  isChecked = false;
 }
 
 export class TeamConfig {

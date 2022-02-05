@@ -50,18 +50,18 @@ export class DepartmentService {
       else return [];
     }
     const active: boolean[] = [
-      user.adm ? true : false,
-      user.design ? true : false,
-      user.obras ? true : false,
-      user.impermeabilizacao ? true : false,
-      user.instalacoes ? true : false,
-      user.ambiental ? true : false,
-      user.arquitetura ? true : false,
-      user.hidrico ? true : false,
-      user.eletrica ? true : false,
-      user.civil ? true : false,
-      user.sanitaria ? true : false,
-      user.incendio ? true : false,
+      // user.adm ? true : false,
+      // user.design ? true : false,
+      // user.obras ? true : false,
+      // user.impermeabilizacao ? true : false,
+      // user.instalacoes ? true : false,
+      // user.ambiental ? true : false,
+      // user.arquitetura ? true : false,
+      // user.hidrico ? true : false,
+      // user.eletrica ? true : false,
+      // user.civil ? true : false,
+      // user.sanitaria ? true : false,
+      // user.incendio ? true : false,
     ];
     const allCoords = this.buildAllCoordinationsList();
     //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.

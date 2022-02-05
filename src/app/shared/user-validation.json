@@ -61,9 +61,6 @@
   "emailNortan": {
     "required": true
   },
-  "mainDepartment": {
-    "required": true
-  },
   "position": {
     "required": true
   },

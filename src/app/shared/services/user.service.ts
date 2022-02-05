@@ -21,7 +21,6 @@ export const CONTRACT_BALANCE = {
   article: '',
   state: '',
   city: '',
-  mainDepartment: '',
   level: '',
   document: '',
   profilePicture:
@@ -37,7 +36,6 @@ export const CLIENT = {
   article: '',
   state: '',
   city: '',
-  mainDepartment: '',
   level: '',
   document: '',
   profilePicture:
@@ -53,7 +51,6 @@ export const NORTAN = {
   article: '',
   state: '',
   city: '',
-  mainDepartment: '',
   level: '',
   document: '',
   profilePicture:

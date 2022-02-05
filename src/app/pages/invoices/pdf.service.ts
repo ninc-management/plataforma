@@ -329,7 +329,7 @@ export class PdfService {
         author.fullName +
         ', ' +
         (author.expertise
-          ? author.expertise[author.expertise.findIndex((el) => el.coordination == invoice.coordination.split(' ')[0])]
+          ? author.expertise[author.expertise.findIndex((el) => el.sector.abrev == invoice.coordination.split(' ')[0])]
               ?.shortExpertise
           : '') +
         ', será ' +
@@ -379,7 +379,7 @@ export class PdfService {
             ', ' +
             (author.expertise
               ? author.expertise[
-                  author.expertise.findIndex((el) => el.coordination == invoice.coordination.split(' ')[0])
+                  author.expertise.findIndex((el) => el.sector.abrev == invoice.coordination.split(' ')[0])
                 ]?.text
               : ''),
           alignment: 'left',
@@ -433,7 +433,7 @@ export class PdfService {
                 ', ' +
                 (user.expertise
                   ? user.expertise[
-                      user.expertise.findIndex((el) => el.coordination == member.coordination.split(' ')[0])
+                      user.expertise.findIndex((el) => el.sector.abrev == member.coordination.split(' ')[0])
                     ]?.text
                   : ''),
               alignment: 'left',
@@ -765,7 +765,7 @@ export class PdfService {
       },
       layout: this.noBorderTable('#BFBFBF'),
     });
-
+    console.log(invoice);
     const productHeader = () => {
       if (invoice.productListType == '1')
         return [

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DoCheck,
   ElementRef,
@@ -13,7 +14,7 @@ import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { take, map, takeUntil, filter } from 'rxjs/operators';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
@@ -22,11 +23,13 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
 import * as user_validation from 'app/shared/user-validation.json';
+import { Sector } from '@models/team';
 
 @Component({
   selector: 'ngx-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChildren('expertise', { read: ElementRef })
@@ -41,6 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   user = new User();
   cities: string[] = [];
   states: string[] = [];
+  groupedSectors: Sector[][] = [];
   validation = (user_validation as any).default;
   isEditing = false;
   isAER = false;
@@ -118,11 +122,13 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
             this.iUser = user;
             this.user = cloneDeep(this.iUser);
+            console.log(this.iUser);
             this.isCurrentUser = true;
           });
         if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
         if (this.user.expertise == undefined) this.user.expertise = [];
         if (this.user.theme == undefined) this.user.theme = 'default';
+        this.buildGrupedSectors();
         this.buildPositionsList();
         this.buildLevelList();
         this.refreshExpertises();
@@ -140,6 +146,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
 
         this.checkPrivileges();
       });
+    console.log(this.user);
   }
 
   ngOnDestroy(): void {
@@ -155,17 +162,17 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   fixTabText(): void {
     if (this.expertiseRefs != undefined && this.shortExpertiseRefs != undefined) {
       this.expertiseRefs.toArray().forEach((el: any) => {
-        const idx = this.user.expertise.findIndex(
-          (ael) => ael.coordination === el.nativeElement.placeholder.split(' ').slice(-1)[0]
+        const idx = this.user.expertise.findIndex((ael) =>
+          ael.sector ? ael.sector.abrev === el.nativeElement.placeholder.split(' ').slice(-1)[0] : false
         );
-        if (el.nativeElement.value != this.user.expertise[idx].text)
+        if (idx != -1 && el.nativeElement.value != this.user.expertise[idx].text)
           el.nativeElement.value = this.user.expertise[idx].text;
       });
       this.shortExpertiseRefs.toArray().forEach((el: any) => {
-        const idx = this.user.expertise.findIndex(
-          (ael) => ael.coordination === el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
+        const idx = this.user.expertise.findIndex((ael) =>
+          ael.sector ? ael.sector.abrev === el.nativeElement.placeholder.split(' ')[5].slice(0, -1) : false
         );
-        if (el.nativeElement.value != this.user.expertise[idx].shortExpertise)
+        if (idx != -1 && el.nativeElement.value != this.user.expertise[idx].shortExpertise)
           el.nativeElement.value = this.user.expertise[idx].shortExpertise;
       });
     }
@@ -225,35 +232,33 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     }
   }
 
+  updateSectors(sector: Sector): void {
+    if (sector.isChecked) {
+      this.user.sectors.push(sector);
+    } else {
+      this.user.sectors.splice(
+        this.user.sectors.findIndex((iSector) => iSector._id === sector._id),
+        1
+      );
+    }
+  }
+
   refreshExpertises(): void {
-    const active: boolean[] = [
-      this.user.adm ? this.user.adm : false,
-      this.user.design ? this.user.design : false,
-      this.user.obras ? this.user.obras : false,
-      this.user.impermeabilizacao ? this.user.impermeabilizacao : false,
-      this.user.instalacoes ? this.user.instalacoes : false,
-      this.user.ambiental ? this.user.ambiental : false,
-      this.user.arquitetura ? this.user.arquitetura : false,
-      this.user.hidrico ? this.user.hidrico : false,
-      this.user.eletrica ? this.user.eletrica : false,
-      this.user.civil ? this.user.civil : false,
-      this.user.sanitaria ? this.user.sanitaria : false,
-      this.user.incendio ? this.user.incendio : false,
-    ];
     this.ACTIVE_EXPERTISE = [];
     //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.
-    this.COORDINATIONS.filter((cd: string, idx: number) => {
-      return active[idx];
-    }).map((cd: string) => {
-      let idx = this.user.expertise.findIndex((el) => el.coordination === cd);
+    this.user.sectors.map((sector: Sector) => {
+      let idx = this.user.expertise.findIndex((el) => {
+        if (el.sector) return el.sector._id === sector._id;
+        return false;
+      });
       if (idx != -1) {
         if (this.user.expertise[idx].shortExpertise == undefined) this.user.expertise[idx].shortExpertise = '';
         this.ACTIVE_EXPERTISE.push(idx);
       } else {
         idx = this.user.expertise.push({
-          coordination: cd,
           text: '',
           shortExpertise: '',
+          sector: sector,
         });
         this.ACTIVE_EXPERTISE.push(idx - 1);
       }
@@ -320,6 +325,17 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           this.userService.updateUser(this.user, undefined, this.isCurrentUser);
         }
       });
+  }
+
+  buildGrupedSectors(): void {
+    this.groupedSectors = this.utils.chunkify(
+      this.teamService.sectorsListAll().map((sector) => {
+        if (this.user.sectors.some((sectorUser) => sectorUser._id === sector._id)) sector.isChecked = true;
+        return sector;
+      }),
+      3
+    );
+    console.log(this.groupedSectors);
   }
 
   buildPositionsList(): void {

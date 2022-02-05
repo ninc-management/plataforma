@@ -4,9 +4,19 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Contract } from './contract';
 import { Team } from './team';
 
+export class Sector extends Base<string> {
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  abrev!: string;
+
+  isChecked = false;
+}
+
 export class UserExpertise {
   @prop({ required: true })
-  public coordination!: string;
+  public sector!: Sector;
 
   @prop({ required: true })
   public text!: string;
@@ -50,13 +60,13 @@ export class User extends Base<string> {
   public email!: string;
 
   @prop({ required: true })
-  public emailNortan!: string;
+  public emailNortan: string = 'trocar@nortanengenharia.com';
 
   @prop({ required: true })
   public phone!: string;
 
   @prop({ required: true })
-  public article!: string;
+  public article: string = 'a';
 
   @prop({ required: true })
   public state!: string;
@@ -67,41 +77,8 @@ export class User extends Base<string> {
   @prop()
   public education?: string;
 
-  @prop()
-  public arquitetura?: boolean;
-
-  @prop()
-  public instalacoes?: boolean;
-
-  @prop()
-  public design?: boolean;
-
-  @prop()
-  public civil?: boolean;
-
-  @prop()
-  public eletrica?: boolean;
-
-  @prop()
-  public incendio?: boolean;
-
-  @prop()
-  public sanitaria?: boolean;
-
-  @prop()
-  public obras?: boolean;
-
-  @prop()
-  public impermeabilizacao?: boolean;
-
-  @prop()
-  public ambiental?: boolean;
-
-  @prop()
-  public hidrico?: boolean;
-
-  @prop()
-  public adm?: boolean;
+  @prop({ required: true, type: () => [Sector] })
+  public sectors: Sector[] = [];
 
   @prop()
   public more?: boolean;
@@ -112,14 +89,11 @@ export class User extends Base<string> {
   @prop()
   public profilePicture?: string;
 
-  @prop({ required: true })
-  public mainDepartment!: string;
-
   @prop({ type: () => [String] })
   public position: string[] = [];
 
   @prop({ required: true })
-  public level!: string;
+  public level: string = 'Associada Trainee';
 
   @prop({ unique: true })
   public document!: string;

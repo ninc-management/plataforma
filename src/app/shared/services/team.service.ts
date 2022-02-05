@@ -9,7 +9,7 @@ import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
-import { Team } from '@models/team';
+import { Sector, Team } from '@models/team';
 import { User } from '@models/user';
 import { parseISO } from 'date-fns';
 
@@ -128,5 +128,27 @@ export class TeamService implements OnDestroy {
 
   hasSubTypes(team: Team, type: string): boolean {
     return team.config.expenseTypes.some((eType) => eType.name === type && eType.subTypes.length > 0);
+  }
+
+  teamsList(): string[] {
+    const teams = this.teams$.getValue();
+    return teams.map((team) => team.abrev + ' - ' + team.name);
+  }
+
+  sectorsListAll(): Sector[] {
+    const teams = this.teams$.getValue();
+    const sectors = teams.map((team) => team.config.sectors);
+    return sectors.flat().sort((a, b) => {
+      return this.utils.nameSort(1, a.name, b.name);
+    });
+  }
+
+  sectorsList(teamAbrev: string): Sector[] {
+    const team = this.teams$.getValue().find((team) => team.abrev == teamAbrev);
+    return team ? team.config.sectors : [];
+  }
+
+  extractAbreviation(composedName: string): string {
+    return composedName.split(' ')[0];
   }
 }
