@@ -15,7 +15,7 @@ import { TeamService } from './team.service';
 
 export type TimeSeriesItem = [string, number];
 
-/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable indent */
 // prettier-ignore
 export interface TimeSeries {
   name: string;
@@ -36,7 +36,7 @@ export interface TimeSeries {
   isMoney?: boolean;
   data: TimeSeriesItem[];
 }
-/* eslint-enable @typescript-eslint/indent */
+/* eslint-enable indent */
 
 interface MetricInfo {
   count: number;
@@ -738,7 +738,7 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<number> {
-    /* eslint-disable @typescript-eslint/indent */
+    /* eslint-disable indent */
     const combined$ =
       role == 'manager'
         ? combineLatest([
@@ -749,7 +749,7 @@ export class MetricsService implements OnDestroy {
             this.contractsAsMember(uId, last, number, fromToday),
             this.invoicesAsMember(uId, last, number, fromToday),
           ]);
-    /* eslint-enable @typescript-eslint/indent */
+    /* eslint-enable indent */
     return combined$.pipe(
       filter(([contracts, invoices]) => contracts != undefined && invoices != undefined),
       map(([contracts, invoices]) => {
@@ -768,7 +768,7 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<number> {
-    /* eslint-disable @typescript-eslint/indent */
+    /* eslint-disable indent */
     const combined$ =
       role == 'manager'
         ? combineLatest([
@@ -779,7 +779,7 @@ export class MetricsService implements OnDestroy {
             this.contractsAsMember(uId, last, number, fromToday),
             this.invoicesAsMember(uId, last, number, fromToday),
           ]);
-    /* eslint-enable @typescript-eslint/indent */
+    /* eslint-enable indent */
     return combined$.pipe(
       filter(([contracts, invoices]) => contracts != undefined && invoices != undefined),
       map(([contracts, invoices]) => {

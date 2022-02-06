@@ -26,14 +26,14 @@ interface MetricItem {
   loading: Observable<boolean>;
 }
 
-/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable indent */
 @Component({
   selector: 'ngx-progress-section',
   templateUrl: './progress-section.component.html',
   styleUrls: ['./progress-section.component.scss'],
 })
 export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestroy {
-  /* eslint-enable @typescript-eslint/indent */
+  /* eslint-enable indent */
   @ViewChildren('textMetric', { read: ElementRef })
   metricsRef!: QueryList<ElementRef>;
   METRICS: MetricItem[] = [];

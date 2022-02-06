@@ -1,5 +1,5 @@
 import { prop } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base } from './base';
 
 export class StatusHistoryItem {
   @prop({ required: true })

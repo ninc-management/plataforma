@@ -14,7 +14,7 @@ import { ContractService, EXPENSE_TYPES, SPLIT_TYPES, CONTRACT_STATOOS } from 'a
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 import { ContractDialogComponent, COMPONENT_TYPES } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
-import * as contract_validation from 'app/shared/contract-validation.json';
+import contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 
@@ -41,7 +41,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
   today = new Date();
-  validation = (contract_validation as any).default;
+  validation = contract_validation as any;
   STATOOS = Object.values(CONTRACT_STATOOS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);

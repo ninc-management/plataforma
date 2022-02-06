@@ -318,7 +318,7 @@ export class PdfService {
 
     const author = invoice.author ? this.userService.idToUser(invoice.author) : new User();
 
-    /* eslint-disable @typescript-eslint/indent*/
+    /* eslint-disable indent*/
     pdf.add({
       text:
         'Nós da Nortan nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
@@ -346,12 +346,12 @@ export class PdfService {
       alignment: 'center',
       style: 'insideText',
     });
-    /* eslint-enable @typescript-eslint/indent*/
+    /* eslint-enable indent*/
 
     // Body - Author
     pdf.add(pdf.ln(1));
 
-    /* eslint-disable @typescript-eslint/indent*/
+    /* eslint-disable indent*/
     pdf.add({
       columns: [
         {
@@ -388,7 +388,7 @@ export class PdfService {
       ],
       style: 'insideText',
     });
-    /* eslint-enable @typescript-eslint/indent*/
+    /* eslint-enable indent*/
 
     // Body - Team
     pdf.add(pdf.ln(1));
@@ -405,7 +405,7 @@ export class PdfService {
       const team = invoice.team.slice(1);
       for (const [index, member] of team.entries()) {
         const user = member.user ? this.userService.idToUser(member.user) : new User();
-        /* eslint-disable @typescript-eslint/indent*/
+        /* eslint-disable indent*/
         pdf.add({
           columns: [
             {
@@ -443,7 +443,7 @@ export class PdfService {
           pageBreak: index == 5 ? 'after' : 'none',
           style: 'insideText',
         });
-        /* eslint-enable @typescript-eslint/indent*/
+        /* eslint-enable indent*/
 
         pdf.add(pdf.ln(1));
       }
@@ -534,7 +534,7 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    /* eslint-disable @typescript-eslint/indent*/
+    /* eslint-disable indent*/
     pdf.add({
       text:
         invoice.contractorFullName != undefined
@@ -544,7 +544,7 @@ export class PdfService {
           : '',
       style: 'insideText',
     });
-    /* eslint-enable @typescript-eslint/indent*/
+    /* eslint-enable indent*/
 
     pdf.add(pdf.ln(1));
 
@@ -584,13 +584,13 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     const leapLength = invoice.laep ? invoice.laep.length : 0;
-    /* eslint-disable @typescript-eslint/indent*/
+    /* eslint-disable indent*/
     const laep = invoice.laep
       ? invoice.laep.map((activity, index) => {
           return activity + (index == leapLength - 1 ? '.' : ';');
         })
       : [];
-    /* eslint-enable @typescript-eslint/indent*/
+    /* eslint-enable indent*/
     pdf.add({
       style: 'insideText',
       table: {
@@ -627,13 +627,13 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     const laeeLength = invoice.laee ? invoice.laee.length : 0;
-    /* eslint-disable @typescript-eslint/indent*/
+    /* eslint-disable indent*/
     const laee = invoice.laee
       ? invoice.laee.map((activity, index) => {
           return activity + (index == laeeLength - 1 ? '.' : ';');
         })
       : [];
-    /* eslint-enable @typescript-eslint/indent*/
+    /* eslint-enable indent*/
     pdf.add({
       style: 'insideText',
       table: {
@@ -675,13 +675,13 @@ export class PdfService {
       pdf.add(pdf.ln(1));
 
       const laecLength = invoice.laec ? invoice.laec.length : 0;
-      /* eslint-disable @typescript-eslint/indent*/
+      /* eslint-disable indent*/
       const laec = invoice.laec
         ? invoice.laec.map((activity, index) => {
             return activity + (index == laecLength - 1 ? '.' : ';');
           })
         : [];
-      /* eslint-enable @typescript-eslint/indent*/
+      /* eslint-enable indent*/
       pdf.add({
         style: 'insideText',
         table: {

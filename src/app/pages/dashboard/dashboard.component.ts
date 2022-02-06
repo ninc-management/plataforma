@@ -53,11 +53,11 @@ export class DashboardComponent {
   };
   start = startOfMonth(new Date());
   end = new Date();
-  open$!: Observable<number>;
-  toReceive$!: Observable<number>;
-  expenses$!: Observable<string>;
-  contractsBalance$!: Observable<number>;
-  taxesBalance$!: Observable<number>;
+  open$: Observable<number>;
+  toReceive$: Observable<number> = of(0);
+  expenses$: Observable<string> = of('');
+  contractsBalance$: Observable<number> = of(0);
+  taxesBalance$: Observable<number> = of(0);
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   teams: Team[] = [];
   nortanTeam!: Team;

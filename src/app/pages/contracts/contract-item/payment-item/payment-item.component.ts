@@ -15,7 +15,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { ContractUserPayment, ContractPayment, Contract } from '@models/contract';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
-import * as contract_validation from 'app/shared/payment-validation.json';
+import contract_validation from 'app/shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -31,7 +31,7 @@ export class PaymentItemComponent implements OnInit {
   @Output() submit = new EventEmitter<void>();
   invoice = new Invoice();
   hasInitialContract = true;
-  validation = (contract_validation as any).default;
+  validation = contract_validation as any;
   ALL_COORDINATIONS: string[] = [];
   USER_COORDINATIONS: string[] = [];
   total = '0';

@@ -160,7 +160,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   ngOnInit(): void {
     combineLatest([
       this.contractService.getContracts(),
@@ -201,7 +201,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
   }
-  /* eslint-enable @typescript-eslint/indent */
+  /* eslint-enable indent */
 
   ngAfterViewInit(): void {
     combineLatest([

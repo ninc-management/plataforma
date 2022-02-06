@@ -27,14 +27,11 @@ class NortanAPI {
 
     // Connect to the database before starting the application server.
     const options = {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-      useFindAndModify: false,
       autoIndex: false,
-      poolSize: 250,
+      maxPoolSize: 250,
       serverSelectionTimeoutMS: 15000,
       connectTimeoutMS: 15000,
-    } as mongoose.ConnectionOptions;
+    };
     mongoose
       .connect(process.env.MONGODB_URI, options)
       .then(() => {
@@ -44,7 +41,6 @@ class NortanAPI {
         console.log('Database Connection failed! ', error);
         process.exit(1);
       });
-    mongoose.set('useCreateIndex', true);
     mongoose.set('returnOriginal', false);
 
     // app.use(logger('dev'));

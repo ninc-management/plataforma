@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Course, CourseParticipant } from '@models/course';
-import * as participant_validation from 'app/shared/participant-validation.json';
+import participant_validation from 'app/shared/participant-validation.json';
 import { CourseService } from 'app/shared/services/course.service';
 import { cloneDeep } from 'lodash';
 
@@ -13,7 +13,7 @@ export class ParticipantItemComponent implements OnInit {
   @Input() iParticipant = new CourseParticipant();
   @Input() iCourse = new Course();
   participant = new CourseParticipant();
-  validation = (participant_validation as any).default;
+  validation = participant_validation as any;
 
   constructor(private courseService: CourseService) {}
 

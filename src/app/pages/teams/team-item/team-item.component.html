@@ -286,7 +286,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="sectorNameInput.value.length == 0 && sectorAbrevInput.value.length == 0"
+            [disabled]="sectorNameInput.value?.length == 0 && sectorAbrevInput.value?.length == 0"
             (click)="addSector()"
           >
             <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
@@ -365,7 +365,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="expenseType.value.length == 0"
+            [disabled]="expenseType.value?.length == 0"
             (click)="addExpenseType()"
           >
             <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>

@@ -1,5 +1,5 @@
 import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base } from './base';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 @plugin(mongooseUniqueValidator)

@@ -44,10 +44,10 @@ export class NbFileUploaderComponent implements OnInit, OnDestroy {
   @Input()
   dropAreaFileChooserLabel = 'browse';
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   @Output()
   filesList = new EventEmitter<Observable<BehaviorSubject<NbFileItem>>>();
-  /* eslint-enable @typescript-eslint/indent */
+  /* eslint-enable indent */
 
   get accept(): string {
     if (this.options.allowedFileTypes) return this.options.allowedFileTypes.join(',');

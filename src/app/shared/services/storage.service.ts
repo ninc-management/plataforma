@@ -1,4 +1,4 @@
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/storage';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
@@ -15,10 +15,10 @@ export interface FilesUploadMetadata {
   providedIn: 'root',
 })
 export class StorageService implements OnDestroy {
-  destroy$: Subject<null> = new Subject();
+  destroy$: Subject<void> = new Subject();
 
   constructor(
-    private readonly storage: AngularFireStorage,
+    private storage: AngularFireStorage,
     private http: HttpClient,
     private onedriveService: OnedriveService
   ) {}

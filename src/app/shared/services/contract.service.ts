@@ -233,7 +233,7 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(result);
   }
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   expensesContributions(
     contract: Contract,
     user?: User | string

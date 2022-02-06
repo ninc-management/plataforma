@@ -8,7 +8,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
-import * as contract_validation from '../../../../shared/payment-validation.json';
+import contract_validation from '../../../../shared/payment-validation.json';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -20,7 +20,7 @@ export class ReceiptItemComponent implements OnInit {
   @Input() availableContracts: Contract[] = [];
   @Input() receiptIndex?: number;
   hasInitialContract = true;
-  validation = (contract_validation as any).default;
+  validation = contract_validation as any;
   today = new Date();
   isEditionGranted = false;
   isFinancialManager = false;

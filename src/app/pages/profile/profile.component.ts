@@ -22,8 +22,8 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
-import * as user_validation from 'app/shared/user-validation.json';
 import { Sector } from '@models/team';
+import user_validation from 'app/shared/user-validation.json';
 
 @Component({
   selector: 'ngx-profile',
@@ -45,7 +45,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   cities: string[] = [];
   states: string[] = [];
   groupedSectors: Sector[][] = [];
-  validation = (user_validation as any).default;
+  validation = user_validation as any;
   isEditing = false;
   isAER = false;
   isEloPrincipal = false;
@@ -122,7 +122,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
             this.iUser = user;
             this.user = cloneDeep(this.iUser);
-            console.log(this.iUser);
             this.isCurrentUser = true;
           });
         if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
@@ -146,7 +145,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
 
         this.checkPrivileges();
       });
-    console.log(this.user);
   }
 
   ngOnDestroy(): void {
@@ -335,7 +333,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       }),
       3
     );
-    console.log(this.groupedSectors);
   }
 
   buildPositionsList(): void {

@@ -30,7 +30,7 @@ export class ResponseNotifierService implements HttpInterceptor {
           }
         },
         (error) => {
-          console.log(error, request.url);
+          console.error(error, request.url);
           if (error instanceof HttpErrorResponse) {
             if (request.url.includes('graph.microsoft.com'))
               this.toastrService.show('', this.handleErrorMessage(error), {

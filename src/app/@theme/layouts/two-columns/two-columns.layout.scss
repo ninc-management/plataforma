@@ -9,5 +9,9 @@
     align-content: space-between;
     justify-content: space-between;
     padding-top: nb-theme(layout-padding-top);
+
+    nb-menu {
+      margin: 0 !important;
+    }
   }
 }

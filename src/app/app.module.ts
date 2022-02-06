@@ -13,7 +13,8 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { AngularFireModule } from '@angular/fire';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { environment } from '../environments/environment';
 import {
   NbChatModule,
@@ -142,6 +143,7 @@ registerLocaleData(ptBr);
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireStorageModule,
     SocketIoModule.forRoot(config),
     MsalModule,
   ],
