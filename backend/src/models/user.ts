@@ -3,16 +3,7 @@ import { Base } from './base';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Contract } from './contract';
 import { Team } from './team';
-
-export class Sector extends Base<string> {
-  @prop({ required: true })
-  name!: string;
-
-  @prop({ required: true })
-  abrev!: string;
-
-  isChecked = false;
-}
+import { Sector } from './shared';
 
 export class UserExpertise {
   @prop({ required: true })
