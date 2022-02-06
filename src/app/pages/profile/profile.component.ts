@@ -22,7 +22,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
-import { Sector } from '@models/team';
+import { Sector } from '@models/shared';
 import user_validation from 'app/shared/user-validation.json';
 
 @Component({

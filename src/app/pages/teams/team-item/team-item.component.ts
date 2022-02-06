@@ -6,8 +6,9 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { DepartmentService } from 'app/shared/services/department.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { Sector } from '@models/shared';
+import { ExpenseType, Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
-import { ExpenseType, Sector, Team, TeamMember } from '@models/team';
 import team_validation from 'app/shared/team-validation.json';
 
 @Component({
