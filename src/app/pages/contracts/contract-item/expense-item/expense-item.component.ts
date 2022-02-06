@@ -14,7 +14,7 @@ import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-ex
 import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
-import * as expense_validation from 'app/shared/expense-validation.json';
+import expense_validation from 'app/shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -27,7 +27,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   @Input() availableContracts: Contract[] = [];
   invoice = new Invoice();
   hasInitialContract = true;
-  validation = (expense_validation as any).default;
+  validation = expense_validation as any;
   USER_COORDINATIONS: string[] = [];
   types = Object.values(EXPENSE_TYPES);
   expenseTypes = EXPENSE_TYPES;

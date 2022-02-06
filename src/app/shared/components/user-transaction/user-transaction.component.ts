@@ -3,7 +3,7 @@ import { Team, TeamFinancialTransaction } from '@models/team';
 import { User, UserFinancialTransaction } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
 import { Observable, of } from 'rxjs';
-import * as transaction_validation from 'app/shared/transaction-validation.json';
+import transaction_validation from 'app/shared/transaction-validation.json';
 import { UserService } from 'app/shared/services/user.service';
 import { take } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
@@ -20,7 +20,7 @@ export class UserTransactionComponent implements OnInit {
   transaction = new UserFinancialTransaction();
   teamSearch = '';
   teamData: Observable<Team[]> = of([]);
-  validation = (transaction_validation as any).default;
+  validation = transaction_validation as any;
 
   constructor(private teamService: TeamService, private userService: UserService) {}
 

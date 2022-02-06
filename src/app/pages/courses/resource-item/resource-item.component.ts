@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Course, CourseParticipant, CourseResource } from '@models/course';
-import * as course_validation from 'app/shared/course-validation.json';
+import course_validation from 'app/shared/course-validation.json';
 import { CourseService } from 'app/shared/services/course.service';
 import { cloneDeep } from 'lodash';
 
@@ -11,7 +11,7 @@ import { cloneDeep } from 'lodash';
 })
 export class ResourceItemComponent implements OnInit {
   @Input() iCourse = new Course();
-  validation = (course_validation as any).default;
+  validation = course_validation as any;
   resource = new CourseResource();
   get filteredURL(): string {
     return this.resource.url.replace(/https:\/\/|http:\/\//g, '');

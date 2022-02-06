@@ -1,5 +1,5 @@
 import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base } from './base';
 import { User } from './user';
 import { UploadedFile } from './contract';
 

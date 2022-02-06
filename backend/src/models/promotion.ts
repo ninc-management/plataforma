@@ -1,5 +1,5 @@
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Base } from './base';
 
 export class PromotionRule {
   @prop({ required: true })

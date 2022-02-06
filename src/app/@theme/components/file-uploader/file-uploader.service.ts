@@ -28,7 +28,7 @@ export class NbFileUploaderService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
     return this.uploadQueue$.pipe(
       map((fileList: BehaviorSubject<NbFileItem>[]): BehaviorSubject<NbFileItem> | undefined =>
@@ -37,7 +37,7 @@ export class NbFileUploaderService implements OnDestroy {
       filter((file): file is BehaviorSubject<NbFileItem> => file != undefined)
     );
   }
-  /* eslint-enble @typescript-eslint/indent */
+  /* eslint-enble indent */
 
   private isUploadedFile(obj: any): obj is UploadedFile {
     return obj.name !== undefined;

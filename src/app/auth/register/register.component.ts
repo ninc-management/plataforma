@@ -8,7 +8,7 @@ import { StatecityService } from 'app/shared/services/statecity.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as user_validation from 'app/shared/user-validation.json';
+import user_validation from 'app/shared/user-validation.json';
 
 @Component({
   selector: 'ngx-register',
@@ -20,7 +20,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   states: string[] = [];
   myMessages: string[] = [];
   myErrors: string[] = [];
-  validation = (user_validation as any).default;
+  validation = user_validation as any;
   protected destroy$ = new Subject<void>();
 
   constructor(

@@ -68,13 +68,13 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorageModule, AngularFireStorage } from '@angular/fire/compat/storage';
 import { NbAccessChecker, NbRoleProvider, NbAclService, NbSecurityModule } from '@nebular/security';
 import { of } from 'rxjs';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { Permissions } from 'app/shared/services/utils.service';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
-import { AngularFireModule } from '@angular/fire';
 import { environment } from 'environments/environment';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
@@ -143,6 +143,7 @@ const IMPORTS = [
   }),
   AngularFireModule.initializeApp(environment.firebaseConfig),
   BrowserAnimationsModule,
+  AngularFireStorageModule,
   CommonModule,
   FormsModule,
   HttpClientTestingModule,

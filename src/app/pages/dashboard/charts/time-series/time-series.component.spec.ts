@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TimeSeriesComponent } from './time-series.component';
 import { CommonTestingModule } from 'app/../common-testing.module';
 
-describe('TemporalSeriesComponent', () => {
+describe('TimeSeriesComponent', () => {
   let component: TimeSeriesComponent;
   let fixture: ComponentFixture<TimeSeriesComponent>;
 

@@ -3,6 +3,7 @@ import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { Course, CourseParticipant } from '@models/course';
+import { saveAs } from 'file-saver';
 
 export enum DIALOG_TYPES {
   COURSE,

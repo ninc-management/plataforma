@@ -15,7 +15,7 @@
     "target": "es2015",
     "typeRoots": ["./src/types/", "node_modules/@types"],
     "lib": ["es2020", "dom"],
-    "plugins": [{ "name": "typescript-eslint-language-service" }],
+    "plugins": [],
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitReturns": true,
@@ -26,6 +26,7 @@
     }
   },
   "angularCompilerOptions": {
+    "preserveSymlinks": true,
     "strictTemplates": true,
     "strictINputAccessModifiers": true,
     "strictInjectionParameters": true

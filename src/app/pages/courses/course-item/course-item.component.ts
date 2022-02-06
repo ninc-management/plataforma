@@ -3,7 +3,7 @@ import { Course } from '@models/course';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 
-import * as course_validation from 'app/shared/course-validation.json';
+import course_validation from 'app/shared/course-validation.json';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -21,7 +21,7 @@ export class CourseItemComponent implements OnInit {
   @Input() iCourse = new Course();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   course: Course = new Course();
-  validation = (course_validation as any).default;
+  validation = course_validation as any;
   editing = false;
   speakerSearch = '';
   participantsSearch = '';

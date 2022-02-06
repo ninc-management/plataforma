@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { Contractor } from '@models/contractor';
-import * as contractor_validation from 'app/shared/contractor-validation.json';
+import contractor_validation from 'app/shared/contractor-validation.json';
 
 @Component({
   selector: 'ngx-contractor-item',
@@ -15,7 +15,7 @@ export class ContractorItemComponent implements OnInit {
   contractor = new Contractor();
   editing = false;
   submitted = false;
-  validation = (contractor_validation as any).default;
+  validation = contractor_validation as any;
 
   constructor(private contractorService: ContractorService) {}
 

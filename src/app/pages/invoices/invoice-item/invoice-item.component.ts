@@ -18,7 +18,7 @@ import { Invoice, InvoiceTeamMember, InvoiceMaterial, InvoiceProduct, InvoiceSta
 import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
-import * as invoice_validation from 'app/shared/invoice-validation.json';
+import invoice_validation from 'app/shared/invoice-validation.json';
 import { NgModel, ValidatorFn, Validators } from '@angular/forms';
 
 export enum UNIT_OF_MEASURE {
@@ -91,7 +91,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   today = new Date();
   invoiceNumber = 0;
   revision = 0;
-  validation = (invoice_validation as any).default;
+  validation = invoice_validation as any;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
   memberChanged$ = new BehaviorSubject<boolean>(true);
@@ -337,7 +337,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     return [];
   }
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   updateCode(): void {
     if (!this.editing) {
       this.tempInvoice.code =
@@ -350,7 +350,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         '-00';
     }
   }
-  /* eslint-enable @typescript-eslint/indent */
+  /* eslint-enable indent */
 
   updateRevision(): void {
     this.tempInvoice.code =
@@ -466,7 +466,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  /* eslint-disable @typescript-eslint/indent */
+  /* eslint-disable indent */
   updateProductTotal(): void {
     if (
       this.options.product.value == undefined ||
@@ -485,7 +485,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         ) * this.stringUtil.moneyToNumber(this.options.product.amount)
       );
   }
-  /* eslint-enable @typescript-eslint/indent */
+  /* eslint-enable indent */
 
   addProduct(): void {
     if (this.options.valueType === '%')

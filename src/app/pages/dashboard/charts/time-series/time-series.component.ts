@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { TimeSeries } from 'app/shared/services/metrics.service';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
@@ -14,7 +14,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
   styleUrls: ['./time-series.component.scss'],
 })
 export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
-  @Input() series$!: Observable<TimeSeries[]>;
+  @Input() series$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   @Input() name = '';
   currentTimeSeries: TimeSeries[] = [];
   echartsInstance: any;
@@ -76,7 +76,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.themeSubscription = combineLatest([this.theme.getJsTheme(), this.series$])
-      .pipe(filter(([config, series]) => series[0].data.length > 0))
+      .pipe(filter(([config, series]) => series.length > 0 && series[0].data.length > 0))
       .subscribe(([config, series]) => {
         const colors: any = config.variables;
         this.currentTheme = colors.echarts;

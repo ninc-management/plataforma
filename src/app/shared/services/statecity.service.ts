@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as json_state_city from '../state-city.json';
+import json_state_city from '../state-city.json';
 
 @Injectable({
   providedIn: 'root',

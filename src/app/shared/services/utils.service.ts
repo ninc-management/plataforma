@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NbMediaBreakpointsService, NbTrigger } from '@nebular/theme';
+import { NgModel } from '@angular/forms';
 import {
   addMonths,
   addYears,
   endOfMonth,
   endOfYear,
+  format,
   isSameMonth,
   isWithinInterval,
   startOfMonth,
@@ -12,13 +14,11 @@ import {
   subDays,
   subMonths,
   subYears,
-  format,
 } from 'date-fns';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { at, groupBy } from 'lodash';
 import { TimeSeriesItem } from './metrics.service';
-import { NgModel } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -56,14 +56,14 @@ export class UtilsService {
     this.document = d;
   }
 
-  nfPercentage(document: Contract | Invoice): string {
+  nfPercentage(iDocument: Contract | Invoice): string {
     let invoice!: Invoice;
-    if (this.isOfType<Invoice>(document, ['administration'])) {
-      invoice = document;
+    if (this.isOfType<Invoice>(iDocument, ['administration'])) {
+      invoice = iDocument;
     } else {
-      if (document.receipts.length > 0) return document.receipts[0].notaFiscal;
+      if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
       if (
-        this.isOfType<Invoice>(document.invoice, [
+        this.isOfType<Invoice>(iDocument.invoice, [
           '_id',
           'author',
           'department',
@@ -73,7 +73,7 @@ export class UtilsService {
           'contractor',
         ])
       )
-        invoice = document.invoice;
+        invoice = iDocument.invoice;
       else return '0';
     }
 
@@ -89,14 +89,14 @@ export class UtilsService {
     } else return '0';
   }
 
-  nortanPercentage(document: Contract | Invoice): string {
+  nortanPercentage(iDocument: Contract | Invoice): string {
     let invoice!: Invoice;
-    if (this.isOfType<Invoice>(document, ['administration'])) {
-      invoice = document;
+    if (this.isOfType<Invoice>(iDocument, ['administration'])) {
+      invoice = iDocument;
     } else {
-      if (document.receipts?.length > 0) return document.receipts[0].nortanPercentage;
+      if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
       if (
-        this.isOfType<Invoice>(document.invoice, [
+        this.isOfType<Invoice>(iDocument.invoice, [
           '_id',
           'author',
           'department',
@@ -106,7 +106,7 @@ export class UtilsService {
           'contractor',
         ])
       )
-        invoice = document.invoice;
+        invoice = iDocument.invoice;
       else return '0';
     }
     if (invoice.department == 'DAD' || invoice.department == 'DAD - Diretoria de Administração') return '0';

@@ -4,7 +4,7 @@ import { StorageService } from './storage.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { StorageProvider } from 'app/@theme/components';
 import { combineLatest } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 
 describe('StorageService', () => {
   let service: StorageService;
@@ -40,9 +40,9 @@ describe('StorageService', () => {
 
   it('should upload file to firebase', (done: DoneFn) => {
     const metadata = service.uploadFileAndGetMetadata('', emptyFile, 'test', StorageProvider.FIREBASE);
-    combineLatest(metadata.downloadUrl$, metadata.uploadProgress$)
-      .toPromise()
-      .then(([url, progress]) => {
+    combineLatest([metadata.downloadUrl$, metadata.uploadProgress$])
+      .pipe(take(1))
+      .subscribe(([url, progress]) => {
         expect((url as string).split('?')[0]).toBe(
           'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/test'
         );

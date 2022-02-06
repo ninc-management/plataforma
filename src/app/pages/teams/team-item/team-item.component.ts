@@ -8,7 +8,7 @@ import { DepartmentService } from 'app/shared/services/department.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
 import { ExpenseType, Sector, Team, TeamMember } from '@models/team';
-import * as team_validation from 'app/shared/team-validation.json';
+import team_validation from 'app/shared/team-validation.json';
 
 @Component({
   selector: 'ngx-team-item',
@@ -17,7 +17,7 @@ import * as team_validation from 'app/shared/team-validation.json';
 })
 export class TeamItemComponent implements OnInit, OnDestroy {
   @Input() iTeam = new Team();
-  validation = (team_validation as any).default;
+  validation = team_validation as any;
   team: Team = new Team();
   editing = false;
   memberChanged$ = new BehaviorSubject<boolean>(true);

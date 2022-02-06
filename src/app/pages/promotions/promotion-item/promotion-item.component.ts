@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
-import * as promotion_validation from 'app/shared/promotion-validation.json';
+import promotion_validation from 'app/shared/promotion-validation.json';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
@@ -54,7 +54,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   iPromotion = new Promotion();
   @Output() submit: EventEmitter<void> = new EventEmitter();
   promotion = new Promotion();
-  validation = (promotion_validation as any).default;
+  validation = promotion_validation as any;
   pTypes = Object.values(PROMOTION_STATOOS);
   pObjTypes = Object.values(RULE_OBJECTS);
   pOpTypes = Object.values(RULE_OPERATORS);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { User } from '@models/user';
-import * as json_department_coordination from '../department-coordination.json';
+import json_department_coordination from '../department-coordination.json';
 
 @Injectable({
   providedIn: 'root',
