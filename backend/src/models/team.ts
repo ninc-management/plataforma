@@ -2,6 +2,7 @@ import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Base } from './base';
 import { User } from './user';
 import { UploadedFile } from './contract';
+import { Sector } from './shared';
 
 export class TeamMember {
   @prop({ required: true, ref: () => User })
@@ -75,16 +76,6 @@ export class ExpenseType {
 
   @prop({ required: true, type: () => [String] })
   subTypes: string[] = [];
-}
-
-export class Sector extends Base<string> {
-  @prop({ required: true })
-  name!: string;
-
-  @prop({ required: true })
-  abrev!: string;
-
-  isChecked = false;
 }
 
 export class TeamConfig {
