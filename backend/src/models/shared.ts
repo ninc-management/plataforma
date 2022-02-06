@@ -13,3 +13,14 @@ export class Sector extends Base<string> {
 
   isChecked = false;
 }
+
+/**
+ * Used by Contract and Team
+ */
+export class UploadedFile {
+  @prop({ required: true })
+  name!: string;
+
+  @prop({ required: true })
+  url!: string;
+}

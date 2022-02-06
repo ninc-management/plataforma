@@ -9,7 +9,8 @@ import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
-import { Sector, Team } from '@models/team';
+import { Sector } from '@models/shared';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 import { parseISO } from 'date-fns';
 
