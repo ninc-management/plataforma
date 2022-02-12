@@ -692,10 +692,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateDiscount(): void {
-    if (!this.tempInvoice.discount) {
-      this.tempInvoice.discount = '0,00';
-      this.updateDiscountValue();
-      this.updateDiscountPercentage();
-    }
+    if (!this.tempInvoice.discount) this.tempInvoice.discount = '0,00';
+    if (this.tempInvoice.discount.length === 1)
+      this.tempInvoice.discount = this.stringUtil.numberToMoney(+this.tempInvoice.discount);
+    this.updateDiscountPercentage();
   }
 }
