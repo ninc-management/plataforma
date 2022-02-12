@@ -12,10 +12,10 @@ import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
+import { TeamService } from 'app/shared/services/team.service';
 
 interface IndividualData {
   received: string;
@@ -151,8 +151,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    private departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -222,7 +222,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   createReportObjectByCoordination(): Record<string, ReportValue> {
     const data: Record<string, ReportValue> = {};
 
-    this.departmentService.buildAllCoordinationsList().forEach((coord) => {
+    this.teamService.sectorsListAll().forEach((sector) => {
       const tmp: IndividualData[] = [];
       for (let i = 1; i <= 12; i++) {
         tmp.push({
@@ -236,7 +236,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           concluded_contracts_team: 0,
         });
       }
-      data[coord] = {
+      data[sector._id] = {
         monthly_data: cloneDeep(tmp),
         overview: {
           received: '0,00',
@@ -433,13 +433,16 @@ export class UsersComponent implements OnInit, OnDestroy {
           )
         ).forEach((monthInvoices) => {
           monthInvoices.forEach((monthInvoice) => {
-            for (const coord of Object.keys(data)) {
-              if (monthInvoice.invoice.coordination == coord) {
-                data[coord].monthly_data[monthInvoice.month].sent_invoices_manager += 1;
-                data[coord].overview.sent_invoices_manager += 1;
-              } else if (monthInvoice.invoice.team.filter((member) => member.coordination == coord).length > 0) {
-                data[coord].monthly_data[monthInvoice.month].sent_invoices_team += 1;
-                data[coord].overview.sent_invoices_team += 1;
+            for (const sector of Object.keys(data)) {
+              if (this.teamService.isSectorEqual(monthInvoice.invoice.sector, sector)) {
+                data[sector].monthly_data[monthInvoice.month].sent_invoices_manager += 1;
+                data[sector].overview.sent_invoices_manager += 1;
+              } else if (
+                monthInvoice.invoice.team.filter((member) => this.teamService.isSectorEqual(member.sector, sector))
+                  .length > 0
+              ) {
+                data[sector].monthly_data[monthInvoice.month].sent_invoices_team += 1;
+                data[sector].overview.sent_invoices_team += 1;
               }
             }
           });
@@ -473,27 +476,29 @@ export class UsersComponent implements OnInit, OnDestroy {
               this.utils.nfPercentage(monthContract.contract),
               this.utils.nortanPercentage(monthContract.contract)
             );
-            for (const coord of Object.keys(data)) {
+            for (const sector of Object.keys(data)) {
               if (
-                this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).coordination ==
-                coord
+                this.teamService.isSectorEqual(
+                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).sector,
+                  sector
+                )
               ) {
-                data[coord].monthly_data[monthContract.month].opened_contracts_manager += 1;
-                data[coord].overview.opened_contracts_manager += 1;
+                data[sector].monthly_data[monthContract.month].opened_contracts_manager += 1;
+                data[sector].overview.opened_contracts_manager += 1;
                 if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[coord].monthly_data[monthContract.month].concluded_contracts_manager += 1;
-                  data[coord].overview.concluded_contracts_manager += 1;
+                  data[sector].monthly_data[monthContract.month].concluded_contracts_manager += 1;
+                  data[sector].overview.concluded_contracts_manager += 1;
                 }
               } else if (
                 this.invoiceService
                   .idToInvoice(monthContract.contract.invoice as Invoice | string)
-                  .team.filter((member) => member.coordination == coord).length > 0
+                  .team.filter((member) => this.teamService.isSectorEqual(member.sector, sector)).length > 0
               ) {
-                data[coord].monthly_data[monthContract.month].opened_contracts_team += 1;
-                data[coord].overview.opened_contracts_team += 1;
+                data[sector].monthly_data[monthContract.month].opened_contracts_team += 1;
+                data[sector].overview.opened_contracts_team += 1;
                 if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[coord].monthly_data[monthContract.month].concluded_contracts_team += 1;
-                  data[coord].overview.concluded_contracts_team += 1;
+                  data[sector].monthly_data[monthContract.month].concluded_contracts_team += 1;
+                  data[sector].overview.concluded_contracts_team += 1;
                 }
               }
               // Sum expenses in related months
@@ -514,19 +519,19 @@ export class UsersComponent implements OnInit, OnDestroy {
                     !this.userService.isEqual(monthExpense.expense.source, CLIENT)
                   ) {
                     const userExpense = monthExpense.expense.team.reduce((sum, member) => {
-                      if (member.coordination == coord) {
+                      if (this.teamService.isSectorEqual(member.sector, sector)) {
                         sum = this.stringUtil.sumMoney(sum, member.value);
                       }
                       return sum;
                     }, '0,00');
 
                     if (userExpense != '0,00') {
-                      data[coord].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
-                        data[coord].monthly_data[monthExpense.month].expenses,
+                      data[sector].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
+                        data[sector].monthly_data[monthExpense.month].expenses,
                         userExpense
                       );
-                      data[coord].overview.expenses = this.stringUtil.sumMoney(
-                        data[coord].overview.expenses,
+                      data[sector].overview.expenses = this.stringUtil.sumMoney(
+                        data[sector].overview.expenses,
                         userExpense
                       );
                     }
@@ -544,19 +549,19 @@ export class UsersComponent implements OnInit, OnDestroy {
               ).forEach((monthPayments) => {
                 monthPayments.forEach((monthPayment) => {
                   const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
-                    if (payment.coordination == coord) {
+                    if (this.teamService.isSectorEqual(payment.sector, sector)) {
                       sum = this.stringUtil.sumMoney(sum, payment.value);
                     }
                     return sum;
                   }, '0,00');
 
                   if (userPayment != '0,00') {
-                    data[coord].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
-                      data[coord].monthly_data[monthPayment.month].received,
+                    data[sector].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
+                      data[sector].monthly_data[monthPayment.month].received,
                       userPayment
                     );
-                    data[coord].overview.received = this.stringUtil.sumMoney(
-                      data[coord].overview.received,
+                    data[sector].overview.received = this.stringUtil.sumMoney(
+                      data[sector].overview.received,
                       userPayment
                     );
                   }
@@ -566,15 +571,15 @@ export class UsersComponent implements OnInit, OnDestroy {
               if (monthContract.contract.invoice) {
                 const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
                 invoice.team.forEach((member) => {
-                  if (member.coordination == coord) {
+                  if (this.teamService.isSectorEqual(member.sector, sector)) {
                     const toReceive = this.stringUtil.sumMoney(
                       this.contractService.notPaidValue(member.distribution, member.user, monthContract.contract),
                       this.stringUtil.numberToMoney(
                         this.contractService.expensesContributions(monthContract.contract, member.user).user.cashback
                       )
                     );
-                    data[coord].overview.to_receive = this.stringUtil.sumMoney(
-                      data[coord].overview.to_receive,
+                    data[sector].overview.to_receive = this.stringUtil.sumMoney(
+                      data[sector].overview.to_receive,
                       toReceive
                     );
                   }

@@ -8,23 +8,22 @@ import { Contract } from '@models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
 import { TeamExpense } from '@models/team';
+import { TeamService } from './team.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnedriveService {
-  private readonly departmentPath: any = {
-    DAD: '01-DAD',
-    DAQ: '02-DAQ',
-    DEC: '03-DEC',
-    DPC: '04-DPC',
-    DRM: '05-DRM',
-  };
-
-  constructor(private http: HttpClient, private userService: UserService, private utils: UtilsService) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private utils: UtilsService,
+    private teamService: TeamService
+  ) {}
 
   private generateBasePath(invoice: Invoice, concluded = false): string {
-    let path = this.departmentPath[invoice['department'].slice(0, 3)];
+    let path = '';
+    if (invoice.nortanTeam) path = this.teamService.idToTeam(invoice.nortanTeam).config.path;
     path += concluded ? '/02-Concluídos/' : '/01-Em Andamento/';
     return path;
   }
@@ -127,8 +126,8 @@ export class OnedriveService {
       this.utils.isOfType<Invoice>(contract.invoice, [
         '_id',
         'author',
-        'department',
-        'coordination',
+        'nortanTeam',
+        'sector',
         'code',
         'type',
         'contractor',

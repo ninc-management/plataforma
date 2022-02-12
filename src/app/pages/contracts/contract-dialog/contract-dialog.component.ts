@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { map, take } from 'rxjs/operators';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -41,7 +40,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ContractDialogComponent>,
-    protected departmentService: DepartmentService,
     protected invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
     private userService: UserService,

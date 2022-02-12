@@ -16,6 +16,7 @@ import { ContractUserPayment, ContractPayment, Contract } from '@models/contract
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import contract_validation from 'app/shared/payment-validation.json';
+import { TeamService } from 'app/shared/services/team.service';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -51,7 +52,7 @@ export class PaymentItemComponent implements OnInit {
     user: undefined,
     value: '',
     percentage: '',
-    coordination: '',
+    sector: '',
   };
   options = {
     valueType: '$',
@@ -86,7 +87,8 @@ export class PaymentItemComponent implements OnInit {
     public stringUtil: StringUtilService,
     public userService: UserService,
     public utils: UtilsService,
-    public accessChecker: NbAccessChecker
+    public accessChecker: NbAccessChecker,
+    public teamService: TeamService
   ) {}
 
   ngOnInit(): void {
@@ -147,7 +149,7 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.payment.team = cloneDeep(this.invoice.team).map((member: InvoiceTeamMember): ContractUserPayment => {
         const payment: ContractUserPayment = {
-          coordination: member.coordination,
+          sector: member.sector,
           user: member.user,
           value: '0',
           percentage: '0',
@@ -212,7 +214,7 @@ export class PaymentItemComponent implements OnInit {
       user: undefined,
       value: '',
       percentage: '',
-      coordination: '',
+      sector: '',
     };
     this.userSearch = '';
     this.updateTotal();
@@ -282,7 +284,7 @@ export class PaymentItemComponent implements OnInit {
     if (this.userPayment.user) {
       const selectedUser = this.userService.idToUser(this.userPayment.user);
       this.USER_COORDINATIONS = this.departmentService.userCoordinations(selectedUser._id);
-      this.userPayment.coordination = '';
+      this.userPayment.sector = '';
     }
   }
 

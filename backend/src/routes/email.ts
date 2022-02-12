@@ -1,5 +1,6 @@
 import * as express from 'express';
 import nodemailer from 'nodemailer';
+import { Sector } from '../models/shared';
 
 import { User } from '../models/user';
 
@@ -41,7 +42,9 @@ function sendMail(user: User, callback: any): void {
       '</li>' +
       '<li>Interesses: ' +
       '<ul>' +
-      user.sectors.map((sector) => '<li> ' + sector.abrev + ' - ' + sector.name + ' ✔️ </li>').join() +
+      user.sectors
+        .map((sector) => '<li> ' + (sector as Sector).abrev + ' - ' + (sector as Sector).name + ' ✔️ </li>')
+        .join() +
       '</ul> </li>' +
       '<li>Quer ser contactado?: ' +
       (user.more ? '✔️' : '❌') +

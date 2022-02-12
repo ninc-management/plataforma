@@ -11,6 +11,7 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
+import { TeamService } from 'app/shared/services/team.service';
 
 pdfMake.fonts = {
   Sans: {
@@ -34,7 +35,8 @@ export class PdfService {
   constructor(
     private stringUtil: StringUtilService,
     private userService: UserService,
-    private contractorService: ContractorService
+    private contractorService: ContractorService,
+    private teamService: TeamService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -329,8 +331,9 @@ export class PdfService {
         author.fullName +
         ', ' +
         (author.expertise
-          ? author.expertise[author.expertise.findIndex((el) => el.sector.abrev == invoice.coordination.split(' ')[0])]
-              ?.shortExpertise
+          ? author.expertise[
+              author.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, invoice.sector))
+            ]?.shortExpertise
           : '') +
         ', será ' +
         (author.article == 'a' ? 'sua' : 'seu') +
@@ -379,7 +382,7 @@ export class PdfService {
             ', ' +
             (author.expertise
               ? author.expertise[
-                  author.expertise.findIndex((el) => el.sector.abrev == invoice.coordination.split(' ')[0])
+                  author.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, invoice.sector))
                 ]?.text
               : ''),
           alignment: 'left',
@@ -433,7 +436,7 @@ export class PdfService {
                 ', ' +
                 (user.expertise
                   ? user.expertise[
-                      user.expertise.findIndex((el) => el.sector.abrev == member.coordination.split(' ')[0])
+                      user.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, member.sector))
                     ]?.text
                   : ''),
               alignment: 'left',
@@ -765,7 +768,7 @@ export class PdfService {
       },
       layout: this.noBorderTable('#BFBFBF'),
     });
-    console.log(invoice);
+
     const productHeader = () => {
       if (invoice.productListType == '1')
         return [

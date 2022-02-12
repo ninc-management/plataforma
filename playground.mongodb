@@ -71,6 +71,49 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
   return value;
 }
 
+function convertCoordinationToSector(coordString) {
+  switch (coordString) {
+    case 'C.ADM - Coordenação de Administração':
+      return '6201b405329f446f16e1b406';
+
+    case 'C.G.O - Coordenação de Gerenciamento de Obras':
+      return '6201b04838baa8d128ac4ec4';
+
+    case 'C.INST - Coordenação de Instalações':
+      return '6201b0fb38baa8d128ac4ed5';
+
+    case 'C.IMP - Coordenação de Impermeabilização':
+      return '6201b07238baa8d128ac4ecd';
+
+    case 'C.P.A - Coordenação de Projetos Arquitetônicos':
+      return '6201afc938baa8d128ac4eb4';
+
+    case 'C.D.I - Coordenação de Design de Interiores':
+      return '6201afc938baa8d128ac4eb5';
+
+    case 'C.S.E - Coordenação de Sistemas Elétricos':
+      return '6201af9438baa8d128ac4ea1';
+
+    case 'C.S.H - Coordenação de Sistemas Hidrosanitários':
+      return '6201af9438baa8d128ac4ea4';
+
+    case 'C.S.EST - Coordenação de Sistemas Estruturais':
+      return '6201af9438baa8d128ac4ea2';
+
+    case 'C.S.I - Coordenação de Sistemas de Incêndio':
+      return '6201af9438baa8d128ac4ea3';
+
+    case 'C.R.H - Coordenação de Recursos Hidrícos':
+      return '6201b398329f446f16e1b3fe';
+
+    case 'C.M.A - Coordenação de Meio Ambiente':
+      return '6201b398329f446f16e1b3ff';
+
+    default:
+      return '';
+  }
+}
+
 // Add active field to Users
 db.users.find().forEach((u) => {
   u.active = true;
@@ -418,4 +461,58 @@ db.users.find().forEach((u) => {
   u.expertise = [];
 
   db.users.replaceOne({ _id: u._id }, u);
+});
+
+db.contracts.find().forEach((contract) => {
+  if (contract.expenses)
+    contract.expenses.forEach((expense) => {
+      if (expense.team)
+        expense.team.forEach((member) => {
+          member.sector = convertCoordinationToSector(member.coordination);
+          delete member.coordination;
+        });
+    });
+
+  if (contract.payments)
+    contract.payments.forEach((payment) => {
+      if (payment.team)
+        payment.team.forEach((member) => {
+          member.sector = convertCoordinationToSector(member.coordination);
+          delete member.coordination;
+        });
+    });
+
+  db.contracts.replaceOne({ _id: contract._id }, contract);
+});
+
+db.invoices.find().forEach((invoice) => {
+  invoice.sector = convertCoordinationToSector(invoice.coordination);
+  delete invoice.coordination;
+
+  if (invoice.team)
+    invoice.team.forEach((member) => {
+      member.sector = convertCoordinationToSector(member.coordination);
+      delete member.coordination;
+    });
+
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});
+
+db.teams.find().forEach((team) => {
+  team.members.forEach((member) => {
+    member.sector = convertCoordinationToSector(member.coordination);
+    delete member.coordination;
+  });
+
+  db.teams.replaceOne({ _id: team._id }, team);
+});
+
+db.users.find().forEach((user) => {
+  if (user.expertise)
+    user.expertise.forEach((expertise) => {
+      expertise.sector = convertCoordinationToSector(expertise.coordination);
+      delete expertise.coordination;
+    });
+
+  db.users.replaceOne({ _id: user._id }, user);
 });

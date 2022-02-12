@@ -17,6 +17,7 @@ import { ContractExpense, Contract } from '@models/contract';
 import contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
+import { TeamService } from 'app/shared/services/team.service';
 
 interface ExpenseTypesSum {
   type: string;
@@ -59,16 +60,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   get invoiceAdministration(): string {
     if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
-    return '';
-  }
-
-  get invoiceCoordination(): string {
-    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).coordination;
-    return '';
-  }
-
-  get invoiceDepartment(): string {
-    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).department;
     return '';
   }
 
@@ -239,7 +230,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     public contractService: ContractService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public teamService: TeamService
   ) {}
 
   ngOnInit(): void {

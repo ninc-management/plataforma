@@ -21,6 +21,7 @@ import { at, groupBy } from 'lodash';
 import { TimeSeriesItem } from './metrics.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Team } from '@models/team';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -66,8 +67,8 @@ export class UtilsService {
         this.isOfType<Invoice>(iDocument.invoice, [
           '_id',
           'author',
-          'department',
-          'coordination',
+          'nortanTeam',
+          'sector',
           'code',
           'type',
           'contractor',
@@ -78,14 +79,11 @@ export class UtilsService {
     }
 
     if (invoice.administration == 'nortan') {
-      if (
-        invoice.department == 'DEC' ||
-        invoice.department == 'DEC - Diretoria de Engenharia Civil' ||
-        invoice.department == 'DAD' ||
-        invoice.department == 'DAD - Diretoria de Administração'
-      )
-        return '8,5';
-      else return '15,5';
+      if (invoice.nortanTeam) {
+        if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'expertise', 'members', 'config']))
+          return invoice.nortanTeam._id == '613232b5687ed0547f0bee19' ? '8,5' : '15,5';
+        else return invoice.nortanTeam == '613232b5687ed0547f0bee19' ? '8,5' : '15,5';
+      } else return '0';
     } else return '0';
   }
 
@@ -99,8 +97,8 @@ export class UtilsService {
         this.isOfType<Invoice>(iDocument.invoice, [
           '_id',
           'author',
-          'department',
-          'coordination',
+          'nortanTeam',
+          'sector',
           'code',
           'type',
           'contractor',
@@ -109,7 +107,21 @@ export class UtilsService {
         invoice = iDocument.invoice;
       else return '0';
     }
-    if (invoice.department == 'DAD' || invoice.department == 'DAD - Diretoria de Administração') return '0';
+
+    if (invoice.nortanTeam) {
+      if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'expertise', 'members', 'config']))
+        return invoice.nortanTeam._id == '6201b405329f446f16e1b404'
+          ? '0'
+          : invoice.administration == 'nortan'
+          ? '15'
+          : '17';
+      else
+        return invoice.nortanTeam == '6201b405329f446f16e1b404'
+          ? '0'
+          : invoice.administration == 'nortan'
+          ? '15'
+          : '17';
+    }
     return invoice.administration == 'nortan' ? '15' : '17';
   }
 

@@ -6,8 +6,8 @@ import { Team } from './team';
 import { Sector } from './shared';
 
 export class UserExpertise {
-  @prop({ required: true })
-  public sector!: Sector;
+  @prop({ required: true, ref: () => Sector })
+  public sector!: Ref<Sector>;
 
   @prop({ required: true })
   public text!: string;
@@ -68,8 +68,8 @@ export class User extends Base<string> {
   @prop()
   public education?: string;
 
-  @prop({ required: true, type: () => [Sector] })
-  public sectors: Sector[] = [];
+  @prop({ required: true, ref: () => Sector })
+  public sectors: Ref<Sector>[] = [];
 
   @prop()
   public more?: boolean;

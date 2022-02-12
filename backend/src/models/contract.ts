@@ -1,7 +1,7 @@
 import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
 import { Invoice } from './invoice';
 import { StatusHistory } from './baseStatusHistory';
-import { UploadedFile } from './shared';
+import { Sector, UploadedFile } from './shared';
 import { User } from './user';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
@@ -15,8 +15,8 @@ export class ContractExpenseTeamMember {
   @prop({ required: true })
   percentage!: string;
 
-  @prop({ required: true })
-  coordination!: string;
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 }
 
 export class ContractExpense {
@@ -67,8 +67,8 @@ export class ContractUserPayment {
   @prop({ required: true, ref: () => User })
   user!: Ref<User>;
 
-  @prop({ required: true })
-  coordination!: string;
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 
   @prop({ required: true })
   value!: string;

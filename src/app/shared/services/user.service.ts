@@ -204,8 +204,8 @@ export class UserService implements OnDestroy {
     if (u1 == undefined) return false;
     return team.some((member: InvoiceTeamMember | TeamMember | User | string | undefined) => {
       if (
-        this.utils.isOfType<InvoiceTeamMember>(member, ['user', 'coordination', 'distribution']) ||
-        this.utils.isOfType<TeamMember>(member, ['user', 'coordination'])
+        this.utils.isOfType<InvoiceTeamMember>(member, ['user', 'sector', 'distribution']) ||
+        this.utils.isOfType<TeamMember>(member, ['user', 'sector'])
       ) {
         return this.isEqual(u1, member.user);
       }

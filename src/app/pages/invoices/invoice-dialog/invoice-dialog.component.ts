@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { UserService } from 'app/shared/services/user.service';
 import { PdfService } from '../pdf.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -26,7 +25,6 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<InvoiceDialogComponent>,
     private dialogService: NbDialogService,
-    protected departmentService: DepartmentService,
     private userService: UserService,
     private pdf: PdfService,
     public utils: UtilsService
@@ -46,8 +44,6 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
 
   useAsModel(): void {
     const oInvoice = cloneDeep(this.invoice);
-    if (oInvoice.department.length > 3)
-      oInvoice.department = this.departmentService.extractAbreviation(oInvoice.department);
     oInvoice.code = '';
     if (oInvoice.products.length > 0)
       oInvoice.products.map((product: InvoiceProduct) => {

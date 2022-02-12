@@ -7,7 +7,6 @@ import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -20,6 +19,9 @@ import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import invoice_validation from 'app/shared/invoice-validation.json';
 import { NgModel, ValidatorFn, Validators } from '@angular/forms';
+import { Team } from '@models/team';
+import { Sector } from '@models/shared';
+import { TeamService } from 'app/shared/services/team.service';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -44,7 +46,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   private CONTRACTOR_NAME = 'teste';
   teamMember: InvoiceTeamMember = {
     user: undefined,
-    coordination: '',
+    sector: undefined,
     distribution: '',
     netValue: '',
     grossValue: '',
@@ -102,10 +104,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   authorSearch = '';
   authorData: Observable<User[]> = of([]);
 
-  DEPARTMENTS: string[] = [];
-  COORDINATIONS: string[] = [];
-  ALL_COORDINATIONS: string[] = [];
-  USER_COORDINATIONS: string[] = [];
+  NORTAN_TEAMS: Team[] = [];
+  SECTORS: Sector[] = [];
+  ALL_SECTORS: Sector[] = [];
+  USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
   UNITx = Object.values(UNIT_OF_MEASURE);
@@ -114,13 +116,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private contractService: ContractService,
-    public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
     public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
-    private brMask: BrMaskDirective
+    private brMask: BrMaskDirective,
+    private teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -135,8 +137,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tempInvoice.created = new Date();
         this.tempInvoice.lastUpdate = new Date();
       }
-      this.COORDINATIONS = this.departmentService.buildCoordinationsList(this.tempInvoice.department);
-      this.tempInvoice.department = this.departmentService.composedName(this.tempInvoice.department);
+      if (this.tempInvoice.nortanTeam)
+        this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
       this.contractorSearch = this.tempInvoice.contractor
         ? this.contractorService.idToName(this.tempInvoice.contractor)
         : '';
@@ -159,7 +161,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.tempInvoice.team.length === 0) {
           this.tempInvoice.team.push({
             user: user,
-            coordination: this.tempInvoice.coordination ? this.tempInvoice.coordination : '',
+            sector: this.tempInvoice.sector ? this.tempInvoice.sector : undefined,
             distribution: '',
             netValue: '',
             grossValue: '',
@@ -230,8 +232,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     });
 
-    this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-    this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+    this.teamService
+      .getTeams()
+      .pipe(take(2))
+      .subscribe((teams) => {
+        this.NORTAN_TEAMS = teams;
+        this.ALL_SECTORS = this.teamService.sectorsListAll();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -248,8 +255,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   registerInvoice(): void {
-    const department = this.tempInvoice.department;
-    this.tempInvoice.department = this.departmentService.extractAbreviation(this.tempInvoice.department);
     if (this.editing) {
       if (!isEqual(this.iInvoice, this.tempInvoice)) {
         if (!this.tempInvoice.team.map((member) => member.distribution).every((distribution) => distribution !== ''))
@@ -272,7 +277,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
           ? this.contractorService.idToName(this.tempInvoice.contractor)
           : '';
         this.iInvoice = cloneDeep(this.tempInvoice);
-        this.tempInvoice.department = department;
       }
     } else {
       this.tempInvoice.lastUpdate = new Date();
@@ -310,31 +314,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateTotal(type);
   }
 
-  onDepartmentChange(): void {
+  onNortanTeamChange(): void {
     this.updateCode();
-    this.updateCoordination();
+    this.updateSector();
   }
 
-  updateCoordination(): void {
-    this.tempInvoice.coordination = '';
-    this.COORDINATIONS = this.departmentService.buildCoordinationsList(
-      this.departmentService.extractAbreviation(this.tempInvoice.department)
-    );
+  updateSector(): void {
+    this.tempInvoice.sector = undefined;
+    if (this.tempInvoice.nortanTeam)
+      this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
   }
 
   addColaborator(): void {
     if (this.tempInvoice.team) {
       this.tempInvoice.team.push(cloneDeep(this.teamMember));
       this.userSearch = '';
-      this.USER_COORDINATIONS = this.updateUserCoordinations();
+      this.USER_SECTORS = [];
       this.memberChanged$.next(true);
     }
-  }
-
-  updateUserCoordinations(): string[] {
-    this.teamMember.coordination = '';
-    if (this.teamMember.user) return this.departmentService.userCoordinations(this.teamMember.user);
-    return [];
   }
 
   /* eslint-disable indent */
@@ -346,7 +343,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         '/' +
         new Date().getFullYear() +
         '-NRT/' +
-        (this.tempInvoice.department ? this.departmentService.extractAbreviation(this.tempInvoice.department) : '') +
+        (this.tempInvoice.nortanTeam ? this.teamService.idToTeam(this.tempInvoice.nortanTeam).abrev : '') +
         '-00';
     }
   }

@@ -161,14 +161,18 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     if (this.expertiseRefs != undefined && this.shortExpertiseRefs != undefined) {
       this.expertiseRefs.toArray().forEach((el: any) => {
         const idx = this.user.expertise.findIndex((ael) =>
-          ael.sector ? ael.sector.abrev === el.nativeElement.placeholder.split(' ').slice(-1)[0] : false
+          ael.sector
+            ? this.teamService.idToSector(ael.sector).abrev === el.nativeElement.placeholder.split(' ').slice(-1)[0]
+            : false
         );
         if (idx != -1 && el.nativeElement.value != this.user.expertise[idx].text)
           el.nativeElement.value = this.user.expertise[idx].text;
       });
       this.shortExpertiseRefs.toArray().forEach((el: any) => {
         const idx = this.user.expertise.findIndex((ael) =>
-          ael.sector ? ael.sector.abrev === el.nativeElement.placeholder.split(' ')[5].slice(0, -1) : false
+          ael.sector
+            ? this.teamService.idToSector(ael.sector).abrev === el.nativeElement.placeholder.split(' ')[5].slice(0, -1)
+            : false
         );
         if (idx != -1 && el.nativeElement.value != this.user.expertise[idx].shortExpertise)
           el.nativeElement.value = this.user.expertise[idx].shortExpertise;
@@ -235,7 +239,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       this.user.sectors.push(sector);
     } else {
       this.user.sectors.splice(
-        this.user.sectors.findIndex((iSector) => iSector._id === sector._id),
+        this.user.sectors.findIndex((iSector) => this.teamService.isSectorEqual(iSector, sector)),
         1
       );
     }
@@ -244,9 +248,9 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   refreshExpertises(): void {
     this.ACTIVE_EXPERTISE = [];
     //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.
-    this.user.sectors.map((sector: Sector) => {
+    this.user.sectors.map((sector) => {
       let idx = this.user.expertise.findIndex((el) => {
-        if (el.sector) return el.sector._id === sector._id;
+        if (el.sector) return this.teamService.isSectorEqual(el.sector, sector);
         return false;
       });
       if (idx != -1) {
@@ -328,7 +332,8 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   buildGrupedSectors(): void {
     this.groupedSectors = this.utils.chunkify(
       this.teamService.sectorsListAll().map((sector) => {
-        if (this.user.sectors.some((sectorUser) => sectorUser._id === sector._id)) sector.isChecked = true;
+        if (this.user.sectors.some((sectorUser) => this.teamService.isSectorEqual(sectorUser, sector)))
+          sector.isChecked = true;
         return sector;
       }),
       3

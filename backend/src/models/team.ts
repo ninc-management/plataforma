@@ -7,8 +7,8 @@ export class TeamMember {
   @prop({ required: true, ref: () => User })
   user!: Ref<User>;
 
-  @prop({ required: true })
-  coordination!: string;
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 }
 
 export class TeamFinancialTransaction {
@@ -83,6 +83,9 @@ export class TeamConfig {
 
   @prop({ required: true, type: () => [Sector] })
   sectors: Sector[] = [];
+
+  @prop({ required: true })
+  path: string = '';
 }
 
 export class Team extends Base<string> {

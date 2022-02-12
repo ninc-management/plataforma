@@ -3,6 +3,8 @@ import { Contractor } from './contractor';
 import { User } from './user';
 import { StatusHistory } from './baseStatusHistory';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+import { Sector } from './shared';
+import { Team } from './team';
 
 export class InvoiceProduct {
   @prop({ required: true })
@@ -54,8 +56,8 @@ export class InvoiceTeamMember {
   @prop({ required: true, ref: () => User })
   user!: Ref<User>;
 
-  @prop({ required: true })
-  coordination!: string;
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 
   @prop({ required: true })
   distribution!: string;
@@ -69,11 +71,11 @@ export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
   author!: Ref<User>;
 
-  @prop({ required: true })
-  department!: string;
+  @prop({ required: true, ref: () => Team })
+  nortanTeam!: Ref<Team>;
 
-  @prop({ required: true })
-  coordination!: string;
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 
   @prop({ required: true })
   administration: string = 'nortan';

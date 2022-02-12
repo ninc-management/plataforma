@@ -29,12 +29,12 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   currentMember = new TeamMember();
   availableUsers: Observable<User[]> = of([]);
   availableLeaders: Observable<User[]> = of([]);
-  COORDINATIONS: string[] = [];
-  USER_COORDINATIONS: string[] = [];
+  SECTORS: (Sector | string | undefined)[] = [];
+  USER_SECTORS: (Sector | string | undefined)[] = [];
   options = { expenseType: '', sectorName: '', sectorAbrev: '' };
 
   constructor(
-    private teamService: TeamService,
+    public teamService: TeamService,
     public utils: UtilsService,
     public userService: UserService,
     public departamentService: DepartmentService
@@ -49,28 +49,17 @@ export class TeamItemComponent implements OnInit, OnDestroy {
       this.leaderSearch = this.userService.idToName(this.team.leader);
     }
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-      map(([users, _]) => {
-        return users.filter((user) => {
-          if (this.teamService.availableCoordinations(user).length == 0) return false;
-          const isUserInTeam = this.userService.isUserInTeam(user, this.team.members);
-          const hasTeamInCoordination = this.teamService.usedCoordinations(user).some((coordination) => {
-            //a coordenacao do usuario é igual a alguma coordenacao do time?
-            return this.COORDINATIONS.includes(coordination);
-          });
-
-          return !isUserInTeam && !hasTeamInCoordination && user.active;
-        });
-      })
+      map(([users, _]) =>
+        users.filter((user) => !this.userService.isUserInTeam(user, this.team.members) && user.active)
+      )
     );
 
     this.availableLeaders = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-      map(([users, _]) => {
-        return users.filter((user) => this.userService.isUserInTeam(user, this.team.members));
-      })
+      map(([users, _]) => users.filter((user) => this.userService.isUserInTeam(user, this.team.members)))
     );
 
     this.memberChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.COORDINATIONS = uniq(this.team.members.map((member: TeamMember) => member.coordination));
+      this.SECTORS = uniq(this.team.members.map((member: TeamMember) => member.sector));
     });
   }
 
@@ -90,7 +79,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   addMember(): void {
     this.team.members.push(cloneDeep(this.currentMember));
     this.memberSearch = '';
-    this.currentMember.coordination = '';
+    this.currentMember.sector = new Sector();
     this.currentMember.user = new User();
     this.memberChanged$.next(true);
   }
@@ -103,7 +92,10 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   }
 
   updateUserCoordinations(): void {
-    this.USER_COORDINATIONS = this.teamService.availableCoordinations(this.currentMember.user);
+    if (this.currentMember.user) {
+      const user = this.userService.idToUser(this.currentMember.user);
+      this.USER_SECTORS = user.sectors;
+    }
   }
 
   addExpenseType(): void {

@@ -272,9 +272,7 @@
           <nb-select
             [(ngModel)]="splitSelectedMember"
             [disabled]="!isEditionGranted"
-            (selectedChange)="
-              updateTeamValues(); USER_COORDINATIONS = departmentService.userCoordinations(splitSelectedMember._id)
-            "
+            (selectedChange)="updateTeamValues(); USER_SECTORS = teamService.userToSectors(splitSelectedMember._id)"
             #selectedMember="ngModel"
             id="input-selected-member"
             name="selectedMember"
@@ -295,7 +293,7 @@
         <div class="form-control-group">
           <label class="label" for="input-memberCoordination">Coordenação:</label>
           <nb-select
-            [(ngModel)]="this.expense.team[this.sMemberIndex].coordination"
+            [(ngModel)]="this.expense.team[this.sMemberIndex].sector"
             #memberCoordination="ngModel"
             id="input-memberCoordination"
             name="memberCoordination"
@@ -307,8 +305,8 @@
             [status]="memberCoordination.dirty ? 'success' : expenseIndex === undefined ? 'success' : 'basic'"
             [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
           >
-            <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
-              {{ coordination.split(' ')[0] }}
+            <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
+              {{ sector.abrev }} - {{ sector.name }}
             </nb-option>
           </nb-select>
         </div>
@@ -321,14 +319,14 @@
             </div>
             <div class="col-md-2">
               <nb-select
-                [(ngModel)]="expense.team[i].coordination"
-                id="input-memberCoordination-{{ i }}"
-                name="memberCoordination-{{ i }}"
-                placeholder="Coordenação"
+                [(ngModel)]="expense.team[i].sector"
+                id="input-memberSector-{{ i }}"
+                name="memberSector-{{ i }}"
+                placeholder="Setor"
                 fullWidth
                 size="large"
                 [disabled]="!isEditionGranted || expense.splitType != splitTypes.PERSONALIZADO"
-                [status]="expense.team[i].coordination ? 'success' : 'basic'"
+                [status]="expense.team[i].sector ? 'success' : 'basic'"
               >
                 <nb-option
                   *ngFor="let coordination of departmentService.userCoordinations(teamUsers[i]._id)"

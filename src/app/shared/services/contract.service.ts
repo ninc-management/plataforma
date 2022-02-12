@@ -106,8 +106,8 @@ export class ContractService implements OnDestroy {
           this.utils.isOfType<Invoice>(contract.invoice, [
             '_id',
             'author',
-            'department',
-            'coordination',
+            'nortanTeam',
+            'sector',
             'code',
             'type',
             'contractor',

@@ -1,7 +1,7 @@
 {
   "author": { "required": true },
-  "department": { "required": true },
-  "coordination": { "required": true },
+  "nortanTeam": { "required": true },
+  "sector": { "required": true },
   "administration": { "required": true },
   "code": { "required": true },
   "date": { "required": true },

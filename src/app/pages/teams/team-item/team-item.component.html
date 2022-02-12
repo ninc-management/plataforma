@@ -147,7 +147,9 @@
           <div class="form-control-group">
             <label class="label" for="input-expertise">Áreas de atuação:</label>
             <ul>
-              <li *ngFor="let coordination of COORDINATIONS">{{ coordination }}</li>
+              <li *ngFor="let sector of SECTORS">
+                {{ teamService.idToSector(sector).abrev }} - {{ teamService.idToSector(sector).name }}
+              </li>
             </ul>
           </div>
         </div>
@@ -178,7 +180,7 @@
           <div class="form-control-group">
             <label class="label" for="input-memberCoordination">Coordenação:</label>
             <nb-select
-              [(ngModel)]="currentMember.coordination"
+              [(ngModel)]="currentMember.sector"
               #memberCoordination="ngModel"
               id="input-memberCoordination"
               name="memberCoordination"
@@ -188,8 +190,8 @@
               [status]="memberCoordination.value?.length > 0 ? 'success' : 'basic'"
               [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
             >
-              <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
-                {{ coordination }}
+              <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
+                {{ teamService.idToSector(sector).abrev }} - {{ teamService.idToSector(sector).name }}
               </nb-option>
             </nb-select>
           </div>
@@ -219,7 +221,9 @@
                 [picture]="userService.idToProfilePicture(member.user)"
               ></nb-user>
             </div>
-            <div class="col-5 col-md-5">{{ member.coordination }}</div>
+            <div class="col-5 col-md-5">
+              {{ teamService.idToSector(member.sector).abrev }} - {{ teamService.idToSector(member.sector).name }}
+            </div>
           </div>
           <div class="col-2 col-md-1" style="text-align: right">
             <nb-icon

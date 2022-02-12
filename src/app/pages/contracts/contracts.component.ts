@@ -17,6 +17,8 @@ import { DepartmentService } from 'app/shared/services/department.service';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
+import { Team } from '@models/team';
+import { TeamService } from 'app/shared/services/team.service';
 
 @Component({
   selector: 'ngx-contracts',
@@ -152,7 +154,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
     private departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -391,22 +394,24 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     return csv;
   }
 
-  downloadReport(selectedDepartment: string): void {
-    const filteredContracts = this.contracts.filter((contract) => {
-      if (contract.invoice) {
-        const invoice = this.invoiceService.idToInvoice(contract.invoice);
-        return (
-          invoice.department == this.departmentService.extractAbreviation(selectedDepartment) &&
-          contract.status != CONTRACT_STATOOS.ARQUIVADO &&
-          contract.status != CONTRACT_STATOOS.CONCLUIDO
-        );
-      }
-      return false;
-    });
+  downloadReport(selectedNortanTeam: string | Team | undefined): void {
+    if (selectedNortanTeam) {
+      const filteredContracts = this.contracts.filter((contract) => {
+        if (contract.invoice) {
+          const invoice = this.invoiceService.idToInvoice(contract.invoice);
+          return (
+            this.teamService.isTeamEqual(invoice.nortanTeam, selectedNortanTeam) &&
+            contract.status != CONTRACT_STATOOS.ARQUIVADO &&
+            contract.status != CONTRACT_STATOOS.CONCLUIDO
+          );
+        }
+        return false;
+      });
 
-    const csv = this.createReportObject(filteredContracts);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    saveAs(blob, 'relatorio_' + this.departmentService.extractAbreviation(selectedDepartment).toLowerCase() + '.csv');
+      const csv = this.createReportObject(filteredContracts);
+      const blob = new Blob([csv], { type: 'text/csv' });
+      saveAs(blob, 'relatorio_' + this.teamService.idToTeam(selectedNortanTeam).abrev.toLowerCase() + '.csv');
+    }
   }
 
   openDepartmentDialog(): void {

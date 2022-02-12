@@ -15,6 +15,8 @@ import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/co
 import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import expense_validation from 'app/shared/expense-validation.json';
+import { Sector } from '@models/shared';
+import { TeamService } from 'app/shared/services/team.service';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -28,7 +30,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   invoice = new Invoice();
   hasInitialContract = true;
   validation = expense_validation as any;
-  USER_COORDINATIONS: string[] = [];
+  USER_SECTORS: Sector[] = [];
   types = Object.values(EXPENSE_TYPES);
   expenseTypes = EXPENSE_TYPES;
   splitTypes = SPLIT_TYPES;
@@ -94,7 +96,8 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected onedrive: OnedriveService,
     public userService: UserService,
     public departmentService: DepartmentService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public teamService: TeamService
   ) {
     super(stringUtil, onedrive, userService);
   }
@@ -134,7 +137,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) {
         this.expense.source = this.userService.idToUser(this.expense.source);
-        this.USER_COORDINATIONS = this.departmentService.userCoordinations(this.expense.source._id);
+        this.USER_SECTORS = this.teamService.userToSectors(this.expense.source._id);
       }
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
@@ -164,7 +167,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         user: member.user,
         value: '0,00',
         percentage: member.distribution,
-        coordination: member.coordination,
+        sector: member.sector,
       }));
 
     this.sourceData = this.sourceArray;
@@ -174,7 +177,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
       if (this.splitSelectedMember._id == undefined)
         this.splitSelectedMember = this.userService.idToUser(this.expense.team[0].user);
-      this.USER_COORDINATIONS = this.departmentService.userCoordinations(this.splitSelectedMember._id);
+      this.USER_SECTORS = this.teamService.userToSectors(this.splitSelectedMember._id);
     }
     if (this.expenseIndex == undefined) this.updateTeamValues();
   }

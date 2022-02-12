@@ -2,15 +2,12 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { takeUntil, map, take, filter } from 'rxjs/operators';
 import { ContractService, CONTRACT_STATOOS } from './contract.service';
-import { ContractorService } from './contractor.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
-import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UtilsService } from './utils.service';
 import { cloneDeep, mergeWith, add } from 'lodash';
 import { format } from 'date-fns';
-import { Team } from '@models/team';
 import { TeamService } from './team.service';
 
 export type TimeSeriesItem = [string, number];
@@ -43,75 +40,30 @@ interface MetricInfo {
   value: number;
 }
 
+interface TeamInfo {
+  id: string;
+  value: number;
+}
+
+interface SectorInfo {
+  id: string;
+  value: number;
+  teamIdx: number;
+}
+
 interface UserAndGlobalMetric {
   user: number;
   global: number;
 }
 
-// Sorted alphabetically
-interface Coordinations {
-  CADM: number;
-  CDI: number;
-  CGO: number;
-  CIMP: number;
-  CINST: number;
-  CMA: number;
-  CPA: number;
-  CRH: number;
-  CSE: number;
-  CSEST: number;
-  CSH: number;
+interface UserAndSectors {
+  user: SectorInfo[];
+  global: SectorInfo[];
 }
 
-interface FilteredCoordinations {
-  CADM?: number;
-  CDI?: number;
-  CGO?: number;
-  CIMP?: number;
-  CINST?: number;
-  CMA?: number;
-  CPA?: number;
-  CRH?: number;
-  CSE?: number;
-  CSEST?: number;
-  CSH?: number;
-}
-
-interface UserAndCoordinations {
-  user: Coordinations;
-  global: Coordinations;
-}
-
-interface FilteredUserAndCoordinations {
-  user: FilteredCoordinations;
-  global: FilteredCoordinations;
-}
-
-// Department-coordination.json file order
-interface Departments {
-  DAD: number;
-  DEC: number;
-  DAQ: number;
-  DPC: number;
-  DRM: number;
-}
-
-interface FilteredDepartments {
-  DAD?: number;
-  DEC?: number;
-  DAQ?: number;
-  DPC?: number;
-  DRM?: number;
-}
-
-interface FilteredUserAndDepartments {
-  user: FilteredDepartments;
-  global: FilteredDepartments;
-}
-
-interface UserAndDepartments {
-  user: Departments;
-  global: Departments;
+interface UserAndTeams {
+  user: TeamInfo[];
+  global: TeamInfo[];
 }
 
 @Injectable({
@@ -120,99 +72,46 @@ interface UserAndDepartments {
 export class MetricsService implements OnDestroy {
   destroy$ = new Subject<void>();
 
-  private defaultCoordsValue: Coordinations = {
-    CADM: 0,
-    CDI: 0,
-    CGO: 0,
-    CIMP: 0,
-    CINST: 0,
-    CMA: 0,
-    CPA: 0,
-    CRH: 0,
-    CSE: 0,
-    CSEST: 0,
-    CSH: 0,
+  private defaultUserAndSectors: UserAndSectors = {
+    user: [],
+    global: [],
   };
 
-  private defaultDepartments: Departments = {
-    DAD: 0,
-    DEC: 0,
-    DAQ: 0,
-    DPC: 0,
-    DRM: 0,
-  };
-
-  private defaultUserCoordValue: UserAndCoordinations = {
-    user: Object.assign({}, this.defaultCoordsValue),
-    global: Object.assign({}, this.defaultCoordsValue),
-  };
-
-  private defaultUserDepartmentValue: UserAndDepartments = {
-    user: Object.assign({}, this.defaultDepartments),
-    global: Object.assign({}, this.defaultDepartments),
+  private defaultUserAndTeams: UserAndTeams = {
+    user: [],
+    global: [],
   };
 
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private userService: UserService,
-    private departmentService: DepartmentService,
     private stringUtil: StringUtilService,
     private utils: UtilsService,
     private teamService: TeamService
-  ) {}
+  ) {
+    this.teamService
+      .getTeams()
+      .pipe(
+        take(2),
+        filter((teams) => teams.length > 0)
+      )
+      .subscribe((teams) => {
+        const baseTeams = teams.map((team): TeamInfo => ({ id: team._id, value: 0 }));
+        const baseSectors = teams
+          .map((team, idx) =>
+            team.config.sectors.map((sector): SectorInfo => ({ id: sector._id, value: 0, teamIdx: idx }))
+          )
+          .flat();
+
+        this.defaultUserAndTeams = { user: cloneDeep(baseTeams), global: cloneDeep(baseTeams) };
+        this.defaultUserAndSectors = { user: cloneDeep(baseSectors), global: cloneDeep(baseSectors) };
+      });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  userDepartmentRepresentation(department: string, userDepartment: FilteredUserAndDepartments): string {
-    const departmentsAbrevs = this.departmentService.buildDepartmentList().map((d) => d.slice(0, 3)); // DAD DEC DAQ DPC DRM
-    switch (department) {
-      case departmentsAbrevs[0]:
-        return this.stringUtil.toPercentageNumber(userDepartment.user.DAD, userDepartment.global.DAD);
-      case departmentsAbrevs[1]:
-        return this.stringUtil.toPercentageNumber(userDepartment.user.DEC, userDepartment.global.DEC);
-      case departmentsAbrevs[2]:
-        return this.stringUtil.toPercentageNumber(userDepartment.user.DAQ, userDepartment.global.DAQ);
-      case departmentsAbrevs[3]:
-        return this.stringUtil.toPercentageNumber(userDepartment.user.DPC, userDepartment.global.DPC);
-      case departmentsAbrevs[4]:
-        return this.stringUtil.toPercentageNumber(userDepartment.user.DRM, userDepartment.global.DRM);
-      default:
-        return '';
-    }
-  }
-
-  userCoordRepresentation(coord: string, userCoord: FilteredUserAndCoordinations): string {
-    const coords = this.departmentService.buildAllCoordinationsList();
-    switch (coord) {
-      case coords[0]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CADM, userCoord.global.CADM);
-      case coords[1]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CDI, userCoord.global.CDI);
-      case coords[2]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CGO, userCoord.global.CGO);
-      case coords[3]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CIMP, userCoord.global.CIMP);
-      case coords[4]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CINST, userCoord.global.CINST);
-      case coords[5]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CMA, userCoord.global.CMA);
-      case coords[6]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CPA, userCoord.global.CPA);
-      case coords[7]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CRH, userCoord.global.CRH);
-      case coords[8]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CSE, userCoord.global.CSE);
-      case coords[9]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CSEST, userCoord.global.CSEST);
-      case coords[10]:
-        return this.stringUtil.toPercentageNumber(userCoord.user.CSH, userCoord.global.CSH);
-      default:
-        return '';
-    }
   }
 
   plural(last: string, number: number): string {
@@ -352,86 +251,35 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValueByCoordinations(start: Date, end: Date, uId?: string): Observable<UserAndCoordinations> {
+  receivedValueBySectors(start: Date, end: Date, uId?: string): Observable<UserAndSectors> {
     return this.contractService.getContracts().pipe(
       filter((contracts) => contracts.length > 0),
       map((contracts) => {
-        return contracts.reduce((received: UserAndCoordinations, contract) => {
+        return contracts.reduce((received: UserAndSectors, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
-            const value = contract.payments.reduce((paid: UserAndCoordinations, payment) => {
+            const value = contract.payments.reduce((paid: UserAndSectors, payment) => {
               if (payment.paid) {
                 const paidDate = payment.paidDate;
                 if (paidDate && this.utils.isWithinInterval(paidDate, start, end)) {
-                  const uCPayments = payment.team.reduce((upaid: UserAndCoordinations, member) => {
-                    const coords = this.departmentService.buildAllCoordinationsList();
-                    switch (member.coordination) {
-                      case coords[0]:
-                        upaid.global.CADM += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CADM += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[1]:
-                        upaid.global.CDI += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CDI += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[2]:
-                        upaid.global.CGO += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CGO += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[3]:
-                        upaid.global.CIMP += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CIMP += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[4]:
-                        upaid.global.CINST += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CINST += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[5]:
-                        upaid.global.CMA += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CMA += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[6]:
-                        upaid.global.CPA += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CPA += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[7]:
-                        upaid.global.CRH += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CRH += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[8]:
-                        upaid.global.CRH += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CRH += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[9]:
-                        upaid.global.CSEST += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CSEST += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[10]:
-                        upaid.global.CSH += this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          upaid.user.CSH += this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      default:
-                        break;
+                  const uCPayments = payment.team.reduce((upaid: UserAndSectors, member) => {
+                    const globalIdx = upaid.global.findIndex(
+                      (o) => o.id == this.teamService.idToSector(member.sector)._id
+                    );
+                    if (globalIdx != -1) {
+                      upaid.global[globalIdx].value += this.stringUtil.moneyToNumber(member.value);
+                      if (this.userService.isEqual(member.user, uId)) {
+                        upaid.user[globalIdx].value += this.stringUtil.moneyToNumber(member.value);
+                      }
                     }
 
                     return upaid;
-                  }, cloneDeep(this.defaultUserCoordValue));
+                  }, cloneDeep(this.defaultUserAndSectors));
                   paid.user = mergeWith({}, paid.user, uCPayments.user, add);
                   paid.global = mergeWith({}, paid.global, uCPayments.global, add);
                 }
               }
               return paid;
-            }, cloneDeep(this.defaultUserCoordValue));
+            }, cloneDeep(this.defaultUserAndSectors));
             received.user = mergeWith({}, received.user, value.user, add);
             received.global = mergeWith({}, received.global, value.global, add);
           }
@@ -446,66 +294,15 @@ export class MetricsService implements OnDestroy {
                   source._id != CONTRACT_BALANCE._id &&
                   source._id != CLIENT._id
                 ) {
-                  const coords = this.departmentService.buildAllCoordinationsList();
                   for (const member of expense.team) {
-                    switch (member.coordination) {
-                      case coords[0]:
-                        received.global.CADM -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CADM -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[1]:
-                        received.global.CDI -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CDI -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[2]:
-                        received.global.CGO -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CGO -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[3]:
-                        received.global.CIMP -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CIMP -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[4]:
-                        received.global.CINST -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CINST -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[5]:
-                        received.global.CMA -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CMA -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[6]:
-                        received.global.CPA -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CPA -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[7]:
-                        received.global.CRH -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CRH -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[8]:
-                        received.global.CRH -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CRH -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[9]:
-                        received.global.CSEST -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CSEST -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      case coords[10]:
-                        received.global.CSH -= this.stringUtil.moneyToNumber(member.value);
-                        if (this.userService.isEqual(member.user, uId))
-                          received.user.CSH -= this.stringUtil.moneyToNumber(member.value);
-                        break;
-                      default:
-                        break;
+                    const globalIdx = received.global.findIndex(
+                      (o) => o.id == this.teamService.idToSector(member.sector)._id
+                    );
+                    if (globalIdx != -1) {
+                      received.global[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                      if (this.userService.isEqual(member.user, uId)) {
+                        received.user[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                      }
                     }
                   }
                 }
@@ -513,181 +310,31 @@ export class MetricsService implements OnDestroy {
             }
           }
           return received;
-        }, cloneDeep(this.defaultUserCoordValue));
+        }, cloneDeep(this.defaultUserAndSectors));
       }),
       takeUntil(this.destroy$)
     );
   }
 
-  receivedValueByCoordinationsFiltered(start: Date, end: Date, uId?: string): Observable<FilteredUserAndCoordinations> {
-    return this.receivedValueByCoordinations(start, end, uId).pipe(
-      map((userCoord: UserAndCoordinations) => {
-        if (userCoord == undefined) return userCoord;
-        const filtered: FilteredUserAndCoordinations = { user: {}, global: {} };
-        for (const coord of this.departmentService.userCoordinations(uId)) {
-          const coords = this.departmentService.buildAllCoordinationsList();
-          switch (coord) {
-            case coords[0]:
-              filtered.user.CADM = userCoord.user.CADM;
-              filtered.global.CADM = userCoord.global.CADM;
-              break;
-            case coords[1]:
-              filtered.user.CDI = userCoord.user.CDI;
-              filtered.global.CDI = userCoord.global.CDI;
-              break;
-            case coords[2]:
-              filtered.user.CGO = userCoord.user.CGO;
-              filtered.global.CGO = userCoord.global.CGO;
-              break;
-            case coords[3]:
-              filtered.user.CIMP = userCoord.user.CIMP;
-              filtered.global.CIMP = userCoord.global.CIMP;
-              break;
-            case coords[4]:
-              filtered.user.CINST = userCoord.user.CINST;
-              filtered.global.CINST = userCoord.global.CINST;
-              break;
-            case coords[5]:
-              filtered.user.CMA = userCoord.user.CMA;
-              filtered.global.CMA = userCoord.global.CMA;
-              break;
-            case coords[6]:
-              filtered.user.CPA = userCoord.user.CPA;
-              filtered.global.CPA = userCoord.global.CPA;
-              break;
-            case coords[7]:
-              filtered.user.CRH = userCoord.user.CRH;
-              filtered.global.CRH = userCoord.global.CRH;
-              break;
-            case coords[8]:
-              filtered.user.CSE = userCoord.user.CSE;
-              filtered.global.CSE = userCoord.global.CSE;
-              break;
-            case coords[9]:
-              filtered.user.CSEST = userCoord.user.CSEST;
-              filtered.global.CSEST = userCoord.global.CSEST;
-              break;
-            case coords[10]:
-              filtered.user.CSH = userCoord.user.CSH;
-              filtered.global.CSH = userCoord.global.CSH;
-              break;
-            default:
-              break;
-          }
+  receivedValueByTeams(start: Date, end: Date, uId?: string): Observable<UserAndTeams> {
+    return this.receivedValueBySectors(start, end, uId).pipe(
+      map((userSector: UserAndSectors) => {
+        const userTeams = cloneDeep(this.defaultUserAndTeams);
+        for (let i in userSector.user) {
+          userTeams.user[userSector.user[i].teamIdx].value += userSector.user[i].value;
+          userTeams.global[userSector.global[i].teamIdx].value += userSector.global[i].value;
         }
-        return filtered;
-      })
-    );
-  }
-
-  receivedValueByDepartments(start: Date, end: Date, uId?: string): Observable<UserAndDepartments> {
-    return this.receivedValueByCoordinations(start, end, uId).pipe(
-      map((userCoord: UserAndCoordinations) => {
-        const userDepartment = cloneDeep(this.defaultUserDepartmentValue);
-        userDepartment.user.DAD += userCoord.user.CADM;
-        userDepartment.global.DAD += userCoord.global.CADM;
-
-        userDepartment.user.DAQ += userCoord.user.CDI;
-        userDepartment.global.DAQ += userCoord.global.CDI;
-
-        userDepartment.user.DEC += userCoord.user.CGO;
-        userDepartment.global.DEC += userCoord.global.CGO;
-
-        userDepartment.user.DEC += userCoord.user.CIMP;
-        userDepartment.global.DEC += userCoord.global.CIMP;
-
-        userDepartment.user.DEC += userCoord.user.CINST;
-        userDepartment.global.DEC += userCoord.global.CINST;
-
-        userDepartment.user.DRM += userCoord.user.CMA;
-        userDepartment.global.DRM += userCoord.global.CMA;
-
-        userDepartment.user.DAQ += userCoord.user.CPA;
-        userDepartment.global.DAQ += userCoord.global.CPA;
-
-        userDepartment.user.DRM += userCoord.user.CRH;
-        userDepartment.global.DRM += userCoord.global.CRH;
-
-        userDepartment.user.DPC += userCoord.user.CSE;
-        userDepartment.global.DPC += userCoord.global.CSE;
-
-        userDepartment.user.DPC += userCoord.user.CSEST;
-        userDepartment.global.DPC += userCoord.global.CSEST;
-
-        userDepartment.user.DPC += userCoord.user.CSH;
-        userDepartment.global.DPC += userCoord.global.CSH;
-
-        return userDepartment;
-      })
-    );
-  }
-
-  receivedValueByDepartmentsFiltered(start: Date, end: Date, uId?: string): Observable<FilteredUserAndDepartments> {
-    return this.receivedValueByDepartments(start, end, uId).pipe(
-      map((userDepartment: UserAndDepartments) => {
-        const filtered: FilteredUserAndDepartments = { user: {}, global: {} };
-        for (const coord of this.departmentService.userCoordinations(uId)) {
-          const coords = this.departmentService.buildAllCoordinationsList();
-          switch (coord) {
-            case coords[0]:
-              filtered.user.DAD = this.utils.assingOrIncrement(filtered.user.DAD, userDepartment.user.DAD);
-              filtered.global.DAD = this.utils.assingOrIncrement(filtered.global.DAD, userDepartment.global.DAD);
-              break;
-            case coords[1]:
-              filtered.user.DAQ = this.utils.assingOrIncrement(filtered.user.DAQ, userDepartment.user.DAQ);
-              filtered.global.DAQ = this.utils.assingOrIncrement(filtered.global.DAQ, userDepartment.global.DAQ);
-              break;
-            case coords[2]:
-              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
-              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
-              break;
-            case coords[3]:
-              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
-              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
-              break;
-            case coords[4]:
-              filtered.user.DEC = this.utils.assingOrIncrement(filtered.user.DEC, userDepartment.user.DEC);
-              filtered.global.DEC = this.utils.assingOrIncrement(filtered.global.DEC, userDepartment.global.DEC);
-              break;
-            case coords[5]:
-              filtered.user.DRM = this.utils.assingOrIncrement(filtered.user.DRM, userDepartment.user.DRM);
-              filtered.global.DRM = this.utils.assingOrIncrement(filtered.global.DRM, userDepartment.global.DRM);
-              break;
-            case coords[6]:
-              filtered.user.DAQ = this.utils.assingOrIncrement(filtered.user.DAQ, userDepartment.user.DAQ);
-              filtered.global.DAQ = this.utils.assingOrIncrement(filtered.global.DAQ, userDepartment.global.DAQ);
-              break;
-            case coords[7]:
-              filtered.user.DRM = this.utils.assingOrIncrement(filtered.user.DRM, userDepartment.user.DRM);
-              filtered.global.DRM = this.utils.assingOrIncrement(filtered.global.DRM, userDepartment.global.DRM);
-              break;
-            case coords[8]:
-              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
-              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
-              break;
-            case coords[9]:
-              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
-              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
-              break;
-            case coords[10]:
-              filtered.user.DPC = this.utils.assingOrIncrement(filtered.user.DPC, userDepartment.user.DPC);
-              filtered.global.DPC = this.utils.assingOrIncrement(filtered.global.DPC, userDepartment.global.DPC);
-              break;
-            default:
-              break;
-          }
-        }
-        return filtered;
+        return userSector;
       })
     );
   }
 
   receivedValueNortan(start: Date, end: Date, uId?: string): Observable<UserAndGlobalMetric> {
-    return this.receivedValueByDepartments(start, end, uId).pipe(
-      map((userDepartment: UserAndDepartments) => {
+    return this.receivedValueByTeams(start, end, uId).pipe(
+      map((userTeams: UserAndTeams) => {
         const result: UserAndGlobalMetric = { user: 0, global: 0 };
-        result.user = Object.values(userDepartment.user).reduce((acc, value) => acc + value);
-        result.global = Object.values(userDepartment.global).reduce((acc, value) => acc + value);
+        result.user = Object.values(userTeams.user).reduce((acc, tInfo) => acc + tInfo.value, 0);
+        result.global = Object.values(userTeams.global).reduce((acc, tInfo) => acc + tInfo.value, 0);
         return result;
       })
     );

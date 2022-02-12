@@ -4,7 +4,6 @@ import { Socket } from 'ngx-socket-io';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
-import { DepartmentService } from './department.service';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { UtilsService } from './utils.service';
@@ -28,8 +27,7 @@ export class TeamService implements OnDestroy {
     private userService: UserService,
     private stringUtil: StringUtilService,
     private socket: Socket,
-    private utils: UtilsService,
-    private departmentService: DepartmentService
+    private utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -74,14 +72,23 @@ export class TeamService implements OnDestroy {
     return this.teams$;
   }
 
-  idToName(id: string | Team): string {
+  idToName(id: string | Team | undefined): string {
+    if (!id) return '';
     return this.idToTeam(id).name;
   }
 
   idToTeam(id: string | Team): Team {
-    if (this.utils.isOfType<Team>(id, ['_id', 'name', 'expertise', 'members'])) return id;
+    if (this.utils.isOfType<Team>(id, ['_id', 'name', 'expertise', 'members', 'config'])) return id;
     const tmp = this.teams$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
+  }
+
+  idToSector(id: string | Sector | undefined): Sector {
+    if (!id) return new Sector();
+    if (this.utils.isOfType<Sector>(id, ['_id', 'name', 'abrev'])) return id;
+    const tmp = this.sectorsListAll().find((sector) => sector._id == id);
+    if (tmp) return tmp;
+    return new Sector();
   }
 
   isMember(uId: string | User | undefined, teamId: string | Team): boolean {
@@ -102,18 +109,6 @@ export class TeamService implements OnDestroy {
       team.members = team.members.filter((member) => this.userService.isEqual(member.user, uId));
       return team;
     });
-  }
-
-  usedCoordinations(uId: string | User | undefined): string[] {
-    if (uId == undefined) return [];
-    return this.userToTeamsMembersFiltered(uId).map((team) => team.members[0].coordination);
-  }
-
-  availableCoordinations(uId: string | User | undefined): string[] {
-    if (uId == undefined) return [];
-    const coordinations = this.departmentService.userCoordinations(uId);
-    const userTeamCoordinations = this.usedCoordinations(uId);
-    return coordinations.filter((coordination) => !userTeamCoordinations.includes(coordination));
   }
 
   keepUpdatingBalance(): void {
@@ -151,5 +146,20 @@ export class TeamService implements OnDestroy {
 
   extractAbreviation(composedName: string): string {
     return composedName.split(' ')[0];
+  }
+
+  isSectorEqual(s1: string | Sector | undefined, s2: string | Sector | undefined): boolean {
+    if (s1 == undefined || s2 == undefined) return false;
+    return this.idToSector(s1)._id == this.idToSector(s2)._id;
+  }
+
+  isTeamEqual(s1: string | Team | undefined, s2: string | Team | undefined): boolean {
+    if (s1 == undefined || s2 == undefined) return false;
+    return this.idToTeam(s1)._id == this.idToTeam(s2)._id;
+  }
+
+  userToSectors(user: User | string | undefined): Sector[] {
+    if (!user) return [];
+    return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
 }

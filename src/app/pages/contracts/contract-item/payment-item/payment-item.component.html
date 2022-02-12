@@ -311,7 +311,7 @@
         <div class="form-control-group">
           <label class="label" for="input-coordination">Coordenação:</label>
           <nb-select
-            [(ngModel)]="userPayment.coordination"
+            [(ngModel)]="userPayment.sector"
             [disabled]="!isEditionGranted"
             #coordination="ngModel"
             id="input-coordination"
@@ -393,18 +393,15 @@
           </div>
           <div class="col-12 col-md-3">
             <nb-select
-              [(ngModel)]="payment.team[i].coordination"
+              [(ngModel)]="payment.team[i].sector"
               [disabled]="!isEditionGranted"
-              id="input-memberCoordination-{{ i }}"
-              name="memberCoordination-{{ i }}"
-              placeholder="Coordenação"
+              id="input-memberSector-{{ i }}"
+              name="memberSector-{{ i }}"
+              placeholder="Setores"
               fullWidth
             >
-              <nb-option
-                *ngFor="let coordination of departmentService.userCoordinations(payment.team[i].user)"
-                [value]="coordination"
-              >
-                {{ coordination }}
+              <nb-option *ngFor="let sector of teamService.userToSectors(payment.team[i].user)" [value]="sector">
+                {{ sector.abrev }} - {{ sector.name }}
               </nb-option>
             </nb-select>
           </div>

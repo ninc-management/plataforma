@@ -98,7 +98,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   idToInvoice(id: string | Invoice): Invoice {
-    if (this.utils.isOfType<Invoice>(id, ['_id', 'author', 'department', 'coordination', 'code', 'type', 'contractor']))
+    if (this.utils.isOfType<Invoice>(id, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor']))
       return id;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
@@ -131,7 +131,7 @@ export class InvoiceService implements OnDestroy {
     const tmpInvoice = cloneDeep(invoice);
     tmpInvoice.team = invoice.team.map((member) => ({
       user: member.user,
-      coordination: member.coordination,
+      sector: member.sector,
       distribution: defaultDistribution,
       netValue: '',
       grossValue: '',
