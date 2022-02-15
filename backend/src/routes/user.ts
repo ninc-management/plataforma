@@ -3,10 +3,14 @@ import UserModel from '../models/user';
 import { User } from '../models/user';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { Prospect } from '../models/prospect';
+import ProspectModel from '../models/prospect';
 
 const router = express.Router();
 let requested = false;
+let prospectRequested = false;
 const usersMap: Record<string, User> = {};
+const prospectMap: Record<string, Prospect> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
@@ -56,6 +60,15 @@ router.post('/all', async (req, res) => {
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(usersMap)));
+});
+
+router.post('/allProspects', async (req, res) => {
+  if (!prospectRequested) {
+    const prospects: Prospect[] = await ProspectModel.find({});
+    prospects.forEach((prospect) => (prospectMap[prospect._id] = cloneDeep(prospect)));
+    prospectRequested = true;
+  }
+  return res.status(200).json(Array.from(Object.values(prospectMap)));
 });
 
 export default router;
