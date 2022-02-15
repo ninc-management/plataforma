@@ -1,4 +1,6 @@
 @import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @font-face {
   font-family: 'icons';
@@ -42,6 +44,30 @@
   th {
     &[ng2-st-actions-title] {
       width: 5%;
+    }
+  }
+
+  .tables {
+    display: flex !important;
+    flex-direction: column;
+    margin-top: -2.5rem;
+    @include media-breakpoint-down(md) {
+      margin-top: -1rem;
+    }
+
+    .tabset {
+      align-self: center;
+      width: fit-content;
+      background-color: nb-theme(card-background-color);
+      border: nb-theme(card-border-width) nb-theme(card-border-style) nb-theme(card-border-color);
+      border-radius: nb-theme(card-border-radius);
+      box-shadow: nb-theme(card-shadow);
+    }
+
+    .prospectTable {
+      .ng2-smart-action-delete-delete:hover {
+        color: nb-theme(icon-success-color) !important;
+      }
     }
   }
 }
