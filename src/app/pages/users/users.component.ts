@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject, Input } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NbTabComponent, NB_DOCUMENT } from '@nebular/theme';
 import { getMonth, getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
@@ -16,6 +16,9 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
+import { Prospect } from '@models/prospect';
+import { ProspectService } from 'app/shared/services/prospect.service';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 interface IndividualData {
   received: string;
@@ -56,6 +59,11 @@ enum GROUP_BY {
   SECTOR = 'Setor',
 }
 
+enum TAB_TITLES {
+  ASSOCIADOS = 'Associados',
+  PROSPECTOS = 'Prospectos',
+}
+
 @Component({
   selector: 'ngx-users',
   templateUrl: './users.component.html',
@@ -64,7 +72,9 @@ enum GROUP_BY {
 export class UsersComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   users: User[] = [];
+  prospects: Prospect[] = [];
   searchQuery = '';
+  isProspectTab = false;
   get filtredUsers(): User[] {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
@@ -79,6 +89,19 @@ export class UsersComponent implements OnInit, OnDestroy {
       return this.utils.nameSort(1, a.fullName, b.fullName);
     });
   }
+
+  get filteredProspects(): Prospect[] {
+    if (this.searchQuery !== '')
+      return this.prospects.filter((prospect) => {
+        return (
+          prospect.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          prospect.phone.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          prospect.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      });
+    return this.prospects.sort((a, b) => this.utils.nameSort(1, a.fullName, b.fullName));
+  }
+
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum usuário para o filtro selecionado.',
@@ -143,7 +166,47 @@ export class UsersComponent implements OnInit, OnDestroy {
     },
   };
 
+  prospectsSettings = {
+    mode: 'external',
+    noDataMessage: 'Não encontramos nenhum prospecto para o filtro selecionado.',
+    add: {
+      addButtonContent: '<i class="icon-file-csv"></i>',
+      createButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    edit: {
+      editButtonContent: '<i class="nb-edit"></i>',
+      saveButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    delete: {
+      deleteButtonContent: '<i class="eva eva-checkmark-outline"></i>',
+      confirmDelete: false,
+    },
+    actions: {
+      columnTitle: 'Ações',
+      add: false,
+      edit: true,
+      delete: true,
+    },
+    columns: {
+      fullName: {
+        title: 'Prospecto',
+        type: 'string',
+      },
+      email: {
+        title: 'Email',
+        type: 'string',
+      },
+      phone: {
+        title: 'Telefone',
+        type: 'string',
+      },
+    },
+  };
+
   source: LocalDataSource = new LocalDataSource();
+  prospectSource: LocalDataSource = new LocalDataSource();
 
   constructor(
     private dialogService: NbDialogService,
@@ -151,6 +214,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
+    private prospectService: ProspectService,
     public utils: UtilsService,
     public teamService: TeamService
   ) {}
@@ -168,13 +232,22 @@ export class UsersComponent implements OnInit, OnDestroy {
         this.users = users;
         this.source.load(this.users);
       });
+
+    this.prospectService
+      .getProspects()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((prospects: Prospect[]) => {
+        this.prospects = prospects;
+        this.prospectSource.load(this.prospects);
+      });
   }
 
   userDialog(event: { data?: User }): void {
     this.dialogService.open(UserDialogComponent, {
       context: {
-        title: 'EDIÇÃO DE ASSOCIADO',
+        title: this.isProspectTab ? 'EDIÇÃO DE PROSPECTO' : 'EDIÇÃO DE ASSOCIADO',
         user: event.data ? event.data : new User(),
+        isProspect: this.isProspectTab,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
@@ -684,6 +757,29 @@ export class UsersComponent implements OnInit, OnDestroy {
 
         const blob = new Blob([csv], { type: 'text/csv' });
         saveAs(blob, 'relatorio geral.csv');
+      });
+  }
+
+  setActiveTab(event: NbTabComponent) {
+    this.isProspectTab = event.tabTitle.toLowerCase() == TAB_TITLES.PROSPECTOS.toLowerCase();
+  }
+
+  approveProspect(prospect: Prospect): void {
+    this.dialogService
+      .open(ConfirmationDialogComponent, {
+        context: {
+          question: 'Realmente deseja aprovar ' + prospect.fullName + '?',
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((response) => {
+        if (response) {
+          console.log('aprovado');
+        }
       });
   }
 }

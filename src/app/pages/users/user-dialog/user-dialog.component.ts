@@ -13,6 +13,7 @@ import { UserService } from 'app/shared/services/user.service';
 export class UserDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() user = new User();
+  @Input() isProspect = false;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
