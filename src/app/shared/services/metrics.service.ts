@@ -300,7 +300,8 @@ export class MetricsService implements OnDestroy {
                   paidDate &&
                   this.utils.isWithinInterval(paidDate, start, end) &&
                   source._id != CONTRACT_BALANCE._id &&
-                  source._id != CLIENT._id
+                  source._id != CLIENT._id &&
+                  source._id != '5eeae34b9e99900017c03ea5'
                 ) {
                   for (const member of expense.team) {
                     const globalIdx = received.global.findIndex(
@@ -676,7 +677,7 @@ export class MetricsService implements OnDestroy {
   expensesTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
     return this.contractService.getContracts().pipe(
       map((contracts) => {
-        const fContracts = contracts.filter((contract) => this.contractService.hasExpenses(contract));
+        const fContracts = cloneDeep(contracts.filter((contract) => this.contractService.hasExpenses(contract)));
         const timeSeriesItems = fContracts.map((contract) => {
           let fExpenses = contract.expenses.filter(
             (expense) =>
