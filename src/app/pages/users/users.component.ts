@@ -777,9 +777,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe((response) => {
-        if (response) {
-          console.log('aprovado');
-        }
+        if (response) this.prospectService.approveProspect(prospect);
       });
   }
 }

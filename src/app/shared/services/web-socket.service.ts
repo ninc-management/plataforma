@@ -38,6 +38,16 @@ export class WebSocketService {
         break;
       }
 
+      case 'delete': {
+        const tmpArray = oArray$.getValue();
+        const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
+        if (idx != -1) {
+          tmpArray.splice(idx, 1);
+          oArray$.next(tmpArray);
+        }
+        break;
+      }
+
       default: {
         console.log('Caso não tratado!', data);
         break;

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { UtilsService } from './utils.service';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
+import { cloneDeep } from 'lodash';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +38,15 @@ export class ProspectService {
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => this.wsService.handle(data, this.prospects$, 'prospects'));
     return this.prospects$;
+  }
+
+  approveProspect(prospect: Prospect): void {
+    const reqProspect = cloneDeep(prospect);
+    reqProspect.active = true;
+    const req = {
+      prospect: reqProspect,
+    };
+
+    this.http.delete('/api/user/approveProspect', { body: req }).pipe(take(1)).subscribe();
   }
 }

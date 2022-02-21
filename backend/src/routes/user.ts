@@ -71,4 +71,36 @@ router.post('/allProspects', async (req, res) => {
   return res.status(200).json(Array.from(Object.values(prospectMap)));
 });
 
+router.delete('/approveProspect', async (req, res, next) => {
+  ProspectModel.deleteOne({ _id: req.body.prospect._id }).catch((err) => {
+    return res.status(500).json({
+      message: 'Erro ao apagar o prospecto!',
+      error: err,
+    });
+  });
+  const newUser = new UserModel(req.body.prospect);
+  newUser
+    .save()
+    .then(() => {
+      return res.status(201).json({
+        message: 'Prospecto aprovado com sucesso!',
+      });
+    })
+    .catch((newUserErr) => {
+      ProspectModel.create(req.body.prospect)
+        .then(() => {
+          return res.status(500).json({
+            message: 'Erro ao criar novo usuário! Prospecto recriado.',
+            error: newUserErr,
+          });
+        })
+        .catch((prospectErr) => {
+          return res.status(500).json({
+            message: 'Erro ao recriar prospecto!',
+            error: prospectErr,
+          });
+        });
+    });
+});
+
 export default router;
