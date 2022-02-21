@@ -132,58 +132,60 @@ export class PaymentItemComponent implements OnInit {
   }
 
   fillContractData(): void {
-    if (this.contract.invoice !== undefined) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-    const teamUsers = this.invoice.team
-      .map((member: InvoiceTeamMember) => {
-        if (member.user) return this.userService.idToUser(member.user);
-        return;
-      })
-      .filter((user): user is User => user !== undefined);
-    if (this.paymentIndex !== undefined) {
-      this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
-      this.updateLastValues();
-      this.options.initialTeam = cloneDeep(this.payment.team);
-      this.calculateTeamValues();
-    } else {
-      this.payment.team = cloneDeep(this.invoice.team).map((member: InvoiceTeamMember): ContractUserPayment => {
-        const payment: ContractUserPayment = {
-          coordination: member.coordination,
-          user: member.user,
-          value: '0',
-          percentage: '0',
-        };
-        if (member.distribution && member.user)
-          payment.value = this.stringUtil.numberToString(
-            this.stringUtil.toMultiplyPercentage(
-              this.contractService.percentageToReceive(
-                member.distribution,
-                this.userService.idToUser(member.user),
-                this.contract,
-                20
-              )
-            ),
-            20
-          );
-        return payment;
-      });
-    }
-    this.availableUsers = this.memberChanged$.pipe(
-      map((_) => {
-        return teamUsers.filter((user) => {
-          return this.payment.team.find((member: ContractUserPayment) =>
-            this.userService.isEqual(user, member.user)
-          ) === undefined
-            ? true
-            : false;
+    if (this.contract.invoice) {
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      const teamUsers = this.invoice.team
+        .map((member: InvoiceTeamMember) => {
+          if (member.user) return this.userService.idToUser(member.user);
+          return;
+        })
+        .filter((user): user is User => !!user);
+      if (this.paymentIndex !== undefined) {
+        this.payment = cloneDeep(this.contract.payments[this.paymentIndex]);
+        this.updateLastValues();
+        this.options.initialTeam = cloneDeep(this.payment.team);
+        this.calculateTeamValues();
+      } else {
+        this.payment.team = cloneDeep(this.invoice.team).map((member: InvoiceTeamMember): ContractUserPayment => {
+          const payment: ContractUserPayment = {
+            coordination: member.coordination,
+            user: member.user,
+            value: '0',
+            percentage: '0',
+          };
+          if (member.distribution && member.user)
+            payment.value = this.stringUtil.numberToString(
+              this.stringUtil.toMultiplyPercentage(
+                this.contractService.percentageToReceive(
+                  member.distribution,
+                  this.userService.idToUser(member.user),
+                  this.contract,
+                  20
+                )
+              ),
+              20
+            );
+          return payment;
         });
-      })
-    );
-    this.contractService
-      .checkEditPermission(this.invoice)
-      .pipe(take(1))
-      .subscribe((isGranted) => {
-        this.isEditionGranted = isGranted;
-      });
+      }
+      this.availableUsers = this.memberChanged$.pipe(
+        map((_) => {
+          return teamUsers.filter((user) => {
+            return this.payment.team.find((member: ContractUserPayment) =>
+              this.userService.isEqual(user, member.user)
+            ) === undefined
+              ? true
+              : false;
+          });
+        })
+      );
+      this.contractService
+        .checkEditPermission(this.invoice)
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          this.isEditionGranted = isGranted;
+        });
+    }
   }
 
   registerPayment(): void {

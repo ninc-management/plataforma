@@ -72,7 +72,9 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => {
-                if (contract.invoice != undefined) {
+                if (contract.invoice) {
+                  const nf = this.utils.nfPercentage(contract);
+                  const nortan = this.utils.nortanPercentage(contract);
                   contract.invoice = this.invoiceService.idToInvoice(contract.invoice);
                   contract.value = contract.invoice.value;
                   contract.code = contract.invoice.code;
@@ -92,18 +94,17 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                         return accumulator;
                       }, 0)
                     ),
-                    this.utils.nfPercentage(contract),
-                    this.utils.nortanPercentage(contract)
+                    nf,
+                    nortan
                   );
                   contract.notPaid = this.stringUtil.numberToMoney(
-                    this.stringUtil.moneyToNumber(contract.liquid) - this.stringUtil.moneyToNumber(paid)
+                    this.stringUtil.moneyToNumber(this.contractService.toNetValue(this.contract.value, nf, nortan)) -
+                      this.stringUtil.moneyToNumber(paid)
                   );
-                  if (contract.invoice) {
-                    const invoice = this.invoiceService.idToInvoice(contract.invoice);
-                    if (invoice.author) {
-                      const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
-                      if (managerPicture) contract.managerPicture = managerPicture;
-                    }
+                  const invoice = this.invoiceService.idToInvoice(contract.invoice);
+                  if (invoice.author) {
+                    const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
+                    if (managerPicture) contract.managerPicture = managerPicture;
                   }
                 }
                 return contract;

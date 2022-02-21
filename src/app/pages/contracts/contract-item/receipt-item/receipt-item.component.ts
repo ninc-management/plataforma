@@ -95,15 +95,15 @@ export class ReceiptItemComponent implements OnInit {
   registerReceipt(): void {
     let isOtherPaid = true;
     if (
-      (this.contract.receipts.length >= 2 && this.receiptIndex != undefined) ||
-      (this.contract.receipts.length >= 1 && this.receiptIndex == undefined)
+      (this.contract.receipts.length >= 2 && this.receiptIndex !== undefined) ||
+      (this.contract.receipts.length >= 1 && this.receiptIndex !== undefined)
     ) {
       isOtherPaid = this.contract.receipts
         .filter((receipt: ContractReceipt, idx: number) => this.receiptIndex != idx)
         .every((receipt: ContractReceipt) => receipt.paid);
     }
 
-    if (this.receiptIndex !== undefined) {
+    if (this.receiptIndex) {
       this.receipt.lastUpdate = new Date();
       this.contract.receipts[this.receiptIndex] = cloneDeep(this.receipt);
     } else {
@@ -139,12 +139,7 @@ export class ReceiptItemComponent implements OnInit {
 
   notPaid(): string {
     let result =
-      this.stringUtil.moneyToNumber(
-        this.contractService.subtractComissions(
-          this.stringUtil.removePercentage(this.contract.value, this.contract.ISS),
-          this.contract
-        )
-      ) -
+      this.stringUtil.moneyToNumber(this.contract.value) -
       this.contract.receipts.reduce(
         (sum: number, receipt: ContractReceipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
         0
