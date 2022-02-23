@@ -7,7 +7,6 @@ import {
   Input,
   OnInit,
   Optional,
-  SkipSelf,
   Output,
   EventEmitter,
 } from '@angular/core';
@@ -22,11 +21,11 @@ export class BrMaskModel {
   percent?: boolean;
   type?: 'alfa' | 'num' | 'all' = 'alfa';
   decimal?: number = 2;
-  decimalCaracter?: string = `,`;
-  thousand?: string;
+  decimalCaracter?: string = ',';
+  thousand?: string = '.';
   userCaracters?: boolean = false;
   numberAndTousand?: boolean = false;
-  moneyInitHasInt?: boolean = true;
+  moneyInitHasInt?: boolean = false;
 }
 
 @Directive({
@@ -72,7 +71,7 @@ export class BrMaskDirective implements OnInit {
       this.brmasker.decimal = 2;
     }
     if (this.brmasker.moneyInitHasInt === undefined) {
-      this.brmasker.moneyInitHasInt = true;
+      this.brmasker.moneyInitHasInt = false;
     }
     if (!this.brmasker.decimalCaracter) {
       this.brmasker.decimalCaracter = ',';
@@ -359,7 +358,7 @@ export class BrMaskDirective implements OnInit {
     value = value
       .replace(/\D/gi, '')
       .replace(new RegExp('([0-9]{' + decimal + '})$', 'g'), config.decimalCaracter + '$1');
-    if (value.length === 1 && !this.brmasker.moneyInitHasInt) {
+    if (value.length === 1 && !config.moneyInitHasInt) {
       const dec = Array(decimal - 1).fill(0);
       return `0${config.decimalCaracter}${dec.join('')}${value}`;
     }
