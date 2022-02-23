@@ -43,7 +43,7 @@
               [disabled]="editing"
               (selectedChange)="onNortanTeamChange()"
             >
-              <nb-option *ngFor="let nTeam of NORTAN_TEAMS" [value]="nTeam">
+              <nb-option *ngFor="let nTeam of NORTAN_TEAMS" [value]="nTeam._id">
                 {{ nTeam.abrev }} - {{ nTeam.name }}
               </nb-option>
             </nb-select>
@@ -58,7 +58,7 @@
               #sector="ngModel"
               id="input-sector"
               name="sector"
-              placeholder="Selecione a coordenação"
+              placeholder="Selecione o setor"
               fullWidth
               size="large"
               [required]="validation.sector.required"
@@ -66,7 +66,7 @@
               [attr.aria-invalid]="sector.invalid && sector.touched ? true : null"
               [disabled]="false"
             >
-              <nb-option *ngFor="let sector of SECTORS" [value]="sector">
+              <nb-option *ngFor="let sector of SECTORS" [value]="sector._id">
                 {{ sector.abrev }} - {{ sector.name }}
               </nb-option>
             </nb-select>
@@ -584,7 +584,7 @@
             <nb-completer
               [(ngModel)]="userSearch"
               [inputName]="'userListCompleter'"
-              (selected)="teamMember.user = $event; USER_SECTORS = $event.sectors"
+              (selected)="teamMember.user = $event; USER_SECTORS = teamService.userToSectors(teamMember.user)"
               #userList="ngModel"
               id="input-user"
               name="userList"
@@ -615,7 +615,7 @@
               [status]="memberSector.value?.length > 0 ? 'success' : 'basic'"
               [attr.aria-invalid]="memberSector.invalid && memberSector.touched ? true : null"
             >
-              <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
+              <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector._id">
                 {{ sector.abrev }} - {{ sector.name }}
               </nb-option>
             </nb-select>
@@ -651,7 +651,7 @@
                 placeholder="Setor"
                 fullWidth
               >
-                <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
+                <nb-option *ngFor="let sector of teamService.userToSectors(member.user)" [value]="sector._id">
                   {{ sector.abrev }} - {{ sector.name }}
                 </nb-option>
               </nb-select>

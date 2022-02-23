@@ -5,7 +5,6 @@ import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -99,7 +98,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
     public userService: UserService,
-    public departmentService: DepartmentService,
     public utils: UtilsService,
     public teamService: TeamService
   ) {
@@ -140,7 +138,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         return;
       })
       .filter((user: User | undefined): user is User => user !== undefined);
-    this.userData = of(tmp);
+    this.userArray.next(tmp);
     tmp.unshift(CONTRACT_BALANCE);
     tmp.unshift(CLIENT);
     this.sourceArray.next(tmp);
@@ -148,10 +146,8 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.expenseIndex !== undefined) {
       this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
-      if (this.expense.source) {
-        this.expense.source = this.userService.idToUser(this.expense.source);
-        this.USER_SECTORS = this.teamService.userToSectors(this.expense.source._id);
-      }
+      if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
+
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
       this.lastType = this.expense.type as EXPENSE_TYPES;
@@ -183,7 +179,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         sector: member.sector,
       }));
 
-    this.sourceData = this.sourceArray;
     this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
     this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
 

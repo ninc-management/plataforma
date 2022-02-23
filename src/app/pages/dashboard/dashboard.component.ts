@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { combineLatest, Observable, of } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, skipWhile, take, takeWhile } from 'rxjs/operators';
 import { startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -71,9 +71,12 @@ export class DashboardComponent {
   ) {
     this.teamService
       .getTeams()
-      .pipe(take(2))
+      .pipe(
+        skipWhile((teams) => teams.length == 0),
+        take(1)
+      )
       .subscribe((teams) => {
-        const nortanTeam = teams.find((team) => team.name == 'Nortan');
+        const nortanTeam = teams.find((team) => team.name == 'Administrativo');
         if (nortanTeam !== undefined) {
           this.nortanTeam = nortanTeam;
           this.expenses$ = metricsService
@@ -96,7 +99,10 @@ export class DashboardComponent {
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.teamService
         .getTeams()
-        .pipe(take(2))
+        .pipe(
+          skipWhile((teams) => teams.length == 0),
+          takeWhile((teams) => teams.length > 0)
+        )
         .subscribe(() => {
           this.teams = this.teamService.userToTeams(user).filter((team) => team.name.toLocaleLowerCase() != 'nortan');
         });

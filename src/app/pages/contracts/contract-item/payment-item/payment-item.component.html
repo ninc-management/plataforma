@@ -290,7 +290,7 @@
           <nb-completer
             [(ngModel)]="userSearch"
             [inputName]="'userListCompleter'"
-            (selected)="userPayment.user = $event; updateUserCoordinations()"
+            (selected)="userPayment.user = $event; updateUserSectors()"
             #userList="ngModel"
             id="input-user"
             name="userList"
@@ -309,21 +309,21 @@
       </div>
       <div class="col-md-4">
         <div class="form-control-group">
-          <label class="label" for="input-coordination">Coordenação:</label>
+          <label class="label" for="input-sector">Setor:</label>
           <nb-select
             [(ngModel)]="userPayment.sector"
             [disabled]="!isEditionGranted"
-            #coordination="ngModel"
-            id="input-coordination"
-            name="coordination"
-            placeholder="Coordenação"
+            #sector="ngModel"
+            id="input-sector"
+            name="sector"
+            placeholder="Setor"
             fullWidth
             size="large"
-            [status]="coordination.value ? 'success' : 'basic'"
-            [attr.aria-invalid]="coordination.invalid && coordination.touched ? true : null"
+            [status]="sector.value ? 'success' : 'basic'"
+            [attr.aria-invalid]="sector.invalid && sector.touched ? true : null"
           >
-            <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
-              {{ coordination }}
+            <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector._id">
+              {{ sector.abrev }} - {{ sector.name }}
             </nb-option>
           </nb-select>
         </div>
@@ -373,7 +373,7 @@
           status="primary"
           size="large"
           style="margin-top: 28px"
-          [disabled]="!paid.value || !coordination.value || !userList.value"
+          [disabled]="!paid.value || !sector.value || !userList.value"
           (click)="addColaborator()"
         >
           +
@@ -400,7 +400,7 @@
               placeholder="Setores"
               fullWidth
             >
-              <nb-option *ngFor="let sector of teamService.userToSectors(payment.team[i].user)" [value]="sector">
+              <nb-option *ngFor="let sector of teamService.userToSectors(payment.team[i].user)" [value]="sector._id">
                 {{ sector.abrev }} - {{ sector.name }}
               </nb-option>
             </nb-select>

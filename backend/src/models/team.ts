@@ -95,9 +95,6 @@ export class Team extends Base<string> {
   @prop({ required: true, ref: () => User })
   leader!: Ref<User>;
 
-  @prop({ required: true })
-  expertise!: string;
-
   @prop({ type: () => [TeamMember] })
   members: TeamMember[] = [];
 

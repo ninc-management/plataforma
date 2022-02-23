@@ -81,9 +81,18 @@ export class UtilsService {
 
     if (invoice.administration == 'nortan') {
       if (invoice.nortanTeam) {
-        if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'expertise', 'members', 'config']))
-          return invoice.nortanTeam._id == '613232b5687ed0547f0bee19' ? '8,5' : '15,5';
-        else return invoice.nortanTeam == '613232b5687ed0547f0bee19' ? '8,5' : '15,5';
+        if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'members', 'config']))
+          return invoice.nortanTeam._id == '61362107f04ddc1a6a59f390' ||
+            invoice.nortanTeam._id == '614b58d90d2cf0435ea59e52' ||
+            invoice.nortanTeam._id == '613236a07f6ed15db318c7d8'
+            ? '8,5'
+            : '15,5';
+        else
+          return invoice.nortanTeam == '61362107f04ddc1a6a59f390' ||
+            invoice.nortanTeam == '614b58d90d2cf0435ea59e52' ||
+            invoice.nortanTeam == '613236a07f6ed15db318c7d8'
+            ? '8,5'
+            : '15,5';
       } else return '0';
     } else return '0';
   }
@@ -110,7 +119,7 @@ export class UtilsService {
     }
 
     if (invoice.nortanTeam) {
-      if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'expertise', 'members', 'config']))
+      if (this.isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'members', 'config']))
         return invoice.nortanTeam._id == '6201b405329f446f16e1b404'
           ? '0'
           : invoice.administration == 'nortan'

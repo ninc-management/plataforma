@@ -77,8 +77,23 @@ export class TeamService implements OnDestroy {
     return this.idToTeam(id).name;
   }
 
+  idToAbbreviation(id: string | Team | undefined): string {
+    if (!id) return '';
+    return this.idToTeam(id).abrev;
+  }
+
+  idToComposedName(id: string | Team | undefined): string {
+    if (!id) return '';
+    return this.idToTeam(id).abrev + ' - ' + this.idToTeam(id).name;
+  }
+
+  idToSectorComposedName(id: string | Sector | undefined): string {
+    if (!id) return '';
+    return this.idToSector(id).abrev + ' - ' + this.idToSector(id).name;
+  }
+
   idToTeam(id: string | Team): Team {
-    if (this.utils.isOfType<Team>(id, ['_id', 'name', 'expertise', 'members', 'config'])) return id;
+    if (this.utils.isOfType<Team>(id, ['_id', 'name', 'members', 'config'])) return id;
     const tmp = this.teams$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

@@ -13,10 +13,9 @@ import {
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, takeUntil, filter } from 'rxjs/operators';
-import { cloneDeep, isEqual } from 'lodash';
+import { take, map, takeUntil, filter, takeWhile } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -24,6 +23,7 @@ import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
 import { Sector } from '@models/shared';
 import user_validation from 'app/shared/user-validation.json';
+import { Team } from '@models/team';
 
 @Component({
   selector: 'ngx-profile',
@@ -49,9 +49,9 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   isEditing = false;
   isAER = false;
   isEloPrincipal = false;
-  COORDINATIONS: string[] = [];
+  SECTORS: Sector[] = [];
   ACTIVE_EXPERTISE: number[] = [];
-  DEPARTMENTS: string[] = [];
+  TEAMS: Team[] = [];
   POSITIONS: string[] = [];
   LEVELS: string[] = [];
   permissions = Permissions;
@@ -95,7 +95,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
 
   constructor(
     private statecityService: StatecityService,
-    private departmentService: DepartmentService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
     public userService: UserService,
@@ -113,10 +112,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       )
       .subscribe(() => {
         this.states = this.statecityService.buildStateList();
-        this.DEPARTMENTS = this.departmentService.buildDepartmentList();
-        this.COORDINATIONS = this.departmentService.buildAllCoordinationsList().map((cd: string) => {
-          return cd.split(' ')[0];
-        });
         if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
         else
           this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
@@ -247,7 +242,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
 
   refreshExpertises(): void {
     this.ACTIVE_EXPERTISE = [];
-    //  A ordem das coordenações no active array precisa ser igual a ordem allCoords.
     this.user.sectors.map((sector) => {
       let idx = this.user.expertise.findIndex((el) => {
         if (el.sector) return this.teamService.isSectorEqual(el.sector, sector);
@@ -345,9 +339,14 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     this.POSITIONS.push('Parceir' + (this.user.article == 'a' ? 'a' : 'o'));
     this.POSITIONS.push('Cliente');
     this.POSITIONS.push('Associad' + (this.user.article == 'a' ? 'a' : 'o'));
-    this.departmentService
-      .buildDepartmentList()
-      .map((dp: string) => this.POSITIONS.push('Elo Principal' + dp.slice(15)));
+    this.teamService
+      .getTeams()
+      .pipe(takeWhile((teams) => teams.length > 0))
+      .subscribe((teams) => {
+        teams.forEach((team) => {
+          this.POSITIONS.push('Elo Principal ' + team.abrev);
+        });
+      });
     this.POSITIONS.push(
       'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Financeir' + (this.user.article == 'a' ? 'a' : 'o')
     );

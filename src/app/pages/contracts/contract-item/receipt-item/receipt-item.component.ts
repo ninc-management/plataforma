@@ -54,10 +54,6 @@ export class ReceiptItemComponent implements OnInit {
   ngOnInit(): void {
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
-    this.accessChecker
-      .isGranted('df', 'receipt-financial-manager')
-      .pipe(take(1))
-      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   fillContractData(): void {
@@ -90,6 +86,10 @@ export class ReceiptItemComponent implements OnInit {
         }
       }
     }
+    this.accessChecker
+      .isGranted('df', 'receipt-financial-manager')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   registerReceipt(): void {

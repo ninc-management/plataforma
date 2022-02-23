@@ -24,7 +24,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
         return (
           team.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           this.userService.idToName(team.leader).toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          team.expertise.toLowerCase().includes(this.searchQuery.toLowerCase())
+          team.abrev.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.teams.sort((a, b) => {

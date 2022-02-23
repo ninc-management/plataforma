@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep, isEqual } from 'lodash';
 import { skip, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
@@ -46,7 +45,6 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     protected onedrive: OnedriveService,
     public teamService: TeamService,
     public userService: UserService,
-    public departmentService: DepartmentService,
     public utils: UtilsService
   ) {
     super(stringUtil, onedrive, userService);

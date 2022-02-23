@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } fr
 import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { take, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 import { Subject, combineLatest } from 'rxjs';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -10,6 +10,7 @@ import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { Invoice } from '@models/invoice';
+import { TeamService } from 'app/shared/services/team.service';
 
 @Component({
   selector: 'ngx-invoices',
@@ -133,7 +134,8 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     private utils: UtilsService,
     private contractorService: ContractorService,
     private userService: UserService,
-    private pdf: PdfService
+    private pdf: PdfService,
+    private teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -145,19 +147,23 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     combineLatest([
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
+      this.teamService.getTeams(),
       this.userService.currentUser$,
     ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([invoices, contractors, user]) => {
-        if (invoices.length > 0 && contractors.length > 0) {
-          this.invoices = invoices.map((invoice: Invoice) => {
-            if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
-            if (invoice.contractor) invoice.contractorName = this.contractorService.idToName(invoice.contractor);
-            invoice.role = this.invoiceService.role(invoice, user);
-            return invoice;
-          });
-          this.source.load(invoices);
-        }
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(
+          ([invoices, contractors, teams, user]) => invoices.length > 0 && contractors.length > 0 && teams.length > 0
+        )
+      )
+      .subscribe(([invoices, contractors, teams, user]) => {
+        this.invoices = invoices.map((invoice: Invoice) => {
+          if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
+          if (invoice.contractor) invoice.contractorName = this.contractorService.idToName(invoice.contractor);
+          invoice.role = this.invoiceService.role(invoice, user);
+          return invoice;
+        });
+        this.source.load(invoices);
       });
   }
 

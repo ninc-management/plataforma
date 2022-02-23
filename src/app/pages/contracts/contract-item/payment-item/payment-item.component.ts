@@ -1,11 +1,10 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -17,6 +16,7 @@ import { User } from '@models/user';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import contract_validation from 'app/shared/payment-validation.json';
 import { TeamService } from 'app/shared/services/team.service';
+import { Sector } from '@models/shared';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -33,8 +33,9 @@ export class PaymentItemComponent implements OnInit {
   invoice = new Invoice();
   hasInitialContract = true;
   validation = contract_validation as any;
-  ALL_COORDINATIONS: string[] = [];
-  USER_COORDINATIONS: string[] = [];
+  ALL_SECTORS: Sector[] = [];
+  USER_SECTORS: Sector[] = [];
+  teamUsers: User[] = [];
   total = '0';
   today = new Date();
   submitted = false;
@@ -83,7 +84,6 @@ export class PaymentItemComponent implements OnInit {
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     public contractService: ContractService,
-    public departmentService: DepartmentService,
     public stringUtil: StringUtilService,
     public userService: UserService,
     public utils: UtilsService,
@@ -92,13 +92,20 @@ export class PaymentItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ALL_COORDINATIONS = this.departmentService.buildAllCoordinationsList();
+    this.ALL_SECTORS = this.teamService.sectorsListAll();
+    this.availableUsers = this.memberChanged$.pipe(
+      map((_) => {
+        return this.teamUsers.filter((user) => {
+          return this.payment.team.find((member: ContractUserPayment) =>
+            this.userService.isEqual(user, member.user)
+          ) === undefined
+            ? true
+            : false;
+        });
+      })
+    );
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
-    this.accessChecker
-      .isGranted('df', 'payment-financial-manager')
-      .pipe(take(1))
-      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   confirmationDialog(index: number): void {
@@ -135,7 +142,7 @@ export class PaymentItemComponent implements OnInit {
 
   fillContractData(): void {
     if (this.contract.invoice !== undefined) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-    const teamUsers = this.invoice.team
+    this.teamUsers = this.invoice.team
       .map((member: InvoiceTeamMember) => {
         if (member.user) return this.userService.idToUser(member.user);
         return;
@@ -169,23 +176,17 @@ export class PaymentItemComponent implements OnInit {
         return payment;
       });
     }
-    this.availableUsers = this.memberChanged$.pipe(
-      map((_) => {
-        return teamUsers.filter((user) => {
-          return this.payment.team.find((member: ContractUserPayment) =>
-            this.userService.isEqual(user, member.user)
-          ) === undefined
-            ? true
-            : false;
-        });
-      })
-    );
+    this.memberChanged$.next(true);
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
       .subscribe((isGranted) => {
         this.isEditionGranted = isGranted;
       });
+    this.accessChecker
+      .isGranted('df', 'payment-financial-manager')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   registerPayment(): void {
@@ -280,10 +281,10 @@ export class PaymentItemComponent implements OnInit {
     } else return '0,00';
   }
 
-  updateUserCoordinations(): void {
+  updateUserSectors(): void {
     if (this.userPayment.user) {
       const selectedUser = this.userService.idToUser(this.userPayment.user);
-      this.USER_COORDINATIONS = this.departmentService.userCoordinations(selectedUser._id);
+      this.USER_SECTORS = this.teamService.userToSectors(selectedUser);
       this.userPayment.sector = '';
     }
   }

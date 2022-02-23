@@ -2,7 +2,7 @@
   "nf": { "required": true },
   "type": { "required": true },
   "selectedMember": { "required": true },
-  "coordination": { "required": true },
+  "sector": { "required": true },
   "paidCheck": { "required": true },
   "paidDate": { "required": true },
   "created": { "required": true },

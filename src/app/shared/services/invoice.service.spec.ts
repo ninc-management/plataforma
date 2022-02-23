@@ -91,14 +91,14 @@ describe('InvoiceService', () => {
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.department = 'DPC';
-    tmpInvoice.coordination = 'test';
+    tmpInvoice.nortanTeam = 'Trocar';
+    tmpInvoice.sector = 'Trocar';
     tmpInvoice.code = 'test';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = true;
     tmpInvoice.team.push({
       user: '1',
-      coordination: 'test',
+      sector: 'Trocar',
       distribution: '50,00',
       grossValue: '',
       netValue: '',
@@ -107,14 +107,14 @@ describe('InvoiceService', () => {
     tmpInvoice = new Invoice();
     tmpInvoice._id = '1';
     tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.department = 'DEC';
-    tmpInvoice.coordination = 'test';
+    tmpInvoice.nortanTeam = 'Trocar';
+    tmpInvoice.sector = 'Trocar';
     tmpInvoice.code = 'test1';
     tmpInvoice.contractor = '0';
     tmpInvoice.trello = false;
     tmpInvoice.team.push({
       user: '0',
-      coordination: 'test',
+      sector: 'test',
       distribution: '50,00',
       grossValue: '',
       netValue: '',
@@ -138,8 +138,8 @@ describe('InvoiceService', () => {
     const tmpInvoice = new Invoice();
     tmpInvoice._id = '2';
     tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.department = 'DPC';
-    tmpInvoice.coordination = 'test';
+    tmpInvoice.nortanTeam = 'Trocar';
+    tmpInvoice.sector = 'Trocar';
     tmpInvoice.code = 'test';
     tmpInvoice.contractor = '0';
     let i = 1;
@@ -205,7 +205,7 @@ describe('InvoiceService', () => {
 
   it('editInvoice should work', (done: DoneFn) => {
     const tmpInvoice = cloneDeep(mockedInvoices[1]);
-    tmpInvoice.department = 'DAD';
+    tmpInvoice.nortanTeam = 'Trocar';
     let i = 1;
     const data = {
       ns: {
@@ -216,7 +216,7 @@ describe('InvoiceService', () => {
         _id: '1',
       },
       updateDescription: {
-        updatedFields: { department: 'DAD' },
+        updatedFields: { nortanTeam: 'Trocar' },
         removedFields: ['trello'] as any[],
       },
     };
@@ -251,7 +251,7 @@ describe('InvoiceService', () => {
           case 3: {
             expect(invoices.length).toBe(2);
             expect(invoices[1].trello).toBe(undefined);
-            expect(invoices[1].department).toBe('DAD');
+            expect(invoices[1].nortanTeam).toBe('Trocar');
             done();
             break;
           }

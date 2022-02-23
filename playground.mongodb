@@ -73,41 +73,72 @@ function moneyMask(value, decimal = 2, decimalCaracter = ',', thousand = '.') {
 
 function convertCoordinationToSector(coordString) {
   switch (coordString) {
-    case 'C.ADM - Coordenação de Administração':
+    case (coordString.match(/C\.ADM/) || {}).input:
       return '6201b405329f446f16e1b406';
 
-    case 'C.G.O - Coordenação de Gerenciamento de Obras':
+    case (coordString.match(/C\.G\.O/) || {}).input:
       return '6201b04838baa8d128ac4ec4';
 
-    case 'C.INST - Coordenação de Instalações':
+    case (coordString.match(/C\.INST/) || {}).input:
       return '6201b0fb38baa8d128ac4ed5';
 
-    case 'C.IMP - Coordenação de Impermeabilização':
+    case (coordString.match(/C\.IMP/) || {}).input:
       return '6201b07238baa8d128ac4ecd';
 
-    case 'C.P.A - Coordenação de Projetos Arquitetônicos':
+    case (coordString.match(/C\.P\.A/) || {}).input:
       return '6201afc938baa8d128ac4eb4';
 
-    case 'C.D.I - Coordenação de Design de Interiores':
+    case (coordString.match(/C\.D\.I/) || {}).input:
       return '6201afc938baa8d128ac4eb5';
 
-    case 'C.S.E - Coordenação de Sistemas Elétricos':
+    case (coordString.match(/C\.S\.E/) || {}).input:
       return '6201af9438baa8d128ac4ea1';
 
-    case 'C.S.H - Coordenação de Sistemas Hidrosanitários':
+    case (coordString.match(/C\.S\.H/) || {}).input:
       return '6201af9438baa8d128ac4ea4';
 
-    case 'C.S.EST - Coordenação de Sistemas Estruturais':
+    case (coordString.match(/C\.S\.EST/) || {}).input:
       return '6201af9438baa8d128ac4ea2';
 
-    case 'C.S.I - Coordenação de Sistemas de Incêndio':
+    case (coordString.match(/C\.S\.I/) || {}).input:
       return '6201af9438baa8d128ac4ea3';
 
-    case 'C.R.H - Coordenação de Recursos Hidrícos':
+    case (coordString.match(/C\.R\.H/) || {}).input:
       return '6201b398329f446f16e1b3fe';
 
-    case 'C.M.A - Coordenação de Meio Ambiente':
+    case (coordString.match(/C\.M\.A/) || {}).input:
       return '6201b398329f446f16e1b3ff';
+
+    default:
+      return '';
+  }
+}
+
+function convertDepartmentToNortanTeam(departmentString, sectorId = '') {
+  switch (departmentString) {
+    case 'DAD':
+      return '6201b405329f446f16e1b404';
+
+    case 'DEC':
+      switch (sectorId) {
+        case '6201b07238baa8d128ac4ecd':
+          return '61362107f04ddc1a6a59f390';
+        case '6201b04838baa8d128ac4ec4':
+          return '613236a07f6ed15db318c7d8';
+        case '6201b0fb38baa8d128ac4ed5':
+          return '614b58d90d2cf0435ea59e52';
+        default:
+          return '61362107f04ddc1a6a59f390';
+      }
+
+    case 'DAQ':
+      return '613232b5687ed0547f0bee19';
+
+    case 'DPC':
+      return '613232b5687ed0547f0bee19';
+
+    case 'DRM':
+      return '6201b37d329f446f16e1b3fa';
 
     default:
       return '';
@@ -120,6 +151,7 @@ db.users.find().forEach((u) => {
   db.users.replaceOne({ _id: u._id }, u);
 });
 
+// Add sector list to team config
 db.teams.find().forEach((team) => {
   team.config.sectors = [];
   db.teams.replaceOne({ _id: team._id }, team);
@@ -444,21 +476,39 @@ db.expenses.drop();
 
 //Refactor coordination to sectors
 db.users.find().forEach((u) => {
+  u.sectors = [];
+  if (u.arquitetura) u.sectors.push('6201afc938baa8d128ac4eb4');
   delete u.arquitetura;
+  if (u.instalacoes) u.sectors.push('6201b0fb38baa8d128ac4ed5');
   delete u.instalacoes;
+  if (u.design) u.sectors.push('6201afc938baa8d128ac4eb5');
   delete u.design;
+  if (u.civil) u.sectors.push('6201af9438baa8d128ac4ea2');
   delete u.civil;
+  if (u.eletrica) u.sectors.push('6201af9438baa8d128ac4ea1');
   delete u.eletrica;
+  if (u.incendio) u.sectors.push('6201af9438baa8d128ac4ea3');
   delete u.incendio;
+  if (u.sanitaria) u.sectors.push('6201af9438baa8d128ac4ea4');
   delete u.sanitaria;
+  if (u.obras) u.sectors.push('6201b04838baa8d128ac4ec4');
   delete u.obras;
+  if (u.impermeabilizacao) u.sectors.push('6201b07238baa8d128ac4ecd');
   delete u.impermeabilizacao;
+  if (u.ambiental) u.sectors.push('6201b398329f446f16e1b3ff');
   delete u.ambiental;
+  if (u.hidrico) u.sectors.push('6201b398329f446f16e1b3fe');
   delete u.hidrico;
+  if (u.adm) u.sectors.push('6201b405329f446f16e1b406');
   delete u.adm;
 
-  u.sectors = [];
-  u.expertise = [];
+  delete u.mainDepartment;
+
+  if (u.expertise)
+    u.expertise.forEach((expertise) => {
+      expertise.sector = convertCoordinationToSector(expertise.coordination);
+      delete expertise.coordination;
+    });
 
   db.users.replaceOne({ _id: u._id }, u);
 });
@@ -468,7 +518,7 @@ db.contracts.find().forEach((contract) => {
     contract.expenses.forEach((expense) => {
       if (expense.team)
         expense.team.forEach((member) => {
-          member.sector = convertCoordinationToSector(member.coordination);
+          member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
           delete member.coordination;
         });
     });
@@ -477,7 +527,7 @@ db.contracts.find().forEach((contract) => {
     contract.payments.forEach((payment) => {
       if (payment.team)
         payment.team.forEach((member) => {
-          member.sector = convertCoordinationToSector(member.coordination);
+          member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
           delete member.coordination;
         });
     });
@@ -488,10 +538,12 @@ db.contracts.find().forEach((contract) => {
 db.invoices.find().forEach((invoice) => {
   invoice.sector = convertCoordinationToSector(invoice.coordination);
   delete invoice.coordination;
+  invoice.nortanTeam = convertDepartmentToNortanTeam(invoice.department, invoice.sector);
+  invoice.department = undefined;
 
   if (invoice.team)
     invoice.team.forEach((member) => {
-      member.sector = convertCoordinationToSector(member.coordination);
+      member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
       delete member.coordination;
     });
 
@@ -500,19 +552,10 @@ db.invoices.find().forEach((invoice) => {
 
 db.teams.find().forEach((team) => {
   team.members.forEach((member) => {
-    member.sector = convertCoordinationToSector(member.coordination);
+    member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
     delete member.coordination;
   });
+  team.config.path = '';
 
   db.teams.replaceOne({ _id: team._id }, team);
-});
-
-db.users.find().forEach((user) => {
-  if (user.expertise)
-    user.expertise.forEach((expertise) => {
-      expertise.sector = convertCoordinationToSector(expertise.coordination);
-      delete expertise.coordination;
-    });
-
-  db.users.replaceOne({ _id: user._id }, user);
 });

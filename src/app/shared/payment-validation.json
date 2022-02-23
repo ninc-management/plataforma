@@ -7,7 +7,7 @@
   "lastUpdate": { "required": true },
   "paidDate": { "required": false },
   "paidCheck": { "required": false },
-  "coordination": { "required": false },
+  "sector": { "required": false },
   "team": { "required": true, "minLength": 1 },
   "service": {
     "required": true,

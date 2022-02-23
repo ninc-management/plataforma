@@ -6,8 +6,6 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { DepartmentService } from 'app/shared/services/department.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
@@ -18,6 +16,8 @@ import contract_validation from 'app/shared/contract-validation.json';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
+import { UtilsService } from 'app/shared/services/utils.service';
+import { Sector } from '@models/shared';
 
 interface ExpenseTypesSum {
   type: string;
@@ -46,7 +46,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   STATOOS = Object.values(CONTRACT_STATOOS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
-  USER_COORDINATIONS = [] as string[];
+  USER_SECTORS: Sector[] = [];
   options = {
     liquid: '0,00',
     paid: '0,00',
@@ -229,7 +229,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService,
-    public departmentService: DepartmentService,
     public utils: UtilsService,
     public teamService: TeamService
   ) {}

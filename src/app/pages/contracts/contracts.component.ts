@@ -13,7 +13,6 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UtilsService, Permissions } from 'app/shared/services/utils.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
@@ -153,7 +152,6 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private userService: UserService,
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
-    private departmentService: DepartmentService,
     public utils: UtilsService,
     private teamService: TeamService
   ) {}
@@ -169,16 +167,17 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
+      this.teamService.getTeams(),
       this.userService.currentUser$,
     ])
       .pipe(
         takeUntil(this.destroy$),
         filter(
-          ([contracts, invoices, contractors, user]) =>
-            contracts.length > 0 && invoices.length > 0 && contractors.length > 0
+          ([contracts, invoices, contractors, teams, user]) =>
+            contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && teams.length > 0
         )
       )
-      .subscribe(([contracts, invoices, contractors, user]) => {
+      .subscribe(([contracts, invoices, contractors, teams, user]) => {
         this.contracts = contracts.map((contract: Contract) => {
           if (contract.invoice) {
             const invoice = this.invoiceService.idToInvoice(contract.invoice);
@@ -414,23 +413,23 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  openDepartmentDialog(): void {
+  openTeamDialog(): void {
     this.dialogService
       .open(SelectorDialogComponent, {
         dialogClass: 'my-dialog',
         context: {
-          selectorList: this.departmentService.buildDepartmentList(),
+          selectorList: this.teamService.teamsList(),
           title: 'Relatório dos contratos abertos:',
-          label: 'Selecione a diretoria',
-          placeholder: 'Selecione a diretoria',
+          label: 'Selecione o time',
+          placeholder: 'Selecione o time',
         },
         closeOnBackdropClick: false,
         closeOnEsc: false,
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe((department) => {
-        if (department) this.downloadReport(department);
+      .subscribe((team) => {
+        if (team) this.downloadReport(team);
       });
   }
 }

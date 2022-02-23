@@ -53,7 +53,7 @@ enum REPORT_TYPES {
 
 enum GROUP_BY {
   USER = 'Usuário',
-  COORD = 'Coordenação',
+  SECTOR = 'Setor',
 }
 
 @Component({
@@ -219,7 +219,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     return cloneDeep(data);
   }
 
-  createReportObjectByCoordination(): Record<string, ReportValue> {
+  createReportObjectBySector(): Record<string, ReportValue> {
     const data: Record<string, ReportValue> = {};
 
     this.teamService.sectorsListAll().forEach((sector) => {
@@ -413,8 +413,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     );
   }
 
-  computeReportDataByCoordination(type: REPORT_TYPES, year: number): Observable<Record<string, ReportValue>> {
-    const data = this.createReportObjectByCoordination();
+  computeReportDataBySector(type: REPORT_TYPES, year: number): Observable<Record<string, ReportValue>> {
+    const data = this.createReportObjectBySector();
 
     return combineLatest([this.invoiceService.getInvoices(), this.contractService.getContracts()]).pipe(
       filter(([invoices, contracts]) => invoices.length > 0 && contracts.length > 0),
@@ -614,7 +614,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   generateCSV(groupBy: GROUP_BY, type: REPORT_TYPES, year: number): void {
-    (groupBy == GROUP_BY.USER ? this.computeReportData(type, year) : this.computeReportDataByCoordination(type, year))
+    (groupBy == GROUP_BY.USER ? this.computeReportData(type, year) : this.computeReportDataBySector(type, year))
       .pipe(take(1))
       .subscribe((data) => {
         const header = [
@@ -707,7 +707,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           style="display: flex"
         >
           <nb-radio [value]="groupByTypes.USER">{{ groupByTypes.USER }}</nb-radio>
-          <nb-radio [value]="groupByTypes.COORD">{{ groupByTypes.COORD }}</nb-radio>
+          <nb-radio [value]="groupByTypes.SECTOR">{{ groupByTypes.SECTOR }}</nb-radio>
         </nb-radio-group>
         <div class="row">
           <div class="col-6">

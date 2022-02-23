@@ -85,19 +85,19 @@
           </div>
           <div class="col-md-2">
             <div class="form-control-group">
-              <label class="label" for="input-department">Diretoria:</label>
+              <label class="label" for="input-nortan-team">Time:</label>
               <input
                 nbInput
-                [ngModel]="teamService.idToName(invoice.nortanTeam)"
-                #department="ngModel"
-                id="input-department"
-                name="department"
-                placeholder="Código do Orçamento"
+                [ngModel]="teamService.idToAbbreviation(invoice.nortanTeam)"
+                #nortanTeam="ngModel"
+                id="input-nortan-team"
+                name="nortan-team"
+                placeholder="Time"
                 fullWidth
                 fieldSize="large"
-                [required]="validation.department.required"
-                [status]="department.dirty ? (department.invalid ? 'danger' : 'success') : 'basic'"
-                [attr.aria-invalid]="department.invalid && department.touched ? true : null"
+                [required]="validation.nortanTeam.required"
+                [status]="nortanTeam.dirty ? (nortanTeam.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="nortanTeam.invalid && nortanTeam.touched ? true : null"
                 [readonly]="true"
               />
             </div>
@@ -107,7 +107,7 @@
               <label class="label" for="input-sector">Setor:</label>
               <input
                 nbInput
-                [ngModel]="this.teamService.idToSector(invoice.sector)"
+                [ngModel]="teamService.idToSectorComposedName(invoice.sector)"
                 #sector="ngModel"
                 id="input-sector"
                 name="sector"
@@ -319,8 +319,8 @@
                 [inputName]="'userListCompleter'"
                 (selected)="
                   teamMember.user = $event;
-                  USER_COORDINATIONS = departmentService.userCoordinations(teamMember.user._id);
-                  teamMember.coordination = undefined
+                  USER_SECTORS = teamService.userToSectors(teamMember.user._id);
+                  teamMember.sector = undefined
                 "
                 #userList="ngModel"
                 id="input-user"
@@ -340,21 +340,21 @@
           </div>
           <div class="col-6 col-md-2">
             <div class="form-control-group">
-              <label class="label" for="input-memberCoordination">Coordenação:</label>
+              <label class="label" for="input-member-sector">Setor:</label>
               <nb-select
-                [(ngModel)]="teamMember.coordination"
-                #memberCoordination="ngModel"
-                id="input-memberCoordination"
-                name="memberCoordination"
-                placeholder="Coordenação"
+                [(ngModel)]="teamMember.sector"
+                #memberSector="ngModel"
+                id="input-member-sector"
+                name="member-sector"
+                placeholder="Setor"
                 fullWidth
                 size="large"
-                [status]="memberCoordination.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="memberCoordination.invalid && memberCoordination.touched ? true : null"
+                [status]="memberSector.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="memberSector.invalid && memberSector.touched ? true : null"
                 [disabled]="!isEditionGranted"
               >
-                <nb-option *ngFor="let coordination of USER_COORDINATIONS" [value]="coordination">
-                  {{ coordination.split(' ')[0] }}
+                <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector._id">
+                  {{ sector.abrev }}
                 </nb-option>
               </nb-select>
             </div>
@@ -441,7 +441,7 @@
               status="primary"
               size="large"
               style="margin-top: 28px"
-              [disabled]="!memberCoordination.value || !userList.value || !netValue.value"
+              [disabled]="!memberSector.value || !userList.value || !netValue.value"
               (click)="addColaborator()"
             >
               +
@@ -462,7 +462,10 @@
                     fullWidth
                     [disabled]="!isEditionGranted"
                   >
-                    <nb-option *ngFor="let sector of teamService.userToSectors(invoice.team[i].user)" [value]="sector">
+                    <nb-option
+                      *ngFor="let sector of teamService.userToSectors(invoice.team[i].user)"
+                      [value]="sector._id"
+                    >
                       {{ sector.abrev }} - {{ sector.name }}
                     </nb-option>
                   </nb-select>

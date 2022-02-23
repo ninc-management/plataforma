@@ -44,6 +44,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
   sourceSearch = '';
   sourceData: Observable<User[]> = of([]);
   protected sourceArray = new BehaviorSubject<User[]>([]);
+  protected userArray = new BehaviorSubject<User[]>([]);
 
   constructor(
     protected stringUtil: StringUtilService,
@@ -62,6 +63,9 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
     this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
       fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
     );
+
+    this.userData = this.userArray;
+    this.sourceData = this.sourceArray;
   }
 
   updateUploaderOptions(folderPath: string, nameFn: (name: string) => string, isAdmFolder?: boolean): void {

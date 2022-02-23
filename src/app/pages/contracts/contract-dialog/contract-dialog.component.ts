@@ -117,19 +117,19 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                   this.availableContracts = contracts.filter(
                     (contract) => contract.total !== contract.receipts.length.toString()
                   );
-                  if (this.availableContracts.length === 0) this.isPayable = false;
+                  this.isPayable = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.PAYMENT:
                   this.availableContracts = contracts.filter(
                     (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
                   );
-                  if (this.availableContracts.length === 0) this.hasBalance = false;
+                  this.hasBalance = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.EXPENSE:
                   this.availableContracts = contracts.filter(
                     (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
                   );
-                  if (this.availableContracts.length === 0) this.hasBalance = false;
+                  this.hasBalance = this.availableContracts.length !== 0;
                   break;
                 default:
                   this.availableContracts = contracts;

@@ -95,22 +95,22 @@ describe('ContractService', () => {
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.department = 'DPC';
-    tmpInvoice.coordination = 'test';
+    tmpInvoice.nortanTeam = 'Trocar';
+    tmpInvoice.sector = 'Trocar';
     tmpInvoice.code = 'ORC-1/2021-NRT/DPC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '1.000,00';
     tmpInvoice.trello = true;
     tmpInvoice.team.push({
       user: '0',
-      coordination: 'test',
+      sector: 'Trocar',
       distribution: '60,00',
       grossValue: '600,00',
       netValue: '549,00',
     });
     tmpInvoice.team.push({
       user: '1',
-      coordination: 'test',
+      sector: 'Trocar',
       distribution: '40,00',
       grossValue: '400,00',
       netValue: '366,00',
@@ -119,8 +119,8 @@ describe('ContractService', () => {
     tmpInvoice = new Invoice();
     tmpInvoice._id = '1';
     tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.department = 'DEC';
-    tmpInvoice.coordination = 'test';
+    tmpInvoice.nortanTeam = 'Trocar';
+    tmpInvoice.sector = 'Trocar';
     tmpInvoice.code = 'ORC-2/2021-NRT/DEC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '2.000,00';
@@ -128,14 +128,14 @@ describe('ContractService', () => {
     tmpInvoice.trello = false;
     tmpInvoice.team.push({
       user: '1',
-      coordination: 'test',
+      sector: 'Trocar',
       distribution: '60,00',
       grossValue: '1.176,00',
       netValue: '976,08',
     });
     tmpInvoice.team.push({
       user: '0',
-      coordination: 'test',
+      sector: 'Trocar',
       distribution: '40,00',
       grossValue: '784,00',
       netValue: '650,72',
@@ -162,7 +162,7 @@ describe('ContractService', () => {
       user: mockedUsers[0],
       value: '1.000,00',
       percentage: '100,00',
-      coordination: 'test',
+      sector: 'Trocar',
     });
     tmpContract.expenses.push(tmpExpense);
     tmpExpense = new ContractExpense();
@@ -180,13 +180,13 @@ describe('ContractService', () => {
       user: mockedUsers[0],
       value: '100,00',
       percentage: '50,00',
-      coordination: 'test',
+      sector: 'Trocar',
     });
     tmpExpense.team.push({
       user: mockedUsers[1],
       value: '100,00',
       percentage: '50,00',
-      coordination: 'test',
+      sector: 'Trocar',
     });
     tmpContract.expenses.push(tmpExpense);
     tmpContract.expenses.push(new ContractExpense());
@@ -213,7 +213,7 @@ describe('ContractService', () => {
     tmpPayment.paidDate = new Date();
     tmpPayment.team.push({
       user: mockedUsers[0],
-      coordination: 'test',
+      sector: 'Trocar',
       value: '415,00',
       percentage: '100,00',
     });
@@ -225,13 +225,13 @@ describe('ContractService', () => {
     tmpPayment.paidDate = new Date();
     tmpPayment.team.push({
       user: mockedUsers[0],
-      coordination: 'test',
+      sector: 'Trocar',
       value: '207,50',
       percentage: '207,50',
     });
     tmpPayment.team.push({
       user: mockedUsers[1],
-      coordination: 'test',
+      sector: 'Trocar',
       value: '207,50',
       percentage: '207,50',
     });
@@ -256,8 +256,8 @@ describe('ContractService', () => {
     const baseInvoice = new Invoice();
     baseInvoice._id = '2';
     baseInvoice.author = mockedUsers[0];
-    baseInvoice.department = 'DPC';
-    baseInvoice.coordination = 'test';
+    baseInvoice.nortanTeam = 'Trocar';
+    baseInvoice.sector = 'Trocar';
     baseInvoice.code = 'ORC-3/2021-NRT/DPC-00';
     baseInvoice.contractor = '0';
     mockedInvoices.push(baseInvoice);

@@ -154,8 +154,8 @@ describe('UtilsService', () => {
     expect(service.nfPercentage(contract)).toBe('0');
     invoice._id = '0';
     invoice.author = '0';
-    invoice.department = 'DEC';
-    invoice.coordination = '';
+    invoice.nortanTeam = 'Trocar';
+    invoice.sector = '';
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
@@ -165,7 +165,7 @@ describe('UtilsService', () => {
     contract.receipts.push(receipt);
     expect(service.nfPercentage(contract)).toBe('0,00');
     expect(service.nfPercentage(invoice)).toBe('8,5');
-    invoice.department = 'DPC';
+    invoice.nortanTeam = 'Trocar';
     expect(service.nfPercentage(invoice)).toBe('15,5');
     invoice.administration = 'pessoal';
     expect(service.nfPercentage(invoice)).toBe('0');
@@ -177,8 +177,8 @@ describe('UtilsService', () => {
     expect(service.nortanPercentage(contract)).toBe('0');
     invoice._id = '0';
     invoice.author = '0';
-    invoice.department = 'DEC';
-    invoice.coordination = '';
+    invoice.nortanTeam = 'Trocar';
+    invoice.sector = '';
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
@@ -190,7 +190,7 @@ describe('UtilsService', () => {
     expect(service.nortanPercentage(invoice)).toBe('15');
     invoice.administration = 'pessoal';
     expect(service.nortanPercentage(invoice)).toBe('17');
-    invoice.department = 'DAD';
+    invoice.nortanTeam = 'Trocar';
     expect(service.nortanPercentage(invoice)).toBe('0');
   });
 

@@ -4,7 +4,6 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
 import { ExpenseType, Team, TeamMember } from '@models/team';
@@ -29,16 +28,11 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   currentMember = new TeamMember();
   availableUsers: Observable<User[]> = of([]);
   availableLeaders: Observable<User[]> = of([]);
-  SECTORS: (Sector | string | undefined)[] = [];
-  USER_SECTORS: (Sector | string | undefined)[] = [];
+  SECTORS: Sector[] = [];
+  USER_SECTORS: Sector[] = [];
   options = { expenseType: '', sectorName: '', sectorAbrev: '' };
 
-  constructor(
-    public teamService: TeamService,
-    public utils: UtilsService,
-    public userService: UserService,
-    public departamentService: DepartmentService
-  ) {
+  constructor(public teamService: TeamService, public utils: UtilsService, public userService: UserService) {
     this.team.members = [] as TeamMember[];
   }
 
@@ -59,7 +53,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     );
 
     this.memberChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.SECTORS = uniq(this.team.members.map((member: TeamMember) => member.sector));
+      this.SECTORS = uniq(this.team.members.map((member: TeamMember) => this.teamService.idToSector(member.sector)));
     });
   }
 
@@ -91,10 +85,10 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateUserCoordinations(): void {
+  updateUserSectors(): void {
     if (this.currentMember.user) {
       const user = this.userService.idToUser(this.currentMember.user);
-      this.USER_SECTORS = user.sectors;
+      this.USER_SECTORS = this.teamService.userToSectors(user);
     }
   }
 

@@ -56,7 +56,6 @@ import { AuthGuard } from 'app/shared/guards/auth.guard';
 import { RedirectGuard } from 'app/shared/guards/redirect.guard';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -216,7 +215,6 @@ const PROVIDERS = [
   AuthService,
   ContractorService,
   ContractService,
-  DepartmentService,
   FinancialService,
   InvoiceService,
   MetricsService,

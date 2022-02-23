@@ -114,6 +114,13 @@ export class MetricsService implements OnDestroy {
     this.destroy$.complete();
   }
 
+  mergeSectorInfo(o1: SectorInfo, o2: SectorInfo): SectorInfo {
+    if (!o1) return o2;
+    if (!o2) return o1;
+    o1.value += o2.value;
+    return o1;
+  }
+
   plural(last: string, number: number): string {
     switch (last) {
       case 'Dia': {
@@ -274,14 +281,15 @@ export class MetricsService implements OnDestroy {
 
                     return upaid;
                   }, cloneDeep(this.defaultUserAndSectors));
-                  paid.user = mergeWith({}, paid.user, uCPayments.user, add);
-                  paid.global = mergeWith({}, paid.global, uCPayments.global, add);
+                  paid.user = mergeWith([], paid.user, uCPayments.user, this.mergeSectorInfo);
+                  paid.global = mergeWith([], paid.global, uCPayments.global, this.mergeSectorInfo);
                 }
               }
               return paid;
             }, cloneDeep(this.defaultUserAndSectors));
-            received.user = mergeWith({}, received.user, value.user, add);
-            received.global = mergeWith({}, received.global, value.global, add);
+
+            received.user = mergeWith([], received.user, value.user, this.mergeSectorInfo);
+            received.global = mergeWith([], received.global, value.global, this.mergeSectorInfo);
           }
           if (this.contractService.hasExpenses(contract._id)) {
             for (const expense of contract.expenses) {
