@@ -20,7 +20,12 @@ export class OnedriveService {
     private userService: UserService,
     private utils: UtilsService,
     private teamService: TeamService
-  ) {}
+  ) {
+    teamService
+      .getTeams()
+      .pipe(take(1))
+      .subscribe(() => {});
+  }
 
   private generateBasePath(invoice: Invoice, concluded = false): string {
     let path = '';

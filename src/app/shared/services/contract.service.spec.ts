@@ -15,6 +15,8 @@ import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
+import { Team, TeamMember } from '@models/team';
+import { TeamService } from './team.service';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -22,6 +24,7 @@ describe('ContractService', () => {
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
   let mockedContracts: Contract[];
+  let mockedTeams: Team[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -78,6 +81,7 @@ describe('ContractService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
     httpMock = TestBed.inject(HttpTestingController);
+    mockedTeams = [];
     mockedUsers = [];
     mockedInvoices = [];
     mockedContracts = [];
@@ -92,25 +96,40 @@ describe('ContractService', () => {
     tmpUser.email = 'test2@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
+    const tmpTeam = new Team();
+    tmpTeam._id = '0';
+    tmpTeam.name = 'test';
+    tmpTeam.leader = '0';
+    tmpTeam.purpose = 'Be tested';
+    tmpTeam.abrev = 'T';
+    tmpTeam.config.path = `test`;
+    const tmpTeamMember = new TeamMember();
+    tmpTeamMember.user = '0';
+    tmpTeamMember.sector = '0';
+    tmpTeam.members.push(cloneDeep(tmpTeamMember));
+    tmpTeamMember.user = '1';
+    tmpTeamMember.sector = '1';
+    tmpTeam.members.push(cloneDeep(tmpTeamMember));
+    mockedTeams.push(cloneDeep(tmpTeam));
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
+    tmpInvoice.nortanTeam = '0';
+    tmpInvoice.sector = '0';
     tmpInvoice.code = 'ORC-1/2021-NRT/DPC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '1.000,00';
     tmpInvoice.trello = true;
     tmpInvoice.team.push({
       user: '0',
-      sector: 'Trocar',
+      sector: '0',
       distribution: '60,00',
       grossValue: '600,00',
       netValue: '549,00',
     });
     tmpInvoice.team.push({
       user: '1',
-      sector: 'Trocar',
+      sector: '1',
       distribution: '40,00',
       grossValue: '400,00',
       netValue: '366,00',
@@ -119,8 +138,8 @@ describe('ContractService', () => {
     tmpInvoice = new Invoice();
     tmpInvoice._id = '1';
     tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
+    tmpInvoice.nortanTeam = '0';
+    tmpInvoice.sector = '1';
     tmpInvoice.code = 'ORC-2/2021-NRT/DEC-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '2.000,00';
@@ -128,14 +147,14 @@ describe('ContractService', () => {
     tmpInvoice.trello = false;
     tmpInvoice.team.push({
       user: '1',
-      sector: 'Trocar',
+      sector: '0',
       distribution: '60,00',
       grossValue: '1.176,00',
       netValue: '976,08',
     });
     tmpInvoice.team.push({
       user: '0',
-      sector: 'Trocar',
+      sector: '1',
       distribution: '40,00',
       grossValue: '784,00',
       netValue: '650,72',
@@ -242,6 +261,10 @@ describe('ContractService', () => {
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedUsers);
+
+    const teamReq = httpMock.expectOne('/api/team/all');
+    expect(teamReq.request.method).toBe('POST');
+    teamReq.flush(mockedTeams);
   });
 
   afterEach(() => {
@@ -256,9 +279,9 @@ describe('ContractService', () => {
     const baseInvoice = new Invoice();
     baseInvoice._id = '2';
     baseInvoice.author = mockedUsers[0];
-    baseInvoice.nortanTeam = 'Trocar';
-    baseInvoice.sector = 'Trocar';
-    baseInvoice.code = 'ORC-3/2021-NRT/DPC-00';
+    baseInvoice.nortanTeam = '0';
+    baseInvoice.sector = '0';
+    baseInvoice.code = 'ORC-3/2021-NRT/T-00';
     baseInvoice.contractor = '0';
     mockedInvoices.push(baseInvoice);
     const tmpContract = new Contract();
@@ -299,7 +322,7 @@ describe('ContractService', () => {
             expect(req1.request.method).toBe('POST');
             req1.flush({ contract: tmpContract });
             const req2 = httpMock.expectOne(
-              'https://graph.microsoft.com/v1.0/drive/root:/04-DPC/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
+              'https://graph.microsoft.com/v1.0/drive/root:/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
             );
             expect(req2.request.method).toBe('GET');
             req2.flush({ parentReference: { driveId: '0', id: '0' }, id: '0' });

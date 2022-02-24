@@ -175,6 +175,7 @@ export class TeamService implements OnDestroy {
 
   userToSectors(user: User | string | undefined): Sector[] {
     if (!user) return [];
+    if (this.utils.isOfType<User>(user, ['fullName', 'sectors', 'position']) && !user._id) return [];
     return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
 }

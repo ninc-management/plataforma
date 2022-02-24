@@ -83,6 +83,8 @@ describe('UtilsService', () => {
   it('formatDate should work', () => {
     const date = new Date('Jun 17, 2021');
     expect(service.formatDate(date)).toBe('17/06/2021');
+    expect(service.formatDate(date, '')).toBe('17062021');
+    expect(service.formatDate(date, '-')).toBe('17-06-2021');
   });
 
   it('isWithinInterval should work', () => {
@@ -154,7 +156,7 @@ describe('UtilsService', () => {
     expect(service.nfPercentage(contract)).toBe('0');
     invoice._id = '0';
     invoice.author = '0';
-    invoice.nortanTeam = 'Trocar';
+    invoice.nortanTeam = '61362107f04ddc1a6a59f390';
     invoice.sector = '';
     invoice.code = '';
     invoice.contractor = '0';
@@ -164,8 +166,11 @@ describe('UtilsService', () => {
     receipt.notaFiscal = '0,00';
     contract.receipts.push(receipt);
     expect(service.nfPercentage(contract)).toBe('0,00');
+    invoice.nortanTeam = '614b58d90d2cf0435ea59e52';
     expect(service.nfPercentage(invoice)).toBe('8,5');
-    invoice.nortanTeam = 'Trocar';
+    invoice.nortanTeam = '613236a07f6ed15db318c7d8';
+    expect(service.nfPercentage(invoice)).toBe('8,5');
+    invoice.nortanTeam = '0';
     expect(service.nfPercentage(invoice)).toBe('15,5');
     invoice.administration = 'pessoal';
     expect(service.nfPercentage(invoice)).toBe('0');
@@ -177,7 +182,7 @@ describe('UtilsService', () => {
     expect(service.nortanPercentage(contract)).toBe('0');
     invoice._id = '0';
     invoice.author = '0';
-    invoice.nortanTeam = 'Trocar';
+    invoice.nortanTeam = '0';
     invoice.sector = '';
     invoice.code = '';
     invoice.contractor = '0';
@@ -187,10 +192,11 @@ describe('UtilsService', () => {
     receipt.nortanPercentage = '20,00';
     contract.receipts.push(receipt);
     expect(service.nortanPercentage(contract)).toBe('20,00');
+    invoice.nortanTeam = '1';
     expect(service.nortanPercentage(invoice)).toBe('15');
     invoice.administration = 'pessoal';
     expect(service.nortanPercentage(invoice)).toBe('17');
-    invoice.nortanTeam = 'Trocar';
+    invoice.nortanTeam = '6201b405329f446f16e1b404';
     expect(service.nortanPercentage(invoice)).toBe('0');
   });
 
