@@ -18,12 +18,12 @@ router.post('/register', (req, res, next) => {
         })
         .catch((err) => {
           console.log('Erro de cadastro:', err);
-          res.status(201).json({
+          res.status(500).json({
             error: 'Email já cadastrado na plataforma',
           });
         });
     } else
-      res.status(201).json({
+      res.status(500).json({
         error: 'Email já cadastrado na plataforma',
       });
   });
