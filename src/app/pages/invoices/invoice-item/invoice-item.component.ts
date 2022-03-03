@@ -690,8 +690,4 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
   }
-
-  teste(event: any): void {
-    console.log(event);
-  }
 }
