@@ -179,6 +179,9 @@ export class Invoice extends StatusHistory {
   @prop({ type: () => [String] })
   importants: string[] = [];
 
+  @prop({ required: true, ref: () => User })
+  prospectedBy!: Ref<User>;
+
   model = false;
   contractorName = '';
   fullName = '';

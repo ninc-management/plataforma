@@ -103,6 +103,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   availableUsers: Observable<User[]> = of([]);
   authorSearch = '';
   authorData: Observable<User[]> = of([]);
+  associateSearch = '';
+  associateData: Observable<User[]> = of([]);
 
   NORTAN_TEAMS: Team[] = [];
   SECTORS: Sector[] = [];
@@ -141,6 +143,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
       this.contractorSearch = this.tempInvoice.contractor
         ? this.contractorService.idToName(this.tempInvoice.contractor)
+        : '';
+      this.associateSearch = this.tempInvoice.prospectedBy
+        ? this.userService.idToName(this.tempInvoice.prospectedBy)
         : '';
       this.revision = +this.tempInvoice.code?.slice(this.tempInvoice.code.length - 2);
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
@@ -203,6 +208,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
     this.contractorData = this.contractorService.getContractors();
+
+    this.associateData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
 
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
@@ -682,5 +689,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.stages, 'stage');
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
+  }
+
+  teste(event: any): void {
+    console.log(event);
   }
 }
