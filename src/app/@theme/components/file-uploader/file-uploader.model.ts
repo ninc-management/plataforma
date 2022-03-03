@@ -23,7 +23,7 @@ export interface NbFileUploaderOptions {
   showUploadQueue?: boolean;
   storageProvider: StorageProvider;
   mediaFolderPath: string;
-  isAdmFolder?: boolean;
+  isTeamFolder?: boolean;
 
   params?: { [key: string]: string };
   headers?: { [key: string]: string };

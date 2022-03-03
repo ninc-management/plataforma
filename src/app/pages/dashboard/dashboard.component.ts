@@ -61,6 +61,8 @@ export class DashboardComponent {
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   teams: Team[] = [];
   nortanTeam!: Team;
+  currentTeam = new Team();
+
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
@@ -192,7 +194,7 @@ export class DashboardComponent {
           this.dialogService.open(TeamDialogComponent, {
             context: {
               title: this.activeTab === TAB_TITLES.NORTAN ? 'ADICIONAR GASTO NORTAN' : 'ADICIONAR DESPESA DO TIME',
-              iTeam: this.nortanTeam,
+              iTeam: this.currentTeam,
               componentType: TEAM_COMPONENT_TYPES.EXPENSE,
             },
             dialogClass: 'my-dialog',
@@ -283,14 +285,17 @@ export class DashboardComponent {
     switch (event.tabTitle.toLowerCase()) {
       case TAB_TITLES.PESSOAL.toLowerCase(): {
         this.activeTab = TAB_TITLES.PESSOAL;
+        this.currentTeam = new Team();
         break;
       }
       case TAB_TITLES.NORTAN.toLowerCase(): {
         this.activeTab = TAB_TITLES.NORTAN;
+        this.currentTeam = this.teamService.idToTeam(event.tabId);
         break;
       }
       default: {
         this.activeTab = TAB_TITLES.TEAM;
+        this.currentTeam = this.teamService.idToTeam(event.tabId);
         break;
       }
     }

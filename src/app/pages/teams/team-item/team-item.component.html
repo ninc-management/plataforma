@@ -48,6 +48,7 @@
               [maxlength]="validation.abrev.maxLength"
               [status]="abrev.touched ? (abrev.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
               [attr.aria-invalid]="abrev.invalid && abrev.touched ? true : null"
+              (focusout)="team.config.path = editing ? team.config.path : team.abrev"
             />
           </div>
           <ng-container *ngIf="abrev.invalid && abrev.touched">
@@ -239,6 +240,34 @@
       </nb-list>
     </nb-tab>
     <nb-tab tabTitle="Configuração" tabIcon="settings-outline" responsive>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Onedrive</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-config-path">Path da pasta do time:</label>
+            <input
+              nbInput
+              [(ngModel)]="team.config.path"
+              #configPath="ngModel"
+              id="input-config-path"
+              name="config-path"
+              placeholder="Path da pasta do time (ex.: 01-NPJ)"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.path"
+              [status]="configPath.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="configPath.invalid && configPath.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">Lista de setores</label>

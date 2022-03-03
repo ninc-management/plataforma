@@ -9,7 +9,12 @@
       </div>
     </div>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : tabTitles.NORTAN" [tabIcon]="nortanIcon" responsive>
+  <nb-tab
+    [tabTitle]="utils.isPhone() ? '' : tabTitles.NORTAN"
+    [tabIcon]="nortanIcon"
+    [tabId]="nortanTeam ? nortanTeam._id : ''"
+    responsive
+  >
     <nb-card fullWidth class="noOverflow">
       <div class="row">
         <div class="col-12 col-md-3">
@@ -46,7 +51,13 @@
       </div>
     </nb-card>
   </nb-tab>
-  <nb-tab *ngFor="let team of teams" [tabTitle]="utils.isPhone() ? '' : team.name" [tabIcon]="teamIcon" responsive>
+  <nb-tab
+    *ngFor="let team of teams"
+    [tabTitle]="utils.isPhone() ? '' : team.name"
+    [tabIcon]="teamIcon"
+    [tabId]="team._id"
+    responsive
+  >
     <nb-card>
       <div class="row">
         <div class="col-12 col-md-12" style="text-align: center">

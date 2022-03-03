@@ -124,7 +124,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   updateUploaderOptions(): void {
-    const mediaFolderPath = this.onedrive.generateNortanExpensesPath(this.expense);
+    const mediaFolderPath = this.onedrive.generateTeamExpensesPath(this.expense, this.iTeam.config.path);
     const fn = (name: string) => {
       const type = this.expense.type;
       const date = this.utils.formatDate(new Date(), '-');

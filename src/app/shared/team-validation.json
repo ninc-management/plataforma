@@ -15,5 +15,6 @@
     "maxLength": 1000
   },
   "expertise": { "required": true },
-  "leader": { "required": true }
+  "leader": { "required": true },
+  "path": { "required": true }
 }

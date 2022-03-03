@@ -68,7 +68,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
     this.sourceData = this.sourceArray;
   }
 
-  updateUploaderOptions(folderPath: string, nameFn: (name: string) => string, isAdmFolder?: boolean): void {
+  updateUploaderOptions(folderPath: string, nameFn: (name: string) => string, isTeamFolder?: boolean): void {
     this.uploaderOptions = {
       multiple: true,
       directory: false,
@@ -76,7 +76,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
       storageProvider: StorageProvider.ONEDRIVE,
       mediaFolderPath: folderPath,
       allowedFileTypes: this.allowedMimeType,
-      isAdmFolder: isAdmFolder,
+      isTeamFolder: isTeamFolder,
       filter: {
         fn: (item?: File) => {
           if (!item) return false;
