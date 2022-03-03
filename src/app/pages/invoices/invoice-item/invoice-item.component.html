@@ -237,6 +237,28 @@
       </div>
 
       <div class="form-control-group">
+        <label class="label" for="input-associate">Prospectado por:</label>
+        <nb-completer
+          [(ngModel)]="associateSearch"
+          [inputName]="'associateListCompleter'"
+          (selected)="tempInvoice.prospectedBy = $event"
+          #associateList="ngModel"
+          id="input-associate"
+          name="associate-list"
+          nameField="fullName"
+          pictureField="profilePicture"
+          [data$]="associateData"
+          [minSearchLength]="0"
+          [placeholder]="'Digite e selecione o nome do associado'"
+          [textNoResults]="'Não foi possível achar um associado com o nome digitado'"
+          [fullWidth]="true"
+          [fieldSize]="'large'"
+          [status]="associateList.dirty && associateSearch ? (associateList.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="associateList.invalid && associateList.touched ? true : null"
+        ></nb-completer>
+      </div>
+
+      <div class="form-control-group">
         <label class="label" for="input-name">Empreendimento:</label>
         <input
           nbInput
