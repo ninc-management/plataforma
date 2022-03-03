@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, skipWhile, take, takeWhile } from 'rxjs/operators';
-import { startOfMonth } from 'date-fns';
+import { endOfMonth, startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
@@ -52,7 +52,7 @@ export class DashboardComponent {
     pack: 'fa',
   };
   start = startOfMonth(new Date());
-  end = new Date();
+  end = endOfMonth(new Date());
   open$: Observable<number>;
   toReceive$: Observable<number> = of(0);
   expenses$: Observable<string> = of('');
@@ -82,7 +82,7 @@ export class DashboardComponent {
         if (nortanTeam !== undefined) {
           this.nortanTeam = nortanTeam;
           this.expenses$ = metricsService
-            .teamExpenses(nortanTeam._id, startOfMonth(new Date()), new Date())
+            .teamExpenses(nortanTeam._id, this.start, this.end)
             .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
         }
       });
