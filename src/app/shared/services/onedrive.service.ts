@@ -56,14 +56,6 @@ export class OnedriveService {
     return this.generateBasePath(invoice, concluded) + this.generateFolderName(invoice);
   }
 
-  generateTeamExpensesPath(teamExpense: TeamExpense, teamPath: string): string {
-    let path = '10-Financeiro/' + teamPath + '/Comprovantes/' + teamExpense.type;
-    if (teamExpense.subType) {
-      path += '/' + teamExpense.subType;
-    }
-    return path;
-  }
-
   oneDriveURI(isAdm?: boolean): string {
     let URI = '';
     if (environment.onedriveUri) {
