@@ -323,11 +323,11 @@ export class PdfService {
     /* eslint-disable indent*/
     pdf.add({
       text:
-        'Nós da Nortan nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
+        'Nós da Nortan Engenharia nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
         author.article +
-        ' Associad' +
+        ' associad' +
         author.article +
-        ' Nortan ' +
+        ' ' +
         author.fullName +
         ', ' +
         (author.expertise
@@ -473,7 +473,7 @@ export class PdfService {
         },
         {
           width: '*',
-          text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
+          text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan Engenharia proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
           alignment: 'left',
           fontSize: 8,
         },
@@ -1234,7 +1234,7 @@ export class PdfService {
     pdf.add(pdf.ln(2));
 
     pdf.add({
-      text: [{ text: 'Nortan', bold: true }, ', Solução Integrada em Projetos.'],
+      text: [{ text: 'Nortan Engenharia', bold: true }, ', Solução Integrada em Projetos.'],
       style: 'insideText',
     });
 
