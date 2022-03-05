@@ -145,6 +145,53 @@ function convertDepartmentToNortanTeam(departmentString, sectorId = '') {
   }
 }
 
+function convertOldExpenseTypes(expense) {
+  switch (expense.type) {
+    case 'Divisão de lucro':
+      expense.type = 'Custo fixo';
+      expense.subType = 'Divisão de lucro';
+      break;
+    case 'Folha de pagamento':
+      expense.type = 'Custo variável';
+      expense.subType = 'Pagamento de colaborador externo';
+      break;
+    case 'Reembolso':
+      expense.type = 'Despesa variável';
+      expense.subType = 'Outros';
+      break;
+    case 'Despesas':
+      expense.type = 'Despesa variável';
+      expense.subType = 'Outros';
+      break;
+    case 'Custo operacional':
+      expense.type = 'Custo fixo';
+      expense.subType = 'Pagamento de colaborador interno';
+      break;
+    case 'Gastos fixos': {
+      expense.type = 'Custo fixo';
+      switch (expense.subType) {
+        case 'Marketing':
+          expense.type = 'Despesa fixa';
+          break;
+        case 'Administrativo':
+          expense.subType = 'Pagamento de colaborador interno';
+          break;
+        default:
+          break;
+      }
+      break;
+    }
+    case 'Pré-Obra': // CONTRATO
+      expense.type = 'Pré-serviço';
+      break;
+    case 'Transporte e Alimentação':
+      expense.type = 'Transporte';
+      break;
+    default:
+      break;
+  }
+}
+
 // Add active field to Users
 db.users.find().forEach((u) => {
   u.active = true;
@@ -469,6 +516,7 @@ var t = db.teams.findOne({ name: 'Nortan' });
 db.expenses.find().forEach((e) => {
   e.subType = e.fixedType;
   delete e.fixedType;
+  convertOldExpenseTypes(e);
   t.expenses.push(e);
 });
 db.teams.replaceOne({ _id: t._id }, t);
@@ -516,6 +564,7 @@ db.users.find().forEach((u) => {
 db.contracts.find().forEach((contract) => {
   if (contract.expenses)
     contract.expenses.forEach((expense) => {
+      convertOldExpenseTypes(expense);
       if (expense.team)
         expense.team.forEach((member) => {
           member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
@@ -551,6 +600,10 @@ db.invoices.find().forEach((invoice) => {
 });
 
 db.teams.find().forEach((team) => {
+  team.expenses.forEach((expense) => {
+    convertOldExpenseTypes(expense);
+  });
+
   team.members.forEach((member) => {
     member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
     delete member.coordination;
