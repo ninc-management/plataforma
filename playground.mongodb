@@ -559,3 +559,9 @@ db.teams.find().forEach((team) => {
 
   db.teams.replaceOne({ _id: team._id }, team);
 });
+
+// Add prospectedBy field to invoices
+db.invoices.find().forEach((i) => {
+ i.prospectedBy = i.prospectedBy ?  i.prospectedBy : i.author;
+  db.invoices.replaceOne({ _id: i._id }, i);
+});
