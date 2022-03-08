@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { map, take } from 'rxjs/operators';
+import { map, skipWhile, take } from 'rxjs/operators';
 import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
@@ -196,7 +196,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       ];
     this.invoiceService
       .invoicesSize()
-      .pipe(take(2))
+      .pipe(
+        skipWhile((size) => size > 0),
+        take(1)
+      )
       .subscribe((size: number) => {
         this.invoiceNumber = size;
         this.updateCode();
@@ -234,7 +237,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.teamService
       .getTeams()
-      .pipe(take(2))
+      .pipe(
+        skipWhile((teams) => teams.length == 0),
+        take(1)
+      )
       .subscribe((teams) => {
         this.NORTAN_TEAMS = teams;
         this.ALL_SECTORS = this.teamService.sectorsListAll();

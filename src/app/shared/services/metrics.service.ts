@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map, take, filter } from 'rxjs/operators';
+import { takeUntil, map, take, filter, skipWhile } from 'rxjs/operators';
 import { ContractService, CONTRACT_STATOOS } from './contract.service';
 import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
@@ -93,8 +93,8 @@ export class MetricsService implements OnDestroy {
     this.teamService
       .getTeams()
       .pipe(
-        take(2),
-        filter((teams) => teams.length > 0)
+        skipWhile((teams) => teams.length == 0),
+        take(1)
       )
       .subscribe((teams) => {
         const baseTeams = teams.map((team): TeamInfo => ({ id: team._id, value: 0 }));

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NbRoleProvider } from '@nebular/security';
 import { UserService } from '../services/user.service';
 import { Observable, of } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { map, skipWhile, take } from 'rxjs/operators';
 import { User } from '@models/user';
 import { Permissions } from 'app/shared/services/utils.service';
 import { AuthService } from 'app/auth/auth.service';
@@ -15,9 +15,10 @@ export class RoleProvider implements NbRoleProvider {
     const email = this.authService.userEmail();
     if (email) {
       return this.userService.getUser(email).pipe(
-        take(2),
-        filter((user): user is User => user !== undefined),
-        map((user: User): string | string[] => {
+        skipWhile((user) => user !== undefined),
+        take(1),
+        map((user: User | undefined): string | string[] => {
+          if (user === undefined) return Permissions.ASSOCIADO;
           return user.position?.length > 0 ? user.position : Permissions.ASSOCIADO;
         })
       );

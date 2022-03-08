@@ -13,7 +13,7 @@ import {
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, takeUntil, filter, takeWhile } from 'rxjs/operators';
+import { take, map, takeUntil, filter, takeWhile, skipWhile } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { StatecityService } from 'app/shared/services/statecity.service';
@@ -114,11 +114,16 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
         this.states = this.statecityService.buildStateList();
         if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
         else
-          this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-            this.iUser = user;
-            this.user = cloneDeep(this.iUser);
-            this.isCurrentUser = true;
-          });
+          this.userService.currentUser$
+            .pipe(
+              skipWhile((user) => user !== undefined),
+              take(1)
+            )
+            .subscribe((user) => {
+              this.iUser = user;
+              this.user = cloneDeep(this.iUser);
+              this.isCurrentUser = true;
+            });
         if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
         if (this.user.expertise == undefined) this.user.expertise = [];
         if (this.user.theme == undefined) this.user.theme = 'default';
