@@ -301,7 +301,7 @@ export class MetricsService implements OnDestroy {
                   this.utils.isWithinInterval(paidDate, start, end) &&
                   source._id != CONTRACT_BALANCE._id &&
                   source._id != CLIENT._id &&
-                  source._id != '5eeae34b9e99900017c03ea5'
+                  source.position.some((p) => new RegExp('/Direto(r|ra) de T.I/').test(p))
                 ) {
                   for (const member of expense.team) {
                     const globalIdx = received.global.findIndex(
