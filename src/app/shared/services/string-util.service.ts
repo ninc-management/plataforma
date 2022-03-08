@@ -44,6 +44,7 @@ export class StringUtilService {
       thousand: '.',
       decimalCaracter: ',',
       decimal: decimals,
+      moneyInitHasInt: false,
     });
     return value < 0 ? '-' + result : result;
   }

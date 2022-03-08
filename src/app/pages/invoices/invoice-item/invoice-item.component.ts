@@ -568,12 +568,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   updateMaterialList(): void {
     if (this.tempInvoice.materialListType == '2') {
       this.tempInvoice.materials.forEach((material, index) => {
-        material.amount = this.brMask.writeValueMoney(material.amount, {
-          money: true,
-          thousand: '.',
-          decimalCaracter: ',',
-          decimal: 2,
-        });
+        material.amount = this.brMask.writeValueMoney(material.amount);
         this.updateItemTotal(this.tempInvoice.materials, index);
       });
       this.updateTotal('material');
@@ -689,12 +684,5 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.stages, 'stage');
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
-  }
-
-  updateDiscount(): void {
-    if (!this.tempInvoice.discount) this.tempInvoice.discount = '0,00';
-    if (this.tempInvoice.discount.length === 1)
-      this.tempInvoice.discount = this.stringUtil.numberToMoney(+this.tempInvoice.discount);
-    this.updateDiscountPercentage();
   }
 }
