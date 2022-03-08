@@ -197,7 +197,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.invoiceService
       .invoicesSize()
       .pipe(
-        skipWhile((size) => size > 0),
+        skipWhile((size) => size == 0),
         take(1)
       )
       .subscribe((size: number) => {
