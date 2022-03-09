@@ -149,7 +149,8 @@
             <label class="label" for="input-expertise">Áreas de atuação:</label>
             <ul>
               <li *ngFor="let sector of SECTORS">
-                {{ teamService.idToSector(sector).abrev }} - {{ teamService.idToSector(sector).name }}
+                {{ [sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev' }} -
+                {{ [sector] | propertyPipe: teamService.idToSector.bind(teamService):'name' }}
               </li>
             </ul>
           </div>
@@ -223,7 +224,8 @@
               ></nb-user>
             </div>
             <div class="col-5 col-md-5">
-              {{ teamService.idToSector(member.sector).abrev }} - {{ teamService.idToSector(member.sector).name }}
+              {{ [member.sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev' }} -
+              {{ [member.sector] | propertyPipe: teamService.idToSector.bind(teamService):'name' }}
             </div>
           </div>
           <div class="col-2 col-md-1" style="text-align: right">
