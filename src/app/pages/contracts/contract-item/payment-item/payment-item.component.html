@@ -384,7 +384,7 @@
       <nb-list-item *ngFor="let userPayment of payment.team; let i = index; trackBy: utils.trackByIndex">
         <div class="row paymentRow">
           <div class="col-12 col-md-4">
-            {{ userService.idToName(userPayment.user) }}
+            {{ [userPayment.user] | propertyPipe: userService.idToName.bind(userService) }}
             <ng-container>
               <p class="caption status-danger" *ngIf="memberValue.errors?.overpaid && memberValue.invalid">
                 O valor pago é superior ao saldo a receber no contrato (R$ {{ userNotPaidValue(payment.team[i]) }})!
