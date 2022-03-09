@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take, filter, last } from 'rxjs/operators';
+import { takeUntil, take, last, skipWhile } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
@@ -115,10 +115,12 @@ export class UserService implements OnDestroy {
     if (email) {
       this.getUser(email)
         .pipe(
-          take(2),
-          filter((user): user is User => user !== undefined)
+          skipWhile((user) => user === undefined),
+          take(1)
         )
-        .subscribe((user) => this._currentUser$.next(cloneDeep(user)));
+        .subscribe((user) => {
+          if (user) this._currentUser$.next(cloneDeep(user));
+        });
     }
   }
 
