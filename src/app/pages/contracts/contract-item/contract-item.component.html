@@ -755,7 +755,8 @@
           <p>
             <b>
               {{
-                contractService.subtractComissions(stringUtil.removePercentage(contract.value, contract.ISS), contract)
+                [stringUtil.removePercentage(contract.value, contract.ISS), contract]
+                  | propertyPipe: contractService.subtractComissions.bind(contractService)
               }}
             </b>
           </p>
@@ -821,30 +822,47 @@
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
                 {{
-                  contractService.toGrossValue(
+                  [
                     contractService.netValueBalance(member.distribution, contract, member.user),
                     options.notaFiscal,
                     options.nortanPercentage
-                  )
+                  ] | propertyPipe: contractService.toGrossValue.bind(contractService)
                 }}
               </div>
               <div class="col-md-3">
-                {{ contractService.netValueBalance(member.distribution, contract, member.user) }}
+                {{
+                  [member.distribution, contract, member.user]
+                    | propertyPipe: contractService.netValueBalance.bind(contractService)
+                }}
               </div>
               <div class="col-md-3">
-                {{ contractService.percentageToReceive(member.distribution, member.user, contract) }}
+                {{
+                  [member.distribution, member.user, contract]
+                    | propertyPipe: contractService.percentageToReceive.bind(contractService)
+                }}
               </div>
-              <div class="col-md-3">{{ contractService.receivedValue(member.user, contract) }}</div>
+              <div class="col-md-3">
+                {{ [member.user, contract] | propertyPipe: contractService.receivedValue.bind(contractService) }}
+              </div>
             </div>
             <div class="col-md-4 d-flex">
-              <div class="col-md-3">{{ contractService.notPaidValue(member.distribution, member.user, contract) }}</div>
+              <div class="col-md-3">
+                {{
+                  [member.distribution, member.user, contract]
+                    | propertyPipe: contractService.notPaidValue.bind(contractService)
+                }}
+              </div>
               <div class="col-md-3">
                 {{
                   stringUtil.numberToMoney(contractService.expensesContributions(contract, member.user).user.cashback)
                 }}
               </div>
-              <div class="col-md-3">{{ contractService.getMemberExpensesSum(member.user, contract) }}</div>
-              <div class="col-md-3">{{ contractService.getMemberBalance(member.user, contract) }}</div>
+              <div class="col-md-3">
+                {{ [member.user, contract] | propertyPipe: contractService.getMemberExpensesSum.bind(contractService) }}
+              </div>
+              <div class="col-md-3">
+                {{ [member.user, contract] | propertyPipe: contractService.getMemberBalance.bind(contractService) }}
+              </div>
             </div>
           </div>
         </div>
