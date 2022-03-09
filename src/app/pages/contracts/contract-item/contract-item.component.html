@@ -88,7 +88,7 @@
               <label class="label" for="input-nortan-team">Time:</label>
               <input
                 nbInput
-                [ngModel]="teamService.idToAbbreviation(invoice.nortanTeam)"
+                [ngModel]="[invoice.nortanTeam] | propertyPipe: teamService.idToAbbreviation.bind(teamService)"
                 #nortanTeam="ngModel"
                 id="input-nortan-team"
                 name="nortan-team"
@@ -107,7 +107,7 @@
               <label class="label" for="input-sector">Setor:</label>
               <input
                 nbInput
-                [ngModel]="teamService.idToSectorComposedName(invoice.sector)"
+                [ngModel]="[invoice.sector] | propertyPipe: teamService.idToSectorComposedName.bind(teamService)"
                 #sector="ngModel"
                 id="input-sector"
                 name="sector"

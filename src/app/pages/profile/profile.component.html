@@ -439,8 +439,10 @@
                   >
                     <div class="row irow">
                       <div class="col">
-                        {{ team.name }} - {{ teamService.idToSector(team.members[0].sector).abrev }} -
-                        {{ teamService.idToSector(team.members[0].sector).name }}
+                        {{ team.name }} -
+                        {{ [team.members[0].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev' }}
+                        -
+                        {{ [team.members[0].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name' }}
                       </div>
                     </div>
                   </nb-list-item>
@@ -508,7 +510,9 @@
                 <label class="label" for="input-expertise">Perfis de atuação por setor:</label>
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
-                    [tabTitle]="teamService.idToSector(user.expertise[idx].sector).abrev"
+                    [tabTitle]="
+                      [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev'
+                    "
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
                     <label class="label" for="input-shortExpertise">Especialidade:</label>
@@ -518,8 +522,8 @@
                       #shortExpertise="ngModel"
                       id="input-shortExpertise"
                       name="shortExpertise"
-                      placeholder="Descreva a sua especialidade na {{
-                        teamService.idToSector(user.expertise[idx].sector).name
+                      placeholder="Descreva a sua especialidade no {{
+                        [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
                       }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
                       fullWidth
                       fieldSize="large"
@@ -541,7 +545,11 @@
                         class="caption status-danger"
                         *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length == 0"
                       >
-                        A especialidade em {{ teamService.idToSector(user.expertise[idx].sector).abrev }} é obrigatória!
+                        A especialidade em
+                        {{
+                          [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev'
+                        }}
+                        é obrigatória!
                       </p>
                       <p
                         class="caption status-danger"
@@ -559,8 +567,8 @@
                       #expertise="ngModel"
                       id="input-expertise"
                       name="expertise"
-                      placeholder="Descreva o seu perfil de atuação na {{
-                        teamService.idToSector(user.expertise[idx].sector).name
+                      placeholder="Descreva o seu perfil de atuação no {{
+                        [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
                       }}"
                       fullWidth
                       fieldSize="large"
@@ -582,8 +590,11 @@
                         class="caption status-danger"
                         *ngIf="expertise.errors?.required && user.expertise[idx].text.length == 0"
                       >
-                        O perfil de atuação na {{ teamService.idToSector(user.expertise[idx].sector).name }} é
-                        obrigatório!
+                        O perfil de atuação no
+                        {{
+                          [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
+                        }}
+                        é obrigatório!
                       </p>
                       <p
                         class="caption status-danger"
