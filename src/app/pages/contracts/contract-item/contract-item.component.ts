@@ -38,6 +38,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() iContract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  iContractIdx!: string;
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
@@ -235,6 +236,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contract = cloneDeep(this.iContract);
+    this.iContractIdx = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     if (this.contract.ISS) {
       if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0) this.options.hasISS = false;
@@ -459,30 +461,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         distribution: '0,00',
       }
     );
-  }
-
-  expenseTypesSum(wantsClient = false): ExpenseTypesSum[] {
-    const result = this.contract.expenses.reduce(
-      (sum: ExpenseTypesSum[], expense) => {
-        if (
-          expense.source &&
-          (wantsClient
-            ? this.userService.isEqual(expense.source, CLIENT._id)
-            : !this.userService.isEqual(expense.source, CLIENT._id))
-        ) {
-          const idx = sum.findIndex((el) => el.type == expense.type);
-          sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
-        }
-        return sum;
-      },
-      this.EXPENSE_OPTIONS.map((type) => ({
-        type: type,
-        value: '0,00',
-      }))
-    );
-    const total = result.reduce((sum, expense) => this.stringUtil.sumMoney(sum, expense.value), '0,00');
-    result.push({ type: 'TOTAL', value: total });
-    return result;
   }
 
   expenseSourceSum(): ExpenseSourceSum[] {

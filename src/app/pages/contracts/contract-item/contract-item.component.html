@@ -935,7 +935,13 @@
           <div class="col-md-6">
             <div class="form-control-group">
               <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-                <nb-list-item *ngFor="let expense of expenseTypesSum(); let i = index; trackBy: utils.trackByIndex">
+                <nb-list-item
+                  *ngFor="
+                    let expense of this.contractService.expenseTypesSum(false, contract);
+                    let i = index;
+                    trackBy: utils.trackByIndex
+                  "
+                >
                   <div class="row irow">
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
@@ -967,7 +973,13 @@
           <div class="col-12" style="text-align: center">
             <div class="form-control-group">
               <nb-list style="width: 100%; padding: 10px 0; text-align: center">
-                <nb-list-item *ngFor="let expense of expenseTypesSum(true); let i = index; trackBy: utils.trackByIndex">
+                <nb-list-item
+                  *ngFor="
+                    let expense of contractService.expenseTypesSum(true, contract);
+                    let i = index;
+                    trackBy: utils.trackByIndex
+                  "
+                >
                   <div class="row irow">
                     <div class="col-md-6">
                       <b>{{ expense.type }}</b>
@@ -981,6 +993,19 @@
         </div>
       </nb-tab>
     </nb-tabset>
+    <div class="row">
+      <div class="col-auto">
+        <label class="label-divider">Gráficos</label>
+      </div>
+      <div class="col">
+        <hr />
+      </div>
+      <div class="col-12">
+        <nb-card>
+          <ngx-echarts-bar [contractId]="iContractIdx"></ngx-echarts-bar>
+        </nb-card>
+      </div>
+    </div>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <nb-list>

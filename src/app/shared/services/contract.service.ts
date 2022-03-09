@@ -49,6 +49,11 @@ export interface ExpenseParts {
   comission: number;
 }
 
+export interface ExpenseTypesSum {
+  type: string;
+  value: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -58,6 +63,7 @@ export class ContractService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   edited$ = new Subject<void>();
+  EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
 
   constructor(
     private http: HttpClient,
@@ -466,5 +472,32 @@ export class ContractService implements OnDestroy {
       return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
     }
     return false;
+  }
+
+  expenseTypesSum(wantsClient = false, contract: Contract): ExpenseTypesSum[] {
+    const result = contract.expenses.reduce(
+      (sum: ExpenseTypesSum[], expense: ContractExpense) => {
+        if (
+          expense.source &&
+          (wantsClient
+            ? this.userService.isEqual(expense.source, CLIENT._id)
+            : !this.userService.isEqual(expense.source, CLIENT._id))
+        ) {
+          const idx = sum.findIndex((el) => el.type == expense.type);
+          sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+        }
+        return sum;
+      },
+      this.EXPENSE_OPTIONS.map((type) => ({
+        type: type,
+        value: '0,00',
+      }))
+    );
+    const total = result.reduce(
+      (sum: string, expense: ExpenseTypesSum) => this.stringUtil.sumMoney(sum, expense.value),
+      '0,00'
+    );
+    result.push({ type: 'TOTAL', value: total });
+    return result;
   }
 }
