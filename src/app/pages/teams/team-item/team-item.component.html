@@ -218,8 +218,8 @@
             <div class="col-5 col-md-6">
               <nb-user
                 size="giant"
-                [name]="userService.idToName(member.user)"
-                [picture]="userService.idToProfilePicture(member.user)"
+                [name]="[member.user] | propertyPipe: userService.idToName.bind(userService)"
+                [picture]="[member.user] | propertyPipe: userService.idToProfilePicture.bind(userService)"
               ></nb-user>
             </div>
             <div class="col-5 col-md-5">
