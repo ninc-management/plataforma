@@ -4,6 +4,6 @@
   [theme]="currentTheme"
   [options]="options"
   (chartInit)="onChartInit($event)"
-  (chartDataZoom)="onDataZoom()"
-  class="echart time-series-dashboard"
+  [merge]="updateOptions"
+  class="echart echart-expenses"
 ></div>

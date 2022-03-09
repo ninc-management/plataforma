@@ -48,6 +48,12 @@ import {
 } from '@azure/msal-browser';
 import { interceptorProviders } from './shared/interceptors/interceptors';
 
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import langPTBR from 'app/shared/langPT-BR';
+
+echarts.registerLocale('PT-BR', langPTBR);
+
 const config: SocketIoConfig = {
   url: '',
   options: {
@@ -146,6 +152,7 @@ registerLocaleData(ptBr);
     AngularFireStorageModule,
     SocketIoModule.forRoot(config),
     MsalModule,
+    NgxEchartsModule.forRoot({ echarts }),
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'pt' },
