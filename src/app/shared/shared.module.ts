@@ -32,6 +32,7 @@ import { TeamExpensesComponent } from './components/teams/team-expenses/team-exp
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
+import { PropertyPipe } from './pipes/property-pipe.pipe';
 
 @NgModule({
   imports: [
@@ -62,6 +63,7 @@ import { UserTransactionComponent } from './components/user-transaction/user-tra
     TeamExpensesComponent,
     TeamExpenseItemComponent,
     UserTransactionComponent,
+    PropertyPipe,
   ],
   declarations: [
     BrMaskDirective,
@@ -80,6 +82,7 @@ import { UserTransactionComponent } from './components/user-transaction/user-tra
     TeamExpensesComponent,
     TeamExpenseItemComponent,
     UserTransactionComponent,
+    PropertyPipe,
   ],
 })
 export class SharedModule {}
