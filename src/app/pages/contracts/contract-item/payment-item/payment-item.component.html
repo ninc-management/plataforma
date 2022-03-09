@@ -494,7 +494,7 @@
               success: total === payment.value && total !== '0'
             }"
           >
-            {{ stringUtil.toPercentage(total, payment.value) }}
+            {{ [total, payment.value] | propertyPipe: stringUtil.toPercentage.bind(stringUtil) }}
           </div>
           <div class="col-md-1"></div>
         </div>

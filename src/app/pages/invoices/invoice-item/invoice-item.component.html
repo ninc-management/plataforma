@@ -662,7 +662,7 @@
         <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{ [member.user] | propertyPipe: userService.idToName.bind(userService)  }}
+              {{ [member.user] | propertyPipe: userService.idToName.bind(userService) }}
             </div>
             <div class="col-10 col-md-5">
               <nb-select
@@ -1685,7 +1685,7 @@
                 success: options.stageTotal === tempInvoice.value && options.stageTotal !== '0'
               }"
             >
-              {{ stringUtil.toPercentage(options.stageTotal, tempInvoice.value) }}
+              {{ [options.stageTotal, tempInvoice.value] | propertyPipe: stringUtil.toPercentage.bind(stringUtil) }}
             </div>
             <div class="col-md-1"></div>
           </div>
