@@ -179,5 +179,10 @@
       "statusBarItem.remoteBackground": "#FFA000"
     }
   },
-  "materialTheme.accent": "Yellow"
+  "materialTheme.accent": "Yellow",
+  "javascript.referencesCodeLens.enabled": true,
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.referencesCodeLens.showOnAllFunctions": true,
+  "typescript.implementationsCodeLens.enabled": true,
+  "javascript.referencesCodeLens.showOnAllFunctions": true
 }
