@@ -777,14 +777,12 @@ export class PdfService {
             bold: true,
             alignment: 'center',
             border: [false, true, true, true],
-            fontSize: 8,
           },
           {
             text: 'VALOR',
             bold: true,
             alignment: 'center',
             border: [true, true, false, true],
-            fontSize: 8,
           },
         ];
       return [
@@ -793,35 +791,30 @@ export class PdfService {
           bold: true,
           alignment: 'center',
           border: [false, true, true, true],
-          fontSize: 8,
         },
         {
           text: 'QUANTIDADE',
           bold: true,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: 'UNIDADE',
           bold: true,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: 'VALOR',
           bold: true,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: 'TOTAL',
           bold: true,
           alignment: 'center',
           border: [true, true, false, true],
-          fontSize: 8,
         },
       ];
     };
@@ -829,15 +822,15 @@ export class PdfService {
     const products = invoice.products.map((product) => {
       const name: any[] = [
         {
-          fontSize: 8,
           text: product.name,
+          bold: true,
         },
       ];
       if (product.subproducts.length > 0)
         name.push({
           stack: product.subproducts.map((subproduct) => subproduct),
           alignment: 'left',
-          fontSize: 6,
+          fontSize: 9,
         });
       if (invoice.productListType == '1')
         return [
@@ -850,7 +843,6 @@ export class PdfService {
             text: 'R$ ' + product.value,
             alignment: 'center',
             border: [true, true, false, true],
-            fontSize: 8,
           },
         ];
       return [
@@ -858,31 +850,26 @@ export class PdfService {
           stack: name,
           alignment: 'left',
           border: [false, true, true, true],
-          fontSize: 8,
         },
         {
           text: product.amount,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: product.unit,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: product.value,
           alignment: 'center',
           border: [true, true, true, true],
-          fontSize: 8,
         },
         {
           text: 'R$ ' + product.total,
           alignment: 'center',
           border: [true, true, false, true],
-          fontSize: 8,
         },
       ];
     });
@@ -896,14 +883,12 @@ export class PdfService {
             alignment: 'right',
             border: [false, true, true, true],
             colSpan: invoice.productListType == '1' ? 1 : 3,
-            fontSize: 8,
             bold: true,
           },
           {
             text: 'R$ ' + invoice.discount,
             alignment: 'center',
             border: [true, true, false, true],
-            fontSize: 8,
             bold: true,
           },
         ];
@@ -923,14 +908,12 @@ export class PdfService {
           alignment: 'right',
           border: [false, true, true, true],
           colSpan: invoice.productListType == '1' ? 1 : 3,
-          fontSize: 8,
           bold: true,
         },
         {
           text: 'R$ ' + total,
           alignment: 'center',
           border: [true, true, false, true],
-          fontSize: 8,
           bold: true,
         },
       ];
