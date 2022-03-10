@@ -9,6 +9,14 @@ RUN install-packages make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpa
     install-packages ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
+RUN curl -Os https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-x86_64-100.5.2.deb && \
+    install-packages ./mongodb-database-tools-ubuntu2004-x86_64-100.5.2.deb && \
+    rm mongodb-database-tools-ubuntu2004-x86_64-100.5.2.deb
+
+RUN curl -Os https://downloads.mongodb.com/compass/mongodb-mongosh_1.2.3_amd64.deb && \
+    install-packages ./mongodb-mongosh_1.2.3_amd64.deb && \
+    rm mongodb-mongosh_1.2.3_amd64.deb
+
 USER gitpod
 
 # Instala codecov
