@@ -949,22 +949,15 @@ export class PdfService {
       layout: this.noSideBorderTable('#BFBFBF', '#476471'),
     });
 
+    pdf.add(pdf.ln(1));
+
     pdf.add({
+      text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
+      bold: true,
       style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [
-            {
-              text: 'PARCELAMENTO DE HONORÁRIOS PELAS ETAPAS DO ' + invoice.invoiceType.toUpperCase() + ':',
-              bold: true,
-            },
-          ],
-        ],
-      },
-      layout: this.noBorderTable('#BFBFBF'),
     });
+
+    pdf.add(pdf.ln(1));
 
     const stages = invoice.stages.map((stage) => {
       return [
