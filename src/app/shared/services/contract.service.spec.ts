@@ -114,9 +114,9 @@ describe('ContractService', () => {
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = '0';
+    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
     tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-1/2021-NRT/DPC-00';
+    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '1.000,00';
     tmpInvoice.trello = true;
@@ -163,9 +163,10 @@ describe('ContractService', () => {
     let tmpContract = new Contract();
     tmpContract._id = '0';
     tmpContract.invoice = mockedInvoices[0];
-    tmpContract.liquid = '732,00';
+    tmpContract.liquid = '676,00';
     tmpContract.balance = '800,00';
-    tmpContract.notPaid = '915,00';
+    tmpContract.notPaid = '845,00';
+    tmpContract.value = '1.000,00';
     let tmpExpense = new ContractExpense();
     tmpExpense.author = mockedUsers[0];
     tmpExpense.source = mockedUsers[0];
@@ -216,6 +217,7 @@ describe('ContractService', () => {
     tmpContract.liquid = '1.626,80';
     tmpContract.balance = '0,00';
     tmpContract.notPaid = '796,80';
+    tmpContract.value = '2.000,00';
     tmpContract.invoice = mockedInvoices[1];
     let tmpReceipt = new ContractReceipt();
     tmpReceipt.value = '1.000,00';
@@ -490,9 +492,9 @@ describe('ContractService', () => {
 
   it('netValueBalance should work', () => {
     expect(service.netValueBalance(mockedInvoices[0].team[0].distribution, mockedContracts[0], mockedUsers[0])).toBe(
-      '1.439,20'
+      '1.405,60'
     );
-    expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('292,80');
+    expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('270,40');
     expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('976,08');
     expect(service.netValueBalance(mockedInvoices[1].team[1].distribution, mockedContracts[1], mockedUsers[1])).toBe(
       '650,72'
@@ -511,12 +513,12 @@ describe('ContractService', () => {
   it('percentageToReceive should work', () => {
     expect(
       service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
-    ).toBe('83,92');
-    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('17,07');
-    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('44,38');
+    ).toBe('83,87');
+    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('16,13');
+    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('42,60');
     expect(
       service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
-    ).toBe('55,63');
+    ).toBe('53,40');
   });
 
   it('receivedValue should work', () => {
@@ -528,9 +530,9 @@ describe('ContractService', () => {
 
   it('notPaidValue should work', () => {
     expect(service.notPaidValue(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])).toBe(
-      '1.439,20'
+      '1.405,60'
     );
-    expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('292,80');
+    expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('270,40');
     expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('353,58');
     expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
       '443,22'
