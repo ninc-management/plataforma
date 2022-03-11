@@ -170,17 +170,7 @@ export class ContractService implements OnDestroy {
   }
 
   balance(contract: Contract): string {
-    const paid = this.toNetValue(
-      this.stringUtil.numberToMoney(
-        contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
-          return accumulator;
-        }, 0)
-      ),
-      this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract)
-    );
-
+    const paid = this.paidValue(contract);
     const expenseContribution = this.expensesContributions(contract);
     return this.stringUtil.numberToMoney(
       this.stringUtil.round(
@@ -303,9 +293,16 @@ export class ContractService implements OnDestroy {
 
   percentageToReceive(distribution: string, user: User | string | undefined, contract: Contract, decimals = 2): string {
     let sum = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(contract.notPaid) + this.stringUtil.moneyToNumber(contract.balance)
+      this.stringUtil.moneyToNumber(
+        this.toNetValue(
+          this.subtractComissions(contract.value, contract),
+          this.utils.nfPercentage(contract),
+          this.utils.nortanPercentage(contract)
+        )
+      ) + this.getComissionsSum(contract)
     );
-    if (contract.balance[0] == '-') sum = contract.notPaid;
+    sum = this.stringUtil.subtractMoney(sum, this.paidValue(contract));
+    if (contract.balance[0] !== '-') sum = this.stringUtil.sumMoney(sum, contract.balance);
     return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 
@@ -319,6 +316,19 @@ export class ContractService implements OnDestroy {
         return sum;
       }, 0);
     return this.stringUtil.numberToMoney(received);
+  }
+
+  paidValue(contract: Contract): string {
+    return this.toNetValue(
+      this.stringUtil.numberToMoney(
+        contract.receipts.reduce((accumulator: number, recipt: any) => {
+          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          return accumulator;
+        }, 0)
+      ),
+      this.utils.nfPercentage(contract),
+      this.utils.nortanPercentage(contract)
+    );
   }
 
   notPaidValue(distribution: string, user: User | string | undefined, contract: Contract): string {

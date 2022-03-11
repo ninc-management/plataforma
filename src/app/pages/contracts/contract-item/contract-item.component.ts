@@ -402,16 +402,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.options.notaFiscal = this.utils.nfPercentage(this.contract);
     this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
-    this.options.paid = this.contractService.toNetValue(
-      this.stringUtil.numberToMoney(
-        this.contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
-          return accumulator;
-        }, 0)
-      ),
-      this.options.notaFiscal,
-      this.options.nortanPercentage
-    );
+    this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(this.contract.value, this.options.notaFiscal, this.options.nortanPercentage)

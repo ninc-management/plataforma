@@ -85,16 +85,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.utils.nfPercentage(contract),
                     this.utils.nortanPercentage(contract)
                   );
-                  const paid = this.contractService.toNetValue(
-                    this.stringUtil.numberToMoney(
-                      contract.receipts.reduce((accumulator: number, recipt: any) => {
-                        if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
-                        return accumulator;
-                      }, 0)
-                    ),
-                    nf,
-                    nortan
-                  );
+                  const paid = this.contractService.paidValue(contract);
                   contract.notPaid = this.stringUtil.numberToMoney(
                     this.stringUtil.moneyToNumber(this.contractService.toNetValue(this.contract.value, nf, nortan)) -
                       this.stringUtil.moneyToNumber(paid)
