@@ -784,10 +784,9 @@ export class PdfService {
             {
               text: [
                 {
-                  text: 'VALOR DO ' + invoice.invoiceType.toUpperCase() + ': R$ ' + invoice.value,
+                  text: 'Após ler as etapas de execução proposta, conheça os produtos e nossa proposta de valor.',
                   bold: true,
                 },
-                '  (' + extensoValue + ')',
               ],
             },
           ],
