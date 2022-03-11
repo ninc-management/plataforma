@@ -220,6 +220,20 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             startWith(true)
           ),
         });
+        this.METRICS.push({
+          title: 'Valor a receber',
+          tooltip: 'Soma dos seus saldos e cashback de cada contrato que você faz parte',
+          value: this.metricsService.userReceivableValue(user._id).pipe(
+            map((userReceivable) => {
+              return 'R$ ' + this.stringUtil.numberToMoney(userReceivable.value);
+            })
+          ),
+          description: of(''),
+          loading: this.metricsService.userReceivableValue(user._id).pipe(
+            map((userReceivable) => userReceivable == undefined),
+            startWith(true)
+          ),
+        });
       }
     });
   }
