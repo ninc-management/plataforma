@@ -9,12 +9,11 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { take, map, startWith, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { take, map, startWith, takeUntil, skipWhile } from 'rxjs/operators';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { DepartmentService } from 'app/shared/services/department.service';
 import { startOfMonth, subMonths } from 'date-fns';
 
 interface MetricItem {
@@ -49,8 +48,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private renderer: Renderer2,
     private metricsService: MetricsService,
     private userService: UserService,
-    private stringUtil: StringUtilService,
-    private departmentService: DepartmentService
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnDestroy(): void {
@@ -209,6 +207,20 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             ),
           loading: this.metricsService.receivedValueNortan(monthStart, today, user._id).pipe(
             map((x) => x == undefined),
+            startWith(true)
+          ),
+        });
+        this.METRICS.push({
+          title: 'Valor a receber',
+          tooltip: 'Soma dos seus saldos e cashback de cada contrato que você faz parte',
+          value: this.metricsService.userReceivableValue(user._id).pipe(
+            map((userReceivable) => {
+              return 'R$ ' + this.stringUtil.numberToMoney(userReceivable.value);
+            })
+          ),
+          description: of(''),
+          loading: this.metricsService.userReceivableValue(user._id).pipe(
+            map((userReceivable) => userReceivable == undefined),
             startWith(true)
           ),
         });
