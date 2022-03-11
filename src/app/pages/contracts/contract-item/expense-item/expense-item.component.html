@@ -184,7 +184,7 @@
         <div class="form-control-group">
           <label class="label" for="input-source">Fonte de pagamento:</label>
           <nb-completer
-            [(ngModel)]="sourceSearch"
+            [(ngModel)]="expense.type == expenseTypes.COMISSAO ? contract_balance : sourceSearch"
             (selected)="expense.source = $event; utils.forceValidatorUpdate(value)"
             inputName="sourceListCompleter"
             #sourceList="ngModel"
@@ -210,6 +210,7 @@
                 : 'basic'
             "
             [attr.aria-invalid]="sourceList.invalid && sourceList.touched ? true : null"
+            [disabled]="expense.type == expenseTypes.COMISSAO ? true : false"
           ></nb-completer>
         </div>
       </div>
