@@ -182,6 +182,9 @@ export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
   prospectedBy!: Ref<User>;
 
+  @prop()
+  pdfPageBreak?: boolean;
+
   model = false;
   contractorName = '';
   fullName = '';

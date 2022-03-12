@@ -1091,7 +1091,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12">
+        <div class="col-6">
           <div class="form-control-group">
             <label class="label" for="input-product-type" style="display: flex; margin-top: 4px">Tipo da lista</label>
             <nb-radio-group
@@ -1107,6 +1107,24 @@
             </nb-radio-group>
           </div>
         </div>
+
+        <div class="col-6">
+          <div class="form-control-group">
+            <label class="label" for="input-pdf-page-break" style="display: flex; margin-top: 4px">
+              Quebra de página:
+            </label>
+            <nb-checkbox
+              [(ngModel)]="tempInvoice.pdfPageBreak"
+              #pdfPageBreak="ngModel"
+              name="pdfPageBreak"
+              id="input-pdf-page-break"
+              [status]="pdfPageBreak.value ? 'success' : 'basic'"
+            >
+              Adicionar quebra de página antes da tabela de valores
+            </nb-checkbox>
+          </div>
+        </div>
+
         <div
           [ngClass]="{
             'col-12': true,
