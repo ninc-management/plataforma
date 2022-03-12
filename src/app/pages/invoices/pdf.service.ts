@@ -1049,7 +1049,6 @@ export class PdfService {
         ],
       },
       layout: this.noSideBorderTable('#BFBFBF', '#476471'),
-      pageBreak: 'after',
     });
 
     if (invoice.materials.length > 0) {
@@ -1244,6 +1243,7 @@ export class PdfService {
     pdf.add({
       text: [{ text: 'Nortan Engenharia', bold: true }, ', Solução Integrada em Projetos.'],
       style: 'insideText',
+      pageBreak: 'after',
     });
 
     pdf.add({
