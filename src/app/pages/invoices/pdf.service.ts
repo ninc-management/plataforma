@@ -204,6 +204,11 @@ export class PdfService {
     };
   }
 
+  pageBreak(invoice: Invoice): string {
+    if (invoice.pdfPageBreak) return 'before';
+    return '';
+  }
+
   async generate(invoice: Invoice, preview = false, openPdf = false): Promise<void> {
     const pdf = new PdfMakeWrapper();
 
@@ -741,6 +746,7 @@ export class PdfService {
       text: 'Valores:',
       bold: true,
       style: 'insideText',
+      pageBreak: this.pageBreak(invoice),
     });
 
     pdf.add(pdf.ln(1));
