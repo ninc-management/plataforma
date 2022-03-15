@@ -3,9 +3,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 type GetElementType<T extends any[]> = T extends (infer U)[] ? U : never;
 
 @Pipe({
-  name: 'propertyPipe',
+  name: 'transformPipe',
 })
-export class PropertyPipe implements PipeTransform {
+export class TransformPipe implements PipeTransform {
   transform<F extends (...args: any[]) => ReturnType<F>>(
     fnArguments: Parameters<F>,
     fnReference: F,

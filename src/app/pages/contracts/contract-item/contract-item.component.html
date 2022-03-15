@@ -88,7 +88,7 @@
               <label class="label" for="input-nortan-team">Time:</label>
               <input
                 nbInput
-                [ngModel]="[invoice.nortanTeam] | propertyPipe: teamService.idToAbbreviation.bind(teamService)"
+                [ngModel]="[invoice.nortanTeam] | transformPipe: teamService.idToAbbreviation.bind(teamService)"
                 #nortanTeam="ngModel"
                 id="input-nortan-team"
                 name="nortan-team"
@@ -107,7 +107,7 @@
               <label class="label" for="input-sector">Setor:</label>
               <input
                 nbInput
-                [ngModel]="[invoice.sector] | propertyPipe: teamService.idToSectorComposedName.bind(teamService)"
+                [ngModel]="[invoice.sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService)"
                 #sector="ngModel"
                 id="input-sector"
                 name="sector"
@@ -286,7 +286,7 @@
               <label class="label" for="input-updated">Última atualização:</label>
               <input
                 nbInput
-                [ngModel]="[contract.lastUpdate] | propertyPipe: utils.formatDate.bind(utils)"
+                [ngModel]="[contract.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
                 #updated="ngModel"
                 id="input-updated"
                 name="updated"
@@ -543,7 +543,7 @@
               <div class="row irow totalRow">
                 <div class="col-2">
                   Restante:
-                  {{ [contract.liquid, teamTotal.netValue] | propertyPipe: stringUtil.subtractMoney.bind(stringUtil) }}
+                  {{ [contract.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil) }}
                 </div>
                 <div class="col-3" style="text-align: right">Total:</div>
                 <div
@@ -759,7 +759,7 @@
             <b>
               {{
                 [stringUtil.removePercentage(contract.value, contract.ISS), contract]
-                  | propertyPipe: contractService.subtractComissions.bind(contractService)
+                  | transformPipe: contractService.subtractComissions.bind(contractService)
               }}
             </b>
           </p>
@@ -821,7 +821,7 @@
       <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: utils.trackByIndex" class="noPadding">
         <div class="row irow">
           <div class="col-md-12 d-flex">
-            <div class="col-md-3">{{ [member.user] | propertyPipe: userService.idToName.bind(userService) }}</div>
+            <div class="col-md-3">{{ [member.user] | transformPipe: userService.idToName.bind(userService) }}</div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
                 {{
@@ -829,43 +829,45 @@
                     contractService.netValueBalance(member.distribution, contract, member.user),
                     options.notaFiscal,
                     options.nortanPercentage
-                  ] | propertyPipe: contractService.toGrossValue.bind(contractService)
+                  ] | transformPipe: contractService.toGrossValue.bind(contractService)
                 }}
               </div>
               <div class="col-md-3">
                 {{
                   [member.distribution, contract, member.user]
-                    | propertyPipe: contractService.netValueBalance.bind(contractService)
+                    | transformPipe: contractService.netValueBalance.bind(contractService)
                 }}
               </div>
               <div class="col-md-3">
                 {{
                   [member.distribution, member.user, contract]
-                    | propertyPipe: contractService.percentageToReceive.bind(contractService)
+                    | transformPipe: contractService.percentageToReceive.bind(contractService)
                 }}
               </div>
               <div class="col-md-3">
-                {{ [member.user, contract] | propertyPipe: contractService.receivedValue.bind(contractService) }}
+                {{ [member.user, contract] | transformPipe: contractService.receivedValue.bind(contractService) }}
               </div>
             </div>
             <div class="col-md-4 d-flex">
               <div class="col-md-3">
                 {{
                   [member.distribution, member.user, contract]
-                    | propertyPipe: contractService.notPaidValue.bind(contractService)
+                    | transformPipe: contractService.notPaidValue.bind(contractService)
                 }}
               </div>
               <div class="col-md-3">
                 {{
                   [contractService.expensesContributions(contract, member.user).user.cashback]
-                    | propertyPipe: stringUtil.numberToMoney.bind(stringUtil)
+                    | transformPipe: stringUtil.numberToMoney.bind(stringUtil)
                 }}
               </div>
               <div class="col-md-3">
-                {{ [member.user, contract] | propertyPipe: contractService.getMemberExpensesSum.bind(contractService) }}
+                {{
+                  [member.user, contract] | transformPipe: contractService.getMemberExpensesSum.bind(contractService)
+                }}
               </div>
               <div class="col-md-3">
-                {{ [member.user, contract] | propertyPipe: contractService.getMemberBalance.bind(contractService) }}
+                {{ [member.user, contract] | transformPipe: contractService.getMemberBalance.bind(contractService) }}
               </div>
             </div>
           </div>
@@ -1127,8 +1129,8 @@
                   <div class="col-auto">
                     <nb-user
                       [onlyPicture]="true"
-                      [name]="[expense.author] | propertyPipe: userService.idToName.bind(userService)"
-                      [picture]="[expense.author] | propertyPipe: userService.profilePicture.bind(userService)"
+                      [name]="[expense.author] | transformPipe: userService.idToName.bind(userService)"
+                      [picture]="[expense.author] | transformPipe: userService.profilePicture.bind(userService)"
                     ></nb-user>
                   </div>
                   <div class="col-auto">#{{ +i + 1 }}</div>
@@ -1140,7 +1142,7 @@
                   <div class="col-md-auto">
                     <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
                     <span style="vertical-align: 0.1em">
-                      {{ [expense.created] | propertyPipe: utils.formatDate.bind(utils) }}
+                      {{ [expense.created] | transformPipe: utils.formatDate.bind(utils) }}
                     </span>
                   </div>
                 </a>

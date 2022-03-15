@@ -407,7 +407,7 @@
                 <nb-list style="width: 100%; padding: 10px 0">
                   <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
                     <div class="row irow">
-                      <div class="col">{{ [AERuser] | propertyPipe: userService.idToName.bind(userService) }}</div>
+                      <div class="col">{{ [AERuser] | transformPipe: userService.idToName.bind(userService) }}</div>
                       <div class="col-auto" style="text-align: right" *ngIf="isEditing">
                         <nb-icon
                           class="xIcon"
@@ -440,9 +440,9 @@
                     <div class="row irow">
                       <div class="col">
                         {{ team.name }} -
-                        {{ [team.members[0].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev' }}
+                        {{ [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }}
                         -
-                        {{ [team.members[0].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name' }}
+                        {{ [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
                       </div>
                     </div>
                   </nb-list-item>
@@ -511,7 +511,7 @@
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
                     [tabTitle]="
-                      [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev'
+                      [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
                     "
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
@@ -523,7 +523,7 @@
                       id="input-shortExpertise"
                       name="shortExpertise"
                       placeholder="Descreva a sua especialidade no {{
-                        [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
+                        [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
                       }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
                       fullWidth
                       fieldSize="large"
@@ -547,7 +547,7 @@
                       >
                         A especialidade em
                         {{
-                          [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'abrev'
+                          [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
                         }}
                         é obrigatória!
                       </p>
@@ -568,7 +568,7 @@
                       id="input-expertise"
                       name="expertise"
                       placeholder="Descreva o seu perfil de atuação no {{
-                        [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
+                        [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
                       }}"
                       fullWidth
                       fieldSize="large"
@@ -592,7 +592,7 @@
                       >
                         O perfil de atuação no
                         {{
-                          [user.expertise[idx].sector] | propertyPipe: teamService.idToSector.bind(teamService):'name'
+                          [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
                         }}
                         é obrigatório!
                       </p>

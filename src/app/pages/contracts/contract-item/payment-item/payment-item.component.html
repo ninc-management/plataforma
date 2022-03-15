@@ -221,7 +221,7 @@
           <label class="label" for="input-updated">Última atualização:</label>
           <input
             nbInput
-            [ngModel]="[payment.lastUpdate] | propertyPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[payment.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
             #updated="ngModel"
             id="input-updated"
             name="updated"
@@ -384,7 +384,7 @@
       <nb-list-item *ngFor="let userPayment of payment.team; let i = index; trackBy: utils.trackByIndex">
         <div class="row paymentRow">
           <div class="col-12 col-md-4">
-            {{ [userPayment.user] | propertyPipe: userService.idToName.bind(userService) }}
+            {{ [userPayment.user] | transformPipe: userService.idToName.bind(userService) }}
             <ng-container>
               <p class="caption status-danger" *ngIf="memberValue.errors?.overpaid && memberValue.invalid">
                 O valor pago é superior ao saldo a receber no contrato (R$ {{ userNotPaidValue(payment.team[i]) }})!
@@ -494,7 +494,7 @@
               success: total === payment.value && total !== '0'
             }"
           >
-            {{ [total, payment.value] | propertyPipe: stringUtil.toPercentage.bind(stringUtil) }}
+            {{ [total, payment.value] | transformPipe: stringUtil.toPercentage.bind(stringUtil) }}
           </div>
           <div class="col-md-1"></div>
         </div>
