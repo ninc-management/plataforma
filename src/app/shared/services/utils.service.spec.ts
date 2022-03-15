@@ -202,4 +202,10 @@ describe('UtilsService', () => {
     service.mockDocument({ documentElement: { clientWidth: 900 } });
     expect(service.isPhone()).toBe(false);
   });
+
+  it('valueSort should work', () => {
+    expect(service.valueSort(1, '1', '2')).toBe('-1');
+    expect(service.valueSort(1, '2', '1')).toBe('1');
+    expect(service.valueSort(1, '1', '1')).toBe('0');
+  });
 });
