@@ -82,11 +82,13 @@ describe('InvoiceService', () => {
     tmpUser.fullName = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
+    tmpUser.profilePicture = 'pic1@pic.com';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
     tmpUser.fullName = 'Test2';
     tmpUser.email = 'test2@te.st';
     tmpUser.phone = '123456';
+    tmpUser.profilePicture = 'pic2@pic.com';
     mockedUsers.push(cloneDeep(tmpUser));
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
@@ -314,6 +316,14 @@ describe('InvoiceService', () => {
     expect(service.idToCode(expectedInvoices[0])).toEqual('test');
     expect(service.idToCode('1')).toEqual('test1');
     expect(service.idToCode(expectedInvoices[1])).toEqual('test1');
+  });
+
+  baseTest('idToProfilePicture should work', (expectedInvoices: Invoice[]) => {
+    expect(service.idToProfilePicture(undefined)).toEqual('');
+    expect(service.idToProfilePicture('0')).toEqual('pic1@pic.com');
+    expect(service.idToProfilePicture(expectedInvoices[0])).toEqual('pic1@pic.com');
+    expect(service.idToProfilePicture('1')).toEqual('pic2@pic.com');
+    expect(service.idToProfilePicture(expectedInvoices[1])).toEqual('pic2@pic.com');
   });
 
   baseTest('isInvoiceAuthor should work', (expectedInvoices: Invoice[]) => {
