@@ -12,6 +12,18 @@
           nbTooltipPlacement="top"
           nbTooltipStatus="info"
         ></nb-icon>
+        <a
+          *ngIf="item.title == 'Valor a receber'"
+          (click)="openReceivablesDialog()"
+          style="text-decoration: none; display: contents; cursor: pointer"
+        >
+          <nb-icon
+            status="info"
+            icon="diagonal-arrow-right-up"
+            pack="eva"
+            [options]="{ animation: { type: 'pulse' } }"
+          ></nb-icon>
+        </a>
       </div>
       <div
         *ngIf="item.loading | async; else metric"
