@@ -205,11 +205,6 @@ export class PdfService {
     };
   }
 
-  pageBreak(invoice: Invoice): string {
-    if (invoice.pdfPageBreak) return 'before';
-    return '';
-  }
-
   async generate(invoice: Invoice, preview = false, openPdf = false): Promise<void> {
     switch (this.teamService.idToAbbreviation(invoice.nortanTeam)) {
       case 'NPJ':
@@ -773,7 +768,7 @@ export class PdfService {
       text: 'Valores:',
       bold: true,
       style: 'insideText',
-      pageBreak: this.pageBreak(invoice),
+      pageBreak: invoice.valuesTablePageBreak ? 'before' : '',
     });
 
     pdf.add(pdf.ln(1));
