@@ -1,5 +1,14 @@
 import { NgModule } from '@angular/core';
-import { NbCardModule, NbButtonModule, NbIconModule, NbSpinnerModule, NbTooltipModule } from '@nebular/theme';
+import {
+  NbCardModule,
+  NbButtonModule,
+  NbIconModule,
+  NbSpinnerModule,
+  NbTooltipModule,
+  NbListModule,
+  NbUserModule,
+  NbInputModule,
+} from '@nebular/theme';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
 import { CommonModule } from '@angular/common';
@@ -14,6 +23,10 @@ import { FabComponent } from './components/fab/fab.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
+import { UserReceivablesComponent } from './components/user-receivables/user-receivables.component';
+import { ReceivablesDialogComponent } from './components/user-receivables/receivables-dialog/receivables-dialog.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   imports: [
@@ -25,6 +38,11 @@ import { SelectAllTextDirective } from './directives/select-all-text.directive';
     NbFileUploaderModule,
     NbIconModule,
     PdfViewerModule,
+    Ng2SmartTableModule,
+    NbListModule,
+    FormsModule,
+    NbUserModule,
+    NbInputModule,
   ],
   exports: [
     BrMaskDirective,
@@ -46,6 +64,8 @@ import { SelectAllTextDirective } from './directives/select-all-text.directive';
     FabItemComponent,
     BaseExpenseComponent,
     SelectAllTextDirective,
+    UserReceivablesComponent,
+    ReceivablesDialogComponent,
   ],
 })
 export class SharedModule {}
