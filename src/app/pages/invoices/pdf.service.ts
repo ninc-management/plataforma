@@ -928,9 +928,15 @@ export class PdfService {
           0
         ) - this.stringUtil.moneyToNumber(invoice.discount)
       );
+      const extensoTotal = extenso(total, { mode: 'currency' });
       const productTotal: any[] = [
         {
-          text: 'TOTAL',
+          text: [
+            {
+              text: 'TOTAL:',
+            },
+            '  (' + extensoTotal + ')',
+          ],
           alignment: 'right',
           border: [false, true, true, true],
           colSpan: invoice.productListType == '1' ? 1 : 3,
