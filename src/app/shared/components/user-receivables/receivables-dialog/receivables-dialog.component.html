@@ -1,0 +1,37 @@
+<div
+  class="row justify-content-center"
+  [ngStyle]="{
+    'width.px': windowWidth()
+  }"
+>
+  <div class="col-md-8">
+    <nb-card
+      [ngStyle]="{
+        'max-height.px': windowHeight()
+      }"
+    >
+      <nb-card-header>
+        VALORES A RECEBER POR CONTRATO
+        <div class="buttons">
+          <button
+            nbButton
+            ghost
+            nbTooltip="Fechar"
+            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="dismiss()"
+          >
+            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+          </button>
+        </div>
+      </nb-card-header>
+      <nb-card-body>
+        <ngx-user-receivables
+          [isDialogBlocked]="isBlocked"
+          [userReceivableContracts]="userReceivableContracts"
+        ></ngx-user-receivables>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>
