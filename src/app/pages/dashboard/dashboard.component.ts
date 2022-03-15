@@ -12,7 +12,6 @@ import { DashboardDialogComponent, DASHBOARD_COMPONENT_TYPES } from './dashboard
 import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -55,10 +54,8 @@ export class DashboardComponent {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
-    private contractorService: ContractorService,
     public utils: UtilsService
   ) {
-    this.contractorService.getContractors();
     this.expenses$ = metricsService
       .teamExpenses(startOfMonth(new Date()), new Date())
       .pipe(map((metricInfo) => stringUtil.numberToMoney(metricInfo.value)));
