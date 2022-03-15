@@ -16,6 +16,8 @@ import { UserService } from 'app/shared/services/user.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { startOfMonth, subMonths } from 'date-fns';
+import { NbDialogService } from '@nebular/theme';
+import { ReceivablesDialogComponent } from 'app/shared/components/user-receivables/receivables-dialog/receivables-dialog.component';
 
 interface MetricItem {
   title: string;
@@ -51,7 +53,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private metricsService: MetricsService,
     private userService: UserService,
     private stringUtil: StringUtilService,
-    private financialService: FinancialService
+    private financialService: FinancialService,
+    private dialogService: NbDialogService
   ) {}
 
   ngOnDestroy(): void {
@@ -260,6 +263,14 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openReceivablesDialog(): void {
-    console.log(this.userReceivableContracts);
+    this.dialogService.open(ReceivablesDialogComponent, {
+      context: {
+        userReceivableContracts: this.userReceivableContracts,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }

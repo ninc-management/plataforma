@@ -1,0 +1,53 @@
+<ng2-smart-table
+  #smartTable
+  *ngIf="!utils.isPhone(); else phone"
+  [settings]="settings"
+  [source]="source"
+  (edit)="contractDialog($event)"
+></ng2-smart-table>
+<ng-template #phone>
+  <div class="row">
+    <div class="col-10">
+      <input
+        nbInput
+        [(ngModel)]="searchQuery"
+        #search="ngModel"
+        id="input-search"
+        name="search"
+        placeholder="Busque aqui..."
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+  </div>
+  <nb-list>
+    <nb-list-item *ngFor="let receivable of filteredReceivables; let i = index">
+      <div class="row irow" style="width: 100%">
+        <a (click)="contractDialog({ data: receivable })">
+          <div class="row">
+            <div class="col-12" style="margin-bottom: 10px">
+              <nb-user
+                size="giant"
+                [name]="receivable.contract.name"
+                [title]="receivable.contract.code"
+                [picture]="invoiceAuthorPic(receivable.contract.invoice)"
+              ></nb-user>
+            </div>
+            <div class="col-12">
+              <p>
+                <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                <span style="vertical-align: 0.1em">
+                  {{ receivable.contract.value }}
+                </span>
+              </p>
+            </div>
+            <div class="col-12">
+              <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
+              {{ receivable.contract.contractor }}
+            </div>
+          </div>
+        </a>
+      </div>
+    </nb-list-item>
+  </nb-list>
+</ng-template>
