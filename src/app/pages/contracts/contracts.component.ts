@@ -109,7 +109,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Valor',
         type: 'string',
         width: '10%',
-        compareFunction: this.valueSort,
+        compareFunction: this.utils.valueSort,
       },
       interests: {
         title: 'Parcelas',
@@ -147,11 +147,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialogService: NbDialogService,
     private contractService: ContractService,
     private contractorService: ContractorService,
-    private invoiceService: InvoiceService,
     private userService: UserService,
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
+    public invoiceService: InvoiceService,
     public utils: UtilsService
   ) {}
 
@@ -257,28 +257,6 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         return 'warning';
     }
-  }
-
-  valueSort(direction: number, a: string, b: string): number {
-    const first = +a.replace(/[,.]/g, '');
-    const second = +b.replace(/[,.]/g, '');
-
-    if (first < second) {
-      return -1 * direction;
-    }
-    if (first > second) {
-      return direction;
-    }
-    return 0;
-  }
-
-  invoiceAuthorPic(iId: string | Invoice | undefined): string {
-    if (iId === undefined) return '';
-    const invoice = this.invoiceService.idToInvoice(iId);
-    if (invoice.author === undefined) return '';
-    const pic = this.userService.idToUser(invoice.author).profilePicture;
-    if (pic === undefined) return '';
-    return pic;
   }
 
   downloadReport(): void {

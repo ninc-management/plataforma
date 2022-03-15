@@ -103,7 +103,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Valor',
         type: 'string',
         width: '10%',
-        compareFunction: this.valueSort,
+        compareFunction: this.utils.valueSort,
       },
       status: {
         title: 'Status',
@@ -217,18 +217,5 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         return 'warning';
     }
-  }
-
-  valueSort(direction: number, a: string, b: string): number {
-    const first = +a.replace(/[,.]/g, '');
-    const second = +b.replace(/[,.]/g, '');
-
-    if (first < second) {
-      return -1 * direction;
-    }
-    if (first > second) {
-      return direction;
-    }
-    return 0;
   }
 }
