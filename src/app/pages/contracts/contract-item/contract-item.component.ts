@@ -138,7 +138,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       value: {
         title: 'Valor',
         type: 'string',
-        compareFunction: this.valueSort,
+        compareFunction: this.utils.valueSort,
       },
       type: {
         title: 'Categoria',
@@ -607,19 +607,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         .toPercentage(this.teamMember.netValue, this.contract.liquid, 20)
         .slice(0, -1);
     }
-  }
-
-  valueSort(direction: number, a: string, b: string): number {
-    const first = +a.replace(/[,.]/g, '');
-    const second = +b.replace(/[,.]/g, '');
-
-    if (first < second) {
-      return -1 * direction;
-    }
-    if (first > second) {
-      return direction;
-    }
-    return 0;
   }
 
   itemSort(direction: number, a: string, b: string): number {

@@ -109,6 +109,15 @@ export class InvoiceService implements OnDestroy {
     return this.idToInvoice(id)?.code;
   }
 
+  idToProfilePicture(iId: string | Invoice | undefined): string {
+    if (iId === undefined) return '';
+    const invoice = this.idToInvoice(iId);
+    if (invoice.author === undefined) return '';
+    const pic = this.userService.idToUser(invoice.author).profilePicture;
+    if (pic === undefined) return '';
+    return pic;
+  }
+
   isInvoiceAuthor(iId: string | Invoice, uId: string | User): boolean {
     return this.userService.isEqual(uId, this.idToInvoice(iId).author);
   }
