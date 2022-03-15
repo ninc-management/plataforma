@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { TeamService } from './team.service';
 import { Contract } from '@models/contract';
 import { ContractorService } from './contractor.service';
+import { InvoiceTeamMember } from '@models/invoice';
 
 export type TimeSeriesItem = [string, number];
 
@@ -66,6 +67,16 @@ interface UserAndSectors {
 interface UserAndTeams {
   user: TeamInfo[];
   global: TeamInfo[];
+}
+
+export interface ReceivableByContract {
+  contract: Contract;
+  receivableValue: string;
+}
+
+interface UserReceivable {
+  totalValue: string;
+  receivableContracts: ReceivableByContract[];
 }
 
 @Injectable({
@@ -746,7 +757,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  userReceivableValue(uId: string): Observable<MetricInfo> {
+  userReceivableValue(uId: string): Observable<UserReceivable> {
     return combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
@@ -757,28 +768,39 @@ export class MetricsService implements OnDestroy {
       ),
       map(([contracts, invoices, contractors]) => {
         return contracts.reduce(
-          (userReceivable: MetricInfo, contract) => {
+          (userReceivable: UserReceivable, contract) => {
             if (contract.invoice && contract.status != CONTRACT_STATOOS.ARQUIVADO) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               const member = invoice.team.find((member) => this.userService.isEqual(member.user, uId));
 
               if (member) {
                 contract = this.fillContract(contract);
-                const notPaid = this.contractService.notPaidValue(member.distribution, member.user, contract);
-                const cashback = this.stringUtil.numberToMoney(
-                  this.contractService.expensesContributions(contract, member.user).user.cashback
-                );
+                const currentReceivableValue = this.receivableValue(contract, member);
 
-                userReceivable.value += this.stringUtil.moneyToNumber(this.stringUtil.sumMoney(notPaid, cashback));
+                userReceivable.receivableContracts.push({
+                  contract: contract,
+                  receivableValue: currentReceivableValue,
+                });
+
+                userReceivable.totalValue = this.stringUtil.sumMoney(currentReceivableValue, userReceivable.totalValue);
               }
             }
 
             return userReceivable;
           },
-          { count: 0, value: 0 }
+          { totalValue: '', receivableContracts: [] }
         );
       })
     );
+  }
+
+  private receivableValue(contract: Contract, member: InvoiceTeamMember): string {
+    const notPaid = this.contractService.notPaidValue(member.distribution, member.user, contract);
+    const cashback = this.stringUtil.numberToMoney(
+      this.contractService.expensesContributions(contract, member.user).user.cashback
+    );
+
+    return this.stringUtil.sumMoney(notPaid, cashback);
   }
 
   private fillContract(contract: Contract): Contract {

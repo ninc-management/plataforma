@@ -10,8 +10,8 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, startWith, takeUntil } from 'rxjs/operators';
-import { MetricsService } from 'app/shared/services/metrics.service';
+import { take, map, startWith, takeUntil, skipWhile } from 'rxjs/operators';
+import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -39,6 +39,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
   METRICS: MetricItem[] = [];
   resize$ = new BehaviorSubject<boolean>(true);
   destroy$ = new Subject<void>();
+  userReceivableContracts: ReceivableByContract[] = [];
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
@@ -62,8 +63,12 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     const today = new Date();
     const monthStart = startOfMonth(today);
     const previousMonth = subMonths(monthStart, 1);
-    this.userService.currentUser$.pipe(take(2)).subscribe((user) => {
-      if (user._id != undefined) {
+    this.userService.currentUser$
+      .pipe(
+        skipWhile((user) => user._id === undefined),
+        take(1)
+      )
+      .subscribe((user) => {
         // TODO: Recalcular a cada nova transação
         this.METRICS.push({
           title: 'Caixa',
@@ -225,7 +230,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma dos seus saldos e cashback de cada contrato que você faz parte',
           value: this.metricsService.userReceivableValue(user._id).pipe(
             map((userReceivable) => {
-              return 'R$ ' + this.stringUtil.numberToMoney(userReceivable.value);
+              this.userReceivableContracts = userReceivable.receivableContracts;
+              return 'R$ ' + userReceivable.totalValue;
             })
           ),
           description: of(''),
@@ -234,8 +240,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             startWith(true)
           ),
         });
-      }
-    });
+      });
   }
 
   ngAfterViewInit(): void {
@@ -252,5 +257,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
         });
       }
     });
+  }
+
+  openReceivablesDialog(): void {
+    console.log(this.userReceivableContracts);
   }
 }
