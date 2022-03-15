@@ -747,9 +747,15 @@ export class MetricsService implements OnDestroy {
   }
 
   userReceivableValue(uId: string): Observable<MetricInfo> {
-    return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
-      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
-      map(([contracts, invoices]) => {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors(),
+    ]).pipe(
+      filter(
+        ([contracts, invoices, contractors]) => contracts.length > 0 && invoices.length > 0 && contractors.length > 0
+      ),
+      map(([contracts, invoices, contractors]) => {
         return contracts.reduce(
           (userReceivable: MetricInfo, contract) => {
             if (contract.invoice && contract.status != CONTRACT_STATOOS.ARQUIVADO) {

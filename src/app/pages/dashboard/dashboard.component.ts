@@ -17,7 +17,6 @@ import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dial
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Team } from '@models/team';
 import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
-import { ContractorService } from 'app/shared/services/contractor.service';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -70,10 +69,8 @@ export class DashboardComponent {
     private userService: UserService,
     private dialogService: NbDialogService,
     private teamService: TeamService,
-    private contractorService: ContractorService,
     public utils: UtilsService
   ) {
-    this.contractorService.getContractors();
     this.teamService
       .getTeams()
       .pipe(
