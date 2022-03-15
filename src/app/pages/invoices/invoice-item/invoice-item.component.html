@@ -1110,15 +1110,15 @@
 
         <div class="col-6">
           <div class="form-control-group">
-            <label class="label" for="input-pdf-page-break" style="display: flex; margin-top: 4px">
+            <label class="label" for="input-values-table-page-break" style="display: flex; margin-top: 4px">
               Quebra de página:
             </label>
             <nb-checkbox
-              [(ngModel)]="tempInvoice.pdfPageBreak"
-              #pdfPageBreak="ngModel"
-              name="pdfPageBreak"
-              id="input-pdf-page-break"
-              [status]="pdfPageBreak.value ? 'success' : 'basic'"
+              [(ngModel)]="tempInvoice.valuesTablePageBreak"
+              #valuesTablePageBreak="ngModel"
+              name="valuesTablePageBreak"
+              id="input-values-table-page-break"
+              [status]="valuesTablePageBreak.value ? 'success' : 'basic'"
             >
               Adicionar quebra de página antes da tabela de valores
             </nb-checkbox>

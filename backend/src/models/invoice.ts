@@ -183,7 +183,7 @@ export class Invoice extends StatusHistory {
   prospectedBy!: Ref<User>;
 
   @prop()
-  pdfPageBreak?: boolean;
+  valuesTablePageBreak?: boolean;
 
   model = false;
   contractorName = '';
