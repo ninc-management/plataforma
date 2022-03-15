@@ -30,7 +30,7 @@
                 size="giant"
                 [name]="receivable.contract.name"
                 [title]="receivable.contract.code"
-                [picture]="invoiceAuthorPic(receivable.contract.invoice)"
+                [picture]="this.invoiceService.idToProfilePicture(receivable.contract.invoice)"
               ></nb-user>
             </div>
             <div class="col-12">

@@ -98,19 +98,6 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     return this.expenses.findIndex((expense) => expense.code == code);
   }
 
-  valueSort(direction: number, a: string, b: string): number {
-    const first = +a.replace(/[,.]/g, '');
-    const second = +b.replace(/[,.]/g, '');
-
-    if (first < second) {
-      return -1 * direction;
-    }
-    if (first > second) {
-      return direction;
-    }
-    return 0;
-  }
-
   itemSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[#]/g, '');
     const second = +b.replace(/[#]/g, '');
@@ -167,7 +154,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
         value: {
           title: 'Valor',
           type: 'string',
-          compareFunction: this.valueSort,
+          compareFunction: this.utils.valueSort,
         },
         type: {
           title: 'Categoria',
