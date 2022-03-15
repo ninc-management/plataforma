@@ -66,7 +66,7 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
         title: 'Valor a receber',
         type: 'string',
         sortDirection: 'desc',
-        compareFunction: this.valueSort,
+        compareFunction: this.utils.valueSort,
       },
     },
   };
@@ -86,8 +86,8 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
 
   constructor(
     public utils: UtilsService,
+    public invoiceService: InvoiceService,
     private dialogService: NbDialogService,
-    private invoiceService: InvoiceService,
     private userService: UserService
   ) {}
 
@@ -128,27 +128,5 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.isDialogBlocked.next(false);
       });
-  }
-
-  valueSort(direction: number, a: string, b: string): number {
-    const first = +a.replace(/[,.]/g, '');
-    const second = +b.replace(/[,.]/g, '');
-
-    if (first < second) {
-      return -1 * direction;
-    }
-    if (first > second) {
-      return direction;
-    }
-    return 0;
-  }
-
-  invoiceAuthorPic(iId: string | Invoice | undefined): string {
-    if (iId === undefined) return '';
-    const invoice = this.invoiceService.idToInvoice(iId);
-    if (invoice.author === undefined) return '';
-    const pic = this.userService.idToUser(invoice.author).profilePicture;
-    if (pic === undefined) return '';
-    return pic;
   }
 }

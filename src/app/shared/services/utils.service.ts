@@ -219,6 +219,19 @@ export class UtilsService {
     return 0;
   }
 
+  valueSort(direction: number, a: string, b: string): number {
+    const first = +a.replace(/[,.]/g, '');
+    const second = +b.replace(/[,.]/g, '');
+
+    if (first < second) {
+      return -1 * direction;
+    }
+    if (first > second) {
+      return direction;
+    }
+    return 0;
+  }
+
   groupByDateTimeSerie(serie: TimeSeriesItem[]): TimeSeriesItem[] {
     return Object.entries(groupBy(serie, '0'))
       .map((objs) => {
