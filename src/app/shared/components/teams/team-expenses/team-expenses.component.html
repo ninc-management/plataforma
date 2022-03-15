@@ -38,8 +38,8 @@
               <div class="col-auto">
                 <nb-user
                   [onlyPicture]="true"
-                  [name]="[expense.author] | propertyPipe: userService.idToName.bind(userService)"
-                  [picture]="[expense.author] | propertyPipe: userService.profilePicture.bind(userService)"
+                  [name]="[expense.author] | transformPipe: userService.idToName.bind(userService)"
+                  [picture]="[expense.author] | transformPipe: userService.profilePicture.bind(userService)"
                 ></nb-user>
               </div>
               <div class="col-auto">#{{ +i + 1 }}</div>
@@ -55,7 +55,7 @@
               <div class="col-md-auto">
                 <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
                 <span style="vertical-align: 0.1em">
-                  {{ [expense.created] | propertyPipe: utils.formatDate.bind(utils) }}
+                  {{ [expense.created] | transformPipe: utils.formatDate.bind(utils) }}
                 </span>
               </div>
             </a>

@@ -315,7 +315,7 @@
         <nb-list-item *ngFor="let member of expense.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-4 list-name">
-              {{ [teamUsers[i]] | propertyPipe: userService.idToShortName.bind(userService) }}
+              {{ [teamUsers[i]] | transformPipe: userService.idToShortName.bind(userService) }}
             </div>
             <div class="col-md-2">
               <nb-select
@@ -521,7 +521,7 @@
           <label class="label" for="input-updated">Última atualização:</label>
           <input
             nbInput
-            [ngModel]="[expense.lastUpdate] | propertyPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[expense.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
             #updated="ngModel"
             id="input-updated"
             name="updated"
