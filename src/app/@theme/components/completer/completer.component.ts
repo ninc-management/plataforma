@@ -86,11 +86,9 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   }
 
   onModelChange(event: any): void {
-    if (this.isInitialized) {
-      if (typeof event === 'string') this.searchStr = event;
-      else this.searchStr = event[this.nameField];
-      this.searchChange$.next(true);
-    }
+    if (typeof event === 'string') this.searchStr = event;
+    else this.searchStr = event[this.nameField];
+    this.searchChange$.next(true);
   }
 
   onSelect(event: any): void {

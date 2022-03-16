@@ -346,6 +346,13 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     else this.expense.paidDate = new Date();
   }
 
+  fixComissionSource(): void {
+    if (this.expense.type === EXPENSE_TYPES.COMISSAO) {
+      this.expense.source = CONTRACT_BALANCE;
+      this.sourceSearch = CONTRACT_BALANCE.fullName;
+    }
+  }
+
   isRadioDisabled(): boolean {
     if (this.expense.team.length == 1) {
       this.expense.splitType = SPLIT_TYPES.INDIVIDUAL;
