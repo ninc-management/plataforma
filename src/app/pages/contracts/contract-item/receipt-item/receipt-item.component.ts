@@ -103,7 +103,7 @@ export class ReceiptItemComponent implements OnInit {
         .every((receipt: ContractReceipt) => receipt.paid);
     }
 
-    if (this.receiptIndex) {
+    if (this.receiptIndex != undefined) {
       this.receipt.lastUpdate = new Date();
       this.contract.receipts[this.receiptIndex] = cloneDeep(this.receipt);
     } else {
