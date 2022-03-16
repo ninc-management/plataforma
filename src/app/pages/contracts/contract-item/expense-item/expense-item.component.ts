@@ -35,7 +35,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   splitTypes = SPLIT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
   isEditionGranted = false;
-  contract_balance = CONTRACT_BALANCE;
   expense: ContractExpense = {
     author: '',
     source: '',
