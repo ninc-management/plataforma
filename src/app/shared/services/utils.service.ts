@@ -124,15 +124,15 @@ export class UtilsService {
           ? '0'
           : invoice.administration == 'nortan'
           ? '15'
-          : '17';
+          : '18';
       else
         return invoice.nortanTeam == '6201b405329f446f16e1b404'
           ? '0'
           : invoice.administration == 'nortan'
           ? '15'
-          : '17';
+          : '18';
     }
-    return invoice.administration == 'nortan' ? '15' : '17';
+    return invoice.administration == 'nortan' ? '15' : '18';
   }
 
   assingOrIncrement(base: number | undefined, increment: number): number {
