@@ -12,6 +12,7 @@ describe('ReceivablesDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReceivablesDialogComponent);
     component = fixture.componentInstance;
+    component.userReceivableContracts = [];
     fixture.detectChanges();
   });
 
