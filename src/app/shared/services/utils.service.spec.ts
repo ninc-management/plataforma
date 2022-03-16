@@ -195,7 +195,7 @@ describe('UtilsService', () => {
     invoice.nortanTeam = '1';
     expect(service.nortanPercentage(invoice)).toBe('15');
     invoice.administration = 'pessoal';
-    expect(service.nortanPercentage(invoice)).toBe('17');
+    expect(service.nortanPercentage(invoice)).toBe('18');
     invoice.nortanTeam = '6201b405329f446f16e1b404';
     expect(service.nortanPercentage(invoice)).toBe('0');
   });
