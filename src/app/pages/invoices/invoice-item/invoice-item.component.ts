@@ -298,7 +298,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         status: this.tempInvoice.status,
         start: this.tempInvoice.created,
       });
-      this.invoiceService.saveInvoice(this.tempInvoice);
+      this.invoiceService.saveInvoice(this.tempInvoice, (savedInvoice: Invoice) => {
+        if (savedInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(savedInvoice);
+      });
       this.submit.emit();
     }
   }
