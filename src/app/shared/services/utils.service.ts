@@ -197,6 +197,7 @@ export class UtilsService {
     return 0;
   }
 
+  //INVARIANT: The number of decimal places of the two numbers must be equal
   valueSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[,.]/g, '');
     const second = +b.replace(/[,.]/g, '');

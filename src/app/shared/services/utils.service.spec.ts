@@ -207,5 +207,14 @@ describe('UtilsService', () => {
     expect(service.valueSort(1, '1', '2')).toBe(-1);
     expect(service.valueSort(1, '2', '1')).toBe(1);
     expect(service.valueSort(1, '1', '1')).toBe(0);
+    expect(service.valueSort(-1, '1', '2')).toBe(1);
+    expect(service.valueSort(-1, '2', '1')).toBe(-1);
+    expect(service.valueSort(-1, '1', '1')).toBe(0);
+    expect(service.valueSort(1, '21.300,01', '21.300,02')).toBe(-1);
+    expect(service.valueSort(1, '21.300,20', '21.300,10')).toBe(1);
+    expect(service.valueSort(1, '21.310,00', '21.310,00')).toBe(0);
+    expect(service.valueSort(-1, '21.300,01', '21.300,02')).toBe(1);
+    expect(service.valueSort(-1, '21.300,20', '21.300,10')).toBe(-1);
+    expect(service.valueSort(-1, '21.310,00', '21.310,00')).toBe(0);
   });
 });
