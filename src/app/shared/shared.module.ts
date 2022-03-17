@@ -33,8 +33,6 @@ import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 import { TransformPipe } from './pipes/transform.pipe';
-import { UserReceivablesComponent } from './components/user-receivables/user-receivables.component';
-import { ReceivablesDialogComponent } from './components/user-receivables/receivables-dialog/receivables-dialog.component';
 
 @NgModule({
   imports: [
@@ -54,11 +52,6 @@ import { ReceivablesDialogComponent } from './components/user-receivables/receiv
     NbUserModule,
     Ng2SmartTableModule,
     PdfViewerModule,
-    Ng2SmartTableModule,
-    NbListModule,
-    FormsModule,
-    NbUserModule,
-    NbInputModule,
   ],
   exports: [
     BrMaskDirective,
@@ -90,8 +83,6 @@ import { ReceivablesDialogComponent } from './components/user-receivables/receiv
     TeamExpenseItemComponent,
     UserTransactionComponent,
     TransformPipe,
-    UserReceivablesComponent,
-    ReceivablesDialogComponent,
   ],
 })
 export class SharedModule {}

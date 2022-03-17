@@ -27,6 +27,8 @@ import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { FormsModule } from '@angular/forms';
 import { TimeSeriesComponent } from './charts/time-series/time-series.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { UserReceivablesComponent } from './user-receivables/user-receivables.component';
+import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -53,6 +55,13 @@ echarts.registerLocale('PT-BR', langPTBR);
     ThemeModule,
     Ng2SmartTableModule,
   ],
-  declarations: [DashboardComponent, ProgressSectionComponent, GaugeComponent, TimeSeriesComponent],
+  declarations: [
+    DashboardComponent,
+    ProgressSectionComponent,
+    GaugeComponent,
+    TimeSeriesComponent,
+    UserReceivablesComponent,
+    ReceivablesDialogComponent,
+  ],
 })
 export class DashboardModule {}
