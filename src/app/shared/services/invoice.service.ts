@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
-import { ContractService } from './contract.service';
 import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
@@ -32,7 +31,6 @@ export class InvoiceService implements OnDestroy {
   constructor(
     private http: HttpClient,
     private userService: UserService,
-    private contractService: ContractService,
     private wsService: WebSocketService,
     private socket: Socket,
     private utils: UtilsService,
@@ -44,7 +42,7 @@ export class InvoiceService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  saveInvoice(invoice: Invoice): void {
+  saveInvoice(invoice: Invoice, callback?: (invoice: Invoice) => void): void {
     invoice = this.setDefaultDistribution(invoice);
     const req = {
       invoice: invoice,
@@ -54,7 +52,7 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res['invoice'];
-        if (savedInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(savedInvoice);
+        if (callback) callback(savedInvoice);
       });
   }
 
