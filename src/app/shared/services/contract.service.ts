@@ -295,14 +295,13 @@ export class ContractService implements OnDestroy {
     let sum = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.toNetValue(
-          this.subtractComissions(contract.value, contract),
+          this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
           this.utils.nfPercentage(contract),
           this.utils.nortanPercentage(contract)
         )
       ) + this.getComissionsSum(contract)
     );
-    sum = this.stringUtil.subtractMoney(sum, this.paidValue(contract));
-    if (contract.balance[0] !== '-') sum = this.stringUtil.sumMoney(sum, contract.balance);
+    sum = this.stringUtil.sumMoney(this.stringUtil.subtractMoney(sum, this.paidValue(contract)), contract.balance);
     return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 

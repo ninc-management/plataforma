@@ -214,15 +214,15 @@ describe('ContractService', () => {
     tmpContract = new Contract();
     tmpContract._id = '1';
     tmpContract.ISS = '2,00';
-    tmpContract.liquid = '1.626,80';
-    tmpContract.balance = '0,00';
-    tmpContract.notPaid = '796,80';
+    tmpContract.liquid = '1.607,20';
+    tmpContract.balance = '-10,00';
+    tmpContract.notPaid = '820,00';
     tmpContract.value = '2.000,00';
     tmpContract.invoice = mockedInvoices[1];
     let tmpReceipt = new ContractReceipt();
     tmpReceipt.value = '1.000,00';
     tmpReceipt.notaFiscal = '0,00';
-    tmpReceipt.nortanPercentage = '17,00';
+    tmpReceipt.nortanPercentage = '18,00';
     tmpReceipt.description = 'Teste';
     tmpReceipt.paid = true;
     tmpReceipt.paidDate = new Date();
@@ -248,13 +248,13 @@ describe('ContractService', () => {
       user: mockedUsers[0],
       sector: 'Trocar',
       value: '207,50',
-      percentage: '207,50',
+      percentage: '50,00',
     });
     tmpPayment.team.push({
       user: mockedUsers[1],
       sector: 'Trocar',
       value: '207,50',
-      percentage: '207,50',
+      percentage: '50,00',
     });
     tmpContract.payments.push(tmpPayment);
     tmpContract.payments.push(new ContractPayment());
@@ -495,9 +495,9 @@ describe('ContractService', () => {
       '1.405,60'
     );
     expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('270,40');
-    expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('976,08');
+    expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('964,32');
     expect(service.netValueBalance(mockedInvoices[1].team[1].distribution, mockedContracts[1], mockedUsers[1])).toBe(
-      '650,72'
+      '642,88'
     );
   });
 
@@ -515,10 +515,10 @@ describe('ContractService', () => {
       service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
     ).toBe('83,87');
     expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('16,13');
-    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('42,60');
+    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('43,98');
     expect(
       service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
-    ).toBe('53,40');
+    ).toBe('56,02');
   });
 
   it('receivedValue should work', () => {
@@ -533,9 +533,9 @@ describe('ContractService', () => {
       '1.405,60'
     );
     expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('270,40');
-    expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('353,58');
+    expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('341,82');
     expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
-      '443,22'
+      '435,38'
     );
   });
 
