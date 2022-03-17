@@ -215,7 +215,7 @@ describe('ContractService', () => {
     tmpContract._id = '1';
     tmpContract.ISS = '2,00';
     tmpContract.liquid = '1.607,20';
-    tmpContract.balance = '-10,00';
+    tmpContract.balance = '0,00';
     tmpContract.notPaid = '820,00';
     tmpContract.value = '2.000,00';
     tmpContract.invoice = mockedInvoices[1];
@@ -229,31 +229,31 @@ describe('ContractService', () => {
     tmpContract.receipts.push(tmpReceipt);
     let tmpPayment = new ContractPayment();
     tmpPayment.service = 'test';
-    tmpPayment.value = '415,00';
+    tmpPayment.value = '410,00';
     tmpPayment.paid = true;
     tmpPayment.paidDate = new Date();
     tmpPayment.team.push({
       user: mockedUsers[0],
       sector: 'Trocar',
-      value: '415,00',
+      value: '410,00',
       percentage: '100,00',
     });
     tmpContract.payments.push(tmpPayment);
     tmpPayment = new ContractPayment();
     tmpPayment.service = 'test';
-    tmpPayment.value = '415,00';
+    tmpPayment.value = '410,00';
     tmpPayment.paid = true;
     tmpPayment.paidDate = new Date();
     tmpPayment.team.push({
       user: mockedUsers[0],
       sector: 'Trocar',
-      value: '207,50',
+      value: '205,00',
       percentage: '50,00',
     });
     tmpPayment.team.push({
       user: mockedUsers[1],
       sector: 'Trocar',
-      value: '207,50',
+      value: '205,00',
       percentage: '50,00',
     });
     tmpContract.payments.push(tmpPayment);
@@ -515,17 +515,17 @@ describe('ContractService', () => {
       service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
     ).toBe('83,87');
     expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('16,13');
-    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('43,98');
+    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('44,38');
     expect(
       service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
-    ).toBe('56,02');
+    ).toBe('55,62');
   });
 
   it('receivedValue should work', () => {
     expect(service.receivedValue(mockedUsers[0], mockedContracts[0])).toBe('0,00');
     expect(service.receivedValue('1', mockedContracts[0])).toBe('0,00');
-    expect(service.receivedValue('0', mockedContracts[1])).toBe('622,50');
-    expect(service.receivedValue(mockedUsers[1], mockedContracts[1])).toBe('207,50');
+    expect(service.receivedValue('0', mockedContracts[1])).toBe('615,00');
+    expect(service.receivedValue(mockedUsers[1], mockedContracts[1])).toBe('205,00');
   });
 
   it('notPaidValue should work', () => {
@@ -533,9 +533,9 @@ describe('ContractService', () => {
       '1.405,60'
     );
     expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('270,40');
-    expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('341,82');
+    expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('349,32');
     expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
-      '435,38'
+      '437,88'
     );
   });
 
@@ -576,9 +576,9 @@ describe('ContractService', () => {
     expect(service.getMemberBalance(undefined, mockedContracts[0])).toBe('0,00');
     expect(service.getMemberBalance(undefined, mockedContracts[1])).toBe('0,00');
     expect(service.getMemberBalance('0', mockedContracts[0])).toBe('0,00');
-    expect(service.getMemberBalance('1', mockedContracts[1])).toBe('207,50');
+    expect(service.getMemberBalance('1', mockedContracts[1])).toBe('205,00');
     expect(service.getMemberBalance(mockedUsers[1], mockedContracts[0])).toBe('0,00');
-    expect(service.getMemberBalance(mockedUsers[0], mockedContracts[1])).toBe('622,50');
+    expect(service.getMemberBalance(mockedUsers[0], mockedContracts[1])).toBe('615,00');
   });
 
   it('checkEditPermission for invoice 0 should work', (done: DoneFn) => {
