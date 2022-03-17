@@ -30,6 +30,8 @@ import { FormsModule } from '@angular/forms';
 import { DashboardDialogComponent } from './dashboard-dialog/dashboard-dialog.component';
 import { TimeSeriesComponent } from './charts/time-series/time-series.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { UserReceivablesComponent } from './user-receivables/user-receivables.component';
+import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -64,6 +66,8 @@ echarts.registerLocale('PT-BR', langPTBR);
     DashboardDialogComponent,
     TimeSeriesComponent,
     NortanExpensesComponent,
+    UserReceivablesComponent,
+    ReceivablesDialogComponent,
   ],
 })
 export class DashboardModule {}

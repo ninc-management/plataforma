@@ -2,7 +2,7 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { BaseDialogComponent } from '../../base-dialog/base-dialog.component';
+import { BaseDialogComponent } from '../../../../shared/components/base-dialog/base-dialog.component';
 
 @Component({
   selector: 'npx-receivables-dialog',
