@@ -185,7 +185,7 @@
           <label class="label" for="input-source">Fonte de pagamento:</label>
           <nb-completer
             [(ngModel)]="sourceSearch"
-            (selected)="utils.forceValidatorUpdate(value)"
+            (selected)="expense.source = $event; utils.forceValidatorUpdate(value)"
             inputName="sourceListCompleter"
             #sourceList="ngModel"
             id="input-source"
