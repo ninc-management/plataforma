@@ -16,7 +16,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { startOfMonth, subMonths } from 'date-fns';
 import { NbDialogService } from '@nebular/theme';
-import { ReceivablesDialogComponent } from 'app/shared/components/user-receivables/receivables-dialog/receivables-dialog.component';
+import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
 
 interface MetricItem {
   title: string;
