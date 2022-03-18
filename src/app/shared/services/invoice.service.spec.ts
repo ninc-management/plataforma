@@ -126,10 +126,6 @@ describe('InvoiceService', () => {
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedUsers);
-
-    const teamReq = httpMock.expectOne('/api/team/all');
-    expect(teamReq.request.method).toBe('POST');
-    teamReq.flush([]);
   });
 
   afterEach(() => {
