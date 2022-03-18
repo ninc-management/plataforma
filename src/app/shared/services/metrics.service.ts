@@ -774,7 +774,7 @@ export class MetricsService implements OnDestroy {
               const member = invoice.team.find((member) => this.userService.isEqual(member.user, uId));
 
               if (member) {
-                contract = this.fillContract(contract);
+                contract = this.contractService.fillContract(contract);
                 const currentReceivableValue = this.receivableValue(contract, member);
 
                 userReceivable.receivableContracts.push({
@@ -801,59 +801,5 @@ export class MetricsService implements OnDestroy {
     );
 
     return this.stringUtil.sumMoney(notPaid, cashback);
-  }
-
-  private fillContract(contract: Contract): Contract {
-    if (contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(contract.invoice);
-      contract.invoice = invoice;
-
-      if (invoice.author) {
-        const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
-        if (managerPicture) contract.managerPicture = managerPicture;
-        contract.fullName = this.userService.idToShortName(invoice.author);
-      }
-
-      if (invoice.contractor) {
-        contract.contractor = this.contractorService.idToName(invoice.contractor);
-      }
-
-      contract.name = invoice.name;
-      contract.interests = contract.receipts.length.toString() + '/' + contract.total;
-      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-        contract.role = this.invoiceService.role(invoice, user);
-      });
-
-      const nf = this.utils.nfPercentage(contract);
-      const nortan = this.utils.nortanPercentage(contract);
-      contract.value = contract.invoice.value;
-      contract.code = contract.invoice.code;
-      contract.balance = this.contractService.balance(contract);
-      contract.liquid = this.contractService.toNetValue(
-        this.contractService.subtractComissions(
-          this.stringUtil.removePercentage(contract.value, contract.ISS),
-          contract
-        ),
-        this.utils.nfPercentage(contract),
-        this.utils.nortanPercentage(contract)
-      );
-
-      const paid = this.contractService.toNetValue(
-        this.stringUtil.numberToMoney(
-          contract.receipts.reduce((accumulator: number, recipt: any) => {
-            if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
-            return accumulator;
-          }, 0)
-        ),
-        nf,
-        nortan
-      );
-
-      contract.notPaid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.contractService.toNetValue(contract.value, nf, nortan)) -
-          this.stringUtil.moneyToNumber(paid)
-      );
-    }
-    return contract;
   }
 }

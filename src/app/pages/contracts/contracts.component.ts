@@ -177,25 +177,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
             contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && teams.length > 0
         )
       )
-      .subscribe(([contracts, invoices, contractors, teams, user]) => {
-        this.contracts = contracts.map((contract: Contract) => {
-          if (contract.invoice) {
-            const invoice = this.invoiceService.idToInvoice(contract.invoice);
-            contract.invoice = invoice;
-            if (invoice.author) {
-              contract.fullName = this.userService.idToShortName(invoice.author);
-            }
-            if (invoice.contractor) {
-              contract.contractor = this.contractorService.idToName(invoice.contractor);
-            }
-            contract.code = this.invoiceService.idToInvoice(contract.invoice).code;
-            contract.name = invoice.name;
-            contract.value = invoice.value;
-            contract.interests = contract.receipts.length.toString() + '/' + contract.total;
-            contract.role = this.invoiceService.role(invoice, user);
-          }
-          return contract;
-        });
+      .subscribe(([contracts, invoices, contractors, user]) => {
+        this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.source.load(this.contracts);
       });
     this.accessChecker
