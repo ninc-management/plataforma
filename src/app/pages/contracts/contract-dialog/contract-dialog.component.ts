@@ -69,35 +69,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                   (this.invoiceService.isInvoiceAuthor(contract.invoice, user) ||
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
-              contracts.map((contract) => {
-                if (contract.invoice) {
-                  const nf = this.utils.nfPercentage(contract);
-                  const nortan = this.utils.nortanPercentage(contract);
-                  contract.invoice = this.invoiceService.idToInvoice(contract.invoice);
-                  contract.value = contract.invoice.value;
-                  contract.code = contract.invoice.code;
-                  contract.balance = this.contractService.balance(contract);
-                  contract.liquid = this.contractService.toNetValue(
-                    this.contractService.subtractComissions(
-                      this.stringUtil.removePercentage(contract.value, contract.ISS),
-                      contract
-                    ),
-                    this.utils.nfPercentage(contract),
-                    this.utils.nortanPercentage(contract)
-                  );
-                  const paid = this.contractService.paidValue(contract);
-                  contract.notPaid = this.stringUtil.numberToMoney(
-                    this.stringUtil.moneyToNumber(this.contractService.toNetValue(this.contract.value, nf, nortan)) -
-                      this.stringUtil.moneyToNumber(paid)
-                  );
-                  const invoice = this.invoiceService.idToInvoice(contract.invoice);
-                  if (invoice.author) {
-                    const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
-                    if (managerPicture) contract.managerPicture = managerPicture;
-                  }
-                }
-                return contract;
-              });
+              contracts.map((contract) => this.contractService.fillContract(contract));
               return contracts.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
             })
           )
