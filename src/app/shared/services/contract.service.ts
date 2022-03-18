@@ -14,6 +14,8 @@ import { User } from '@models/user';
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { StatusHistoryItem } from '@models/baseStatusHistory';
+import { InvoiceService } from './invoice.service';
+import { ContractorService } from './contractor.service';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -63,7 +65,9 @@ export class ContractService implements OnDestroy {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private socket: Socket,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private invoiceService: InvoiceService,
+    private contractorService: ContractorService
   ) {}
 
   ngOnDestroy(): void {
@@ -394,6 +398,56 @@ export class ContractService implements OnDestroy {
         return this.isUserAnAER(user, invoice) || this.userService.isEqual(user, invoice.team[0].user);
       })
     );
+  }
+
+  fillContract(contract: Contract): Contract {
+    if (contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(contract.invoice);
+      contract.invoice = invoice;
+
+      if (invoice.author) {
+        const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
+        if (managerPicture) contract.managerPicture = managerPicture;
+        contract.fullName = this.userService.idToShortName(invoice.author);
+      }
+
+      if (invoice.contractor) {
+        contract.contractor = this.contractorService.idToName(invoice.contractor);
+      }
+
+      contract.interests = contract.receipts.length.toString() + '/' + contract.total;
+      this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+        contract.role = this.invoiceService.role(invoice, user);
+      });
+
+      contract.name = invoice.name;
+      contract.value = invoice.value;
+      contract.code = invoice.code;
+      contract.balance = this.balance(contract);
+      contract.liquid = this.toNetValue(
+        this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
+        this.utils.nfPercentage(contract),
+        this.utils.nortanPercentage(contract)
+      );
+
+      const nf = this.utils.nfPercentage(contract);
+      const nortan = this.utils.nortanPercentage(contract);
+      const paid = this.toNetValue(
+        this.stringUtil.numberToMoney(
+          contract.receipts.reduce((accumulator: number, recipt: any) => {
+            if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+            return accumulator;
+          }, 0)
+        ),
+        nf,
+        nortan
+      );
+
+      contract.notPaid = this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.toNetValue(contract.value, nf, nortan)) - this.stringUtil.moneyToNumber(paid)
+      );
+    }
+    return contract;
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {
