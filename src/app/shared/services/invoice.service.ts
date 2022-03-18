@@ -52,7 +52,7 @@ export class InvoiceService implements OnDestroy {
       .pipe(take(1))
       .subscribe((res: any) => {
         const savedInvoice = res['invoice'];
-        if (callback) callback(savedInvoice);
+        if (callback && savedInvoice) callback(savedInvoice);
       });
   }
 
