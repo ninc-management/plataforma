@@ -22,7 +22,7 @@
   [nbAutocomplete]="autoNgModel"
 />
 
-<nb-autocomplete #autoNgModel (selectedChange)="onSelect($event)">
+<nb-autocomplete #autoNgModel (selectedChange)="onSelect($event)" [handleDisplayFn]="display.bind(this)">
   <nb-option *ngIf="searchActive && displaySearching" class="completer-searching">
     {{ textSearching }}
   </nb-option>
