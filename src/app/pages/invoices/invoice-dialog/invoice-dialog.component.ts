@@ -7,9 +7,10 @@ import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { take } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
-import { INVOICE_STATOOS } from 'app/shared/services/invoice.service';
+import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { Invoice, InvoiceProduct, InvoiceMaterial } from '@models/invoice';
 import { User } from '@models/user';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -27,7 +28,9 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
     private dialogService: NbDialogService,
     private userService: UserService,
     private pdf: PdfService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private invoiceService: InvoiceService,
+    private http: HttpClient
   ) {
     super(derivedDocument, derivedRef);
   }
@@ -70,12 +73,22 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
   }
 
   generatePDF(): void {
-    this.pdf.generate(this.invoice);
+    this.http
+      .post('/api/public/metric/all/', {})
+      .pipe(take(1))
+      .subscribe((metrics: any) => {
+        this.pdf.generate(this.invoiceService.idToInvoice(this.invoice), metrics);
+      });
   }
 
   previewPDF(): void {
     this.isBlocked.next(true);
-    this.pdf.generate(this.tempInvoice, true);
+    this.http
+      .post('/api/public/metric/all/', {})
+      .pipe(take(1))
+      .subscribe((metrics: any) => {
+        this.pdf.generate(this.tempInvoice, metrics, true);
+      });
 
     this.dialogService
       .open(PdfDialogComponent, {
