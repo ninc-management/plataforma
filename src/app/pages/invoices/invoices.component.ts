@@ -11,6 +11,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'ngx-invoices',
@@ -135,7 +136,8 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractorService: ContractorService,
     private userService: UserService,
     private pdf: PdfService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private http: HttpClient
   ) {}
 
   ngOnDestroy(): void {
@@ -205,7 +207,12 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async generatePDF(event: { data: Invoice }): Promise<void> {
-    this.pdf.generate(event.data);
+    this.http
+      .post('/api/public/metric/all/', {})
+      .pipe(take(1))
+      .subscribe((metrics: any) => {
+        this.pdf.generate(this.invoiceService.idToInvoice(event.data), metrics);
+      });
   }
 
   pageWidth(): number {

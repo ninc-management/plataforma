@@ -11,6 +11,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
+import { HttpClient } from '@angular/common/http';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -46,7 +47,8 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private contractService: ContractService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    private http: HttpClient
   ) {
     super(derivedDocument, derivedRef);
   }
@@ -165,6 +167,12 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
         });
   }
   openPDFnewtab(): void {
-    if (this.contract.invoice) this.pdf.generate(this.invoiceService.idToInvoice(this.contract.invoice), false, true);
+    this.http
+      .post('/api/public/metric/all/', {})
+      .pipe(take(1))
+      .subscribe((metrics: any) => {
+        if (this.contract.invoice)
+          this.pdf.generate(this.invoiceService.idToInvoice(this.contract.invoice), metrics, false, true);
+      });
   }
 }
