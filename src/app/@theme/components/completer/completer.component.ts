@@ -85,6 +85,10 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
       .replace(/[\u0300-\u036f]/g, '');
   }
 
+  display(event: any): string {
+    return typeof event === 'string' ? event : event[this.nameField];
+  }
+
   onModelChange(event: any): void {
     if (typeof event === 'string') this.searchStr = event;
     else this.searchStr = event[this.nameField];
