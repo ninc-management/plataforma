@@ -35,6 +35,7 @@ export enum SPLIT_TYPES {
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
   A_RECEBER = 'A receber',
+  FINALIZADO = 'Finalizado',
   CONCLUIDO = 'Concluído',
   ARQUIVADO = 'Arquivado',
 }
