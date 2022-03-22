@@ -21,4 +21,8 @@ export class ConfigComponent implements OnInit {
     this.config.expenseTypes.push(cloneDeep(this.newExpense));
     this.newExpense = new ExpenseType();
   }
+
+  updateConfig(): void {
+    console.log(this.config);
+  }
 }
