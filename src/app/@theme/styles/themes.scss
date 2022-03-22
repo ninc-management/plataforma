@@ -98,3 +98,9 @@ $nb-themes: nb-register-theme(
   dark,
   dark
 );
+
+.menu-item :hover {
+  background-color: var(--menu-item-hover-background-color);
+  color: var(--menu-item-hover-text-color);
+  cursor: var(--menu-item-hover-cursor);
+}

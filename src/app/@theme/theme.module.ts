@@ -13,6 +13,8 @@ import {
   NbSelectModule,
   NbIconModule,
   NbThemeModule,
+  NbTooltipModule,
+  NbCardModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbSecurityModule } from '@nebular/security';
@@ -32,6 +34,8 @@ import { DEFAULT_THEME } from './styles/theme.default';
 import { COSMIC_THEME } from './styles/theme.cosmic';
 import { CORPORATE_THEME } from './styles/theme.corporate';
 import { DARK_THEME } from './styles/theme.dark';
+import { ConfigComponent } from './components/header/config/config.component';
+import { ConfigDialogComponent } from './components/header/config/config-dialog/config-dialog.component';
 
 const NB_MODULES = [
   NbLayoutModule,
@@ -48,6 +52,8 @@ const NB_MODULES = [
   NbEvaIconsModule,
   NbCompleterModule,
   NbFileUploaderModule,
+  NbTooltipModule,
+  NbCardModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,
@@ -58,6 +64,8 @@ const COMPONENTS = [
   OneColumnLayoutComponent,
   ThreeColumnsLayoutComponent,
   TwoColumnsLayoutComponent,
+  ConfigComponent,
+  ConfigDialogComponent,
 ];
 const PIPES = [CapitalizePipe, PluralPipe, RoundPipe, TimingPipe, NumberWithCommasPipe];
 
