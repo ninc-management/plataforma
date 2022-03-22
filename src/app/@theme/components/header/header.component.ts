@@ -1,12 +1,27 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NbMediaBreakpointsService, NbMenuService, NbSidebarService, NbThemeService } from '@nebular/theme';
+import {
+  NbDialogService,
+  NbMediaBreakpointsService,
+  NbMenuService,
+  NbSidebarService,
+  NbThemeService,
+} from '@nebular/theme';
 
-import { map, takeUntil } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { environment } from 'app/../environments/environment';
 import { User } from '@models/user';
+import { ConfigDialogComponent } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
+import { NbAccessChecker } from '@nebular/security';
+import { Permissions } from 'app/shared/services/utils.service';
+
+interface NbMenuItem {
+  title: string;
+  link?: string;
+  tag?: string;
+}
 
 @Component({
   selector: 'ngx-header',
@@ -22,7 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user = new User();
   logoIcon = 'logo';
 
-  userMenu = [
+  userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
   ];
@@ -33,10 +48,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private userService: UserService,
     private breakpointService: NbMediaBreakpointsService,
+    private dialogService: NbDialogService,
+    private accessChecker: NbAccessChecker,
     public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
+    this.accessChecker
+      .isGranted(Permissions.ELO_PRINCIPAL, 'change-configs')
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        if (isGranted) this.userMenu.splice(1, 0, { title: 'Configurações', tag: 'config' });
+      });
+
     this.userService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user: any) => {
       this.user = user;
       this.changeTheme();
@@ -57,6 +81,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
           this.menuTitle = event.item.title === 'Início' ? 'Nortan' : event.item.title;
+        }
+      });
+
+    this.menuService
+      .onItemClick()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: { item: any; tag: string }) => {
+        if (event.item.tag == 'config') {
+          this.dialogService.open(ConfigDialogComponent, {
+            context: {},
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
         }
       });
 
