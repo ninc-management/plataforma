@@ -547,10 +547,11 @@ describe('ContractService', () => {
   });
 
   it('toNetValue should work', () => {
-    expect(service.toNetValue('100,00', '0', '0')).toBe('100,00');
-    expect(service.toNetValue('1.000,00', '0,00', '0,00')).toBe('1.000,00');
-    expect(service.toNetValue('128.576,02', '8,5', '15,00')).toBe('100.000,00');
-    expect(service.toNetValue('1.425.821,63', '15,5', '17,00')).toBe('1.000.000,00');
+    expect(service.toNetValue('100,00', '0', '0', new Date('2021/11/01'))).toBe('100,00');
+    expect(service.toNetValue('1.000,00', '0,00', '0,00', new Date('2022/01/01'))).toBe('1.000,00');
+    expect(service.toNetValue('128.576,02', '8,5', '15,00', new Date('2022/02/25'))).toBe('100.000,00');
+    expect(service.toNetValue('1.425.821,63', '15,5', '17,00', new Date('2021/03/19'))).toBe('1.000.000,00');
+    expect(service.toNetValue('1.503,76', '15,5', '18,00', new Date('2022/03/25'))).toBe('1.000,00');
   });
 
   it('subtractComissions should work', () => {
