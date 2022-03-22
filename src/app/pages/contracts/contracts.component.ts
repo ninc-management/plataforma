@@ -125,7 +125,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: [{ value: 'Em andamento A receber', title: 'Ativo' }].concat(
+            list: [{ value: 'Em andamento A receber Finalizado', title: 'Ativo' }].concat(
               Object.values(CONTRACT_STATOOS).map((status) => ({ value: status, title: status }))
             ),
           },
