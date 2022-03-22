@@ -124,14 +124,9 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: [
-              { value: 'Em andamento A receber', title: 'Ativo' },
-              { value: 'Em andamento', title: 'Em andamento' },
-              { value: 'A receber', title: 'A receber' },
-              { value: 'Finalizado', title: 'Finalizado' },
-              { value: 'Concluído', title: 'Concluído' },
-              { value: 'Arquivado', title: 'Arquivado' },
-            ],
+            list: [{ value: 'Em andamento A receber', title: 'Ativo' }].concat(
+              Object.values(CONTRACT_STATOOS).map((status) => ({ value: status, title: status }))
+            ),
           },
         },
         filterFunction(cell: string, search?: string): boolean {
