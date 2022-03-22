@@ -1,6 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatRippleModule, MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
 import {
   NbActionsModule,
   NbLayoutModule,
@@ -15,6 +16,8 @@ import {
   NbThemeModule,
   NbTooltipModule,
   NbCardModule,
+  NbInputModule,
+  NbListModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbSecurityModule } from '@nebular/security';
@@ -54,6 +57,9 @@ const NB_MODULES = [
   NbFileUploaderModule,
   NbTooltipModule,
   NbCardModule,
+  FormsModule,
+  NbInputModule,
+  NbListModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,
