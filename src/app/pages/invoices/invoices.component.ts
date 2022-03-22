@@ -113,12 +113,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: [
-              { value: INVOICE_STATOOS.EM_ANALISE, title: 'Em análise' },
-              { value: INVOICE_STATOOS.FECHADO, title: 'Fechado' },
-              { value: INVOICE_STATOOS.NEGADO, title: 'Negado' },
-              { value: INVOICE_STATOOS.INVALIDADO, title: 'Invalidado' },
-            ],
+            list: Object.values(INVOICE_STATOOS).map((status) => ({ value: status, title: status })),
           },
         },
       },
