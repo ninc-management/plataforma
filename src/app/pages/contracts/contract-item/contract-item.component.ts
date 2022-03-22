@@ -405,7 +405,12 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
-        this.contractService.toNetValue(this.contract.value, this.options.notaFiscal, this.options.nortanPercentage)
+        this.contractService.toNetValue(
+          this.contract.value,
+          this.options.notaFiscal,
+          this.options.nortanPercentage,
+          this.contract.created
+        )
       ) - this.stringUtil.moneyToNumber(this.options.paid)
     );
   }
@@ -515,7 +520,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         this.contract
       ),
       this.options.notaFiscal,
-      this.options.nortanPercentage
+      this.options.nortanPercentage,
+      this.contract.created
     );
     this.contract.cashback = this.stringUtil.numberToMoney(
       this.contractService.expensesContributions(this.contract).global.cashback
@@ -553,7 +559,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         this.invoice.team[idx].netValue = this.contractService.toNetValue(
           this.invoice.team[idx].grossValue,
           this.options.notaFiscal,
-          this.options.nortanPercentage
+          this.options.nortanPercentage,
+          this.contract.created
         );
       } else {
         this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
@@ -567,7 +574,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         this.teamMember.netValue = this.contractService.toNetValue(
           this.teamMember.grossValue,
           this.options.notaFiscal,
-          this.options.nortanPercentage
+          this.options.nortanPercentage,
+          this.contract.created
         );
       } else {
         this.teamMember.netValue = this.stringUtil.applyPercentage(this.contract.liquid, this.teamMember.distribution);

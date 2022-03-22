@@ -249,7 +249,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         }, 0)
       ),
       this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract)
+      this.utils.nortanPercentage(contract),
+      contract.created
     );
   }
 
@@ -275,7 +276,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         }, 0)
       ),
       this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract)
+      this.utils.nortanPercentage(contract),
+      contract.created
     );
 
     return this.stringUtil.numberToMoney(
@@ -283,7 +285,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.contractService.toNetValue(
           invoice.value,
           this.utils.nfPercentage(contract),
-          this.utils.nortanPercentage(contract)
+          this.utils.nortanPercentage(contract),
+          contract.created
         )
       ) - this.stringUtil.moneyToNumber(paidValue)
     );
@@ -333,7 +336,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
                 contract
               ),
               this.utils.nfPercentage(contract),
-              this.utils.nortanPercentage(contract)
+              this.utils.nortanPercentage(contract),
+              contract.created
             ) + ';';
           csv += this.getReportReceivedValue(contract) + ';';
           csv += this.getReportExpensesValue(contract) + ';';

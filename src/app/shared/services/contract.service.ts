@@ -302,7 +302,8 @@ export class ContractService implements OnDestroy {
         this.toNetValue(
           this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
           this.utils.nfPercentage(contract),
-          this.utils.nortanPercentage(contract)
+          this.utils.nortanPercentage(contract),
+          contract.created
         )
       ) + this.getComissionsSum(contract)
     );
@@ -331,7 +332,8 @@ export class ContractService implements OnDestroy {
         }, 0)
       ),
       this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract)
+      this.utils.nortanPercentage(contract),
+      contract.created
     );
   }
 
@@ -346,8 +348,13 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.revertPercentage(this.stringUtil.revertPercentage(netValue, NF), nortanPercentage);
   }
 
-  toNetValue(grossValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.removePercentage(this.stringUtil.removePercentage(grossValue, NF), nortanPercentage);
+  toNetValue(grossValue: string, NF: string, nortanPercentage: string, createdDate: Date): string {
+    if (isBefore(createdDate, new Date('2022/03/20')))
+      return this.stringUtil.removePercentage(this.stringUtil.removePercentage(grossValue, NF), nortanPercentage);
+    return this.stringUtil.subtractMoney(
+      this.stringUtil.subtractMoney(grossValue, this.stringUtil.applyPercentage(grossValue, NF)),
+      this.stringUtil.applyPercentage(grossValue, nortanPercentage)
+    );
   }
 
   subtractComissions(contractValue: string, contract: Contract): string {
@@ -428,7 +435,8 @@ export class ContractService implements OnDestroy {
       contract.liquid = this.toNetValue(
         this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
         this.utils.nfPercentage(contract),
-        this.utils.nortanPercentage(contract)
+        this.utils.nortanPercentage(contract),
+        contract.created
       );
 
       const nf = this.utils.nfPercentage(contract);
@@ -441,11 +449,13 @@ export class ContractService implements OnDestroy {
           }, 0)
         ),
         nf,
-        nortan
+        nortan,
+        contract.created
       );
 
       contract.notPaid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.toNetValue(contract.value, nf, nortan)) - this.stringUtil.moneyToNumber(paid)
+        this.stringUtil.moneyToNumber(this.toNetValue(contract.value, nf, nortan, contract.created)) -
+          this.stringUtil.moneyToNumber(paid)
       );
     }
     return contract;

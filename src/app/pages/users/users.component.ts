@@ -386,7 +386,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 monthContract.contract
               ),
               this.utils.nfPercentage(monthContract.contract),
-              this.utils.nortanPercentage(monthContract.contract)
+              this.utils.nortanPercentage(monthContract.contract),
+              monthContract.contract.created
             );
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
@@ -547,7 +548,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 monthContract.contract
               ),
               this.utils.nfPercentage(monthContract.contract),
-              this.utils.nortanPercentage(monthContract.contract)
+              this.utils.nortanPercentage(monthContract.contract),
+              monthContract.contract.created
             );
             for (const sector of Object.keys(data)) {
               if (

@@ -481,7 +481,8 @@ export class MetricsService implements OnDestroy {
                       this.contractService.toNetValue(
                         receipt.value,
                         this.utils.nfPercentage(contract),
-                        this.utils.nortanPercentage(contract)
+                        this.utils.nortanPercentage(contract),
+                        contract.created
                       )
                     );
                   return acc;
