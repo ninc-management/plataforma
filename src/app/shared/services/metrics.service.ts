@@ -770,7 +770,11 @@ export class MetricsService implements OnDestroy {
       map(([contracts, invoices, contractors]) => {
         return contracts.reduce(
           (userReceivable: UserReceivable, contract) => {
-            if (contract.invoice && contract.status != CONTRACT_STATOOS.ARQUIVADO) {
+            if (
+              contract.invoice &&
+              contract.status != CONTRACT_STATOOS.ARQUIVADO &&
+              contract.status != CONTRACT_STATOOS.CONCLUIDO
+            ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               const member = invoice.team.find((member) => this.userService.isEqual(member.user, uId));
 
