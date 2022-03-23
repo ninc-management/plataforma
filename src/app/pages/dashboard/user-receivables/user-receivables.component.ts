@@ -98,15 +98,17 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.source.load(
-      this.userReceivableContracts.map((receivable) => {
-        return {
-          contract: receivable.contract,
-          code: receivable.contract.code,
-          contractor: receivable.contract.contractor,
-          name: receivable.contract.name,
-          receivableValue: receivable.receivableValue,
-        };
-      })
+      this.userReceivableContracts
+        .filter((receivable) => receivable.receivableValue != '0,00')
+        .map((receivable) => {
+          return {
+            contract: receivable.contract,
+            code: receivable.contract.code,
+            contractor: receivable.contract.contractor,
+            name: receivable.contract.name,
+            receivableValue: receivable.receivableValue,
+          };
+        })
     );
   }
 
