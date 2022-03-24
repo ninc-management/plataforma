@@ -1,6 +1,6 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep, isEqual } from 'lodash';
-import { skip, take, takeUntil } from 'rxjs/operators';
+import { skip, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -13,6 +13,7 @@ import expense_validation from 'app/shared/expense-validation.json';
 import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
 import { Team, TeamExpense } from '@models/team';
+import { ConfigService } from 'app/shared/services/config.service';
 
 @Component({
   selector: 'ngx-team-expense-item',
@@ -43,6 +44,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
+    private configService: ConfigService,
     public teamService: TeamService,
     public userService: UserService,
     public utils: UtilsService
@@ -57,7 +59,15 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     this.registered = false;
     const tmp = cloneDeep(this.userService.getUsers().value.filter((user) => user.active));
     this.userData = of(cloneDeep(tmp));
-    this.types = this.iTeam.config.expenseTypes.map((eType) => eType.name);
+    this.configService
+      .getConfig()
+      .pipe(
+        skipWhile((config) => config.length == 0),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((config) => {
+        this.types = config[0].expenseTypes.map((eType) => eType.name);
+      });
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);
     if (this.expenseIdx != undefined) {
@@ -140,12 +150,8 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   handleTypeChange(): void {
-    if (!this.teamService.hasSubTypes(this.iTeam, this.expense.type)) {
-      this.expense.subType = '';
-    } else {
-      const eType = this.iTeam.config.expenseTypes.find((type) => type.name === this.expense.type);
-      this.subTypes = eType!.subTypes;
-    }
+    this.subTypes = this.configService.expenseSubTypes(this.expense.type);
+    if (this.subTypes.length == 0) this.expense.subType = '';
   }
 
   updatePaidDate(): void {

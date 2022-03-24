@@ -1,14 +1,16 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { PlatformConfig } from '@models/platformConfig';
 import { Team, TeamExpense } from '@models/team';
 import { NbDialogService } from '@nebular/theme';
 import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -23,7 +25,8 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
   team: Team = new Team();
-  settings = {};
+  platformConfig: PlatformConfig = new PlatformConfig();
+
   get filtredExpenses(): TeamExpense[] {
     if (this.searchQuery !== '')
       return this.expenses.filter((expense) => {
@@ -41,9 +44,96 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     return this.expenses;
   }
 
+  settings = {
+    mode: 'external',
+    noDataMessage: 'Não encontramos nenhum gasto para o filtro selecionado.',
+    add: {
+      addButtonContent: '<i class="nb-plus"></i>',
+      createButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    edit: {
+      editButtonContent: '<i class="nb-edit"></i>',
+      saveButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
+    delete: {
+      deleteButtonContent: '<i class="nb-trash"></i>',
+      confirmDelete: false,
+    },
+    actions: {
+      columnTitle: 'Ações',
+      add: true,
+      edit: true,
+      delete: false,
+    },
+    columns: {
+      code: {
+        title: '#',
+        type: 'string',
+        sortDirection: 'desc',
+        width: '5%',
+        compareFunction: this.itemSort,
+      },
+      source: {
+        title: 'Fonte',
+        type: 'string',
+      },
+      description: {
+        title: 'Descrição',
+        type: 'string',
+      },
+      value: {
+        title: 'Valor',
+        type: 'string',
+        compareFunction: this.utils.valueSort,
+      },
+      type: {
+        title: 'Categoria',
+        type: 'string',
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: this.platformConfig.expenseTypes.map((type) => ({
+              value: type.name,
+              title: type.name,
+            })),
+          },
+        },
+      },
+      created: {
+        title: 'Data',
+        type: 'string',
+      },
+      paid: {
+        title: 'Pago?',
+        type: 'string',
+        valuePrepareFunction: (value: any) => (value ? '✅' : '❌'),
+        filter: {
+          type: 'list',
+          config: {
+            selectText: 'Todos',
+            list: [
+              {
+                value: true,
+                title: '✅',
+              },
+              {
+                value: false,
+                title: '❌',
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
+
   constructor(
     private dialogService: NbDialogService,
     private teamService: TeamService,
+    private configService: ConfigService,
     public userService: UserService,
     public utils: UtilsService
   ) {}
@@ -53,6 +143,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  //INVARIANT: The settings object must be filled before the ngAfterViewInit cycle
   ngOnInit(): void {
     this.teamService
       .getTeams()
@@ -70,7 +161,18 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           })
         );
       });
-    this.loadTableSettings();
+
+    //INVARIANT: The config service data must be loaded for the code to be synchronous
+    this.configService
+      .getConfig()
+      .pipe(
+        skipWhile((config) => config.length == 0),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((config) => {
+        this.platformConfig = config[0];
+        this.reloadTableSettings();
+      });
   }
 
   openDialog(index?: number): void {
@@ -111,91 +213,12 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  loadTableSettings() {
-    this.settings = {
-      mode: 'external',
-      noDataMessage: 'Não encontramos nenhum gasto para o filtro selecionado.',
-      add: {
-        addButtonContent: '<i class="nb-plus"></i>',
-        createButtonContent: '<i class="nb-checkmark"></i>',
-        cancelButtonContent: '<i class="nb-close"></i>',
-      },
-      edit: {
-        editButtonContent: '<i class="nb-edit"></i>',
-        saveButtonContent: '<i class="nb-checkmark"></i>',
-        cancelButtonContent: '<i class="nb-close"></i>',
-      },
-      delete: {
-        deleteButtonContent: '<i class="nb-trash"></i>',
-        confirmDelete: false,
-      },
-      actions: {
-        columnTitle: 'Ações',
-        add: true,
-        edit: true,
-        delete: false,
-      },
-      columns: {
-        code: {
-          title: '#',
-          type: 'string',
-          sortDirection: 'desc',
-          width: '5%',
-          compareFunction: this.itemSort,
-        },
-        source: {
-          title: 'Fonte',
-          type: 'string',
-        },
-        description: {
-          title: 'Descrição',
-          type: 'string',
-        },
-        value: {
-          title: 'Valor',
-          type: 'string',
-          compareFunction: this.utils.valueSort,
-        },
-        type: {
-          title: 'Categoria',
-          type: 'string',
-          filter: {
-            type: 'list',
-            config: {
-              selectText: 'Todos',
-              list: this.team.config.expenseTypes.map((type) => ({
-                value: type.name,
-                title: type.name,
-              })),
-            },
-          },
-        },
-        created: {
-          title: 'Data',
-          type: 'string',
-        },
-        paid: {
-          title: 'Pago?',
-          type: 'string',
-          valuePrepareFunction: (value: any) => (value ? '✅' : '❌'),
-          filter: {
-            type: 'list',
-            config: {
-              selectText: 'Todos',
-              list: [
-                {
-                  value: true,
-                  title: '✅',
-                },
-                {
-                  value: false,
-                  title: '❌',
-                },
-              ],
-            },
-          },
-        },
-      },
-    };
+  reloadTableSettings(): void {
+    const newSettings = this.settings;
+    newSettings.columns.type.filter.config.list = this.platformConfig.expenseTypes.map((type) => ({
+      value: type.name,
+      title: type.name,
+    }));
+    this.settings = Object.assign({}, newSettings);
   }
 }

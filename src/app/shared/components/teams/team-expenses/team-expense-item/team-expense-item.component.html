@@ -192,7 +192,7 @@
         </nb-select>
       </div>
     </div>
-    <div *ngIf="teamService.hasSubTypes(iTeam, expense.type)" class="col-md-3">
+    <div *ngIf="subTypes.length > 0" class="col-md-3">
       <div class="form-control-group">
         <label class="label" for="input-subtype">Subcategoria do gasto:</label>
         <nb-select
