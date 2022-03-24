@@ -86,18 +86,13 @@ describe('ConfigService', () => {
   });
 
   it('saveConfig should work', (done: DoneFn) => {
-    const tmpConfig = new PlatformConfig();
-    const tmpExpenseType = new ExpenseType();
-    tmpExpenseType.name = 'tmpExpenseType';
-    tmpConfig.expenseTypes.push(cloneDeep(tmpExpenseType));
-
     let i = 1;
     const data = {
       ns: {
         coll: 'platformconfigs',
       },
       operationType: 'insert',
-      fullDocument: tmpConfig,
+      fullDocument: mockedConfigs[0],
     };
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
@@ -113,19 +108,18 @@ describe('ConfigService', () => {
           }
           case 2: {
             i += 1;
-            expect(configs.length).toBe(1);
-            expect(configs).toEqual(mockedConfigs);
-            service.saveConfig(tmpConfig);
+            expect(configs.length).toBe(0);
+            expect(configs).toEqual([]);
+            service.saveConfig(mockedConfigs[0]);
             const req1 = httpMock.expectOne('/api/config/');
             expect(req1.request.method).toBe('POST');
-            req1.flush({ config: tmpConfig });
+            req1.flush({ config: mockedConfigs[0] });
             socket.emit('dbchange', data);
             break;
           }
           case 3: {
-            expect(configs.length).toBe(2);
-            mockedConfigs.push(tmpConfig);
-            expect(configs).toEqual(mockedConfigs);
+            expect(configs.length).toBe(1);
+            expect(configs).toEqual(JSON.parse(JSON.stringify(mockedConfigs)));
             done();
             break;
           }
@@ -139,7 +133,7 @@ describe('ConfigService', () => {
     const req = httpMock.expectOne('/api/config/all');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(mockedConfigs);
+      req.flush([]);
     }, 50);
   });
 
