@@ -992,20 +992,14 @@
           </div>
         </div>
       </nb-tab>
+      <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gráfico'" [tabIcon]="chartIcon" responsive>
+        <div class="row" style="text-align: center">
+          <div class="col-12">
+            <ngx-echarts-bar [contractId]="contractId"></ngx-echarts-bar>
+          </div>
+        </div>
+      </nb-tab>
     </nb-tabset>
-    <div class="row">
-      <div class="col-auto">
-        <label class="label-divider">Gráficos</label>
-      </div>
-      <div class="col">
-        <hr />
-      </div>
-      <div class="col-12">
-        <nb-card>
-          <ngx-echarts-bar [contractId]="iContractIdx"></ngx-echarts-bar>
-        </nb-card>
-      </div>
-    </div>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <nb-list>
