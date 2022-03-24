@@ -9,7 +9,14 @@ let requested = false;
 const configMap: Record<string, PlatformConfig> = {};
 const mutex = new Mutex();
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
+  const configs: PlatformConfig[] = await PlatformConfigModel.find({});
+  if (configs.length > 0) {
+    return res.status(500).json({
+      message: 'Já existe uma configuração para a plataforma!',
+    });
+  }
+
   const config = new PlatformConfigModel(req.body.config);
   mutex.acquire().then((release) => {
     config
