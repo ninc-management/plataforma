@@ -1,9 +1,18 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Subject } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { EChartsOption } from 'echarts';
+
+type EchartBarItem = [string, number];
+
+interface EchartBar {
+  type: 'bar';
+  barWidth: string;
+  barGap: string;
+  data: EchartBarItem[];
+}
 
 @Component({
   selector: 'ngx-echarts-bar',
@@ -17,8 +26,8 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
   updateOptions: EChartsOption = {};
   expenseTypes: string[] = [];
   expenseValues: number[] = [];
+  series: EchartBar[] = [];
   private destroy$: Subject<void> = new Subject();
-  themeSubscription: any;
   currentTheme = {};
   constructor(
     private theme: NbThemeService,
@@ -31,67 +40,68 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.themeSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toHandleChart(series: EchartBar[]) {
+    this.options = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
+      xAxis: [
+        {
+          type: 'category',
+          axisLabel: {
+            width: 100,
+            interval: 0,
+          },
+          axisTick: {
+            alignWithLabel: true,
+          },
+        },
+      ],
+      yAxis: [
+        {
+          type: 'value',
+        },
+      ],
+      series: series,
+    };
   }
 
   ngOnInit(): void {
-    this.themeSubscription = this.theme.getJsTheme().subscribe((config) => {
-      const colors: any = config.variables;
-      this.currentTheme = colors.echarts;
-      this.contractService.getContracts().subscribe((contracts) => {
-        this.expenseTypes = [];
-        this.expenseValues = [];
-        const currentContract = contracts.find((contract) => contract._id === this.contractId);
-
-        if (currentContract) {
-          const result = this.contractService.expenseTypesSum(false, currentContract);
-          result
-            .filter((x) => x.type !== 'TOTAL')
-            .map((expense) => {
-              this.expenseTypes.push(expense.type);
-              this.expenseValues.push(this.stringUtilService.moneyToNumber(expense.value));
-              this.updateOptions = {
-                xAxis: [{ data: this.expenseTypes }],
-                series: [{ data: this.expenseValues }],
-              };
-            });
-        }
+    this.theme
+      .getJsTheme()
+      .pipe(take(1))
+      .subscribe((config) => {
+        const colors: any = config.variables;
+        this.currentTheme = colors.echarts;
+        this.contractService
+          .getContracts()
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((contracts) => {
+            const series: EchartBar[] = [];
+            const currentContract = contracts.find((contract) => contract._id === this.contractId);
+            if (currentContract) {
+              const result = this.contractService.expenseTypesSum(false, currentContract);
+              result
+                .filter((x) => x.type !== 'TOTAL')
+                .map((expense) => {
+                  const temp: EchartBar = {
+                    type: 'bar',
+                    barGap: '-100%',
+                    barWidth: '30%',
+                    data: [[expense.type, this.stringUtilService.moneyToNumber(expense.value)]],
+                  };
+                  series.push(temp);
+                });
+              this.toHandleChart(series);
+            }
+          });
       });
-      this.options = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow',
-          },
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: this.expenseTypes,
-            axisLabel: {
-              width: 100,
-              interval: 0,
-            },
-            axisTick: {
-              alignWithLabel: true,
-            },
-          },
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            axisLabel: {},
-          },
-        ],
-        series: [
-          {
-            name: 'Total:',
-            type: 'bar',
-            barWidth: '30%',
-            data: this.expenseValues,
-          },
-        ],
-      };
-    });
   }
 }

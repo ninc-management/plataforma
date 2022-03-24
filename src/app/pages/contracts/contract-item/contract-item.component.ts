@@ -38,7 +38,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() iContract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  iContractIdx!: string;
+  contractId!: string;
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
@@ -217,6 +217,10 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     icon: 'scale',
     pack: 'fac',
   };
+  chartIcon = {
+    icon: 'chart-bar',
+    pack: 'fa',
+  };
   teamTotal = {
     grossValue: '0,00',
     netValue: '0,00',
@@ -236,7 +240,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contract = cloneDeep(this.iContract);
-    this.iContractIdx = this.contract._id;
+    this.contractId = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     if (this.contract.ISS) {
       if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0) this.options.hasISS = false;
