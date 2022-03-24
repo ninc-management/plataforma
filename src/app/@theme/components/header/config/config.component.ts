@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -10,7 +10,7 @@ import { cloneDeep } from 'lodash';
   styleUrls: ['./config.component.scss'],
 })
 export class ConfigComponent implements OnInit {
-  config: PlatformConfig = new PlatformConfig();
+  @Input() config!: PlatformConfig;
   newExpense: ExpenseType = new ExpenseType();
 
   constructor(public utils: UtilsService) {}
