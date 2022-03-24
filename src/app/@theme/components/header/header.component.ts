@@ -7,8 +7,8 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 
-import { map, take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { environment } from 'app/../environments/environment';
@@ -16,6 +16,8 @@ import { User } from '@models/user';
 import { ConfigDialogComponent } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
 import { NbAccessChecker } from '@nebular/security';
 import { Permissions } from 'app/shared/services/utils.service';
+import { ConfigService } from 'app/shared/services/config.service';
+import { PlatformConfig } from '@models/platformConfig';
 
 interface NbMenuItem {
   title: string;
@@ -36,6 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userPictureOnly = false;
   user = new User();
   logoIcon = 'logo';
+  config: PlatformConfig = new PlatformConfig();
 
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
@@ -50,21 +53,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private breakpointService: NbMediaBreakpointsService,
     private dialogService: NbDialogService,
     private accessChecker: NbAccessChecker,
+    private configService: ConfigService,
     public utils: UtilsService
   ) {}
 
   ngOnInit(): void {
+    combineLatest([this.userService.currentUser$, this.configService.getConfig()])
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(([currentUser, config]) => currentUser._id !== undefined)
+      )
+      .subscribe(([currentUser, config]) => {
+        this.user = currentUser;
+        this.changeTheme();
+        if (config.length == 0) config.push(new PlatformConfig());
+        this.config = config[0];
+      });
+
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'change-configs')
       .pipe(take(1))
       .subscribe((isGranted) => {
         if (isGranted) this.userMenu.splice(1, 0, { title: 'Configurações', tag: 'config' });
       });
-
-    this.userService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe((user: any) => {
-      this.user = user;
-      this.changeTheme();
-    });
 
     const { sm, xl } = this.breakpointService.getBreakpointsMap();
     this.themeService
@@ -90,7 +101,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((event: { item: any; tag: string }) => {
         if (event.item.tag == 'config') {
           this.dialogService.open(ConfigDialogComponent, {
-            context: {},
+            context: {
+              config: this.config,
+            },
             dialogClass: 'my-dialog',
             closeOnBackdropClick: false,
             closeOnEsc: false,

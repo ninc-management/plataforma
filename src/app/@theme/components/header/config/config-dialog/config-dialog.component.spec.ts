@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlatformConfig } from '@models/platformConfig';
 import { CommonTestingModule } from 'common-testing.module';
 
 import { ConfigDialogComponent } from './config-dialog.component';
@@ -12,6 +13,7 @@ describe('ConfigDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigDialogComponent);
     component = fixture.componentInstance;
+    component.config = new PlatformConfig();
     fixture.detectChanges();
   });
 
