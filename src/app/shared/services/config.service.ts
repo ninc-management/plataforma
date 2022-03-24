@@ -51,4 +51,9 @@ export class ConfigService implements OnDestroy {
     };
     this.http.post('/api/config/update', req).pipe(take(1)).subscribe();
   }
+
+  expenseSubTypes(type: string): string[] {
+    const tmpType = this.config$.value[0].expenseTypes.find((eType) => eType.name === type);
+    return tmpType ? tmpType.subTypes : [];
+  }
 }
