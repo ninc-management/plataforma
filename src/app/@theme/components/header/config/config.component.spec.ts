@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlatformConfig } from '@models/platformConfig';
 import { CommonTestingModule } from 'common-testing.module';
 
 import { ConfigComponent } from './config.component';
@@ -12,6 +13,7 @@ describe('ConfigComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigComponent);
     component = fixture.componentInstance;
+    component.config = new PlatformConfig();
     fixture.detectChanges();
   });
 
