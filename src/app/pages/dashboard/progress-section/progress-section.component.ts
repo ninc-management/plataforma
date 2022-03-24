@@ -224,7 +224,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           value: this.metricsService.userReceivableValue(user._id).pipe(
             map((userReceivable) => {
               this.userReceivableContracts = userReceivable.receivableContracts;
-              return 'R$ ' + userReceivable.totalValue;
+              return userReceivable.totalValue ? 'R$ ' + userReceivable.totalValue : 'R$ 0,00';
             })
           ),
           description: of(''),
