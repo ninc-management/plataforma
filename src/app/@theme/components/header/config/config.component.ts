@@ -10,7 +10,7 @@ import { cloneDeep } from 'lodash';
   styleUrls: ['./config.component.scss'],
 })
 export class ConfigComponent implements OnInit {
-  @Input() config!: PlatformConfig;
+  @Input() config: PlatformConfig = new PlatformConfig();
   newExpense: ExpenseType = new ExpenseType();
 
   constructor(public utils: UtilsService) {}

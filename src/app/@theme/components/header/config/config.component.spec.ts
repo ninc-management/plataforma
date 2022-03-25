@@ -13,7 +13,6 @@ describe('ConfigComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigComponent);
     component = fixture.componentInstance;
-    component.config = new PlatformConfig();
     fixture.detectChanges();
   });
 
