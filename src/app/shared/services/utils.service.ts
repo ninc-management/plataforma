@@ -306,13 +306,13 @@ export class UtilsService {
    * @param {Parameters<F>[0] | undefined} id
    * @param {F} revival
    * @param {keyof ReturnType<F>} property
-   * @returns {string}
+   * @returns {any}
    */
   idToProperty<F extends (...arg: any) => ReturnType<F>>(
     id: Parameters<F>[0] | undefined,
     revival: F,
     property: keyof ReturnType<F>
-  ): string {
+  ): any {
     if (id) return (revival(id) as any)[property];
     return '';
   }

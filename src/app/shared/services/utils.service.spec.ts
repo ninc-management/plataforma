@@ -3,12 +3,16 @@ import { TestBed } from '@angular/core/testing';
 import { UtilsService } from './utils.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { subMonths, addMonths, subYears, subDays } from 'date-fns';
-import { range } from 'lodash';
+import { cloneDeep, range } from 'lodash';
 import { Component } from '@angular/core';
 import { User } from '@models/user';
 import { Contract, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { Team, TeamMember } from '@models/team';
 import { TimeSeriesItem } from './metrics.service';
+import { InvoiceService } from './invoice.service';
+import { UserService } from './user.service';
+import { TeamService } from './team.service';
 
 @Component({
   selector: 'test-cmp',
@@ -42,11 +46,59 @@ function elementText(n: any): string {
 
 describe('UtilsService', () => {
   let service: UtilsService;
+  let invoiceService: InvoiceService;
+  let userService: UserService;
+  let teamService: TeamService;
+
+  let mockedUsers: User[];
+  let mockedInvoices: Invoice[];
+  let mockedTeams: Team[];
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
   beforeEach(() => {
     service = TestBed.inject(UtilsService);
+    invoiceService = TestBed.inject(InvoiceService);
+    userService = TestBed.inject(UserService);
+    teamService = TestBed.inject(TeamService);
+
+    mockedUsers = [];
+    mockedInvoices = [];
+    mockedTeams = [];
+
+    const tmpUser = new User();
+    tmpUser._id = '0';
+    tmpUser.fullName = 'Test1';
+    tmpUser.email = 'test1@te.st';
+    tmpUser.phone = '123456';
+    tmpUser.profilePicture = 'pic1@pic.com';
+    mockedUsers.push(cloneDeep(tmpUser));
+
+    const tmpTeam = new Team();
+    tmpTeam._id = '0';
+    tmpTeam.name = 'test';
+    tmpTeam.leader = '0';
+    tmpTeam.purpose = 'Be tested';
+    tmpTeam.abrev = 'T';
+    tmpTeam.config.path = `test`;
+    const tmpTeamMember = new TeamMember();
+    tmpTeamMember.user = '0';
+    tmpTeamMember.sector = '0';
+    tmpTeam.members.push(cloneDeep(tmpTeamMember));
+    tmpTeamMember.user = '1';
+    tmpTeamMember.sector = '1';
+    tmpTeam.members.push(cloneDeep(tmpTeamMember));
+    mockedTeams.push(cloneDeep(tmpTeam));
+
+    let tmpInvoice = new Invoice();
+    tmpInvoice._id = '0';
+    tmpInvoice.author = mockedUsers[0];
+    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
+    tmpInvoice.sector = '0';
+    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
+    tmpInvoice.contractor = '0';
+    tmpInvoice.value = '1.000,00';
+    mockedInvoices.push(cloneDeep(tmpInvoice));
   });
 
   it('should be created', () => {
@@ -222,5 +274,18 @@ describe('UtilsService', () => {
     expect(service.valueSort(-1, '21.300,01', '21.300,02')).toBe(1);
     expect(service.valueSort(-1, '21.300,20', '21.300,10')).toBe(-1);
     expect(service.valueSort(-1, '21.310,00', '21.310,00')).toBe(0);
+  });
+
+  it('idToProperty should work', () => {
+    expect(service.idToProperty(mockedInvoices[0], invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe(
+      'ORC-84/2021-NRT/DAD-00'
+    );
+    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'fullName')).toBe('Test1');
+    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'profilePicture')).toBe(
+      'pic1@pic.com'
+    );
+    expect(service.idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
+    expect(service.idToProperty(undefined, teamService.idToTeam.bind(teamService), 'abrev')).toBe('');
+    expect(service.idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe('T');
   });
 });
