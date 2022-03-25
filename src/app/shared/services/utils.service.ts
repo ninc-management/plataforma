@@ -300,4 +300,20 @@ export class UtilsService {
     });
     return condition;
   }
+
+  /**
+   * Return a property of an object given its reference and revival function
+   * @param {Parameters<F>[0] | undefined} id
+   * @param {F} revival
+   * @param {keyof ReturnType<F>} property
+   * @returns {string}
+   */
+  idToProperty<F extends (...arg: any) => ReturnType<F>>(
+    id: Parameters<F>[0] | undefined,
+    revival: F,
+    property: keyof ReturnType<F>
+  ): string {
+    if (id) return (revival(id) as any)[property];
+    return '';
+  }
 }
