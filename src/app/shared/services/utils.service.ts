@@ -313,7 +313,7 @@ export class UtilsService {
     revival: F,
     property: keyof ReturnType<F>
   ): any {
-    if (id) return (revival(id) as any)[property];
+    if (id) return revival(id)[property];
     return '';
   }
 }

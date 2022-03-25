@@ -13,6 +13,7 @@ import { TimeSeriesItem } from './metrics.service';
 import { InvoiceService } from './invoice.service';
 import { UserService } from './user.service';
 import { TeamService } from './team.service';
+import { ContractService } from './contract.service';
 
 @Component({
   selector: 'test-cmp',
@@ -49,10 +50,12 @@ describe('UtilsService', () => {
   let invoiceService: InvoiceService;
   let userService: UserService;
   let teamService: TeamService;
+  let contractService: ContractService;
 
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
   let mockedTeams: Team[];
+  let mockedContracts: Contract[];
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
@@ -65,6 +68,7 @@ describe('UtilsService', () => {
     mockedUsers = [];
     mockedInvoices = [];
     mockedTeams = [];
+    mockedContracts = [];
 
     const tmpUser = new User();
     tmpUser._id = '0';
@@ -82,7 +86,7 @@ describe('UtilsService', () => {
     tmpTeam.abrev = 'T';
     tmpTeam.config.path = `test`;
     const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = '0';
+    tmpTeamMember.user = mockedUsers[0];
     tmpTeamMember.sector = '0';
     tmpTeam.members.push(cloneDeep(tmpTeamMember));
     tmpTeamMember.user = '1';
@@ -99,6 +103,15 @@ describe('UtilsService', () => {
     tmpInvoice.contractor = '0';
     tmpInvoice.value = '1.000,00';
     mockedInvoices.push(cloneDeep(tmpInvoice));
+
+    let tmpContract = new Contract();
+    tmpContract._id = '0';
+    tmpContract.invoice = mockedInvoices[0];
+    tmpContract.liquid = '676,00';
+    tmpContract.balance = '800,00';
+    tmpContract.notPaid = '845,00';
+    tmpContract.value = '1.000,00';
+    mockedContracts.push(cloneDeep(tmpContract));
   });
 
   it('should be created', () => {
@@ -278,14 +291,29 @@ describe('UtilsService', () => {
 
   it('idToProperty should work', () => {
     expect(service.idToProperty(mockedInvoices[0], invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe(
-      'ORC-84/2021-NRT/DAD-00'
+      mockedInvoices[0].code
     );
-    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'fullName')).toBe('Test1');
+    expect(
+      service.idToProperty(mockedContracts[0].invoice, invoiceService.idToInvoice.bind(invoiceService), 'code')
+    ).toBe(mockedInvoices[0].code);
+    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'fullName')).toBe(
+      mockedUsers[0].fullName
+    );
+    expect(service.idToProperty(mockedInvoices[0].author, userService.idToUser.bind(userService), 'fullName')).toBe(
+      mockedUsers[0].fullName
+    );
     expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'profilePicture')).toBe(
-      'pic1@pic.com'
+      mockedUsers[0].profilePicture
     );
     expect(service.idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
-    expect(service.idToProperty(undefined, teamService.idToTeam.bind(teamService), 'abrev')).toBe('');
-    expect(service.idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe('T');
+    expect(service.idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(
+      mockedTeams[0].abrev
+    );
+    setTimeout(() => {
+      expect(service.idToProperty('0', teamService.idToTeam.bind(teamService), 'purpose')).toBe(mockedTeams[0].purpose);
+      expect(
+        service.idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'name')
+      ).toBe(mockedContracts[0].name);
+    }, 20);
   });
 });
