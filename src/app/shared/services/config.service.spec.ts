@@ -40,7 +40,7 @@ describe('ConfigService', () => {
             }
             case 2: {
               const expectedConfigs = mockedConfigs;
-              expect(configs.length).toBe(2);
+              expect(configs.length).toBe(1);
               expect(configs).toEqual(expectedConfigs);
               test(expectedConfigs);
               done();
@@ -76,13 +76,6 @@ describe('ConfigService', () => {
     mockedExpenseType.name = 'mockedExpenseType1';
     mockedExpenseType.subTypes.push('mockedExpenseSubType1');
     mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.expenseTypes.push(cloneDeep(mockedExpenseType));
-    mockedConfigs.push(cloneDeep(mockedConfig));
-
-    mockedConfig._id = '1';
-    mockedConfig.expenseTypes = [];
-    mockedExpenseType.name = 'mockedExpenseType2';
-    mockedExpenseType.subTypes = [];
     mockedConfig.expenseTypes.push(cloneDeep(mockedExpenseType));
     mockedConfigs.push(cloneDeep(mockedConfig));
   });
@@ -129,7 +122,6 @@ describe('ConfigService', () => {
           }
           case 3: {
             expect(configs.length).toBe(1);
-            mockedConfigs.pop();
             expect(configs).toEqual(JSON.parse(JSON.stringify(mockedConfigs)));
             done();
             break;
@@ -185,7 +177,7 @@ describe('ConfigService', () => {
           }
           case 2: {
             i += 1;
-            expect(configs.length).toBe(2);
+            expect(configs.length).toBe(1);
             expect(configs).toEqual(mockedConfigs);
             service.editConfig(tmpConfig);
             const req1 = httpMock.expectOne('/api/config/update');
@@ -195,7 +187,7 @@ describe('ConfigService', () => {
             break;
           }
           case 3: {
-            expect(configs.length).toBe(2);
+            expect(configs.length).toBe(1);
             expect(configs[0].expenseTypes).toEqual([
               { name: 'editTestExpenseType', subTypes: ['editTestExpenseSubType'] },
             ]);
@@ -223,6 +215,8 @@ describe('ConfigService', () => {
       'mockedExpenseSubType1',
       'mockedExpenseSubType2',
     ]);
-    expect(service.expenseSubTypes(expectedConfigs[1].expenseTypes[0].name)).toEqual([]);
+
+    mockedConfigs[0].expenseTypes[0].subTypes = [];
+    expect(service.expenseSubTypes(mockedConfigs[0].expenseTypes[0].name)).toEqual([]);
   });
 });
