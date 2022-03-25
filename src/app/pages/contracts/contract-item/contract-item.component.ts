@@ -187,7 +187,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       },
       paidDate: {
         title: 'Pagamento',
-        valuePrepareFunction: (value?: Date): string => (value ? value.toLocaleDateString() : ''),
         type: 'string',
       },
     },
@@ -599,6 +598,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
         tmp.created = this.utils.formatDate(tmp.created);
+        tmp.paidDate = this.utils.formatDate(tmp.paidDate);
         return tmp;
       })
     );
