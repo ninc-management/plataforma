@@ -165,8 +165,8 @@
     </div>
     <div
       [ngClass]="{
-        'col-md-6': !teamService.hasSubTypes(iTeam, expense.type),
-        'col-md-3': teamService.hasSubTypes(iTeam, expense.type)
+        'col-md-6': !(([expense.type] | transformPipe: configService.expenseSubTypes.bind(configService)).length > 0),
+        'col-md-3': ([expense.type] | transformPipe: configService.expenseSubTypes.bind(configService)).length > 0
       }"
     >
       <div class="form-control-group">

@@ -44,7 +44,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
-    private configService: ConfigService,
+    public configService: ConfigService,
     public teamService: TeamService,
     public userService: UserService,
     public utils: UtilsService
@@ -139,7 +139,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       const type = this.expense.type;
       const date = this.utils.formatDate(new Date(), '-');
       const extension = name.match('[.].+');
-      if (this.teamService.hasSubTypes(this.iTeam, this.expense.type)) {
+      if (this.configService.expenseSubTypes(this.expense.type).length > 0) {
         const subType = this.expense.subType;
         return 'Comprovante-' + type + '-' + subType + '-' + date + extension;
       }

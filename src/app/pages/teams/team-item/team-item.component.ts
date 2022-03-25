@@ -6,7 +6,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
-import { ExpenseType, Team, TeamMember } from '@models/team';
+import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
 import team_validation from 'app/shared/team-validation.json';
 
@@ -30,7 +30,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   availableLeaders: Observable<User[]> = of([]);
   SECTORS: Sector[] = [];
   USER_SECTORS: Sector[] = [];
-  options = { expenseType: '', sectorName: '', sectorAbrev: '' };
+  options = { sectorName: '', sectorAbrev: '' };
 
   constructor(public teamService: TeamService, public utils: UtilsService, public userService: UserService) {
     this.team.members = [] as TeamMember[];
@@ -90,13 +90,6 @@ export class TeamItemComponent implements OnInit, OnDestroy {
       const user = this.userService.idToUser(this.currentMember.user);
       this.USER_SECTORS = this.teamService.userToSectors(user);
     }
-  }
-
-  addExpenseType(): void {
-    const eType = new ExpenseType();
-    eType.name = this.options.expenseType;
-    this.team.config.expenseTypes.push(eType);
-    this.options.expenseType = '';
   }
 
   addSector(): void {

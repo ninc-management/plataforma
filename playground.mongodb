@@ -609,7 +609,7 @@ db.teams.find().forEach((team) => {
     delete member.coordination;
   });
   team.config.path = '';
-
+  delete team.config.expenseTypes
   db.teams.replaceOne({ _id: team._id }, team);
 });
 
