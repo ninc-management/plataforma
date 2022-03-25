@@ -13,7 +13,6 @@ describe('ConfigDialogComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigDialogComponent);
     component = fixture.componentInstance;
-    component.config = new PlatformConfig();
     fixture.detectChanges();
   });
 

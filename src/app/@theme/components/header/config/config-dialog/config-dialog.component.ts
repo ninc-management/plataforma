@@ -10,7 +10,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
   styleUrls: ['./config-dialog.component.scss'],
 })
 export class ConfigDialogComponent extends BaseDialogComponent implements OnInit {
-  @Input() config!: PlatformConfig;
+  @Input() config: PlatformConfig = new PlatformConfig();
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
