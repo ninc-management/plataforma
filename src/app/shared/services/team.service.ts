@@ -127,10 +127,6 @@ export class TeamService implements OnDestroy {
     });
   }
 
-  hasSubTypes(team: Team, type: string): boolean {
-    return team.config.expenseTypes.some((eType) => eType.name === type && eType.subTypes.length > 0);
-  }
-
   teamsList(): string[] {
     const teams = this.teams$.getValue();
     return teams.map((team) => team.abrev + ' - ' + team.name);
