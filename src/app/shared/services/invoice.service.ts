@@ -102,11 +102,6 @@ export class InvoiceService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  idToCode(id: string | Invoice | undefined): string {
-    if (id === undefined) return '';
-    return this.idToInvoice(id)?.code;
-  }
-
   idToProfilePicture(iId: string | Invoice | undefined): string {
     if (iId === undefined) return '';
     const invoice = this.idToInvoice(iId);
