@@ -310,14 +310,6 @@ describe('InvoiceService', () => {
     expect(service.idToInvoice(expectedInvoices[1])).toEqual(expectedInvoices[1]);
   });
 
-  baseTest('idToCode should work', (expectedInvoices: Invoice[]) => {
-    expect(service.idToCode(undefined)).toEqual('');
-    expect(service.idToCode('0')).toEqual('test');
-    expect(service.idToCode(expectedInvoices[0])).toEqual('test');
-    expect(service.idToCode('1')).toEqual('test1');
-    expect(service.idToCode(expectedInvoices[1])).toEqual('test1');
-  });
-
   baseTest('idToProfilePicture should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToProfilePicture(undefined)).toEqual('');
     expect(service.idToProfilePicture('0')).toEqual('pic1@pic.com');
