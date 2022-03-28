@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } fr
 import { NbDialogService, NbComponentStatus } from '@nebular/theme';
 import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ContractService } from 'app/shared/services/contract.service';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
