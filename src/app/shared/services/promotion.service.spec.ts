@@ -240,11 +240,6 @@ describe('PromotionService', () => {
 
   it('getPromotions should work', () => {});
 
-  baseTest('idToName should work', (expectedPromotions: Promotion[]) => {
-    expect(service.idToName('0')).toEqual(expectedPromotions[0].name);
-    expect(service.idToName(mockedPromotions[0])).toEqual(expectedPromotions[0].name);
-  });
-
   baseTest('idToPromotion should work', (expectedPromotions: Promotion[]) => {
     expect(service.idToPromotion('0')).toEqual(expectedPromotions[0]);
     expect(service.idToPromotion(expectedPromotions[0])).toEqual(expectedPromotions[0]);
