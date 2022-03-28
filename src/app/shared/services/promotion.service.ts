@@ -64,10 +64,6 @@ export class PromotionService implements OnDestroy {
     return this.promotions$;
   }
 
-  idToName(id: string | Promotion): string {
-    return this.idToPromotion(id).name;
-  }
-
   idToPromotion(id: string | Promotion): Promotion {
     if (this.utils.isOfType<Promotion>(id, ['_id', 'name', 'start', 'end', 'rules'])) return id;
     const tmp = this.promotions$.getValue();
