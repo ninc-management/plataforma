@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
+import { ConfigService } from 'app/shared/services/config.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 
@@ -13,7 +14,7 @@ export class ConfigComponent implements OnInit {
   @Input() config: PlatformConfig = new PlatformConfig();
   newExpense: ExpenseType = new ExpenseType();
 
-  constructor(public utils: UtilsService) {}
+  constructor(private configService: ConfigService, public utils: UtilsService) {}
 
   ngOnInit(): void {}
 
@@ -23,6 +24,6 @@ export class ConfigComponent implements OnInit {
   }
 
   updateConfig(): void {
-    console.log(this.config);
+    this.configService.editConfig(this.config);
   }
 }
