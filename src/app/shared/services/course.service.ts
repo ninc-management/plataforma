@@ -49,11 +49,6 @@ export class CourseService {
     this.http.post('/api/course/', req).pipe(take(1)).subscribe();
   }
 
-  idToParticipantName(id: string | CourseParticipant | undefined): string {
-    if (id === undefined) return '';
-    return this.idToParticipant(id)?.name;
-  }
-
   idToParticipant(id: string | CourseParticipant): CourseParticipant {
     if (this.utils.isOfType<CourseParticipant>(id, ['_id', 'name', 'email', 'isSpeaker'])) return id;
     const tmp = this.courses$
