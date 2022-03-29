@@ -84,6 +84,7 @@ import { CommonModule } from '@angular/common';
 import { TeamService } from 'app/shared/services/team.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ConfigService } from 'app/shared/services/config.service';
 
 const roles = Object.values(Permissions);
 
@@ -238,6 +239,7 @@ const PROVIDERS = [
   UserService,
   UtilsService,
   WebSocketService,
+  ConfigService,
 ];
 
 @NgModule({
