@@ -426,7 +426,11 @@ export class ContractService implements OnDestroy {
       }
 
       if (invoice.contractor) {
-        contract.contractor = this.contractorService.idToName(invoice.contractor);
+        contract.contractor = this.utils.idToProperty(
+          invoice.contractor,
+          this.contractorService.idToContractor.bind(this.contractorService),
+          'fullName'
+        );
       }
 
       contract.interests = contract.receipts.length.toString() + '/' + contract.total;

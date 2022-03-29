@@ -141,9 +141,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (this.tempInvoice.nortanTeam)
         this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
-      this.contractorSearch = this.tempInvoice.contractor
-        ? this.contractorService.idToName(this.tempInvoice.contractor)
-        : '';
+      this.contractorSearch = this.utils.idToProperty(
+        this.tempInvoice.contractor,
+        this.contractorService.idToContractor.bind(this.contractorService),
+        'fullName'
+      );
+
       this.associateSearch = this.tempInvoice.prospectedBy
         ? this.userService.idToName(this.tempInvoice.prospectedBy)
         : '';
@@ -287,9 +290,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.oldStatus !== this.tempInvoice.status) {
           if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(this.tempInvoice);
         }
-        this.tempInvoice.contractorName = this.tempInvoice.contractor
-          ? this.contractorService.idToName(this.tempInvoice.contractor)
-          : '';
+        this.tempInvoice.contractorName = this.utils.idToProperty(
+          this.tempInvoice.contractor,
+          this.contractorService.idToContractor.bind(this.contractorService),
+          'fullName'
+        );
+
         this.iInvoice = cloneDeep(this.tempInvoice);
       }
     } else {

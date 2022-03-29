@@ -325,7 +325,12 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         if (contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(contract.invoice);
           csv += invoice.code + ';';
-          csv += this.contractorService.idToName(invoice.contractor) + ';';
+          csv +=
+            this.utils.idToProperty(
+              invoice.contractor,
+              this.contractorService.idToContractor.bind(this.contractorService),
+              'fullName'
+            ) + ';';
           csv += invoice.name + ';';
           csv += invoice.value + ';';
           csv += this.contractService.getComissionsSum(contract) + ';';

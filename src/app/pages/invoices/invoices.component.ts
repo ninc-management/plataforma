@@ -156,7 +156,13 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(([invoices, contractors, teams, user]) => {
         this.invoices = invoices.map((invoice: Invoice) => {
           if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
-          if (invoice.contractor) invoice.contractorName = this.contractorService.idToName(invoice.contractor);
+          if (invoice.contractor)
+            invoice.contractorName = this.utils.idToProperty(
+              invoice.contractor,
+              this.contractorService.idToContractor.bind(this.contractorService),
+              'fullName'
+            );
+
           invoice.role = this.invoiceService.role(invoice, user);
           return invoice;
         });
