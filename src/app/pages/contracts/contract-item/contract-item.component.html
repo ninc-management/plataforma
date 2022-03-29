@@ -88,7 +88,10 @@
               <label class="label" for="input-nortan-team">Time:</label>
               <input
                 nbInput
-                [ngModel]="[invoice.nortanTeam] | transformPipe: teamService.idToAbbreviation.bind(teamService)"
+                [ngModel]="
+                  [invoice.nortanTeam, teamService.idToTeam.bind(teamService), 'abrev']
+                    | transformPipe: utils.idToProperty.bind(utils)
+                "
                 #nortanTeam="ngModel"
                 id="input-nortan-team"
                 name="nortan-team"

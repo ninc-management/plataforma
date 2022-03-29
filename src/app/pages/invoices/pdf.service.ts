@@ -12,6 +12,7 @@ import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 pdfMake.fonts = {
   Sans: {
@@ -70,7 +71,8 @@ export class PdfService {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private contractorService: ContractorService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private utils: UtilsService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -239,7 +241,7 @@ export class PdfService {
   }
 
   async generate(invoice: Invoice, metrics: any, preview = false, openPdf = false): Promise<void> {
-    switch (this.teamService.idToAbbreviation(invoice.nortanTeam)) {
+    switch (this.utils.idToProperty(invoice.nortanTeam, this.teamService.idToTeam, 'abrev')) {
       case 'NPJ':
         this.teamService
           .userToSectors(invoice.author)
