@@ -186,9 +186,11 @@
               [inputName]="'contractorCompleter'"
               (selected)="
                 tempInvoice.contractor = $event;
-                tempInvoice.contractorFullName = tempInvoice.contractor
-                  ? contractorService.idToName(tempInvoice.contractor)
-                  : ''
+                tempInvoice.contractorFullName = utils.idToProperty(
+                      tempInvoice.contractor,
+                      contractorService.idToContractor.bind(contractorService),
+                      'fullName'
+                    )
               "
               #contractor="ngModel"
               id="input-contractor"
