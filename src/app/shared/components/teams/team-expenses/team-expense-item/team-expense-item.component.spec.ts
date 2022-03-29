@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TeamExpenseItemComponent } from './team-expense-item.component';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { ConfigService } from 'app/shared/services/config.service';
-import { of } from 'rxjs';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
 import { cloneDeep } from 'lodash';
@@ -14,7 +12,6 @@ describe('TeamExpenseItemComponent', () => {
   let fixture: ComponentFixture<TeamExpenseItemComponent>;
   let configService: ConfigService;
   let httpMock: HttpTestingController;
-  const configServiceSpy = jasmine.createSpyObj<ConfigService>('configService', ['getConfig', 'expenseSubTypes']);
 
   CommonTestingModule.setUpTestBed(TeamExpenseItemComponent);
 
@@ -30,9 +27,6 @@ describe('TeamExpenseItemComponent', () => {
     mockedConfig.expenseTypes.push(cloneDeep(mockedExpenseType));
     mockedConfigs.push(cloneDeep(mockedConfig));
 
-    TestBed.overrideProvider(ConfigService, { useValue: configServiceSpy });
-    configServiceSpy.getConfig.and.returnValue(of(mockedConfigs));
-    configServiceSpy.expenseSubTypes.and.returnValue(mockedConfigs[0].expenseTypes.map((type) => type.name));
     configService = TestBed.inject(ConfigService);
     httpMock = TestBed.inject(HttpTestingController);
 
@@ -42,15 +36,15 @@ describe('TeamExpenseItemComponent', () => {
 
     const reqTeam = httpMock.expectOne('/api/team/all');
     expect(reqTeam.request.method).toBe('POST');
-    setTimeout(() => {
-      reqTeam.flush([]);
-    }, 50);
+    reqTeam.flush([]);
 
     const reqUser = httpMock.expectOne('/api/user/all');
     expect(reqUser.request.method).toBe('POST');
-    setTimeout(() => {
-      reqUser.flush([]);
-    }, 50);
+    reqUser.flush([]);
+
+    const reqConfig = httpMock.expectOne('/api/config/all');
+    expect(reqConfig.request.method).toBe('POST');
+    reqConfig.flush(mockedConfigs);
   });
 
   afterEach(() => {

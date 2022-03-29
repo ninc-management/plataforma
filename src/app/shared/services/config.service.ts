@@ -53,6 +53,7 @@ export class ConfigService implements OnDestroy {
   }
 
   expenseSubTypes(type: string): string[] {
+    if (!type) return [];
     const tmpType = this.config$.value[0].expenseTypes.find((eType) => eType.name === type);
     return tmpType ? tmpType.subTypes : [];
   }
