@@ -14,6 +14,10 @@ import { InvoiceService } from './invoice.service';
 import { UserService } from './user.service';
 import { TeamService } from './team.service';
 import { ContractService } from './contract.service';
+import { take } from 'rxjs';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { ContractorService } from './contractor.service';
+import { Contractor } from '@models/contractor';
 
 @Component({
   selector: 'test-cmp',
@@ -47,15 +51,18 @@ function elementText(n: any): string {
 
 describe('UtilsService', () => {
   let service: UtilsService;
+  let httpMock: HttpTestingController;
   let invoiceService: InvoiceService;
   let userService: UserService;
   let teamService: TeamService;
   let contractService: ContractService;
+  let contractorService: ContractorService;
 
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
   let mockedTeams: Team[];
   let mockedContracts: Contract[];
+  let mockedContractors: Contractor[];
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
@@ -64,11 +71,15 @@ describe('UtilsService', () => {
     invoiceService = TestBed.inject(InvoiceService);
     userService = TestBed.inject(UserService);
     teamService = TestBed.inject(TeamService);
+    contractService = TestBed.inject(ContractService);
+    contractorService = TestBed.inject(ContractorService);
+    httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = [];
     mockedInvoices = [];
     mockedTeams = [];
     mockedContracts = [];
+    mockedContractors = [];
 
     const tmpUser = new User();
     tmpUser._id = '0';
@@ -112,6 +123,40 @@ describe('UtilsService', () => {
     tmpContract.notPaid = '845,00';
     tmpContract.value = '1.000,00';
     mockedContracts.push(cloneDeep(tmpContract));
+
+    const tmpContractor = new Contractor();
+    tmpContractor._id = '0';
+    tmpContractor.address = 'rua teste1';
+    tmpContractor.document = '000.000.000-11';
+    tmpContractor.email = 'test1@te.st';
+    tmpContractor.fullName = 'Test1';
+    tmpContractor.phone = '(00) 0000-0000';
+    mockedContractors.push(cloneDeep(tmpContractor));
+
+    teamService.getTeams().pipe(take(1)).subscribe();
+    let req = httpMock.expectOne('/api/team/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedTeams);
+
+    userService.getUsers().pipe(take(1)).subscribe();
+    req = httpMock.expectOne('/api/user/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedUsers);
+
+    invoiceService.getInvoices().pipe(take(1)).subscribe();
+    req = httpMock.expectOne('/api/invoice/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedInvoices);
+
+    contractService.getContracts().pipe(take(1)).subscribe();
+    req = httpMock.expectOne('/api/contract/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedContracts);
+
+    contractorService.getContractors().pipe(take(1)).subscribe();
+    req = httpMock.expectOne('/api/contractor/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedContractors);
   });
 
   it('should be created', () => {
@@ -290,30 +335,46 @@ describe('UtilsService', () => {
   });
 
   it('idToProperty should work', () => {
-    expect(service.idToProperty(mockedInvoices[0], invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe(
+    expect(service.idToProperty(undefined, invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe('');
+    expect(service.idToProperty(mockedInvoices[0]._id, invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe(
       mockedInvoices[0].code
     );
-    expect(
-      service.idToProperty(mockedContracts[0].invoice, invoiceService.idToInvoice.bind(invoiceService), 'code')
-    ).toBe(mockedInvoices[0].code);
-    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'fullName')).toBe(
-      mockedUsers[0].fullName
-    );
-    expect(service.idToProperty(mockedInvoices[0].author, userService.idToUser.bind(userService), 'fullName')).toBe(
-      mockedUsers[0].fullName
-    );
-    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'profilePicture')).toBe(
-      mockedUsers[0].profilePicture
+    expect(service.idToProperty(mockedInvoices[0], invoiceService.idToInvoice.bind(invoiceService), 'author')).toEqual(
+      mockedUsers[0]
     );
     expect(service.idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
+    expect(service.idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'fullName')).toBe(
+      mockedUsers[0].fullName
+    );
+    expect(service.idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'phone')).toBe(
+      mockedUsers[0].phone
+    );
+    expect(service.idToProperty(undefined, teamService.idToTeam.bind(teamService), 'purpose')).toBe('');
+    expect(service.idToProperty(mockedTeams[0]._id, teamService.idToTeam.bind(teamService), 'purpose')).toBe(
+      mockedTeams[0].purpose
+    );
     expect(service.idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(
       mockedTeams[0].abrev
     );
-    setTimeout(() => {
-      expect(service.idToProperty('0', teamService.idToTeam.bind(teamService), 'purpose')).toBe(mockedTeams[0].purpose);
-      expect(
-        service.idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'name')
-      ).toBe(mockedContracts[0].name);
-    }, 20);
+    expect(service.idToProperty(undefined, contractService.idToContract.bind(contractService), 'name')).toBe('');
+    expect(
+      service.idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'name')
+    ).toBe(mockedContracts[0].name);
+    expect(service.idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'value')).toBe(
+      mockedContracts[0].value
+    );
+    expect(service.idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'fullName')).toBe(
+      ''
+    );
+    expect(
+      service.idToProperty(
+        mockedContractors[0]._id,
+        contractorService.idToContractor.bind(contractorService),
+        'fullName'
+      )
+    ).toBe(mockedContractors[0].fullName);
+    expect(
+      service.idToProperty(mockedContractors[0], contractorService.idToContractor.bind(contractorService), 'document')
+    ).toBe(mockedContractors[0].document);
   });
 });
