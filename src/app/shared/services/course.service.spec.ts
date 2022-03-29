@@ -251,14 +251,6 @@ describe('CourseService', () => {
 
   baseTest('getCourses should work', (expectedCourses: Course[]) => {});
 
-  baseTest('idToParticipantName should work', (expectedCourses: Course[]) => {
-    expect(service.idToParticipantName('0')).toEqual(expectedCourses[0].participants[0].name);
-    expect(service.idToParticipantName(mockedParticipants[0])).toEqual(expectedCourses[0].participants[0].name);
-    expect(service.idToParticipantName('1')).toEqual(expectedCourses[0].participants[1].name);
-    expect(service.idToParticipantName(mockedParticipants[1])).toEqual(expectedCourses[0].participants[1].name);
-    expect(service.idToParticipantName(undefined)).toEqual('');
-  });
-
   baseTest('idToParticipant should work', (expectedCourses: Course[]) => {
     expect(service.idToParticipant('0')).toEqual(expectedCourses[0].participants[0]);
     expect(service.idToParticipant('1')).toEqual(expectedCourses[0].participants[1]);
