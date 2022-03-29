@@ -72,16 +72,6 @@ export class TeamService implements OnDestroy {
     return this.teams$;
   }
 
-  idToName(id: string | Team | undefined): string {
-    if (!id) return '';
-    return this.idToTeam(id).name;
-  }
-
-  idToAbbreviation(id: string | Team | undefined): string {
-    if (!id) return '';
-    return this.idToTeam(id).abrev;
-  }
-
   idToComposedName(id: string | Team | undefined): string {
     if (!id) return '';
     return this.idToTeam(id).abrev + ' - ' + this.idToTeam(id).name;
