@@ -52,6 +52,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
