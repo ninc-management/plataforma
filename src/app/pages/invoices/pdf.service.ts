@@ -241,7 +241,7 @@ export class PdfService {
   }
 
   async generate(invoice: Invoice, metrics: any, preview = false, openPdf = false): Promise<void> {
-    switch (this.utils.idToProperty(invoice.nortanTeam, this.teamService.idToTeam, 'abrev')) {
+    switch (this.utils.idToProperty(invoice.nortanTeam, this.teamService.idToTeam.bind(this.teamService), 'abrev')) {
       case 'NPJ':
         this.teamService
           .userToSectors(invoice.author)
