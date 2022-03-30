@@ -731,10 +731,7 @@
     </form>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" responsive>
-    <ngx-management-tab
-      [contract]='contract'
-      [isDialogBlocked]="isDialogBlocked"
-    ></ngx-management-tab>
+    <ngx-management-tab [contract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <div class="row">
@@ -1027,7 +1024,7 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
+          <div class="col-2 col-md-1" style="text-align: right">
             <span
               class="mr-1"
               [nbTooltip]="receipt.paid ? 'Pago' : 'Não pago'"
@@ -1076,7 +1073,7 @@
               </a>
             </div>
           </div>
-          <div class="col-2 col-md-1" style="text-align: right" *ngIf="isEditionGranted">
+          <div class="col-2 col-md-1" style="text-align: right">
             <span
               class="mr-1"
               [nbTooltip]="payment.paid ? 'Pago' : 'Não pago'"
