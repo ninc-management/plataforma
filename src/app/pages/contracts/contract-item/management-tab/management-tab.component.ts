@@ -31,18 +31,19 @@ class ChatComment {
 })
 export class ManagementTabComponent implements OnInit {
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
-  @Input() contract: Contract = new Contract();
+  @Input() iContract: Contract = new Contract();
   @Input() isDialogBlocked!: BehaviorSubject<boolean>;
+  contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
+
   avaliableResponsibles: Observable<User[]> = of([]);
   avaliableContracts: Observable<Contract[]> = of([]);
-  checklist!: ContractChecklistItem[];
-  validation = (contract_validation as any).default;
   managementResponsible = '';
   responsibleSearch = '';
   modelSearch = '';
+
   newComment: ChatComment = new ChatComment();
   isTargetSelectionActive = false;
   commentTargetSearch = '';
@@ -50,6 +51,7 @@ export class ManagementTabComponent implements OnInit {
   comments: ChatComment[] = [];
   caretPosition!: Caret.Position;
 
+  validation = (contract_validation as any).default;
   avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
 
   avaliableItemStatus = [
@@ -76,6 +78,7 @@ export class ManagementTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.contract = cloneDeep(this.iContract);
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
@@ -83,7 +86,6 @@ export class ManagementTabComponent implements OnInit {
     this.deadline = this.contractService.getDeadline(this.contract);
     this.avaliableResponsibles = this.getAvaliableResponsibles();
     this.avaliableContracts = this.contractService.getContracts();
-    this.checklist = cloneDeep(this.contract.checklist);
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.newComment.author = user;
     });
@@ -106,7 +108,6 @@ export class ManagementTabComponent implements OnInit {
   }
 
   updateContractManagement(): void {
-    this.contract.checklist = cloneDeep(this.checklist);
     this.contractService.editContract(this.contract);
   }
 
@@ -152,9 +153,10 @@ export class ManagementTabComponent implements OnInit {
 
   registerChecklistItem(): void {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
-    this.checklist.push(this.newChecklistItem);
+    this.contract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
     this.responsibleSearch = '';
+    this.deadline = this.contractService.getDeadline(this.contract);
   }
 
   getItemTotalDays(item: ContractChecklistItem): number | undefined {
@@ -208,7 +210,6 @@ export class ManagementTabComponent implements OnInit {
       .open(ChecklistItemDialogComponent, {
         context: {
           contract: this.contract,
-          checklist: this.checklist,
           itemIndex: index,
         },
         dialogClass: 'my-dialog',
@@ -223,17 +224,17 @@ export class ManagementTabComponent implements OnInit {
   }
 
   removeItem(index: number): void {
-    this.checklist.splice(index, 1);
+    this.contract.checklist.splice(index, 1);
   }
 
-  applyManagementModel(contract: Contract): void {
+  applyManagementModel(selectedContract: Contract): void {
     this.isDialogBlocked.next(true);
     this.dialogService
       .open(ConfirmationDialogComponent, {
         context: {
           question:
             'Você tem certeza que deseja importar a checklist do contrato ' +
-            contract.code +
+            selectedContract.code +
             '? Os dados atuais serão apagados.',
         },
         dialogClass: 'my-dialog',
@@ -244,7 +245,7 @@ export class ManagementTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.checklist = cloneDeep(contract.checklist);
+          this.contract.checklist = cloneDeep(selectedContract.checklist);
         } else {
           this.modelSearch = '';
         }
