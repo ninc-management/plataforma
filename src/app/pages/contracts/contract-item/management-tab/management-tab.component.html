@@ -26,7 +26,7 @@
             name="contractor"
             fullWidth
             fieldSize="large"
-            [nbTooltip]="tooltipText()"
+            [nbTooltip]="[] | transformPipe: tooltipText.bind(this)"
             nbTooltipPlacement="top"
             nbTooltipStatus="primary"
             [readonly]="true"
@@ -59,7 +59,7 @@
           <label class="label" for="start-date">Início:</label>
           <input
             nbInput
-            [ngModel]="utils.formatDate(contract.created)"
+            [ngModel]="[contract.created] | transformPipe: utils.formatDate.bind(utils)"
             name="start-date"
             fullWidth
             fieldSize="large"
@@ -72,7 +72,7 @@
           <label class="label" for="end-date">Fim:</label>
           <input
             nbInput
-            [ngModel]="deadline ? utils.formatDate(deadline) : ''"
+            [ngModel]="deadline ? ([deadline] | transformPipe: utils.formatDate.bind(utils)) : ''"
             name="end-date"
             fullWidth
             fieldSize="large"
@@ -85,7 +85,7 @@
           <label class="label" for="remaining-days">Dias restantes:</label>
           <input
             nbInput
-            [ngModel]="getRemainingDays()"
+            [ngModel]="[] | transformPipe: getRemainingDays.bind(this)"
             name="remaining-days"
             fullWidth
             fieldSize="large"
@@ -268,7 +268,10 @@
           <div class="col-3">
             <input
               nbInput
-              [ngModel]="this.userService.idToName(checklist[i].responsible)"
+              [ngModel]="
+                [checklist[i].responsible, this.userService.idToUser.bind(userService), 'fullName']
+                  | transformPipe: this.utils.idToProperty.bind(utils)
+              "
               #responsible="ngModel"
               id="item-responsible-{{ i }}"
               name="item-responsible-{{ i }}"
@@ -316,8 +319,8 @@
         <div class="row w-100">
           <div class="col-12 mt-3">
             <nb-progress-bar
-              [status]="getItemProgressStatus(checklist[i])"
-              [class]="'progress-border ' + getItemProgressStatus(checklist[i])"
+              [status]="[checklist[i]] | transformPipe: getItemProgressStatus.bind(this)"
+              [class]="'progress-border ' + ([checklist[i]] | transformPipe: getItemProgressStatus.bind(this))"
               [size]="'tiny'"
               [displayValue]="true"
               [value]="getPercentualItemProgress(checklist[i])"
@@ -350,7 +353,10 @@
     >
       <nb-user
         size="large"
-        [picture]="userService.idToProfilePicture(comment.author)"
+        [picture]="
+          [comment.author, this.userService.idToUser.bind(userService), 'profilePicture']
+            | transformPipe: this.utils.idToProperty.bind(utils)
+        "
         onlyPicture
         shape="rectangle"
       ></nb-user>
@@ -359,7 +365,9 @@
           <span>
             <b>{{ comment.author.fullName }}</b>
           </span>
-          <span class="label" style="margin-left: 0.5rem">{{ comment.created.toLocaleString() }}</span>
+          <span class="label" style="margin-left: 0.5rem">
+            {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}
+          </span>
         </div>
         {{ comment.body }}
       </div>
