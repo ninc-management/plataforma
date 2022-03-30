@@ -32,7 +32,7 @@ class ChatComment {
 export class ManagementTabComponent implements OnInit {
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
   @Input() iContract: Contract = new Contract();
-  @Input() isDialogBlocked!: BehaviorSubject<boolean>;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
@@ -214,7 +214,7 @@ export class ManagementTabComponent implements OnInit {
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
-        closeOnEsc: true,
+        closeOnEsc: false,
         autoFocus: false,
       })
       .onClose.pipe(take(1))
