@@ -233,12 +233,12 @@
     </div>
 
     <nb-list class="row overflow-hidden py-3">
-      <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of checklist; let i = index">
+      <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of contract.checklist; let i = index">
         <div class="row w-100">
           <div class="col-3">
             <input
               nbInput
-              [(ngModel)]="checklist[i].name"
+              [(ngModel)]="contract.checklist[i].name"
               #nameInput="ngModel"
               id="item-name-{{ i }}"
               name="item-name-{{ i }}"
@@ -252,7 +252,7 @@
           <div class="col-2">
             <input
               nbInput
-              [(ngModel)]="checklist[i].range"
+              [(ngModel)]="contract.checklist[i].range"
               #rangeInput="ngModel"
               id="item-range-{{ i }}"
               name="item-range-{{ i }}"
@@ -269,7 +269,7 @@
             <input
               nbInput
               [ngModel]="
-                [checklist[i].responsible, this.userService.idToUser.bind(userService), 'fullName']
+                [contract.checklist[i].responsible, this.userService.idToUser.bind(userService), 'fullName']
                   | transformPipe: this.utils.idToProperty.bind(utils)
               "
               #responsible="ngModel"
@@ -282,7 +282,7 @@
           </div>
           <div class="col-2">
             <nb-select
-              [(ngModel)]="checklist[i].status"
+              [(ngModel)]="contract.checklist[i].status"
               #statusInput="ngModel"
               id="item-status-{{ i }}"
               name="item-status-{{ i }}"
@@ -319,11 +319,11 @@
         <div class="row w-100">
           <div class="col-12 mt-3">
             <nb-progress-bar
-              [status]="[checklist[i]] | transformPipe: getItemProgressStatus.bind(this)"
-              [class]="'progress-border ' + ([checklist[i]] | transformPipe: getItemProgressStatus.bind(this))"
+              [status]="[contract.checklist[i]] | transformPipe: getItemProgressStatus.bind(this)"
+              [class]="'progress-border ' + ([contract.checklist[i]] | transformPipe: getItemProgressStatus.bind(this))"
               [size]="'tiny'"
               [displayValue]="true"
-              [value]="getPercentualItemProgress(checklist[i])"
+              [value]="getPercentualItemProgress(contract.checklist[i])"
             ></nb-progress-bar>
           </div>
         </div>

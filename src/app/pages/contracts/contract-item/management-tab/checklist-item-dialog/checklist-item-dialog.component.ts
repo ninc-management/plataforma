@@ -18,7 +18,6 @@ import { Observable, of } from 'rxjs';
 })
 export class ChecklistItemDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() contract: Contract = new Contract();
-  @Input() checklist!: ContractChecklistItem[];
   @Input() itemIndex!: number;
   invoice: Invoice = new Invoice();
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
@@ -57,7 +56,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     if (this.itemIndex !== undefined) {
-      this.checklistItem = cloneDeep(this.checklist[this.itemIndex]);
+      this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
       this.actionList = cloneDeep(this.checklistItem.actionList);
     }
     this.avaliableResponsibles = this.getAvaliableResponsibles();
@@ -92,8 +91,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
 
   updateAction(): void {
     this.checklistItem.actionList = cloneDeep(this.actionList);
-    this.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
-    this.contract.checklist = cloneDeep(this.checklist);
+    this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
     this.dismiss();
   }
 
