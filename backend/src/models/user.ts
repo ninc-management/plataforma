@@ -39,6 +39,23 @@ export class UserFinancialTransaction {
   value!: string;
 }
 
+export class UserNotification extends Base<string> {
+  @prop({ required: true })
+  title: string = '';
+
+  @prop({ required: true })
+  message: string = '';
+
+  @prop({ ref: () => User })
+  sender: Ref<User>;
+
+  @prop({ ref: () => User })
+  addressee: Ref<User>;
+
+  @prop({ required: true })
+  Date = new Date();
+}
+
 @plugin(mongooseUniqueValidator)
 export class User extends Base<string> {
   @prop({ required: true })
@@ -103,6 +120,9 @@ export class User extends Base<string> {
 
   @prop({ required: true })
   public active: boolean = true;
+
+  @prop({ type: () => [UserNotification] })
+  public notifications: UserNotification[] = [];
 }
 
 export default getModelForClass(User);

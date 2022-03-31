@@ -28,6 +28,7 @@ export const CONTRACT_BALANCE = {
   expertise: [],
   AER: [],
   transactions: [],
+  notifications: [],
   active: true,
   profilePicture:
     'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
@@ -49,6 +50,7 @@ export const CLIENT = {
   expertise: [],
   AER: [],
   transactions: [],
+  notifications: [],
   active: true,
   profilePicture:
     'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
@@ -70,6 +72,7 @@ export const NORTAN = {
   expertise: [],
   AER: [],
   transactions: [],
+  notifications: [],
   active: true,
   profilePicture:
     'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
