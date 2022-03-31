@@ -618,3 +618,9 @@ db.invoices.find().forEach((i) => {
  i.prospectedBy = i.prospectedBy ?  i.prospectedBy : i.author;
   db.invoices.replaceOne({ _id: i._id }, i);
 });
+
+// Add notification list to user
+db.users.find().forEach((u) => {
+  u.notifications = [];
+  db.users.replaceOne({ _id: u._id }, u);
+});
