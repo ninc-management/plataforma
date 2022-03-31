@@ -5,7 +5,11 @@ import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from 'app/shared/contract-validation.json';
-import { ContractService } from 'app/shared/services/contract.service';
+import {
+  AVALIABLE_MANAGEMENT_STATUS,
+  AVALIABLE_MANAGEMENT_ITEM_STATUS,
+  ContractService,
+} from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -52,21 +56,8 @@ export class ManagementTabComponent implements OnInit {
   caretPosition!: Caret.Position;
 
   validation = (contract_validation as any).default;
-  avaliableStatus = ['Produção', 'Análise Externa', 'Espera', 'Prioridade', 'Finalização', 'Concluído'];
-
-  avaliableItemStatus = [
-    'Briefing',
-    'Anteprojeto',
-    'Estudo preliminar',
-    'Projeto básico',
-    'Projeto executivo',
-    'Campo',
-    'Prioridade',
-    'Análise externa',
-    'Espera',
-    'Finalização',
-    'Concluído',
-  ];
+  avaliableStatus = Object.values(AVALIABLE_MANAGEMENT_STATUS);
+  avaliableItemStatus = Object.values(AVALIABLE_MANAGEMENT_ITEM_STATUS);
 
   constructor(
     public userService: UserService,

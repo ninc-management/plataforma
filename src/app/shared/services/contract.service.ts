@@ -42,6 +42,29 @@ export enum CONTRACT_STATOOS {
   ARQUIVADO = 'Arquivado',
 }
 
+export enum AVALIABLE_MANAGEMENT_STATUS {
+  PRODUCAO = 'Produção',
+  ANALISE_EXTERNA = 'Análise Externa',
+  ESPERA = 'Espera',
+  PRIORIDADE = 'Prioridade',
+  FINALIZACAO = 'Finalização',
+  CONCLUIDO = 'Concluído',
+}
+
+export enum AVALIABLE_MANAGEMENT_ITEM_STATUS {
+  BRIEFING = 'Briefing',
+  ANTEPROJETO = 'Anteprojeto',
+  ESTUDO_PRELIMINAR = 'Estudo preliminar',
+  PROJETO_BASICO = 'Projeto básico',
+  PROJETO_EXECUTIVO = 'Projeto executivo',
+  CAMPO = 'Campo',
+  PRIORIDADE = 'Prioridade',
+  ANALISE_EXTERNA = 'Análise externa',
+  ESPERA = 'Espera',
+  FINALIZACAO = 'Finalização',
+  CONCLUIDO = 'Concluído',
+}
+
 export interface ExpenseParts {
   expense: number;
   contribution: number;
