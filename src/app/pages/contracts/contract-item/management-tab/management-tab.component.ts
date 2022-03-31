@@ -20,6 +20,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 import { Caret } from 'textarea-caret-ts';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 //Tipo local para testes
 class ChatComment {
@@ -65,7 +66,8 @@ export class ManagementTabComponent implements OnInit {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private contractService: ContractService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private stringUtils: StringUtilService
   ) {}
 
   ngOnInit(): void {
@@ -127,7 +129,7 @@ export class ManagementTabComponent implements OnInit {
     const remaining = this.getRemainingDays();
     if (total != undefined && total != 0 && remaining != undefined) {
       const progress = total - remaining;
-      return +((progress / total) * 100).toFixed(2);
+      return this.stringUtils.moneyToNumber(this.stringUtils.toPercentageNumber(progress, total).slice(0, -1));
     }
     return 0;
   }
@@ -172,7 +174,9 @@ export class ManagementTabComponent implements OnInit {
   getPercentualItemProgress(item: ContractChecklistItem): number {
     if (item.actionList.length > 0) {
       const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
-      return +((completedActionsQtd / item.actionList.length) * 100).toFixed(2);
+      return this.stringUtils.moneyToNumber(
+        this.stringUtils.toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1)
+      );
     }
     return 0;
   }
