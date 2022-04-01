@@ -43,10 +43,10 @@ export class ManagementTabComponent implements OnInit {
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
 
-  avaliableResponsibles: Observable<User[]> = of([]);
+  avaliableAssignees: Observable<User[]> = of([]);
   avaliableContracts: Observable<Contract[]> = of([]);
-  managementResponsible = '';
-  responsibleSearch = '';
+  managementAssignee = '';
+  assigneeSearch = '';
   modelSearch = '';
 
   newComment: ChatComment = new ChatComment();
@@ -75,9 +75,9 @@ export class ManagementTabComponent implements OnInit {
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
-    this.managementResponsible = this.userService.idToName(this.invoice.author);
+    this.managementAssignee = this.userService.idToName(this.invoice.author);
     this.deadline = this.contractService.getDeadline(this.contract);
-    this.avaliableResponsibles = this.getAvaliableResponsibles();
+    this.avaliableAssignees = this.getAvaliableAssignees();
     this.avaliableContracts = this.contractService.getContracts();
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.newComment.author = user;
@@ -134,7 +134,7 @@ export class ManagementTabComponent implements OnInit {
     return 0;
   }
 
-  getAvaliableResponsibles(): Observable<User[]> {
+  getAvaliableAssignees(): Observable<User[]> {
     return of(
       this.invoice.team
         .map((member: InvoiceTeamMember) => {
@@ -148,7 +148,7 @@ export class ManagementTabComponent implements OnInit {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
     this.contract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
-    this.responsibleSearch = '';
+    this.assigneeSearch = '';
     this.deadline = this.contractService.getDeadline(this.contract);
   }
 

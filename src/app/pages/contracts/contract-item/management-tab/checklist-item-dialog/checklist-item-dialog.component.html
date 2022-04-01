@@ -85,16 +85,16 @@
               <nb-rangepicker #inputRangePicker></nb-rangepicker>
             </div>
             <div class="col-4">
-              <label class="label" for="new-action-responsible">Responsável:</label>
+              <label class="label" for="new-action-assignee">Responsável:</label>
               <nb-completer
-                [(ngModel)]="responsibleSearch"
-                #newActionResponsible="ngModel"
-                (selected)="newAction.responsible = $event"
-                id="new-action-responsible"
-                name="new-action-responsible"
-                inputName="actionResponsible"
+                [(ngModel)]="assigneeSearch"
+                #newActionAssignee="ngModel"
+                (selected)="newAction.assignee = $event"
+                id="new-action-assignee"
+                name="new-action-assignee"
+                inputName="actionAssignee"
                 nameField="fullName"
-                [data$]="avaliableResponsibles"
+                [data$]="avaliableAssignees"
                 [placeholder]="'Digite o nome do responsável pela ação'"
                 [fullWidth]="true"
                 [fieldSize]="'large'"
@@ -111,7 +111,7 @@
                 size="large"
                 style="margin-top: 28px"
                 (click)="registerAction()"
-                [disabled]="!newNameInput.value || !newRangeInput.value || !newActionResponsible.value"
+                [disabled]="!newNameInput.value || !newRangeInput.value || !newActionAssignee.value"
               >
                 +
               </button>
@@ -160,10 +160,10 @@
                 <div class="col-3">
                   <input
                     nbInput
-                    [ngModel]="userService.idToName(actionList[i].responsible)"
-                    #actionResponsible="ngModel"
-                    id="action-responsible-{{ i }}"
-                    name="action-responsible-{{ i }}"
+                    [ngModel]="userService.idToName(actionList[i].assignee)"
+                    #actionAssignee="ngModel"
+                    id="action-assignee-{{ i }}"
+                    name="action-assignee-{{ i }}"
                     fullWidth
                     fieldSize="large"
                     [readonly]="true"

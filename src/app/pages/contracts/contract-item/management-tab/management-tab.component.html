@@ -95,15 +95,8 @@
       </div>
       <div class="col-3">
         <div class="form-control-group">
-          <label class="label" for="responsible">Responsável:</label>
-          <input
-            nbInput
-            [ngModel]="managementResponsible"
-            name="responsible"
-            fullWidth
-            fieldSize="large"
-            [readonly]="true"
-          />
+          <label class="label" for="assignee">Responsável:</label>
+          <input nbInput [ngModel]="managementAssignee" name="assignee" fullWidth fieldSize="large" [readonly]="true" />
         </div>
       </div>
       <div class="col-3">
@@ -182,16 +175,16 @@
         <nb-rangepicker #rangePicker></nb-rangepicker>
       </div>
       <div class="col-3">
-        <label class="label" for="input-item-responsible">Responsável:</label>
+        <label class="label" for="input-item-assignee">Responsável:</label>
         <nb-completer
-          [(ngModel)]="responsibleSearch"
-          #itemResponsibleList="ngModel"
-          (selected)="newChecklistItem.responsible = $event"
-          id="input-item-responsible"
-          name="input-item-responsible"
-          inputName="itemResponsible"
+          [(ngModel)]="assigneeSearch"
+          #itemAssigneeList="ngModel"
+          (selected)="newChecklistItem.assignee = $event"
+          id="input-item-assignee"
+          name="input-item-assignee"
+          inputName="itemAssignee"
           nameField="fullName"
-          [data$]="avaliableResponsibles"
+          [data$]="avaliableAssignees"
           [placeholder]="'Digite o nome do responsável pela ação'"
           [fullWidth]="true"
           [fieldSize]="'large'"
@@ -225,7 +218,7 @@
           size="large"
           style="margin-top: 28px"
           (click)="registerChecklistItem()"
-          [disabled]="!nameInput.value || !rangeInput.value || !itemResponsibleList.value || !statusInput.value"
+          [disabled]="!nameInput.value || !rangeInput.value || !itemAssigneeList.value || !statusInput.value"
         >
           +
         </button>
@@ -269,12 +262,12 @@
             <input
               nbInput
               [ngModel]="
-                [contract.checklist[i].responsible, this.userService.idToUser.bind(userService), 'fullName']
+                [contract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
                   | transformPipe: this.utils.idToProperty.bind(utils)
               "
-              #responsible="ngModel"
-              id="item-responsible-{{ i }}"
-              name="item-responsible-{{ i }}"
+              #assignee="ngModel"
+              id="item-assignee-{{ i }}"
+              name="item-assignee-{{ i }}"
               fullWidth
               fieldSize="large"
               [readonly]="true"
@@ -390,7 +383,7 @@
           name="input-comment-target"
           inputName="commentTarget"
           nameField="fullName"
-          [data$]="avaliableResponsibles"
+          [data$]="avaliableAssignees"
           [placeholder]="'Digite o nome de um membro do contrato'"
           [fullWidth]="true"
           [fieldSize]="'large'"

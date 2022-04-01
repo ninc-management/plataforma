@@ -37,7 +37,7 @@
     "endDate": {
       "required": true
     },
-    "responsible": {
+    "assignee": {
       "required": true
     },
     "status": {
@@ -50,7 +50,7 @@
       "dateRange": {
         "required": true
       },
-      "responsible": {
+      "assignee": {
         "required": true
       }
     }
