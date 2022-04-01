@@ -1,14 +1,14 @@
 <div
   class="row justify-content-center"
   [ngStyle]="{
-    'width.px': windowWidth()
+    'width.px': [] | transformPipe: windowWidth.bind(this)
   }"
 >
   <div class="col-md-8">
     <form #form="ngForm" (ngSubmit)="updateAction()" aria-labelledby="title">
       <nb-card
         [ngStyle]="{
-          'max-height.px': windowHeight()
+          'max-height.px': [] | transformPipe: windowWidth.bind(this)
         }"
       >
         <nb-card-header>
@@ -148,7 +148,7 @@
                 <div class="col-3" *ngIf="actionList[i].isFinished">
                   <input
                     nbInput
-                    [ngModel]="formattedRange(actionList[i].range)"
+                    [ngModel]="[actionList[i].range] | transformPipe: formattedRange.bind(this)"
                     #finishedActionRange="ngModel"
                     id="action-range-{{ i }}"
                     name="action-range-{{ i }}"
@@ -160,7 +160,10 @@
                 <div class="col-3">
                   <input
                     nbInput
-                    [ngModel]="userService.idToName(actionList[i].assignee)"
+                    [ngModel]="
+                      [actionList[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                        | transformPipe: this.utils.idToProperty.bind(utils)
+                    "
                     #actionAssignee="ngModel"
                     id="action-assignee-{{ i }}"
                     name="action-assignee-{{ i }}"

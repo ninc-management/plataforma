@@ -42,8 +42,8 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>,
-    private utils: UtilsService,
     private invoiceService: InvoiceService,
+    public utils: UtilsService,
     public userService: UserService
   ) {
     super(derivedDocument, derivedRef);
