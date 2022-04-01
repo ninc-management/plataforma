@@ -96,7 +96,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     }
   }
 
-  getFormattedRange(range: DateRange): string | undefined {
+  formattedRange(range: DateRange): string | undefined {
     if (range.end) {
       return this.utils.formatDate(range.start) + ' - ' + this.utils.formatDate(range.end);
     }

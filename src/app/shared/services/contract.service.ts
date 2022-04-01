@@ -494,13 +494,6 @@ export class ContractService implements OnDestroy {
     return contract;
   }
 
-  private isUserAnAER(user: User, invoice: Invoice): boolean {
-    if (user.AER && user.AER.length != 0) {
-      return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
-    }
-    return false;
-  }
-
   expenseTypesSum(wantsClient = false, contract: Contract): ExpenseTypesSum[] {
     const result = contract.expenses.reduce(
       (sum: ExpenseTypesSum[], expense: ContractExpense) => {
@@ -528,11 +521,18 @@ export class ContractService implements OnDestroy {
     return result;
   }
 
-  getDeadline(contract: Contract): Date | undefined {
-    return contract.checklist.length != 0 ? this.getLatestEndDate(contract) : undefined;
+  deadline(contract: Contract): Date | undefined {
+    return contract.checklist.length != 0 ? this.latestEndDate(contract) : undefined;
   }
 
-  private getLatestEndDate(contract: Contract): Date {
+  private isUserAnAER(user: User, invoice: Invoice): boolean {
+    if (user.AER && user.AER.length != 0) {
+      return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
+    }
+    return false;
+  }
+
+  private latestEndDate(contract: Contract): Date {
     let latestDate = new Date(contract.created);
     for (const item of contract.checklist) {
       if (item.range.end) {
