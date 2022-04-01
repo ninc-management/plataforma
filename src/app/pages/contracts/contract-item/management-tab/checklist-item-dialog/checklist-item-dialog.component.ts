@@ -23,8 +23,8 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
   actionList!: ChecklistItemAction[];
   newAction: ChecklistItemAction = new ChecklistItemAction();
-  responsibleSearch = '';
-  avaliableResponsibles: Observable<User[]> = of([]);
+  assigneeSearch = '';
+  avaliableAssignees: Observable<User[]> = of([]);
 
   avaliableActionStatus = [
     'Briefing',
@@ -60,14 +60,14 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
       this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
       this.actionList = cloneDeep(this.checklistItem.actionList);
     }
-    this.avaliableResponsibles = this.getAvaliableResponsibles();
+    this.avaliableAssignees = this.getAvaliableAssignees();
   }
 
   dismiss(): void {
     super.dismiss();
   }
 
-  getAvaliableResponsibles(): Observable<User[]> {
+  getAvaliableAssignees(): Observable<User[]> {
     return of(
       this.invoice.team
         .map((member: InvoiceTeamMember) => {
@@ -82,7 +82,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
       this.newAction.range = this.newAction.range as DateRange;
       this.actionList.push(cloneDeep(this.newAction));
       this.newAction = new ChecklistItemAction();
-      this.responsibleSearch = '';
+      this.assigneeSearch = '';
     }
   }
 

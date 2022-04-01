@@ -141,7 +141,7 @@ export class ChecklistItemAction {
   range!: DateRange;
 
   @prop({ required: true, ref: () => User })
-  responsible: Ref<User>;
+  assignee: Ref<User>;
 
   @prop({ required: true })
   isFinished: boolean = false;
@@ -155,7 +155,7 @@ export class ContractChecklistItem {
   range!: DateRange;
 
   @prop({ required: true, ref: () => User })
-  responsible: Ref<User>;
+  assignee: Ref<User>;
 
   @prop({ required: true })
   status!: string;
