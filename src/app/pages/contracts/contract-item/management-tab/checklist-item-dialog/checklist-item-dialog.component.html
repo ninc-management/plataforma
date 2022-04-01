@@ -148,7 +148,7 @@
                 <div class="col-3" *ngIf="actionList[i].isFinished">
                   <input
                     nbInput
-                    [ngModel]="getFormattedRange(actionList[i].range)"
+                    [ngModel]="formattedRange(actionList[i].range)"
                     #finishedActionRange="ngModel"
                     id="action-range-{{ i }}"
                     name="action-range-{{ i }}"

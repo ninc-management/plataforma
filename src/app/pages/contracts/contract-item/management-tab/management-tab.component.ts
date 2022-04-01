@@ -76,7 +76,7 @@ export class ManagementTabComponent implements OnInit {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     }
     this.managementAssignee = this.userService.idToName(this.invoice.author);
-    this.deadline = this.contractService.getDeadline(this.contract);
+    this.deadline = this.contractService.deadline(this.contract);
     this.avaliableAssignees = this.getAvaliableAssignees();
     this.avaliableContracts = this.contractService.getContracts();
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -104,7 +104,7 @@ export class ManagementTabComponent implements OnInit {
     this.contractService.editContract(this.contract);
   }
 
-  getTotalDays(): number | undefined {
+  totalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
       return differenceInCalendarDays(this.deadline, this.contract.created);
@@ -112,7 +112,7 @@ export class ManagementTabComponent implements OnInit {
     return undefined;
   }
 
-  getRemainingDays(): number | undefined {
+  remainingDays(): number | undefined {
     if (this.deadline) {
       const today = new Date();
       const remaining = differenceInCalendarDays(this.deadline, today);
@@ -122,11 +122,11 @@ export class ManagementTabComponent implements OnInit {
     return undefined;
   }
 
-  getPercentualProgress(): number {
+  percentualProgress(): number {
     //if the contract is created today, total is 0
     //remaining can be 0 but cant be undefined
-    const total = this.getTotalDays();
-    const remaining = this.getRemainingDays();
+    const total = this.totalDays();
+    const remaining = this.remainingDays();
     if (total != undefined && total != 0 && remaining != undefined) {
       const progress = total - remaining;
       return this.stringUtils.moneyToNumber(this.stringUtils.toPercentageNumber(progress, total).slice(0, -1));
@@ -149,15 +149,15 @@ export class ManagementTabComponent implements OnInit {
     this.contract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
     this.assigneeSearch = '';
-    this.deadline = this.contractService.getDeadline(this.contract);
+    this.deadline = this.contractService.deadline(this.contract);
   }
 
-  getItemTotalDays(item: ContractChecklistItem): number | undefined {
+  itemTotalDays(item: ContractChecklistItem): number | undefined {
     if (item.range.end) return differenceInCalendarDays(item.range.end, item.range.start);
     return;
   }
 
-  getItemRemainingDays(item: ContractChecklistItem): number | undefined {
+  itemRemainingDays(item: ContractChecklistItem): number | undefined {
     if (item.range.end) {
       const today = new Date();
       if (isBefore(today, item.range.start)) {
@@ -171,7 +171,7 @@ export class ManagementTabComponent implements OnInit {
     return;
   }
 
-  getPercentualItemProgress(item: ContractChecklistItem): number {
+  percentualItemProgress(item: ContractChecklistItem): number {
     if (item.actionList.length > 0) {
       const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
       return this.stringUtils.moneyToNumber(
@@ -181,12 +181,12 @@ export class ManagementTabComponent implements OnInit {
     return 0;
   }
 
-  getItemProgressStatus(item: ContractChecklistItem): string {
-    const progress = this.getPercentualItemProgress(item);
+  itemProgressStatus(item: ContractChecklistItem): string {
+    const progress = this.percentualItemProgress(item);
     if (progress == 100) {
       return 'success';
     } else {
-      const remainingDays = this.getItemRemainingDays(item);
+      const remainingDays = this.itemRemainingDays(item);
       if (remainingDays != undefined) {
         if (remainingDays <= 2) {
           return 'danger';
