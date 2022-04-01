@@ -4,7 +4,6 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -18,7 +17,7 @@ import { Observable, of } from 'rxjs';
 })
 export class ChecklistItemDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() contract: Contract = new Contract();
-  @Input() itemIndex!: number;
+  @Input() itemIndex?: number;
   invoice: Invoice = new Invoice();
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
   actionList!: ChecklistItemAction[];
@@ -43,7 +42,6 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>,
-    private contractService: ContractService,
     private utils: UtilsService,
     private invoiceService: InvoiceService,
     public userService: UserService
@@ -91,9 +89,11 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   }
 
   updateAction(): void {
-    this.checklistItem.actionList = cloneDeep(this.actionList);
-    this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
-    this.dismiss();
+    if (this.itemIndex !== undefined) {
+      this.checklistItem.actionList = cloneDeep(this.actionList);
+      this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
+      this.dismiss();
+    }
   }
 
   getFormattedRange(range: DateRange): string | undefined {
