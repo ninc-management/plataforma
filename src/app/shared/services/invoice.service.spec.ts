@@ -339,4 +339,9 @@ describe('InvoiceService', () => {
     expect(service.role(expectedInvoices[1], mockedUsers[1])).toBe('Gestor');
     expect(service.role(expectedInvoices[1], mockedUsers[0])).toBe('Equipe');
   });
+
+  baseTest('teamMembers should work', (expectedInvoices: Invoice[]) => {
+    expect(service.teamMembers(mockedInvoices[0])).toEqual(mockedUsers.splice(1, 1));
+    expect(service.teamMembers(mockedInvoices[1])).toEqual(mockedUsers.splice(0, 1));
+  });
 });
