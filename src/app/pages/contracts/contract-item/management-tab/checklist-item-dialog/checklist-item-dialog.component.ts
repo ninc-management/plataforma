@@ -1,6 +1,6 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -8,7 +8,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'ngx-checklist-item-dialog',
@@ -23,7 +23,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   actionList!: ChecklistItemAction[];
   newAction: ChecklistItemAction = new ChecklistItemAction();
   assigneeSearch = '';
-  avaliableAssignees: Observable<User[]> = of([]);
+  avaliableAssignees$ = new BehaviorSubject<User[]>([]);
 
   avaliableActionStatus = [
     'Briefing',
@@ -53,26 +53,16 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     super.ngOnInit();
     if (this.contract.invoice) {
       this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.contract.invoice));
     }
     if (this.itemIndex !== undefined) {
       this.checklistItem = cloneDeep(this.contract.checklist[this.itemIndex]);
       this.actionList = cloneDeep(this.checklistItem.actionList);
     }
-    this.avaliableAssignees = this.getAvaliableAssignees();
   }
 
   dismiss(): void {
     super.dismiss();
-  }
-
-  getAvaliableAssignees(): Observable<User[]> {
-    return of(
-      this.invoice.team
-        .map((member: InvoiceTeamMember) => {
-          return member.user ? this.userService.idToUser(member.user) : undefined;
-        })
-        .filter((user: User | undefined): user is User => user !== undefined)
-    );
   }
 
   registerAction(): void {

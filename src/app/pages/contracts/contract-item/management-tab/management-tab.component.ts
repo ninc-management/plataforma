@@ -1,6 +1,6 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Contract, ContractChecklistItem, DateRange } from '@models/contract';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -16,8 +16,8 @@ import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 import { Caret } from 'textarea-caret-ts';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -34,17 +34,17 @@ class ChatComment {
   templateUrl: './management-tab.component.html',
   styleUrls: ['./management-tab.component.scss'],
 })
-export class ManagementTabComponent implements OnInit {
+export class ManagementTabComponent implements OnInit, OnDestroy {
+  private destroy$: Subject<void> = new Subject<void>();
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
   @Input() iContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  contract: Contract = new Contract();
+  avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
 
-  avaliableAssignees: Observable<User[]> = of([]);
-  avaliableContracts: Observable<Contract[]> = of([]);
+  avaliableContracts$: Observable<Contract[]> = of([]);
   managementAssignee = '';
   assigneeSearch = '';
   modelSearch = '';
@@ -71,43 +71,48 @@ export class ManagementTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.contract = cloneDeep(this.iContract);
-    if (this.contract.invoice) {
-      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.iContract.invoice) {
+      this.invoice = this.invoiceService.idToInvoice(this.iContract.invoice);
+      this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
     }
     this.managementAssignee = this.userService.idToName(this.invoice.author);
-    this.deadline = this.contractService.deadline(this.contract);
-    this.avaliableAssignees = this.getAvaliableAssignees();
-    this.avaliableContracts = this.contractService.getContracts();
+    this.deadline = this.contractService.deadline(this.iContract);
+    this.avaliableContracts$ = this.contractService.getContracts();
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.newComment.author = user;
     });
+    this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.iContract.invoice)
+        this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   tooltipText(): string {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.contractor)
-        return (
-          `CPF/CNPJ: ` +
-          this.contractorService.idToContractor(invoice.contractor).document +
-          `\nEmail: ` +
-          this.contractorService.idToContractor(invoice.contractor).email +
-          `\nEndereço: ` +
-          this.contractorService.idToContractor(invoice.contractor).address
-        );
-    }
+    if (this.invoice.contractor)
+      return (
+        `CPF/CNPJ: ` +
+        this.contractorService.idToContractor(this.invoice.contractor).document +
+        `\nEmail: ` +
+        this.contractorService.idToContractor(this.invoice.contractor).email +
+        `\nEndereço: ` +
+        this.contractorService.idToContractor(this.invoice.contractor).address
+      );
     return '';
   }
 
   updateContractManagement(): void {
-    this.contractService.editContract(this.contract);
+    this.contractService.editContract(this.iContract);
   }
 
   totalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
-      return differenceInCalendarDays(this.deadline, this.contract.created);
+      return differenceInCalendarDays(this.deadline, this.iContract.created);
     }
     return undefined;
   }
@@ -134,22 +139,12 @@ export class ManagementTabComponent implements OnInit {
     return 0;
   }
 
-  getAvaliableAssignees(): Observable<User[]> {
-    return of(
-      this.invoice.team
-        .map((member: InvoiceTeamMember) => {
-          return member.user ? this.userService.idToUser(member.user) : undefined;
-        })
-        .filter((user: User | undefined): user is User => user !== undefined)
-    );
-  }
-
   registerChecklistItem(): void {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
-    this.contract.checklist.push(cloneDeep(this.newChecklistItem));
+    this.iContract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
     this.assigneeSearch = '';
-    this.deadline = this.contractService.deadline(this.contract);
+    this.deadline = this.contractService.deadline(this.iContract);
   }
 
   itemTotalDays(item: ContractChecklistItem): number | undefined {
@@ -204,7 +199,7 @@ export class ManagementTabComponent implements OnInit {
     this.dialogService
       .open(ChecklistItemDialogComponent, {
         context: {
-          contract: this.contract,
+          contract: this.iContract,
           itemIndex: index,
         },
         dialogClass: 'my-dialog',
@@ -219,7 +214,7 @@ export class ManagementTabComponent implements OnInit {
   }
 
   removeItem(index: number): void {
-    this.contract.checklist.splice(index, 1);
+    this.iContract.checklist.splice(index, 1);
   }
 
   applyManagementModel(selectedContract: Contract): void {
@@ -240,7 +235,7 @@ export class ManagementTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.contract.checklist = cloneDeep(selectedContract.checklist);
+          this.iContract.checklist = cloneDeep(selectedContract.checklist);
         } else {
           this.modelSearch = '';
         }

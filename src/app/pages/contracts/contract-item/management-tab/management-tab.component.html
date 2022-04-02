@@ -14,7 +14,14 @@
       <div class="col-4">
         <div class="form-control-group">
           <label class="label" for="contract-code">Código do Contrato:</label>
-          <input nbInput [ngModel]="contract.code" name="contract-code" fullWidth fieldSize="large" [readonly]="true" />
+          <input
+            nbInput
+            [ngModel]="iContract.code"
+            name="contract-code"
+            fullWidth
+            fieldSize="large"
+            [readonly]="true"
+          />
         </div>
       </div>
       <div class="col-5">
@@ -22,7 +29,7 @@
           <label class="label" for="contractor">Cliente:</label>
           <input
             nbInput
-            [ngModel]="contract.contractor"
+            [ngModel]="iContract.contractor"
             name="contractor"
             fullWidth
             fieldSize="large"
@@ -43,7 +50,7 @@
             id="management-model"
             name="management-model"
             nameField="code"
-            [data$]="avaliableContracts"
+            [data$]="avaliableContracts$"
             [placeholder]="'Digite o código do contrato'"
             [fullWidth]="true"
             [fieldSize]="'large'"
@@ -59,7 +66,7 @@
           <label class="label" for="start-date">Início:</label>
           <input
             nbInput
-            [ngModel]="[contract.created] | transformPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[iContract.created] | transformPipe: utils.formatDate.bind(utils)"
             name="start-date"
             fullWidth
             fieldSize="large"
@@ -103,7 +110,7 @@
         <div class="form-control-group">
           <label class="label" for="management-status">Status de gestão:</label>
           <nb-select
-            [(ngModel)]="contract.managementStatus"
+            [(ngModel)]="iContract.managementStatus"
             #managementStatus="ngModel"
             id="management-status"
             name="management-status"
@@ -126,7 +133,7 @@
           <label class="label" for="management-notes">Observações:</label>
           <textarea
             nbInput
-            [(ngModel)]="contract.managementNotes"
+            [(ngModel)]="iContract.managementNotes"
             id="management-notes"
             name="management-notes"
             fullWidth
@@ -184,7 +191,7 @@
           name="input-item-assignee"
           inputName="itemAssignee"
           nameField="fullName"
-          [data$]="avaliableAssignees"
+          [data$]="avaliableAssignees$"
           [placeholder]="'Digite o nome do responsável pela ação'"
           [fullWidth]="true"
           [fieldSize]="'large'"
@@ -226,12 +233,12 @@
     </div>
 
     <nb-list class="row overflow-hidden py-3">
-      <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of contract.checklist; let i = index">
+      <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of iContract.checklist; let i = index">
         <div class="row w-100">
           <div class="col-3">
             <input
               nbInput
-              [(ngModel)]="contract.checklist[i].name"
+              [(ngModel)]="iContract.checklist[i].name"
               #nameInput="ngModel"
               id="item-name-{{ i }}"
               name="item-name-{{ i }}"
@@ -245,7 +252,7 @@
           <div class="col-2">
             <input
               nbInput
-              [(ngModel)]="contract.checklist[i].range"
+              [(ngModel)]="iContract.checklist[i].range"
               #rangeInput="ngModel"
               id="item-range-{{ i }}"
               name="item-range-{{ i }}"
@@ -262,7 +269,7 @@
             <input
               nbInput
               [ngModel]="
-                [contract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                [iContract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
                   | transformPipe: this.utils.idToProperty.bind(utils)
               "
               #assignee="ngModel"
@@ -275,7 +282,7 @@
           </div>
           <div class="col-2">
             <nb-select
-              [(ngModel)]="contract.checklist[i].status"
+              [(ngModel)]="iContract.checklist[i].status"
               #statusInput="ngModel"
               id="item-status-{{ i }}"
               name="item-status-{{ i }}"
@@ -312,11 +319,11 @@
         <div class="row w-100">
           <div class="col-12 mt-3">
             <nb-progress-bar
-              [status]="[contract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
-              [class]="'progress-border ' + ([contract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))"
+              [status]="[iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
+              [class]="'progress-border ' + ([iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))"
               [size]="'tiny'"
               [displayValue]="true"
-              [value]="percentualItemProgress(contract.checklist[i])"
+              [value]="percentualItemProgress(iContract.checklist[i])"
             ></nb-progress-bar>
           </div>
         </div>
@@ -383,7 +390,7 @@
           name="input-comment-target"
           inputName="commentTarget"
           nameField="fullName"
-          [data$]="avaliableAssignees"
+          [data$]="avaliableAssignees$"
           [placeholder]="'Digite o nome de um membro do contrato'"
           [fullWidth]="true"
           [fieldSize]="'large'"

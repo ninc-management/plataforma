@@ -6,7 +6,7 @@ import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { Invoice } from '@models/invoice';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
 import { parseISO } from 'date-fns';
 import { StringUtilService } from './string-util.service';
@@ -140,5 +140,13 @@ export class InvoiceService implements OnDestroy {
     }));
 
     return tmpInvoice;
+  }
+
+  teamMembers(iInvoice: string | Invoice): User[] {
+    return this.idToInvoice(iInvoice)
+      .team.map((member: InvoiceTeamMember) => {
+        return member.user ? this.userService.idToUser(member.user) : undefined;
+      })
+      .filter((user: User | undefined): user is User => user !== undefined);
   }
 }
