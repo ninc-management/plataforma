@@ -4,6 +4,7 @@ import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { AVALIABLE_MANAGEMENT_ITEM_STATUS } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -24,20 +25,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   newAction: ChecklistItemAction = new ChecklistItemAction();
   assigneeSearch = '';
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
-
-  avaliableActionStatus = [
-    'Briefing',
-    'Anteprojeto',
-    'Estudo preliminar',
-    'Projeto básico',
-    'Projeto executivo',
-    'Campo',
-    'Prioridade',
-    'Análise externa',
-    'Espera',
-    'Finalização',
-    'Concluído',
-  ];
+  avaliableActionStatus = Object.values(AVALIABLE_MANAGEMENT_ITEM_STATUS);
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
