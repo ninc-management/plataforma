@@ -72,8 +72,7 @@ export class PdfService {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private contractorService: ContractorService,
-    private teamService: TeamService,
-    private utils: UtilsService
+    private teamService: TeamService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
