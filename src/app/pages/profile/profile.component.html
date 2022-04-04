@@ -407,7 +407,12 @@
                 <nb-list style="width: 100%; padding: 10px 0">
                   <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
                     <div class="row irow">
-                      <div class="col">{{ [AERuser] | transformPipe: userService.idToName.bind(userService) }}</div>
+                      <div class="col">
+                        {{
+                          [AERuser, this.userService.idToUser.bind(this.userService), 'fullName']
+                            | transformPipe: this.utils.idToProperty
+                        }}
+                      </div>
                       <div class="col-auto" style="text-align: right" *ngIf="isEditing">
                         <nb-icon
                           class="xIcon"

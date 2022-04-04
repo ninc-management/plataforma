@@ -78,9 +78,15 @@ export class ContractItemComponent implements OnInit, OnDestroy {
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            this.userService.idToName(expense.author).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+            this.utils
+              .idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            this.userService.idToName(expense.source).toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+            this.utils
+              .idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
           this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });

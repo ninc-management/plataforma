@@ -348,28 +348,11 @@ describe('UserService', () => {
     }, 50);
   });
 
-  baseTest('idToName should work', (expectedUsers: User[], done: DoneFn) => {
-    expect(expectedUsers).toEqual(mockedUsers);
-    expect(service.idToName('0')).toBe(mockedUsers[0].fullName);
-    expect(service.idToName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
-    expect(service.idToName(undefined)).toBe('');
-    expect(service.idToName('000000000000000000000000')).toBe('Caixa do contrato');
-    done();
-  });
-
   baseTest('idToShortName should work', (expectedUsers: User[], done: DoneFn) => {
     expect(expectedUsers).toEqual(mockedUsers);
     expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
     expect(service.idToShortName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
     expect(service.idToShortName('000000000000000000000000')).toBe('Caixa do contrato');
-    done();
-  });
-
-  baseTest('idToProfilePicture should work', (expectedUsers: User[], done: DoneFn) => {
-    expect(expectedUsers).toEqual(mockedUsers);
-    expect(service.idToProfilePicture('0')).toBe('');
-    expect(service.idToProfilePicture(mockedUsers[1])).toBe(mockedUsers[1].profilePicture as string);
-    expect(service.idToProfilePicture('000000000000000000000000')).toBe(CONTRACT_BALANCE.profilePicture as string);
     done();
   });
 

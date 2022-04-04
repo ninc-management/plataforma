@@ -23,7 +23,10 @@ export class TeamsComponent implements OnInit, OnDestroy {
       return this.teams.filter((team) => {
         return (
           team.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          this.userService.idToName(team.leader).toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          this.utils
+            .idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName')
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
           team.abrev.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
@@ -87,7 +90,11 @@ export class TeamsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((teams) => {
         this.teams = teams.map((team) => {
-          team.leaderName = this.userService.idToName(team.leader);
+          team.leaderName = this.utils.idToProperty(
+            team.leader,
+            this.userService.idToUser.bind(this.userService),
+            'fullName'
+          );
           return team;
         });
         this.source.load(this.teams);

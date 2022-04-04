@@ -277,7 +277,7 @@ export class PdfService {
     // Metadata definition
     pdf.info({
       title: 'Proposta de Orçamento Nortan Projetos',
-      author: this.userService.idToName(invoice.author),
+      author: this.utils.idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
       subject: 'Orçamento ' + invoice.code,
       keywords: 'orçamento',
     });

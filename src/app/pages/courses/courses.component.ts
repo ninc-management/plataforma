@@ -57,7 +57,8 @@ export class CoursesComponent implements OnInit {
       },
       speaker: {
         title: 'Ministrante',
-        valuePrepareFunction: (speaker: string): string => this.userService.idToName(speaker),
+        valuePrepareFunction: (speaker: string): string =>
+          this.utils.idToProperty(speaker, this.userService.idToUser.bind(this.userService), 'fullName'),
         type: 'string',
       },
       participantsQuantity: {

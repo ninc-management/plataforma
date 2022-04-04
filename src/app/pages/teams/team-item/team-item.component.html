@@ -219,8 +219,13 @@
             <div class="col-5 col-md-6">
               <nb-user
                 size="giant"
-                [name]="[member.user] | transformPipe: userService.idToName.bind(userService)"
-                [picture]="[member.user] | transformPipe: userService.idToProfilePicture.bind(userService)"
+                [name]="
+                  [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
+                "
+                [picture]="
+                  [member.user, userService.idToUser.bind(userService), 'profilePicture']
+                    | transformPipe: utils.idToProperty
+                "
               ></nb-user>
             </div>
             <div class="col-5 col-md-5">

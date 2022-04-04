@@ -182,21 +182,10 @@ export class UserService implements OnDestroy {
       });
   }
 
-  idToName(id: string | User | undefined): string {
-    if (id === undefined) return '';
-    return this.idToUser(id)?.fullName;
-  }
-
   idToShortName(id: string | User): string {
     const exibitionName = this.idToUser(id).exibitionName;
     if (exibitionName) return exibitionName;
     return this.idToUser(id).fullName;
-  }
-
-  idToProfilePicture(id: string | User | undefined): string {
-    if (id === undefined) return '';
-    const pP = this.idToUser(id).profilePicture;
-    return pP ? pP : '';
   }
 
   idToUser(id: string | User): User {
@@ -206,13 +195,6 @@ export class UserService implements OnDestroy {
     if (id == NORTAN._id) return NORTAN as User;
     const tmp = this.users$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
-  }
-
-  profilePicture(uId: string | User | undefined): string {
-    if (uId === undefined) return '';
-    const author = this.idToUser(uId);
-    if (author.profilePicture === undefined) return '';
-    return author.profilePicture;
   }
 
   isEqual(u1: string | User | undefined, u2: string | User | undefined): boolean {

@@ -375,7 +375,12 @@ export class MetricsService implements OnDestroy {
                   if (paidDate && this.utils.isValidDate(paidDate, last, number, fromToday)) {
                     const uCPayments = payment.team.reduce((upaid: any, member) => {
                       if (member.user) {
-                        const author = this.userService.idToName(member.user);
+                        const author = this.utils.idToProperty(
+                          member.user,
+                          this.userService.idToUser.bind(this.userService),
+                          'fullName'
+                        );
+
                         const value = this.stringUtil.moneyToNumber(member.value);
                         upaid[author] = upaid[author] ? upaid[author] + value : value;
                       }
