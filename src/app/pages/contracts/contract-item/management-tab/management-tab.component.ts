@@ -75,8 +75,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       this.invoice = this.invoiceService.idToInvoice(this.iContract.invoice);
       this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
     }
-    this.managementAssignee = this.userService.idToName(this.invoice.author);
-    this.deadline = this.contractService.deadline(this.iContract);
+    (this.managementAssignee = this.utils.idToProperty(
+      this.invoice.author,
+      this.userService.idToUser.bind(this.userService),
+      'fullName'
+    )),
+      (this.deadline = this.contractService.deadline(this.iContract));
     this.avaliableContracts$ = this.contractService.getContracts();
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.newComment.author = user;

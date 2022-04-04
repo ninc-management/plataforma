@@ -736,7 +736,10 @@ export class UsersComponent implements OnInit, OnDestroy {
         csv += '\r\n';
 
         for (const key of Object.keys(data)) {
-          csv += (groupBy == GROUP_BY.USER ? this.userService.idToName(key) : key) + ';';
+          csv +=
+            (groupBy == GROUP_BY.USER
+              ? this.utils.idToProperty(key, this.userService.idToUser.bind(this.userService), 'fullName')
+              : key) + ';';
           data[key].monthly_data.forEach((individualData) => {
             csv += individualData.received + ';';
             csv += individualData.expenses + ';';

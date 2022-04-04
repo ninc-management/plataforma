@@ -38,8 +38,14 @@
               <div class="col-auto">
                 <nb-user
                   [onlyPicture]="true"
-                  [name]="[expense.author] | transformPipe: userService.idToName.bind(userService)"
-                  [picture]="[expense.author] | transformPipe: userService.profilePicture.bind(userService)"
+                  [name]="
+                    [expense.author, userService.idToUser.bind(userService), 'fullName']
+                      | transformPipe: utils.idToProperty
+                  "
+                  [picture]="
+                    [expense.author, userService.idToUser.bind(userService), 'profilePicture']
+                      | transformPipe: utils.idToProperty
+                  "
                 ></nb-user>
               </div>
               <div class="col-auto">#{{ +i + 1 }}</div>

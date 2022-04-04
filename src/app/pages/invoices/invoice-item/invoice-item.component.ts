@@ -133,7 +133,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (this.iInvoice._id !== undefined || this.iInvoice.model) {
+    if (this.iInvoice._id || this.iInvoice.model) {
       this.editing = this.tempInvoice.model == undefined;
       if (!this.editing) {
         this.tempInvoice.created = new Date();
@@ -146,9 +146,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.contractorService.idToContractor.bind(this.contractorService),
         'fullName'
       );
-
       this.associateSearch = this.tempInvoice.prospectedBy
-        ? this.userService.idToName(this.tempInvoice.prospectedBy)
+        ? this.utils.idToProperty(
+            this.tempInvoice.prospectedBy,
+            this.userService.idToUser.bind(this.userService),
+            'fullName'
+          )
         : '';
       this.revision = +this.tempInvoice.code?.slice(this.tempInvoice.code.length - 2);
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
@@ -166,7 +169,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tempInvoice = new Invoice();
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         this.tempInvoice.author = user;
-        if (this.tempInvoice.team.length === 0) {
+        if (this.tempInvoice.team.length === 0 && user._id) {
           this.tempInvoice.team.push({
             user: user,
             sector: this.tempInvoice.sector ? this.tempInvoice.sector : undefined,
@@ -235,8 +238,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
               this.authorData = of(
                 u.AER.filter((u): u is User | string => u != undefined).map((u) => this.userService.idToUser(u))
               );
-              if (this.tempInvoice.author && u.AER.includes(this.userService.idToUser(this.tempInvoice.author)?._id))
-                this.authorSearch = this.userService.idToName(this.tempInvoice.author);
+              if (
+                this.tempInvoice._id &&
+                this.tempInvoice.author &&
+                u.AER.includes(this.userService.idToUser(this.tempInvoice.author)?._id)
+              )
+                this.authorSearch = this.utils.idToProperty(
+                  this.tempInvoice.author,
+                  this.userService.idToUser.bind(this.userService),
+                  'fullName'
+                );
               else {
                 this.authorSearch = '';
                 this.tempInvoice.author = undefined;

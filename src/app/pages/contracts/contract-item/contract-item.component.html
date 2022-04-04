@@ -831,7 +831,11 @@
       <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: utils.trackByIndex" class="noPadding">
         <div class="row irow">
           <div class="col-md-12 d-flex">
-            <div class="col-md-3">{{ [member.user] | transformPipe: userService.idToName.bind(userService) }}</div>
+            <div class="col-md-3">
+              {{
+                [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
+              }}
+            </div>
             <div class="col-md-5 d-flex">
               <div class="col-md-3">
                 {{
@@ -1158,8 +1162,14 @@
                   <div class="col-auto">
                     <nb-user
                       [onlyPicture]="true"
-                      [name]="[expense.author] | transformPipe: userService.idToName.bind(userService)"
-                      [picture]="[expense.author] | transformPipe: userService.profilePicture.bind(userService)"
+                      [name]="
+                        [expense.author, userService.idToUser.bind(userService), 'fullName']
+                          | transformPipe: utils.idToProperty
+                      "
+                      [picture]="
+                        [expense.author, userService.idToUser.bind(userService), 'profilePicture']
+                          | transformPipe: utils.idToProperty
+                      "
                     ></nb-user>
                   </div>
                   <div class="col-auto">#{{ +i + 1 }}</div>

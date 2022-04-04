@@ -664,7 +664,9 @@
         <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{ [member.user] | transformPipe: userService.idToName.bind(userService) }}
+              {{
+                [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
+              }}
             </div>
             <div class="col-10 col-md-5">
               <nb-select

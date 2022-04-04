@@ -348,7 +348,11 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           csv += this.getReportExpensesValue(contract) + ';';
           csv += this.getReportContractNotPaid(contract, invoice) + ';';
           csv += this.contractService.balance(contract) + ';';
-          csv += invoice.team.map((member) => this.userService.idToName(member.user)).join(', ');
+          csv += invoice.team
+            .map((member) => {
+              this.utils.idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'fullName');
+            })
+            .join(', ');
           csv += '\r\n';
           csv += subHeaders.join(';') + '\r\n';
           csv += invoice.products.map((product) => product.name).join('\r\n') + '\r\n';
