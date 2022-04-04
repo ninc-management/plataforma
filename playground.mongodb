@@ -581,6 +581,7 @@ db.contracts.find().forEach((contract) => {
         });
     });
 
+  contract.checklist = []
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
 
