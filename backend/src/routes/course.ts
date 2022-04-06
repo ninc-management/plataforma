@@ -3,10 +3,10 @@ import CourseModel from '../models/course';
 import { Course } from '../models/course';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { coursesMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const coursesMap: Record<string, Course> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {

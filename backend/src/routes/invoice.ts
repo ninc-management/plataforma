@@ -3,10 +3,10 @@ import InvoiceModel from '../models/invoice';
 import { Invoice } from '../models/invoice';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { invoicesMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const invoicesMap: Record<string, Invoice> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {

@@ -3,10 +3,10 @@ import ContractorModel from '../models/contractor';
 import { Contractor } from '../models/contractor';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { contractorsMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const contractorsMap: Record<string, Contractor> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {

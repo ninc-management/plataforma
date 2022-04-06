@@ -3,10 +3,10 @@ import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
 import { PlatformConfig } from '../models/platformConfig';
 import PlatformConfigModel from '../models/platformConfig';
+import { configMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const configMap: Record<string, PlatformConfig> = {};
 const mutex = new Mutex();
 
 router.post('/', async (req, res, next) => {

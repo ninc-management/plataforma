@@ -3,10 +3,10 @@ import TeamModel from '../models/team';
 import { Team } from '../models/team';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { teamMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const teamMap: Record<string, Team> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
