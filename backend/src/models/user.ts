@@ -47,13 +47,13 @@ export class UserNotification extends Base<string> {
   message: string = '';
 
   @prop({ ref: () => User })
-  sender: Ref<User>;
+  from: Ref<User>;
 
   @prop({ ref: () => User })
-  addressee: Ref<User>;
+  to: Ref<User>;
 
   @prop({ required: true })
-  Date = new Date();
+  date: Date = new Date();
 }
 
 @plugin(mongooseUniqueValidator)
