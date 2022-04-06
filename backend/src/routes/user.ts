@@ -5,11 +5,11 @@ import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
 import { Prospect } from '../models/prospect';
 import ProspectModel from '../models/prospect';
+import { usersMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
 let prospectRequested = false;
-const usersMap: Record<string, User> = {};
 const prospectMap: Record<string, Prospect> = {};
 const mutex = new Mutex();
 

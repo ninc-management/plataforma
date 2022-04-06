@@ -3,10 +3,10 @@ import PromotionModel from '../models/promotion';
 import { Promotion } from '../models/promotion';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+import { promotionsMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const promotionsMap: Record<string, Promotion> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
