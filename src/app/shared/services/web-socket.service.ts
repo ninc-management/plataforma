@@ -24,7 +24,13 @@ export class WebSocketService {
       case 'update': {
         const tmpArray = oArray$.getValue();
         const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
-        if (data.updateDescription.updatedFields) Object.assign(tmpArray[idx], data.updateDescription.updatedFields);
+        if (data.updateDescription.updatedFields) {
+          const fieldAndIndex = Object.keys(data.updateDescription.updatedFields)[0].split('.');
+          const isPush = fieldAndIndex.length > 1;
+          if (isPush) {
+            (tmpArray[idx] as any)[fieldAndIndex[0]].push(Object.values(data.updateDescription.updatedFields)[0]);
+          } else Object.assign(tmpArray[idx], data.updateDescription.updatedFields);
+        }
         if (data.updateDescription.removedFields.length > 0)
           for (const f of data.updateDescription.removedFields) delete (tmpArray[idx] as any)[f];
         oArray$.next(tmpArray);
