@@ -35,14 +35,20 @@ function updateNotification(notification: UserNotification, res: any) {
 }
 
 router.post('/', (req, res, next) => {
-  lastNotification = req.body.notification;
-  updateNotification(req.body.notification, res);
+  mutex.acquire().then((release) => {
+    lastNotification = req.body.notification;
+    updateNotification(req.body.notification, res);
+    release();
+  });
 });
 
 router.post('/many', (req, res, next) => {
-  lastNotification = req.body.notifications[req.body.notifications.length - 1];
-  req.body.notifications.forEach((notification) => {
-    updateNotification(notification, res);
+  mutex.acquire().then((release) => {
+    lastNotification = req.body.notifications[req.body.notifications.length - 1];
+    req.body.notifications.forEach((notification) => {
+      updateNotification(notification, res);
+    });
+    release();
   });
 });
 
