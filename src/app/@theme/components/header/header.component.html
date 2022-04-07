@@ -60,6 +60,8 @@
     <nb-action
       class="control-item"
       icon="bell-outline"
+      [badgeText]="user.notifications.length ? totalNotifications : ''"
+      badgeStatus="danger"
       matRipple
       [matRippleUnbounded]="true"
       [matRippleCentered]="true"
