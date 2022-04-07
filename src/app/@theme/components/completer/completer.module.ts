@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { NbAutocompleteModule, NbInputModule, NbListModule, NbTooltipModule, NbUserModule } from '@nebular/theme';
 
 import { NbCompleterComponent } from './completer.component';
+import { NbMessageInputComponent } from '../message-input/message-input.component';
 
 @NgModule({
   imports: [
@@ -21,8 +22,8 @@ import { NbCompleterComponent } from './completer.component';
     NbAutocompleteModule,
     NbUserModule,
   ],
-  declarations: [NbCompleterComponent],
-  exports: [NbCompleterComponent],
+  declarations: [NbCompleterComponent, NbMessageInputComponent],
+  exports: [NbCompleterComponent, NbMessageInputComponent],
   providers: [],
 })
 export class NbCompleterModule {}

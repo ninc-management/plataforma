@@ -29,11 +29,6 @@
     border-color: nb-theme(progress-bar-danger-filled-background-color);
   }
 
-  .targetSelection {
-    position: absolute;
-    width: 50%;
-  }
-
   ::ng-deep {
     .progress-container {
       border-radius: 0;

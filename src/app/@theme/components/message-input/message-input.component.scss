@@ -1,0 +1,16 @@
+@import '../../styles/themes';
+
+::ng-deep {
+  .message-input-row-wrapper {
+    display: flex;
+  }
+
+  .message-input-row {
+    width: 100%;
+    height: 100%;
+  }
+
+  .message-input-image {
+    padding-left: 1rem;
+  }
+}

@@ -1,0 +1,51 @@
+<textarea
+  #autoInput
+  nbInput
+  [status]="status"
+  [fullWidth]="fullWidth"
+  [fieldSize]="fieldSize"
+  [ngModel]="messageStr"
+  (keydown)="handleKeyDown($event)"
+  (ngModelChange)="onModelChange($event)"
+  #inputCompleter="ngModel"
+  [attr.name]="inputName"
+  [attr.maxlength]="maxChars"
+  [disabled]="disabled"
+  [placeholder]="placeholder"
+  type="text"
+  autocomplete="off"
+  [nbAutocomplete]="autoNgModel"
+></textarea>
+
+<nb-autocomplete
+  #autoNgModel
+  (selectedChange)="onSelect($event)"
+  [handleDisplayFn]="display.bind(this)"
+  [optionsListClass]="mentionMode ? 'visible' : 'invisible'"
+>
+  <nb-option *ngIf="searchActive">
+    {{ textSearching }}
+  </nb-option>
+  <nb-option *ngIf="!searchActive && (!data$ || (filteredDataIsEmpty$ | async))">
+    {{ textNoResults }}
+  </nb-option>
+  <nb-option
+    class="message-input-row-wrapper"
+    *ngFor="let item of filteredData$ | async; let rowIndex = index"
+    [value]="item"
+  >
+    <div class="message-input-row row">
+      <div *ngIf="showAvatar" class="col" class="completer-image-holder">
+        <nb-user
+          class="message-input-image"
+          [onlyPicture]="true"
+          [name]="item[nameField]"
+          [picture]="item[pictureField]"
+        ></nb-user>
+      </div>
+      <div class="col" style="display: flex; align-items: center">
+        {{ item[nameField] }}
+      </div>
+    </div>
+  </nb-option>
+</nb-autocomplete>
