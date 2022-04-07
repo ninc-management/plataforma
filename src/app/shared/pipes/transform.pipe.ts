@@ -10,7 +10,7 @@ export class TransformPipe implements PipeTransform {
     fnArguments: Parameters<F>,
     fnReference: F,
     property?: keyof NonNullable<Exclude<GetElementType<Parameters<F>>, string>>
-  ): string {
+  ): ReturnType<F> {
     return property ? (fnReference(...fnArguments) as any)[property] : fnReference(...fnArguments);
   }
 }
