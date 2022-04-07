@@ -19,7 +19,6 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
-import { Caret } from 'textarea-caret-ts';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 
 //Tipo local para testes
@@ -50,11 +49,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   modelSearch = '';
 
   newComment: ChatComment = new ChatComment();
-  isTargetSelectionActive = false;
-  commentTargetSearch = '';
-  commentTarget!: User;
   comments: ChatComment[] = [];
-  caretPosition!: Caret.Position;
 
   validation = (contract_validation as any).default;
   avaliableStatus = Object.values(AVALIABLE_MANAGEMENT_STATUS);
@@ -245,21 +240,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         }
         this.isDialogBlocked.next(false);
       });
-  }
-
-  isAtSign($event: KeyboardEvent): void {
-    if ($event.key == '@') {
-      this.isTargetSelectionActive = true;
-      this.caretPosition = Caret.getRelativePosition(this.commentInput.nativeElement);
-      this.caretPosition.top += 14;
-      this.caretPosition.left += 33;
-    }
-  }
-
-  onTargetSelected($event: User): void {
-    this.newComment.body += $event.fullName.replace(/\s/g, '') + ' ';
-    this.commentTargetSearch = '';
-    this.isTargetSelectionActive = false;
   }
 
   registerNewComment(): void {
