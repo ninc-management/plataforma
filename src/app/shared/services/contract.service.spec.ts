@@ -322,7 +322,7 @@ describe('ContractService', () => {
             service.saveContract(mockedInvoices[2]);
             const req1 = httpMock.expectOne('/api/contract/');
             expect(req1.request.method).toBe('POST');
-            req1.flush({ contract: tmpContract });
+            req1.flush({});
             const req2 = httpMock.expectOne(
               'https://graph.microsoft.com/v1.0/drive/root:/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
             );

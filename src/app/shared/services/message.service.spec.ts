@@ -93,7 +93,7 @@ describe('MessageService', () => {
             service.saveMessage(tmpMessage);
             const req = httpMock.expectOne('/api/contract/createMessage/');
             expect(req.request.method).toBe('POST');
-            req.flush({ message: tmpMessage });
+            req.flush({});
             socket.emit('dbchange', data);
             break;
           }

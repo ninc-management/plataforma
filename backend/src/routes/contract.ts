@@ -10,6 +10,7 @@ import { contractsMap, messagesMap } from '../shared/global';
 const router = express.Router();
 let requested = false;
 let requestedMessage = false;
+
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {

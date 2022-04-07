@@ -151,7 +151,7 @@ describe('PromotionService', () => {
 
             const req1 = httpMock.expectOne('/api/promotion/');
             expect(req1.request.method).toBe('POST');
-            req1.flush({ promotion: tmpPromotion });
+            req1.flush({});
             socket.emit('dbchange', data);
             break;
           }
