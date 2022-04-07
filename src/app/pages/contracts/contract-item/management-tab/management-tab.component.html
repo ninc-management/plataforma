@@ -2,10 +2,10 @@
   <div class="row">
     <div class="col-12 my-3">
       <nb-progress-bar
-        [status]="percentualProgress() == 100 ? 'success' : 'primary'"
+        [status]="([] | transformPipe: percentualProgress.bind(this)) == 100 ? 'success' : 'primary'"
         [size]="'tiny'"
         [displayValue]="true"
-        [value]="percentualProgress()"
+        [value]="[] | transformPipe: percentualProgress.bind(this)"
       ></nb-progress-bar>
     </div>
   </div>
@@ -331,7 +331,7 @@
                 [class]="'progress-border ' + ([iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))"
                 [size]="'tiny'"
                 [displayValue]="true"
-                [value]="percentualItemProgress(iContract.checklist[i])"
+                [value]="[iContract.checklist[i]] | transformPipe: percentualItemProgress.bind(this)"
               ></nb-progress-bar>
             </div>
           </div>
