@@ -39,6 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user = new User();
   logoIcon = 'logo';
   config: PlatformConfig = new PlatformConfig();
+  totalNotifications = this.user.notifications.length.toString();
 
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
