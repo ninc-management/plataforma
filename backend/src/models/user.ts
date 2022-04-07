@@ -53,7 +53,7 @@ export class UserNotification extends Base<string> {
   to: Ref<User>;
 
   @prop({ required: true })
-  date: Date = new Date();
+  created: Date = new Date();
 }
 
 @plugin(mongooseUniqueValidator)
