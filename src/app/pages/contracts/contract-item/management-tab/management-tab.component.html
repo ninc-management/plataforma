@@ -375,37 +375,22 @@
   </nb-list>
   <div class="row" style="margin-top: 1rem">
     <div class="col-11">
+      <label class="label" for="new-comment">Novo comentário</label>
       <div class="form-control-group">
-        <nb-completer
-          class="targetSelection"
-          [ngStyle]="{
-            visibility: isTargetSelectionActive ? 'visible' : 'hidden',
-            top: caretPosition ? caretPosition.top + 'px' : '0',
-            left: caretPosition ? caretPosition.left + 'px' : '0'
-          }"
-          [(ngModel)]="commentTargetSearch"
-          #targetSelection="ngModel"
-          (selected)="onTargetSelected($event)"
-          id="input-comment-target"
-          name="input-comment-target"
-          inputName="commentTarget"
+        <nb-message-input
+          [(ngModel)]="newComment.body"
+          #commentInput="ngModel"
+          id="input-comment-input"
+          name="input-comment-input"
+          inputName="commentInput"
           nameField="fullName"
           [data$]="avaliableAssignees$"
-          [placeholder]="'Digite o nome de um membro do contrato'"
+          [placeholder]="'Digite seu comentário. Para marcar outra pessoa, digite @.'"
           [fullWidth]="true"
           [fieldSize]="'large'"
           [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
           [minSearchLength]="0"
-        ></nb-completer>
-        <label class="label" for="new-comment">Novo comentário</label>
-        <textarea
-          [(ngModel)]="newComment.body"
-          #newCommentInput
-          nbInput
-          fullWidth
-          fieldSize="large"
-          (keypress)="isAtSign($event)"
-        ></textarea>
+        ></nb-message-input>
       </div>
     </div>
     <div class="col-1">
@@ -415,11 +400,11 @@
         fullWidth
         status="primary"
         size="large"
-        style="margin-top: 28px"
+        style="margin-top: 28px; height: 72px"
         (click)="registerNewComment()"
-        [disabled]="!newCommentInput.value"
+        [disabled]="!commentInput.value"
       >
-        +
+        <nb-icon style="width: 20px; height: 20px" status="basic" icon="paper-plane-outline" pack="eva"></nb-icon>
       </button>
     </div>
   </div>
