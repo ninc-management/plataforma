@@ -11,29 +11,34 @@ $hamburger-layer-color: nb-theme(menu-item-icon-color);
 $hamburger-layer-border-radius: 4px;
 @import '~hamburgers/_sass/hamburgers/hamburgers';
 
+::ng-deep {
+  .mat-ripple-element {
+    background-color: nb-theme(color-basic-transparent-600);
+  }
+
+  nb-badge {
+    margin: -10px;
+    padding: 0.3rem 0.46rem;
+    border-radius: 1.3rem;
+    font-size: small;
+  }
+
+  .sidebar-toggle {
+    .mat-ripple-element {
+      margin-left: -10px;
+    }
+  }
+}
 @include nb-install-component() {
   display: flex;
   justify-content: space-between;
   width: 100%;
-
-  ::ng-deep {
-    .mat-ripple-element {
-      background-color: nb-theme(color-basic-transparent-600);
-    }
-
-    .sidebar-toggle {
-      .mat-ripple-element {
-        margin-left: -10px;
-      }
-    }
-  }
 
   .logo-container {
     display: flex;
     align-items: center;
     width: calc(#{nb-theme(sidebar-width)} - #{nb-theme(header-padding)});
   }
-
   nb-action {
     height: auto;
     display: flex;
