@@ -516,7 +516,8 @@
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab
                     [tabTitle]="
-                      [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
+                      [user.expertise[idx].sector, teamService.idToSector.bind(teamService), 'abrev']
+                        | transformPipe: utils.idToProperty.bind(utils)
                     "
                     *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                   >
