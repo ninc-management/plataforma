@@ -20,6 +20,7 @@ import courseRoutes from './routes/course';
 import publicRoutes from './routes/public';
 import configRoutes from './routes/platformConfig';
 import notificationRoutes from './routes/notification';
+import transactionRoutes from './routes/transaction';
 
 class NortanAPI {
   public app;
@@ -73,6 +74,7 @@ class NortanAPI {
     this.app.use('/api/course', courseRoutes);
     this.app.use('/api/config', configRoutes);
     this.app.use('/api/notify', notificationRoutes);
+    this.app.use('/api/transaction', transactionRoutes);
 
     // For all GET requests, send back index.html
     // so that PathLocationStrategy can be used
