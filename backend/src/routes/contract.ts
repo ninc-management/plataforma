@@ -1,12 +1,16 @@
 import * as express from 'express';
 import ContractModel from '../models/contract';
+import MessageModel from '../models/message';
 import { Contract } from '../models/contract';
+import { Message } from '../models/message';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
-import { contractsMap } from '../shared/global';
+import { contractsMap, messagesMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
+let requestedMessage = false;
+
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
@@ -67,6 +71,37 @@ router.post('/all', async (req, res) => {
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(contractsMap)));
+});
+
+router.post('/createMessage', (req, res, next) => {
+  const message = new MessageModel(req.body.message);
+  mutex.acquire().then((release) => {
+    message
+      .save()
+      .then((savedMessage) => {
+        if (requested) messagesMap[savedMessage._id] = cloneDeep(savedMessage.toJSON());
+        release();
+        return res.status(201).json({
+          message: 'Comentário cadastrado!',
+        });
+      })
+      .catch((err) => {
+        release();
+        return res.status(500).json({
+          message: 'Erro ao cadastrar comentário!',
+          error: err,
+        });
+      });
+  });
+});
+
+router.post('/allMessages', async (req, res) => {
+  if (!requestedMessage) {
+    const messages: Message[] = await MessageModel.find({});
+    messages.map((message) => (messagesMap[message._id] = cloneDeep(message)));
+    requestedMessage = true;
+  }
+  return res.status(200).json(Array.from(Object.values(messagesMap)));
 });
 
 export default router;
