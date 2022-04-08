@@ -14,7 +14,7 @@ function updateNotification(notification: UserNotification, res: any) {
     (notification.to as any)._id,
     { $push: { notifications: notification } },
     { upsert: false },
-    async (err, savedUser) => {
+    (err, savedUser) => {
       if (err) {
         return res.status(500).json({
           message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
@@ -22,9 +22,7 @@ function updateNotification(notification: UserNotification, res: any) {
         });
       }
       if (Object.keys(usersMap).length > 0)
-        await mutex.runExclusive(async () => {
           usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
-        });
       if (isEqual(notification, lastNotification)) {
         return res
           .status(200)
