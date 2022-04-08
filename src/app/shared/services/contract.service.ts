@@ -544,4 +544,9 @@ export class ContractService implements OnDestroy {
     }
     return latestDate;
   }
+
+  isEqual(u1: string | Contract | undefined, u2: string | Contract | undefined): boolean {
+    if (u1 == undefined || u2 == undefined) return false;
+    return this.idToContract(u1)._id == this.idToContract(u2)._id;
+  }
 }

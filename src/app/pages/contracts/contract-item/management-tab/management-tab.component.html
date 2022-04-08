@@ -348,7 +348,7 @@
   </div>
   <nb-list class="row">
     <nb-list-item
-      *ngFor="let comment of comments; let i = index; trackBy: utils.trackByIndex"
+      *ngFor="let comment of availableMessages; let i = index; trackBy: utils.trackByIndex"
       style="align-items: flex-start"
     >
       <nb-user
@@ -363,7 +363,11 @@
       <div>
         <div style="margin-bottom: 3px">
           <span>
-            <b>{{ comment.author.fullName }}</b>
+            <b>
+              {{
+                [comment.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
+              }}
+            </b>
           </span>
           <span class="label" style="margin-left: 0.5rem">
             {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}

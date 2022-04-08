@@ -20,13 +20,8 @@ import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-
-//Tipo local para testes
-class ChatComment {
-  body: string = '';
-  author!: User;
-  created!: Date;
-}
+import { Message } from '@models/message';
+import { MessageService } from 'app/shared/services/message.service';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -46,10 +41,10 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   avaliableContracts$: Observable<Contract[]> = of([]);
   managementAssignee = '';
   assigneeSearch = '';
-  modelSearch = '';
+  availableMessages: Message[] = [];
 
-  newComment: ChatComment = new ChatComment();
-  comments: ChatComment[] = [];
+  modelSearch = '';
+  newComment: Message = new Message();
 
   validation = (contract_validation as any).default;
   avaliableStatus = Object.values(AVALIABLE_MANAGEMENT_STATUS);
@@ -61,9 +56,15 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private contractService: ContractService,
-    private dialogService: NbDialogService,
-    private stringUtils: StringUtilService
+    private stringUtils: StringUtilService,
+    private messageService: MessageService,
+    private dialogService: NbDialogService
   ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     if (this.iContract.invoice) {
@@ -84,11 +85,17 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       if (this.iContract.invoice)
         this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
     });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.messageService
+      .getMessages()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((messages) => {
+        this.availableMessages = [];
+        messages
+          .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.iContract))
+          .forEach((message) => {
+            this.availableMessages.push(message);
+          });
+      });
   }
 
   tooltipText(): string {
@@ -244,7 +251,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   registerNewComment(): void {
     this.newComment.created = new Date();
-    this.comments.push(cloneDeep(this.newComment));
+    this.newComment.contract = this.iContract;
+    this.messageService.saveMessage(this.newComment);
     this.newComment.body = '';
   }
 }
