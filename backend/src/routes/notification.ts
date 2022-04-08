@@ -21,8 +21,7 @@ function updateNotification(notification: UserNotification, res: any) {
           error: err,
         });
       }
-      if (Object.keys(usersMap).length > 0)
-          usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+      if (Object.keys(usersMap).length > 0) usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
       if (isEqual(notification, lastNotification)) {
         return res
           .status(200)
