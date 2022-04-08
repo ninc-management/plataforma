@@ -2,7 +2,9 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatRippleModule, MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
 import { FormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 import {
+  NbPopoverModule,
   NbActionsModule,
   NbLayoutModule,
   NbMenuModule,
@@ -44,6 +46,7 @@ const NB_MODULES = [
   NbLayoutModule,
   NbMenuModule,
   NbUserModule,
+  NbPopoverModule,
   NbActionsModule,
   NbSearchModule,
   NbSidebarModule,
@@ -83,7 +86,7 @@ const themeProviders = NbThemeModule.forRoot(
 ).providers;
 
 @NgModule({
-  imports: [CommonModule, MatRippleModule, ...NB_MODULES],
+  imports: [CommonModule, MatRippleModule, SharedModule, ...NB_MODULES],
   exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
   declarations: [...COMPONENTS, ...PIPES],
   providers: [{ provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService }],

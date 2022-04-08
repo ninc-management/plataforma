@@ -15,6 +15,58 @@ $hamburger-layer-border-radius: 4px;
   .mat-ripple-element {
     background-color: nb-theme(color-basic-transparent-600);
   }
+  /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: var(--card-background-color);
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--card-border-color);
+  }
+
+  .nb-card-notification {
+    max-height: 642px;
+    width: 480px;
+  }
+
+  .nb-card-notification div.notification-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .nb-card-notification nb-list-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nb-card-notification div.notification {
+    display: inline-block;
+    text-align: justify;
+    word-break: break-word;
+  }
+
+  nb-badge {
+    margin: -10px;
+    padding: 0.3rem 0.46rem;
+    border-radius: 1.3rem;
+    font-size: small;
+  }
+
+  .sidebar-toggle {
+    .mat-ripple-element {
+      margin-left: -10px;
+    }
+  }
+}
+@include nb-install-component() {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 
   nb-badge {
     margin: -10px;
