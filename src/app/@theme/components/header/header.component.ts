@@ -50,11 +50,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
     private themeService: NbThemeService,
-    public userService: UserService,
     private breakpointService: NbMediaBreakpointsService,
     private dialogService: NbDialogService,
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
+    public userService: UserService,
     public utils: UtilsService
   ) {}
 
