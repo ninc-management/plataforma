@@ -11,7 +11,7 @@ import { UtilsService } from './utils.service';
 import { StringUtilService } from './string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
-import { Contract, ContractExpense } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { StatusHistoryItem } from '@models/baseStatusHistory';
 import { InvoiceService } from './invoice.service';
@@ -523,6 +523,17 @@ export class ContractService implements OnDestroy {
 
   deadline(contract: Contract): Date | undefined {
     return contract.checklist.length != 0 ? this.latestEndDate(contract) : undefined;
+  }
+
+  actionsByContract(contract: Contract): ChecklistItemAction[] {
+    return contract.checklist.map((item) => item.actionList).flat();
+  }
+
+  allActions(): ChecklistItemAction[] {
+    return this.contracts$
+      .getValue()
+      .map((contract) => this.actionsByContract(contract))
+      .flat();
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {

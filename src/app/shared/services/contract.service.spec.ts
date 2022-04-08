@@ -2,7 +2,14 @@ import { TestBed } from '@angular/core/testing';
 
 import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES, SPLIT_TYPES } from './contract.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { Contract, ContractReceipt, ContractExpense, ContractPayment } from '@models/contract';
+import {
+  Contract,
+  ContractReceipt,
+  ContractExpense,
+  ContractPayment,
+  ContractChecklistItem,
+  ChecklistItemAction,
+} from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
@@ -16,7 +23,6 @@ import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
 import { Team, TeamMember } from '@models/team';
-import { TeamService } from './team.service';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -25,6 +31,7 @@ describe('ContractService', () => {
   let mockedInvoices: Invoice[];
   let mockedContracts: Contract[];
   let mockedTeams: Team[];
+  let mockedChecklistItem: ContractChecklistItem[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -85,6 +92,8 @@ describe('ContractService', () => {
     mockedUsers = [];
     mockedInvoices = [];
     mockedContracts = [];
+    mockedChecklistItem = [];
+
     const tmpUser = new User();
     tmpUser._id = '0';
     tmpUser.fullName = 'Test1';
@@ -210,6 +219,21 @@ describe('ContractService', () => {
     });
     tmpContract.expenses.push(tmpExpense);
     tmpContract.expenses.push(new ContractExpense());
+
+    let tmpChecklistItem = new ContractChecklistItem();
+    let tmpChecklistItemAction = new ChecklistItemAction();
+    tmpChecklistItemAction.name = 'testAction1';
+    tmpChecklistItem.actionList.push(tmpChecklistItemAction);
+    mockedChecklistItem.push(tmpChecklistItem);
+
+    tmpChecklistItem = new ContractChecklistItem();
+    tmpChecklistItemAction = new ChecklistItemAction();
+    tmpChecklistItemAction.name = 'testAction2';
+    tmpChecklistItem.actionList.push(tmpChecklistItemAction);
+    mockedChecklistItem.push(tmpChecklistItem);
+
+    tmpContract.checklist.push(cloneDeep(mockedChecklistItem[0]));
+
     mockedContracts.push(tmpContract);
     tmpContract = new Contract();
     tmpContract._id = '1';
@@ -258,6 +282,8 @@ describe('ContractService', () => {
     });
     tmpContract.payments.push(tmpPayment);
     tmpContract.payments.push(new ContractPayment());
+    tmpContract.checklist.push(cloneDeep(mockedChecklistItem[1]));
+
     mockedContracts.push(tmpContract);
     // mock response
     const req = httpMock.expectOne('/api/user/all');
@@ -600,5 +626,15 @@ describe('ContractService', () => {
         expect(result).toBe(false);
         done();
       });
+  });
+
+  it('actionsByContract should work', () => {
+    expect(service.actionsByContract(mockedContracts[0])).toEqual(mockedChecklistItem[0].actionList);
+    expect(service.actionsByContract(mockedContracts[1])).toEqual(mockedChecklistItem[1].actionList);
+  });
+
+  baseTest('allActions should work', (expectedContracts: Contract[]) => {
+    const allMockedActions = mockedChecklistItem[0].actionList.concat(mockedChecklistItem[1].actionList);
+    expect(service.allActions()).toEqual(JSON.parse(JSON.stringify(allMockedActions)));
   });
 });
