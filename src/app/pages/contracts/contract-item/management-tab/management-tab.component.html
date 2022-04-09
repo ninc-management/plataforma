@@ -359,6 +359,10 @@
     <nb-list-item
       *ngFor="let comment of availableMessages; let i = index; trackBy: utils.trackByIndex"
       style="align-items: flex-start"
+      [ngClass]="{
+        'comment-current-user':
+          [comment.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService)
+      }"
     >
       <nb-user
         size="large"
@@ -382,7 +386,7 @@
             {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}
           </span>
         </div>
-        {{ comment.body }}
+        <p>{{ comment.body }}</p>
       </div>
     </nb-list-item>
   </nb-list>

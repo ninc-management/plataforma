@@ -39,4 +39,18 @@
       border-radius: 0;
     }
   }
+
+  .comment-current-user {
+    flex-direction: row-reverse;
+
+    span {
+      margin: 0 0.5rem;
+    }
+
+    p {
+      display: flex;
+      justify-content: flex-end;
+      margin: 0 0.5rem;
+    }
+  }
 }

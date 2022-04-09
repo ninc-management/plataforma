@@ -38,6 +38,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
+  currentUser: User = new User();
 
   avaliableContracts$: Observable<Contract[]> = of([]);
   managementAssignee = '';
@@ -82,13 +83,11 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         'invoice'
       );
       this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
-      this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
       this.userService.currentUser$.pipe(take(1)).subscribe((currentUser) => {
-        this.newComment.author = currentUser;
-        this.isCommentGranted =
-          this.invoice.team.findIndex((teamMember) => this.userService.isEqual(teamMember.user, currentUser)) != -1;
+        this.currentUser = currentUser;
       });
-
+      this.isCommentGranted =
+        this.invoice.team.findIndex((teamMember) => this.userService.isEqual(teamMember.user, this.currentUser)) != -1;
       (this.managementAssignee = this.utils.idToProperty(
         this.invoice.author,
         this.userService.idToUser.bind(this.userService),
@@ -288,6 +287,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   registerNewComment(): void {
     this.newComment.created = new Date();
+    this.newComment.author = this.currentUser;
     this.newComment.contract = this.iContract;
     this.messageService.saveMessage(this.newComment);
     this.newComment.body = '';
