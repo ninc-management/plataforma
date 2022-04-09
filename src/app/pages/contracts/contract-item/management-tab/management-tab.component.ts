@@ -55,6 +55,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   validation = (contract_validation as any).default;
   avaliableStatus = Object.values(AVALIABLE_MANAGEMENT_STATUS);
   avaliableItemStatus = Object.values(AVALIABLE_MANAGEMENT_ITEM_STATUS);
+  isEditionGranted = false;
+  isCommentGranted = false;
 
   constructor(
     public userService: UserService,
@@ -73,35 +75,49 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.iContract.invoice) {
-      this.invoice = this.invoiceService.idToInvoice(this.iContract.invoice);
+    if (this.iContract._id) {
+      this.invoice = this.utils.idToProperty(
+        this.iContract,
+        this.contractService.idToContract.bind(this.contractService),
+        'invoice'
+      );
       this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
-    }
-    (this.managementAssignee = this.utils.idToProperty(
-      this.invoice.author,
-      this.userService.idToUser.bind(this.userService),
-      'fullName'
-    )),
-      (this.deadline = this.contractService.deadline(this.iContract));
-    this.avaliableContracts$ = this.contractService.getContracts();
-    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.newComment.author = user;
-    });
-    this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      if (this.iContract.invoice)
-        this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
-    });
-    this.messageService
-      .getMessages()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((messages) => {
-        this.availableMessages = [];
-        messages
-          .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.iContract))
-          .forEach((message) => {
-            this.availableMessages.push(message);
-          });
+      this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.invoice));
+      this.userService.currentUser$.pipe(take(1)).subscribe((currentUser) => {
+        this.newComment.author = currentUser;
+        this.isCommentGranted =
+          this.invoice.team.findIndex((teamMember) => this.userService.isEqual(teamMember.user, currentUser)) != -1;
       });
+
+      (this.managementAssignee = this.utils.idToProperty(
+        this.invoice.author,
+        this.userService.idToUser.bind(this.userService),
+        'fullName'
+      )),
+        (this.deadline = this.contractService.deadline(this.iContract));
+      this.avaliableContracts$ = this.contractService.getContracts();
+      this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        if (this.iContract.invoice)
+          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
+      });
+      this.messageService
+        .getMessages()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((messages) => {
+          this.availableMessages = [];
+          messages
+            .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.iContract))
+            .forEach((message) => {
+              this.availableMessages.push(message);
+            });
+        });
+      this.contractService
+        .checkEditPermission(this.invoice)
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          this.isEditionGranted = isGranted;
+        });
+    }
   }
 
   tooltipText(): string {

@@ -10,333 +10,342 @@
     </div>
   </div>
   <form (ngSubmit)="updateContractManagement()" #form="ngForm" aria-labelledby="title">
-    <div class="row">
-      <div class="col-4">
-        <div class="form-control-group">
-          <label class="label" for="contract-code">Código do Contrato:</label>
-          <input
-            nbInput
-            [ngModel]="iContract.code"
-            name="contract-code"
-            fullWidth
-            fieldSize="large"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-5">
-        <div class="form-control-group">
-          <label class="label" for="contractor">Cliente:</label>
-          <input
-            nbInput
-            [ngModel]="iContract.contractor"
-            name="contractor"
-            fullWidth
-            fieldSize="large"
-            [nbTooltip]="[] | transformPipe: tooltipText.bind(this)"
-            nbTooltipPlacement="top"
-            nbTooltipStatus="primary"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="form-control-group">
-          <label class="label" for="model">Modelo:</label>
-          <nb-completer
-            [(ngModel)]="modelSearch"
-            #managementModelList="ngModel"
-            (selected)="applyManagementModel($event)"
-            id="management-model"
-            name="management-model"
-            nameField="code"
-            [data$]="avaliableContracts$"
-            [placeholder]="'Digite o código do contrato'"
-            [fullWidth]="true"
-            [fieldSize]="'large'"
-            [textNoResults]="'Não foi possível achar um contrato com o código digitado'"
-            [minSearchLength]="0"
-          ></nb-completer>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-2">
-        <div class="form-control-group">
-          <label class="label" for="start-date">Início:</label>
-          <input
-            nbInput
-            [ngModel]="[iContract.created] | transformPipe: utils.formatDate.bind(utils)"
-            name="start-date"
-            fullWidth
-            fieldSize="large"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="form-control-group">
-          <label class="label" for="end-date">Fim:</label>
-          <input
-            nbInput
-            [ngModel]="deadline ? ([deadline] | transformPipe: utils.formatDate.bind(utils)) : ''"
-            name="end-date"
-            fullWidth
-            fieldSize="large"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="form-control-group">
-          <label class="label" for="remaining-days">Dias restantes:</label>
-          <input
-            nbInput
-            [ngModel]="[] | transformPipe: remainingDays.bind(this)"
-            name="remaining-days"
-            fullWidth
-            fieldSize="large"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="form-control-group">
-          <label class="label" for="assignee">Responsável:</label>
-          <input nbInput [ngModel]="managementAssignee" name="assignee" fullWidth fieldSize="large" [readonly]="true" />
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="form-control-group">
-          <label class="label" for="management-status">Status de gestão:</label>
-          <nb-select
-            [(ngModel)]="iContract.managementStatus"
-            #managementStatus="ngModel"
-            id="management-status"
-            name="management-status"
-            placeholder="Selecione o status da gestão"
-            fullWidth
-            size="large"
-            [status]="managementStatus.dirty ? (managementStatus.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="managementStatus.invalid && managementStatus.touched ? true : null"
-          >
-            <nb-option *ngFor="let status of avaliableStatus" [value]="status">
-              {{ status }}
-            </nb-option>
-          </nb-select>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="form-control-group">
-          <label class="label" for="management-notes">Observações:</label>
-          <textarea
-            nbInput
-            [(ngModel)]="iContract.managementNotes"
-            id="management-notes"
-            name="management-notes"
-            fullWidth
-            fieldSize="large"
-          ></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-auto">
-        <h6>Checklist</h6>
-      </div>
-      <div class="col">
-        <hr />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-3">
-        <label class="label" for="input-item-name">Ação:</label>
-        <input
-          nbInput
-          [(ngModel)]="newChecklistItem.name"
-          #nameInput="ngModel"
-          id="input-item-name"
-          name="input-item-name"
-          fullWidth
-          fieldSize="large"
-          [status]="nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
-        />
-      </div>
-      <div class="col-3">
-        <label class="label" for="input-item-range">Prazo:</label>
-        <input
-          nbInput
-          [(ngModel)]="newChecklistItem.range"
-          #rangeInput="ngModel"
-          id="input-item-range"
-          name="input-item-range"
-          fullWidth
-          fieldSize="large"
-          [nbDatepicker]="rangePicker"
-          [status]="rangeInput.dirty ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="rangeInput.invalid && rangeInput.touched ? true : null"
-        />
-        <nb-rangepicker #rangePicker></nb-rangepicker>
-      </div>
-      <div class="col-3">
-        <label class="label" for="input-item-assignee">Responsável:</label>
-        <nb-completer
-          [(ngModel)]="assigneeSearch"
-          #itemAssigneeList="ngModel"
-          (selected)="newChecklistItem.assignee = $event"
-          id="input-item-assignee"
-          name="input-item-assignee"
-          inputName="itemAssignee"
-          nameField="fullName"
-          [data$]="avaliableAssignees$"
-          [placeholder]="'Digite o nome do responsável pela ação'"
-          [fullWidth]="true"
-          [fieldSize]="'large'"
-          [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
-          [minSearchLength]="0"
-        ></nb-completer>
-      </div>
-      <div class="col-2">
-        <label class="label" for="input-item-status">Status:</label>
-        <nb-select
-          id="input-item-status"
-          [(ngModel)]="newChecklistItem.status"
-          #statusInput="ngModel"
-          name="input-item-status"
-          fullWidth
-          size="large"
-          [status]="statusInput.dirty ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="statusInput.invalid && statusInput.touched ? true : null"
-        >
-          <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
-            {{ status }}
-          </nb-option>
-        </nb-select>
-      </div>
-      <div class="col-1">
-        <button
-          nbButton
-          type="button"
-          fullWidth
-          status="primary"
-          size="large"
-          style="margin-top: 28px"
-          (click)="registerChecklistItem()"
-          [disabled]="!nameInput.value || !rangeInput.value || !itemAssigneeList.value || !statusInput.value"
-        >
-          +
-        </button>
-      </div>
-    </div>
-
-    <nb-list class="row overflow-hidden py-3">
-      <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of iContract.checklist; let i = index">
-        <div class="row w-100">
-          <div class="col-3">
+    <fieldset [disabled]="!isEditionGranted">
+      <div class="row">
+        <div class="col-4">
+          <div class="form-control-group">
+            <label class="label" for="contract-code">Código do Contrato:</label>
             <input
               nbInput
-              [(ngModel)]="iContract.checklist[i].name"
-              #nameInput="ngModel"
-              id="item-name-{{ i }}"
-              name="item-name-{{ i }}"
-              fullWidth
-              fieldSize="large"
-              [required]="validation.checklist.name"
-              [status]="nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
-            />
-          </div>
-          <div class="col-2">
-            <input
-              nbInput
-              [(ngModel)]="iContract.checklist[i].range"
-              #rangeInput="ngModel"
-              id="item-range-{{ i }}"
-              name="item-range-{{ i }}"
-              fullWidth
-              fieldSize="large"
-              [required]="validation.checklist.startDate"
-              [nbDatepicker]="rangePicker"
-              [status]="rangeInput.dirty ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="rangeInput.invalid && rangeInput.touched ? true : null"
-            />
-            <nb-rangepicker #rangePicker></nb-rangepicker>
-          </div>
-          <div class="col-3">
-            <input
-              nbInput
-              [ngModel]="
-                [iContract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
-                  | transformPipe: this.utils.idToProperty.bind(utils)
-              "
-              #assignee="ngModel"
-              id="item-assignee-{{ i }}"
-              name="item-assignee-{{ i }}"
+              [ngModel]="iContract.code"
+              name="contract-code"
               fullWidth
               fieldSize="large"
               [readonly]="true"
             />
           </div>
-          <div class="col-2">
+        </div>
+        <div class="col-5">
+          <div class="form-control-group">
+            <label class="label" for="contractor">Cliente:</label>
+            <input
+              nbInput
+              [ngModel]="iContract.contractor"
+              name="contractor"
+              fullWidth
+              fieldSize="large"
+              [nbTooltip]="[] | transformPipe: tooltipText.bind(this)"
+              nbTooltipPlacement="top"
+              nbTooltipStatus="primary"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-control-group">
+            <label class="label" for="model">Modelo:</label>
+            <nb-completer
+              [(ngModel)]="modelSearch"
+              #managementModelList="ngModel"
+              (selected)="applyManagementModel($event)"
+              id="management-model"
+              name="management-model"
+              nameField="code"
+              [data$]="avaliableContracts$"
+              [placeholder]="'Digite o código do contrato'"
+              [fullWidth]="true"
+              [fieldSize]="'large'"
+              [textNoResults]="'Não foi possível achar um contrato com o código digitado'"
+              [minSearchLength]="0"
+            ></nb-completer>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <div class="form-control-group">
+            <label class="label" for="start-date">Início:</label>
+            <input
+              nbInput
+              [ngModel]="[iContract.created] | transformPipe: utils.formatDate.bind(utils)"
+              name="start-date"
+              fullWidth
+              fieldSize="large"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="form-control-group">
+            <label class="label" for="end-date">Fim:</label>
+            <input
+              nbInput
+              [ngModel]="deadline ? ([deadline] | transformPipe: utils.formatDate.bind(utils)) : ''"
+              name="end-date"
+              fullWidth
+              fieldSize="large"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="form-control-group">
+            <label class="label" for="remaining-days">Dias restantes:</label>
+            <input
+              nbInput
+              [ngModel]="[] | transformPipe: remainingDays.bind(this)"
+              name="remaining-days"
+              fullWidth
+              fieldSize="large"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-control-group">
+            <label class="label" for="assignee">Responsável:</label>
+            <input
+              nbInput
+              [ngModel]="managementAssignee"
+              name="assignee"
+              fullWidth
+              fieldSize="large"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-control-group">
+            <label class="label" for="management-status">Status de gestão:</label>
             <nb-select
-              [(ngModel)]="iContract.checklist[i].status"
-              #statusInput="ngModel"
-              id="item-status-{{ i }}"
-              name="item-status-{{ i }}"
+              [(ngModel)]="iContract.managementStatus"
+              #managementStatus="ngModel"
+              id="management-status"
+              name="management-status"
+              placeholder="Selecione o status da gestão"
               fullWidth
               size="large"
-              [required]="validation.checklist.status"
-              [status]="statusInput.dirty ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="statusInput.invalid && statusInput.touched ? true : null"
+              [status]="managementStatus.dirty ? (managementStatus.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="managementStatus.invalid && managementStatus.touched ? true : null"
             >
-              <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
+              <nb-option *ngFor="let status of avaliableStatus" [value]="status">
                 {{ status }}
               </nb-option>
             </nb-select>
           </div>
-          <div class="col-1 icon-container">
-            <nb-icon
-              icon="external-link-outline"
-              pack="eva"
-              [options]="{ animation: { type: 'pulse' } }"
-              (click)="openItemDialog(i)"
-            ></nb-icon>
-          </div>
-          <div class="col-1 icon-container">
-            <nb-icon
-              class="xIcon"
-              status="danger"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="removeItem(i)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
         </div>
-        <div class="row w-100">
-          <div class="col-12 mt-3">
-            <nb-progress-bar
-              [status]="[iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
-              [class]="'progress-border ' + ([iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))"
-              [size]="'tiny'"
-              [displayValue]="true"
-              [value]="percentualItemProgress(iContract.checklist[i])"
-            ></nb-progress-bar>
-          </div>
-        </div>
-      </nb-list-item>
-    </nb-list>
-
-    <div class="row">
-      <div class="col-12">
-        <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">
-          Atualizar
-        </button>
       </div>
-    </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="management-notes">Observações:</label>
+            <textarea
+              nbInput
+              [(ngModel)]="iContract.managementNotes"
+              id="management-notes"
+              name="management-notes"
+              fullWidth
+              fieldSize="large"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-auto">
+          <h6>Checklist</h6>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <label class="label" for="input-item-name">Ação:</label>
+          <input
+            nbInput
+            [(ngModel)]="newChecklistItem.name"
+            #nameInput="ngModel"
+            id="input-item-name"
+            name="input-item-name"
+            fullWidth
+            fieldSize="large"
+            [status]="nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
+          />
+        </div>
+        <div class="col-3">
+          <label class="label" for="input-item-range">Prazo:</label>
+          <input
+            nbInput
+            [(ngModel)]="newChecklistItem.range"
+            #rangeInput="ngModel"
+            id="input-item-range"
+            name="input-item-range"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="rangePicker"
+            [status]="rangeInput.dirty ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="rangeInput.invalid && rangeInput.touched ? true : null"
+          />
+          <nb-rangepicker #rangePicker></nb-rangepicker>
+        </div>
+        <div class="col-3">
+          <label class="label" for="input-item-assignee">Responsável:</label>
+          <nb-completer
+            [(ngModel)]="assigneeSearch"
+            #itemAssigneeList="ngModel"
+            (selected)="newChecklistItem.assignee = $event"
+            id="input-item-assignee"
+            name="input-item-assignee"
+            inputName="itemAssignee"
+            nameField="fullName"
+            [data$]="avaliableAssignees$"
+            [placeholder]="'Digite o nome do responsável pela ação'"
+            [fullWidth]="true"
+            [fieldSize]="'large'"
+            [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
+            [minSearchLength]="0"
+          ></nb-completer>
+        </div>
+        <div class="col-2">
+          <label class="label" for="input-item-status">Status:</label>
+          <nb-select
+            id="input-item-status"
+            [(ngModel)]="newChecklistItem.status"
+            #statusInput="ngModel"
+            name="input-item-status"
+            fullWidth
+            size="large"
+            [status]="statusInput.dirty ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="statusInput.invalid && statusInput.touched ? true : null"
+          >
+            <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
+              {{ status }}
+            </nb-option>
+          </nb-select>
+        </div>
+        <div class="col-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            (click)="registerChecklistItem()"
+            [disabled]="!nameInput.value || !rangeInput.value || !itemAssigneeList.value || !statusInput.value"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <nb-list class="row overflow-hidden py-3">
+        <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of iContract.checklist; let i = index">
+          <div class="row w-100">
+            <div class="col-3">
+              <input
+                nbInput
+                [(ngModel)]="iContract.checklist[i].name"
+                #nameInput="ngModel"
+                id="item-name-{{ i }}"
+                name="item-name-{{ i }}"
+                fullWidth
+                fieldSize="large"
+                [required]="validation.checklist.name"
+                [status]="nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
+              />
+            </div>
+            <div class="col-2">
+              <input
+                nbInput
+                [(ngModel)]="iContract.checklist[i].range"
+                #rangeInput="ngModel"
+                id="item-range-{{ i }}"
+                name="item-range-{{ i }}"
+                fullWidth
+                fieldSize="large"
+                [required]="validation.checklist.startDate"
+                [nbDatepicker]="rangePicker"
+                [status]="rangeInput.dirty ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="rangeInput.invalid && rangeInput.touched ? true : null"
+              />
+              <nb-rangepicker #rangePicker></nb-rangepicker>
+            </div>
+            <div class="col-3">
+              <input
+                nbInput
+                [ngModel]="
+                  [iContract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                    | transformPipe: this.utils.idToProperty.bind(utils)
+                "
+                #assignee="ngModel"
+                id="item-assignee-{{ i }}"
+                name="item-assignee-{{ i }}"
+                fullWidth
+                fieldSize="large"
+                [readonly]="true"
+              />
+            </div>
+            <div class="col-2">
+              <nb-select
+                [(ngModel)]="iContract.checklist[i].status"
+                #statusInput="ngModel"
+                id="item-status-{{ i }}"
+                name="item-status-{{ i }}"
+                fullWidth
+                size="large"
+                [required]="validation.checklist.status"
+                [status]="statusInput.dirty ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="statusInput.invalid && statusInput.touched ? true : null"
+              >
+                <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
+                  {{ status }}
+                </nb-option>
+              </nb-select>
+            </div>
+            <div class="col-1 icon-container">
+              <nb-icon
+                icon="external-link-outline"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                (click)="openItemDialog(i)"
+              ></nb-icon>
+            </div>
+            <div class="col-1 icon-container">
+              <nb-icon
+                class="xIcon"
+                status="danger"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="removeItem(i)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+          <div class="row w-100">
+            <div class="col-12 mt-3">
+              <nb-progress-bar
+                [status]="[iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
+                [class]="'progress-border ' + ([iContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))"
+                [size]="'tiny'"
+                [displayValue]="true"
+                [value]="percentualItemProgress(iContract.checklist[i])"
+              ></nb-progress-bar>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+
+      <div class="row">
+        <div class="col-12">
+          <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">
+            Atualizar
+          </button>
+        </div>
+      </div>
+    </fieldset>
   </form>
   <div class="row mt-3">
     <div class="col-auto">
@@ -402,14 +411,16 @@
           [minSearchLength]="0"
         ></nb-completer>
         <label class="label" for="new-comment">Novo comentário</label>
-        <textarea
-          [(ngModel)]="newComment.body"
-          #newCommentInput
-          nbInput
-          fullWidth
-          fieldSize="large"
-          (keypress)="isAtSign($event)"
-        ></textarea>
+        <fieldset [disabled]="!isCommentGranted">
+          <textarea
+            [(ngModel)]="newComment.body"
+            #newCommentInput
+            nbInput
+            fullWidth
+            fieldSize="large"
+            (keypress)="isAtSign($event)"
+          ></textarea>
+        </fieldset>
       </div>
     </div>
     <div class="col-1">
