@@ -1,28 +1,19 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { map, take, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
-import { ContractService, EXPENSE_TYPES, SPLIT_TYPES, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 import { ContractDialogComponent, COMPONENT_TYPES } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
-import contract_validation from 'app/shared/contract-validation.json';
-import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { Sector } from '@models/shared';
-
-interface ExpenseTypesSum {
-  type: string;
-  value: string;
-}
 
 interface ExpenseSourceSum {
   user: string;
@@ -42,12 +33,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
-  today = new Date();
-  validation = contract_validation as any;
-  STATOOS = Object.values(CONTRACT_STATOOS);
-  INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
-  USER_SECTORS: Sector[] = [];
   options = {
     liquid: '0,00',
     paid: '0,00',
@@ -59,15 +45,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   isEditionGranted = false;
   comissionSum = '';
 
-  get invoiceAdministration(): string {
-    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
-    return '';
-  }
-
   teamMember: any = {};
   memberChanged$ = new BehaviorSubject<boolean>(true);
-  userSearch = '';
-  availableUsers: Observable<User[]> = of([]);
 
   searchQuery = '';
   get filtredExpenses(): ContractExpense[] {
@@ -235,7 +214,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
-    private contractorService: ContractorService,
     public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService,
@@ -260,14 +238,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.updateLiquid();
     this.calculatePaidValue();
     this.calculateBalance();
-    this.applyDistribution();
     this.updateTeamTotal();
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
-    this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
-      map(([users, _]) => {
-        return users.filter((user) => !this.userService.isUserInTeam(user, this.invoice.team) && user.active);
-      })
-    );
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
@@ -430,32 +402,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.contract.balance = this.contractService.balance(this.contract);
   }
 
-  tooltipText(): string {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.contractor)
-        return (
-          `CPF/CNPJ: ` +
-          this.contractorService.idToContractor(invoice.contractor).document +
-          `\nTelefone: ` +
-          this.contractorService.idToContractor(invoice.contractor).phone +
-          `\nEmail: ` +
-          this.contractorService.idToContractor(invoice.contractor).email +
-          `\nEndereço: ` +
-          this.contractorService.idToContractor(invoice.contractor).address
-        );
-    }
-    return '';
-  }
-
-  addColaborator(): void {
-    this.invoice.team.push(Object.assign({}, this.teamMember));
-    this.userSearch = '';
-    this.teamMember = {};
-    this.updateTeamTotal();
-    this.memberChanged$.next(true);
-  }
-
   updateTeamTotal(): void {
     this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
@@ -540,49 +486,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateNetValue(idx?: number, source: 'gross' | 'distribution' = 'distribution'): void {
-    if (idx != undefined) {
-      if (source === 'gross') {
-        this.invoice.team[idx].netValue = this.contractService.toNetValue(
-          this.invoice.team[idx].grossValue,
-          this.options.notaFiscal,
-          this.options.nortanPercentage,
-          this.contract.created
-        );
-      } else {
-        this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
-          this.contract.liquid,
-          this.invoice.team[idx].distribution
-        );
-      }
-      this.updateTeamTotal();
-    } else {
-      if (source === 'gross') {
-        this.teamMember.netValue = this.contractService.toNetValue(
-          this.teamMember.grossValue,
-          this.options.notaFiscal,
-          this.options.nortanPercentage,
-          this.contract.created
-        );
-      } else {
-        this.teamMember.netValue = this.stringUtil.applyPercentage(this.contract.liquid, this.teamMember.distribution);
-      }
-    }
-  }
-
-  updatePercentage(idx?: number): void {
-    if (idx != undefined) {
-      this.invoice.team[idx].distribution = this.stringUtil
-        .toPercentage(this.invoice.team[idx].netValue, this.contract.liquid, 20)
-        .slice(0, -1);
-      this.updateTeamTotal();
-    } else {
-      this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.netValue, this.contract.liquid, 20)
-        .slice(0, -1);
-    }
-  }
-
   itemSort(direction: number, a: string, b: string): number {
     const first = +a.replace(/[#]/g, '');
     const second = +b.replace(/[#]/g, '');
@@ -612,44 +515,5 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   expenseIndex(code: 'string'): number {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
-  }
-
-  isGrossValueOK(): boolean {
-    return (
-      this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.teamTotal.grossValue) + this.contractService.getComissionsSum(this.contract)
-      ) === this.stringUtil.removePercentage(this.contract.value, this.contract.ISS) &&
-      this.teamTotal.grossValue !== '0,00'
-    );
-  }
-
-  isNetValueOK(): boolean {
-    return this.teamTotal.netValue === this.contract.liquid && this.teamTotal.netValue !== '0,00';
-  }
-
-  applyDistribution(): void {
-    this.invoice.team = this.invoice.team.map((member) => {
-      member.netValue = this.stringUtil.applyPercentage(this.contract.liquid, member.distribution);
-      member.grossValue = this.contractService.toGrossValue(
-        member.netValue,
-        this.options.notaFiscal,
-        this.options.nortanPercentage
-      );
-      return member;
-    });
-  }
-
-  canRemoveMember(index: number): boolean {
-    const user = this.invoice.team[index].user;
-    if (this.stringUtil.moneyToNumber(this.contractService.receivedValue(user, this.contract)) > 0) {
-      return false;
-    }
-    if (this.stringUtil.moneyToNumber(this.contractService.getMemberExpensesSum(user, this.contract)) > 0) {
-      return false;
-    }
-    if (!!this.contract.expenses.find((expense) => expense.paid && this.userService.isEqual(expense.source, user))) {
-      return false;
-    }
-    return true;
   }
 }
