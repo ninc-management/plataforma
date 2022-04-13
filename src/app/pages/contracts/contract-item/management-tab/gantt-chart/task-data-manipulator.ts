@@ -11,17 +11,17 @@ export class TaskDataManipulator {
 
   mapData(taskData: TaskModel[]): any[] {
     //Im changing the item object to array... this is why the encode is filled with indexed
-    var _groupData = this.mapGroups(taskData);
+    const _groupData = this.mapGroups(taskData);
 
-    var mappedData = [];
+    const mappedData = [];
 
     for (let index = 0; index < taskData.length; index++) {
-      let item = taskData[index];
+      const item = taskData[index];
 
       //filling the group information
       // here I get the taskID gorupped by mapGroups functions and compare the position of taskid with the array present in the groupped. If the current taskid is in the end of array I dont need to draw the group
       let isToDrawGroup = 0;
-      let groupInfo = _groupData[item.groupName];
+      const groupInfo = _groupData[item.groupName];
       if (groupInfo != undefined && groupInfo.tasks.length > 1) {
         if (groupInfo.tasks.indexOf(item.taskId) < groupInfo.tasks.length - 1) isToDrawGroup = 1;
       }
@@ -33,7 +33,7 @@ export class TaskDataManipulator {
         color = groupInfo.color;
       }
 
-      let index_attributes = [
+      const index_attributes = [
         index,
         item.taskName,
         item.start,
@@ -54,11 +54,11 @@ export class TaskDataManipulator {
   }
 
   mapZebra(taskData: TaskModel[]): any[] {
-    var mappedData = [];
+    const mappedData = [];
 
     for (let index = 0; index < taskData.length; index++) {
-      let item = taskData[index];
-      let index_attributes = [index, this.getMinDate(taskData), this.getMaxDate(taskData), item.taskId];
+      const item = taskData[index];
+      const index_attributes = [index, this.getMinDate(taskData), this.getMaxDate(taskData), item.taskId];
       mappedData.push(index_attributes);
     }
     return mappedData;
@@ -67,7 +67,7 @@ export class TaskDataManipulator {
   getMinDate(taskData: TaskModel[]): Date {
     let minDate = new Date(8640000000000000);
     for (let index = 0; index < taskData.length; index++) {
-      let item = taskData[index];
+      const item = taskData[index];
       if (item.start < minDate) {
         minDate = item.start;
       }
@@ -79,7 +79,7 @@ export class TaskDataManipulator {
   getMaxDate(taskData: TaskModel[]): Date {
     let maxDate = new Date(-8640000000000000);
     for (let index = 0; index < taskData.length; index++) {
-      let item = taskData[index];
+      const item = taskData[index];
       if (item.end > maxDate) {
         maxDate = item.end;
       }
@@ -102,7 +102,7 @@ export class TaskDataManipulator {
     }
 
     let countColor = 0;
-    let mappedGroups: any = {};
+    const mappedGroups: any = {};
     //Im creating a map of groups => taskId
     for (let i = 0; i < taskData.length; i++) {
       if (mappedGroups[taskData[i].groupName] == undefined) {
@@ -157,7 +157,7 @@ export class TaskDataManipulator {
   }
 
   getRandomHexColor(): string {
-    //var randomColor = Math.floor(Math.random()*16777215).toString(16);
+    //const randomColor = Math.floor(Math.random()*16777215).toString(16);
     //return "#" + randomColor;
 
     return this.COLOURS[this.randomInt(0, this.COLOURS.length)];

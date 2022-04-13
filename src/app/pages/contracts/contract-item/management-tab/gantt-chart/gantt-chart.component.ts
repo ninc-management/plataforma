@@ -332,7 +332,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
     return {
       id: 'zebra',
       type: 'custom',
-      renderItem: this.renderers!.renderZebra.bind(this.renderers),
+      renderItem: this.renderers.renderZebra.bind(this.renderers),
       dimensions: _zebraDataDimensions,
       encode: {
         x: -1, //[1, 2],
@@ -351,7 +351,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       itemStyle: {
         borderType: 'dashed',
       },
-      renderItem: this.renderers!.renderArrowsItem.bind(this.renderers),
+      renderItem: this.renderers.renderArrowsItem.bind(this.renderers),
       dimensions: taskDataDimensions,
       tooltip: null,
       encode: {
@@ -367,7 +367,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       id: 'taskData',
       type: 'custom',
       itemStyle: {},
-      renderItem: this.renderers!.renderGanttItem.bind(this.renderers),
+      renderItem: this.renderers.renderGanttItem.bind(this.renderers),
       dimensions: taskDataDimensions,
       encode: {
         x: [2, 3],
@@ -381,7 +381,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   getSerieAxisY(taskDataDimensions: any[]): any {
     return {
       type: 'custom',
-      renderItem: this.renderers!.renderAxisLabelItem.bind(this.renderers),
+      renderItem: this.renderers.renderAxisLabelItem.bind(this.renderers),
       dimensions: taskDataDimensions,
       encode: {
         x: -1, // Then this series will not controlled by x.
@@ -396,7 +396,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
     return {
       id: 'today',
       type: 'custom',
-      renderItem: this.renderers!.renderToday.bind(this.renderers),
+      renderItem: this.renderers.renderToday.bind(this.renderers),
       dimensions: [{ name: 'today', type: 'time' }],
       encode: {
         x: 0,
@@ -525,8 +525,8 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   ngAfterContentChecked(): void {
     if (this.wrapper == undefined) return;
 
-    this.ganttWidth = this.wrapper!.nativeElement.offsetWidth;
-    this.ganttHeight = this.wrapper!.nativeElement.offsetHeight;
+    this.ganttWidth = this.wrapper?.nativeElement.offsetWidth;
+    this.ganttHeight = this.wrapper?.nativeElement.offsetHeight;
 
     const chartHeight = this.taskData.length * 80;
     this.ganttHeight = chartHeight < 300 ? 300 : chartHeight;
@@ -544,8 +544,8 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       task.image = params.value[7]
       task.groupName = params.value[8]*/
       //re-mapping [index, item.taskName, item.start, item.end, item.taskId, item.donePercentage, item.owner, item.image, item.groupName, isToDrawGroup, color] into taskmodel
-      const task: TaskModel = this.taskDataManipulator.getTaskById(this.taskData, params.value[4])!;
-      this.taskClicked.emit(task);
+      const task = this.taskDataManipulator.getTaskById(this.taskData, params.value[4]);
+      if (task) this.taskClicked.emit(task);
     }
   }
 
