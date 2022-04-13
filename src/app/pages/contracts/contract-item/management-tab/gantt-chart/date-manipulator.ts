@@ -7,7 +7,7 @@ export class DateManipulator {
 
   static daysLeft(baseDate: number, translation: any) {
     //get days left based on today
-    var left = this.datediff(baseDate, new Date().getTime());
+    const left = this.datediff(baseDate, new Date().getTime());
     if (left < 0) {
       return -left + ' ' + (translation ? translation.TO_END : 'TO_END');
     } else {

@@ -47,7 +47,6 @@ export class GanttRenderers {
 
     const timeStart = api.coord([api.value(2), index]);
     const timeEnd = api.coord([api.value(3), index]);
-    const taskId = api.value(4);
     const donePercentage = api.value(5);
     const groupColor = api.value(10);
 
@@ -119,11 +118,8 @@ export class GanttRenderers {
     //console.log("api.coord([0, api.value(0)])", api.coord([0, api.value(0)]))
     const index = api.value(0);
     const taskName = api.value(1);
-    const taskId = api.value(4);
     const donePercentage = api.value(5);
-    const start = api.value(2);
     const end = api.value(3);
-    const owner = api.value(6);
     const image = api.value(7);
     const groupName = api.value(8);
     const isToDrawGroup = api.value(9);
@@ -225,12 +221,8 @@ export class GanttRenderers {
 
   renderArrowsItem(params: any, api: any) {
     const index = api.value(0);
-    const taskName = api.value(1);
     const timeStart = api.coord([api.value(2), index]);
-    const timeEnd = api.coord([api.value(3), index]);
-    const taskId = api.value(4);
 
-    const barLength = timeEnd[0] - timeStart[0];
     // Get the heigth corresponds to length 1 on y axis.
     const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
     const x = timeStart[0];
@@ -352,12 +344,8 @@ export class GanttRenderers {
 
   renderArrowsItem2(params: any, api: any) {
     const index = api.value(0);
-    const taskName = api.value(1);
     const timeStart = api.coord([api.value(2), index]);
-    const timeEnd = api.coord([api.value(3), index]);
-    const taskId = api.value(4);
 
-    const barLength = timeEnd[0] - timeStart[0];
     // Get the heigth corresponds to length 1 on y axis.
     const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
     const x = timeStart[0];
