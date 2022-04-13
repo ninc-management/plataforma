@@ -63,5 +63,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     UserReceivablesComponent,
     ReceivablesDialogComponent,
   ],
+  exports: [NgxEchartsModule],
 })
 export class DashboardModule {}
