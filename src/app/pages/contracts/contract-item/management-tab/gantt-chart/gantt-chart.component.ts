@@ -1,3 +1,5 @@
+// This code was initially made by https://github.com/mfandre
+
 import {
   AfterContentChecked,
   AfterViewInit,
