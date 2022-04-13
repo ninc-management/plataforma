@@ -48,7 +48,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   public enableDarkTheme: boolean = false;
 
   @Input()
-  public enableGroup: boolean = false;
+  public enableGroup: boolean = true;
 
   @Input()
   public chartTitle: string = '';
@@ -80,6 +80,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   public height: number = 300;
 
   translation: any = {
+    FINISHED: 'Finalizado',
     DONE: 'Feito',
     TO_END: 'Dias restantes',
     DELAYED: 'Atrasado',
