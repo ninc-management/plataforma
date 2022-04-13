@@ -1,5 +1,6 @@
-import * as echarts from 'echarts/core';
+// This code was initially made by https://github.com/mfandre
 
+import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';

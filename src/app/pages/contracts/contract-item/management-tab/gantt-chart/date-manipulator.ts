@@ -1,3 +1,5 @@
+// This code was initially made by https://github.com/mfandre
+
 export class DateManipulator {
   static datediff(first: number, second: number) {
     // Take the difference between the dates and divide by milliseconds per day.
