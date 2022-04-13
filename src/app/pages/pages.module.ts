@@ -55,6 +55,7 @@ import { ParticipantItemComponent } from './courses/participant-item/participant
 import { ResourceItemComponent } from './courses/resource-item/resource-item.component';
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
 import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist-item-dialog/checklist-item-dialog.component';
+import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.component';
 
 @NgModule({
   imports: [
@@ -115,6 +116,7 @@ import { ChecklistItemDialogComponent } from './contracts/contract-item/manageme
     ResourceItemComponent,
     ManagementTabComponent,
     ChecklistItemDialogComponent,
+    DataTabComponent,
   ],
 })
 export class PagesModule {}
