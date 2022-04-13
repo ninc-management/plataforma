@@ -56,6 +56,9 @@ import { ResourceItemComponent } from './courses/resource-item/resource-item.com
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
 import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist-item-dialog/checklist-item-dialog.component';
 import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.component';
+import { GanttChartComponent } from './contracts/contract-item/management-tab/gantt-chart/gantt-chart.component';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 @NgModule({
   imports: [
@@ -84,6 +87,7 @@ import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.co
     SharedModule,
     ThemeModule,
     NbProgressBarModule,
+    NgxEchartsModule.forRoot({ echarts }),
   ],
   declarations: [
     PagesComponent,
@@ -117,6 +121,7 @@ import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.co
     ManagementTabComponent,
     ChecklistItemDialogComponent,
     DataTabComponent,
+    GanttChartComponent,
   ],
 })
 export class PagesModule {}
