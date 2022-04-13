@@ -433,5 +433,9 @@
       </div>
     </div>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gráfico de Gantt'" responsive></nb-tab>
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gráfico de Gantt'" responsive>
+    <ngx-gantt-chart [chartTitle]="'Acompanhamento das atividades do contrato'" [(taskData)]="taskData">
+      >
+    </ngx-gantt-chart>
+  </nb-tab>
 </nb-tabset>
