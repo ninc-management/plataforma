@@ -109,7 +109,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
 
   echartsInstance: any;
 
-  private renderers?: GanttRenderers;
+  private renderers!: GanttRenderers;
   private taskDataManipulator: TaskDataManipulator;
   private mappedData: any[];
   private zebraData: any[];
@@ -477,6 +477,16 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   }
 
   ngOnInit(): void {
+    this.renderers = new GanttRenderers(
+      this.taskData,
+      this.mappedData,
+      this.colours,
+      this.dateFormat,
+      this.heightRatio,
+      this.translation,
+      this.enableGroup,
+      this.enableDarkTheme
+    );
     this.setChartOptions();
   }
 
