@@ -49,8 +49,6 @@ describe('NotificationService', () => {
     tmpUser._id = '0';
     tmpUser.fullName = 'Test';
     tmpUser.email = 'test@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic1@pic.com';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
     tmpUser.fullName = 'Test1';
@@ -94,7 +92,6 @@ describe('NotificationService', () => {
     let req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedUsers);
-    userService.currentUser$.pipe(take(1)).subscribe();
   });
 
   afterEach(() => {
