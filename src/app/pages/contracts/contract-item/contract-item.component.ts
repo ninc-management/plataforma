@@ -8,17 +8,12 @@ import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
-import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
+import { UserService } from 'app/shared/services/user.service';
 import { ContractDialogComponent, COMPONENT_TYPES } from '../contract-dialog/contract-dialog.component';
 import { ContractExpense, Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-
-interface ExpenseSourceSum {
-  user: string;
-  value: string;
-}
 
 @Component({
   selector: 'ngx-contract-item',
@@ -29,7 +24,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() iContract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  contractId!: string;
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
@@ -177,10 +171,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     },
   };
 
-  contractorIcon = {
-    icon: 'client',
-    pack: 'fac',
-  };
   contractIcon = {
     icon: 'file-invoice',
     pack: 'fac',
@@ -201,10 +191,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     icon: 'scale',
     pack: 'fac',
   };
-  chartIcon = {
-    icon: 'chart-bar',
-    pack: 'fa',
-  };
+
   teamTotal = {
     grossValue: '0,00',
     netValue: '0,00',
@@ -223,7 +210,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.contract = cloneDeep(this.iContract);
-    this.contractId = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     if (this.contract.ISS) {
       if (this.stringUtil.moneyToNumber(this.contract.ISS) == 0) this.options.hasISS = false;
@@ -232,9 +218,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       this.contract.ISS = '0,00';
       this.options.hasISS = false;
     }
-    this.options.interest = this.contract.receipts.length;
-    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
     this.updateLiquid();
     this.calculatePaidValue();
     this.calculateBalance();
@@ -416,34 +399,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         distribution: '0,00',
       }
     );
-  }
-
-  expenseSourceSum(): ExpenseSourceSum[] {
-    const result = this.contract.expenses.reduce(
-      (sum: ExpenseSourceSum[], expense) => {
-        if (expense.source != undefined) {
-          const source = this.userService.idToShortName(expense.source);
-          const idx = sum.findIndex((el) => el.user == source);
-          if (idx != -1) sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
-        }
-        return sum;
-      },
-      [CONTRACT_BALANCE.fullName, CLIENT.fullName]
-        .concat(
-          this.invoice.team
-            .map((member) => {
-              if (member.user) return this.userService.idToShortName(member.user);
-              return '';
-            })
-            .filter((n) => n.length > 0)
-        )
-        .map((name) => ({ user: name, value: '0,00' }))
-    );
-    const contractor = result.splice(1, 1)[0];
-    const total = result.reduce((sum, expense) => this.stringUtil.sumMoney(sum, expense.value), '0,00');
-    result.push({ user: 'TOTAL', value: total });
-    result.push(contractor);
-    return result;
   }
 
   updateLiquid(): void {
