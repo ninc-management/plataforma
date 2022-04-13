@@ -92,7 +92,9 @@
               </span>
               <br />
               <br />
-              <span style="float: right">{{ notification.created }}</span>
+              <span style="float: right">
+                {{ [notification.created] | transformPipe: utils.elapsedTime.bind(this) }}
+              </span>
             </div>
           </nb-list-item>
         </div>
