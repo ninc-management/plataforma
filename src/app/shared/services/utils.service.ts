@@ -14,6 +14,10 @@ import {
   subDays,
   subMonths,
   subYears,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  differenceInDays,
 } from 'date-fns';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -315,5 +319,19 @@ export class UtilsService {
   ): any {
     if (id) return revival(id)[property];
     return '';
+  }
+
+  elapsedTime(time: Date, elapsedLocalTime: Date = new Date()): string {
+    const hours = differenceInHours(elapsedLocalTime.getTime(), time.getTime());
+    const minutes = differenceInMinutes(elapsedLocalTime.getTime(), time.getTime());
+    const seconds = differenceInSeconds(elapsedLocalTime.getTime(), time.getTime());
+    const days = differenceInDays(elapsedLocalTime.getTime(), time.getTime());
+
+    if (days > 0) return days === 1 ? `há ${days} dia` : `há ${days} dias`;
+    else if (hours === 0 && minutes !== 0)
+      return minutes === 1 ? `há ${minutes} minuto atrás` : `há ${minutes} minutos atrás`;
+    else if (minutes === 0) return seconds === 1 ? `há ${seconds} segundo atrás` : `há ${seconds} segundos atrás`;
+
+    return hours === 1 ? `há ${hours} hora atrás` : `há ${hours} horas atrás`;
   }
 }

@@ -377,4 +377,37 @@ describe('UtilsService', () => {
       service.idToProperty(mockedContractors[0], contractorService.idToContractor.bind(contractorService), 'document')
     ).toBe(mockedContractors[0].document);
   });
+
+  it('elapsedTime should work', () => {
+    expect(service.elapsedTime(new Date('2022/04/11 23:59:00'), new Date('2022/04/13 00:00:00'))).toBe('há 1 dia');
+    expect(service.elapsedTime(new Date(2022, 4, 11, 23, 59, 0), new Date(2022, 4, 13, 0, 0, 0))).toBe('há 1 dia');
+    expect(service.elapsedTime(new Date('2022/04/10 23:59:00'), new Date('2022/04/13 00:00:00'))).toBe('há 2 dias');
+    expect(service.elapsedTime(new Date('2022/04/12 20:00:00'), new Date('2022/04/12 21:00:00'))).toBe(
+      'há 1 hora atrás'
+    );
+    expect(service.elapsedTime(new Date(2022, 4, 12, 20, 0, 0), new Date(2022, 4, 12, 21, 0, 0))).toBe(
+      'há 1 hora atrás'
+    );
+    expect(service.elapsedTime(new Date('2022/04/12 18:00:00'), new Date('2022/04/12 22:00:00'))).toBe(
+      'há 4 horas atrás'
+    );
+    expect(service.elapsedTime(new Date('2022/04/12 20:00:00'), new Date('2022/04/12 20:01:00'))).toBe(
+      'há 1 minuto atrás'
+    );
+    expect(service.elapsedTime(new Date(2022, 4, 12, 20, 0, 0), new Date(2022, 4, 12, 20, 1, 0))).toBe(
+      'há 1 minuto atrás'
+    );
+    expect(service.elapsedTime(new Date('2022/04/12 20:05:00'), new Date('2022/04/12 20:10:00'))).toBe(
+      'há 5 minutos atrás'
+    );
+    expect(service.elapsedTime(new Date('2022/04/12 20:00:00'), new Date('2022/04/12 20:00:01'))).toBe(
+      'há 1 segundo atrás'
+    );
+    expect(service.elapsedTime(new Date(2022, 4, 12, 20, 0, 0), new Date(2022, 4, 12, 20, 0, 1))).toBe(
+      'há 1 segundo atrás'
+    );
+    expect(service.elapsedTime(new Date('2022/04/12 20:00:00'), new Date('2022/04/12 20:00:02'))).toBe(
+      'há 2 segundos atrás'
+    );
+  });
 });
