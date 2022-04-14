@@ -16,6 +16,15 @@ export class ConfigComponent implements OnInit {
 
   constructor(private configService: ConfigService, public utils: UtilsService) {}
 
+  expenseIcon = {
+    icon: 'minus',
+    pack: 'fac',
+  };
+  invoiceIcon = {
+    icon: 'file-invoice-dollar',
+    pack: 'fac',
+  };
+
   ngOnInit(): void {}
 
   addExpenseType(): void {

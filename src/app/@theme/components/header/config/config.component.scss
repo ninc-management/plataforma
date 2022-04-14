@@ -28,4 +28,11 @@
       float: left;
     }
   }
+
+  .table-invoice {
+    text-align: left;
+    .td-left {
+      padding: 10px 20px 20px;
+    }
+  }
 }
