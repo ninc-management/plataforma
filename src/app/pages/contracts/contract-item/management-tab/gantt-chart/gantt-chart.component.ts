@@ -2,7 +2,6 @@
 
 import {
   AfterContentChecked,
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -24,7 +23,7 @@ import { TaskModel } from './task-data.model';
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
 })
-export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, AfterContentChecked {
+export class GanttChartComponent implements OnInit, OnChanges, AfterContentChecked {
   @ViewChild('wrapper') wrapper: ElementRef | undefined;
   @ViewChild('gantt') gantt: ElementRef | undefined;
 
@@ -45,9 +44,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
    */
   @Input()
   public enableDataZoom: boolean = false;
-
-  @Input()
-  public enableDarkTheme: boolean = false;
 
   @Input()
   public enableGroup: boolean = true;
@@ -115,7 +111,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
     return {
       text: this.chartTitle,
       textStyle: {
-        color: this.enableDarkTheme ? '#fff' : '#000',
+        color: '#fff',
       },
       left: 'center',
     };
@@ -465,18 +461,9 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       this.colours,
       this.dateFormat,
       this.heightRatio,
-      this.enableGroup,
-      this.enableDarkTheme
+      this.enableGroup
     );
     this.setChartOptions();
-  }
-
-  ngAfterViewInit(): void {
-    //import * as echarts from 'echarts';
-    //@ViewChild('gantt')
-    //public gantt: ElementRef | undefined;
-    //public ganttEchart: any;
-    //this.ganttEchart = echarts.init(this.gantt!.nativeElement);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -496,8 +483,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       this.colours,
       this.dateFormat,
       this.heightRatio,
-      this.enableGroup,
-      this.enableDarkTheme
+      this.enableGroup
     );
     this.setChartOptions();
   }
@@ -514,16 +500,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
 
   onTaskClicked(params: any) {
     if (params != undefined) {
-      /*const task:TaskModel = new TaskModel()
-      task.taskName = params.value[1]
-      task.start = params.value[2]
-      task.end = params.value[3]
-      task.taskId = params.value[4]
-      task.donePercentage = params.value[5]
-      task.owner = params.value[6]
-      task.image = params.value[7]
-      task.groupName = params.value[8]*/
-      //re-mapping [index, item.taskName, item.start, item.end, item.taskId, item.donePercentage, item.owner, item.image, item.groupName, isToDrawGroup, color] into taskmodel
       const task = this.taskDataManipulator.getTaskById(this.taskData, params.value[4]);
       if (task) this.taskClicked.emit(task);
     }

@@ -8,7 +8,6 @@ import { TaskModel } from './task-data.model';
 export class GanttRenderers {
   private HEIGHT_RATIO: number;
   private DATE_FORMAT: string;
-  private _darkTheme: boolean;
   private _enableGroup: boolean;
   private _taskData: TaskModel[];
   private _mappedData: any[];
@@ -27,15 +26,13 @@ export class GanttRenderers {
     colours: string[],
     dateFormat: string,
     heightRatio: number,
-    enableGroup: boolean = true,
-    darkTheme: boolean = false
+    enableGroup: boolean = true
   ) {
     this._taskData = taskData;
     this._mappedData = mappedData;
     this.taskDataManipulator = new TaskDataManipulator(colours, enableGroup);
     this.DATE_FORMAT = dateFormat;
     this.HEIGHT_RATIO = heightRatio;
-    this._darkTheme = darkTheme;
     this._enableGroup = enableGroup;
   }
 
@@ -206,7 +203,7 @@ export class GanttRenderers {
             text: groupName,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            textFill: this._darkTheme ? '#fff' : '#000',
+            textFill: '#fff',
           },
         });
       }
@@ -244,7 +241,7 @@ export class GanttRenderers {
       const xFather = timeStartFather[0];
       const yFather = timeStartFather[1] - barHeightFather - barHeightFather / 3;
 
-      const color = this._darkTheme ? this.arrowColors[1] : this.arrowColors[0];
+      const color = this.arrowColors[1];
 
       let arrow = {};
       //condition to draw the arrow correctly when a dependent task is exactly below another task
@@ -463,13 +460,7 @@ export class GanttRenderers {
           ignore: !rectNormal,
           shape: rectNormal,
           style: api.style({
-            fill: this._darkTheme
-              ? index % 2 == 0
-                ? this.zebraColor[1][0]
-                : this.zebraColor[1][1]
-              : index % 2 == 0
-              ? this.zebraColor[0][0]
-              : this.zebraColor[0][1],
+            fill: index % 2 == 0 ? this.zebraColor[1][0] : this.zebraColor[1][1],
           }),
         },
       ],
