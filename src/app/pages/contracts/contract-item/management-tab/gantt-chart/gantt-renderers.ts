@@ -13,7 +13,6 @@ export class GanttRenderers {
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
-  private _translation: any;
 
   //normal|dark
   private arrowColors: string[] = ['#000', '#fff'];
@@ -28,7 +27,6 @@ export class GanttRenderers {
     colours: string[],
     dateFormat: string,
     heightRatio: number,
-    translation: any,
     enableGroup: boolean = true,
     darkTheme: boolean = false
   ) {
@@ -39,7 +37,6 @@ export class GanttRenderers {
     this.HEIGHT_RATIO = heightRatio;
     this._darkTheme = darkTheme;
     this._enableGroup = enableGroup;
-    this._translation = translation;
   }
 
   renderGanttItem(params: any, api: any) {
@@ -127,13 +124,11 @@ export class GanttRenderers {
     const groupColor = api.value(10);
 
     //console.log(taskId, groupName, isToDrawGroup, groupColor)
-    let daysToEnd = DateManipulator.daysLeft(end, this._translation);
     const y = api.coord([0, index])[1];
     const barHeight = api.size([0, 1])[1];
 
-    if (donePercentage == 100) {
-      daysToEnd = this._translation ? this._translation.FINISHED : 'FINISHED';
-    }
+    let daysToEnd = DateManipulator.daysLeft(end);
+    if (donePercentage == 100) daysToEnd = 'Finalizado';
 
     const groupedElement = {
       type: 'group',

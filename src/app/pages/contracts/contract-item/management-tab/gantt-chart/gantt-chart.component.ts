@@ -81,25 +81,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   @Input()
   public height: number = 300;
 
-  translation: any = {
-    FINISHED: 'Finalizado',
-    DONE: 'Feito',
-    TO_END: 'Dias restantes',
-    DELAYED: 'Atrasado',
-    JANUARY: 'Jan',
-    FEBRUARY: 'Fev',
-    MARCH: 'Mar',
-    APRIL: 'Abr',
-    MAY: 'Mai',
-    JUNE: 'Jun',
-    JULY: 'Jul',
-    AUGUST: 'Ago',
-    SEPTEMBER: 'Set',
-    OCTOBER: 'Out',
-    NOVEMBER: 'Nov',
-    DECEMBER: 'Dez',
-  };
-
   /**
    * constiable to control chart
    */
@@ -155,7 +136,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
 
   getTooltipOption(): any {
     const DATE_FORMAT = this.dateFormat;
-    const translation = this.translation;
     return {
       confine: true,
       appendToBody: true,
@@ -177,7 +157,7 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
           '<div class="tooltip-title">' + echarts.format.encodeHTML(taskName) + '</div>',
           start + ' - ',
           end + '<br>',
-          donePercentage + '% ' + (translation ? translation.DONE : 'DONE'),
+          donePercentage + '% ' + 'Feito',
         ].join('');
       },
     };
@@ -286,29 +266,29 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
   getMonthName(month: number): string {
     switch (month) {
       case 0:
-        return this.translation ? this.translation.JANUARY : 'Jan';
+        return 'Jan';
       case 1:
-        return this.translation ? this.translation.FEBRUARY : 'Fev';
+        return 'Fev';
       case 2:
-        return this.translation ? this.translation.MARCH : 'Mar';
+        return 'Mar';
       case 3:
-        return this.translation ? this.translation.APRIL : 'Apr';
+        return 'Abr';
       case 4:
-        return this.translation ? this.translation.MAY : 'May';
+        return 'Mai';
       case 5:
-        return this.translation ? this.translation.JUNE : 'Jun';
+        return 'Jun';
       case 6:
-        return this.translation ? this.translation.JULY : 'Jul';
+        return 'Jul';
       case 7:
-        return this.translation ? this.translation.AUGUST : 'Aug';
+        return 'Ago';
       case 8:
-        return this.translation ? this.translation.SEPTEMBER : 'Sep';
+        return 'Set';
       case 9:
-        return this.translation ? this.translation.OCTOBER : 'Oct';
+        return 'Out';
       case 10:
-        return this.translation ? this.translation.NOVEMBER : 'Nov';
+        return 'Nov';
       case 11:
-        return this.translation ? this.translation.DECEMBER : 'Dec';
+        return 'Dez';
     }
     return '';
   }
@@ -485,7 +465,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       this.colours,
       this.dateFormat,
       this.heightRatio,
-      this.translation,
       this.enableGroup,
       this.enableDarkTheme
     );
@@ -517,7 +496,6 @@ export class GanttChartComponent implements OnInit, AfterViewInit, OnChanges, Af
       this.colours,
       this.dateFormat,
       this.heightRatio,
-      this.translation,
       this.enableGroup,
       this.enableDarkTheme
     );

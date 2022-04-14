@@ -7,13 +7,13 @@ export class DateManipulator {
     return Math.round((second - first) / (1000 * 60 * 60 * 24));
   }
 
-  static daysLeft(baseDate: number, translation: any) {
+  static daysLeft(baseDate: number) {
     //get days left based on today
     const left = this.datediff(baseDate, new Date().getTime());
     if (left < 0) {
-      return -left + ' ' + (translation ? translation.TO_END : 'TO_END');
+      return -left + ' dias restantes';
     } else {
-      return left + ' ' + (translation ? translation.DELAYED : 'DELAYED');
+      return left + ' dias atrasado';
     }
   }
 }
