@@ -22,7 +22,7 @@ import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
-import { TaskModel } from './gantt-chart/task-data.model';
+import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
 
 @Component({
   selector: 'ngx-management-tab',

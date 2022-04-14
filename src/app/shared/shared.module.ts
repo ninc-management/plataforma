@@ -32,14 +32,12 @@ import { TeamExpensesComponent } from './components/teams/team-expenses/team-exp
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
-
 import { TransformPipe } from './pipes/transform.pipe';
-
 import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
-
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import langPTBR from 'app/shared/langPT-BR';
+import { GanttChartComponent } from './components/charts/gantt-chart/gantt-chart.component';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -73,9 +71,9 @@ echarts.registerLocale('PT-BR', langPTBR);
     TeamExpensesComponent,
     TeamExpenseItemComponent,
     UserTransactionComponent,
-
     TransformPipe,
     EchartsBarComponent,
+    GanttChartComponent,
   ],
   declarations: [
     BrMaskDirective,
@@ -94,10 +92,9 @@ echarts.registerLocale('PT-BR', langPTBR);
     TeamExpensesComponent,
     TeamExpenseItemComponent,
     UserTransactionComponent,
-
     TransformPipe,
-
     EchartsBarComponent,
+    GanttChartComponent,
   ],
 })
 export class SharedModule {}
