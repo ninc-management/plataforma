@@ -385,6 +385,29 @@ export class PdfService {
           },
         ],
       });
+    } else {
+      pdf.add({
+        columns: [
+          {
+            svg: this.teamImageSVG,
+            width: 200,
+          },
+        ],
+        margin: [5, 20, 5, 5],
+      });
+      pdf.add({
+        canvas: [
+          {
+            type: 'line',
+            x1: 0,
+            y1: 5,
+            x2: 595 - 2 * 30,
+            y2: 5,
+            lineWidth: 1,
+            color: '#79BA9E',
+          },
+        ],
+      });
     }
 
     // Body - Greetings
