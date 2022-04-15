@@ -110,7 +110,7 @@
       <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
+  <nb-tab tabId="invoice-tab" [tabTitle]="utils.isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="form-control-group">
         <table class="table-invoice">

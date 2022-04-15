@@ -36,3 +36,18 @@
     }
   }
 }
+
+::ng-deep {
+  .tabset .tab a {
+    align-items: center;
+  }
+
+  .tabset .tab[data-tab-id='invoice-tab'] a nb-icon {
+    top: -5px;
+    position: relative;
+  }
+
+  nb-tooltip {
+    white-space: pre-wrap;
+  }
+}
