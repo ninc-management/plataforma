@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import extenso from 'extenso';
@@ -13,6 +13,8 @@ import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { ConfigService } from 'app/shared/services/config.service';
+import { InvoiceConfig } from '@models/platformConfig';
 
 pdfMake.fonts = {
   Sans: {
@@ -39,6 +41,7 @@ export class PdfService {
   today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   pdfData$ = new Subject<string>();
   teamImageSVG = '';
+  config = new InvoiceConfig();
 
   nortanLogoSvg =
     '<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 248" width="962" height="300"><style>.A{fill:#002f41}</style><path class="A" d="m115.2 125.4l-22.9-34.3l-30.7 92.1q-5.2-3.6-9.8-8.2c-6.6-6.6-11.8-14.3-15.4-22.9q-1.4-3.3-2.4-6.6l48.3-144.9l49.6 74.5z"/><path class="A" d="m171.7 102.4l-48.3 145l-49.7-74.6l16.7-50.2l22.9 34.3l30.7-92.1q5.2 3.6 9.8 8.2c6.7 6.6 11.9 14.3 15.5 22.9q1.4 3.2 2.4 6.5z"/><path class="A" d="m84.9 204.3l15 22.5c-55.4-1.6-99.9-47-99.9-102.8c0-43.2 26.6-80.2 64.4-95.4l-9.5 28.6c-5.8 4.1-11.1 9-15.6 14.5l-20.2-7.4l13.7 16.6c-7.8 12.5-12.2 27.3-12.2 43.1c0 25.6 11.6 48.4 29.9 63.5l-7.4 20.2l16.5-13.7c7.7 4.8 16.2 8.3 25.3 10.3z"/><path class="A" d="m205.6 124c0 43.2-26.6 80.2-64.4 95.4l9.6-28.5c5.8-4.2 11-9.1 15.5-14.6l20.2 7.4l-13.6-16.6c7.7-12.5 12.2-27.3 12.2-43.1c0-25.7-11.8-48.6-30.3-63.7l0.3 0.2l7.5-20.2l-16.6 13.7c-7.7-4.8-16.2-8.3-25.3-10.3l-15-22.5c55.5 1.6 99.9 47 99.9 102.8z"/><path class="A" d="m346.2 165.4v0.2q-0.5 1.4-0.8 3.5q-0.2 2.1-0.4 5.2q-0.2 3.1-0.3 7.3q-0.1 4.3-0.1 10v43.3h-2.4l-50.8-49.9v22.7q-0.1 5.8 0 10.1q0.1 4.2 0.2 7.3q0.2 3.1 0.5 5.2q0.3 2.1 0.7 3.5v0.3h-9.6v-0.3q0.5-1.4 0.8-3.5q0.3-2.1 0.5-5.2q0.2-3.1 0.3-7.3q0-4.3 0-10.1v-16.1q0-5.7 0-10q-0.1-4.2-0.3-7.3q-0.2-3.1-0.5-5.2q-0.3-2.1-0.8-3.5v-0.2h4l50.9 50.2v-24q0-5.7-0.1-10q-0.1-4.2-0.2-7.3q-0.2-3.1-0.4-5.2q-0.3-2.1-0.7-3.5v-0.2z"/><path class="A" d="m421.9 206.8v0.3q-0.4 0.9-0.6 2.3q-0.3 1.3-0.4 3.2q-0.2 1.8-0.3 4.3q-0.1 2.5-0.1 5.8v3.6q0 0.8-0.1 1.4q-0.2 0.6-0.8 1q-4.5 3.2-10.6 5.1q-6 1.8-14.1 1.8q-9.2 0-16.7-2.6q-7.5-2.6-12.8-7.3q-5.4-4.7-8.4-11.3q-2.9-6.6-2.9-14.5q-0.1-6.9 2.7-13.3q2.7-6.5 7.8-11.5q5.1-5 12.4-8q7.3-3 16.5-3q4.8 0 9.1 0.6q4.3 0.5 8.3 1.7l4.8 11.5l-0.7 0.4q-3.8-4.4-9.2-7q-5.5-2.6-12.5-2.6q-5.8 0-10.6 1.9q-4.8 1.8-8.4 5.4q-3.5 3.5-5.5 8.7q-2 5.2-2 11.8q0 7.4 1.9 13.7q1.8 6.3 5.5 11q3.7 4.6 9.2 7.2q5.5 2.6 12.8 2.6q6.2 0 9.7-1.6q3.5-1.5 3.5-3.6v-3.4q0-3.3-0.1-5.7q0-2.5-0.2-4.2q-0.1-1.8-0.3-3.1q-0.2-1.2-0.6-2.3v-0.3z"/><path class="A" d="m470.4 226.1l-1.5 8.3q-1 0-3.1-0.1q-2.1-0.1-4.5-0.2q-2.3 0-4.4 0q-2 0-2.8 0h-24.2v-0.3q0.5-1.4 0.8-3.5q0.4-2.1 0.6-5.2q0.2-3.1 0.3-7.3q0.2-4.3 0.2-10.1v-16.1q0-5.7-0.2-10q-0.1-4.2-0.3-7.3q-0.2-3.1-0.6-5.2q-0.3-2.1-0.8-3.5v-0.2q6.3-0.1 12.9-0.1q6.5 0 12.2-0.1q5.6-0.1 9.6-0.2q4.1-0.2 5.4-0.4l-2.5 6.9q-1.7-0.5-3.9-0.8q-1.9-0.4-4.6-0.7q-2.8-0.2-6.3-0.2q-1.3 0-3 0.1q-1.6 0.1-3.2 0.2q-1.8 0.1-3.6 0.2v25.3q5.2-0.1 9.3-0.3q4.2-0.2 7.1-0.5q3.5-0.2 6.1-0.7l-1.6 7.6q-3.5-0.4-7-0.8q-3.1-0.3-6.8-0.5q-3.7-0.2-7.1-0.2v29q5.9 0 10.9-0.5q5-0.5 8.7-1q4.3-0.7 7.9-1.6z"/><path class="A" d="m273.5 226.1l-1.5 8.3q-0.9 0-3.1-0.1q-2.1-0.1-4.4-0.2q-2.4 0-4.4 0q-2 0-2.8 0h-24.2v-0.3q0.4-1.4 0.8-3.5q0.3-2.1 0.5-5.2q0.3-3.1 0.4-7.3q0.1-4.3 0.1-10.1v-16.1q0-5.7-0.1-10q-0.1-4.2-0.4-7.3q-0.2-3.1-0.5-5.2q-0.4-2.1-0.8-3.5v-0.2q6.2-0.1 12.8-0.1q6.6 0 12.2-0.1q5.6-0.1 9.7-0.2q4.1-0.2 5.3-0.4l-2.5 6.9q-1.7-0.5-3.9-0.8q-1.9-0.4-4.6-0.7q-2.7-0.2-6.3-0.2q-1.3 0-2.9 0.1q-1.7 0.1-3.2 0.2q-1.8 0.1-3.7 0.2v25.3q5.2-0.1 9.4-0.3q4.1-0.2 7.1-0.5q3.4-0.2 6-0.7l-1.5 7.6q-3.5-0.4-7.1-0.8q-3.1-0.3-6.8-0.5q-3.7-0.2-7.1-0.2v29q6 0 11-0.5q5-0.5 8.7-1q4.3-0.7 7.8-1.6z"/><path class="A" d="m542.3 165.4v0.2q-0.4 1.4-0.7 3.5q-0.3 2.1-0.5 5.2q-0.2 3.1-0.2 7.3q-0.1 4.3-0.1 10v43.3h-2.5l-50.8-49.9v22.7q0 5.8 0.1 10.1q0 4.2 0.2 7.3q0.1 3.1 0.4 5.2q0.3 2.1 0.8 3.5v0.3h-9.6v-0.3q0.4-1.4 0.8-3.5q0.3-2.1 0.5-5.2q0.1-3.1 0.2-7.3q0.1-4.3 0.1-10.1v-16.1q0-5.7-0.1-10q-0.1-4.2-0.2-7.3q-0.2-3.1-0.5-5.2q-0.4-2.1-0.8-3.5v-0.2h3.9l50.9 50.2v-24q0-5.7-0.1-10q0-4.2-0.2-7.3q-0.1-3.1-0.4-5.2q-0.3-2.1-0.7-3.5v-0.2z"/><path class="A" d="m614.5 191.6v16.1q0 5.8 0.2 10.1q0.1 4.2 0.3 7.3q0.3 3.1 0.6 5.2q0.4 2.1 0.8 3.5v0.3h-14.8v-0.3q0.5-1.4 0.8-3.5q0.3-2.1 0.6-5.2q0.2-3.1 0.3-7.3q0.1-4.3 0.1-10.1v-6.5q-2 0-4.9 0q-2.9-0.1-6.4-0.1q-3.4-0.1-7.1-0.1q-3.7-0.1-7.2-0.1q-3.3 0-6.1 0.1q-2.8 0.1-4.9 0.2v6.5q0 5.8 0.1 10.1q0.2 4.2 0.4 7.3q0.2 3.1 0.5 5.2q0.3 2.1 0.8 3.5v0.3h-14.8v-0.3q0.5-1.4 0.8-3.5q0.4-2.1 0.6-5.2q0.2-3.1 0.4-7.3q0.1-4.3 0.1-10.1v-16.1q0-5.7-0.1-10q-0.2-4.2-0.4-7.3q-0.2-3.1-0.6-5.2q-0.3-2.1-0.8-3.5v-0.2h14.8v0.2q-0.5 1.4-0.8 3.5q-0.3 2.1-0.5 5.2q-0.2 3.1-0.4 7.3q-0.1 4.3-0.1 10v4.4h9.4q3.5 0 7.4-0.1q3.9 0 7.6 0q3.6-0.1 6.8-0.1q3.2-0.1 5.4-0.2v-4q0-5.7-0.1-10q-0.1-4.2-0.3-7.3q-0.3-3.1-0.6-5.2q-0.3-2.1-0.8-3.5v-0.2h14.8v0.2q-0.4 1.4-0.8 3.5q-0.3 2.1-0.6 5.2q-0.2 3.1-0.3 7.3q-0.2 4.3-0.2 10z"/><path fill-rule="evenodd" class="A" d="m693.7 233.8v0.3h-16.3q0.1-0.6 0.1-1v-0.9q0-1.4-0.6-3.4q-0.6-2-1.5-4q-0.8-2.1-1.8-4q-0.9-2-1.5-3.2l-2.5-5.1h-16.3q-3.2 0-6.2 0q-2.9 0-5.3 0q-2.5 0.1-3.8 0.1l-2.4 5q-1.5 3-2.6 5.3q-1.1 2.3-1.8 4q-0.7 1.7-1 3q-0.3 1.2-0.3 2.3q0 0.7 0.1 1.1q0 0.3 0.1 0.5v0.3h-11.2v-0.3q0.4-0.5 1.4-2q1-1.5 2.2-3.6q1.3-2.2 2.7-5q1.4-2.7 2.8-5.6l26.1-53.8h4.8l25.6 53.8q1.4 3 2.9 5.8q1.5 2.9 2.8 5.1q1.3 2.2 2.3 3.6q0.9 1.4 1.2 1.7zm-26.4-26.5l-13.2-28.2l-13.6 28.4h3.9q2.7 0 5.7-0.1q3 0 6.1 0q3.1 0 6 0q2.8-0.1 5.1-0.1z"/><path class="A" d="m755.5 233.8v0.3h-16.7q0-0.6-0.8-2.1q-0.8-1.4-1.9-3q-1-1.5-2.1-3q-1-1.5-1.5-2.2l-16.2-22.8q6.5-0.5 10.1-4.2q4.1-4.3 4.2-12.9q0-7-3.3-11.1q-3.3-4.1-9.7-4.1q-2.1 0-3.6 0.2q-1.6 0.2-2.7 0.4q-1.2 0.2-2.1 0.5v38.2q0 5.7 0.1 9.9q0.2 4.3 0.4 7.3q0.2 3.1 0.5 5.2q0.3 2 0.8 3.4v0.3h-14.8v-0.3q0.5-1.4 0.8-3.5q0.4-2.1 0.6-5.2q0.2-3.1 0.4-7.3q0.1-4.3 0.1-10.1v-16.1q0-5.7-0.1-10q-0.2-4.2-0.4-7.3q-0.2-3.1-0.6-5.2q-0.3-2.1-0.8-3.5v-0.2q1 0 2.2 0.1q1 0 2.1 0.1q1.2 0 2.4 0q2.1 0 6.1-0.4q4-0.4 9.5-0.4q5.5 0 10 1.4q4.5 1.3 7.7 3.8q3.2 2.5 5 6.1q1.7 3.6 1.7 8q0 3.4-0.9 6.3q-1 2.8-2.7 5.1q-1.7 2.3-4.1 4q-2.4 1.7-5.2 3l13.3 18.8q1.8 2.3 3.5 4.4q1.8 2.1 3.4 3.8q1.6 1.7 3 2.8q1.4 1.1 2.3 1.5z"/><path class="A" d="m769.8 191.6v16.1q0 5.8 0.1 10.1q0.1 4.2 0.4 7.3q0.2 3.1 0.5 5.2q0.4 2.1 0.8 3.5v0.3h-14.8v-0.3q0.5-1.4 0.8-3.5q0.4-2.1 0.6-5.2q0.2-3.1 0.3-7.3q0.2-4.3 0.2-10.1v-16.1q0-5.7-0.2-10q-0.1-4.2-0.3-7.3q-0.2-3.1-0.6-5.2q-0.3-2.1-0.8-3.5v-0.2h14.8v0.2q-0.4 1.4-0.8 3.5q-0.3 2.1-0.5 5.2q-0.3 3.1-0.4 7.3q-0.1 4.3-0.1 10z"/><path fill-rule="evenodd" class="A" d="m850 233.8v0.3h-16.4q0.2-0.6 0.2-1v-0.9q0-1.4-0.6-3.4q-0.6-2-1.5-4q-0.9-2.1-1.8-4q-0.9-2-1.5-3.2l-2.5-5.1h-16.3q-3.3 0-6.2 0q-2.9 0-5.4 0q-2.4 0.1-3.7 0.1l-2.4 5q-1.5 3-2.6 5.3q-1.1 2.3-1.8 4q-0.7 1.7-1 3q-0.3 1.2-0.3 2.3q0 0.7 0 1.1q0.1 0.3 0.2 0.5v0.3h-11.2v-0.3q0.4-0.5 1.4-2q0.9-1.5 2.2-3.6q1.2-2.2 2.7-5q1.4-2.7 2.8-5.6l26.1-53.8h4.8l25.5 53.8q1.5 3 3 5.8q1.5 2.9 2.8 5.1q1.3 2.2 2.2 3.6q1 1.4 1.3 1.7zm-26.4-26.5l-13.2-28.2l-13.6 28.4h3.9q2.6 0 5.7-0.1q3 0 6.1 0q3.1 0 5.9 0q2.9-0.1 5.2-0.1z"/><path class="A" d="m351.9 0.6v0.4q-0.6 2-1 5q-0.5 2.9-0.9 7.4q-0.4 4.4-0.6 10.5q-0.2 6.1-0.2 14.2v101.5h-3.3l-98.5-104.7v65.4q0 8.2 0.2 14.2q0.2 6.1 0.6 10.5q0.4 4.4 0.8 7.4q0.5 2.9 1.1 4.9v0.4h-17v-0.4q0.5-2 1.1-4.9q0.5-3 0.9-7.4q0.4-4.4 0.5-10.5q0.2-6 0.2-14.2v-62.2q0-8.1-0.2-14.2q-0.1-6.1-0.5-10.5q-0.4-4.5-0.9-7.4q-0.6-3-1.1-5v-0.4h6.1l98.5 104.8v-67.3q0-8.1-0.2-14.2q-0.2-6.1-0.6-10.5q-0.4-4.5-0.9-7.4q-0.5-3-1.1-5v-0.4z"/><path fill-rule="evenodd" class="A" d="m473.6 86.9q0 10.2-3.7 19.7q-3.6 9.5-10.6 16.8q-7 7.4-17.2 11.7q-10.2 4.4-23.4 4.4q-11.2 0-21.2-3.8q-9.9-3.7-17.4-10.6q-7.4-7-11.7-16.9q-4.3-9.9-4.3-22.2q0-11.3 4.2-20.9q4.3-9.7 11.6-16.8q7.4-7.1 17.4-11.2q10.1-4 21.6-4q11.2 0 21.2 3.8q10 3.8 17.4 10.8q7.4 6.9 11.8 16.9q4.3 9.9 4.3 22.3zm-19.3 4.3q0-11-2.3-20.4q-2.4-9.4-7.1-16.2q-4.7-6.8-11.8-10.7q-7.1-3.9-16.5-3.9q-7.3 0-13.4 2.8q-6.1 2.8-10.6 8q-4.4 5.3-6.9 12.9q-2.5 7.7-2.5 17.4q0 10.9 2.4 20.3q2.5 9.5 7.2 16.4q4.7 6.9 11.8 10.9q7.1 4 16.5 4q7.2 0 13.3-2.9q6.2-2.9 10.6-8.2q4.5-5.4 6.9-13.1q2.4-7.7 2.4-17.3z"/><path class="A" d="m574 137.3v0.4h-25.1q0-0.8-1.2-3q-1.2-2.1-2.8-4.5q-1.5-2.3-3.1-4.5q-1.6-2.2-2.4-3.3l-14.2-20.1l-10-14q9.8-0.7 15.2-6.3q6.2-6.4 6.2-19.2q0-10.6-4.9-16.7q-5-6.1-14.5-6.1q-3.1 0-5.4 0.3q-2.4 0.2-4 0.5q-1.8 0.4-3.2 0.7v57.2q0 1.9 0 3.6q0.1 6.3 0.2 11.3q0.2 6.3 0.6 10.9q0.3 4.6 0.8 7.7q0.4 3.1 1.1 5.1v0.4h-22.1v-0.4q0.7-2 1.2-5.1q0.5-3.2 0.9-7.8q0.3-4.6 0.5-11.1q0.2-6.4 0.2-15v-24.1q0-8.6-0.2-14.9q-0.2-6.4-0.5-11q-0.4-4.7-0.9-7.8q-0.5-3.2-1.2-5.2v-0.4q1.6 0.1 3.3 0.2q1.4 0.1 3.2 0.2q1.8 0 3.6 0q3 0 9.1-0.5q6-0.6 14.1-0.6q8.2 0 15 2q6.7 2 11.5 5.7q4.9 3.8 7.5 9.1q2.6 5.4 2.6 12q0 5.1-1.4 9.4q-1.4 4.2-4 7.6q-2.6 3.4-6.1 6q-3.6 2.6-7.9 4.5l20 28.2q2.6 3.4 5.2 6.6q2.6 3.2 5 5.6q2.4 2.5 4.5 4.2q2.1 1.7 3.6 2.2z"/><path class="A" d="m653.9 46.7q-4.6-1.2-10.5-2.3q-5.1-0.9-12.2-1.6q-7.1-0.8-16-0.8v56.3q0 8.6 0.2 15q0.2 6.5 0.5 11.1q0.3 4.6 0.8 7.8q0.5 3.1 1.2 5.1v0.4h-22.1v-0.4q0.6-2 1.1-5.1q0.5-3.2 0.9-7.8q0.4-4.6 0.6-11.1q0.1-6.4 0.1-15v-56.3q-8.7 0-15.8 0.8q-7.1 0.7-12.3 1.6q-5.9 1.1-10.7 2.3l1.9-12.3q1.5 0.2 4.7 0.3q3.3 0 6.9 0.1q3.5 0 6.7 0.1q3.3 0 4.5 0h45.2q1.2 0 4.3 0q3.1-0.1 6.6-0.1q3.6-0.1 6.8-0.1q3.3-0.1 4.7-0.3z"/><path class="A" d="m849.8 34.9v0.4q-0.7 2-1.1 5.2q-0.5 3.1-0.8 7.8q-0.3 4.6-0.3 11q-0.1 6.3-0.1 14.9v64.9h-3.8l-76-74.8v34q0 8.6 0.1 15q0.1 6.5 0.3 11.1q0.3 4.6 0.7 7.8q0.4 3.1 1.1 5.1v0.4h-14.3v-0.4q0.6-2 1.1-5.1q0.5-3.2 0.8-7.8q0.3-4.6 0.4-11.1q0.1-6.4 0.1-15v-24.1q0-8.6-0.1-14.9q-0.1-6.4-0.4-11q-0.3-4.7-0.8-7.8q-0.5-3.2-1.1-5.2v-0.4h5.9l76.1 75.2v-35.9q0-8.6-0.1-14.9q-0.1-6.4-0.3-11q-0.3-4.7-0.6-7.8q-0.4-3.2-1.1-5.2v-0.4z"/><path fill-rule="evenodd" class="A" d="m751.8 137.3v0.4h-24.4q0.1-0.8 0.1-1.4v-1.4q0-2.1-0.9-5q-0.9-3-2.2-6.1q-1.3-3.1-2.6-6q-1.4-2.9-2.3-4.8l-3.7-7.6h-24.4q-4.9 0-9.3 0q-4.4 0.1-8 0.1q-3.6 0.1-5.6 0.1l-3.6 7.4q-2.3 4.6-3.9 8q-1.6 3.4-2.7 6q-1 2.6-1.5 4.4q-0.5 1.9-0.5 3.5q0 1.1 0.1 1.6q0.1 0.5 0.3 0.8v0.4h-16.8v-0.4q0.6-0.6 2.1-2.9q1.4-2.2 3.3-5.5q1.8-3.2 4-7.4q2.1-4.1 4.2-8.5l39.1-80.5h7.1l38.3 80.5q2.2 4.6 4.4 8.8q2.3 4.2 4.2 7.5q1.9 3.3 3.3 5.5q1.5 2.1 1.9 2.5zm-39.5-39.6l-19.7-42.2l-20.4 42.4h5.8q4 0 8.6 0q4.5-0.1 9.1-0.1q4.6 0 8.9 0q4.3-0.1 7.7-0.1z"/></svg>';
@@ -72,7 +75,8 @@ export class PdfService {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private contractorService: ContractorService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private configService: ConfigService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -274,6 +278,13 @@ export class PdfService {
     }
     const pdf = new PdfMakeWrapper();
 
+    this.configService
+      .getConfig()
+      .pipe(take(1))
+      .subscribe((configs) => {
+        if (configs[0]) this.config = configs[0].invoiceConfig;
+      });
+
     // Metadata definition
     pdf.info({
       title: 'Proposta de Orçamento Nortan Projetos',
@@ -332,47 +343,49 @@ export class PdfService {
     });
 
     // Header
-    pdf.add({
-      columns: [
-        {
-          svg: this.teamImageSVG,
-          width: 200,
-        },
-        [
+    if (this.config.hasHeader) {
+      pdf.add({
+        columns: [
           {
-            text: 'proposta de orçamento\n',
-            fontSize: 14,
-            alignment: 'right',
-            color: '#052E41',
-            bold: true,
-            margin: [0, 5, 0, 0],
+            svg: this.teamImageSVG,
+            width: 200,
           },
+          [
+            {
+              text: 'proposta de orçamento\n',
+              fontSize: 14,
+              alignment: 'right',
+              color: '#052E41',
+              bold: true,
+              margin: [0, 5, 0, 0],
+            },
+            {
+              text:
+                (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
+                '\n' +
+                (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
+              fontSize: 12,
+              alignment: 'right',
+              color: '#052E41',
+            },
+          ],
+        ],
+        margin: [5, 20, 5, 5],
+      });
+      pdf.add({
+        canvas: [
           {
-            text:
-              (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
-              '\n' +
-              (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
-            fontSize: 12,
-            alignment: 'right',
-            color: '#052E41',
+            type: 'line',
+            x1: 0,
+            y1: 5,
+            x2: 595 - 2 * 30,
+            y2: 5,
+            lineWidth: 1,
+            color: '#79BA9E',
           },
         ],
-      ],
-      margin: [5, 20, 5, 5],
-    });
-    pdf.add({
-      canvas: [
-        {
-          type: 'line',
-          x1: 0,
-          y1: 5,
-          x2: 595 - 2 * 30,
-          y2: 5,
-          lineWidth: 1,
-          color: '#79BA9E',
-        },
-      ],
-    });
+      });
+    }
 
     // Body - Greetings
     pdf.add(pdf.ln(1));
@@ -461,93 +474,95 @@ export class PdfService {
     /* eslint-enable indent*/
 
     // Body - Team
-    pdf.add(pdf.ln(1));
+    if (this.config.hasTeam) {
+      pdf.add(pdf.ln(1));
 
-    pdf.add({
-      text: 'Conheça também a equipe que vai trabalhar nesse contrato:',
-      alignment: 'center',
-      style: 'insideText',
-    });
+      pdf.add({
+        text: 'Conheça também a equipe que vai trabalhar nesse contrato:',
+        alignment: 'center',
+        style: 'insideText',
+      });
 
-    pdf.add(pdf.ln(1));
+      pdf.add(pdf.ln(1));
 
-    if (invoice.team.length > 1) {
-      const team = invoice.team.slice(1);
-      for (const [index, member] of team.entries()) {
-        const user = member.user ? this.userService.idToUser(member.user) : new User();
-        /* eslint-disable indent*/
-        pdf.add({
-          columns: [
-            {
-              width: 70,
-              columns: [
-                await new Img(
-                  user.profilePicture == undefined
-                    ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
-                    : user.profilePicture
-                )
-                  .width(60)
-                  .height(60)
-                  .build(),
-                {
-                  svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-                  fit: [62, 62],
-                  relativePosition: { x: -61, y: -1 },
-                },
-              ],
-            },
-            {
-              width: '*',
-              text:
-                user.exibitionName +
-                ', ' +
-                (user.expertise
-                  ? user.expertise[
-                      user.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, member.sector))
-                    ]?.text
-                  : ''),
-              alignment: 'left',
-              fontSize: 8,
-            },
-          ],
-          pageBreak: index == 5 ? 'after' : 'none',
-          style: 'insideText',
-        });
-        /* eslint-enable indent*/
+      if (invoice.team.length > 1) {
+        const team = invoice.team.slice(1);
+        for (const [index, member] of team.entries()) {
+          const user = member.user ? this.userService.idToUser(member.user) : new User();
+          /* eslint-disable indent*/
+          pdf.add({
+            columns: [
+              {
+                width: 70,
+                columns: [
+                  await new Img(
+                    user.profilePicture == undefined
+                      ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
+                      : user.profilePicture
+                  )
+                    .width(60)
+                    .height(60)
+                    .build(),
+                  {
+                    svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                    fit: [62, 62],
+                    relativePosition: { x: -61, y: -1 },
+                  },
+                ],
+              },
+              {
+                width: '*',
+                text:
+                  user.exibitionName +
+                  ', ' +
+                  (user.expertise
+                    ? user.expertise[
+                        user.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, member.sector))
+                      ]?.text
+                    : ''),
+                alignment: 'left',
+                fontSize: 8,
+              },
+            ],
+            pageBreak: index == 5 ? 'after' : 'none',
+            style: 'insideText',
+          });
+          /* eslint-enable indent*/
 
-        pdf.add(pdf.ln(1));
+          pdf.add(pdf.ln(1));
+        }
       }
-    }
 
-    // Body - Teams - Support
-    pdf.add({
-      columns: [
-        {
-          width: 70,
-          columns: [
-            await new Img(
-              'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
-            )
-              .width(60)
-              .height(60)
-              .build(),
-            {
-              svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-              fit: [62, 62],
-              relativePosition: { x: -61, y: -1 },
-            },
-          ],
-        },
-        {
-          width: '*',
-          text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan Engenharia proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
-          alignment: 'left',
-          fontSize: 8,
-        },
-      ],
-      pageBreak: invoice.team ? (invoice.team.length == 5 ? 'after' : 'none') : 'none',
-      style: 'insideText',
-    });
+      // Body - Teams - Support
+      pdf.add({
+        columns: [
+          {
+            width: 70,
+            columns: [
+              await new Img(
+                'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport.png?alt=media&token=1d319acb-b655-457c-81dd-62a22d9ae836'
+              )
+                .width(60)
+                .height(60)
+                .build(),
+              {
+                svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                fit: [62, 62],
+                relativePosition: { x: -61, y: -1 },
+              },
+            ],
+          },
+          {
+            width: '*',
+            text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan Engenharia proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
+            alignment: 'left',
+            fontSize: 8,
+          },
+        ],
+        pageBreak: invoice.team ? (invoice.team.length == 5 ? 'after' : 'none') : 'none',
+        style: 'insideText',
+      });
+    }
 
     // Body - Invoice Info
     pdf.add(pdf.ln(1));
@@ -644,144 +659,150 @@ export class PdfService {
     });
 
     // Body - Invoice Info Early Stage - Page 2
-    pdf.add({
-      text: 'Descrição do serviço:',
-      bold: true,
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    const leapLength = invoice.laep ? invoice.laep.length : 0;
-    /* eslint-disable indent*/
-    const laep = invoice.laep
-      ? invoice.laep.map((activity, index) => {
-          return activity + (index == leapLength - 1 ? '.' : ';');
-        })
-      : [];
-    /* eslint-enable indent*/
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [{ text: 'ETAPA PRELIMINAR' }],
-          [
-            {
-              text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
-              fontSize: 8,
-              alignment: 'justify',
-            },
-          ],
-          [
-            {
-              ul: laep,
-              fontSize: 10,
-              alignment: 'justify',
-            },
-          ],
-          [
-            {
-              text: invoice.dep,
-              alignment: 'justify',
-            },
-          ],
-        ],
-      },
-      layout: this.noBorderTable('#BCDCCE'),
-    });
-
-    // Body - Invoice Info Mid Stage - Page 2
-    pdf.add(pdf.ln(1));
-
-    const laeeLength = invoice.laee ? invoice.laee.length : 0;
-    /* eslint-disable indent*/
-    const laee = invoice.laee
-      ? invoice.laee.map((activity, index) => {
-          return activity + (index == laeeLength - 1 ? '.' : ';');
-        })
-      : [];
-    /* eslint-enable indent*/
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [{ text: 'ETAPA EXECUTIVA' }],
-          [
-            {
-              text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
-              fontSize: 8,
-              alignment: 'justify',
-            },
-          ],
-          [
-            {
-              ul: laee,
-              fontSize: 10,
-              alignment: 'justify',
-            },
-          ],
-          [
-            {
-              text: invoice.dee,
-              alignment: 'justify',
-            },
-          ],
-        ],
-      },
-      layout: this.noBorderTable('#BCDCCE'),
-    });
-
-    // Body - Invoice Info Final Stage - Page 2
-    if (
-      (invoice.peec && invoice.peec?.length > 0) ||
-      (invoice.laec && invoice.laec.length > 0) ||
-      (invoice.dec && invoice.dec?.length > 0)
-    ) {
-      pdf.add(pdf.ln(1));
-
-      const laecLength = invoice.laec ? invoice.laec.length : 0;
-      /* eslint-disable indent*/
-      const laec = invoice.laec
-        ? invoice.laec.map((activity, index) => {
-            return activity + (index == laecLength - 1 ? '.' : ';');
-          })
-        : [];
-      /* eslint-enable indent*/
+    if (this.config.hasPreliminary || this.config.hasExecutive || this.config.hasComplementary) {
       pdf.add({
+        text: 'Descrição do serviço:',
+        bold: true,
         style: 'insideText',
-        table: {
-          widths: ['*'],
-          dontBreakRows: true,
-          body: [
-            [{ text: 'ETAPA COMPLEMENTAR' }],
-            [
-              {
-                text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
-                fontSize: 8,
-                alignment: 'justify',
-              },
-            ],
-            [
-              {
-                ul: laec,
-                fontSize: 10,
-                alignment: 'justify',
-              },
-            ],
-            [
-              {
-                text: invoice.dec,
-                alignment: 'justify',
-              },
-            ],
-          ],
-        },
-        layout: this.noBorderTable('#BCDCCE'),
       });
+      if (this.config.hasPreliminary) {
+        pdf.add(pdf.ln(1));
+
+        const leapLength = invoice.laep ? invoice.laep.length : 0;
+        /* eslint-disable indent*/
+        const laep = invoice.laep
+          ? invoice.laep.map((activity, index) => {
+              return activity + (index == leapLength - 1 ? '.' : ';');
+            })
+          : [];
+        /* eslint-enable indent*/
+        pdf.add({
+          style: 'insideText',
+          table: {
+            widths: ['*'],
+            dontBreakRows: true,
+            body: [
+              [{ text: 'ETAPA PRELIMINAR' }],
+              [
+                {
+                  text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
+                  fontSize: 8,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  ul: laep,
+                  fontSize: 10,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  text: invoice.dep,
+                  alignment: 'justify',
+                },
+              ],
+            ],
+          },
+          layout: this.noBorderTable('#BCDCCE'),
+        });
+      }
+
+      // Body - Invoice Info Mid Stage - Page 2
+      if (this.config.hasExecutive) {
+        pdf.add(pdf.ln(1));
+
+        const laeeLength = invoice.laee ? invoice.laee.length : 0;
+        /* eslint-disable indent*/
+        const laee = invoice.laee
+          ? invoice.laee.map((activity, index) => {
+              return activity + (index == laeeLength - 1 ? '.' : ';');
+            })
+          : [];
+        /* eslint-enable indent*/
+        pdf.add({
+          style: 'insideText',
+          table: {
+            widths: ['*'],
+            dontBreakRows: true,
+            body: [
+              [{ text: 'ETAPA EXECUTIVA' }],
+              [
+                {
+                  text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
+                  fontSize: 8,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  ul: laee,
+                  fontSize: 10,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  text: invoice.dee,
+                  alignment: 'justify',
+                },
+              ],
+            ],
+          },
+          layout: this.noBorderTable('#BCDCCE'),
+        });
+      }
+
+      // Body - Invoice Info Final Stage - Page 2
+      if (
+        this.config.hasComplementary &&
+        ((invoice.peec && invoice.peec?.length > 0) ||
+          (invoice.laec && invoice.laec.length > 0) ||
+          (invoice.dec && invoice.dec?.length > 0))
+      ) {
+        pdf.add(pdf.ln(1));
+
+        const laecLength = invoice.laec ? invoice.laec.length : 0;
+        /* eslint-disable indent*/
+        const laec = invoice.laec
+          ? invoice.laec.map((activity, index) => {
+              return activity + (index == laecLength - 1 ? '.' : ';');
+            })
+          : [];
+        /* eslint-enable indent*/
+        pdf.add({
+          style: 'insideText',
+          table: {
+            widths: ['*'],
+            dontBreakRows: true,
+            body: [
+              [{ text: 'ETAPA COMPLEMENTAR' }],
+              [
+                {
+                  text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
+                  fontSize: 8,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  ul: laec,
+                  fontSize: 10,
+                  alignment: 'justify',
+                },
+              ],
+              [
+                {
+                  text: invoice.dec,
+                  alignment: 'justify',
+                },
+              ],
+            ],
+          },
+          layout: this.noBorderTable('#BCDCCE'),
+        });
+      }
     }
 
     // Body - Invoice Values - Page 2
@@ -1006,92 +1027,94 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    pdf.add({
-      text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
-      bold: true,
-      style: 'insideText',
-    });
+    if (this.config.hasStageName) {
+      pdf.add({
+        text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
+        bold: true,
+        style: 'insideText',
+      });
 
-    pdf.add(pdf.ln(1));
+      pdf.add(pdf.ln(1));
 
-    const stages = invoice.stages.map((stage) => {
-      return [
-        {
-          text: stage.name,
-          alignment: 'center',
-          border: [false, true, true, true],
-        },
-        {
-          text: this.stringUtil.toPercentage(stage.value, invoice.value),
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'R$ ' + stage.value,
-          alignment: 'center',
-          border: [true, true, false, true],
-        },
-      ];
-    });
-    const total = this.stringUtil.numberToMoney(
-      invoice.stages.reduce(
-        (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
-        0
-      )
-    );
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*', '*', '*'],
-        dontBreakRows: true,
-        body: [
-          [
-            {
-              text: 'ETAPAS',
-              bold: true,
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: 'PORCENTAGEM',
-              bold: true,
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'VALOR',
-              bold: true,
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
+      const stages = invoice.stages.map((stage) => {
+        return [
+          {
+            text: stage.name,
+            alignment: 'center',
+            border: [false, true, true, true],
+          },
+          {
+            text: this.stringUtil.toPercentage(stage.value, invoice.value),
+            alignment: 'center',
+            border: [true, true, true, true],
+          },
+          {
+            text: 'R$ ' + stage.value,
+            alignment: 'center',
+            border: [true, true, false, true],
+          },
+        ];
+      });
+      const total = this.stringUtil.numberToMoney(
+        invoice.stages.reduce(
+          (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
+          0
+        )
+      );
+      pdf.add({
+        style: 'insideText',
+        table: {
+          widths: ['*', '*', '*'],
+          dontBreakRows: true,
+          body: [
+            [
+              {
+                text: 'ETAPAS',
+                bold: true,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: 'PORCENTAGEM',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'VALOR',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ],
+            ...stages,
+            [
+              {
+                text: 'TOTAL',
+                bold: true,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: this.stringUtil.toPercentage(total, invoice.value),
+                bold: true,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'R$ ' + total,
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ],
           ],
-          ...stages,
-          [
-            {
-              text: 'TOTAL',
-              bold: true,
-              alignment: 'center',
-              border: [false, true, true, true],
-            },
-            {
-              text: this.stringUtil.toPercentage(total, invoice.value),
-              bold: true,
-              alignment: 'center',
-              border: [true, true, true, true],
-            },
-            {
-              text: 'R$ ' + total,
-              bold: true,
-              alignment: 'center',
-              border: [true, true, false, true],
-            },
-          ],
-        ],
-      },
-      layout: this.noSideBorderTable('#BFBFBF', '#476471'),
-    });
+        },
+        layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+      });
+    }
 
-    if (invoice.materials.length > 0) {
+    if (this.config.hasMaterialList && invoice.materials.length > 0) {
       const materials = invoice.materials.map((material) => {
         if (invoice.materialListType == '1')
           return [
@@ -1233,36 +1256,38 @@ export class PdfService {
       });
     }
 
-    // Body - Importante Notes - Page 3
-    pdf.add(pdf.ln(1));
+    if (this.config.hasImportants) {
+      // Body - Importante Notes - Page 3
+      pdf.add(pdf.ln(1));
 
-    pdf.add({
-      text: 'Importante:',
-      bold: true,
-      style: 'insideText',
-    });
+      pdf.add({
+        text: 'Importante:',
+        bold: true,
+        style: 'insideText',
+      });
 
-    pdf.add(pdf.ln(1));
+      pdf.add(pdf.ln(1));
 
-    const importants = invoice.importants.map((important, index) => {
-      return important + (index == invoice.importants.length - 1 ? '.' : ';');
-    });
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [
-            {
-              ul: importants,
-              fontSize: 10,
-            },
+      const importants = invoice.importants.map((important, index) => {
+        return important + (index == invoice.importants.length - 1 ? '.' : ';');
+      });
+      pdf.add({
+        style: 'insideText',
+        table: {
+          widths: ['*'],
+          dontBreakRows: true,
+          body: [
+            [
+              {
+                ul: importants,
+                fontSize: 10,
+              },
+            ],
           ],
-        ],
-      },
-      layout: this.noBorderTable('#82ADAD'),
-    });
+        },
+        layout: this.noBorderTable('#82ADAD'),
+      });
+    }
 
     pdf.add(pdf.ln(2));
 
