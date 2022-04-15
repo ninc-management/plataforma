@@ -140,7 +140,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.configService
       .getConfig()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(1))
       .subscribe((configs) => {
         if (configs[0]) this.config = configs[0].invoiceConfig;
       });
