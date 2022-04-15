@@ -13,7 +13,7 @@ export class InvoiceConfig {
   hasTeam: boolean = true;
 
   @prop({ required: true })
-  hasPremilary: boolean = true;
+  hasPreliminary: boolean = true;
 
   @prop({ required: true })
   hasExecutive: boolean = true;
