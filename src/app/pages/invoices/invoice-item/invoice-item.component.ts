@@ -22,6 +22,8 @@ import { NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { Team } from '@models/team';
 import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
+import { InvoiceConfig } from '@models/platformConfig';
+import { ConfigService } from 'app/shared/services/config.service';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -88,6 +90,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     netValue: '0,00',
   };
 
+  config = new InvoiceConfig();
+
   destroy$ = new Subject<void>();
   editing = false;
   today = new Date();
@@ -124,7 +128,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
     private brMask: BrMaskDirective,
-    public teamService: TeamService
+    public teamService: TeamService,
+    private configService: ConfigService
   ) {}
 
   ngOnDestroy(): void {
@@ -133,6 +138,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.configService
+      .getConfig()
+      .pipe(take(1))
+      .subscribe((configs) => {
+        if (configs[0]) this.config = configs[0].invoiceConfig;
+      });
     if (this.iInvoice._id || this.iInvoice.model) {
       this.editing = this.tempInvoice.model == undefined;
       if (!this.editing) {

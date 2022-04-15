@@ -631,7 +631,7 @@ db.platformconfigs.find().forEach((config) => {
     hasType: true,
     hasHeader: true,
     hasTeam: true,
-    hasPremilary: true,
+    hasPreliminary: true,
     hasExecutive: true,
     hasComplementary: true,
     hasStageName: true,

@@ -187,10 +187,10 @@
               (selected)="
                 tempInvoice.contractor = $event;
                 tempInvoice.contractorFullName = utils.idToProperty(
-                      tempInvoice.contractor,
-                      contractorService.idToContractor.bind(contractorService),
-                      'fullName'
-                    )
+                  tempInvoice.contractor,
+                  contractorService.idToContractor.bind(contractorService),
+                  'fullName'
+                )
               "
               #contractor="ngModel"
               id="input-contractor"
@@ -434,7 +434,7 @@
       </div>
     </nb-tab>
     <nb-tab tabTitle="Complementar">
-      <div class="row">
+      <div *ngIf="config.hasType" class="row">
         <div class="col-auto">
           <label class="label-divider">Tipo de orçamento</label>
         </div>
@@ -459,7 +459,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasHeader" class="row">
         <div class="col-auto">
           <label class="label-divider">Cabeçalho</label>
         </div>
@@ -467,7 +467,7 @@
           <hr />
         </div>
       </div>
-      <div class="form-control-group">
+      <div *ngIf="config.hasHeader" class="form-control-group">
         <label class="label" for="input-subtitle1">Subtítulo linha 1:</label>
         <input
           nbInput
@@ -493,7 +493,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="form-control-group">
+      <div *ngIf="config.hasHeader" class="form-control-group">
         <label class="label" for="input-subtitle2">Subtítulo linha 2:</label>
         <input
           nbInput
@@ -601,7 +601,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasTeam" class="row">
         <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-user">Colaborador:</label>
@@ -660,7 +660,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasTeam" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
@@ -724,7 +724,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row" style="margin-top: 8px">
+      <div *ngIf="config.hasPreliminary" class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Etapa Preliminar</label>
         </div>
@@ -732,7 +732,7 @@
           <hr />
         </div>
       </div>
-      <div class="form-control-group">
+      <div *ngIf="config.hasPreliminary" class="form-control-group">
         <label class="label" for="input-peep">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
@@ -758,7 +758,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasPreliminary" class="row">
         <div class="col-md-11">
           <div class="form-control-group">
             <label class="label" for="input-aep">Atividades: (Pontuação final automática)</label>
@@ -776,7 +776,7 @@
             />
           </div>
         </div>
-        <div class="col-md-1">
+        <div *ngIf="config.hasPreliminary" class="col-md-1">
           <button
             nbButton
             type="button"
@@ -791,7 +791,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasPreliminary" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let activity of tempInvoice.laep; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
@@ -818,7 +818,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="form-control-group">
+      <div *ngIf="config.hasPreliminary" class="form-control-group">
         <label class="label" for="input-dep">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
@@ -844,7 +844,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row" style="margin-top: 8px">
+      <div *ngIf="config.hasExecutive" class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Etapa Executiva</label>
         </div>
@@ -852,7 +852,7 @@
           <hr />
         </div>
       </div>
-      <div class="form-control-group">
+      <div *ngIf="config.hasExecutive" class="form-control-group">
         <label class="label" for="input-peee">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
@@ -878,7 +878,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasExecutive" class="row">
         <div class="col-md-11">
           <div class="form-control-group">
             <label class="label" for="input-aee">Atividades: (Pontuação final automática)</label>
@@ -911,7 +911,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasExecutive" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let activity of tempInvoice.laee; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
@@ -938,7 +938,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="form-control-group">
+      <div *ngIf="config.hasExecutive" class="form-control-group">
         <label class="label" for="input-dee">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
@@ -964,7 +964,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row" style="margin-top: 8px">
+      <div *ngIf="config.hasComplementary" class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Etapa Complementar</label>
         </div>
@@ -972,7 +972,7 @@
           <hr />
         </div>
       </div>
-      <div class="form-control-group">
+      <div *ngIf="config.hasComplementary" class="form-control-group">
         <label class="label" for="input-peec">Período de execução: (Já está entre parênteses)</label>
         <textarea
           nbInput
@@ -998,7 +998,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasComplementary" class="row">
         <div class="col-md-11">
           <div class="form-control-group">
             <label class="label" for="input-aec">Atividades: (Pontuação final automática)</label>
@@ -1031,7 +1031,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasComplementary" style="width: 100%; padding: 10px 0">
         <nb-list-item
           *ngFor="let activity of tempInvoice.laec ? tempInvoice.laec : []; let i = index; trackBy: utils.trackByIndex"
         >
@@ -1060,7 +1060,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="form-control-group">
+      <div *ngIf="config.hasComplementary" class="form-control-group">
         <label class="label" for="input-dec">Detalhes: (Pontuação final necessária)</label>
         <textarea
           nbInput
@@ -1553,7 +1553,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="row">
+      <div *ngIf="config.hasStageName" class="row">
         <div class="col-md-7">
           <div class="form-control-group">
             <label class="label" for="input-stage">Parcelamentos:</label>
@@ -1622,7 +1622,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasStageName" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: utils.trackByIndex">
           <div class="row paymentRow">
             <div class="col-12 col-md-7">
@@ -1713,7 +1713,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="row">
+      <div *ngIf="config.hasImportants" class="row">
         <div class="col-md-11">
           <div class="form-control-group">
             <label class="label" for="input-important">Importante: (Pontuação final automática)</label>
@@ -1746,7 +1746,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasImportants" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let activity of tempInvoice.importants; let i = index; trackBy: utils.trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
@@ -1773,7 +1773,7 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="row" style="margin-top: 8px">
+      <div *ngIf="config.hasMaterialList" class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Lista de Materias</label>
         </div>
@@ -1781,7 +1781,7 @@
           <hr />
         </div>
       </div>
-      <div class="row">
+      <div *ngIf="config.hasMaterialList" class="row">
         <div class="col-12">
           <div class="form-control-group">
             <label class="label" for="input-material-type" style="display: flex; margin-top: 4px">Tipo da lista:</label>
@@ -1934,7 +1934,7 @@
           </button>
         </div>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
+      <nb-list *ngIf="config.hasMaterialList" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let material of tempInvoice.materials; let i = index; trackBy: utils.trackByIndex">
           <div class="row paymentRow">
             <div
