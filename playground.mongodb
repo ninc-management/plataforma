@@ -625,3 +625,18 @@ db.users.find().forEach((u) => {
   u.notifications = [];
   db.users.replaceOne({ _id: u._id }, u);
 });
+
+db.platformconfigs.find().forEach((config) => {
+  config.invoiceConfig = {
+    hasType: true,
+    hasHeader: true,
+    hasTeam: true,
+    hasPremilary: true,
+    hasExecutive: true,
+    hasComplementary: true,
+    hasStageName: true,
+    hasImportants: true,
+    hasMaterialList: true,
+  };
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
