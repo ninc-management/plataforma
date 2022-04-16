@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { map, skipWhile, take } from 'rxjs/operators';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
@@ -140,7 +140,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.configService
       .getConfig()
-      .pipe(take(1))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((configs) => {
         if (configs[0]) this.config = configs[0].invoiceConfig;
       });
