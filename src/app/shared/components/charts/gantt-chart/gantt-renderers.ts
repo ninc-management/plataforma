@@ -1,30 +1,44 @@
 // This code was initially made by https://github.com/mfandre
 
+//COR DA ZEBRA VIA ECHARTS
+//CORRIGIR COR DO TODAY VIA COR DO ECHARTS
+//TIRAR TEXTO DO TODAY
+//TROCAR OS ÍCONES DO SUPERIOR ESQUERDO
+//COPIAR CONFIGURACAO DO TIME SERIES PRO GANTT ALINHADO NA DIREITA
+//dark, default, cosmic, corporate
+
+//CHECKLIST ITEM PAI PROGRESO É STASTUS ACAO
+//PROGRESSO AÇAO POR TEMPO RESTANTE
+//ALTERAR TRADUCAO DO CHECKLIST DE ACOES DE FEITO PRA DIAS RESTANTES NA TOOLTIP
+
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
 
+enum CHART_COLOURS {
+  DARK_BG_COLOR_1 = '#192038',
+  DARK_BG_COLOR_2 = '#151a30',
+  BG_COLOR_1 = '#f7f9fc',
+  BG_COLOR_2 = '#edf1f7',
+  DARK_TODAY_LINE = '#000000',
+  TODAY_LINE = '#ffffff',
+}
+
 export class GanttRenderers {
   private HEIGHT_RATIO: number;
-  private DATE_FORMAT: string;
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
-
-  //normal|dark
+  private _isDarkTheme: boolean;
   private arrowColors: string[] = ['#000', '#fff'];
-  private zebraColor: any[] = [
-    ['#f2f2f2', '#e6e6e6'],
-    ['#212529', '#2C3034'],
-  ];
 
-  constructor(taskData: TaskModel[], mappedData: any[], colours: string[], dateFormat: string, heightRatio: number) {
+  constructor(taskData: TaskModel[], mappedData: any[], colours: string[], heightRatio: number, isDarkTheme: boolean) {
     this._taskData = taskData;
     this._mappedData = mappedData;
     this.taskDataManipulator = new TaskDataManipulator(colours);
-    this.DATE_FORMAT = dateFormat;
     this.HEIGHT_RATIO = heightRatio;
+    this._isDarkTheme = isDarkTheme;
   }
 
   renderGanttItem(params: any, api: any) {
@@ -449,7 +463,7 @@ export class GanttRenderers {
           ignore: !rectNormal,
           shape: rectNormal,
           style: api.style({
-            fill: index % 2 == 0 ? this.zebraColor[1][0] : this.zebraColor[1][1],
+            fill: this.zebraColor(index),
           }),
         },
       ],
@@ -463,24 +477,10 @@ export class GanttRenderers {
     const y = barHeight;
     const y_end = barHeight * 1000;
 
-    const todayText = echarts.time.format(new Date(), this.DATE_FORMAT, false);
-    const todayTextWidth = echarts.format.getTextRect(todayText).width;
-
     return {
       type: 'group',
       silent: true,
       children: [
-        {
-          type: 'text',
-          style: {
-            x: x - todayTextWidth / 2,
-            y: y,
-            text: todayText,
-            textVerticalAlign: 'bottom',
-            textAlign: 'left',
-            textFill: '#a14b27',
-          },
-        },
         {
           type: 'line',
           shape: {
@@ -490,8 +490,8 @@ export class GanttRenderers {
             y2: y_end,
           },
           style: api.style({
-            fill: '#a14b27',
-            stroke: '#a14b27',
+            fill: this._isDarkTheme ? CHART_COLOURS.TODAY_LINE : CHART_COLOURS.DARK_TODAY_LINE,
+            stroke: this._isDarkTheme ? CHART_COLOURS.TODAY_LINE : CHART_COLOURS.DARK_TODAY_LINE,
           }),
         },
       ],
@@ -505,5 +505,15 @@ export class GanttRenderers {
       width: params.coordSys.width,
       height: params.coordSys.height,
     });
+  }
+
+  private zebraColor(index: number): string {
+    return index % 2 == 0
+      ? this._isDarkTheme
+        ? CHART_COLOURS.DARK_BG_COLOR_1
+        : CHART_COLOURS.BG_COLOR_1
+      : this._isDarkTheme
+      ? CHART_COLOURS.DARK_BG_COLOR_2
+      : CHART_COLOURS.BG_COLOR_2;
   }
 }

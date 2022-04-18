@@ -75,6 +75,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   themeSubscription: any;
   currentTheme = {};
   colours: string[] = [];
+  isDarkTheme!: boolean;
 
   private renderers!: GanttRenderers;
   private taskDataManipulator!: TaskDataManipulator;
@@ -423,6 +424,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   ngOnInit(): void {
     this.themeSubscription = this.theme.getJsTheme().subscribe((config) => {
       const colours: any = config.variables;
+      this.isDarkTheme = config.name == 'dark' || config.name == 'cosmic';
       this.currentTheme = colours.echarts;
       this.colours = colours.echarts.color;
 
@@ -435,8 +437,8 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         this.taskData,
         this.mappedData,
         this.colours,
-        this.dateFormat,
-        this.heightRatio
+        this.heightRatio,
+        this.isDarkTheme
       );
       this.setChartOptions();
     });
@@ -458,8 +460,8 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       this.taskData,
       this.mappedData,
       this.colours,
-      this.dateFormat,
-      this.heightRatio
+      this.heightRatio,
+      this.isDarkTheme
     );
     this.setChartOptions();
   }
