@@ -8,11 +8,13 @@ import {
   HostListener,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { NbThemeService } from '@nebular/theme';
 import * as echarts from 'echarts/core';
 import { GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
@@ -23,7 +25,7 @@ import { TaskModel } from './task-data.model';
   templateUrl: './gantt-chart.component.html',
   styleUrls: ['./gantt-chart.component.scss'],
 })
-export class GanttChartComponent implements OnInit, OnChanges, AfterContentChecked {
+export class GanttChartComponent implements OnInit, OnChanges, AfterContentChecked, OnDestroy {
   @ViewChild('wrapper') wrapper: ElementRef | undefined;
   @ViewChild('gantt') gantt: ElementRef | undefined;
 
@@ -55,20 +57,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public dateFormat: string = '{MM}/{dd}/{yyyy}';
 
   @Input()
-  public colours: string[] = [
-    '#F94144',
-    '#F3722C',
-    '#F8961E',
-    '#F9844A',
-    '#F9C74F',
-    '#90BE6D',
-    '#43AA8B',
-    '#4D908E',
-    '#577590',
-    '#277DA1',
-  ];
-
-  @Input()
   public heightRatio: number = 0.6;
 
   @Input()
@@ -87,23 +75,17 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   chartOptions: any;
 
   echartsInstance: any;
+  themeSubscription: any;
+  currentTheme = {};
+  colours: string[] = [];
 
   private renderers!: GanttRenderers;
-  private taskDataManipulator: TaskDataManipulator;
-  private mappedData: any[];
-  private zebraData: any[];
-  private todayData: any[];
+  private taskDataManipulator!: TaskDataManipulator;
+  private mappedData!: any[];
+  private zebraData!: any[];
+  private todayData!: any[];
 
-  constructor() {
-    this.taskDataManipulator = new TaskDataManipulator(this.colours, this.enableGroup);
-
-    this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
-
-    //after sort we map to maintain the order
-    this.mappedData = this.taskDataManipulator.mapData(this.taskData);
-    this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
-    this.todayData = [new Date()];
-  }
+  constructor(private theme: NbThemeService) {}
 
   getTitleOption(): any {
     if (this.chartTitle === '') return {};
@@ -125,7 +107,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       left: 225,
       right: 20,
       //height: '1000px',
-      backgroundColor: '#fff',
+      backgroundColor: '#fff', //cor das linhas do grid
       borderWidth: 0,
     };
   }
@@ -454,16 +436,32 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     };
   }
 
+  ngOnDestroy(): void {
+    this.themeSubscription.unsubscribe();
+  }
+
   ngOnInit(): void {
-    this.renderers = new GanttRenderers(
-      this.taskData,
-      this.mappedData,
-      this.colours,
-      this.dateFormat,
-      this.heightRatio,
-      this.enableGroup
-    );
-    this.setChartOptions();
+    this.themeSubscription = this.theme.getJsTheme().subscribe((config) => {
+      const colours: any = config.variables;
+      this.currentTheme = colours.echarts;
+      this.colours = colours.echarts.color;
+
+      this.taskDataManipulator = new TaskDataManipulator(this.colours, this.enableGroup);
+      this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
+      //after sort we map to maintain the order
+      this.mappedData = this.taskDataManipulator.mapData(this.taskData);
+      this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
+      this.renderers = new GanttRenderers(
+        this.taskData,
+        this.mappedData,
+        this.colours,
+        this.dateFormat,
+        this.heightRatio,
+        this.enableGroup
+      );
+      this.setChartOptions();
+    });
+    this.todayData = [new Date()];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
