@@ -4,11 +4,9 @@ import { TaskModel } from './task-data.model';
 
 export class TaskDataManipulator {
   COLOURS: string[];
-  _enableGroup: boolean;
 
-  constructor(colours: string[], enableGroup: boolean) {
+  constructor(colours: string[]) {
     this.COLOURS = colours;
-    this._enableGroup = enableGroup;
   }
 
   mapData(taskData: TaskModel[]): any[] {
@@ -28,12 +26,7 @@ export class TaskDataManipulator {
         if (groupInfo.tasks.indexOf(item.taskId) < groupInfo.tasks.length - 1) isToDrawGroup = 1;
       }
 
-      let color = '';
-      if (this._enableGroup == false) {
-        color = this.getColorHex(index);
-      } else {
-        color = groupInfo.color;
-      }
+      const color = groupInfo.color;
 
       const index_attributes = [
         index,
@@ -98,10 +91,6 @@ export class TaskDataManipulator {
      *  "groupName2" => { color: "#222", tasks: [taskId1, taskId2, ..., taskIdN]}
      * }
      */
-
-    if (this._enableGroup == false) {
-      return {};
-    }
 
     let countColor = 0;
     const mappedGroups: any = {};

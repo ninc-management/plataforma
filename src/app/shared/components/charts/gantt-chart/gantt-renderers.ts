@@ -8,7 +8,6 @@ import { TaskModel } from './task-data.model';
 export class GanttRenderers {
   private HEIGHT_RATIO: number;
   private DATE_FORMAT: string;
-  private _enableGroup: boolean;
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
@@ -20,20 +19,12 @@ export class GanttRenderers {
     ['#212529', '#2C3034'],
   ];
 
-  constructor(
-    taskData: TaskModel[],
-    mappedData: any[],
-    colours: string[],
-    dateFormat: string,
-    heightRatio: number,
-    enableGroup: boolean = true
-  ) {
+  constructor(taskData: TaskModel[], mappedData: any[], colours: string[], dateFormat: string, heightRatio: number) {
     this._taskData = taskData;
     this._mappedData = mappedData;
-    this.taskDataManipulator = new TaskDataManipulator(colours, enableGroup);
+    this.taskDataManipulator = new TaskDataManipulator(colours);
     this.DATE_FORMAT = dateFormat;
     this.HEIGHT_RATIO = heightRatio;
-    this._enableGroup = enableGroup;
   }
 
   renderGanttItem(params: any, api: any) {
@@ -184,29 +175,27 @@ export class GanttRenderers {
       ],
     };
 
-    if (this._enableGroup) {
-      if (isToDrawGroup == 1) {
-        // group agrupator (Vertical rectangle)
-        groupedElement.children.push({
-          type: 'rect',
-          shape: { x: 105, y: params.coordSys.y - 2 * barHeight - barHeight / 3, width: 10, height: 46 },
-          style: {
-            fill: groupColor,
-          },
-        });
-      } else {
-        groupedElement.children.push({
-          type: 'text',
-          style: {
-            x: -10,
-            y: params.coordSys.y - 2 * barHeight + barHeight / 9,
-            text: groupName,
-            textVerticalAlign: 'bottom',
-            textAlign: 'left',
-            textFill: '#fff',
-          },
-        });
-      }
+    if (isToDrawGroup == 1) {
+      // group agrupator (Vertical rectangle)
+      groupedElement.children.push({
+        type: 'rect',
+        shape: { x: 105, y: params.coordSys.y - 2 * barHeight - barHeight / 3, width: 10, height: 46 },
+        style: {
+          fill: groupColor,
+        },
+      });
+    } else {
+      groupedElement.children.push({
+        type: 'text',
+        style: {
+          x: -10,
+          y: params.coordSys.y - 2 * barHeight + barHeight / 9,
+          text: groupName,
+          textVerticalAlign: 'bottom',
+          textAlign: 'left',
+          textFill: '#fff',
+        },
+      });
     }
 
     return groupedElement;
