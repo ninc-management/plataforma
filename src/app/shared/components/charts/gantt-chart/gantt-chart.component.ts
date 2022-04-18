@@ -44,8 +44,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   /**
    * The scroll will stop to work... its a bug that I cant figure it out :(
    */
-  @Input()
-  public enableDataZoom: boolean = false;
 
   @Input()
   public chartTitle: string = '';
@@ -137,14 +135,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         ].join('');
       },
     };
-  }
-
-  resetZoomAction(): void {
-    this.echartsInstance.dispatchAction({
-      type: 'dataZoom',
-      start: 0,
-      end: 100,
-    });
   }
 
   editAction(): void {
@@ -348,10 +338,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   }
 
   getDataZoom(): any[] {
-    if (this.enableDataZoom == false) {
-      return [];
-    }
-
     return [
       {
         type: 'slider',
@@ -360,7 +346,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         height: 30,
         bottom: 0,
         start: 0,
-        end: 30,
+        end: 100,
         showDetail: false,
       },
       {
