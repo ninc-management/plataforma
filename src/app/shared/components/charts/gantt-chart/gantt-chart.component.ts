@@ -48,9 +48,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public enableDataZoom: boolean = false;
 
   @Input()
-  public enableGroup: boolean = true;
-
-  @Input()
   public chartTitle: string = '';
 
   @Input()
@@ -446,7 +443,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       this.currentTheme = colours.echarts;
       this.colours = colours.echarts.color;
 
-      this.taskDataManipulator = new TaskDataManipulator(this.colours, this.enableGroup);
+      this.taskDataManipulator = new TaskDataManipulator(this.colours);
       this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
       //after sort we map to maintain the order
       this.mappedData = this.taskDataManipulator.mapData(this.taskData);
@@ -456,8 +453,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         this.mappedData,
         this.colours,
         this.dateFormat,
-        this.heightRatio,
-        this.enableGroup
+        this.heightRatio
       );
       this.setChartOptions();
     });
@@ -468,7 +464,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     if (this.echartsInstance) {
       this.echartsInstance.clear();
     }
-    this.taskDataManipulator = new TaskDataManipulator(this.colours, this.enableGroup);
+    this.taskDataManipulator = new TaskDataManipulator(this.colours);
     this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
 
     //after sort we map to maintain the order
@@ -480,8 +476,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       this.mappedData,
       this.colours,
       this.dateFormat,
-      this.heightRatio,
-      this.enableGroup
+      this.heightRatio
     );
     this.setChartOptions();
   }
