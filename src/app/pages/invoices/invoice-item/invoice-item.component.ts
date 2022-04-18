@@ -122,14 +122,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private contractService: ContractService,
+    private brMask: BrMaskDirective,
+    private configService: ConfigService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
     public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
-    private brMask: BrMaskDirective,
-    public teamService: TeamService,
-    private configService: ConfigService
+    public teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
