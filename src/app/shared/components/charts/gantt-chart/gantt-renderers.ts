@@ -236,48 +236,32 @@ export class GanttRenderers {
       const color = this.arrowColors[1];
 
       let arrow = {};
+      const ARROW_SIZE = 5;
       //condition to draw the arrow correctly when a dependent task is exactly below another task
-      if (x < xFather + barLengthFather / 2) {
-        if (y > yFather) {
-          arrow = {
-            type: 'polygon',
-            shape: {
-              points: [
-                [xFather + barLengthFather / 2 - 5, y - 10],
-                [xFather + barLengthFather / 2 + 5, y - 10],
-                [xFather + barLengthFather / 2, y],
-              ],
-            },
-            style: api.style({
-              fill: color,
-              //stroke: "#000"
-            }),
-          };
-        } else {
-          arrow = {
-            type: 'polygon',
-            shape: {
-              points: [
-                [xFather + barLengthFather / 2 - 5, y + barHeightFather + 10],
-                [xFather + barLengthFather / 2 + 5, y + barHeightFather + 10],
-                [xFather + barLengthFather / 2, y + barHeightFather],
-              ],
-            },
-            style: api.style({
-              fill: color,
-              //stroke: "#000"
-            }),
-          };
-        }
+      if (x < ARROW_SIZE + xFather + barLengthFather / 20) {
+        arrow = {
+          type: 'polygon',
+          shape: {
+            points: [
+              [xFather + barLengthFather / 20 - 5, y - 10],
+              [xFather + barLengthFather / 20 + 5, y - 10],
+              [xFather + barLengthFather / 20, y],
+            ],
+          },
+          style: api.style({
+            fill: color,
+            //stroke: "#000"
+          }),
+        };
       } else {
         //draw normaly
         arrow = {
           type: 'polygon',
           shape: {
             points: [
-              [x - 5, y + barHeight / 2 - 5],
-              [x - 5, y + barHeight / 2 + 5],
-              [x + 5, y + barHeight / 2],
+              [x - 10, y + barHeight / 2 - 5],
+              [x - 10, y + barHeight / 2 + 5],
+              [x, y + barHeight / 2],
             ],
           },
           style: api.style({
@@ -290,9 +274,9 @@ export class GanttRenderers {
       const verticalLine = {
         type: 'line',
         shape: {
-          x1: xFather + barLengthFather / 2,
+          x1: xFather + barLengthFather / 20,
           y1: yFather + barHeightFather,
-          x2: xFather + barLengthFather / 2,
+          x2: xFather + barLengthFather / 20,
           y2: y + barHeightFather / 2,
         },
         style: api.style({
@@ -304,7 +288,7 @@ export class GanttRenderers {
       const horizontalLine = {
         type: 'line',
         shape: {
-          x1: xFather + barLengthFather / 2,
+          x1: xFather + barLengthFather / 20,
           y1: y + barHeightFather / 2,
           x2: x,
           y2: y + barHeightFather / 2,
@@ -318,100 +302,6 @@ export class GanttRenderers {
       links.push({
         type: 'group',
         children: [verticalLine, horizontalLine, arrow],
-      });
-    }
-
-    return {
-      type: 'group',
-      children: links,
-    };
-  }
-
-  renderArrowsItem2(params: any, api: any) {
-    const index = api.value(0);
-    const timeStart = api.coord([api.value(2), index]);
-
-    // Get the heigth corresponds to length 1 on y axis.
-    const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
-    const x = timeStart[0];
-    const y = timeStart[1] - barHeight;
-
-    //the api.value only suports numeric and string values to get... to get taskDependencies I need to get from my real data constiable
-    const currentData = this._taskData[params.dataIndex];
-    const taskDependencies = currentData.taskDependencies;
-
-    const links = [];
-    const dependencies = taskDependencies;
-    for (let j = 0; j < dependencies.length; j++) {
-      const taskFather = this.taskDataManipulator.getTaskByIdInMappedData(this._mappedData, dependencies[j]);
-      if (taskFather == null) continue;
-      //console.log("dependencies", taskName, taskFather)
-      const indexFather = taskFather[0]; //index
-      const timeStartFather = api.coord([taskFather[2], indexFather]);
-      const timeEndFather = api.coord([taskFather[3], indexFather]);
-
-      const barLengthFather = timeEndFather[0] - timeStartFather[0];
-      // Get the heigth corresponds to length 1 on y axis.
-      const barHeightFather = api.size([0, 1])[1] * this.HEIGHT_RATIO;
-      const xFather = timeStartFather[0];
-      const yFather = timeStartFather[1] - barHeightFather;
-
-      links.push({
-        type: 'group',
-        children: [
-          /*{
-                    type: 'line',
-                    shape: {
-                        x1: xFather + barLengthFather,
-                        y1: yFather + barHeightFather/2,
-                        x2: x,
-                        y2: y + barHeight/2
-                    },
-                    style: api.style({
-                        fill: "#000",
-                        stroke: "#000"
-                    })
-                },*/ {
-            type: 'line',
-            shape: {
-              x1: xFather + barLengthFather,
-              y1: yFather + barHeightFather / 2,
-              x2: x,
-              y2: yFather + barHeightFather / 2,
-            },
-            style: api.style({
-              fill: '#000',
-              stroke: '#000',
-            }),
-          },
-          {
-            type: 'line',
-            shape: {
-              x1: x,
-              y1: yFather + barHeightFather / 2,
-              x2: x - 10,
-              y2: y + barHeight / 2,
-            },
-            style: api.style({
-              fill: '#000',
-              stroke: '#000',
-            }),
-          },
-          {
-            type: 'polygon',
-            shape: {
-              points: [
-                [x - 5, y + barHeight / 2 - 5],
-                [x - 5, y + barHeight / 2 + 10],
-                [x + 5, y + barHeight / 2],
-              ],
-            },
-            style: api.style({
-              fill: '#000',
-              stroke: '#000',
-            }),
-          },
-        ],
       });
     }
 

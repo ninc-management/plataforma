@@ -310,7 +310,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
           groupOrder: groupCount,
           taskName: action.name,
           taskId: groupCount.toString() + taskCount.toString(),
-          taskDependencies: [groupCount.toString() + '0'],
+          taskDependencies: [taskCount == 1 ? '' : groupCount.toString() + '1'],
           start: action.range.start,
           end: action.range.end,
           donePercentage: action.isFinished ? 100 : 0,
