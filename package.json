@@ -106,7 +106,6 @@
     "@angular/compiler-cli": "^13.2.1",
     "@angular/language-service": "13.2.1",
     "@compodoc/compodoc": "^1.1.18",
-    "@juggle/resize-observer": "^3.3.1",
     "@types/angular": "^1.8.0",
     "@types/extenso": "^2.0.0",
     "@types/file-saver": "^2.0.1",
