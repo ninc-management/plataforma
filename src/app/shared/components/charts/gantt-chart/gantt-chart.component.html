@@ -5,7 +5,7 @@
     class="gantt-chart"
     [options]="chartOptions"
     [loading]="loading"
-    [theme]="currentTheme"
+    [theme]="currentTheme.variables.echarts"
     (chartInit)="onChartInit($event)"
     (chartClick)="onTaskClicked($event)"
     [style.width.px]="ganttWidth"
