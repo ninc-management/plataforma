@@ -279,34 +279,51 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   transformActionsData(): TaskModel[] {
     let groupCount = 0;
     let taskCount = 0;
-    return this.iContract.checklist
-      .map((item) => {
-        groupCount += 1;
-        taskCount = 0;
-        return item.actionList.map((action) => {
-          taskCount += 1;
-          return {
-            groupName: item.name,
-            groupOrder: groupCount,
-            taskName: action.name,
-            taskId: groupCount.toString() + taskCount.toString(),
-            taskDependencies: [],
-            start: action.range.start,
-            end: action.range.end,
-            donePercentage: action.isFinished ? 100 : 0,
-            owner: this.utils.idToProperty(
-              action.assignee,
-              this.userService.idToUser.bind(this.userService),
-              'fullName'
-            ),
-            image: this.utils.idToProperty(
-              action.assignee,
-              this.userService.idToUser.bind(this.userService),
-              'profilePicture'
-            ),
-          } as TaskModel;
-        });
-      })
-      .flat();
+    const taskData: TaskModel[] = [];
+
+    this.iContract.checklist.forEach((item) => {
+      groupCount += 1;
+      taskCount = 0;
+
+      taskData.push({
+        groupName: item.name,
+        groupOrder: groupCount,
+        taskName: item.name,
+        taskId: groupCount.toString() + taskCount.toString(),
+        taskDependencies: [],
+        start: item.range.start,
+        end: item.range.end,
+        donePercentage: 100,
+        owner: this.utils.idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+        image: this.utils.idToProperty(
+          item.assignee,
+          this.userService.idToUser.bind(this.userService),
+          'profilePicture'
+        ),
+      } as TaskModel);
+
+      item.actionList.forEach((action) => {
+        taskCount += 1;
+
+        taskData.push({
+          groupName: item.name,
+          groupOrder: groupCount,
+          taskName: action.name,
+          taskId: groupCount.toString() + taskCount.toString(),
+          taskDependencies: [groupCount.toString() + '0'],
+          start: action.range.start,
+          end: action.range.end,
+          donePercentage: action.isFinished ? 100 : 0,
+          owner: this.utils.idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+          image: this.utils.idToProperty(
+            action.assignee,
+            this.userService.idToUser.bind(this.userService),
+            'profilePicture'
+          ),
+        } as TaskModel);
+      });
+    });
+
+    return taskData;
   }
 }

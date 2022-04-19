@@ -116,11 +116,11 @@ export class TaskDataManipulator {
     if (a.groupOrder > b.groupOrder) groupOrderComp = -1;
     if (b.groupOrder > a.groupOrder) groupOrderComp = 1;
 
-    let taskNameComp = 0;
-    if (a.taskName > b.taskName) taskNameComp = -1;
-    if (b.taskName > a.taskName) taskNameComp = 1;
+    let taskIdComp = 0;
+    if (a.taskId > b.taskId) taskIdComp = -1;
+    if (b.taskId > a.taskId) taskIdComp = 1;
 
-    return groupOrderComp || taskNameComp || dateComp;
+    return groupOrderComp || taskIdComp || dateComp;
   }
 
   getTaskById(taskData: TaskModel[], id: any): TaskModel | null {
