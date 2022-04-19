@@ -111,7 +111,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       left: 225,
       right: 20,
       //height: '1000px',
-      backgroundColor: '#fff', //cor das linhas do grid
+      backgroundColor: '#fff',
       borderWidth: 0,
     };
   }
