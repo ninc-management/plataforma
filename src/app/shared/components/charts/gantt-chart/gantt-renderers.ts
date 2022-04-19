@@ -1,44 +1,25 @@
 // This code was initially made by https://github.com/mfandre
 
-//COR DA ZEBRA VIA ECHARTS
-//CORRIGIR COR DO TODAY VIA COR DO ECHARTS
-//TIRAR TEXTO DO TODAY
-//TROCAR OS ÍCONES DO SUPERIOR ESQUERDO
-//COPIAR CONFIGURACAO DO TIME SERIES PRO GANTT ALINHADO NA DIREITA
-//dark, default, cosmic, corporate
-
-//CHECKLIST ITEM PAI PROGRESO É STASTUS ACAO
-//PROGRESSO AÇAO POR TEMPO RESTANTE
-//ALTERAR TRADUCAO DO CHECKLIST DE ACOES DE FEITO PRA DIAS RESTANTES NA TOOLTIP
-
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
+import { ChartTheme } from './gantt-chart.component';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
-
-enum CHART_COLOURS {
-  DARK_BG_COLOR_1 = '#192038',
-  DARK_BG_COLOR_2 = '#151a30',
-  BG_COLOR_1 = '#f7f9fc',
-  BG_COLOR_2 = '#edf1f7',
-  DARK_TODAY_LINE = '#000000',
-  TODAY_LINE = '#ffffff',
-}
 
 export class GanttRenderers {
   private HEIGHT_RATIO: number;
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
-  private _isDarkTheme: boolean;
   private arrowColors: string[] = ['#000', '#fff'];
+  private _currentTheme: ChartTheme;
 
-  constructor(taskData: TaskModel[], mappedData: any[], colours: string[], heightRatio: number, isDarkTheme: boolean) {
+  constructor(taskData: TaskModel[], mappedData: any[], heightRatio: number, currentTheme: ChartTheme) {
     this._taskData = taskData;
     this._mappedData = mappedData;
-    this.taskDataManipulator = new TaskDataManipulator(colours);
+    this._currentTheme = currentTheme;
+    this.taskDataManipulator = new TaskDataManipulator(this._currentTheme.palette);
     this.HEIGHT_RATIO = heightRatio;
-    this._isDarkTheme = isDarkTheme;
   }
 
   renderGanttItem(params: any, api: any) {
@@ -97,7 +78,9 @@ export class GanttRenderers {
             fill: 'transparent',
             stroke: 'transparent',
             text: text,
-            textFill: '#fff',
+            textFill: '#000',
+            fontFamily: this._currentTheme.variables.fontMain,
+            fontWeight: 600,
           }),
         },
         {
@@ -172,6 +155,8 @@ export class GanttRenderers {
             textVerticalAlign: 'bottom',
             textAlign: 'left',
             textFill: '#000',
+            fontFamily: this._currentTheme.variables.fontMain,
+            fontWeight: 600,
           },
         },
         {
@@ -184,6 +169,8 @@ export class GanttRenderers {
             text: daysToEnd,
             textFill: '#000',
             fontSize: 9,
+            fontFamily: this._currentTheme.variables.fontMain,
+            fontWeight: 600,
           },
         },
       ],
@@ -207,7 +194,9 @@ export class GanttRenderers {
           text: groupName,
           textVerticalAlign: 'bottom',
           textAlign: 'left',
-          textFill: '#fff',
+          textFill: '#000',
+          fontFamily: this._currentTheme.variables.fontMain,
+          fontWeight: 600,
         },
       });
     }
@@ -490,8 +479,8 @@ export class GanttRenderers {
             y2: y_end,
           },
           style: api.style({
-            fill: this._isDarkTheme ? CHART_COLOURS.TODAY_LINE : CHART_COLOURS.DARK_TODAY_LINE,
-            stroke: this._isDarkTheme ? CHART_COLOURS.TODAY_LINE : CHART_COLOURS.DARK_TODAY_LINE,
+            fill: this.todayLineColor(),
+            stroke: this.todayLineColor(),
           }),
         },
       ],
@@ -508,12 +497,10 @@ export class GanttRenderers {
   }
 
   private zebraColor(index: number): string {
-    return index % 2 == 0
-      ? this._isDarkTheme
-        ? CHART_COLOURS.DARK_BG_COLOR_1
-        : CHART_COLOURS.BG_COLOR_1
-      : this._isDarkTheme
-      ? CHART_COLOURS.DARK_BG_COLOR_2
-      : CHART_COLOURS.BG_COLOR_2;
+    return (index % 2 == 0 ? this._currentTheme.variables.bg2 : this._currentTheme.variables.bg3) as string;
+  }
+
+  private todayLineColor(): string {
+    return this._currentTheme.isDark ? '#ffffff' : '#000000';
   }
 }
