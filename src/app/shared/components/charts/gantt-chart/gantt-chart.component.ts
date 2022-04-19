@@ -418,7 +418,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   ngOnInit(): void {
     this.themeSubscription = this.theme.getJsTheme().subscribe((config: any) => {
       this.currentTheme = {
-        palette: config.variables.echarts.color,
+        palette: config.variables.echarts?.color,
         variables: config.variables,
         isDark: config.name == 'dark' || config.name == 'cosmic',
       } as ChartTheme;
