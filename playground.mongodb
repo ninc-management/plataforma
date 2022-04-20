@@ -640,3 +640,15 @@ db.platformconfigs.find().forEach((config) => {
   };
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.platformconfigs.find().forEach((config) => {
+  config.profileConfig = {
+    positions: [],
+    hasLevels: true,
+    levels: [],
+    hasTeam: true,
+    hasSector: true,
+    hasExpertiseBySector: true,
+  };
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
