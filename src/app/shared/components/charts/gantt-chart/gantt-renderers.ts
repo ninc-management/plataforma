@@ -363,8 +363,8 @@ export class GanttRenderers {
             y2: y_end,
           },
           style: api.style({
-            fill: this.todayLineColor(),
-            stroke: this.todayLineColor(),
+            fill: this._currentTheme.variables.fgText,
+            stroke: this._currentTheme.variables.fgText,
           }),
         },
       ],
@@ -382,10 +382,6 @@ export class GanttRenderers {
 
   private zebraColor(index: number): string {
     return (index % 2 == 0 ? this._currentTheme.variables.bg2 : this._currentTheme.variables.bg3) as string;
-  }
-
-  private todayLineColor(): string {
-    return this._currentTheme.isDark ? '#ffffff' : '#000000';
   }
 
   private progressLineColor(isFinished: number, progressPercentage: number): string {

@@ -24,7 +24,6 @@ import { TaskModel } from './task-data.model';
 export interface ChartTheme {
   palette: string[];
   variables: NbJSThemeVariable;
-  isDark: boolean;
 }
 
 @Component({
@@ -81,7 +80,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   currentTheme: ChartTheme = {
     palette: [],
     variables: {},
-    isDark: true,
   };
 
   private renderers!: GanttRenderers;
@@ -436,7 +434,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       this.currentTheme = {
         palette: config.variables.echarts?.color,
         variables: config.variables,
-        isDark: config.name == 'dark' || config.name == 'cosmic',
       } as ChartTheme;
 
       this.taskDataManipulator = new TaskDataManipulator(this.currentTheme.palette);
