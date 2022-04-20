@@ -11,7 +11,6 @@ export class GanttRenderers {
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
-  private arrowColors: string[] = ['#000', '#fff'];
   private _currentTheme: ChartTheme;
 
   constructor(taskData: TaskModel[], mappedData: any[], heightRatio: number, currentTheme: ChartTheme) {
@@ -230,8 +229,6 @@ export class GanttRenderers {
       const xFather = timeStartFather[0];
       const yFather = timeStartFather[1] - barHeightFather - barHeightFather / 3;
 
-      const color = this.arrowColors[1];
-
       let arrow = {};
       const ARROW_SIZE = 5;
       //condition to draw the arrow correctly when a dependent task is exactly below another task
@@ -246,7 +243,7 @@ export class GanttRenderers {
             ],
           },
           style: api.style({
-            fill: color,
+            fill: this._currentTheme.variables.fgText,
             //stroke: "#000"
           }),
         };
@@ -262,7 +259,7 @@ export class GanttRenderers {
             ],
           },
           style: api.style({
-            fill: color,
+            fill: this._currentTheme.variables.fgText,
             //stroke: "#000"
           }),
         };
@@ -277,8 +274,8 @@ export class GanttRenderers {
           y2: y + barHeightFather / 2,
         },
         style: api.style({
-          fill: color,
-          stroke: color,
+          fill: this._currentTheme.variables.fgText,
+          stroke: this._currentTheme.variables.fgText,
         }),
       };
 
@@ -291,8 +288,8 @@ export class GanttRenderers {
           y2: y + barHeightFather / 2,
         },
         style: api.style({
-          fill: color,
-          stroke: color,
+          fill: this._currentTheme.variables.fgText,
+          stroke: this._currentTheme.variables.fgText,
         }),
       };
 
