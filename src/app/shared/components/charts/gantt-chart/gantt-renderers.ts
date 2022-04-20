@@ -28,9 +28,9 @@ export class GanttRenderers {
 
     const timeStart = api.coord([api.value(2), index]);
     const timeEnd = api.coord([api.value(3), index]);
-    const donePercentage = api.value(5);
+    const progressPercentage = api.value(5);
     const groupColor = api.value(10);
-
+    const isFinished = api.value(11);
     const barLength = timeEnd[0] - timeStart[0];
     // Get the heigth corresponds to length 1 on y axis.
     const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
@@ -55,7 +55,7 @@ export class GanttRenderers {
     const rectPercent = this.clipRectByRect(params, {
       x: x,
       y: y,
-      width: (barLength * donePercentage) / 100,
+      width: (barLength * progressPercentage) / 100,
       height: 3,
     });
 
@@ -88,7 +88,7 @@ export class GanttRenderers {
           ignore: !rectPercent,
           shape: rectPercent,
           style: api.style({
-            fill: 'rgba(214, 40, 40, 1)',
+            fill: this.progressLineColor(isFinished, progressPercentage),
             stroke: 'transparent',
           }),
         },
@@ -101,19 +101,16 @@ export class GanttRenderers {
     //console.log("api.coord([0, api.value(0)])", api.coord([0, api.value(0)]))
     const index = api.value(0);
     const taskName = api.value(1);
-    const donePercentage = api.value(5);
     const end = api.value(3);
     const image = api.value(7);
     const groupName = api.value(8);
     const isToDrawGroup = api.value(9);
     const groupColor = api.value(10);
+    const isFinished = api.value(11);
 
     //console.log(taskId, groupName, isToDrawGroup, groupColor)
     const y = api.coord([0, index])[1];
     const barHeight = api.size([0, 1])[1];
-
-    let daysToEnd = DateManipulator.daysLeft(end);
-    if (donePercentage == 100) daysToEnd = 'Finalizado';
 
     const groupedElement = {
       type: 'group',
@@ -166,7 +163,7 @@ export class GanttRenderers {
             y: params.coordSys.y - 2 * barHeight + barHeight * 0.7,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            text: daysToEnd,
+            text: isFinished ? 'Finalizado' : DateManipulator.daysLeft(end),
             textFill: '#000',
             fontSize: 9,
             fontFamily: this._currentTheme.variables.fontMain,
@@ -392,5 +389,12 @@ export class GanttRenderers {
 
   private todayLineColor(): string {
     return this._currentTheme.isDark ? '#ffffff' : '#000000';
+  }
+
+  private progressLineColor(isFinished: number, progressPercentage: number): string {
+    if (isFinished) return this._currentTheme.variables.success as string;
+    if (progressPercentage <= 45) return this._currentTheme.variables.primary as string;
+    if (progressPercentage <= 90) return this._currentTheme.variables.warning as string;
+    return this._currentTheme.variables.danger as string;
   }
 }

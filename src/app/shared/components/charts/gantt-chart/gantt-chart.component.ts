@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
 import * as echarts from 'echarts/core';
+import { DateManipulator } from './date-manipulator';
 import { GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
@@ -133,13 +134,26 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         const taskName = value[1];
         const start = echarts.time.format(new Date(value[2]), DATE_FORMAT, false);
         const end = echarts.time.format(new Date(value[3]), DATE_FORMAT, false);
-        const donePercentage = value[5];
+        const progressPercentage = value[5];
+        const isFinished = value[11];
+        const isAction = value[12];
+
+        let text = '';
+        if (isAction) {
+          text = isFinished ? 'Ação finalizada' : DateManipulator.daysLeft(value[3]);
+        } else {
+          //if the progress is 100 but item isn't finished
+          //the progress bar remains full but in red color
+          text = isFinished
+            ? 'Item finalizado'
+            : (progressPercentage == 100 ? 0 : progressPercentage) + '% ' + 'de ações feitas';
+        }
 
         return [
           '<div class="tooltip-title">' + echarts.format.encodeHTML(taskName) + '</div>',
           start + ' - ',
           end + '<br>',
-          donePercentage + '% ' + 'Feito',
+          text,
         ].join('');
       },
     };
@@ -380,12 +394,14 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       { name: 'start', type: 'time' },
       { name: 'end', type: 'time' },
       { name: 'taskId', type: 'number' },
-      { name: 'donePercentage', type: 'number' },
+      { name: 'progressPercentage', type: 'number' },
       { name: 'owner', type: 'ordinal' },
       { name: 'image', type: 'ordinal' },
       { name: 'groupName', type: 'ordinal' },
       { name: 'isToDrawGroup', type: 'number' },
       { name: 'groupColor', type: 'ordinal' },
+      { name: 'isFinished', type: 'number' },
+      { name: 'isAction', type: 'number' },
     ];
     return [
       this.getSerieZebra(),

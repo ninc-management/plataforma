@@ -95,7 +95,7 @@
                 <label class="label" for="remaining-days">Dias restantes:</label>
                 <input
                   nbInput
-                  [ngModel]="[] | transformPipe: remainingDays.bind(this)"
+                  [ngModel]="[] | transformPipe: checklistRemainingDays.bind(this)"
                   name="remaining-days"
                   fullWidth
                   fieldSize="large"

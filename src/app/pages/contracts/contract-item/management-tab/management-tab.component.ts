@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Contract, ContractChecklistItem, DateRange } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
@@ -14,7 +14,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { differenceInCalendarDays, isBefore } from 'date-fns';
+import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -134,7 +134,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.contractService.editContract(this.iContract);
   }
 
-  totalDays(): number | undefined {
+  checklistTotalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
       return differenceInCalendarDays(this.deadline, this.iContract.created);
@@ -142,7 +142,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     return undefined;
   }
 
-  remainingDays(): number | undefined {
+  checklistRemainingDays(): number | undefined {
     if (this.deadline) {
       const today = new Date();
       const remaining = differenceInCalendarDays(this.deadline, today);
@@ -155,8 +155,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   percentualProgress(): number {
     //if the contract is created today, total is 0
     //remaining can be 0 but cant be undefined
-    const total = this.totalDays();
-    const remaining = this.remainingDays();
+    const total = this.checklistTotalDays();
+    const remaining = this.checklistRemainingDays();
     if (total != undefined && total != 0 && remaining != undefined) {
       const progress = total - remaining;
       return this.stringUtils.moneyToNumber(this.stringUtils.toPercentageNumber(progress, total).slice(0, -1));
@@ -172,12 +172,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.deadline = this.contractService.deadline(this.iContract);
   }
 
-  itemTotalDays(item: ContractChecklistItem): number | undefined {
+  totalDays(item: ContractChecklistItem | ChecklistItemAction): number | undefined {
     if (item.range.end) return differenceInCalendarDays(item.range.end, item.range.start);
     return;
   }
 
-  itemRemainingDays(item: ContractChecklistItem): number | undefined {
+  remainingDays(item: ContractChecklistItem | ChecklistItemAction): number | undefined {
     if (item.range.end) {
       const today = new Date();
       if (isBefore(today, item.range.start)) {
@@ -193,6 +193,9 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   percentualItemProgress(item: ContractChecklistItem): number {
     if (item.actionList.length > 0) {
+      const today = new Date();
+      if (item.range.end && isAfter(today, item.range.end)) return 100;
+
       const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
       return this.stringUtils.moneyToNumber(
         this.stringUtils.toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1)
@@ -201,12 +204,30 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     return 0;
   }
 
+  hasItemFinished(item: ContractChecklistItem): boolean {
+    if (item.actionList.length > 0) {
+      const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
+      return completedActionsQtd == item.actionList.length;
+    }
+    return true;
+  }
+
+  percentualActionProgress(action: ChecklistItemAction): number {
+    const today = new Date();
+    if (isBefore(today, action.range.start)) return 0;
+    if (action.range.end && isAfter(today, action.range.end)) return 100;
+
+    return this.stringUtils.moneyToNumber(
+      this.stringUtils.toPercentageNumber(this.remainingDays(action), this.totalDays(action)).slice(0, -1)
+    );
+  }
+
   itemProgressStatus(item: ContractChecklistItem): string {
     const progress = this.percentualItemProgress(item);
     if (progress == 100) {
       return 'success';
     } else {
-      const remainingDays = this.itemRemainingDays(item);
+      const remainingDays = this.remainingDays(item);
       if (remainingDays != undefined) {
         if (remainingDays <= 2) {
           return 'danger';
@@ -293,13 +314,15 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         taskDependencies: [],
         start: item.range.start,
         end: item.range.end,
-        donePercentage: 100,
+        progressPercentage: this.percentualItemProgress(item),
         owner: this.utils.idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
         image: this.utils.idToProperty(
           item.assignee,
           this.userService.idToUser.bind(this.userService),
           'profilePicture'
         ),
+        isFinished: this.hasItemFinished(item) ? 1 : 0,
+        isAction: 0,
       } as TaskModel);
 
       item.actionList.forEach((action) => {
@@ -313,13 +336,15 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
           taskDependencies: [taskCount == 1 ? '' : groupCount.toString() + '1'],
           start: action.range.start,
           end: action.range.end,
-          donePercentage: action.isFinished ? 100 : 0,
+          progressPercentage: this.percentualActionProgress(action),
           owner: this.utils.idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
           image: this.utils.idToProperty(
             action.assignee,
             this.userService.idToUser.bind(this.userService),
             'profilePicture'
           ),
+          isFinished: action.isFinished ? 1 : 0,
+          isAction: 1,
         } as TaskModel);
       });
     });

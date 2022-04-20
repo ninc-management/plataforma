@@ -1,19 +1,14 @@
 // This code was initially made by https://github.com/mfandre
 
-export class DateManipulator {
-  static datediff(first: number, second: number) {
-    // Take the difference between the dates and divide by milliseconds per day.
-    // Round to nearest whole number to deal with DST.
-    return Math.round((second - first) / (1000 * 60 * 60 * 24));
-  }
+import { differenceInCalendarDays, isAfter } from 'date-fns';
 
-  static daysLeft(baseDate: number) {
-    //get days left based on today
-    const left = this.datediff(baseDate, new Date().getTime());
-    if (left < 0) {
-      return -left + ' dias restantes';
+export class DateManipulator {
+  static daysLeft(endDate: number): string {
+    const today = new Date();
+    if (isAfter(today, endDate)) {
+      return differenceInCalendarDays(today, endDate) + ' dias atrasado';
     } else {
-      return left + ' dias atrasado';
+      return differenceInCalendarDays(endDate, today) + ' dias restantes';
     }
   }
 }

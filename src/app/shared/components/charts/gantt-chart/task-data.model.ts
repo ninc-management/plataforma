@@ -8,11 +8,9 @@ export class TaskModel {
   start!: Date;
   end!: Date;
   owner!: string;
-
-  /**
-   * integer beween 0 and 100 (inclusive)
-   */
-  donePercentage!: number;
+  progressPercentage!: number;
+  isFinished!: number;
+  isAction!: number;
 
   /**
    * url to image
