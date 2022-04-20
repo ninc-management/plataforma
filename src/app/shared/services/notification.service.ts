@@ -57,6 +57,7 @@ export class NotificationService implements OnDestroy {
     users.forEach((to) => {
       if (this.utils.isOfType<User>(to, ['fullName', 'sectors', 'position'])) newNotification.to = to;
       else newNotification.to = to.user;
+      if (newNotification.to) newNotification.to = this.userService.idToUser(newNotification.to);
       notifications.push(cloneDeep(newNotification));
     });
 
