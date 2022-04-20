@@ -27,19 +27,20 @@ export class TaskDataManipulator {
       }
 
       const color = groupInfo.color;
-
       const index_attributes = [
         index,
         item.taskName,
         item.start,
         item.end,
         item.taskId,
-        item.donePercentage,
+        item.progressPercentage,
         item.owner,
         item.image,
         item.groupName,
         isToDrawGroup,
         color,
+        item.isFinished,
+        item.isAction,
       ];
 
       mappedData.push(index_attributes);
