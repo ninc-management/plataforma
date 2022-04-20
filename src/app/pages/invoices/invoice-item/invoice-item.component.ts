@@ -24,6 +24,7 @@ import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
 import { InvoiceConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
+import { NotificationBody, NotificationService } from 'app/shared/services/notification.service';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -124,6 +125,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private contractService: ContractService,
     private brMask: BrMaskDirective,
     private configService: ConfigService,
+    private notificationService: NotificationService,
     public stringUtil: StringUtilService,
     public utils: UtilsService,
     public userService: UserService,
@@ -310,7 +312,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.invoiceService.editInvoice(this.tempInvoice);
         if (this.oldStatus !== this.tempInvoice.status) {
-          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(this.tempInvoice);
+          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) {
+            this.notificationService.notifyMany(this.tempInvoice.team, {
+              title: 'Orçamento fechado!',
+              message:
+                'O orçamento ' +
+                this.tempInvoice.code +
+                ' que você faz parte foi fechado, confira os dados do contrato!',
+            } as NotificationBody);
+            this.contractService.saveContract(this.tempInvoice);
+          }
         }
         this.tempInvoice.contractorName = this.utils.idToProperty(
           this.tempInvoice.contractor,
