@@ -194,7 +194,7 @@ export class GanttRenderers {
           text: groupName,
           textVerticalAlign: 'bottom',
           textAlign: 'left',
-          textFill: '#000',
+          textFill: this._currentTheme.variables.fgText as string,
           fontFamily: this._currentTheme.variables.fontMain,
           fontWeight: 600,
         },
