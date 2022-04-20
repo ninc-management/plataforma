@@ -13,6 +13,8 @@ import { cloneDeep } from 'lodash';
 export class ConfigComponent implements OnInit {
   @Input() config: PlatformConfig = new PlatformConfig();
   newExpense: ExpenseType = new ExpenseType();
+  newRole: string = '';
+  newLevel: string = '';
 
   constructor(private configService: ConfigService, public utils: UtilsService) {}
 
@@ -30,6 +32,16 @@ export class ConfigComponent implements OnInit {
   addExpenseType(): void {
     this.config.expenseTypes.push(cloneDeep(this.newExpense));
     this.newExpense = new ExpenseType();
+  }
+
+  addLevel(): void {
+    this.config.profileConfig.levels.push(this.newLevel);
+    this.newLevel = '';
+  }
+
+  addRole(): void {
+    this.config.profileConfig.positions.push(this.newRole);
+    this.newRole = '';
   }
 
   updateConfig(): void {

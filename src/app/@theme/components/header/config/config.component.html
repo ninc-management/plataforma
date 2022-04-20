@@ -211,4 +211,205 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
+  <nb-tab tabId="profile-tab" [tabTitle]="utils.isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
+    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="toggle-list col-12 col-lg-auto">
+          <div class="form-control-group">
+            <table class="table-profile">
+              <tbody>
+                <tr>
+                  <td class="td-left">Enquadramentos</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.profileConfig.hasLevels"
+                      name="toggle-levels"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Lista de times</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.profileConfig.hasTeam"
+                      name="toggle-team"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Lista de setores</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.profileConfig.hasSector"
+                      name="toggle-sector"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Perfil de atuação</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.profileConfig.hasExpertiseBySector"
+                      name="toggle-performance-profile"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg">
+          <div class="row" style="margin-top: 8px">
+            <div class="col-auto">
+              <label class="label-divider">Lista de papéis</label>
+            </div>
+            <div class="col">
+              <hr />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-10">
+              <div class="form-control-group">
+                <label class="label" for="input-role-type">Tipo de papel:</label>
+                <input
+                  nbInput
+                  [(ngModel)]="newRole"
+                  #roleType="ngModel"
+                  id="input-role-type"
+                  name="roleType"
+                  placeholder="Nome do tipo de papel"
+                  fullWidth
+                  fieldSize="large"
+                  [status]="newRole ? 'success' : 'basic'"
+                  [attr.aria-invalid]="roleType.invalid && roleType.touched ? true : null"
+                />
+              </div>
+            </div>
+
+            <div class="col-2">
+              <button
+                nbButton
+                type="button"
+                fullWidth
+                status="primary"
+                size="large"
+                style="margin-top: 28px"
+                [disabled]="newRole?.length == 0"
+                (click)="addRole()"
+              >
+                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item
+              *ngFor="let position of config.profileConfig.positions; let i = index; trackBy: utils.trackByIndex"
+            >
+              <div class="row typeRow">
+                <div class="col-10">
+                  <input
+                    nbInput
+                    [(ngModel)]="config.profileConfig.positions[i]"
+                    id="input-role-type-{{ i }}"
+                    name="role-type-{{ i }}"
+                    placeholder="Nome do tipo de papel"
+                    fullWidth
+                    [status]="config.profileConfig.positions[i].length == 0 ? 'danger' : 'basic'"
+                  />
+                </div>
+                <div class="col-2">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="config.profileConfig.positions.splice(i, 1)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
+
+          <div class="row" style="margin-top: 8px">
+            <div class="col-auto">
+              <label class="label-divider">Lista de enquadramento</label>
+            </div>
+            <div class="col">
+              <hr />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-10">
+              <div class="form-control-group">
+                <label class="label" for="input-levels-type">Tipo de enquadramento:</label>
+                <input
+                  nbInput
+                  [(ngModel)]="newLevel"
+                  #levelType="ngModel"
+                  id="input-levels-type"
+                  name="levelsType"
+                  placeholder="Nome do tipo de enquadramento"
+                  fullWidth
+                  fieldSize="large"
+                  [status]="newLevel ? 'success' : 'basic'"
+                  [attr.aria-invalid]="levelType.invalid && levelType.touched ? true : null"
+                />
+              </div>
+            </div>
+
+            <div class="col-2">
+              <button
+                nbButton
+                type="button"
+                fullWidth
+                status="primary"
+                size="large"
+                style="margin-top: 28px"
+                [disabled]="newLevel?.length == 0"
+                (click)="addLevel()"
+              >
+                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+              </button>
+            </div>
+            <hr />
+          </div>
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item *ngFor="let level of config.profileConfig.levels; let i = index; trackBy: utils.trackByIndex">
+              <div class="row typeRow">
+                <div class="col-10">
+                  <input
+                    nbInput
+                    [(ngModel)]="config.profileConfig.levels[i]"
+                    id="input-level-type-{{ i }}"
+                    name="level-type-{{ i }}"
+                    placeholder="Nome do tipo de enquadramento"
+                    fullWidth
+                    [status]="config.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
+                  />
+                </div>
+                <div class="col-2">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="config.profileConfig.levels.splice(i, 1)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
+        </div>
+      </div>
+      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+    </form>
+  </nb-tab>
 </nb-tabset>
