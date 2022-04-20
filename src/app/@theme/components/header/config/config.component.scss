@@ -1,4 +1,6 @@
 @import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
   nb-list-item {
@@ -29,12 +31,40 @@
     }
   }
 
-  .table-invoice {
+  .table-invoice,
+  .table-profile {
     text-align: left;
     .td-left {
-      padding: 10px 20px 20px;
+      padding: 10px 20px 20px 0;
     }
   }
+}
+
+@include media-breakpoint-down(md) {
+  .toggle-list {
+    border: none !important;
+  }
+}
+
+.toggle-list {
+  height: auto;
+  border-right: var(--tabset-divider-width) var(--tabset-divider-style) var(--tabset-divider-color);
+  margin-bottom: 11px;
+}
+
+.label-divider {
+  color: nb-theme(text-hint-color);
+  font-family: nb-theme(text-label-font-family);
+  font-size: nb-theme(text-basic-font-size);
+  font-weight: nb-theme(text-label-font-weight);
+  line-height: nb-theme(text-label-line-height);
+}
+
+hr {
+  margin-top: nb-theme(text-label-line-height);
+  margin-bottom: 0;
+  border: 0;
+  border-top: 1px solid nb-theme(text-hint-color);
 }
 
 ::ng-deep {
