@@ -13,12 +13,14 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { Socket } from 'ngx-socket-io';
+import { UtilsService } from './utils.service';
 import { parseISO } from 'date-fns';
 
 describe('NotificationService', () => {
   let service: NotificationService;
   let userService: UserService;
   let httpMock: HttpTestingController;
+  let utilsService: UtilsService;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -40,7 +42,7 @@ describe('NotificationService', () => {
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
     userService = TestBed.inject(UserService);
-
+    utilsService = TestBed.inject(UtilsService);
     mockedUsers = [];
     mockedInvoices = [];
     mockedTeams = [];
@@ -135,7 +137,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(mockedUsers);
+            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
             service.notify(notification.to, notificationBody);
             socket.emit('dbchange', data);
             const req = httpMock.expectOne('/api/notify/');
@@ -178,7 +180,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(mockedUsers);
+            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
             service.notifyMany(mockedInvoices[0].team, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
@@ -251,7 +253,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(mockedUsers);
+            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
             service.notifyMany(mockedTeams[0].members, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
@@ -324,7 +326,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(mockedUsers);
+            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
             service.notifyMany(mockedUsers, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');

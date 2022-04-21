@@ -18,6 +18,7 @@ import {
   differenceInMinutes,
   differenceInSeconds,
   differenceInDays,
+  parseISO,
 } from 'date-fns';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -331,5 +332,12 @@ export class UtilsService {
     else if (hours !== 0) return hours === 1 ? `há ${hours} hora atrás` : `há ${hours} horas atrás`;
     else if (minutes !== 0) return minutes === 1 ? `há ${minutes} minuto atrás` : `há ${minutes} minutos atrás`;
     else return seconds === 1 ? `há ${seconds} segundo atrás` : `há ${seconds} segundos atrás`;
+  }
+
+  reviveDates<T>(users: T): T {
+    return JSON.parse(JSON.stringify(users), (k, v) => {
+      if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(k)) return parseISO(v);
+      return v;
+    }) as T;
   }
 }

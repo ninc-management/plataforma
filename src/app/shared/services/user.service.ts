@@ -146,8 +146,9 @@ export class UserService implements OnDestroy {
         .post('/api/user/all', {})
         .pipe(take(1))
         .subscribe((users: any) => {
+          const tmp = this.utils.reviveDates(users);
           this.users$.next(
-            (users as User[]).sort((a, b) => {
+            (tmp as User[]).sort((a, b) => {
               this.isLoaded = true;
               return this.utils.nameSort(1, a.fullName, b.fullName);
             })
