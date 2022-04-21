@@ -85,6 +85,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigService } from 'app/shared/services/config.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 
 const roles = Object.values(Permissions);
 
@@ -214,6 +215,7 @@ const PROVIDERS = [
   AngularFireStorage,
   AuthGuard,
   AuthService,
+  ConfigService,
   ContractorService,
   ContractService,
   FinancialService,
@@ -236,6 +238,7 @@ const PROVIDERS = [
   StorageService,
   StringUtilService,
   TeamService,
+  TransactionService,
   UserService,
   UtilsService,
   WebSocketService,

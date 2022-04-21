@@ -1,33 +1,19 @@
 import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Base } from './base';
 import { User } from './user';
-import { UploadedFile } from './shared';
+import { EditionHistoryItem, UploadedFile } from './shared';
 import { Contract } from './contract';
 import { Team } from './team';
 
-export class editionHistoryItem {
-  @prop({ required: true })
-  comment!: string;
-
-  @prop({ required: true })
-  date: Date = new Date();
-}
-
 export class Transaction extends Base<string> {
-  @prop({ required: true, enum: ['User', 'Contract', 'Team'] })
-  modelFrom!: string;
-
-  @prop({ required: true, enum: ['User', 'Contract', 'Team'] })
-  modelTo!: string;
+  @prop({ required: true, enum: ['User', 'Team'] })
+  modelCostCenter!: string;
 
   @prop({ required: true, ref: () => User })
   author!: Ref<User>;
 
-  @prop({ required: true, refPath: 'modelFrom' })
-  from!: Ref<User | Contract | Team>;
-
-  @prop({ required: true, refPath: 'modelTo' })
-  to!: Ref<User | Contract | Team>;
+  @prop({ required: true, refPath: 'modelCostCenter' })
+  costCenter!: Ref<User | Team>;
 
   @prop({ required: true })
   description!: string;
@@ -65,14 +51,14 @@ export class Transaction extends Base<string> {
   @prop()
   paidDate?: Date;
 
-  @prop()
-  Contract?: Date;
+  @prop({ ref: () => Contract })
+  contract?: Ref<Contract>;
 
   @prop({ type: () => [UploadedFile] })
   uploadedFiles: UploadedFile[] = [];
 
-  @prop({ type: () => [editionHistoryItem] })
-  editionHistory: editionHistoryItem[] = [];
+  @prop({ type: () => [EditionHistoryItem] })
+  editionHistory: EditionHistoryItem[] = [];
 }
 
 export default getModelForClass(Transaction);
