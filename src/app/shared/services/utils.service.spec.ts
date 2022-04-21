@@ -410,4 +410,28 @@ describe('UtilsService', () => {
       'há 2 segundos atrás'
     );
   });
+
+  it('reviveDates should work', () => {
+    // keys in revival keys list
+    const test1 = {
+      created: new Date(),
+    };
+    // keys not in revival keys list that aren't Date type
+    const test2 = {
+      created: new Date(),
+      sent: 1,
+    };
+    // keys not in revival keys list that are Date type
+    const test3 = {
+      created: new Date(),
+      sent: new Date(),
+    };
+
+    expect(service.reviveDates(JSON.parse(JSON.stringify(test1)))).toEqual(test1);
+    expect(service.reviveDates(test1)).toEqual(test1);
+    expect(service.reviveDates(JSON.parse(JSON.stringify(test2)))).toEqual(test2);
+    expect(service.reviveDates(test2)).toEqual(test2);
+    expect(service.reviveDates(JSON.parse(JSON.stringify(test3)))).not.toEqual(test3);
+    expect(service.reviveDates(test3)).not.toEqual(test3);
+  });
 });

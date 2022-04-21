@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user = new User();
   logoIcon = 'logo';
   config: PlatformConfig = new PlatformConfig();
-  totalNotifications = this.user.notifications.length.toString();
+  totalNotifications = '';
 
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
@@ -66,6 +66,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, config]) => {
         this.user = currentUser;
+        this.totalNotifications = currentUser.notifications.length.toString();
         this.changeTheme();
         if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];

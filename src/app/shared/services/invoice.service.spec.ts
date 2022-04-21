@@ -13,6 +13,7 @@ import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
 import { CONTRACT_BALANCE } from './user.service';
+import { UtilsService } from './utils.service';
 import MockedServerSocket from 'socket.io-mock';
 
 describe('InvoiceService', () => {
@@ -20,6 +21,7 @@ describe('InvoiceService', () => {
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
+  let utilsService: UtilsService;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -75,6 +77,7 @@ describe('InvoiceService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
     httpMock = TestBed.inject(HttpTestingController);
+    utilsService = TestBed.inject(UtilsService);
     mockedUsers = [];
     mockedInvoices = [];
     const tmpUser = new User();
@@ -341,7 +344,7 @@ describe('InvoiceService', () => {
   });
 
   baseTest('teamMembers should work', (expectedInvoices: Invoice[]) => {
-    expect(service.teamMembers(mockedInvoices[0])).toEqual(mockedUsers.splice(1, 1));
-    expect(service.teamMembers(mockedInvoices[1])).toEqual(mockedUsers.splice(0, 1));
+    expect(service.teamMembers(mockedInvoices[0])).toEqual(utilsService.reviveDates(mockedUsers.splice(1, 1)));
+    expect(service.teamMembers(mockedInvoices[1])).toEqual(utilsService.reviveDates(mockedUsers.splice(0, 1)));
   });
 });
