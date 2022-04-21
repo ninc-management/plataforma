@@ -166,7 +166,7 @@ describe('CourseService', () => {
             service.saveCourse(tmpCourse);
             const req1 = httpMock.expectOne('/api/course/');
             expect(req1.request.method).toBe('POST');
-            req1.flush({ course: tmpCourse });
+            req1.flush(null);
             socket.emit('dbchange', data);
             break;
           }
