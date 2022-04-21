@@ -343,72 +343,52 @@ export class PdfService {
     });
 
     // Header
+    const header = {
+      columns: [
+        {
+          svg: this.teamImageSVG,
+          width: 200,
+        },
+      ] as any,
+      margin: [5, 20, 5, 5],
+    };
+
     if (this.config.hasHeader) {
-      pdf.add({
-        columns: [
-          {
-            svg: this.teamImageSVG,
-            width: 200,
-          },
-          [
-            {
-              text: 'proposta de orçamento\n',
-              fontSize: 14,
-              alignment: 'right',
-              color: '#052E41',
-              bold: true,
-              margin: [0, 5, 0, 0],
-            },
-            {
-              text:
-                (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
-                '\n' +
-                (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
-              fontSize: 12,
-              alignment: 'right',
-              color: '#052E41',
-            },
-          ],
-        ],
-        margin: [5, 20, 5, 5],
-      });
-      pdf.add({
-        canvas: [
-          {
-            type: 'line',
-            x1: 0,
-            y1: 5,
-            x2: 595 - 2 * 30,
-            y2: 5,
-            lineWidth: 1,
-            color: '#79BA9E',
-          },
-        ],
-      });
-    } else {
-      pdf.add({
-        columns: [
-          {
-            svg: this.teamImageSVG,
-            width: 200,
-          },
-        ],
-        margin: [5, 20, 5, 5],
-      });
-      pdf.add({
-        canvas: [
-          {
-            type: 'line',
-            x1: 0,
-            y1: 5,
-            x2: 595 - 2 * 30,
-            y2: 5,
-            lineWidth: 1,
-            color: '#79BA9E',
-          },
-        ],
-      });
+      header.columns.push([
+        {
+          text: 'proposta de orçamento\n',
+          fontSize: 14,
+          alignment: 'right',
+          color: '#052E41',
+          bold: true,
+          margin: [0, 5, 0, 0],
+        },
+        {
+          text:
+            (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
+            '\n' +
+            (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
+          fontSize: 12,
+          alignment: 'right',
+          color: '#052E41',
+        },
+      ]);
     }
+
+    pdf.add(header);
+    pdf.add({
+      canvas: [
+        {
+          type: 'line',
+          x1: 0,
+          y1: 5,
+          x2: 595 - 2 * 30,
+          y2: 5,
+          lineWidth: 1,
+          color: '#79BA9E',
+        },
+      ],
+    });
 
     // Body - Greetings
     pdf.add(pdf.ln(1));
