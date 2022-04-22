@@ -15,6 +15,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
+import { UtilsService } from 'app/shared/services/utils.service';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
 import { GanttRenderers } from './gantt-renderers';
@@ -88,7 +89,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   private zebraData!: any[];
   private todayData!: any[];
 
-  constructor(private theme: NbThemeService) {}
+  constructor(private theme: NbThemeService, private utils: UtilsService) {}
 
   getTitleOption(): any {
     if (this.chartTitle === '') return {};
@@ -163,6 +164,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
 
   getToolboxOption(): any {
     return {
+      left: 0,
       feature: {
         dataZoom: {
           yAxisIndex: 'none',
@@ -361,13 +363,13 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     return [
       {
         type: 'slider',
-        xAxisIndex: 0,
-        filterMode: 'weakFilter',
-        height: 30,
-        bottom: 0,
+        rangeMode: 'value',
+        top: 3,
         start: 0,
         end: 100,
-        showDetail: false,
+        labelFormatter: (value: Date): string => {
+          return this.utils.formatDate(value);
+        },
       },
       {
         type: 'inside',
