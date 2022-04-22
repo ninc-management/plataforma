@@ -365,6 +365,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         type: 'slider',
         rangeMode: 'value',
         top: 3,
+        right: 22,
         start: 0,
         end: 100,
         labelFormatter: (value: Date): string => {
