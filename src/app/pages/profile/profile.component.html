@@ -142,30 +142,23 @@
 
                 <div class="col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-emailn">Email nortan:</label>
+                    <label class="label" for="input-corporate-email">Email corporativo:</label>
                     <input
                       nbInput
-                      [(ngModel)]="user.emailNortan"
-                      #emailNortan="ngModel"
-                      id="input-emailn"
-                      name="emailNortan"
-                      pattern=".+@nortanprojetos.com+"
-                      placeholder="Endereço de emailNortan"
+                      email
+                      [(ngModel)]="user.corporateEmail"
+                      #corporateEmail="ngModel"
+                      id="input-corporate-email"
+                      name="corporateEmail"
+                      placeholder="Endereço de email profissional"
                       fullWidth
                       fieldSize="large"
-                      [status]="emailNortan.dirty ? (emailNortan.invalid ? 'danger' : 'success') : 'basic'"
-                      [required]="validation.emailNortan.required"
-                      [attr.aria-invalid]="emailNortan.invalid && emailNortan.touched ? true : null"
+                      [status]="corporateEmail.dirty ? (corporateEmail.invalid ? 'danger' : 'success') : 'basic'"
+                      [required]="false"
+                      [attr.aria-invalid]="corporateEmail.invalid && corporateEmail.touched ? true : null"
                       [disabled]="!isEditing"
                     />
-                    <ng-container *ngIf="emailNortan.invalid && emailNortan.touched">
-                      <p class="caption status-danger" *ngIf="emailNortan.errors?.required">
-                        O email Nortan é obrigatório!
-                      </p>
-                      <p class="caption status-danger" *ngIf="emailNortan.errors?.pattern">
-                        Digite um email Nortan válido! (@nortanprojetos.com)
-                      </p>
-                    </ng-container>
+                    <p class="caption status-danger" *ngIf="corporateEmail.errors?.email">Digite um email válido!</p>
                   </div>
                 </div>
               </div>
@@ -332,7 +325,7 @@
                   </div>
                 </div>
                 <div class="col-12 col-md-6">
-                  <div class="form-control-group">
+                  <div class="form-control-group" *ngIf="config.hasLevels">
                     <label class="label" for="input-level">
                       Enquadramento:
                       <nb-icon
@@ -428,7 +421,7 @@
                 </nb-list>
               </div>
 
-              <div class="row">
+              <div class="row" *ngIf="config.hasTeam">
                 <div class="col">
                   <div class="form-control-group" style="margin: 0px">
                     <label class="label" for="input-user">Membro dos times:</label>
@@ -454,7 +447,7 @@
                 </nb-list>
               </div>
 
-              <div class="form-control-group">
+              <div class="form-control-group" *ngIf="config.hasSector">
                 <label class="label" for="input-interests">Setores atuantes:</label>
                 <div class="row">
                   <div class="col-md-4">
@@ -511,7 +504,7 @@
                 </div>
               </div>
 
-              <div class="form-control-group">
+              <div class="form-control-group" *ngIf="config.hasExpertiseBySector">
                 <label class="label" for="input-expertise">Perfis de atuação por setor:</label>
                 <nb-tabset fullWidth #expertiseTabs>
                   <nb-tab

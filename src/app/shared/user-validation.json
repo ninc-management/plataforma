@@ -58,7 +58,7 @@
   "email": {
     "required": true
   },
-  "emailNortan": {
+  "corporateEmail": {
     "required": true
   },
   "position": {

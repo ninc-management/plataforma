@@ -130,8 +130,8 @@ export class UsersComponent implements OnInit, OnDestroy {
         title: 'Associado',
         type: 'string',
       },
-      emailNortan: {
-        title: 'Email Nortan',
+      corporateEmail: {
+        title: 'Email corporativo',
         type: 'string',
       },
       phone: {
