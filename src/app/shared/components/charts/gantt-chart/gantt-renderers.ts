@@ -38,7 +38,6 @@ export class GanttRenderers {
 
     const taskNameWidth = echarts.format.getTextRect(taskName).width;
     const text = barLength > taskNameWidth + 40 && x + barLength >= 180 ? taskName : '';
-
     const rectNormal = this.clipRectByRect(params, {
       x: x,
       y: y,
@@ -347,27 +346,21 @@ export class GanttRenderers {
     const today = api.coord([api.value(0), 0]);
     const barHeight = api.size([0, 1])[1];
     const x = today[0];
-    const y = barHeight;
-    const y_end = barHeight * 1000;
+    const y = barHeight - 4;
+    const y_end = barHeight * (this._mappedData.length + 1) - 4;
 
     return {
-      type: 'group',
-      silent: true,
-      children: [
-        {
-          type: 'line',
-          shape: {
-            x1: x,
-            y1: y,
-            x2: x,
-            y2: y_end,
-          },
-          style: api.style({
-            fill: this._currentTheme.variables.fgText,
-            stroke: this._currentTheme.variables.fgText,
-          }),
-        },
-      ],
+      type: 'line',
+      shape: {
+        x1: x,
+        y1: y,
+        x2: x,
+        y2: y_end,
+      },
+      style: api.style({
+        fill: this._currentTheme.variables.fgText,
+        stroke: this._currentTheme.variables.fgText,
+      }),
     };
   }
 

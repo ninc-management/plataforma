@@ -14,7 +14,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
-import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns';
+import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
@@ -214,7 +214,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   percentualActionProgress(action: ChecklistItemAction): number {
     const today = new Date();
-    if (isBefore(today, action.range.start)) return 0;
+    if (isBefore(today, action.range.start) || isSameDay(today, action.range.start)) return 0;
     if (action.range.end && isAfter(today, action.range.end)) return 100;
 
     return this.stringUtils.moneyToNumber(
