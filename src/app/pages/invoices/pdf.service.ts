@@ -1318,7 +1318,7 @@ export class PdfService {
       stack: [
         { text: 'Mais informações:', bold: true, color: '#79BA9E' },
         {
-          text: author.emailNortan + ' • ' + author.phone,
+          text: author.corporateEmail + ' • ' + author.phone,
           fontSize: 10,
           bold: true,
         },

@@ -24,6 +24,8 @@ import { User } from '@models/user';
 import { Sector } from '@models/shared';
 import user_validation from 'app/shared/user-validation.json';
 import { Team } from '@models/team';
+import { ProfileConfig } from '@models/platformConfig';
+import { ConfigService } from 'app/shared/services/config.service';
 
 @Component({
   selector: 'ngx-profile',
@@ -42,6 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   private destroy$ = new Subject<void>();
   isCurrentUser = false;
   user = new User();
+  config = new ProfileConfig();
   cities: string[] = [];
   states: string[] = [];
   groupedSectors: Sector[][] = [];
@@ -97,6 +100,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     private statecityService: StatecityService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
+    private configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService,
     public accessChecker: NbAccessChecker,
@@ -104,6 +108,12 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   ) {}
 
   ngOnInit(): void {
+    this.configService
+      .getConfig()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((configs) => {
+        if (configs[0]) this.config = configs[0].profileConfig;
+      });
     this.teamService
       .getTeams()
       .pipe(
@@ -368,6 +378,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     );
     this.POSITIONS.push('Elo Principal Nortan');
     this.POSITIONS.push('Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I');
+    this.POSITIONS.push(...this.config.positions);
   }
 
   buildLevelList(): void {
@@ -377,6 +388,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     this.LEVELS.push('Associad' + this.user.article + ' Equipe');
     this.LEVELS.push('Associad' + this.user.article + ' Líder');
     this.LEVELS.push('Associad' + this.user.article + ' Gestor');
+    this.LEVELS.push(...this.config.levels);
   }
 
   changeTheme(): void {
