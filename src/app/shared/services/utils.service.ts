@@ -334,10 +334,10 @@ export class UtilsService {
     else return seconds === 1 ? `há ${seconds} segundo atrás` : `há ${seconds} segundos atrás`;
   }
 
-  reviveDates<T>(users: T): T {
-    return JSON.parse(JSON.stringify(users), (k, v) => {
-      if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(k)) return parseISO(v);
-      return v;
+  reviveDates<T>(Obj: T): T {
+    return JSON.parse(JSON.stringify(Obj), (key, value) => {
+      if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(key)) return parseISO(value);
+      return value;
     }) as T;
   }
 }

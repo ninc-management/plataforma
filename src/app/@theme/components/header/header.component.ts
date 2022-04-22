@@ -66,10 +66,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, config]) => {
         this.user = currentUser;
-        this.totalNotifications = currentUser.notifications.length.toString();
         this.changeTheme();
         if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];
+      });
+
+    this.userService
+      .getUsers()
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((users) => users.length > 0)
+      )
+      .subscribe((users) => {
+        const matchedUser = users.filter((currentUser) => currentUser._id == this.user._id);
+        if (matchedUser.length > 0) this.totalNotifications = matchedUser[0].notifications.length.toString();
       });
 
     this.accessChecker
