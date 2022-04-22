@@ -57,6 +57,7 @@ import { ManagementTabComponent } from './contracts/contract-item/management-tab
 import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist-item-dialog/checklist-item-dialog.component';
 import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.component';
 import { BalanceTabComponent } from './contracts/contract-item/balance-tab/balance-tab.component';
+import { ReceiptTabComponent } from './contracts/contract-item/receipt-tab/receipt-tab.component';
 
 @NgModule({
   imports: [
@@ -119,6 +120,7 @@ import { BalanceTabComponent } from './contracts/contract-item/balance-tab/balan
     ChecklistItemDialogComponent,
     DataTabComponent,
     BalanceTabComponent,
+    ReceiptTabComponent,
   ],
 })
 export class PagesModule {}

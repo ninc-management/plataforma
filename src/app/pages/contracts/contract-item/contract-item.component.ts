@@ -27,6 +27,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   contract: Contract = new Contract();
   invoice: Invoice = new Invoice();
   types = COMPONENT_TYPES;
+  responseEvent = new Subject<void>();
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
   options = {
     liquid: '0,00',
@@ -267,9 +268,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     index = index != undefined ? index : undefined;
     let title = '';
     switch (componentType) {
-      case COMPONENT_TYPES.RECEIPT:
-        title = index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
-        break;
       case COMPONENT_TYPES.PAYMENT:
         title = index != undefined ? 'ORDEM DE PAGAMENTO' : 'ADICIONAR ORDEM DE PAGAMENTO';
         break;
@@ -287,7 +285,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
           title: title,
           contract: this.contract,
           paymentIndex: componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
-          receiptIndex: componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
           expenseIndex: componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
           componentType: componentType,
         },
@@ -315,9 +312,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     this.isDialogBlocked.next(true);
     let item = '';
     switch (componentType) {
-      case COMPONENT_TYPES.RECEIPT:
-        item = 'a ordem de empenho #' + (index + 1).toString() + '?';
-        break;
       case COMPONENT_TYPES.PAYMENT:
         item = 'a ordem de pagamento #' + (index + 1).toString() + '?';
         break;
@@ -342,9 +336,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         if (response) {
           switch (componentType) {
-            case COMPONENT_TYPES.RECEIPT:
-              this.contract.receipts.splice(index, 1);
-              break;
             case COMPONENT_TYPES.PAYMENT:
               this.contract.payments.splice(index, 1);
               break;
@@ -470,5 +461,9 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   expenseIndex(code: 'string'): number {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
+  }
+
+  sendResponseEmmiter() {
+    this.responseEvent.next();
   }
 }

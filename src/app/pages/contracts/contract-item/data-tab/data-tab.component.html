@@ -720,6 +720,8 @@
         </div>
       </div>
     </div>
-    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">Atualizar</button>
+    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty || isNotEdited()">
+      Atualizar
+    </button>
   </fieldset>
 </form>

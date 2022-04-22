@@ -6,6 +6,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { Subject, takeUntil } from 'rxjs';
 
 interface ExpenseSourceSum {
   user: string;
@@ -19,9 +20,13 @@ interface ExpenseSourceSum {
 })
 export class BalanceTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
+  @Input() responseEvent = new Subject<void>();
+  private destroy$ = new Subject<void>();
+
   comissionSum = '';
   contractId!: string;
   invoice: Invoice = new Invoice();
+  teamMember: any = {};
 
   options = {
     liquid: '0,00',
@@ -30,6 +35,12 @@ export class BalanceTabComponent implements OnInit {
     interest: 0,
     notaFiscal: '0',
     nortanPercentage: '0',
+  };
+
+  teamTotal = {
+    grossValue: '0,00',
+    netValue: '0,00',
+    distribution: '0,00',
   };
 
   contractorIcon = {
@@ -50,7 +61,16 @@ export class BalanceTabComponent implements OnInit {
     public userService: UserService
   ) {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
+    this.responseEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.calculatePaidValue();
+      this.calculateBalance();
+    });
     this.contractId = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
@@ -85,5 +105,83 @@ export class BalanceTabComponent implements OnInit {
     result.push({ user: 'TOTAL', value: total });
     result.push(contractor);
     return result;
+  }
+
+  updateTeamTotal(): void {
+    this.teamTotal = this.invoice.team.reduce(
+      (sum, member) => {
+        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.grossValue);
+        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.netValue);
+        sum.distribution = this.stringUtil.sumMoney(sum.distribution, member.distribution);
+        return sum;
+      },
+      {
+        grossValue: '0,00',
+        netValue: '0,00',
+        distribution: '0,00',
+      }
+    );
+  }
+
+  updateLiquid(): void {
+    this.contract.liquid = this.contractService.toNetValue(
+      this.contractService.subtractComissions(
+        this.stringUtil.removePercentage(this.contract.value, this.contract.ISS),
+        this.contract
+      ),
+      this.options.notaFiscal,
+      this.options.nortanPercentage,
+      this.contract.created
+    );
+    this.contract.cashback = this.stringUtil.numberToMoney(
+      this.contractService.expensesContributions(this.contract).global.cashback
+    );
+    if (this.contract.invoice != undefined) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      invoice.team.map((member, index) => {
+        member.netValue = this.stringUtil.applyPercentage(this.contract.liquid, member.distribution);
+        this.updateGrossValue(index);
+        this.updateTeamTotal();
+      });
+    }
+  }
+
+  updateGrossValue(idx?: number): void {
+    if (idx != undefined) {
+      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
+        this.invoice.team[idx].netValue,
+        this.options.notaFiscal,
+        this.options.nortanPercentage
+      );
+      this.updateTeamTotal();
+    } else {
+      this.teamMember.grossValue = this.contractService.toGrossValue(
+        this.teamMember.netValue,
+        this.options.notaFiscal,
+        this.options.nortanPercentage
+      );
+    }
+  }
+
+  calculatePaidValue(): void {
+    this.options.interest = this.contract.receipts.length;
+    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
+    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    this.updateLiquid();
+    this.options.paid = this.contractService.paidValue(this.contract);
+    this.contract.notPaid = this.stringUtil.numberToMoney(
+      this.stringUtil.moneyToNumber(
+        this.contractService.toNetValue(
+          this.contract.value,
+          this.options.notaFiscal,
+          this.options.nortanPercentage,
+          this.contract.created
+        )
+      ) - this.stringUtil.moneyToNumber(this.options.paid)
+    );
+  }
+
+  calculateBalance(): void {
+    this.contract.balance = this.contractService.balance(this.contract);
   }
 }
