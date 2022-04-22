@@ -331,6 +331,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.iInvoice = cloneDeep(this.tempInvoice);
       }
+      this.invoiceService.editInvoice(this.tempInvoice);
+      if (this.oldStatus !== this.tempInvoice.status) {
+        if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) this.contractService.saveContract(this.tempInvoice);
+      }
+      this.tempInvoice.contractorName = this.utils.idToProperty(
+        this.tempInvoice.contractor,
+        this.contractorService.idToContractor.bind(this.contractorService),
+        'fullName'
+      );
+
+      this.iInvoice = cloneDeep(this.tempInvoice);
     } else {
       this.tempInvoice.lastUpdate = new Date();
       this.tempInvoice.statusHistory.push({
