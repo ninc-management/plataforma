@@ -68,7 +68,7 @@ export class User extends Base<string> {
   public email!: string;
 
   @prop()
-  public corporateEmail: string = 'trocar@corporativo.com.br';
+  public professionalEmail: string = 'trocar@profissional.com.br';
 
   @prop({ required: true })
   public phone!: string;

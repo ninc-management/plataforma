@@ -1318,7 +1318,7 @@ export class PdfService {
       stack: [
         { text: 'Mais informações:', bold: true, color: '#79BA9E' },
         {
-          text: author.corporateEmail + ' • ' + author.phone,
+          text: author.professionalEmail + ' • ' + author.phone,
           fontSize: 10,
           bold: true,
         },
