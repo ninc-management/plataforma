@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { NbDialogService, NbTabComponent } from '@nebular/theme';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, skipWhile, take, takeWhile } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NbDialogService, NbTabComponent, NbThemeService } from '@nebular/theme';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -17,6 +17,7 @@ import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dial
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Team } from '@models/team';
 import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { User } from '@models/user';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -39,7 +40,8 @@ enum DIALOG_TYPES {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
+  private destroy$: Subject<void> = new Subject<void>();
   tabTitles = TAB_TITLES;
   dialogTypes = DIALOG_TYPES;
   activeTab = TAB_TITLES.PESSOAL;
@@ -62,12 +64,14 @@ export class DashboardComponent {
   teams: Team[] = [];
   nortanTeam!: Team;
   currentTeam = new Team();
+  user: User = new User();
 
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
+    private themeService: NbThemeService,
     private teamService: TeamService,
     public utils: UtilsService
   ) {
@@ -99,6 +103,7 @@ export class DashboardComponent {
       .nortanValue(this.start, this.end, 'taxes')
       .pipe(map((metricInfo) => metricInfo.global));
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.user = user;
       this.teamService
         .getTeams()
         .pipe(
@@ -158,6 +163,16 @@ export class DashboardComponent {
         })
       );
     });
+  }
+
+  ngOnInit(): void {
+    this.changeTheme();
+    this.themeService
+      .onThemeChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((theme) => {
+        this.nortanIcon.icon = ['default', 'corporate'].includes(theme.name) ? 'logo' : 'logoNoFill';
+      });
   }
 
   openDialog(dType: DIALOG_TYPES): void {
@@ -281,6 +296,10 @@ export class DashboardComponent {
     }
   }
 
+  changeTheme(): void {
+    this.themeService.changeTheme(this.user.theme == undefined ? 'default' : this.user.theme);
+  }
+
   setActiveTab(event: NbTabComponent): void {
     switch (event.tabTitle.toLowerCase()) {
       case TAB_TITLES.PESSOAL.toLowerCase(): {
@@ -299,5 +318,10 @@ export class DashboardComponent {
         break;
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
