@@ -58,9 +58,6 @@
   "email": {
     "required": true
   },
-  "professionalEmail": {
-    "required": true
-  },
   "position": {
     "required": true
   },
