@@ -154,7 +154,6 @@
                       fullWidth
                       fieldSize="large"
                       [status]="professionalEmail.dirty ? (professionalEmail.invalid ? 'danger' : 'success') : 'basic'"
-                      [required]="false"
                       [attr.aria-invalid]="professionalEmail.invalid && professionalEmail.touched ? true : null"
                       [disabled]="!isEditing"
                     />
