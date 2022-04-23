@@ -58,7 +58,7 @@
   "email": {
     "required": true
   },
-  "corporateEmail": {
+  "professionalEmail": {
     "required": true
   },
   "position": {

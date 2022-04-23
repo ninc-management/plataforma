@@ -142,23 +142,23 @@
 
                 <div class="col-md-6">
                   <div class="form-control-group">
-                    <label class="label" for="input-corporate-email">Email corporativo:</label>
+                    <label class="label" for="input-professional-email">Email profissional:</label>
                     <input
                       nbInput
                       email
-                      [(ngModel)]="user.corporateEmail"
-                      #corporateEmail="ngModel"
+                      [(ngModel)]="user.professionalEmail"
+                      #professionalEmail="ngModel"
                       id="input-corporate-email"
-                      name="corporateEmail"
+                      name="professionalEmail"
                       placeholder="Endereço de email profissional"
                       fullWidth
                       fieldSize="large"
-                      [status]="corporateEmail.dirty ? (corporateEmail.invalid ? 'danger' : 'success') : 'basic'"
+                      [status]="professionalEmail.dirty ? (professionalEmail.invalid ? 'danger' : 'success') : 'basic'"
                       [required]="false"
-                      [attr.aria-invalid]="corporateEmail.invalid && corporateEmail.touched ? true : null"
+                      [attr.aria-invalid]="professionalEmail.invalid && professionalEmail.touched ? true : null"
                       [disabled]="!isEditing"
                     />
-                    <p class="caption status-danger" *ngIf="corporateEmail.errors?.email">Digite um email válido!</p>
+                    <p class="caption status-danger" *ngIf="professionalEmail.errors?.email">Digite um email válido!</p>
                   </div>
                 </div>
               </div>
