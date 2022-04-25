@@ -334,8 +334,8 @@ export class UtilsService {
     else return seconds === 1 ? `há ${seconds} segundo atrás` : `há ${seconds} segundos atrás`;
   }
 
-  reviveDates<T>(Obj: T): T {
-    return JSON.parse(JSON.stringify(Obj), (key, value) => {
+  reviveDates<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj), (key, value) => {
       if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(key)) return parseISO(value);
       return value;
     }) as T;
