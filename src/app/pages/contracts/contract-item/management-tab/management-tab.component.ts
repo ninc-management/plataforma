@@ -94,6 +94,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
         if (this.iContract.invoice)
           this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
+        this.actionsData = this.transformActionsData();
       });
       this.messageService
         .getMessages()
