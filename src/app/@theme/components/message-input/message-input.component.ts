@@ -111,7 +111,7 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   }
 
   handleKeyDown(event: KeyboardEvent) {
-    if (this.shouldActivateMentionMode(event)) this.mentionMode = true;
+    if (this.shouldActivateMentionMode(event)) this.activateMentionMode();
     else if (this.shouldDeactivateMentionMode(event)) this.deactivateMentionMode();
     if (this.mentionMode && event.key != '@') this.handleMentioning(event);
   }
@@ -128,6 +128,11 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
     this.mentionMode = false;
     this.searchStr = '';
     this.searchChange$.next();
+  }
+
+  private activateMentionMode(): void {
+    this.searchChange$.next();
+    this.mentionMode = true;
   }
 
   private handleMentioning(event: KeyboardEvent): void {
