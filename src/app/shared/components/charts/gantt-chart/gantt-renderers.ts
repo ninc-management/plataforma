@@ -12,6 +12,7 @@ export class GanttRenderers {
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
   private _currentTheme: ChartTheme;
+  private lastZebraY: number = 0;
 
   constructor(taskData: TaskModel[], mappedData: any[], heightRatio: number, currentTheme: ChartTheme) {
     this._taskData = taskData;
@@ -317,7 +318,8 @@ export class GanttRenderers {
     const x = timeStart[0] > timeToday[0] ? timeToday[0] : timeStart[0];
     const y = timeStart[1] - barHeight;
 
-    //console.log("=======>",x, y)
+    //if it is the last zebra
+    if (index == 0) this.lastZebraY = y;
 
     const rectNormal = this.clipRectByRect(params, {
       x: x,
@@ -346,14 +348,14 @@ export class GanttRenderers {
     const today = api.coord([api.value(0), 0]);
     const barHeight = api.size([0, 1])[1];
     const x = today[0];
-    const y = barHeight - 4;
-    const y_end = barHeight * (this._mappedData.length + 1) - 4;
+    const LINE_START_OFFSET = 70;
+    const y_end = this.lastZebraY + barHeight;
 
     return {
       type: 'line',
       shape: {
         x1: x,
-        y1: y,
+        y1: LINE_START_OFFSET,
         x2: x,
         y2: y_end,
       },
