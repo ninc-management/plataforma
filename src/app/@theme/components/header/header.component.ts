@@ -77,7 +77,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         filter((users) => users.length > 0)
       )
       .subscribe((users) => {
-        const matchedUser = users.find((currentUser) => currentUser._id == this.user._id);
+        const matchedUser = users.find((currentUser) => this.userService.isEqual(currentUser._id, this.user._id));
         if (matchedUser) this.user = matchedUser;
       });
 
