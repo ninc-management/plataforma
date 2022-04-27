@@ -15,6 +15,7 @@ module.exports = {
         ONEDRIVE_ADM_ID: JSON.stringify(process.env.ONEDRIVE_ADM_ID),
         DEMO: JSON.stringify(process.env.DEMO),
         API_TOKEN: JSON.stringify(process.env.API_TOKEN),
+        GITPOD_WORKSPACE_URL: JSON.stringify(process.env.GITPOD_WORKSPACE_URL),
       },
     }),
     new webpack.NormalModuleReplacementPlugin(/type-graphql$|@typegoose\/typegoose$/, (resource) => {
