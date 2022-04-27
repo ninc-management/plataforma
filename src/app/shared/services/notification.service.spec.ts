@@ -379,4 +379,81 @@ describe('NotificationService', () => {
         }
       });
   });
+
+  fit('checkNotification should work', (done: DoneFn) => {
+    const notificationBody = {
+      title: 'Title',
+      tag: 'T',
+      message: 'Message',
+    };
+
+    socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
+
+    let i = 1;
+    let req: TestRequest;
+
+    userService
+      .getUsers()
+      .pipe(take(3))
+      .subscribe((users) => {
+        switch (i) {
+          case 1: {
+            i += 1;
+            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+            service.notifyMany(mockedUsers, notificationBody);
+            req = httpMock.expectOne('/api/notify/many');
+            expect(req.request.method).toBe('POST');
+            req.flush(null);
+            socket.emit('dbchange', {
+              ns: {
+                coll: 'users',
+              },
+              operationType: 'update',
+              documentKey: {
+                _id: '0',
+              },
+              updateDescription: {
+                updatedFields: { 'notifications.1': req.request.body.notifications[0] },
+                removedFields: [] as any[],
+              },
+            });
+            break;
+          }
+          case 2: {
+            i += 1;
+            const expectedNotifications = JSON.parse(JSON.stringify(req.request.body.notifications), (k, v) => {
+              if (['created'].includes(k)) return parseISO(v);
+              return v;
+            }) as UserNotification[];
+            expect(users[0].notifications[0]).toEqual(expectedNotifications[0]);
+            service.checkNotification(expectedNotifications[0]);
+            req = httpMock.expectOne('/api/notify/read');
+            expect(req.request.method).toBe('POST');
+            req.flush(null);
+            socket.emit('dbchange', {
+              ns: {
+                coll: 'users',
+              },
+              operationType: 'update',
+              documentKey: {
+                _id: '0',
+              },
+              updateDescription: {
+                updatedFields: { notifications: [] },
+                removedFields: [] as any[],
+              },
+            });
+            break;
+          }
+          case 3: {
+            expect(users[0].notifications.length).toBe(0);
+            done();
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+  });
 });

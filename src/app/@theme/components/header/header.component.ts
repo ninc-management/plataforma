@@ -12,8 +12,11 @@ import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { environment } from 'app/../environments/environment';
-import { User } from '@models/user';
-import { ConfigDialogComponent } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
+import { User, UserNotification } from '@models/user';
+import {
+  COMPONENT_TYPES,
+  ConfigDialogComponent,
+} from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
 import { NbAccessChecker } from '@nebular/security';
 import { Permissions } from 'app/shared/services/utils.service';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -113,6 +116,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (event.item.tag == 'config') {
           this.dialogService.open(ConfigDialogComponent, {
             context: {
+              title: 'CONFIGURAÇÕES DA PLATAFORMA',
               config: this.config,
             },
             dialogClass: 'my-dialog',
@@ -154,5 +158,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
   navigateHome(): boolean {
     this.menuService.navigateHome();
     return false;
+  }
+
+  openNotification(idx: number, event: { data?: UserNotification }): void {
+    this.dialogService.open(ConfigDialogComponent, {
+      context: {
+        title: event.data?.title,
+        notification: event.data,
+        notificationIndex: idx,
+        componentType: COMPONENT_TYPES.NOTIFICATION,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 }

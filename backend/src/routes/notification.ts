@@ -49,4 +49,28 @@ router.post('/many', (req, res, next) => {
   });
 });
 
+router.post('/read', (req, res, next) => {
+  mutex.acquire().then((release) => {
+    UserModel.findByIdAndUpdate(
+      { _id: req.body.notification.to },
+      { $pull: { notifications: { _id: req.body.notification._id } } },
+      { safe: true, multi: false },
+      (err, savedUser) => {
+        if (err) {
+          return res.status(500).json({
+            message: 'Falha ao ler notificação!',
+            error: err,
+          });
+        }
+        if (Object.keys(usersMap).length > 0)
+          usersMap[(req.body.notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+        if (isEqual(req.body.notification, lastNotification)) {
+          return res.status(200).json({ message: 'Notificação marcada como lida!' });
+        }
+      }
+    );
+    release();
+  });
+});
+
 export default router;
