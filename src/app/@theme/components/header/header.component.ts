@@ -39,7 +39,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user = new User();
   logoIcon = 'logo';
   config: PlatformConfig = new PlatformConfig();
-  totalNotifications = '';
 
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
@@ -78,8 +77,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         filter((users) => users.length > 0)
       )
       .subscribe((users) => {
-        const matchedUser = users.filter((currentUser) => currentUser._id == this.user._id);
-        if (matchedUser.length > 0) this.totalNotifications = matchedUser[0].notifications.length.toString();
+        const matchedUser = users.find((currentUser) => currentUser._id == this.user._id);
+        if (matchedUser) this.user = matchedUser;
       });
 
     this.accessChecker
