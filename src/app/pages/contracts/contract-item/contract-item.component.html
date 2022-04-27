@@ -2,7 +2,7 @@
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
     <ngx-data-tab [iContract]="iContract" [clonedContract]="contract"></ngx-data-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" responsive>
+  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
     <ngx-management-tab [iContract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
@@ -25,94 +25,11 @@
     ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
-    <ng2-smart-table
-      #smartTable
-      *ngIf="!utils.isPhone(); else phone"
-      [settings]="settings"
-      [source]="source"
-      (create)="paymentDialog(types.EXPENSE)"
-      (edit)="paymentDialog(types.EXPENSE, expenseIndex($event.data.code))"
-      (delete)="confirmationDialog(expenseIndex($event.data.code), types.EXPENSE)"
-    ></ng2-smart-table>
-    <ng-template #phone>
-      <div class="row">
-        <div class="col-2" style="padding-left: 0; padding-right: 0">
-          <button
-            nbButton
-            fullWidth
-            status="primary"
-            style="height: 100%"
-            [disabled]="!isEditionGranted"
-            (click)="paymentDialog(types.EXPENSE)"
-          >
-            <i class="nb-plus" style="font-size: 1.5rem"></i>
-          </button>
-        </div>
-        <div class="col-10">
-          <input
-            nbInput
-            [(ngModel)]="searchQuery"
-            #search="ngModel"
-            id="input-search"
-            name="search"
-            placeholder="Busque aqui..."
-            fullWidth
-            fieldSize="large"
-          />
-        </div>
-      </div>
-      <nb-list>
-        <nb-list-item *ngFor="let expense of filtredExpenses; let i = index">
-          <div class="row irow" style="width: 100%">
-            <div class="col-10 col-md-11">
-              <div class="irow row">
-                <a
-                  (click)="paymentDialog(types.EXPENSE, i)"
-                  style="width: 100%; cursor: pointer; display: flex; align-items: center"
-                >
-                  <div class="col-auto">
-                    <nb-user
-                      [onlyPicture]="true"
-                      [name]="
-                        [expense.author, userService.idToUser.bind(userService), 'fullName']
-                          | transformPipe: utils.idToProperty
-                      "
-                      [picture]="
-                        [expense.author, userService.idToUser.bind(userService), 'profilePicture']
-                          | transformPipe: utils.idToProperty
-                      "
-                    ></nb-user>
-                  </div>
-                  <div class="col-auto">#{{ +i + 1 }}</div>
-                  <div class="col">{{ expense.description }}</div>
-                  <div class="col-md-auto">
-                    <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-                    <span style="vertical-align: 0.1em">
-                      {{ expense.value }}
-                    </span>
-                  </div>
-                  <div class="col-md-auto">
-                    <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
-                    <span style="vertical-align: 0.1em">
-                      {{ [expense.created] | transformPipe: utils.formatDate.bind(utils) }}
-                    </span>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="col-2 col-md-auto" style="text-align: right" *ngIf="isEditionGranted">
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="confirmationDialog(i, types.EXPENSE)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
-            </div>
-          </div>
-        </nb-list-item>
-      </nb-list>
-    </ng-template>
+    <ngx-expense-tab
+      [iContract]="iContract"
+      [contract]="contract"
+      [isDialogBlocked]="isDialogBlocked"
+      (receiptsChanged)="forwardRespose()"
+    ></ngx-expense-tab>
   </nb-tab>
 </nb-tabset>
