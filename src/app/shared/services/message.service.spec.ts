@@ -10,17 +10,11 @@ import { MessageService } from './message.service';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 import { cloneDeep } from 'lodash';
-import { parseISO } from 'date-fns';
-
-function reviveDates(messages: Message[]): Message[] {
-  return JSON.parse(JSON.stringify(messages), (k, v) => {
-    if (['created'].includes(k)) return parseISO(v);
-    return v;
-  }) as Message[];
-}
+import { UtilsService } from './utils.service';
 
 describe('MessageService', () => {
   let service: MessageService;
+  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedMessages: Message[];
   const socket$ = new Subject<any>();
@@ -38,6 +32,7 @@ describe('MessageService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(MessageService);
+    utilsService = TestBed.inject(UtilsService);
 
     mockedMessages = [];
 
@@ -89,7 +84,7 @@ describe('MessageService', () => {
           case 2: {
             i += 1;
             expect(messages.length).toBe(1);
-            expect(reviveDates(messages)).toEqual(reviveDates(mockedMessages));
+            expect(utilsService.reviveDates(messages)).toEqual(utilsService.reviveDates(mockedMessages));
             service.saveMessage(tmpMessage);
             const req = httpMock.expectOne('/api/contract/createMessage/');
             expect(req.request.method).toBe('POST');
@@ -100,7 +95,7 @@ describe('MessageService', () => {
           case 3: {
             expect(messages.length).toBe(2);
             mockedMessages.push(tmpMessage);
-            expect(reviveDates(messages)).toEqual(reviveDates(mockedMessages));
+            expect(utilsService.reviveDates(messages)).toEqual(utilsService.reviveDates(mockedMessages));
             done();
             break;
           }
@@ -130,7 +125,7 @@ describe('MessageService', () => {
             break;
           }
           case 2: {
-            const expectedMessages = reviveDates(mockedMessages);
+            const expectedMessages = utilsService.reviveDates(mockedMessages);
             expect(messages.length).toBe(1);
             expect(messages).toEqual(expectedMessages);
             done();

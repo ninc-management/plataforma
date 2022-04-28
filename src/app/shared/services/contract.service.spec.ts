@@ -21,11 +21,12 @@ import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
 import { Team, TeamMember } from '@models/team';
+import { UtilsService } from './utils.service';
 
 describe('ContractService', () => {
   let service: ContractService;
+  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -57,10 +58,7 @@ describe('ContractService', () => {
             }
             case 2: {
               i += 1;
-              const expectedContracts = JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Contract[];
+              const expectedContracts = utilsService.reviveDates(mockedContracts);
               expect(contracts.length).toBe(2);
               expect(contracts).toEqual(expectedContracts);
               test(expectedContracts);
@@ -87,6 +85,7 @@ describe('ContractService', () => {
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
+    utilsService = TestBed.inject(UtilsService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTeams = [];
     mockedUsers = [];
@@ -339,12 +338,7 @@ describe('ContractService', () => {
           case 2: {
             i += 1;
             expect(contracts.length).toBe(2);
-            expect(contracts).toEqual(
-              JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Contract[]
-            );
+            expect(contracts).toEqual(utilsService.reviveDates(mockedContracts));
             service.saveContract(mockedInvoices[2]);
             const req1 = httpMock.expectOne('/api/contract/');
             expect(req1.request.method).toBe('POST');
@@ -360,12 +354,7 @@ describe('ContractService', () => {
           case 3: {
             expect(contracts.length).toBe(3);
             mockedContracts.push(tmpContract);
-            expect(contracts).toEqual(
-              JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Contract[]
-            );
+            expect(contracts).toEqual(utilsService.reviveDates(mockedContracts));
             const req3 = httpMock.expectOne('https://graph.microsoft.com/v1.0/drive/items/0/copy');
             expect(req3.request.method).toBe('POST');
             req3.flush(null);
@@ -417,12 +406,7 @@ describe('ContractService', () => {
           case 2: {
             i += 1;
             expect(contracts.length).toBe(2);
-            expect(contracts).toEqual(
-              JSON.parse(JSON.stringify(mockedContracts), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Contract[]
-            );
+            expect(contracts).toEqual(utilsService.reviveDates(mockedContracts));
             service.editContract(tmpContract);
             const req1 = httpMock.expectOne('/api/contract/update');
             expect(req1.request.method).toBe('POST');

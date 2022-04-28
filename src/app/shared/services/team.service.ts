@@ -11,7 +11,6 @@ import { WebSocketService } from './web-socket.service';
 import { Sector } from '@models/shared';
 import { Team } from '@models/team';
 import { User } from '@models/user';
-import { parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -57,10 +56,7 @@ export class TeamService implements OnDestroy {
         .post('/api/team/all', {})
         .pipe(take(1))
         .subscribe((teams: any) => {
-          const tmp = JSON.parse(JSON.stringify(teams), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(teams);
           this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
         });

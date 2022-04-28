@@ -8,18 +8,12 @@ import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import { Socket } from 'ngx-socket-io';
 import MockedServerSocket from 'socket.io-mock';
-import { parseISO } from 'date-fns';
 import { cloneDeep } from 'lodash';
-
-function reviveDates<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj), (k, v) => {
-    if (['created', 'lastUpdate', 'paidDate', 'date'].includes(k)) return parseISO(v);
-    return v;
-  }) as T;
-}
+import { UtilsService } from './utils.service';
 
 describe('TransactionService', () => {
   let service: TransactionService;
+  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedTransactions: Transaction[];
   const socket$ = new Subject<any>();
@@ -43,7 +37,7 @@ describe('TransactionService', () => {
               break;
             }
             case 2: {
-              const expectedTransactions = reviveDates(mockedTransactions);
+              const expectedTransactions = utilsService.reviveDates(mockedTransactions);
               expect(transactions.length).toBe(4);
               expect(transactions).toEqual(expectedTransactions);
               test(expectedTransactions);
@@ -68,6 +62,7 @@ describe('TransactionService', () => {
     TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TransactionService);
+    utilsService = TestBed.inject(UtilsService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTransactions = [];
     // Ordem de empenho
@@ -174,7 +169,7 @@ describe('TransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(4);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.saveTransaction(tmpTransaction);
             const req1 = httpMock.expectOne('/api/transaction/');
             expect(req1.request.method).toBe('POST');
@@ -185,7 +180,7 @@ describe('TransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(5);
             mockedTransactions.push(tmpTransaction);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -238,7 +233,7 @@ describe('TransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(4);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.saveManyTransaction([tmpTransaction1, tmpTransaction2]);
             reqSave = httpMock.expectOne('/api/transaction/many');
             expect(reqSave.request.method).toBe('POST');
@@ -268,7 +263,7 @@ describe('TransactionService', () => {
             expect(transactions.length).toBe(6);
             mockedTransactions.push(tmpTransaction1);
             mockedTransactions.push(tmpTransaction2);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -319,7 +314,7 @@ describe('TransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(4);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.editTransaction(tmpTransaction, editionHistoryItem);
             const req1 = httpMock.expectOne('/api/transaction/update');
             expect(req1.request.method).toBe('POST');
@@ -330,7 +325,7 @@ describe('TransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(4);
             expect(transactions[0].value).toBe(tmpTransaction.value);
-            expect(reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
+            expect(utilsService.reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
             done();
             break;
           }
