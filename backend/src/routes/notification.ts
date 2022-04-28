@@ -64,9 +64,7 @@ router.post('/read', (req, res, next) => {
         }
         if (Object.keys(usersMap).length > 0)
           usersMap[(req.body.notification.to as any)._id] = cloneDeep(savedUser.toJSON());
-        if (isEqual(req.body.notification, lastNotification)) {
-          return res.status(200).json({ message: 'Notificação marcada como lida!' });
-        }
+        return res.status(200).json({ message: 'Notificação marcada como lida!' });
       }
     );
     release();
