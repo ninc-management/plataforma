@@ -403,6 +403,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       { name: 'groupColor', type: 'ordinal' },
       { name: 'isFinished', type: 'number' },
       { name: 'isAction', type: 'number' },
+      { name: 'finishedDate', type: 'time' },
     ];
     return [
       this.getSerieZebra(),

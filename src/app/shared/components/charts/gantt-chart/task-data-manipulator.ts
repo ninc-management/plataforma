@@ -41,6 +41,7 @@ export class TaskDataManipulator {
         color,
         item.isFinished,
         item.isAction,
+        item.finishedDate,
       ];
 
       mappedData.push(index_attributes);
