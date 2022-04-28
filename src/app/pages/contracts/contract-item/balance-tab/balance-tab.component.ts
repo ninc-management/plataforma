@@ -26,8 +26,6 @@ export class BalanceTabComponent implements OnInit {
   comissionSum = '';
   contractId!: string;
   invoice: Invoice = new Invoice();
-  teamMember: any = {};
-
   options = {
     liquid: '0,00',
     paid: '0,00',
@@ -154,12 +152,6 @@ export class BalanceTabComponent implements OnInit {
         this.options.nortanPercentage
       );
       this.updateTeamTotal();
-    } else {
-      this.teamMember.grossValue = this.contractService.toGrossValue(
-        this.teamMember.netValue,
-        this.options.notaFiscal,
-        this.options.nortanPercentage
-      );
     }
   }
 

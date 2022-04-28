@@ -1,5 +1,5 @@
 <nb-list>
-  <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
+  <nb-list-item *ngFor="let receipt of clonedContract.receipts; let i = index">
     <div class="row irow" style="width: 100%">
       <div class="col-10 col-md-11">
         <div class="irow row">
@@ -40,7 +40,7 @@
   fullWidth
   status="primary"
   size="large"
-  [disabled]="contract.receipts.length == +contract.total || !isEditionGranted"
+  [disabled]="clonedContract.receipts.length == +clonedContract.total || !isEditionGranted"
   (click)="openDialog(types.RECEIPT)"
 >
   Nova Ordem de Empenho

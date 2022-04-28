@@ -11,8 +11,8 @@
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
       [iContract]="iContract"
-      [contract]="contract"
-      (response)="sendResponseEmmiter()"
+      [clonedContract]="contract"
+      (response)="responseEmitter()"
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-receipt-tab>
   </nb-tab>

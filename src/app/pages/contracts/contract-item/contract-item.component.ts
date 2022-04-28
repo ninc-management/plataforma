@@ -463,7 +463,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
   }
 
-  sendResponseEmmiter() {
+  responseEmitter() {
     this.responseEvent.next();
   }
 }

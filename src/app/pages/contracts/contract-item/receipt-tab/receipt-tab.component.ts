@@ -18,9 +18,9 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
 })
 export class ReceiptTabComponent implements OnInit {
   @Input() iContract: Contract = new Contract();
-  @Input() contract: Contract = new Contract();
+  @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() response = new EventEmitter<void>();
+  @Output() receiptsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
   types = COMPONENT_TYPES;
@@ -34,7 +34,7 @@ export class ReceiptTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
@@ -52,7 +52,7 @@ export class ReceiptTabComponent implements OnInit {
       .open(ContractDialogComponent, {
         context: {
           title: title,
-          contract: this.contract,
+          contract: this.clonedContract,
           receiptIndex: componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
           componentType: componentType,
         },
@@ -63,7 +63,7 @@ export class ReceiptTabComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        this.response.emit();
+        this.receiptsChanged.emit();
         this.isDialogBlocked.next(false);
       });
   }
@@ -85,8 +85,8 @@ export class ReceiptTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.contract.receipts.splice(index, 1);
-          this.response.emit();
+          this.clonedContract.receipts.splice(index, 1);
+          this.receiptsChanged.emit();
           this.updateContract();
         }
         this.isDialogBlocked.next(false);
@@ -94,19 +94,19 @@ export class ReceiptTabComponent implements OnInit {
   }
 
   updateContract(): void {
-    let version = +this.contract.version;
+    let version = +this.clonedContract.version;
     version += 1;
-    this.contract.version = version.toString().padStart(2, '0');
-    this.contract.lastUpdate = new Date();
-    if (this.iContract.status !== this.contract.status) {
-      const lastStatusIndex = this.contract.statusHistory.length - 1;
-      this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
-      this.contract.statusHistory.push({
-        status: this.contract.status,
-        start: this.contract.lastUpdate,
+    this.clonedContract.version = version.toString().padStart(2, '0');
+    this.clonedContract.lastUpdate = new Date();
+    if (this.iContract.status !== this.clonedContract.status) {
+      const lastStatusIndex = this.clonedContract.statusHistory.length - 1;
+      this.clonedContract.statusHistory[lastStatusIndex].end = this.clonedContract.lastUpdate;
+      this.clonedContract.statusHistory.push({
+        status: this.clonedContract.status,
+        start: this.clonedContract.lastUpdate,
       });
     }
-    this.iContract = cloneDeep(this.contract);
+    this.iContract = cloneDeep(this.clonedContract);
     this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.iContract);
   }
