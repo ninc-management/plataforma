@@ -160,11 +160,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  openNotification(idx: number, event: { data?: UserNotification }): void {
+  openNotification(idx: number, notification: UserNotification): void {
     this.dialogService.open(ConfigDialogComponent, {
       context: {
-        title: event.data?.title,
-        notification: event.data,
+        title: notification.title,
+        notification: notification,
         notificationIndex: idx,
         componentType: COMPONENT_TYPES.NOTIFICATION,
       },

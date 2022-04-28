@@ -77,7 +77,7 @@
           <nb-list-item
             style="display: block"
             *ngFor="let notification of user.notifications; let i = index; trackBy: utils.trackByIndex"
-            (click)="openNotification(i, { data: notification })"
+            (click)="openNotification(i, notification)"
           >
             <nb-user
               [name]="
