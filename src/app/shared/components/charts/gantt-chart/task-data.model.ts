@@ -11,6 +11,7 @@ export class TaskModel {
   progressPercentage!: number;
   isFinished!: number;
   isAction!: number;
+  finishedDate?: Date;
 
   /**
    * url to image

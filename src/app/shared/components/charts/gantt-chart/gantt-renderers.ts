@@ -1,5 +1,6 @@
 // This code was initially made by https://github.com/mfandre
 
+import { isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
 import { ChartTheme } from './gantt-chart.component';
@@ -31,6 +32,7 @@ export class GanttRenderers {
     const progressPercentage = api.value(5);
     const groupColor = api.value(10);
     const isFinished = api.value(11);
+    const isAction = api.value(12);
     const barLength = timeEnd[0] - timeStart[0];
     // Get the heigth corresponds to length 1 on y axis.
     const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
@@ -57,8 +59,7 @@ export class GanttRenderers {
       width: (barLength * progressPercentage) / 100,
       height: 3,
     });
-
-    return {
+    const itemGroup = {
       type: 'group',
       children: [
         {
@@ -93,6 +94,30 @@ export class GanttRenderers {
         },
       ],
     };
+
+    if (isAction && isFinished) {
+      const rectFinished = this.createFinishedRect(params, api);
+      const actionEndDate = new Date(api.value(3));
+      const finishedDate = new Date(api.value(13));
+
+      if (isAfter(finishedDate, actionEndDate)) {
+        //make the text rect size the same as the finished rect
+        itemGroup.children[1].shape = rectFinished.shape;
+        itemGroup.children[1].ignore = !rectFinished.shape;
+        //make the progress line width the same as the rect finished
+        itemGroup.children[2].shape.width = rectFinished.shape.width;
+        itemGroup.children[2].ignore = !rectFinished.shape;
+        itemGroup.children.splice(0, 0, rectFinished);
+      } else {
+        //swap colors between base rect and finished rect
+        const tmpStyle = itemGroup.children[0].style;
+        itemGroup.children[0].style = rectFinished.style;
+        rectFinished.style = tmpStyle;
+        itemGroup.children.splice(1, 0, rectFinished);
+      }
+    }
+
+    return itemGroup;
   }
 
   renderAxisLabelItem(params: any, api: any) {
@@ -384,5 +409,40 @@ export class GanttRenderers {
     if (progressPercentage <= 45) return this._currentTheme.variables.primary as string;
     if (progressPercentage <= 90) return this._currentTheme.variables.warning as string;
     return this._currentTheme.variables.danger as string;
+  }
+
+  private createFinishedRect(params: any, api: any): any {
+    const index = api.value(0);
+    const timeStart = api.coord([api.value(2), index]);
+    const barHeight = api.size([0, 1])[1] * this.HEIGHT_RATIO;
+    const x = timeStart[0];
+    const actionEndDate = api.value(3);
+
+    const finishedDate = api.value(13);
+    const finishedEnd = api.coord([finishedDate, index]);
+    const finishedBarLength = finishedEnd[0] - timeStart[0];
+    const finishedY = finishedEnd[1] - barHeight - barHeight / 3;
+
+    const rectFinished = this.clipRectByRect(params, {
+      x: x,
+      y: finishedY,
+      width: finishedBarLength,
+      height: barHeight,
+    });
+
+    return {
+      type: 'rect',
+      ignore: !rectFinished,
+      shape: rectFinished,
+      style: api.style({
+        fill: this.finishedRectColor(finishedDate, actionEndDate),
+      }),
+    };
+  }
+
+  private finishedRectColor(finishedDate: Date, actionEndDate: Date): string {
+    return isAfter(finishedDate, actionEndDate)
+      ? (this._currentTheme.variables.danger as string)
+      : (this._currentTheme.variables.success as string);
   }
 }

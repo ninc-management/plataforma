@@ -216,7 +216,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   percentualActionProgress(action: ChecklistItemAction): number {
     const today = new Date();
     if (isBefore(today, action.range.start) || isSameDay(today, action.range.start)) return 0;
-    if (action.range.end && isAfter(today, action.range.end)) return 100;
+    if ((action.range.end && isAfter(today, action.range.end)) || action.isFinished) return 100;
 
     return this.stringUtils.moneyToNumber(
       this.stringUtils.toPercentageNumber(this.remainingDays(action), this.totalDays(action)).slice(0, -1)
@@ -346,6 +346,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
           ),
           isFinished: action.isFinished ? 1 : 0,
           isAction: 1,
+          finishedDate: action.finishedDate,
         } as TaskModel);
       });
     });
