@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { isAfter, isBefore, parseISO } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
@@ -158,10 +158,7 @@ export class ContractService implements OnDestroy {
         .post('/api/contract/all', {})
         .pipe(take(1))
         .subscribe((contracts: any) => {
-          const tmp = JSON.parse(JSON.stringify(contracts), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate', 'start', 'end'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(contracts);
           this.contracts$.next(tmp as Contract[]);
         });
       this.socket

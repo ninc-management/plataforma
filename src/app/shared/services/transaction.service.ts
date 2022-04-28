@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { EditionHistoryItem } from '@models/shared';
 import { Transaction } from '@models/transaction';
-import { parseISO } from 'date-fns';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { UtilsService } from './utils.service';
@@ -57,10 +56,7 @@ export class TransactionService implements OnDestroy {
         .post('/api/transaction/all', {})
         .pipe(take(1))
         .subscribe((transactions: any) => {
-          const tmp = JSON.parse(JSON.stringify(transactions), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate', 'date'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(transactions);
           this.transactions$.next(tmp as Transaction[]);
         });
       this.socket

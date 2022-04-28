@@ -11,7 +11,6 @@ import { AuthService } from 'app/auth/auth.service';
 import { Socket } from 'ngx-socket-io';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
 import { CONTRACT_BALANCE } from './user.service';
 import { UtilsService } from './utils.service';
 import MockedServerSocket from 'socket.io-mock';
@@ -46,10 +45,7 @@ describe('InvoiceService', () => {
               break;
             }
             case 2: {
-              const expectedInvoices = JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Invoice[];
+              const expectedInvoices = utilsService.reviveDates(mockedInvoices);
               expect(invoices.length).toBe(2);
               expect(invoices).toEqual(expectedInvoices);
               test(expectedInvoices);
@@ -170,12 +166,7 @@ describe('InvoiceService', () => {
           case 2: {
             i += 1;
             expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(
-              JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Invoice[]
-            );
+            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
             service.saveInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/');
             expect(req1.request.method).toBe('POST');
@@ -186,12 +177,7 @@ describe('InvoiceService', () => {
           case 3: {
             expect(invoices.length).toBe(3);
             mockedInvoices.push(tmpInvoice);
-            expect(invoices).toEqual(
-              JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Invoice[]
-            );
+            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
             done();
             break;
           }
@@ -240,12 +226,7 @@ describe('InvoiceService', () => {
           case 2: {
             i += 1;
             expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(
-              JSON.parse(JSON.stringify(mockedInvoices), (k, v) => {
-                if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Invoice[]
-            );
+            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
             service.editInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/update');
             expect(req1.request.method).toBe('POST');

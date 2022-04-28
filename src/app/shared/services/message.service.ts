@@ -3,9 +3,9 @@ import { Injectable } from '@angular/core';
 import { Message } from '@models/message';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
+import { UtilsService } from './utils.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,12 @@ export class MessageService {
   private requested = false;
   private messages$ = new BehaviorSubject<Message[]>([]);
   private destroy$ = new Subject<void>();
-  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
+  constructor(
+    private http: HttpClient,
+    private socket: Socket,
+    private wsService: WebSocketService,
+    private utils: UtilsService
+  ) {}
 
   saveMessage(message: Message): void {
     const req = {
@@ -30,10 +35,7 @@ export class MessageService {
         .post('/api/contract/allMessages', {})
         .pipe(take(1))
         .subscribe((messages: any) => {
-          const tmp = JSON.parse(JSON.stringify(messages), (k, v) => {
-            if (['created'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(messages);
           this.messages$.next(tmp as Message[]);
         });
       this.socket

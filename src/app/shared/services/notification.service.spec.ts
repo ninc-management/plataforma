@@ -14,7 +14,6 @@ import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { Socket } from 'ngx-socket-io';
 import { UtilsService } from './utils.service';
-import { parseISO } from 'date-fns';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -146,10 +145,7 @@ describe('NotificationService', () => {
             break;
           }
           case 2: {
-            const expectedNotifications = JSON.parse(JSON.stringify([notification]), (k, v) => {
-              if (['created'].includes(k)) return parseISO(v);
-              return v;
-            }) as UserNotification[];
+            const expectedNotifications = utilsService.reviveDates([notification]);
             expect(users[1].notifications).toEqual(expectedNotifications);
             done();
             break;
@@ -218,10 +214,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = JSON.parse(JSON.stringify(req.request.body.notifications), (k, v) => {
-              if (['created'].includes(k)) return parseISO(v);
-              return v;
-            }) as UserNotification[];
+            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();
@@ -291,10 +284,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = JSON.parse(JSON.stringify(req.request.body.notifications), (k, v) => {
-              if (['created'].includes(k)) return parseISO(v);
-              return v;
-            }) as UserNotification[];
+            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();
@@ -364,10 +354,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = JSON.parse(JSON.stringify(req.request.body.notifications), (k, v) => {
-              if (['created'].includes(k)) return parseISO(v);
-              return v;
-            }) as UserNotification[];
+            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();

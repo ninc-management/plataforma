@@ -8,7 +8,6 @@ import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
-import { parseISO } from 'date-fns';
 import { StringUtilService } from './string-util.service';
 import { cloneDeep } from 'lodash';
 
@@ -70,10 +69,7 @@ export class InvoiceService implements OnDestroy {
         .post('/api/invoice/all', {})
         .pipe(take(1))
         .subscribe((invoices: any) => {
-          const tmp = JSON.parse(JSON.stringify(invoices), (k, v) => {
-            if (['created', 'lastUpdate'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(invoices);
           this.invoices$.next(tmp as Invoice[]);
         });
       this.socket

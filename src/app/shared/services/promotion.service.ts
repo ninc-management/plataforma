@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
-import { parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -50,10 +49,7 @@ export class PromotionService implements OnDestroy {
         .post('/api/promotion/all', {})
         .pipe(take(1))
         .subscribe((promotions: any) => {
-          const tmp = JSON.parse(JSON.stringify(promotions), (k, v) => {
-            if (['created', 'lastUpdate', 'start', 'end'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(promotions);
           this.promotions$.next(tmp as Promotion[]);
         });
       this.socket

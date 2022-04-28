@@ -9,23 +9,17 @@ import { AuthService } from 'app/auth/auth.service';
 import MockedServerSocket from 'socket.io-mock';
 import { Socket } from 'ngx-socket-io';
 import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import {
   PROMOTION_STATOOS,
   RULE_OBJECTS,
   RULE_OPERATORS,
 } from 'app/pages/promotions/promotion-item/promotion-item.component';
-
-function reviveDates(promotions: Promotion[]): Promotion[] {
-  return JSON.parse(JSON.stringify(promotions), (k, v) => {
-    if (['created', 'start', 'end', 'lastUpdate'].includes(k)) return parseISO(v);
-    return v;
-  }) as Promotion[];
-}
+import { UtilsService } from './utils.service';
 
 describe('PromotionService', () => {
   let service: PromotionService;
+  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedPromotions: Promotion[];
   const socket$ = new Subject<any>();
@@ -50,7 +44,7 @@ describe('PromotionService', () => {
               break;
             }
             case 2: {
-              const expectedPromotions = reviveDates(mockedPromotions);
+              const expectedPromotions = utilsService.reviveDates(mockedPromotions);
               expect(promotions.length).toBe(1);
               expect(promotions).toEqual(expectedPromotions);
               test(expectedPromotions);
@@ -78,6 +72,7 @@ describe('PromotionService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(PromotionService);
+    utilsService = TestBed.inject(UtilsService);
 
     mockedPromotions = [];
 
@@ -146,7 +141,7 @@ describe('PromotionService', () => {
           case 2: {
             i += 1;
             expect(promotions.length).toBe(1);
-            expect(promotions).toEqual(reviveDates(mockedPromotions));
+            expect(promotions).toEqual(utilsService.reviveDates(mockedPromotions));
             service.savePromotion(tmpPromotion);
 
             const req1 = httpMock.expectOne('/api/promotion/');
@@ -159,7 +154,7 @@ describe('PromotionService', () => {
           case 3: {
             expect(promotions.length).toBe(2);
             mockedPromotions.push(tmpPromotion);
-            expect(reviveDates(promotions)).toEqual(reviveDates(mockedPromotions));
+            expect(utilsService.reviveDates(promotions)).toEqual(utilsService.reviveDates(mockedPromotions));
             done();
             break;
           }
@@ -210,7 +205,7 @@ describe('PromotionService', () => {
           case 2: {
             i += 1;
             expect(promotions.length).toBe(1);
-            expect(promotions).toEqual(reviveDates(mockedPromotions));
+            expect(promotions).toEqual(utilsService.reviveDates(mockedPromotions));
 
             service.editPromotion(tmpPromotion);
             const req1 = httpMock.expectOne('/api/promotion/update');
