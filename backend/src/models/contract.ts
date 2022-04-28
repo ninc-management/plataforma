@@ -145,6 +145,9 @@ export class ChecklistItemAction {
 
   @prop({ required: true })
   isFinished: boolean = false;
+
+  @prop()
+  finishedDate?: Date;
 }
 
 export class ContractChecklistItem {
