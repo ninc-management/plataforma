@@ -176,6 +176,7 @@
                   <label class="label">Finalizada?</label>
                   <nb-checkbox
                     [(ngModel)]="actionList[i].isFinished"
+                    (ngModelChange)="checkAction(i)"
                     id="action-checked-{{ i }}"
                     name="action-checked-{{ i }}"
                     #actionChecked="ngModel"

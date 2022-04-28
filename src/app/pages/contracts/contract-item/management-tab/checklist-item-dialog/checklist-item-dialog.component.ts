@@ -80,4 +80,8 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     }
     return this.utils.formatDate(range.start);
   }
+
+  checkAction(index: number): void {
+    this.actionList[index].finishedDate = new Date();
+  }
 }
