@@ -637,10 +637,12 @@ export class PdfService {
             widths: ['*'],
             dontBreakRows: true,
             body: [
-              [{ text: 'ETAPA PRELIMINAR' }],
+              [{ text: 'ETAPA PRELIMINAR', color: 'white', bold: true }],
               [
                 {
                   text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
+                  color: 'white',
+                  bold: true,
                   fontSize: 8,
                   alignment: 'justify',
                 },
@@ -648,6 +650,8 @@ export class PdfService {
               [
                 {
                   ul: laep,
+                  color: 'white',
+                  bold: true,
                   fontSize: 10,
                   alignment: 'justify',
                 },
@@ -655,12 +659,14 @@ export class PdfService {
               [
                 {
                   text: invoice.dep,
+                  color: 'white',
+                  bold: true,
                   alignment: 'justify',
                 },
               ],
             ],
           },
-          layout: this.noBorderTable('#FF8800'),
+          layout: this.noBorderTable('#FF8F07'),
         });
       }
 
@@ -682,10 +688,12 @@ export class PdfService {
             widths: ['*'],
             dontBreakRows: true,
             body: [
-              [{ text: 'ETAPA EXECUTIVA' }],
+              [{ text: 'ETAPA EXECUTIVA', color: 'white', bold: true }],
               [
                 {
                   text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
+                  color: 'white',
+                  bold: true,
                   fontSize: 8,
                   alignment: 'justify',
                 },
@@ -693,6 +701,8 @@ export class PdfService {
               [
                 {
                   ul: laee,
+                  color: 'white',
+                  bold: true,
                   fontSize: 10,
                   alignment: 'justify',
                 },
@@ -700,12 +710,14 @@ export class PdfService {
               [
                 {
                   text: invoice.dee,
+                  color: 'white',
+                  bold: true,
                   alignment: 'justify',
                 },
               ],
             ],
           },
-          layout: this.noBorderTable('#FF8800'),
+          layout: this.noBorderTable('#FF8F07'),
         });
       }
 
@@ -732,10 +744,12 @@ export class PdfService {
             widths: ['*'],
             dontBreakRows: true,
             body: [
-              [{ text: 'ETAPA COMPLEMENTAR' }],
+              [{ text: 'ETAPA COMPLEMENTAR', color: 'white', bold: true }],
               [
                 {
                   text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
+                  color: 'white',
+                  bold: true,
                   fontSize: 8,
                   alignment: 'justify',
                 },
@@ -743,6 +757,8 @@ export class PdfService {
               [
                 {
                   ul: laec,
+                  color: 'white',
+                  bold: true,
                   fontSize: 10,
                   alignment: 'justify',
                 },
@@ -750,12 +766,14 @@ export class PdfService {
               [
                 {
                   text: invoice.dec,
+                  color: 'white',
+                  bold: true,
                   alignment: 'justify',
                 },
               ],
             ],
           },
-          layout: this.noBorderTable('#FF8800'),
+          layout: this.noBorderTable('#FF8F07'),
         });
       }
     }
@@ -1235,12 +1253,14 @@ export class PdfService {
             [
               {
                 ul: importants,
+                color: 'white',
+                bold: true,
                 fontSize: 10,
               },
             ],
           ],
         },
-        layout: this.noBorderTable('#FF8800'),
+        layout: this.noBorderTable('#FF8F07'),
       });
     }
 
