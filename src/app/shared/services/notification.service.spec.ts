@@ -380,7 +380,7 @@ describe('NotificationService', () => {
       });
   });
 
-  fit('checkNotification should work', (done: DoneFn) => {
+  it('checkNotification should work', (done: DoneFn) => {
     const notificationBody = {
       title: 'Title',
       tag: 'T',
@@ -421,10 +421,7 @@ describe('NotificationService', () => {
           }
           case 2: {
             i += 1;
-            const expectedNotifications = JSON.parse(JSON.stringify(req.request.body.notifications), (k, v) => {
-              if (['created'].includes(k)) return parseISO(v);
-              return v;
-            }) as UserNotification[];
+            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
             expect(users[0].notifications[0]).toEqual(expectedNotifications[0]);
             service.checkNotification(expectedNotifications[0]);
             req = httpMock.expectOne('/api/notify/read');
