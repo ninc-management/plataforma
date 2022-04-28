@@ -16,6 +16,7 @@ import {
 } from '@angular/core';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
+import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
 import { GanttRenderers } from './gantt-renderers';
@@ -118,43 +119,28 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
 
   getTooltipOption(): any {
     const DATE_FORMAT = this.dateFormat;
+    const formatterFunction = (info: any) => {
+      //removing tooltip from the lines
+      if (info != undefined && info.seriesIndex != 2) return '';
+
+      const value = info.value;
+      const taskName = value[1];
+      const start = echarts.time.format(new Date(value[2]), DATE_FORMAT, false);
+      const end = echarts.time.format(new Date(value[3]), DATE_FORMAT, false);
+
+      return [
+        '<div class="tooltip-title">' + echarts.format.encodeHTML(taskName) + '</div>',
+        start + ' - ',
+        end + '<br>',
+        this.actionStatusText(value),
+      ].join('');
+    };
+
     return {
       confine: true,
       appendToBody: true,
       trigger: 'item',
-      formatter: function (info: any) {
-        //removing tooltip from the lines
-        if (info != undefined && info.seriesIndex != 2) {
-          return '';
-        }
-        //console.log("info", info)
-        const value = info.value;
-
-        const taskName = value[1];
-        const start = echarts.time.format(new Date(value[2]), DATE_FORMAT, false);
-        const end = echarts.time.format(new Date(value[3]), DATE_FORMAT, false);
-        const progressPercentage = value[5];
-        const isFinished = value[11];
-        const isAction = value[12];
-
-        let text = '';
-        if (isAction) {
-          text = isFinished ? 'Ação finalizada' : DateManipulator.daysLeft(value[3]);
-        } else {
-          //if the progress is 100 but item isn't finished
-          //the progress bar remains full but in red color
-          text = isFinished
-            ? 'Item finalizado'
-            : (progressPercentage == 100 ? 0 : progressPercentage) + '% ' + 'de ações feitas';
-        }
-
-        return [
-          '<div class="tooltip-title">' + echarts.format.encodeHTML(taskName) + '</div>',
-          start + ' - ',
-          end + '<br>',
-          text,
-        ].join('');
-      },
+      formatter: formatterFunction.bind(this),
     };
   }
 
@@ -492,6 +478,30 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     if (this.echartsInstance) {
       this.echartsInstance.resize();
     }
+  }
+
+  actionStatusText(value: any): string {
+    const isFinished = value[11];
+    const isAction = value[12];
+    const actionEndDate = value[3];
+
+    if (isAction) return isFinished ? this.actionFinishedText(value) : DateManipulator.daysLeft(actionEndDate);
+
+    //if the progress is 100 but item isn't finished
+    //the progress bar remains full but in red color
+    const progressPercentage = value[5];
+    return isFinished
+      ? 'Item finalizado'
+      : (progressPercentage == 100 ? 0 : progressPercentage) + '% ' + 'de ações feitas';
+  }
+
+  private actionFinishedText(value: any): string {
+    const actionEndDate = new Date(value[3]);
+    const finishedDate = new Date(value[13]);
+
+    const difference = Math.abs(differenceInCalendarDays(finishedDate, actionEndDate));
+    if (isAfter(finishedDate, actionEndDate)) return 'Ação finalizada com ' + difference + ' dias de atraso';
+    return 'Ação finalizada com ' + difference + ' dias adiantados';
   }
 
   @HostListener('window:resize', ['$event'])
