@@ -57,9 +57,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public chartTitle: string = '';
 
   @Input()
-  public dateFormat: string = '{MM}/{dd}/{yyyy}';
-
-  @Input()
   public heightRatio: number = 0.6;
 
   @Input()
@@ -118,15 +115,15 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   }
 
   getTooltipOption(): any {
-    const DATE_FORMAT = this.dateFormat;
     const formatterFunction = (info: any) => {
       //removing tooltip from the lines
       if (info != undefined && info.seriesIndex != 2) return '';
 
       const value = info.value;
       const taskName = value[1];
-      const start = echarts.time.format(new Date(value[2]), DATE_FORMAT, false);
-      const end = echarts.time.format(new Date(value[3]), DATE_FORMAT, false);
+      const dateFormat = '{dd}/{MM}/{yyyy}';
+      const start = echarts.time.format(new Date(value[2]), dateFormat, false);
+      const end = echarts.time.format(new Date(value[3]), dateFormat, false);
 
       return [
         '<div class="tooltip-title">' + echarts.format.encodeHTML(taskName) + '</div>',
@@ -195,12 +192,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       return this.getMonthName(monthToday);
     }
     return dayToday + '';
-    /*const DATE_FORMAT = this.dateFormat
-    return echarts.time.format(
-        value,
-        DATE_FORMAT,
-        false
-    );*/
   }
 
   /**
