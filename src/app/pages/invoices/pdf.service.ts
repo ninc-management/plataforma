@@ -550,7 +550,7 @@ export class PdfService {
         },
         {
           text: invoice.code.slice(0, -3),
-          color: '#79BA9E',
+          color: '#FF8800',
           bold: true,
           alignment: 'right',
         },
