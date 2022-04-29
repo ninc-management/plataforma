@@ -23,6 +23,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() iContract: Contract = new Contract();
+  @Input() clonedContract: Contract = new Contract();
   isEditionGranted = false;
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
@@ -68,7 +69,7 @@ export class DataTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.contract = this.iContract;
+    this.contract = this.clonedContract;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
@@ -257,23 +258,21 @@ export class DataTabComponent implements OnInit {
   }
 
   updateContract(): void {
-    if (!isEqual(this.iContract, this.contract)) {
-      let version = +this.contract.version;
-      version += 1;
-      this.contract.version = version.toString().padStart(2, '0');
-      this.contract.lastUpdate = new Date();
-      if (this.iContract.status !== this.contract.status) {
-        const lastStatusIndex = this.contract.statusHistory.length - 1;
-        this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
-        this.contract.statusHistory.push({
-          status: this.contract.status,
-          start: this.contract.lastUpdate,
-        });
-      }
-      this.iContract = cloneDeep(this.contract);
-      this.invoiceService.editInvoice(this.invoice);
-      this.contractService.editContract(this.iContract);
+    let version = +this.contract.version;
+    version += 1;
+    this.contract.version = version.toString().padStart(2, '0');
+    this.contract.lastUpdate = new Date();
+    if (this.iContract.status !== this.contract.status) {
+      const lastStatusIndex = this.contract.statusHistory.length - 1;
+      this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
+      this.contract.statusHistory.push({
+        status: this.contract.status,
+        start: this.contract.lastUpdate,
+      });
     }
+    this.iContract = cloneDeep(this.contract);
+    this.invoiceService.editInvoice(this.invoice);
+    this.contractService.editContract(this.iContract);
   }
 
   applyDistribution(): void {
@@ -286,5 +285,9 @@ export class DataTabComponent implements OnInit {
       );
       return member;
     });
+  }
+
+  isNotEdited(): boolean {
+    return isEqual(this.iContract, this.contract);
   }
 }

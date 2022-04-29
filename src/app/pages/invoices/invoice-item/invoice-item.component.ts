@@ -734,4 +734,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.updateDependentValues(this.tempInvoice.products, 'product');
     this.updateLastValues();
   }
+
+  isNotEdited(): boolean {
+    return isEqual(this.iInvoice, this.tempInvoice);
+  }
 }

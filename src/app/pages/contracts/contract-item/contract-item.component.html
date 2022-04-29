@@ -1,61 +1,20 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
-    <ngx-data-tab [iContract]="contract"></ngx-data-tab>
+    <ngx-data-tab [iContract]="iContract" [clonedContract]="contract"></ngx-data-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" responsive>
     <ngx-management-tab [iContract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
-    <ngx-balance-tab [contract]="contract"></ngx-balance-tab>
+    <ngx-balance-tab [contract]="contract" [responseEvent]="responseEvent"></ngx-balance-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
-    <nb-list>
-      <nb-list-item *ngFor="let receipt of contract.receipts; let i = index">
-        <div class="row irow" style="width: 100%">
-          <div class="col-10 col-md-11">
-            <div class="irow row">
-              <a (click)="paymentDialog(types.RECEIPT, i)" style="width: 100%; cursor: pointer; display: flex">
-                <div class="col-1">#{{ +i + 1 }}</div>
-                <div class="col">{{ receipt.description }}</div>
-                <div class="col-md-3">
-                  <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-                  <span style="vertical-align: 0.1em">{{ receipt.value }}</span>
-                </div>
-              </a>
-            </div>
-          </div>
-          <div class="col-2 col-md-1" style="text-align: right">
-            <span
-              class="mr-1"
-              [nbTooltip]="receipt.paid ? 'Pago' : 'Não pago'"
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            >
-              {{ receipt.paid ? '✅' : '❌' }}
-            </span>
-            <nb-icon
-              *ngIf="isEditionGranted"
-              class="xIcon"
-              status="basic"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="confirmationDialog(i, types.RECEIPT)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
-        </div>
-      </nb-list-item>
-    </nb-list>
-    <button
-      nbButton
-      fullWidth
-      status="primary"
-      size="large"
-      [disabled]="contract.receipts.length == +contract.total || !isEditionGranted"
-      (click)="paymentDialog(types.RECEIPT)"
-    >
-      Nova Ordem de Empenho
-    </button>
+    <ngx-receipt-tab
+      [iContract]="iContract"
+      [clonedContract]="contract"
+      (response)="forwardRespose()"
+      [isDialogBlocked]="isDialogBlocked"
+    ></ngx-receipt-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
     <nb-list>
