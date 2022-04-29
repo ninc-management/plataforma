@@ -268,9 +268,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     index = index != undefined ? index : undefined;
     let title = '';
     switch (componentType) {
-      case COMPONENT_TYPES.PAYMENT:
-        title = index != undefined ? 'ORDEM DE PAGAMENTO' : 'ADICIONAR ORDEM DE PAGAMENTO';
-        break;
       case COMPONENT_TYPES.EXPENSE:
         title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
         break;
@@ -284,7 +281,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
         context: {
           title: title,
           contract: this.contract,
-          paymentIndex: componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
           expenseIndex: componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
           componentType: componentType,
         },
