@@ -12,7 +12,7 @@
     <ngx-receipt-tab
       [iContract]="iContract"
       [clonedContract]="contract"
-      (response)="responseEmitter()"
+      (response)="forwardRespose()"
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-receipt-tab>
   </nb-tab>
