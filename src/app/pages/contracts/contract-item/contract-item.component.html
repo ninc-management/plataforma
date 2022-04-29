@@ -17,53 +17,12 @@
     ></ngx-receipt-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
-    <nb-list>
-      <nb-list-item *ngFor="let payment of contract.payments; let i = index">
-        <div class="row irow" style="width: 100%">
-          <div class="col-10 col-md-11">
-            <div class="irow row">
-              <a (click)="paymentDialog(types.PAYMENT, i)" style="width: 100%; cursor: pointer; display: flex">
-                <div class="col-1">#{{ +i + 1 }}</div>
-                <div class="col">{{ payment.service }}</div>
-                <div class="col-md-3">
-                  <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-                  <span style="vertical-align: 0.1em">{{ payment.value }}</span>
-                </div>
-              </a>
-            </div>
-          </div>
-          <div class="col-2 col-md-1" style="text-align: right">
-            <span
-              class="mr-1"
-              [nbTooltip]="payment.paid ? 'Pago' : 'Não pago'"
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            >
-              {{ payment.paid ? '✅' : '❌' }}
-            </span>
-            <nb-icon
-              *ngIf="isEditionGranted"
-              class="xIcon"
-              status="basic"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="confirmationDialog(i, types.PAYMENT)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
-        </div>
-      </nb-list-item>
-    </nb-list>
-    <button
-      nbButton
-      fullWidth
-      status="primary"
-      size="large"
-      [disabled]="!isEditionGranted"
-      (click)="paymentDialog(types.PAYMENT)"
-    >
-      Nova Ordem de Pagamento
-    </button>
+    <ngx-payment-tab
+      [iContract]="iContract"
+      [contract]="contract"
+      [isDialogBlocked]="isDialogBlocked"
+      (response)="forwardRespose()"
+    ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <ng2-smart-table
