@@ -7,7 +7,7 @@ import helmet from 'helmet';
 
 // import logger from 'morgan';
 // Import API endpoint routes
-import { isUserAuthenticated } from './shared/util';
+import { isUserAuthenticated, notifyByEmail } from './shared/util';
 import authRoutes from './routes/auth';
 import emailRoutes from './routes/email';
 import userRoutes from './routes/user';
@@ -21,6 +21,7 @@ import publicRoutes from './routes/public';
 import configRoutes from './routes/platformConfig';
 import notificationRoutes from './routes/notification';
 import transactionRoutes from './routes/transaction';
+import { notification$ } from './shared/global';
 
 class NortanAPI {
   public app;
@@ -80,6 +81,10 @@ class NortanAPI {
     // so that PathLocationStrategy can be used
     this.app.get('/*', function (req, res) {
       res.sendFile(path.join(__dirname, '/angular/index.html'));
+    });
+
+    notification$.subscribe((notification) => {
+      notifyByEmail(notification);
     });
   }
 }

@@ -34,7 +34,7 @@ export class NotificationService implements OnDestroy {
       notification.title = body.title;
       // notification.tag = body.tag;
       notification.message = body.message;
-      notification.to = user;
+      notification.to = this.userService.idToUser(user);
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         notification.from = user;
       });

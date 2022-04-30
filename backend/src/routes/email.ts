@@ -6,7 +6,7 @@ import { User } from '../models/user';
 
 const router = express.Router();
 
-function sendMail(user: User, callback: any): void {
+export function sendMail(mailOptions: any, callback: any): void {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -16,6 +16,11 @@ function sendMail(user: User, callback: any): void {
       pass: process.env.EMAIL_PASSWD,
     },
   });
+  transporter.sendMail(mailOptions, callback);
+}
+
+router.post('/', (req, res, next) => {
+  const user = req.body as User;
   const mailOptions = {
     from: '"Diretoria de Administração" <dad@nortanprojetos.com>',
     to: 'hugocunha@nortanprojetos.com,natanael.filho@nortanprojetos.com',
@@ -53,12 +58,7 @@ function sendMail(user: User, callback: any): void {
       user.meet +
       '</li></ul>',
   };
-  transporter.sendMail(mailOptions, callback);
-}
-
-router.post('/', (req, res, next) => {
-  const user = req.body as User;
-  sendMail(user, (err, info) => {
+  sendMail(mailOptions, (err, info) => {
     if (err) {
       console.log('Erro envio de mail:', err);
       res.status(201).json({
