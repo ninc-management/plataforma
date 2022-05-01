@@ -59,7 +59,7 @@
     ></nb-action> -->
     <nb-action
       class="control-item"
-      icon="bell-outline"
+      [icon]="user.notifications.length ? 'bell' : 'bell-outline'"
       [badgeText]="user.notifications.length ? user.notifications.length.toString() : ''"
       badgeStatus="danger"
       [nbPopover]="notificationBox"
@@ -87,7 +87,7 @@
               "
             ></nb-user>
             <div class="notification">
-              <span style="position: relative; top: 6px">
+              <span style="position: relative; top: 15px">
                 {{ notification.message }}
               </span>
               <br />
