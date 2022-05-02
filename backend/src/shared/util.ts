@@ -32,7 +32,7 @@ export function isUserAuthenticated(req, res, next): boolean {
 
 export function notifyByEmail(notification: UserNotification): void {
   const mailOptions = {
-    from: '"' + (notification.from as User).fullName + '"' + '<' + (notification.from as User).email + '>',
+    from: '"Plataforma Nortan" <contato@nortanengenharia.com>',
     to: (notification.to as User).email,
     subject: notification.title,
     html: '<p>' + notification.message + '</p>',

@@ -22,8 +22,8 @@ function updateNotification(notification: UserNotification, res: any) {
         });
       }
       if (Object.keys(usersMap).length > 0) usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+      notification$.next(notification);
       if (isEqual(notification, lastNotification)) {
-        notification$.next(notification);
         return res
           .status(200)
           .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
