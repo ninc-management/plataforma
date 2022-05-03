@@ -24,6 +24,7 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() iContract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
+  @Input() responseEvent = new Subject<void>();
   isEditionGranted = false;
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
@@ -70,6 +71,8 @@ export class DataTabComponent implements OnInit {
 
   ngOnInit(): void {
     this.contract = this.clonedContract;
+    this.options.interest = this.contract.receipts.length;
+    this.options.paid = this.contractService.paidValue(this.contract);
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
@@ -77,6 +80,10 @@ export class DataTabComponent implements OnInit {
         return users.filter((user) => !this.userService.isUserInTeam(user, this.invoice.team) && user.active);
       })
     );
+    this.responseEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.options.interest = this.contract.receipts.length;
+      this.options.paid = this.contractService.paidValue(this.contract);
+    });
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
