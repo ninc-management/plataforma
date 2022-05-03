@@ -4,14 +4,19 @@
     'width.px': windowWidth()
   }"
 >
-  <div class="col-md-8">
+  <div
+    [ngClass]="{
+      'col-md-8': componentType === types.CONFIG,
+      'col-md-6': componentType === types.NOTIFICATION
+    }"
+  >
     <nb-card
       [ngStyle]="{
         'max-height.px': windowHeight()
       }"
     >
       <nb-card-header>
-        CONFIGURAÇÕES DA PLATAFORMA
+        {{ title }}
         <div class="buttons">
           <button
             nbButton
@@ -26,8 +31,22 @@
           </button>
         </div>
       </nb-card-header>
-      <nb-card-body style="padding: 0">
-        <ngx-config [config]="config"></ngx-config>
+      <nb-card-body>
+        <ngx-config [config]="config" *ngIf="componentType === types.CONFIG; else notify"></ngx-config>
+        <ng-template #notify>
+          <div class="row">
+            <div style="padding: 0 1rem">
+              <p>{{ notification.message }}</p>
+              <p>
+                Por:
+                {{
+                  [notification.from, userService.idToUser.bind(userService), 'fullName']
+                    | transformPipe: utils.idToProperty
+                }}
+              </p>
+            </div>
+          </div>
+        </ng-template>
       </nb-card-body>
     </nb-card>
   </div>
