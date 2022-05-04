@@ -57,10 +57,7 @@ export class InternalTransactionService implements OnDestroy {
         .post('/api/transaction/internal/all', {})
         .pipe(take(1))
         .subscribe((transactions: any) => {
-          const tmp = JSON.parse(JSON.stringify(transactions), (k, v) => {
-            if (['created', 'lastUpdate', 'paidDate', 'date'].includes(k)) return parseISO(v);
-            return v;
-          });
+          const tmp = this.utils.reviveDates(transactions);
           this.transactions$.next(tmp as InternalTransaction[]);
         });
       this.socket

@@ -8,18 +8,12 @@ import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import { Socket } from 'ngx-socket-io';
 import MockedServerSocket from 'socket.io-mock';
-import { parseISO } from 'date-fns';
 import { cloneDeep } from 'lodash';
-
-function reviveDates<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj), (k, v) => {
-    if (['created', 'lastUpdate', 'paidDate', 'date'].includes(k)) return parseISO(v);
-    return v;
-  }) as T;
-}
+import { UtilsService } from './utils.service';
 
 describe('InternalTransactionService', () => {
   let service: InternalTransactionService;
+  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedTransactions: InternalTransaction[];
   const socket$ = new Subject<any>();
@@ -43,7 +37,7 @@ describe('InternalTransactionService', () => {
               break;
             }
             case 2: {
-              const expectedTransactions = reviveDates(mockedTransactions);
+              const expectedTransactions = utilsService.reviveDates(mockedTransactions);
               expect(transactions.length).toBe(3);
               expect(transactions).toEqual(expectedTransactions);
               test(expectedTransactions);
@@ -68,6 +62,7 @@ describe('InternalTransactionService', () => {
     TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InternalTransactionService);
+    utilsService = TestBed.inject(UtilsService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTransactions = [];
     // Ordem de Pagamento
@@ -93,7 +88,7 @@ describe('InternalTransactionService', () => {
     tmpTransaction.from = '0';
     tmpTransaction.modelTo = 'Team';
     tmpTransaction.to = '1';
-    tmpTransaction.description = 'Redestribuição mensal para os caixas dos times';
+    tmpTransaction.description = 'Redistribuição mensal para os caixas dos times';
     tmpTransaction.type = 'Aporte';
     tmpTransaction.value = '500,00';
     tmpTransaction.paid = true;
@@ -108,7 +103,7 @@ describe('InternalTransactionService', () => {
     tmpTransaction.from = '0';
     tmpTransaction.modelTo = 'User';
     tmpTransaction.to = '0';
-    tmpTransaction.description = 'Distruibuição de libro trimestral 1/4';
+    tmpTransaction.description = 'Distribuição de lucro trimestral 1/4';
     tmpTransaction.type = 'Distribuição de lucro';
     tmpTransaction.value = '2000,00';
     tmpTransaction.paid = true;
@@ -133,7 +128,7 @@ describe('InternalTransactionService', () => {
     tmpTransaction.from = '0';
     tmpTransaction.modelTo = 'Team';
     tmpTransaction.to = '1';
-    tmpTransaction.description = 'Aporte do resto do tinheiro do contrato no time';
+    tmpTransaction.description = 'Aporte do resto do dinheiro do contrato no time';
     tmpTransaction.type = 'Aporte';
     tmpTransaction.value = '500,00';
     tmpTransaction.paid = true;
@@ -162,7 +157,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.saveTransaction(tmpTransaction);
             const req1 = httpMock.expectOne('/api/transaction/internal/');
             expect(req1.request.method).toBe('POST');
@@ -173,7 +168,7 @@ describe('InternalTransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(4);
             mockedTransactions.push(tmpTransaction);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -226,7 +221,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.saveManyTransaction([tmpTransaction1, tmpTransaction2]);
             reqSave = httpMock.expectOne('/api/transaction/internal/many');
             expect(reqSave.request.method).toBe('POST');
@@ -256,7 +251,7 @@ describe('InternalTransactionService', () => {
             expect(transactions.length).toBe(5);
             mockedTransactions.push(tmpTransaction1);
             mockedTransactions.push(tmpTransaction2);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -307,7 +302,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(reviveDates(mockedTransactions));
+            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
             service.editTransaction(tmpTransaction, editionHistoryItem);
             const req1 = httpMock.expectOne('/api/transaction/internal/update');
             expect(req1.request.method).toBe('POST');
@@ -318,7 +313,7 @@ describe('InternalTransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(3);
             expect(transactions[0].value).toBe(tmpTransaction.value);
-            expect(reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
+            expect(utilsService.reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
             done();
             break;
           }
