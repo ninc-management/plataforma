@@ -66,6 +66,35 @@ export class InvoiceTeamMember {
   grossValue = '0,00';
 }
 
+export class InvoicePageBreak {
+  @prop({ required: true })
+  valuesTable: boolean = false;
+
+  @prop({ required: true })
+  stagesTable: boolean = false;
+
+  @prop({ required: true })
+  materialTable: boolean = false;
+
+  @prop({ required: true })
+  preliminaryStage: boolean = false;
+
+  @prop({ required: true })
+  executiveStage: boolean = false;
+
+  @prop({ required: true })
+  complementaryStage: boolean = false;
+
+  @prop({ required: true })
+  importants: boolean = false;
+
+  @prop({ required: true })
+  contractor: boolean = false;
+
+  @prop({ required: true })
+  subject: boolean = false;
+}
+
 @plugin(mongooseUniqueValidator)
 export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
@@ -182,8 +211,8 @@ export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
   prospectedBy!: Ref<User>;
 
-  @prop()
-  valuesTablePageBreak?: boolean;
+  @prop({ required: true })
+  hasPageBreak: InvoicePageBreak = new InvoicePageBreak();
 
   model = false;
   contractorName = '';

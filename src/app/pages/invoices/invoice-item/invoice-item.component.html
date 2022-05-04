@@ -575,31 +575,54 @@
           </div>
         </div>
       </div>
-      <div class="form-control-group">
-        <label class="label" for="input-contractorName">Contratante:</label>
-        <input
-          nbInput
-          [(ngModel)]="tempInvoice.contractorFullName"
-          #contractorName="ngModel"
-          id="input-contractorName"
-          name="contractorName"
-          placeholder="Primeiro nome do contato na empresa"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.contractorName.minLength"
-          [maxlength]="validation.contractorName.maxLength"
-          [status]="contractorName.dirty ? (contractorName.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="contractorName.invalid && contractorName.touched ? true : null"
-          [disabled]="false"
-        />
-        <ng-container *ngIf="contractorName.invalid && contractorName.touched">
-          <p class="caption status-danger" *ngIf="contractorName.errors?.minlength || contractorName.errors?.maxlength">
-            O nome do contratante deve conter entre
-            {{ validation.contractorName.minLength }} a
-            {{ validation.contractorName.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="form-control-group">
+            <label class="label" for="input-contractorName">Contratante:</label>
+            <input
+              nbInput
+              [(ngModel)]="tempInvoice.contractorFullName"
+              #contractorName="ngModel"
+              id="input-contractorName"
+              name="contractorName"
+              placeholder="Primeiro nome do contato na empresa"
+              fullWidth
+              fieldSize="large"
+              [minlength]="validation.contractorName.minLength"
+              [maxlength]="validation.contractorName.maxLength"
+              [status]="contractorName.dirty ? (contractorName.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="contractorName.invalid && contractorName.touched ? true : null"
+              [disabled]="false"
+            />
+            <ng-container *ngIf="contractorName.invalid && contractorName.touched">
+              <p
+                class="caption status-danger"
+                *ngIf="contractorName.errors?.minlength || contractorName.errors?.maxlength"
+              >
+                O nome do contratante deve conter entre
+                {{ validation.contractorName.minLength }} a
+                {{ validation.contractorName.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="toggle-contractor" style="display: flex; margin-top: 4px">
+              Quebra de página:
+            </label>
+            <nb-checkbox
+              [(ngModel)]="tempInvoice.hasPageBreak.contractor"
+              #contractorPageBreak="ngModel"
+              name="contractorPageBreak"
+              id="toggle-contractor"
+              [status]="contractorPageBreak.value ? 'success' : 'basic'"
+            >
+              Adicionar quebra de página no PDF
+            </nb-checkbox>
+          </div>
+        </div>
       </div>
       <div *ngIf="config.hasTeam" class="row">
         <div class="col-md-6">
@@ -695,34 +718,52 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="form-control-group">
-        <label class="label" for="input-subject" style="width: 100%; display: flex; justify-content: space-between">
-          Assunto: (Pontuação final necessária)
-          <span>(Negrito: *!texto*)</span>
-        </label>
-        <textarea
-          nbInput
-          [(ngModel)]="tempInvoice.subject"
-          #subject="ngModel"
-          id="input-subject"
-          name="subject"
-          placeholder="Digite o assunto da proposta de orçamento. Para texto em negrito use os delimitadores *! *. ex: *!texto*"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.subject.minLength"
-          [maxlength]="validation.subject.maxLength"
-          [status]="subject.dirty ? (subject.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="subject.invalid && subject.touched ? true : null"
-          [disabled]="false"
-        ></textarea>
-        <ng-container *ngIf="subject.invalid && subject.touched">
-          <p class="caption status-danger" *ngIf="subject.errors?.minlength || subject.errors?.maxlength">
-            O assunto deve conter entre
-            {{ validation.subject.minLength }} a
-            {{ validation.subject.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="form-control-group">
+            <label class="label" for="input-subject" style="width: 100%; display: flex; justify-content: space-between">
+              Assunto: (Pontuação final necessária)
+              <span>(Negrito: *!texto*)</span>
+            </label>
+            <textarea
+              nbInput
+              [(ngModel)]="tempInvoice.subject"
+              #subject="ngModel"
+              id="input-subject"
+              name="subject"
+              placeholder="Digite o assunto da proposta de orçamento. Para texto em negrito use os delimitadores *! *. ex: *!texto*"
+              fullWidth
+              fieldSize="large"
+              [minlength]="validation.subject.minLength"
+              [maxlength]="validation.subject.maxLength"
+              [status]="subject.dirty ? (subject.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="subject.invalid && subject.touched ? true : null"
+              [disabled]="false"
+            ></textarea>
+            <ng-container *ngIf="subject.invalid && subject.touched">
+              <p class="caption status-danger" *ngIf="subject.errors?.minlength || subject.errors?.maxlength">
+                O assunto deve conter entre
+                {{ validation.subject.minLength }} a
+                {{ validation.subject.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="toggle-subject" style="display: flex; margin-top: 4px">Quebra de página:</label>
+            <nb-checkbox
+              [(ngModel)]="tempInvoice.hasPageBreak.subject"
+              #subjectPageBreak="ngModel"
+              name="subjectPageBreak"
+              id="toggle-subject"
+              [status]="subjectPageBreak.value ? 'success' : 'basic'"
+            >
+              Adicionar quebra de página no PDF
+            </nb-checkbox>
+          </div>
+        </div>
       </div>
       <div *ngIf="config.hasPreliminary" class="row" style="margin-top: 8px">
         <div class="col-auto">
@@ -732,31 +773,46 @@
           <hr />
         </div>
       </div>
-      <div *ngIf="config.hasPreliminary" class="form-control-group">
-        <label class="label" for="input-peep">Período de execução: (Já está entre parênteses)</label>
-        <textarea
-          nbInput
-          [(ngModel)]="tempInvoice.peep"
-          #peep="ngModel"
-          id="input-peep"
-          name="peep"
-          placeholder="Digite o texto do período de execução"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.peep.minLength"
-          [maxlength]="validation.peep.maxLength"
-          [status]="peep.dirty ? (peep.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="peep.invalid && peep.touched ? true : null"
-          [disabled]="false"
-        ></textarea>
-        <ng-container *ngIf="peep.invalid && peep.touched">
-          <p class="caption status-danger" *ngIf="peep.errors?.minlength || peep.errors?.maxlength">
-            O período de execução deve conter entre
-            {{ validation.peep.minLength }} a
-            {{ validation.peep.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div class="row" *ngIf="config.hasPreliminary">
+        <div class="form-control-group col-md-9">
+          <label class="label" for="input-peep">Período de execução: (Já está entre parênteses)</label>
+          <textarea
+            nbInput
+            [(ngModel)]="tempInvoice.peep"
+            #peep="ngModel"
+            id="input-peep"
+            name="peep"
+            placeholder="Digite o texto do período de execução"
+            fullWidth
+            fieldSize="large"
+            [minlength]="validation.peep.minLength"
+            [maxlength]="validation.peep.maxLength"
+            [status]="peep.dirty ? (peep.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="peep.invalid && peep.touched ? true : null"
+            [disabled]="false"
+          ></textarea>
+          <ng-container *ngIf="peep.invalid && peep.touched">
+            <p class="caption status-danger" *ngIf="peep.errors?.minlength || peep.errors?.maxlength">
+              O período de execução deve conter entre
+              {{ validation.peep.minLength }} a
+              {{ validation.peep.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="form-control-group col-md-3">
+          <label class="label" for="toggle-preliminaryStage">Quebra de página</label>
+          <br />
+          <nb-checkbox
+            [(ngModel)]="tempInvoice.hasPageBreak.preliminaryStage"
+            #preliminaryStagePageBreak="ngModel"
+            name="preliminaryStagePageBreak"
+            id="toggle-preliminaryStage"
+            [status]="preliminaryStagePageBreak.value ? 'success' : 'basic'"
+          >
+            Adicionar quebra de página no PDF
+          </nb-checkbox>
+        </div>
       </div>
       <div *ngIf="config.hasPreliminary" class="row">
         <div class="col-md-11">
@@ -852,31 +908,46 @@
           <hr />
         </div>
       </div>
-      <div *ngIf="config.hasExecutive" class="form-control-group">
-        <label class="label" for="input-peee">Período de execução: (Já está entre parênteses)</label>
-        <textarea
-          nbInput
-          [(ngModel)]="tempInvoice.peee"
-          #peee="ngModel"
-          id="input-peee"
-          name="peee"
-          placeholder="Digite o texto do período de execução"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.peee.minLength"
-          [maxlength]="validation.peee.maxLength"
-          [status]="peee.dirty ? (peee.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="peee.invalid && peee.touched ? true : null"
-          [disabled]="false"
-        ></textarea>
-        <ng-container *ngIf="peee.invalid && peee.touched">
-          <p class="caption status-danger" *ngIf="peee.errors?.minlength || peee.errors?.maxlength">
-            O período de execução deve conter entre
-            {{ validation.peee.minLength }} a
-            {{ validation.peee.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div *ngIf="config.hasExecutive" class="row">
+        <div class="form-control-group col-md-9">
+          <label class="label" for="input-peee">Período de execução: (Já está entre parênteses)</label>
+          <textarea
+            nbInput
+            [(ngModel)]="tempInvoice.peee"
+            #peee="ngModel"
+            id="input-peee"
+            name="peee"
+            placeholder="Digite o texto do período de execução"
+            fullWidth
+            fieldSize="large"
+            [minlength]="validation.peee.minLength"
+            [maxlength]="validation.peee.maxLength"
+            [status]="peee.dirty ? (peee.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="peee.invalid && peee.touched ? true : null"
+            [disabled]="false"
+          ></textarea>
+          <ng-container *ngIf="peee.invalid && peee.touched">
+            <p class="caption status-danger" *ngIf="peee.errors?.minlength || peee.errors?.maxlength">
+              O período de execução deve conter entre
+              {{ validation.peee.minLength }} a
+              {{ validation.peee.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="form-control-group col-md-3">
+          <label class="label" for="toggle-executiveStage">Quebra de página</label>
+          <br />
+          <nb-checkbox
+            [(ngModel)]="tempInvoice.hasPageBreak.executiveStage"
+            #executiveStagePageBreak="ngModel"
+            name="executiveStagePageBreak"
+            id="toggle-executiveStage"
+            [status]="executiveStagePageBreak.value ? 'success' : 'basic'"
+          >
+            Adicionar quebra de página no PDF
+          </nb-checkbox>
+        </div>
       </div>
       <div *ngIf="config.hasExecutive" class="row">
         <div class="col-md-11">
@@ -972,31 +1043,46 @@
           <hr />
         </div>
       </div>
-      <div *ngIf="config.hasComplementary" class="form-control-group">
-        <label class="label" for="input-peec">Período de execução: (Já está entre parênteses)</label>
-        <textarea
-          nbInput
-          [(ngModel)]="tempInvoice.peec"
-          #peec="ngModel"
-          id="input-peec"
-          name="peec"
-          placeholder="Digite o texto do período de execução"
-          fullWidth
-          fieldSize="large"
-          [minlength]="validation.peec.minLength"
-          [maxlength]="validation.peec.maxLength"
-          [status]="peec.dirty ? (peec.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="peec.invalid && peec.touched ? true : null"
-          [disabled]="false"
-        ></textarea>
-        <ng-container *ngIf="peec.invalid && peec.touched">
-          <p class="caption status-danger" *ngIf="peec.errors?.minlength || peec.errors?.maxlength">
-            O período de execução deve conter entre
-            {{ validation.peec.minLength }} a
-            {{ validation.peec.maxLength }}
-            caracteres
-          </p>
-        </ng-container>
+      <div *ngIf="config.hasComplementary" class="row">
+        <div *ngIf="config.hasComplementary" class="form-control-group col-md-9">
+          <label class="label" for="input-peec">Período de execução: (Já está entre parênteses)</label>
+          <textarea
+            nbInput
+            [(ngModel)]="tempInvoice.peec"
+            #peec="ngModel"
+            id="input-peec"
+            name="peec"
+            placeholder="Digite o texto do período de execução"
+            fullWidth
+            fieldSize="large"
+            [minlength]="validation.peec.minLength"
+            [maxlength]="validation.peec.maxLength"
+            [status]="peec.dirty ? (peec.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="peec.invalid && peec.touched ? true : null"
+            [disabled]="false"
+          ></textarea>
+          <ng-container *ngIf="peec.invalid && peec.touched">
+            <p class="caption status-danger" *ngIf="peec.errors?.minlength || peec.errors?.maxlength">
+              O período de execução deve conter entre
+              {{ validation.peec.minLength }} a
+              {{ validation.peec.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="form-control-group col-md-3">
+          <label class="label" for="toggle-complementaryStage">Quebra de página</label>
+          <br />
+          <nb-checkbox
+            [(ngModel)]="tempInvoice.hasPageBreak.complementaryStage"
+            #complementaryStagePageBreak="ngModel"
+            name="complementaryStagePageBreak"
+            id="toggle-complementaryStage"
+            [status]="complementaryStagePageBreak.value ? 'success' : 'basic'"
+          >
+            Adicionar quebra de página no PDF
+          </nb-checkbox>
+        </div>
       </div>
       <div *ngIf="config.hasComplementary" class="row">
         <div class="col-md-11">
@@ -1095,7 +1181,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-6">
+        <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-product-type" style="display: flex; margin-top: 4px">Tipo da lista</label>
             <nb-radio-group
@@ -1112,19 +1198,19 @@
           </div>
         </div>
 
-        <div class="col-6">
+        <div class="col-md-6">
           <div class="form-control-group">
-            <label class="label" for="input-values-table-page-break" style="display: flex; margin-top: 4px">
+            <label class="label" for="toggle-valuesTable" style="display: flex; margin-top: 4px">
               Quebra de página:
             </label>
             <nb-checkbox
-              [(ngModel)]="tempInvoice.valuesTablePageBreak"
+              [(ngModel)]="tempInvoice.hasPageBreak.valuesTable"
               #valuesTablePageBreak="ngModel"
               name="valuesTablePageBreak"
-              id="input-values-table-page-break"
+              id="toggle-valuesTable"
               [status]="valuesTablePageBreak.value ? 'success' : 'basic'"
             >
-              Adicionar quebra de página antes da tabela de valores
+              Adicionar quebra de página no PDF
             </nb-checkbox>
           </div>
         </div>
@@ -1621,6 +1707,18 @@
             +
           </button>
         </div>
+        <div class="form-control-group col-md-4">
+          <label for="toggle-stagesTable" class="label" style="display: flex; margin-top: 4px">Quebra de página</label>
+          <nb-checkbox
+            [(ngModel)]="tempInvoice.hasPageBreak.stagesTable"
+            #stagesTablePageBreak="ngModel"
+            name="stagesTablePageBreak"
+            id="toggle-stagesTable"
+            [status]="stagesTablePageBreak.value ? 'success' : 'basic'"
+          >
+            Adicionar quebra de página no PDF
+          </nb-checkbox>
+        </div>
       </div>
       <nb-list *ngIf="config.hasStageName" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: utils.trackByIndex">
@@ -1745,6 +1843,18 @@
             +
           </button>
         </div>
+        <div class="form-control-group col-md-4">
+          <label for="toggle-importants" class="label" style="display: flex; margin-top: 4px">Quebra de página</label>
+          <nb-checkbox
+            [(ngModel)]="tempInvoice.hasPageBreak.importants"
+            #importantsPageBreak="ngModel"
+            name="importantsPageBreak"
+            id="toggle-importants"
+            [status]="importantsPageBreak.value ? 'success' : 'basic'"
+          >
+            Adicionar quebra de página no PDF
+          </nb-checkbox>
+        </div>
       </div>
       <nb-list *ngIf="config.hasImportants" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let activity of tempInvoice.importants; let i = index; trackBy: utils.trackByIndex">
@@ -1782,7 +1892,7 @@
         </div>
       </div>
       <div *ngIf="config.hasMaterialList" class="row">
-        <div class="col-12">
+        <div class="col-md-6">
           <div class="form-control-group">
             <label class="label" for="input-material-type" style="display: flex; margin-top: 4px">Tipo da lista:</label>
             <nb-radio-group
@@ -1798,6 +1908,23 @@
             </nb-radio-group>
           </div>
         </div>
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="toggle-materialTable" style="display: flex; margin-top: 4px">
+              Quebra de página:
+            </label>
+            <nb-checkbox
+              [(ngModel)]="tempInvoice.hasPageBreak.materialTable"
+              #materialTablePageBreak="ngModel"
+              name="materialTablePageBreak"
+              id="toggle-materialTable"
+              [status]="materialTablePageBreak.value ? 'success' : 'basic'"
+            >
+              Adicionar quebra de página no PDF
+            </nb-checkbox>
+          </div>
+        </div>
+
         <div
           [ngClass]="{
             'col-12': true,
