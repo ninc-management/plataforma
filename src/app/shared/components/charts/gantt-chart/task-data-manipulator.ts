@@ -68,7 +68,7 @@ export class TaskDataManipulator {
 
   getMaxDate(taskData: TaskModel[]): Date {
     const contractLastStatus = this._contract.statusHistory[this._contract.statusHistory.length - 1];
-    if (contractLastStatus.status == CONTRACT_STATOOS.FINALIZADO && contractLastStatus.end) {
+    if (contractLastStatus && contractLastStatus.status == CONTRACT_STATOOS.FINALIZADO && contractLastStatus.end) {
       return new Date(contractLastStatus.end);
     }
 

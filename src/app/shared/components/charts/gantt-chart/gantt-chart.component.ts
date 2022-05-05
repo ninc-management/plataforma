@@ -64,7 +64,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public loading: boolean = false;
 
   @Input()
-  public contract!: Contract;
+  public contract: Contract = new Contract();
 
   /**
    * constiable to control chart
