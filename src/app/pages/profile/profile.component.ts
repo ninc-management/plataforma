@@ -378,7 +378,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     );
     this.POSITIONS.push('Elo Principal Nortan');
     this.POSITIONS.push('Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I');
-    this.POSITIONS.push(...this.config.positions);
+    this.POSITIONS.push(...this.config.positions.map((position) => position.typeName));
   }
 
   buildLevelList(): void {

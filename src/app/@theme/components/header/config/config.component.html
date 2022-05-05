@@ -262,7 +262,6 @@
             </table>
           </div>
         </div>
-
         <div class="col-12 col-lg">
           <div class="row" style="margin-top: 8px">
             <div class="col-auto">
@@ -272,58 +271,88 @@
               <hr />
             </div>
           </div>
-          <div class="row">
-            <div class="col-10">
+          <div class="row" style="align-items: end">
+            <div class="col-12 col-lg-6">
               <div class="form-control-group">
                 <label class="label" for="input-role-type">Tipo de papel:</label>
                 <input
                   nbInput
-                  [(ngModel)]="newRole"
+                  [(ngModel)]="newRole.typeName"
                   #roleType="ngModel"
                   id="input-role-type"
                   name="roleType"
                   placeholder="Nome do tipo de papel"
                   fullWidth
                   fieldSize="large"
-                  [status]="newRole ? 'success' : 'basic'"
+                  [status]="newRole.typeName && newRole.permission ? 'success' : 'basic'"
                   [attr.aria-invalid]="roleType.invalid && roleType.touched ? true : null"
                 />
               </div>
             </div>
-
+            <div class="col-10 col-lg-4">
+              <div class="form-control-group">
+                <label class="label" for="input-permission-selector">Tipo de permissão:</label>
+                <nb-select
+                  [(ngModel)]="newRole.permission"
+                  #permissionType="ngModel"
+                  id="input-permission-selector"
+                  name="permissionType"
+                  placeholder="Selecione a permissão"
+                  fullWidth
+                  size="large"
+                  [status]="permissionType.dirty ? (permissionType.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="permissionType.invalid && permissionType.touched ? true : null"
+                >
+                  <nb-option *ngFor="let pType of PERMISSIONS" [value]="pType">{{ pType }}</nb-option>
+                </nb-select>
+              </div>
+            </div>
             <div class="col-2">
-              <button
-                nbButton
-                type="button"
-                fullWidth
-                status="primary"
-                size="large"
-                style="margin-top: 28px"
-                [disabled]="newRole?.length == 0"
-                (click)="addRole()"
-              >
-                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
-              </button>
+              <div class="form-control-group">
+                <button
+                  nbButton
+                  type="button"
+                  fullWidth
+                  status="primary"
+                  size="large"
+                  [disabled]="newRole.typeName?.length !== 0 && newRole.permission?.length !== 0 ? false : true"
+                  (click)="addRole()"
+                >
+                  <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                </button>
+              </div>
             </div>
           </div>
-
           <nb-list style="width: 100%; padding: 10px 0">
             <nb-list-item
               *ngFor="let position of config.profileConfig.positions; let i = index; trackBy: utils.trackByIndex"
             >
               <div class="row typeRow">
-                <div class="col-10">
+                <div class="col-9 col-lg-6" style="margin: 5px 5px">
                   <input
                     nbInput
-                    [(ngModel)]="config.profileConfig.positions[i]"
+                    [(ngModel)]="position.typeName"
                     id="input-role-type-{{ i }}"
                     name="role-type-{{ i }}"
                     placeholder="Nome do tipo de papel"
                     fullWidth
-                    [status]="config.profileConfig.positions[i].length == 0 ? 'danger' : 'basic'"
+                    [status]="position.typeName.length == 0 ? 'danger' : 'basic'"
                   />
                 </div>
-                <div class="col-2">
+                <div class="col-9 col-lg-4" style="margin-left: 5px">
+                  <nb-select
+                    [(ngModel)]="position.permission"
+                    #permissionType="ngModel"
+                    id="input-permission-type-{{ i }}"
+                    name="permission-type-{{ i }}"
+                    placeholder="Selecione a permissão"
+                    fullWidth
+                    [status]="permissionType.dirty ? (permissionType.invalid ? 'danger' : 'success') : 'basic'"
+                  >
+                    <nb-option *ngFor="let pType of PERMISSIONS" [value]="pType">{{ pType }}</nb-option>
+                  </nb-select>
+                </div>
+                <div class="trash col-2 col-lg-1">
                   <nb-icon
                     class="xIcon"
                     status="basic"
@@ -336,7 +365,6 @@
               </div>
             </nb-list-item>
           </nb-list>
-
           <div class="row" style="margin-top: 8px">
             <div class="col-auto">
               <label class="label-divider">Lista de enquadramento</label>
@@ -345,7 +373,7 @@
               <hr />
             </div>
           </div>
-          <div class="row">
+          <div class="row" style="align-items: end">
             <div class="col-10">
               <div class="form-control-group">
                 <label class="label" for="input-levels-type">Tipo de enquadramento:</label>
@@ -363,20 +391,21 @@
                 />
               </div>
             </div>
-
             <div class="col-2">
-              <button
-                nbButton
-                type="button"
-                fullWidth
-                status="primary"
-                size="large"
-                style="margin-top: 28px"
-                [disabled]="newLevel?.length == 0"
-                (click)="addLevel()"
-              >
-                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
-              </button>
+              <div class="form-control-group">
+                <button
+                  nbButton
+                  type="button"
+                  fullWidth
+                  status="primary"
+                  size="large"
+                  style="margin-top: 28px"
+                  [disabled]="newLevel?.length == 0"
+                  (click)="addLevel()"
+                >
+                  <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                </button>
+              </div>
             </div>
             <hr />
           </div>

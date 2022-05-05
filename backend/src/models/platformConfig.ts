@@ -2,9 +2,17 @@ import { prop, getModelForClass } from '@typegoose/typegoose';
 import { Base } from './base';
 import { ExpenseType } from './team';
 
+export class AcessControl {
+  @prop({ required: true })
+  typeName: string = '';
+
+  @prop({ required: true })
+  permission: string = '';
+}
+
 export class ProfileConfig {
-  @prop({ required: true, type: () => [String] })
-  positions: string[] = [];
+  @prop({ required: true, type: () => [AcessControl] })
+  positions: AcessControl[] = [];
 
   @prop({ required: true })
   hasLevels: boolean = true;
