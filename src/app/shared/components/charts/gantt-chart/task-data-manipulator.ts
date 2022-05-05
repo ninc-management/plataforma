@@ -1,12 +1,16 @@
 // This code was initially made by https://github.com/mfandre
 
+import { Contract } from '@models/contract';
+import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { TaskModel } from './task-data.model';
 
 export class TaskDataManipulator {
   COLOURS: string[];
+  _contract: Contract;
 
-  constructor(colours: string[]) {
+  constructor(colours: string[], contract: Contract) {
     this.COLOURS = colours;
+    this._contract = contract;
   }
 
   mapData(taskData: TaskModel[]): any[] {
@@ -52,37 +56,28 @@ export class TaskDataManipulator {
 
   mapZebra(taskData: TaskModel[]): any[] {
     const mappedData = [];
+    const maxDate = this.getMaxDate(taskData);
+    const minDate = new Date(this._contract.created);
 
     for (let index = 0; index < taskData.length; index++) {
       const item = taskData[index];
-      const index_attributes = [index, this.getMinDate(taskData), this.getMaxDate(taskData), item.taskId];
+      const index_attributes = [index, minDate, maxDate, item.taskId];
       mappedData.push(index_attributes);
     }
     return mappedData;
   }
 
-  getMinDate(taskData: TaskModel[]): Date {
-    let minDate = new Date(8640000000000000);
-    for (let index = 0; index < taskData.length; index++) {
-      const item = taskData[index];
-      if (item.start < minDate) {
-        minDate = item.start;
-      }
-    }
-
-    return new Date(minDate);
-  }
-
   getMaxDate(taskData: TaskModel[]): Date {
-    let maxDate = new Date(-8640000000000000);
-    for (let index = 0; index < taskData.length; index++) {
-      const item = taskData[index];
-      if (item.end > maxDate) {
-        maxDate = item.end;
-      }
+    const contractLastStatus = this._contract.statusHistory[this._contract.statusHistory.length - 1];
+    if (contractLastStatus.status == CONTRACT_STATOOS.FINALIZADO && contractLastStatus.end) {
+      return new Date(contractLastStatus.end);
     }
 
-    return new Date(maxDate);
+    const maxDate = new Date(-8640000000000000);
+    return taskData.reduce((maxDate, item) => {
+      if (item.end > maxDate) maxDate = item.end;
+      return maxDate;
+    }, maxDate);
   }
 
   mapGroups(taskData: TaskModel[]): any {

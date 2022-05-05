@@ -1,5 +1,6 @@
 // This code was initially made by https://github.com/mfandre
 
+import { Contract } from '@models/contract';
 import { isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
@@ -15,11 +16,17 @@ export class GanttRenderers {
   private _currentTheme: ChartTheme;
   private lastZebraY: number = 0;
 
-  constructor(taskData: TaskModel[], mappedData: any[], heightRatio: number, currentTheme: ChartTheme) {
+  constructor(
+    taskData: TaskModel[],
+    mappedData: any[],
+    heightRatio: number,
+    currentTheme: ChartTheme,
+    contract: Contract
+  ) {
     this._taskData = taskData;
     this._mappedData = mappedData;
     this._currentTheme = currentTheme;
-    this.taskDataManipulator = new TaskDataManipulator(this._currentTheme.palette);
+    this.taskDataManipulator = new TaskDataManipulator(this._currentTheme.palette, contract);
     this.HEIGHT_RATIO = heightRatio;
   }
 
