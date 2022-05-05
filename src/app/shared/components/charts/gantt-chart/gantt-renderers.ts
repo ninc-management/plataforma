@@ -171,7 +171,7 @@ export class GanttRenderers {
         {
           type: 'text',
           style: {
-            x: 60,
+            x: 63,
             y: y + 24,
             text: taskName,
             textVerticalAlign: 'bottom',
@@ -185,7 +185,7 @@ export class GanttRenderers {
         {
           type: 'text',
           style: {
-            x: 60,
+            x: 63,
             y: y + 38,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
