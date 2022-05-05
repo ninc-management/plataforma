@@ -2,7 +2,7 @@ import * as express from 'express';
 import UserModel from '../models/user';
 import { UserNotification } from '../models/user';
 import { Mutex } from 'async-mutex';
-import { usersMap } from '../shared/global';
+import { notification$, usersMap } from '../shared/global';
 import { cloneDeep, isEqual } from 'lodash';
 
 const router = express.Router();
@@ -22,6 +22,7 @@ function updateNotification(notification: UserNotification, res: any) {
         });
       }
       if (Object.keys(usersMap).length > 0) usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+      notification$.next(notification);
       if (isEqual(notification, lastNotification)) {
         return res
           .status(200)

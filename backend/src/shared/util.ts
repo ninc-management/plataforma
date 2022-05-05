@@ -1,3 +1,6 @@
+import { User, UserNotification } from '../models/user';
+import { sendMail } from '../routes/email';
+
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
   return (
@@ -25,6 +28,18 @@ export function isUserAuthenticated(req, res, next): boolean {
       });
     }
   } else next();
+}
+
+export function notifyByEmail(notification: UserNotification): void {
+  const mailOptions = {
+    from: '"Plataforma Nortan" <contato@nortanengenharia.com>',
+    to: (notification.to as User).email,
+    subject: notification.title,
+    html: '<p>' + notification.message + '</p>',
+  };
+  sendMail(mailOptions, (err, info) => {
+    if (err) console.log('Erro envio de mail:', err);
+  });
 }
 
 export default {
