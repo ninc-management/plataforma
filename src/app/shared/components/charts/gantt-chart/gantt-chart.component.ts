@@ -20,7 +20,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
-import { GanttRenderers } from './gantt-renderers';
+import { ChartConstants, GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
 
@@ -109,7 +109,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       bottom: 20,
       left: 225,
       right: 20,
-      //height: '1000px',
+      height: ChartConstants.DEFAULT_BAR_HEIGHT + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT,
       backgroundColor: '#fff',
       borderWidth: 0,
     };
@@ -378,7 +378,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       { name: 'owner', type: 'ordinal' },
       { name: 'image', type: 'ordinal' },
       { name: 'groupName', type: 'ordinal' },
-      { name: 'isToDrawGroup', type: 'number' },
+      { name: 'shouldDrawGroupConnector', type: 'number' },
       { name: 'groupColor', type: 'ordinal' },
       { name: 'isFinished', type: 'number' },
       { name: 'isAction', type: 'number' },
@@ -459,12 +459,8 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
 
   ngAfterContentChecked(): void {
     if (this.wrapper == undefined) return;
-
     this.ganttWidth = this.wrapper?.nativeElement.offsetWidth;
-    this.ganttHeight = this.wrapper?.nativeElement.offsetHeight;
-
-    const chartHeight = this.taskData.length * 80;
-    this.ganttHeight = chartHeight < 300 ? 300 : chartHeight;
+    this.ganttHeight = ChartConstants.DEFAULT_BAR_HEIGHT + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT;
   }
 
   onTaskClicked(params: any) {

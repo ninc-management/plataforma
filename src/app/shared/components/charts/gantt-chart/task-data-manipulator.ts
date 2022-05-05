@@ -16,7 +16,6 @@ export class TaskDataManipulator {
   mapData(taskData: TaskModel[]): any[] {
     //Im changing the item object to array... this is why the encode is filled with indexed
     const _groupData = this.mapGroups(taskData);
-
     const mappedData = [];
 
     for (let index = 0; index < taskData.length; index++) {
@@ -24,10 +23,10 @@ export class TaskDataManipulator {
 
       //filling the group information
       // here I get the taskID gorupped by mapGroups functions and compare the position of taskid with the array present in the groupped. If the current taskid is in the end of array I dont need to draw the group
-      let isToDrawGroup = 0;
+      let shouldDrawGroupConnector = 0;
       const groupInfo = _groupData[item.groupName];
       if (groupInfo != undefined && groupInfo.tasks.length > 1) {
-        if (groupInfo.tasks.indexOf(item.taskId) < groupInfo.tasks.length - 1) isToDrawGroup = 1;
+        if (groupInfo.tasks.indexOf(item.taskId) != 0) shouldDrawGroupConnector = 1;
       }
 
       const color = groupInfo.color;
@@ -41,7 +40,7 @@ export class TaskDataManipulator {
         item.owner,
         item.image,
         item.groupName,
-        isToDrawGroup,
+        shouldDrawGroupConnector,
         color,
         item.isFinished,
         item.isAction,
@@ -106,16 +105,16 @@ export class TaskDataManipulator {
 
   compareTasks(a: TaskModel, b: TaskModel): number {
     let dateComp = 0;
-    if (a.start > b.start) dateComp = -1;
-    if (b.start > a.start) dateComp = 1;
+    if (a.start > b.start) dateComp = 1;
+    if (b.start > a.start) dateComp = -1;
 
     let groupOrderComp = 0;
-    if (a.groupOrder > b.groupOrder) groupOrderComp = -1;
-    if (b.groupOrder > a.groupOrder) groupOrderComp = 1;
+    if (a.groupOrder > b.groupOrder) groupOrderComp = 1;
+    if (b.groupOrder > a.groupOrder) groupOrderComp = -1;
 
     let taskIdComp = 0;
-    if (a.taskId > b.taskId) taskIdComp = -1;
-    if (b.taskId > a.taskId) taskIdComp = 1;
+    if (a.taskId > b.taskId) taskIdComp = 1;
+    if (b.taskId > a.taskId) taskIdComp = -1;
 
     return groupOrderComp || taskIdComp || dateComp;
   }
