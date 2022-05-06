@@ -15,6 +15,10 @@ export interface NotificationBody {
   message: string;
 }
 
+export enum NotificationTags {
+  MENTION = 'mention',
+}
+
 @Injectable({
   providedIn: 'root',
 })

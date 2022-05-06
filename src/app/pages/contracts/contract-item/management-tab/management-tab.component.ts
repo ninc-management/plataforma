@@ -23,7 +23,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
-import { NotificationService } from 'app/shared/services/notification.service';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -304,7 +304,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         if (usersToNotify)
           this.notificationService.notifyMany(usersToNotify, {
             title: 'Novo comentário na gestão do contrato ' + this.iContract.code,
-            tag: '',
+            tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
       });
