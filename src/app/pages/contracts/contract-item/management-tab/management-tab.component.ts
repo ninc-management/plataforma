@@ -33,7 +33,7 @@ import { NotificationService, NotificationTags } from 'app/shared/services/notif
 export class ManagementTabComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
-  @Input() iContract: Contract = new Contract();
+  @Input() contract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
@@ -76,9 +76,9 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.iContract._id) {
+    if (this.contract._id) {
       this.invoice = this.utils.idToProperty(
-        this.iContract,
+        this.contract,
         this.contractService.idToContract.bind(this.contractService),
         'invoice'
       );
@@ -93,11 +93,11 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         this.userService.idToUser.bind(this.userService),
         'fullName'
       )),
-        (this.deadline = this.contractService.deadline(this.iContract));
+        (this.deadline = this.contractService.deadline(this.contract));
       this.avaliableContracts$ = this.contractService.getContracts();
       this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-        if (this.iContract.invoice)
-          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.iContract.invoice));
+        if (this.contract.invoice)
+          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.contract.invoice));
         this.actionsData = this.transformActionsData();
       });
       this.messageService
@@ -106,7 +106,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         .subscribe((messages) => {
           this.availableMessages = [];
           messages
-            .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.iContract))
+            .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.contract))
             .forEach((message) => {
               this.availableMessages.push(message);
             });
@@ -119,7 +119,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         });
 
       this.actionsData = this.transformActionsData();
-      this.checklistItems = cloneDeep(this.iContract.checklist);
+      this.checklistItems = cloneDeep(this.contract.checklist);
     }
   }
 
@@ -137,15 +137,15 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   updateContractManagement(): void {
-    this.contractService.editContract(this.iContract);
-    this.checklistItems = cloneDeep(this.iContract.checklist);
+    this.contractService.editContract(this.contract);
+    this.checklistItems = cloneDeep(this.contract.checklist);
     this.isChecklistEdited = false;
   }
 
   checklistTotalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
-      return differenceInCalendarDays(this.deadline, this.iContract.created);
+      return differenceInCalendarDays(this.deadline, this.contract.created);
     }
     return undefined;
   }
@@ -174,10 +174,10 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   registerChecklistItem(): void {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
-    this.iContract.checklist.push(cloneDeep(this.newChecklistItem));
+    this.contract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
     this.assigneeSearch = '';
-    this.deadline = this.contractService.deadline(this.iContract);
+    this.deadline = this.contractService.deadline(this.contract);
   }
 
   totalDays(item: ContractChecklistItem | ChecklistItemAction): number | undefined {
@@ -253,7 +253,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(ChecklistItemDialogComponent, {
         context: {
-          contract: this.iContract,
+          contract: this.contract,
           itemIndex: index,
         },
         dialogClass: 'my-dialog',
@@ -263,13 +263,13 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        if (!isEqual(this.iContract.checklist, this.checklistItems)) this.isChecklistEdited = true;
+        if (!isEqual(this.contract.checklist, this.checklistItems)) this.isChecklistEdited = true;
         this.isDialogBlocked.next(false);
       });
   }
 
   removeItem(index: number): void {
-    this.iContract.checklist.splice(index, 1);
+    this.contract.checklist.splice(index, 1);
   }
 
   applyManagementModel(selectedContract: Contract): void {
@@ -290,7 +290,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.iContract.checklist = cloneDeep(selectedContract.checklist);
+          this.contract.checklist = cloneDeep(selectedContract.checklist);
         } else {
           this.modelSearch = '';
         }
@@ -301,7 +301,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   registerNewComment(): void {
     this.newComment.created = new Date();
     this.newComment.author = this.currentUser;
-    this.newComment.contract = this.iContract;
+    this.newComment.contract = this.contract;
     const mentionedUsers = this.searchMentionedUsers(this.newComment.body);
 
     if (mentionedUsers) {
@@ -309,7 +309,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
         if (usersToNotify) {
           this.notificationService.notifyMany(usersToNotify, {
-            title: 'Novo comentário na gestão do contrato ' + this.iContract.code,
+            title: 'Novo comentário na gestão do contrato ' + this.contract.code,
             tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
@@ -327,7 +327,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     let taskCount = 0;
     const taskData: TaskModel[] = [];
 
-    this.iContract.checklist.forEach((item) => {
+    this.contract.checklist.forEach((item) => {
       groupCount += 1;
       taskCount = 0;
 

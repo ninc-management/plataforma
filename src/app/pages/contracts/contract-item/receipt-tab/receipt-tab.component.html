@@ -3,7 +3,7 @@
     <div class="row irow" style="width: 100%">
       <div class="col-10 col-md-11">
         <div class="irow row">
-          <a (click)="openDialog(types.RECEIPT, i)" style="width: 100%; cursor: pointer; display: flex">
+          <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex">
             <div class="col-1">#{{ +i + 1 }}</div>
             <div class="col">{{ receipt.description }}</div>
             <div class="col-md-3">
@@ -41,7 +41,7 @@
   status="primary"
   size="large"
   [disabled]="clonedContract.receipts.length == +clonedContract.total || !isEditionGranted"
-  (click)="openDialog(types.RECEIPT)"
+  (click)="openDialog()"
 >
   Nova Ordem de Empenho
 </button>

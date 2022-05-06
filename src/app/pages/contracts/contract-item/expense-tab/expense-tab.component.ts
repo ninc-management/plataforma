@@ -19,10 +19,10 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
   styleUrls: ['./expense-tab.component.scss'],
 })
 export class ExpenseTabComponent implements OnInit {
-  @Input() iContract: Contract = new Contract();
   @Input() contract: Contract = new Contract();
+  @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() expenseChanged = new EventEmitter<void>();
+  @Output() expensesChanged = new EventEmitter<void>();
 
   types = COMPONENT_TYPES;
   isEditionGranted = false;
@@ -34,7 +34,7 @@ export class ExpenseTabComponent implements OnInit {
 
   get filtredExpenses(): ContractExpense[] {
     if (this.searchQuery !== '')
-      return this.contract.expenses.filter((expense) => {
+      return this.clonedContract.expenses.filter((expense) => {
         return (
           expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -52,7 +52,7 @@ export class ExpenseTabComponent implements OnInit {
           this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.contract.expenses;
+    return this.clonedContract.expenses;
   }
   settings = {
     mode: 'external',
@@ -168,7 +168,7 @@ export class ExpenseTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
@@ -178,19 +178,19 @@ export class ExpenseTabComponent implements OnInit {
       });
   }
 
-  openDialog(componentType: COMPONENT_TYPES, index?: number): void {
+  openDialog(index?: number): void {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
-    const title = index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
+    const title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
     const previousComissionSum = this.comissionSum;
 
     this.dialogService
       .open(ContractDialogComponent, {
         context: {
           title: title,
-          contract: this.contract,
-          expenseIndex: componentType == COMPONENT_TYPES.EXPENSE ? index : undefined,
-          componentType: componentType,
+          contract: this.clonedContract,
+          expenseIndex: index,
+          componentType: COMPONENT_TYPES.EXPENSE,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -200,9 +200,9 @@ export class ExpenseTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe(() => {
         this.loadTableExpenses();
-        this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
+        this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
         if (previousComissionSum != this.comissionSum) {
-          this.expenseChanged.emit();
+          this.expensesChanged.emit();
         }
         this.isDialogBlocked.next(false);
       });
@@ -225,9 +225,9 @@ export class ExpenseTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.contract.expenses.splice(index, 1);
+          this.clonedContract.expenses.splice(index, 1);
           this.loadTableExpenses();
-          this.expenseChanged.emit();
+          this.expensesChanged.emit();
         }
         this.updateContract();
         this.isDialogBlocked.next(false);
@@ -235,32 +235,32 @@ export class ExpenseTabComponent implements OnInit {
   }
 
   updateContract(): void {
-    let version = +this.contract.version;
+    let version = +this.clonedContract.version;
     version += 1;
-    this.contract.version = version.toString().padStart(2, '0');
-    this.contract.lastUpdate = new Date();
-    if (this.iContract.status !== this.contract.status) {
-      const lastStatusIndex = this.contract.statusHistory.length - 1;
-      this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
-      this.contract.statusHistory.push({
-        status: this.contract.status,
-        start: this.contract.lastUpdate,
+    this.clonedContract.version = version.toString().padStart(2, '0');
+    this.clonedContract.lastUpdate = new Date();
+    if (this.contract.status !== this.clonedContract.status) {
+      const lastStatusIndex = this.clonedContract.statusHistory.length - 1;
+      this.clonedContract.statusHistory[lastStatusIndex].end = this.clonedContract.lastUpdate;
+      this.clonedContract.statusHistory.push({
+        status: this.clonedContract.status,
+        start: this.clonedContract.lastUpdate,
       });
     }
-    this.iContract = cloneDeep(this.contract);
+    this.contract = cloneDeep(this.clonedContract);
     this.invoiceService.editInvoice(this.invoice);
-    this.contractService.editContract(this.iContract);
+    this.contractService.editContract(this.contract);
   }
 
   expenseIndex(code: 'string'): number {
-    return this.contract.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
   }
 
   loadTableExpenses(): void {
     this.settings.actions.add = this.isEditionGranted;
     this.settings.actions.delete = this.isEditionGranted;
     this.source.load(
-      this.contract.expenses.map((expense: any, index: number) => {
+      this.clonedContract.expenses.map((expense: any, index: number) => {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
         tmp.created = this.utils.formatDate(tmp.created);

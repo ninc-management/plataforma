@@ -6,7 +6,7 @@
           <label class="label" for="input-author">Autor:</label>
           <input
             nbInput
-            [(ngModel)]="contract.fullName"
+            [(ngModel)]="clonedContract.fullName"
             #author="ngModel"
             id="input-author"
             name="author"
@@ -25,7 +25,7 @@
           <label class="label" for="input-version">Revisão:</label>
           <input
             nbInput
-            [(ngModel)]="contract.version"
+            [(ngModel)]="clonedContract.version"
             #version="ngModel"
             id="input-version"
             name="version"
@@ -44,7 +44,7 @@
         <div class="form-control-group">
           <label class="label" for="input-status">Status:</label>
           <nb-select
-            [(ngModel)]="contract.status"
+            [(ngModel)]="clonedContract.status"
             #status="ngModel"
             id="input-status"
             name="status"
@@ -69,7 +69,7 @@
           <label class="label" for="input-code">Código do orçamento:</label>
           <input
             nbInput
-            [(ngModel)]="contract.code"
+            [(ngModel)]="clonedContract.code"
             #code="ngModel"
             id="input-code"
             name="code"
@@ -129,7 +129,7 @@
           <label class="label" for="input-contractor">Cliente:</label>
           <input
             nbInput
-            [(ngModel)]="contract.contractor"
+            [(ngModel)]="clonedContract.contractor"
             #contractor="ngModel"
             id="input-contractor"
             name="contractor"
@@ -179,7 +179,7 @@
       <label class="label" for="input-name">Empreendimento:</label>
       <input
         nbInput
-        [(ngModel)]="contract.name"
+        [(ngModel)]="clonedContract.name"
         #name="ngModel"
         id="input-name"
         name="name"
@@ -205,7 +205,7 @@
           <label class="label" for="input-value">Valor do contrato:</label>
           <input
             nbInput
-            [ngModel]="contract.value"
+            [ngModel]="clonedContract.value"
             #value="ngModel"
             id="input-value"
             name="value"
@@ -248,7 +248,7 @@
           </label>
           <input
             nbInput
-            [ngModel]="contract.liquid"
+            [ngModel]="clonedContract.liquid"
             #liquid="ngModel"
             id="input-liquid"
             name="liquid"
@@ -265,14 +265,14 @@
           <label class="label" for="input-created">Data de criação:</label>
           <input
             nbInput
-            [(ngModel)]="contract.created"
+            [(ngModel)]="clonedContract.created"
             #created="ngModel"
             id="input-created"
             name="created"
             placeholder="Escolha uma data"
             fullWidth
             fieldSize="large"
-            (ngModelChange)="contract.lastUpdate = today"
+            (ngModelChange)="clonedContract.lastUpdate = today"
             [nbDatepicker]="datepicker"
             [required]="validation.created.required"
             [status]="created.dirty ? (created.invalid ? 'danger' : 'success') : 'basic'"
@@ -287,7 +287,7 @@
           <label class="label" for="input-updated">Última atualização:</label>
           <input
             nbInput
-            [ngModel]="[contract.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[clonedContract.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
             #updated="ngModel"
             id="input-updated"
             name="updated"
@@ -541,7 +541,9 @@
           <div class="row irow totalRow">
             <div class="col-2">
               Restante:
-              {{ [contract.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil) }}
+              {{
+                [clonedContract.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
+              }}
             </div>
             <div class="col-3" style="text-align: right">Total:</div>
             <div
@@ -589,7 +591,7 @@
             [required]="validation.hasISS?.required"
             [status]="hasISS.dirty ? (hasISS.invalid ? 'danger' : 'success') : 'basic'"
             [attr.aria-invalid]="hasISS.invalid && hasISS.touched ? true : null"
-            (selectedChange)="contract.ISS = hasISS.value ? iss.value : '0,00'; updateLiquid()"
+            (selectedChange)="clonedContract.ISS = hasISS.value ? iss.value : '0,00'; updateLiquid()"
             [disabled]="!isEditionGranted"
           >
             <nb-option [value]="true">Sim</nb-option>
@@ -602,7 +604,7 @@
           <label class="label" for="input-iss">Alíquota do ISS:</label>
           <input
             nbInput
-            [(ngModel)]="contract.ISS"
+            [(ngModel)]="clonedContract.ISS"
             #iss="ngModel"
             id="input-iss"
             name="iss"
@@ -629,7 +631,7 @@
           <label class="label" for="input-balance">Caixa:</label>
           <input
             nbInput
-            [(ngModel)]="contract.balance"
+            [(ngModel)]="clonedContract.balance"
             #balance="ngModel"
             id="input-balance"
             name="balance"
@@ -644,7 +646,7 @@
             }"
             ngxSelectAllText
             [required]="validation.balance?.required"
-            [status]="balance.invalid || contract.balance[0] == '-' ? 'danger' : 'basic'"
+            [status]="balance.invalid || clonedContract.balance[0] == '-' ? 'danger' : 'basic'"
             [attr.aria-invalid]="balance.invalid && balance.touched ? true : null"
             [readonly]="true"
           />
@@ -701,7 +703,7 @@
         <div class="form-control-group">
           <label class="label" for="input-total">Parcelas totais:</label>
           <nb-select
-            [(ngModel)]="contract.total"
+            [(ngModel)]="clonedContract.total"
             #total="ngModel"
             id="input-total"
             name="total"

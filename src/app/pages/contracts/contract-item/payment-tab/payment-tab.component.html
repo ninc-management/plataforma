@@ -1,9 +1,9 @@
 <nb-list>
-  <nb-list-item *ngFor="let payment of contract.payments; let i = index">
+  <nb-list-item *ngFor="let payment of clonedContract.payments; let i = index">
     <div class="row irow" style="width: 100%">
       <div class="col-10 col-md-11">
         <div class="irow row">
-          <a (click)="openDialog(types.PAYMENT, i)" style="width: 100%; cursor: pointer; display: flex">
+          <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex">
             <div class="col-1">#{{ +i + 1 }}</div>
             <div class="col">{{ payment.service }}</div>
             <div class="col-md-3">
@@ -41,7 +41,7 @@
   status="primary"
   size="large"
   [disabled]="!isEditionGranted || isNotEdited()"
-  (click)="openDialog(types.PAYMENT)"
+  (click)="openDialog()"
 >
   Nova Ordem de Pagamento
 </button>
