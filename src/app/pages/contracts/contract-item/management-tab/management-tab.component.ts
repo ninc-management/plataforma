@@ -301,12 +301,13 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     if (mentionedUsers) {
       this.avaliableAssignees$.pipe(take(1)).subscribe((users) => {
         const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
-        if (usersToNotify)
+        if (usersToNotify) {
           this.notificationService.notifyMany(usersToNotify, {
             title: 'Novo comentário na gestão do contrato ' + this.iContract.code,
             tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
+        }
       });
     }
 
@@ -384,14 +385,14 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   private applyBold(body: string): string {
     const regex = new RegExp(/(\*@).+?\*/g);
     return body.replace(regex, (match) => {
-      return '<b>' + match.slice(1, -1) + '</b>';
+      return '<b>' + match.slice(1, -1) + ' </b>';
     });
   }
 
   private searchUsersToNotify(users: User[], mentionedUsers: string[]): User[] {
     return users.filter((user) => {
       const index = mentionedUsers.findIndex((mentionedUser) => {
-        return mentionedUser == user.exibitionName ? user.exibitionName : user.fullName;
+        return mentionedUser == (user.exibitionName ? user.exibitionName : user.fullName);
       });
 
       if (index != -1) {
