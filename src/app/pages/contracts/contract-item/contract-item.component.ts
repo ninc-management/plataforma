@@ -11,9 +11,9 @@ import { UtilsService } from 'app/shared/services/utils.service';
 })
 export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  @Input() iContract = new Contract();
+  @Input() contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  contract: Contract = new Contract();
+  clonedContract: Contract = new Contract();
   responseEvent = new Subject<void>();
 
   contractIcon = {
@@ -40,7 +40,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   constructor(public utils: UtilsService) {}
 
   ngOnInit(): void {
-    this.contract = cloneDeep(this.iContract);
+    this.clonedContract = cloneDeep(this.contract);
   }
 
   ngOnDestroy(): void {
@@ -49,7 +49,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   }
 
   expenseIndex(code: 'string'): number {
-    return this.contract.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
   }
 
   forwardResponse() {

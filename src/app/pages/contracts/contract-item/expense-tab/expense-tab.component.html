@@ -3,8 +3,8 @@
   *ngIf="!utils.isPhone(); else phone"
   [settings]="settings"
   [source]="source"
-  (create)="openDialog(types.EXPENSE)"
-  (edit)="openDialog(types.EXPENSE, expenseIndex($event.data.code))"
+  (create)="openDialog()"
+  (edit)="openDialog(expenseIndex($event.data.code))"
   (delete)="confirmationDialog(expenseIndex($event.data.code))"
 ></ng2-smart-table>
 <ng-template #phone>
@@ -16,7 +16,7 @@
         status="primary"
         style="height: 100%"
         [disabled]="!isEditionGranted"
-        (click)="openDialog(types.EXPENSE)"
+        (click)="openDialog()"
       >
         <i class="nb-plus" style="font-size: 1.5rem"></i>
       </button>
@@ -39,10 +39,7 @@
       <div class="row irow" style="width: 100%">
         <div class="col-10 col-md-11">
           <div class="irow row">
-            <a
-              (click)="openDialog(types.EXPENSE, i)"
-              style="width: 100%; cursor: pointer; display: flex; align-items: center"
-            >
+            <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex; align-items: center">
               <div class="col-auto">
                 <nb-user
                   [onlyPicture]="true"

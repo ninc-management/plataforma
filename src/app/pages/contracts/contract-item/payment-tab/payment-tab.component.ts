@@ -15,14 +15,12 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
   styleUrls: ['./payment-tab.component.scss'],
 })
 export class PaymentTabComponent implements OnInit {
-  @Input() iContract: Contract = new Contract();
   @Input() contract: Contract = new Contract();
+  @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() paymentsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
-
-  types = COMPONENT_TYPES;
 
   constructor(
     private dialogService: NbDialogService,
@@ -31,7 +29,7 @@ export class PaymentTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
@@ -40,7 +38,7 @@ export class PaymentTabComponent implements OnInit {
       });
   }
 
-  openDialog(componentType: COMPONENT_TYPES, index?: number): void {
+  openDialog(index?: number): void {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     const title = index != undefined ? 'ORDEM DE PAGAMENTO' : 'ADICIONAR ORDEM DE PAGAMENTO';
@@ -49,9 +47,9 @@ export class PaymentTabComponent implements OnInit {
       .open(ContractDialogComponent, {
         context: {
           title: title,
-          contract: this.contract,
-          paymentIndex: componentType == COMPONENT_TYPES.PAYMENT ? index : undefined,
-          componentType: componentType,
+          contract: this.clonedContract,
+          paymentIndex: index,
+          componentType: COMPONENT_TYPES.PAYMENT,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -82,7 +80,7 @@ export class PaymentTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.contract.payments.splice(index, 1);
+          this.clonedContract.payments.splice(index, 1);
           this.paymentsChanged.emit();
           this.updateContract();
         }
@@ -91,24 +89,24 @@ export class PaymentTabComponent implements OnInit {
   }
 
   updateContract(): void {
-    let version = +this.contract.version;
+    let version = +this.clonedContract.version;
     version += 1;
-    this.contract.version = version.toString().padStart(2, '0');
-    this.contract.lastUpdate = new Date();
-    if (this.iContract.status !== this.contract.status) {
-      const lastStatusIndex = this.contract.statusHistory.length - 1;
-      this.contract.statusHistory[lastStatusIndex].end = this.contract.lastUpdate;
-      this.contract.statusHistory.push({
-        status: this.contract.status,
-        start: this.contract.lastUpdate,
+    this.clonedContract.version = version.toString().padStart(2, '0');
+    this.clonedContract.lastUpdate = new Date();
+    if (this.contract.status !== this.clonedContract.status) {
+      const lastStatusIndex = this.clonedContract.statusHistory.length - 1;
+      this.clonedContract.statusHistory[lastStatusIndex].end = this.clonedContract.lastUpdate;
+      this.clonedContract.statusHistory.push({
+        status: this.clonedContract.status,
+        start: this.clonedContract.lastUpdate,
       });
     }
-    this.iContract = cloneDeep(this.contract);
+    this.contract = cloneDeep(this.clonedContract);
     this.invoiceService.editInvoice(this.invoice);
-    this.contractService.editContract(this.iContract);
+    this.contractService.editContract(this.contract);
   }
 
   isNotEdited(): boolean {
-    return isEqual(this.iContract, this.contract);
+    return isEqual(this.contract, this.clonedContract);
   }
 }

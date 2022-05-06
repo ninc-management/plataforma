@@ -17,13 +17,12 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
   styleUrls: ['./receipt-tab.component.scss'],
 })
 export class ReceiptTabComponent implements OnInit {
-  @Input() iContract: Contract = new Contract();
+  @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() receiptsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
-  types = COMPONENT_TYPES;
 
   constructor(
     private contractService: ContractService,
@@ -43,7 +42,7 @@ export class ReceiptTabComponent implements OnInit {
       });
   }
 
-  openDialog(componentType: COMPONENT_TYPES, index?: number): void {
+  openDialog(index?: number): void {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     const title = index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
@@ -53,8 +52,8 @@ export class ReceiptTabComponent implements OnInit {
         context: {
           title: title,
           contract: this.clonedContract,
-          receiptIndex: componentType == COMPONENT_TYPES.RECEIPT ? index : undefined,
-          componentType: componentType,
+          receiptIndex: index,
+          componentType: COMPONENT_TYPES.RECEIPT,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -98,7 +97,7 @@ export class ReceiptTabComponent implements OnInit {
     version += 1;
     this.clonedContract.version = version.toString().padStart(2, '0');
     this.clonedContract.lastUpdate = new Date();
-    if (this.iContract.status !== this.clonedContract.status) {
+    if (this.contract.status !== this.clonedContract.status) {
       const lastStatusIndex = this.clonedContract.statusHistory.length - 1;
       this.clonedContract.statusHistory[lastStatusIndex].end = this.clonedContract.lastUpdate;
       this.clonedContract.statusHistory.push({
@@ -106,8 +105,8 @@ export class ReceiptTabComponent implements OnInit {
         start: this.clonedContract.lastUpdate,
       });
     }
-    this.iContract = cloneDeep(this.clonedContract);
+    this.contract = cloneDeep(this.clonedContract);
     this.invoiceService.editInvoice(this.invoice);
-    this.contractService.editContract(this.iContract);
+    this.contractService.editContract(this.contract);
   }
 }
