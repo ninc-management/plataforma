@@ -20,11 +20,13 @@ export class TaskDataManipulator {
 
     for (let index = 0; index < taskData.length; index++) {
       const item = taskData[index];
-
-      //filling the group information
-      // here I get the taskID gorupped by mapGroups functions and compare the position of taskid with the array present in the groupped. If the current taskid is in the end of array I dont need to draw the group
       let shouldDrawGroupConnector = 0;
       const groupInfo = _groupData[item.groupName];
+
+      /*
+        the group connector must be draw in every task inside a group except the first
+        which will have the group title
+      */
       if (groupInfo != undefined && groupInfo.tasks.length > 1) {
         if (groupInfo.tasks.indexOf(item.taskId) != 0) shouldDrawGroupConnector = 1;
       }

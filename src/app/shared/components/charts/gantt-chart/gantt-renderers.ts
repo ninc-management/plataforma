@@ -288,7 +288,7 @@ export class GanttRenderers {
         type: 'line',
         shape: {
           x1: xFather + barLengthFather / 20,
-          y1: yFather + ChartConstants.DEFAULT_BAR_HEIGHT - 10,
+          y1: yFather + ChartConstants.DEFAULT_BAR_HEIGHT - ChartConstants.ITEM_OFFSET,
           x2: xFather + barLengthFather / 20,
           y2: y + ChartConstants.DEFAULT_BAR_HEIGHT / 2,
         },
