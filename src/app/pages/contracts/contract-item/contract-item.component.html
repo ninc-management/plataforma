@@ -12,7 +12,7 @@
     <ngx-receipt-tab
       [iContract]="iContract"
       [clonedContract]="contract"
-      (receiptsChanged)="forwardRespose()"
+      (receiptsChanged)="forwardResponse()"
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-receipt-tab>
   </nb-tab>
@@ -21,7 +21,7 @@
       [iContract]="iContract"
       [contract]="contract"
       [isDialogBlocked]="isDialogBlocked"
-      (paymentsChanged)="forwardRespose()"
+      (paymentsChanged)="forwardResponse()"
     ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>

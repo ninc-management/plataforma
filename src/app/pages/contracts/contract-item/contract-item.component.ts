@@ -459,7 +459,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return this.contract.expenses.findIndex((expense) => expense.code == code);
   }
 
-  forwardRespose() {
+  forwardResponse() {
     this.responseEvent.next();
   }
 }
