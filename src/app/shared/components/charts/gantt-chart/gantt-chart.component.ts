@@ -58,9 +58,6 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public chartTitle: string = '';
 
   @Input()
-  public heightRatio: number = 0.6;
-
-  @Input()
   public loading: boolean = false;
 
   @Input()
@@ -109,7 +106,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       bottom: 20,
       left: 225,
       right: 20,
-      height: ChartConstants.DEFAULT_BAR_HEIGHT + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT,
+      height: ChartConstants.ZOOM_BOX_OFFSET + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT,
       backgroundColor: '#fff',
       borderWidth: 0,
     };
@@ -424,13 +421,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       //after sort we map to maintain the order
       this.mappedData = this.taskDataManipulator.mapData(this.taskData);
       this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
-      this.renderers = new GanttRenderers(
-        this.taskData,
-        this.mappedData,
-        this.heightRatio,
-        this.currentTheme,
-        this.contract
-      );
+      this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.currentTheme, this.contract);
       this.setChartOptions();
     });
     this.todayData = [new Date()];
@@ -447,20 +438,14 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     this.mappedData = this.taskDataManipulator.mapData(this.taskData);
     this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
     this.todayData = [new Date()];
-    this.renderers = new GanttRenderers(
-      this.taskData,
-      this.mappedData,
-      this.heightRatio,
-      this.currentTheme,
-      this.contract
-    );
+    this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.currentTheme, this.contract);
     this.setChartOptions();
   }
 
   ngAfterContentChecked(): void {
     if (this.wrapper == undefined) return;
     this.ganttWidth = this.wrapper?.nativeElement.offsetWidth;
-    this.ganttHeight = ChartConstants.DEFAULT_BAR_HEIGHT + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT;
+    this.ganttHeight = ChartConstants.ZOOM_BOX_OFFSET + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT;
   }
 
   onTaskClicked(params: any) {

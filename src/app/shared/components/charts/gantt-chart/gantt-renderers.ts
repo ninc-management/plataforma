@@ -9,7 +9,7 @@ import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
 
 export enum ChartConstants {
-  Y_OFFSET = 70,
+  ZOOM_BOX_OFFSET = 70,
   DEFAULT_BAR_HEIGHT = 70,
   ITEM_HEIGHT = 50,
   ITEM_OFFSET = 10,
@@ -18,24 +18,16 @@ export enum ChartConstants {
 }
 
 export class GanttRenderers {
-  private HEIGHT_RATIO: number;
   private _taskData: TaskModel[];
   private _mappedData: any[];
   private taskDataManipulator: TaskDataManipulator;
   private _currentTheme: ChartTheme;
 
-  constructor(
-    taskData: TaskModel[],
-    mappedData: any[],
-    heightRatio: number,
-    currentTheme: ChartTheme,
-    contract: Contract
-  ) {
+  constructor(taskData: TaskModel[], mappedData: any[], currentTheme: ChartTheme, contract: Contract) {
     this._taskData = taskData;
     this._mappedData = mappedData;
     this._currentTheme = currentTheme;
     this.taskDataManipulator = new TaskDataManipulator(this._currentTheme.palette, contract);
-    this.HEIGHT_RATIO = heightRatio;
   }
 
   renderGanttItem(params: any, api: any) {
@@ -51,7 +43,6 @@ export class GanttRenderers {
 
     const x = timeStart[0];
     const y = ChartConstants.DEFAULT_BAR_HEIGHT * (index + 1) + ChartConstants.ITEM_OFFSET;
-
     const taskNameWidth = echarts.format.getTextRect(taskName).width;
     const text = barLength > taskNameWidth + 40 && x + barLength >= 180 ? taskName : '';
 
@@ -361,13 +352,13 @@ export class GanttRenderers {
   renderToday(params: any, api: any) {
     const today = api.coord([api.value(0), 0]);
     const x = today[0];
-    const y_end = this._taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT + ChartConstants.Y_OFFSET;
+    const y_end = this._taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT + ChartConstants.ZOOM_BOX_OFFSET;
 
     return {
       type: 'line',
       shape: {
         x1: x,
-        y1: ChartConstants.Y_OFFSET,
+        y1: ChartConstants.ZOOM_BOX_OFFSET,
         x2: x,
         y2: y_end,
       },
