@@ -26,6 +26,12 @@ import user_validation from 'app/shared/user-validation.json';
 import { Team } from '@models/team';
 import { ProfileConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
+import invoice from '@models/invoice';
+
+interface article {
+  a: string;
+  o: string;
+}
 
 @Component({
   selector: 'ngx-profile',
@@ -56,6 +62,18 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   ACTIVE_EXPERTISE: number[] = [];
   TEAMS: Team[] = [];
   POSITIONS: string[] = [];
+  positionsList = {
+    diretor: { o: 'Diretor', a: 'Diretora' },
+    assessor: { o: 'Assesor', a: 'Assesora' },
+    estagiario: { o: 'Estagiário', a: 'Estagiária' },
+    secretario: { o: 'Secretário', a: 'Secretária' },
+    financeiro: { o: 'Financeiro', a: 'Financeira' },
+    executivo: { o: 'Executivo', a: 'Executiva' },
+    assossiado: { o: 'Assossiado', a: 'Assossiada' },
+    parceiro: { o: 'Parceiro', a: 'Parceira' },
+    supervisor: { o: 'Supervisor', a: 'Supervisora' },
+    remoto: { o: 'Remoto', a: 'Remota' },
+  };
   LEVELS: string[] = [];
   permissions = Permissions;
   THEMES = [
@@ -349,47 +367,29 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     );
   }
 
+  applyArticle(positions: string[]): string[] {
+    return positions.map((position) => {
+      return position
+        .split(' ')
+        .map((word) => {
+          const simpliedWord = word
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+          if ((this.positionsList as any)[simpliedWord])
+            word = (this.positionsList as any)[simpliedWord][this.user.article];
+          return word;
+        })
+        .join(' ');
+    });
+  }
+
   buildPositionsList(): void {
-    this.POSITIONS = [];
-    this.POSITIONS.push('Parceir' + (this.user.article == 'a' ? 'a' : 'o'));
-    this.POSITIONS.push('Cliente');
-    this.POSITIONS.push('Associad' + (this.user.article == 'a' ? 'a' : 'o'));
-    this.teamService
-      .getTeams()
-      .pipe(takeWhile((teams) => teams.length > 0))
-      .subscribe((teams) => {
-        teams.forEach((team) => {
-          this.POSITIONS.push('Elo Principal ' + team.abrev);
-        });
-      });
-    this.POSITIONS.push(
-      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Financeir' + (this.user.article == 'a' ? 'a' : 'o')
-    );
-    this.POSITIONS.push(
-      'Diretor' + (this.user.article == 'a' ? 'a' : '') + ' Administrativ' + (this.user.article == 'a' ? 'a' : 'o')
-    );
-    this.POSITIONS.push(
-      'Assessor' +
-        (this.user.article == 'a' ? 'a' : '') +
-        ' Executiv' +
-        (this.user.article == 'a' ? 'a' : 'o') +
-        ' Remot' +
-        (this.user.article == 'a' ? 'a' : 'o')
-    );
-    this.POSITIONS.push('Elo Principal Nortan');
-    this.POSITIONS.push('Diretor' + (this.user.article == 'a' ? 'a' : '') + ' de T.I');
-    if (this.config.positions.length !== 0)
-      this.POSITIONS.push(...this.config.positions.map((position) => position.roleTypeName));
+    this.POSITIONS = this.applyArticle(this.config.positions.map((position) => position.roleTypeName));
   }
 
   buildLevelList(): void {
-    this.LEVELS = [];
-    this.LEVELS.push('Freelancer');
-    this.LEVELS.push('Associad' + this.user.article + ' Trainee');
-    this.LEVELS.push('Associad' + this.user.article + ' Equipe');
-    this.LEVELS.push('Associad' + this.user.article + ' Líder');
-    this.LEVELS.push('Associad' + this.user.article + ' Gestor');
-    this.LEVELS.push(...this.config.levels);
+    this.LEVELS = this.applyArticle(this.config.levels);
   }
 
   changeTheme(): void {
