@@ -19,7 +19,9 @@
       [status]="listSelector.dirty ? (listSelector.invalid ? 'danger' : 'success') : 'basic'"
       [attr.aria-invalid]="listSelector.invalid && listSelector.touched ? true : null"
     >
-      <nb-option *ngFor="let item of selectorList" [value]="item">{{ item }}</nb-option>
+      <nb-option *ngFor="let item of selectorList" [value]="valueTransformer(item)">
+        {{ textTransformer(item) }}
+      </nb-option>
     </nb-select>
   </nb-card-body>
 </nb-card>
