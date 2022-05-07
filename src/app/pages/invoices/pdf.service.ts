@@ -562,7 +562,6 @@ export class PdfService {
             fontSize: 8,
           },
         ],
-        pageBreak: invoice.team ? (invoice.team.length == 5 ? 'after' : 'none') : 'none',
         style: 'insideText',
       });
     }
@@ -599,7 +598,6 @@ export class PdfService {
           color: '#79BA9E',
         },
       ],
-      pageBreak: invoice.team ? (invoice.team.length == 3 || invoice.team.length == 4 ? 'before' : 'none') : 'none',
     });
 
     pdf.add(pdf.ln(1));
@@ -660,7 +658,6 @@ export class PdfService {
       text: subject,
       style: 'insideText',
       alignment: 'justify',
-      pageBreak: invoice.team ? (invoice.team.length > 2 ? 'none' : 'after') : 'after',
     });
 
     pdf.add(pdf.ln(1));
