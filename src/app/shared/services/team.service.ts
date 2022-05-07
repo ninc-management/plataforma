@@ -123,9 +123,8 @@ export class TeamService implements OnDestroy {
     });
   }
 
-  teamsList(): string[] {
-    const teams = this.teams$.getValue();
-    return teams.map((team) => team.abrev + ' - ' + team.name);
+  teamsList(): Team[] {
+    return cloneDeep(this.teams$.getValue());
   }
 
   sectorsListAll(): Sector[] {

@@ -8,7 +8,9 @@ import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
   styleUrls: ['./selector-dialog.component.scss'],
 })
 export class SelectorDialogComponent extends BaseDialogComponent implements OnInit {
-  @Input() selectorList: string[] = [];
+  @Input() selectorList: any[] = [];
+  @Input() valueTransformer: (i: any) => string = (i: any) => i;
+  @Input() textTransformer: (i: any) => string = (i: any) => i;
   @Input() title: string = '';
   @Input() label: string = '';
   @Input() placeholder: string = '';
