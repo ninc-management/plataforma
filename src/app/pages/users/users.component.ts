@@ -728,7 +728,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         ];
         let csv = header.join(';');
         csv += '\r\n';
-        csv += 'Associados;';
+        csv += groupBy == GROUP_BY.USER ? 'Associados;' : 'Setores;';
         for (let i = 0; i < 12; i++) {
           csv += monthlySubHeader.join(';') + ';';
         }
@@ -739,7 +739,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           csv +=
             (groupBy == GROUP_BY.USER
               ? this.utils.idToProperty(key, this.userService.idToUser.bind(this.userService), 'fullName')
-              : key) + ';';
+              : this.teamService.idToSectorComposedName(key)) + ';';
           data[key].monthly_data.forEach((individualData) => {
             csv += individualData.received + ';';
             csv += individualData.expenses + ';';
