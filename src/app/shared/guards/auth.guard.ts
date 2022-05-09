@@ -97,10 +97,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     private configService: ConfigService
   ) {}
 
-  setRouter(customRouter: Router): void {
-    this.router = customRouter;
-  }
-
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -140,16 +136,16 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         if (configs[0]) {
           configs[0].profileConfig.positions.forEach((position) => {
             if (position.permission == 'Administrador') {
-              obj[position.typeName] = {
+              obj[position.roleTypeName] = {
                 parent: 'Diretor de T.I',
               };
             } else if (position.permission == 'Membro') {
-              obj[position.typeName] = {
-                parent: 'Diretor de T.I',
+              obj[position.roleTypeName] = {
+                parent: 'Associado',
               };
             } else if (position.permission == 'Financeiro') {
-              obj[position.typeName] = {
-                parent: 'Diretor de T.I',
+              obj[position.roleTypeName] = {
+                parent: 'Diretor Financeiro',
               };
             }
           });

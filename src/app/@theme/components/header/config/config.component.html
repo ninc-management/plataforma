@@ -35,7 +35,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="expenseType.value?.length == 0"
+            [disabled]="!expenseType.value"
             (click)="addExpenseType()"
           >
             <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
@@ -277,14 +277,14 @@
                 <label class="label" for="input-role-type">Tipo de papel:</label>
                 <input
                   nbInput
-                  [(ngModel)]="newRole.typeName"
+                  [(ngModel)]="newRole.roleTypeName"
                   #roleType="ngModel"
                   id="input-role-type"
                   name="roleType"
                   placeholder="Nome do tipo de papel"
                   fullWidth
                   fieldSize="large"
-                  [status]="newRole.typeName && newRole.permission ? 'success' : 'basic'"
+                  [status]="newRole.roleTypeName && newRole.permission ? 'success' : 'basic'"
                   [attr.aria-invalid]="roleType.invalid && roleType.touched ? true : null"
                 />
               </div>
@@ -315,7 +315,7 @@
                   fullWidth
                   status="primary"
                   size="large"
-                  [disabled]="newRole.typeName?.length !== 0 && newRole.permission?.length !== 0 ? false : true"
+                  [disabled]="newRole.roleTypeName && newRole.permission"
                   (click)="addRole()"
                 >
                   <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
@@ -331,12 +331,12 @@
                 <div class="col-9 col-lg-6" style="margin: 5px 5px">
                   <input
                     nbInput
-                    [(ngModel)]="position.typeName"
+                    [(ngModel)]="position.roleTypeName"
                     id="input-role-type-{{ i }}"
                     name="role-type-{{ i }}"
                     placeholder="Nome do tipo de papel"
                     fullWidth
-                    [status]="position.typeName.length == 0 ? 'danger' : 'basic'"
+                    [status]="!position.roleTypeName ? 'danger' : 'basic'"
                   />
                 </div>
                 <div class="col-9 col-lg-4" style="margin-left: 5px">
@@ -399,8 +399,7 @@
                   fullWidth
                   status="primary"
                   size="large"
-                  style="margin-top: 28px"
-                  [disabled]="newLevel?.length == 0"
+                  [disabled]="!newLevel"
                   (click)="addLevel()"
                 >
                   <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>

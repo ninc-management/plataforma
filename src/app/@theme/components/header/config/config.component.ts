@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -13,10 +13,9 @@ import { cloneDeep } from 'lodash';
 export class ConfigComponent {
   @Input() config: PlatformConfig = new PlatformConfig();
   newExpense: ExpenseType = new ExpenseType();
-  newRole = { typeName: '', permission: '' };
+  newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
-  userService: any;
 
   expenseIcon = {
     icon: 'minus',
@@ -36,7 +35,7 @@ export class ConfigComponent {
 
   addRole(): void {
     this.config.profileConfig.positions.push(cloneDeep(this.newRole));
-    this.newRole.typeName = '';
+    this.newRole.roleTypeName = '';
     this.newRole.permission = '';
   }
 
