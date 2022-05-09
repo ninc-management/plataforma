@@ -43,6 +43,7 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   isInitialized = false;
   searchActive = false;
   mentionMode = false;
+  isAlphabetic = new RegExp(/^[A-Za-z]+$/);
   filteredData$: Observable<any[]> = of([]);
   filteredDataIsEmpty$: Observable<boolean> = of(true);
   searchChange$ = new Subject<void>();
@@ -99,14 +100,19 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   }
 
   display(event: User | string): string {
-    if (typeof event === 'string') return event;
-    if (this.searchStr.length > 0) this.messageStr = this.messageStr.slice(0, -this.searchStr.length);
-    return this.prepareMention(event);
+    if (typeof event !== 'string') return this.prepareMention(event);
+
+    if (this.mentionMode) {
+      if (this.isAlphabetic.test(event.slice(-1)) || event.slice(-1) == '@') return event;
+      return event.slice(0, event.length - 1);
+    }
+
+    return event;
   }
 
   onModelChange(event: User | string): void {
-    if (typeof event === 'string') this.messageStr = event;
-    else this.messageStr = this.prepareMention(event);
+    if (typeof event !== 'string') this.messageStr = this.prepareMention(event);
+    else if (!this.mentionMode || event.slice(-1) == '@') this.messageStr = event;
     this._onChangeCallback(this.messageStr);
   }
 
@@ -121,7 +127,10 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   }
 
   private shouldDeactivateMentionMode(event: KeyboardEvent): boolean {
-    return event.code == 'Space' || (this.messageStr.slice(-1) == '@' && event.code == 'Backspace');
+    return (
+      event.code == 'Space' ||
+      (this.messageStr.slice(-1) == '@' && event.code == 'Backspace' && this.searchStr.length == 0)
+    );
   }
 
   private deactivateMentionMode(): void {
@@ -138,7 +147,7 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   private handleMentioning(event: KeyboardEvent): void {
     if (event.code == 'Backspace') {
       this.searchStr = this.searchStr.slice(0, -1);
-    } else {
+    } else if (event.key.length == 1 && this.isAlphabetic.test(event.key)) {
       this.searchStr += event.key;
     }
 
