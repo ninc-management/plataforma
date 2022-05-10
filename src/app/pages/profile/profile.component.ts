@@ -64,12 +64,12 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   POSITIONS: string[] = [];
   positionsList = {
     diretor: { o: 'Diretor', a: 'Diretora' },
-    assessor: { o: 'Assesor', a: 'Assesora' },
+    assessor: { o: 'Assessor', a: 'Assessora' },
     estagiario: { o: 'Estagiário', a: 'Estagiária' },
     secretario: { o: 'Secretário', a: 'Secretária' },
     financeiro: { o: 'Financeiro', a: 'Financeira' },
     executivo: { o: 'Executivo', a: 'Executiva' },
-    assossiado: { o: 'Assossiado', a: 'Assossiada' },
+    assossiado: { o: 'Associado', a: 'Associada' },
     parceiro: { o: 'Parceiro', a: 'Parceira' },
     supervisor: { o: 'Supervisor', a: 'Supervisora' },
     remoto: { o: 'Remoto', a: 'Remota' },
@@ -372,12 +372,12 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       return position
         .split(' ')
         .map((word) => {
-          const simpliedWord = word
+          const simplifiedWord = word
             .toLowerCase()
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
-          if ((this.positionsList as any)[simpliedWord])
-            word = (this.positionsList as any)[simpliedWord][this.user.article];
+          if ((this.positionsList as any)[simplifiedWord])
+            word = (this.positionsList as any)[simplifiedWord][this.user.article];
           return word;
         })
         .join(' ');
