@@ -18,7 +18,7 @@ export class PaymentTabComponent implements OnInit {
   @Input() iContract: Contract = new Contract();
   @Input() contract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() response = new EventEmitter<void>();
+  @Output() paymentsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
 
@@ -60,7 +60,7 @@ export class PaymentTabComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        this.response.emit();
+        this.paymentsChanged.emit();
         this.isDialogBlocked.next(false);
       });
   }
@@ -83,7 +83,7 @@ export class PaymentTabComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.contract.payments.splice(index, 1);
-          this.response.emit();
+          this.paymentsChanged.emit();
           this.updateContract();
         }
         this.isDialogBlocked.next(false);

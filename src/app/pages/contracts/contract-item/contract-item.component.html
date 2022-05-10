@@ -1,6 +1,6 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
-    <ngx-data-tab [iContract]="iContract" [clonedContract]="contract"></ngx-data-tab>
+    <ngx-data-tab [iContract]="iContract" [clonedContract]="contract" [responseEvent]="responseEvent"></ngx-data-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
     <ngx-management-tab [iContract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
@@ -12,7 +12,7 @@
     <ngx-receipt-tab
       [iContract]="iContract"
       [clonedContract]="contract"
-      (response)="forwardRespose()"
+      (receiptsChanged)="forwardResponse()"
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-receipt-tab>
   </nb-tab>
@@ -21,7 +21,7 @@
       [iContract]="iContract"
       [contract]="contract"
       [isDialogBlocked]="isDialogBlocked"
-      (response)="forwardRespose()"
+      (paymentsChanged)="forwardResponse()"
     ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
@@ -29,7 +29,7 @@
       [iContract]="iContract"
       [contract]="contract"
       [isDialogBlocked]="isDialogBlocked"
-      (receiptsChanged)="forwardRespose()"
+      (receiptsChanged)="forwardResponse()"
     ></ngx-expense-tab>
   </nb-tab>
 </nb-tabset>
