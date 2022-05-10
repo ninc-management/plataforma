@@ -9,6 +9,7 @@ import { UtilsService } from 'app/shared/services/utils.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import user_validation from 'app/shared/user-validation.json';
+import { Prospect } from '@models/prospect';
 
 @Component({
   selector: 'ngx-register',
@@ -21,6 +22,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   myMessages: string[] = [];
   myErrors: string[] = [];
   validation = user_validation as any;
+  prospect = new Prospect();
   protected destroy$ = new Subject<void>();
 
   constructor(
@@ -44,7 +46,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
       .pipe(takeUntil(this.destroy$))
       .subscribe((result: EventMessage) => {
         if (result.eventType === EventType.LOGIN_SUCCESS || result.eventType === EventType.ACQUIRE_TOKEN_SUCCESS) {
-          this.user.email = (result.payload as any).account.username;
+          this.prospect.email = (result.payload as any).account.username;
         } else if (
           result.eventType === EventType.LOGIN_FAILURE ||
           result.eventType === EventType.ACQUIRE_TOKEN_FAILURE
@@ -79,7 +81,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   register(): void {
     this.gotoTop();
     this.authService.submitted$.next(true);
-    this.authService.register(this.user).subscribe((res) => {
+    this.authService.register(this.prospect).subscribe((res) => {
       if (res.message) {
         this.setupMessage(res.message);
       }

@@ -50,13 +50,7 @@ router.post('/', (req, res, next) => {
       user.sectors
         .map((sector) => '<li> ' + (sector as Sector).abrev + ' - ' + (sector as Sector).name + ' ✔️ </li>')
         .join() +
-      '</ul> </li>' +
-      '<li>Quer ser contactado?: ' +
-      (user.more ? '✔️' : '❌') +
-      '</li>' +
-      '<li>Detalhes: ' +
-      user.meet +
-      '</li></ul>',
+      '</ul> </li> </ul>',
   };
   sendMail(mailOptions, (err, info) => {
     if (err) {

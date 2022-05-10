@@ -13,7 +13,9 @@ declare let ENV_VARS: { [key: string]: string };
 export const environment = {
   production: false,
   msalClientId: ENV_VARS.MSAL_CLIENT_ID,
-  msalRedirectUri: ENV_VARS.GITPOD_WORKSPACE_URL.slice(0, 8) + '4200-' + ENV_VARS.GITPOD_WORKSPACE_URL.slice(8),
+  msalRedirectUri: ENV_VARS.MSAL_REDIRECT_URI
+    ? ENV_VARS.MSAL_REDIRECT_URI
+    : ENV_VARS.GITPOD_WORKSPACE_URL.slice(0, 8) + '4200-' + ENV_VARS.GITPOD_WORKSPACE_URL.slice(8),
   onedriveUri: 'https://graph.microsoft.com/v1.0/drive/root:/',
   onedriveNortanID: ENV_VARS.ONEDRIVE_NORTAN_ID,
   onedriveAdmID: ENV_VARS.ONEDRIVE_ADM_ID,
