@@ -300,7 +300,7 @@
                   placeholder="Selecione a permissão"
                   fullWidth
                   size="large"
-                  [status]="permissionType.dirty ? (permissionType.invalid ? 'danger' : 'success') : 'basic'"
+                  [status]="newRole.roleTypeName && newRole.permission ? 'success' : 'basic'"
                   [attr.aria-invalid]="permissionType.invalid && permissionType.touched ? true : null"
                 >
                   <nb-option *ngFor="let pType of PERMISSIONS" [value]="pType">{{ pType }}</nb-option>
@@ -315,7 +315,7 @@
                   fullWidth
                   status="primary"
                   size="large"
-                  [disabled]="newRole.roleTypeName && newRole.permission"
+                  [disabled]="newRole.roleTypeName && newRole.permission ? false : true"
                   (click)="addRole()"
                 >
                   <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
@@ -347,7 +347,7 @@
                     name="permission-type-{{ i }}"
                     placeholder="Selecione a permissão"
                     fullWidth
-                    [status]="permissionType.dirty ? (permissionType.invalid ? 'danger' : 'success') : 'basic'"
+                    [status]="!position.permission ? 'danger' : 'basic'"
                   >
                     <nb-option *ngFor="let pType of PERMISSIONS" [value]="pType">{{ pType }}</nb-option>
                   </nb-select>
