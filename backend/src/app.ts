@@ -8,6 +8,7 @@ import helmet from 'helmet';
 // import logger from 'morgan';
 // Import API endpoint routes
 import { isUserAuthenticated, notifyByEmail } from './shared/util';
+import { notification$ } from './shared/global';
 import authRoutes from './routes/auth';
 import emailRoutes from './routes/email';
 import userRoutes from './routes/user';
@@ -21,7 +22,7 @@ import publicRoutes from './routes/public';
 import configRoutes from './routes/platformConfig';
 import notificationRoutes from './routes/notification';
 import transactionRoutes from './routes/transaction';
-import { notification$ } from './shared/global';
+import internalTransactionRoutes from './routes/internalTransaction';
 
 class NortanAPI {
   public app;
@@ -75,6 +76,7 @@ class NortanAPI {
     this.app.use('/api/course', courseRoutes);
     this.app.use('/api/config', configRoutes);
     this.app.use('/api/notify', notificationRoutes);
+    this.app.use('/api/transaction/internal', internalTransactionRoutes);
     this.app.use('/api/transaction', transactionRoutes);
 
     // For all GET requests, send back index.html
