@@ -89,12 +89,6 @@ export class User extends Base<string> {
   public sectors: Ref<Sector>[] = [];
 
   @prop()
-  public more?: boolean;
-
-  @prop()
-  public meet?: string;
-
-  @prop()
   public profilePicture?: string;
 
   @prop({ type: () => [String] })
