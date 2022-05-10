@@ -377,7 +377,7 @@
             shape="rectangle"
           ></nb-user>
           <div>
-            <div style="margin-bottom: 3px">
+            <div class="comment-header">
               <span>
                 <b>
                   {{
@@ -390,13 +390,16 @@
                 {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}
               </span>
             </div>
-            <p>{{ comment.body }}</p>
+            <pre [innerHTML]="comment.body"></pre>
           </div>
         </nb-list-item>
       </nb-list>
       <div class="row" style="margin-top: 1rem">
         <div class="col-11">
-          <label class="label" for="new-comment">Novo comentário</label>
+          <div class="d-flex justify-content-between">
+            <label class="label" for="new-comment">Novo comentário</label>
+            <label class="label" for="new-comment">Menção: *@nome*</label>
+          </div>
           <fieldset [disabled]="!isCommentGranted">
             <div class="form-control-group">
               <nb-message-input

@@ -42,10 +42,20 @@
       margin: 0 0.5rem;
     }
 
-    p {
+    pre {
       display: flex;
       justify-content: flex-end;
       margin: 0 0.5rem;
+      font-family: nb-theme(font-family-primary);
+      color: nb-theme(text-basic-color);
+      white-space: break-spaces;
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: end;
+      align-items: baseline;
+      margin-bottom: 3px;
     }
   }
 }

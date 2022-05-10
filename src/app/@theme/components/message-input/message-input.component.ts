@@ -146,8 +146,6 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   }
 
   private prepareMention(event: User): string {
-    return event.exibitionName
-      ? this.messageStr.concat(event.exibitionName.replace(/\s/g, '') + ' ')
-      : this.messageStr.concat(event.fullName.replace(/\s/g, '') + ' ');
+    return this.messageStr.slice(0, -1) + '*@' + (event.exibitionName ? event.exibitionName : event.fullName) + '* ';
   }
 }

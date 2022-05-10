@@ -23,6 +23,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -63,7 +64,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private stringUtils: StringUtilService,
     private messageService: MessageService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnDestroy(): void {
@@ -294,6 +296,22 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.newComment.created = new Date();
     this.newComment.author = this.currentUser;
     this.newComment.contract = this.iContract;
+    const mentionedUsers = this.searchMentionedUsers(this.newComment.body);
+
+    if (mentionedUsers) {
+      this.avaliableAssignees$.pipe(take(1)).subscribe((users) => {
+        const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
+        if (usersToNotify) {
+          this.notificationService.notifyMany(usersToNotify, {
+            title: 'Novo comentário na gestão do contrato ' + this.iContract.code,
+            tag: NotificationTags.MENTION,
+            message: this.newComment.body,
+          });
+        }
+      });
+    }
+
+    this.newComment.body = this.applyBold(this.newComment.body);
     this.messageService.saveMessage(this.newComment);
     this.newComment.body = '';
   }
@@ -352,5 +370,38 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     });
 
     return taskData;
+  }
+
+  /*
+    This regex means: look for everything that looks like this: *@foobar*
+    So, if body is "Hello There *@Kenobi*" the match is ['*@Kenobi*']
+    https://regexr.com/6kt4g
+   */
+  private searchMentionedUsers(body: string): string[] {
+    const matches = body.match(new RegExp(/(\*@).+?\*/g));
+    if (!matches) return [];
+    return matches.map((match) => match.slice(2, -1));
+  }
+
+  private applyBold(body: string): string {
+    const regex = new RegExp(/(\*@).+?\*/g);
+    return body.replace(regex, (match) => {
+      return '<b>' + match.slice(1, -1) + ' </b>';
+    });
+  }
+
+  private searchUsersToNotify(users: User[], mentionedUsers: string[]): User[] {
+    return users.filter((user) => {
+      const index = mentionedUsers.findIndex((mentionedUser) => {
+        return mentionedUser == (user.exibitionName ? user.exibitionName : user.fullName);
+      });
+
+      if (index != -1) {
+        mentionedUsers.splice(index, 1);
+        return true;
+      }
+
+      return false;
+    });
   }
 }
