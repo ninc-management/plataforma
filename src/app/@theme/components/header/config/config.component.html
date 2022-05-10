@@ -315,7 +315,7 @@
                   fullWidth
                   status="primary"
                   size="large"
-                  [disabled]="newRole.roleTypeName && newRole.permission ? false : true"
+                  [disabled]="!newRole.roleTypeName || !newRole.permission"
                   (click)="addRole()"
                 >
                   <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
