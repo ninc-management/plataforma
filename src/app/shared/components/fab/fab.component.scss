@@ -35,13 +35,15 @@
   transform: scale(1.1, 1.1) translate3d(0, 0, 0);
   cursor: pointer;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  background-color: nb-theme(color-primary-default);
 }
 .fab-menu .fab-toggle:hover {
   transform: scale(1.2, 1.2) translate3d(0, 0, 0);
+  background-color: nb-theme(color-primary-hover);
 }
 
 .fab-menu.active .fab-toggle {
-  background-color: #32859e !important;
+  background-color: nb-theme(color-primary-default) !important;
   transition-timing-function: linear;
   transition-duration: 200ms;
   transform: scale(0.8, 0.8) translate3d(0, 0, 0);
