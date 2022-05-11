@@ -82,7 +82,7 @@ export const NORTAN = {
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private isLoaded = false;
   private _currentUser$ = new BehaviorSubject<User>(new User());
   private destroy$ = new Subject<void>();
@@ -93,6 +93,10 @@ export class UserService implements OnDestroy {
       this.refreshCurrentUser();
     }
     return this._currentUser$;
+  }
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
   }
 
   constructor(
@@ -140,8 +144,8 @@ export class UserService implements OnDestroy {
   }
 
   getUsers(): BehaviorSubject<User[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))

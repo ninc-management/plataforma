@@ -23,6 +23,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
   invoices: any[] = [];
   searchQuery = '';
+  isDataLoaded = false;
   get filtredInvoices(): any[] {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
@@ -141,6 +142,16 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    combineLatest([
+      this.invoiceService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([reqInvoice, reqContractor, reqTeam]) => {
+        this.isDataLoaded = reqInvoice && reqContractor && reqTeam;
+      });
+
     combineLatest([
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),

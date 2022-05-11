@@ -9,9 +9,9 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class ConfigService implements OnDestroy {
-  private requested = false;
   private destroy$ = new Subject<void>();
   private config$ = new BehaviorSubject<PlatformConfig[]>([]);
+  private requested$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
 
@@ -29,8 +29,8 @@ export class ConfigService implements OnDestroy {
 
   //INVARIANT: There's only one PlatformConfig object in the collection
   getConfig(): Observable<PlatformConfig[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/config/all', {})
         .pipe(take(1))

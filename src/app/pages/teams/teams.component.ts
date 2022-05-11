@@ -18,6 +18,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   teams: Team[] = [];
   searchQuery = '';
+  isDataLoaded = false;
   get filtredTeams(): Team[] {
     if (this.searchQuery !== '')
       return this.teams.filter((team) => {
@@ -85,6 +86,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.teamService.isDataLoaded$.pipe(takeUntil(this.destroy$)).subscribe((reqTeam) => (this.isDataLoaded = reqTeam));
     this.teamService
       .getTeams()
       .pipe(takeUntil(this.destroy$))

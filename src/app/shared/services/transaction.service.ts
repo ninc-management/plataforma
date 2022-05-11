@@ -11,10 +11,13 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class TransactionService implements OnDestroy {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private destroy$ = new Subject<void>();
   private transactions$ = new BehaviorSubject<Transaction[]>([]);
 
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
@@ -50,8 +53,8 @@ export class TransactionService implements OnDestroy {
   }
 
   getTransactions(): Observable<Transaction[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/transaction/all', {})
         .pipe(take(1))

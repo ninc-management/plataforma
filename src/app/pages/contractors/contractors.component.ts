@@ -17,6 +17,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   contractors: Contractor[] = [];
   searchQuery = '';
+  isDataLoaded = false;
   get filtredContractors(): Contractor[] {
     if (this.searchQuery !== '')
       return this.contractors.filter((contractor) => {
@@ -84,6 +85,9 @@ export class ContractorsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.contractorService.isDataLoaded$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((reqContractor) => (this.isDataLoaded = reqContractor));
     this.contractorService
       .getContractors()
       .pipe(takeUntil(this.destroy$))

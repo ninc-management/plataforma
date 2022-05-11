@@ -22,10 +22,14 @@ export enum INVOICE_STATOOS {
   providedIn: 'root',
 })
 export class InvoiceService implements OnDestroy {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private size$ = new BehaviorSubject<number>(0);
   private invoices$ = new BehaviorSubject<Invoice[]>([]);
   private destroy$ = new Subject<void>();
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
 
   constructor(
     private http: HttpClient,
@@ -63,8 +67,8 @@ export class InvoiceService implements OnDestroy {
   }
 
   getInvoices(): Observable<Invoice[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/invoice/all', {})
         .pipe(take(1))

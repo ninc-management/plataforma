@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Prospect } from '@models/prospect';
-import { BehaviorSubject, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { UtilsService } from './utils.service';
 import { Socket } from 'ngx-socket-io';
@@ -11,8 +11,13 @@ import { cloneDeep } from 'lodash';
   providedIn: 'root',
 })
 export class ProspectService {
+  private requested$ = new BehaviorSubject<boolean>(false);
   private prospects$ = new BehaviorSubject<Prospect[]>([]);
   private destroy$ = new Subject<void>();
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
 
   constructor(
     private http: HttpClient,
@@ -27,16 +32,21 @@ export class ProspectService {
   }
 
   getProspects(): BehaviorSubject<Prospect[]> {
-    this.http
-      .post('/api/user/allProspects', {})
-      .pipe(take(1))
-      .subscribe((prospects: any) => {
-        this.prospects$.next((prospects as Prospect[]).sort((a, b) => this.utils.nameSort(1, a.fullName, b.fullName)));
-      });
-    this.socket
-      .fromEvent('dbchange')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => this.wsService.handle(data, this.prospects$, 'prospects'));
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
+      this.http
+        .post('/api/user/allProspects', {})
+        .pipe(take(1))
+        .subscribe((prospects: any) => {
+          this.prospects$.next(
+            (prospects as Prospect[]).sort((a, b) => this.utils.nameSort(1, a.fullName, b.fullName))
+          );
+        });
+      this.socket
+        .fromEvent('dbchange')
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: any) => this.wsService.handle(data, this.prospects$, 'prospects'));
+    }
     return this.prospects$;
   }
 

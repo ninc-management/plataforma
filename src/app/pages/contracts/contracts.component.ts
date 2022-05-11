@@ -29,6 +29,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
   contracts: Contract[] = [];
   searchQuery = '';
+  isDataLoaded = false;
   get filtredContracts(): Contract[] {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
@@ -159,6 +160,16 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /* eslint-disable indent */
   ngOnInit(): void {
+    combineLatest([
+      this.invoiceService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+    ])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([reqInvoice, reqContractor, reqTeam]) => {
+        this.isDataLoaded = reqInvoice && reqContractor && reqTeam;
+      });
+
     combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),

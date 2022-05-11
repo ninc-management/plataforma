@@ -11,9 +11,10 @@ import { UtilsService } from './utils.service';
   providedIn: 'root',
 })
 export class MessageService {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private messages$ = new BehaviorSubject<Message[]>([]);
   private destroy$ = new Subject<void>();
+
   constructor(
     private http: HttpClient,
     private socket: Socket,
@@ -29,8 +30,8 @@ export class MessageService {
   }
 
   getMessages(): Observable<Message[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/contract/allMessages', {})
         .pipe(take(1))

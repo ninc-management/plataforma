@@ -18,7 +18,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   promotions: Promotion[] = [];
   source: LocalDataSource = new LocalDataSource();
-
+  isDataLoaded = false;
   searchQuery = '';
   get filtredPromotions(): Promotion[] {
     if (this.searchQuery !== '')
@@ -87,6 +87,9 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.promotionService.isDataLoaded$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((reqPromotion) => (this.isDataLoaded = reqPromotion));
     this.promotionService
       .getPromotions()
       .pipe(takeUntil(this.destroy$))
