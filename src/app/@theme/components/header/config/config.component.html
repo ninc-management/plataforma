@@ -440,7 +440,7 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab tabId="links-tab" [tabTitle]="utils.isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
+  <nb-tab tabId="social-tab" [tabTitle]="utils.isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-12">
