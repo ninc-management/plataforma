@@ -1,29 +1,34 @@
 // This code was initially made by https://github.com/mfandre
 
+import { Contract } from '@models/contract';
+import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { TaskModel } from './task-data.model';
 
 export class TaskDataManipulator {
   COLOURS: string[];
+  _contract: Contract;
 
-  constructor(colours: string[]) {
+  constructor(colours: string[], contract: Contract) {
     this.COLOURS = colours;
+    this._contract = contract;
   }
 
   mapData(taskData: TaskModel[]): any[] {
     //Im changing the item object to array... this is why the encode is filled with indexed
     const _groupData = this.mapGroups(taskData);
-
     const mappedData = [];
 
     for (let index = 0; index < taskData.length; index++) {
       const item = taskData[index];
-
-      //filling the group information
-      // here I get the taskID gorupped by mapGroups functions and compare the position of taskid with the array present in the groupped. If the current taskid is in the end of array I dont need to draw the group
-      let isToDrawGroup = 0;
+      let shouldDrawGroupConnector = 0;
       const groupInfo = _groupData[item.groupName];
+
+      /*
+        the group connector must be draw in every task inside a group except the first
+        which will have the group title
+      */
       if (groupInfo != undefined && groupInfo.tasks.length > 1) {
-        if (groupInfo.tasks.indexOf(item.taskId) < groupInfo.tasks.length - 1) isToDrawGroup = 1;
+        if (groupInfo.tasks.indexOf(item.taskId) != 0) shouldDrawGroupConnector = 1;
       }
 
       const color = groupInfo.color;
@@ -37,7 +42,7 @@ export class TaskDataManipulator {
         item.owner,
         item.image,
         item.groupName,
-        isToDrawGroup,
+        shouldDrawGroupConnector,
         color,
         item.isFinished,
         item.isAction,
@@ -52,37 +57,28 @@ export class TaskDataManipulator {
 
   mapZebra(taskData: TaskModel[]): any[] {
     const mappedData = [];
+    const maxDate = this.getMaxDate(taskData);
+    const minDate = new Date(this._contract.created);
 
     for (let index = 0; index < taskData.length; index++) {
       const item = taskData[index];
-      const index_attributes = [index, this.getMinDate(taskData), this.getMaxDate(taskData), item.taskId];
+      const index_attributes = [index, minDate, maxDate, item.taskId];
       mappedData.push(index_attributes);
     }
     return mappedData;
   }
 
-  getMinDate(taskData: TaskModel[]): Date {
-    let minDate = new Date(8640000000000000);
-    for (let index = 0; index < taskData.length; index++) {
-      const item = taskData[index];
-      if (item.start < minDate) {
-        minDate = item.start;
-      }
-    }
-
-    return new Date(minDate);
-  }
-
   getMaxDate(taskData: TaskModel[]): Date {
-    let maxDate = new Date(-8640000000000000);
-    for (let index = 0; index < taskData.length; index++) {
-      const item = taskData[index];
-      if (item.end > maxDate) {
-        maxDate = item.end;
-      }
+    const contractLastStatus = this._contract.statusHistory[this._contract.statusHistory.length - 1];
+    if (contractLastStatus && contractLastStatus.status == CONTRACT_STATOOS.FINALIZADO && contractLastStatus.end) {
+      return new Date(contractLastStatus.end);
     }
 
-    return new Date(maxDate);
+    const maxDate = new Date(-8640000000000000);
+    return taskData.reduce((maxDate, item) => {
+      if (item.end > maxDate) maxDate = item.end;
+      return maxDate;
+    }, maxDate);
   }
 
   mapGroups(taskData: TaskModel[]): any {
@@ -111,16 +107,16 @@ export class TaskDataManipulator {
 
   compareTasks(a: TaskModel, b: TaskModel): number {
     let dateComp = 0;
-    if (a.start > b.start) dateComp = -1;
-    if (b.start > a.start) dateComp = 1;
+    if (a.start > b.start) dateComp = 1;
+    if (b.start > a.start) dateComp = -1;
 
     let groupOrderComp = 0;
-    if (a.groupOrder > b.groupOrder) groupOrderComp = -1;
-    if (b.groupOrder > a.groupOrder) groupOrderComp = 1;
+    if (a.groupOrder > b.groupOrder) groupOrderComp = 1;
+    if (b.groupOrder > a.groupOrder) groupOrderComp = -1;
 
     let taskIdComp = 0;
-    if (a.taskId > b.taskId) taskIdComp = -1;
-    if (b.taskId > a.taskId) taskIdComp = 1;
+    if (a.taskId > b.taskId) taskIdComp = 1;
+    if (b.taskId > a.taskId) taskIdComp = -1;
 
     return groupOrderComp || taskIdComp || dateComp;
   }

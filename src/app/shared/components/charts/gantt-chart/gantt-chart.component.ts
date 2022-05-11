@@ -14,12 +14,13 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { Contract } from '@models/contract';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { DateManipulator } from './date-manipulator';
-import { GanttRenderers } from './gantt-renderers';
+import { ChartConstants, GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
 
@@ -57,13 +58,10 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   public chartTitle: string = '';
 
   @Input()
-  public heightRatio: number = 0.6;
-
-  @Input()
   public loading: boolean = false;
 
   @Input()
-  public height: number = 300;
+  public contract: Contract = new Contract();
 
   /**
    * constiable to control chart
@@ -108,7 +106,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       bottom: 20,
       left: 225,
       right: 20,
-      //height: '1000px',
+      height: ChartConstants.ZOOM_BOX_OFFSET + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT,
       backgroundColor: '#fff',
       borderWidth: 0,
     };
@@ -161,6 +159,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     return {
       type: 'time',
       position: 'top',
+      min: new Date(this.contract.created),
       splitLine: {
         lineStyle: {
           color: ['#E9EDFF'],
@@ -376,7 +375,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       { name: 'owner', type: 'ordinal' },
       { name: 'image', type: 'ordinal' },
       { name: 'groupName', type: 'ordinal' },
-      { name: 'isToDrawGroup', type: 'number' },
+      { name: 'shouldDrawGroupConnector', type: 'number' },
       { name: 'groupColor', type: 'ordinal' },
       { name: 'isFinished', type: 'number' },
       { name: 'isAction', type: 'number' },
@@ -417,12 +416,12 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         variables: config.variables,
       } as ChartTheme;
 
-      this.taskDataManipulator = new TaskDataManipulator(this.currentTheme.palette);
+      this.taskDataManipulator = new TaskDataManipulator(this.currentTheme.palette, this.contract);
       this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
       //after sort we map to maintain the order
       this.mappedData = this.taskDataManipulator.mapData(this.taskData);
       this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
-      this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.heightRatio, this.currentTheme);
+      this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.currentTheme, this.contract);
       this.setChartOptions();
     });
     this.todayData = [new Date()];
@@ -432,25 +431,21 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     if (this.echartsInstance) {
       this.echartsInstance.clear();
     }
-    this.taskDataManipulator = new TaskDataManipulator(this.currentTheme.palette);
+    this.taskDataManipulator = new TaskDataManipulator(this.currentTheme.palette, this.contract);
     this.taskData = this.taskData.sort(this.taskDataManipulator.compareTasks);
 
     //after sort we map to maintain the order
     this.mappedData = this.taskDataManipulator.mapData(this.taskData);
     this.zebraData = this.taskDataManipulator.mapZebra(this.taskData);
     this.todayData = [new Date()];
-    this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.heightRatio, this.currentTheme);
+    this.renderers = new GanttRenderers(this.taskData, this.mappedData, this.currentTheme, this.contract);
     this.setChartOptions();
   }
 
   ngAfterContentChecked(): void {
     if (this.wrapper == undefined) return;
-
     this.ganttWidth = this.wrapper?.nativeElement.offsetWidth;
-    this.ganttHeight = this.wrapper?.nativeElement.offsetHeight;
-
-    const chartHeight = this.taskData.length * 80;
-    this.ganttHeight = chartHeight < 300 ? 300 : chartHeight;
+    this.ganttHeight = ChartConstants.ZOOM_BOX_OFFSET + this.taskData.length * ChartConstants.DEFAULT_BAR_HEIGHT;
   }
 
   onTaskClicked(params: any) {

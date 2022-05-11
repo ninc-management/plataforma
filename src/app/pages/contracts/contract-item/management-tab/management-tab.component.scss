@@ -58,4 +58,17 @@
       margin-bottom: 3px;
     }
   }
+
+  .emptyChecklistAlert {
+    display: flex;
+    justify-content: center;
+
+    h6 {
+      margin: 16px 0 0;
+    }
+
+    nb-icon {
+      margin: 18px 8px 0 0;
+    }
+  }
 }

@@ -437,6 +437,16 @@
     </div>
   </nb-tab>
   <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gráfico de Gantt'" responsive>
-    <ngx-gantt-chart [taskData]="actionsData"></ngx-gantt-chart>
+    <ngx-gantt-chart
+      *ngIf="actionsData.length > 0; else emptyChecklistAlert"
+      [taskData]="actionsData"
+      [contract]="iContract"
+    ></ngx-gantt-chart>
+    <ng-template #emptyChecklistAlert>
+      <div class="emptyChecklistAlert">
+        <nb-icon status="basic" icon="info-outline" pack="eva"></nb-icon>
+        <h6>Adicione um item para iniciar o gráfico</h6>
+      </div>
+    </ng-template>
   </nb-tab>
 </nb-tabset>
