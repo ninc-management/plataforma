@@ -35,27 +35,54 @@
     }
   }
 
+  pre {
+    display: block;
+    white-space: break-spaces;
+    margin: 0.25rem 0rem;
+    font-family: var(--font-family-primary);
+    color: var(--text-basic-color);
+    text-align: left;
+  }
+
+  .comment-wrapper {
+    display: flex;
+    flex-flow: column;
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .comment-created {
+    margin: 0 0 0 0.5rem;
+  }
+
+  .comment-author {
+    align-self: flex-start;
+  }
+
   .comment-current-user {
     flex-direction: row-reverse;
+
+    pre {
+      margin: 0.25rem 0.5rem;
+    }
 
     span {
       margin: 0 0.5rem;
     }
 
-    pre {
-      display: block;
-      white-space: break-spaces;
-      margin: 0.25rem 0.5rem;
-      font-family: var(--font-family-primary);
-      color: var(--text-basic-color);
-      float: right;
+    .comment-created {
+      margin: 0 0.5rem 0 0;
     }
 
     .comment-header {
-      display: flex;
       justify-content: end;
-      align-items: baseline;
-      margin-bottom: 3px;
+    }
+
+    .comment-wrapper {
+      align-items: flex-end;
     }
   }
 

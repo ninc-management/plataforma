@@ -361,13 +361,13 @@
       <nb-list class="row">
         <nb-list-item
           *ngFor="let comment of availableMessages; let i = index; trackBy: utils.trackByIndex"
-          style="align-items: flex-start"
           [ngClass]="{
             'comment-current-user':
               [comment.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService)
           }"
         >
           <nb-user
+            class="comment-author"
             size="large"
             [picture]="
               [comment.author, this.userService.idToUser.bind(userService), 'profilePicture']
@@ -376,7 +376,7 @@
             onlyPicture
             shape="rectangle"
           ></nb-user>
-          <div>
+          <div class="comment-wrapper">
             <div class="comment-header">
               <span>
                 <b>
@@ -386,7 +386,7 @@
                   }}
                 </b>
               </span>
-              <span class="label" style="margin-left: 0.5rem">
+              <span class="label comment-created">
                 {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}
               </span>
             </div>
