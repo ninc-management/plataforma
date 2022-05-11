@@ -26,8 +26,6 @@ export class FabComponent implements AfterContentInit, OnDestroy {
   @Input()
   open = new Subject<boolean>();
   @Input()
-  color = '#7abb9e';
-  @Input()
   disabled = false;
   @Output()
   events = new Subject<any>();
