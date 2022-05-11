@@ -71,4 +71,11 @@ export class StringUtilService {
   toValue(percentage: string, base: string): string {
     return this.numberToMoney((this.moneyToNumber(percentage) / 100) * this.moneyToNumber(base));
   }
+
+  applyBoldToMention(body: string): string {
+    const regex = new RegExp(/(\*@).+?\*/g);
+    return body.replace(regex, (match) => {
+      return '<b>' + match.slice(1, -1) + ' </b>';
+    });
+  }
 }

@@ -43,12 +43,12 @@
     }
 
     pre {
-      display: flex;
-      justify-content: flex-end;
-      margin: 0 0.5rem;
-      font-family: nb-theme(font-family-primary);
-      color: nb-theme(text-basic-color);
+      display: block;
       white-space: break-spaces;
+      margin: 0.25rem 0.5rem;
+      font-family: var(--font-family-primary);
+      color: var(--text-basic-color);
+      float: right;
     }
 
     .comment-header {

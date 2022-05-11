@@ -36,7 +36,7 @@
         <ng-template #notify>
           <div class="row">
             <div style="padding: 0 1rem">
-              <p>{{ notification.message }}</p>
+              <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
               <p>
                 Por:
                 {{
