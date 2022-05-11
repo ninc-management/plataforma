@@ -19,6 +19,10 @@ describe('ConfigComponent', () => {
       packClass: 'fa',
       iconClassPrefix: 'fa',
     });
+    iconsLibrary.registerFontPack('ion', {
+      packClass: 'ion',
+      iconClassPrefix: 'ion',
+    });
     iconsLibrary.registerSvgPack('fac', {
       minus: '<svg></svg>',
     });
