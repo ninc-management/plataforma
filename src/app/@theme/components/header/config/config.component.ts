@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -10,13 +10,12 @@ import { cloneDeep } from 'lodash';
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss'],
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent {
   @Input() config: PlatformConfig = new PlatformConfig();
   newExpense: ExpenseType = new ExpenseType();
-  newRole: string = '';
+  newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
-
-  constructor(private configService: ConfigService, public utils: UtilsService) {}
+  PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
 
   expenseIcon = {
     icon: 'minus',
@@ -27,21 +26,22 @@ export class ConfigComponent implements OnInit {
     pack: 'fac',
   };
 
-  ngOnInit(): void {}
+  constructor(private configService: ConfigService, public utils: UtilsService) {}
 
   addExpenseType(): void {
     this.config.expenseTypes.push(cloneDeep(this.newExpense));
     this.newExpense = new ExpenseType();
   }
 
+  addRole(): void {
+    this.config.profileConfig.positions.push(cloneDeep(this.newRole));
+    this.newRole.roleTypeName = '';
+    this.newRole.permission = '';
+  }
+
   addLevel(): void {
     this.config.profileConfig.levels.push(this.newLevel);
     this.newLevel = '';
-  }
-
-  addRole(): void {
-    this.config.profileConfig.positions.push(this.newRole);
-    this.newRole = '';
   }
 
   updateConfig(): void {
