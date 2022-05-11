@@ -11,9 +11,13 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class CourseService {
-  private requested = false;
   private courses$ = new BehaviorSubject<Course[]>([]);
   private destroy$ = new Subject<void>();
+  private requested$ = new BehaviorSubject<boolean>(false);
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
 
   constructor(
     private http: HttpClient,
@@ -28,8 +32,8 @@ export class CourseService {
   }
 
   getCourses(): Observable<Course[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/course/all', {})
         .pipe(take(1))

@@ -12,10 +12,13 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class PromotionService implements OnDestroy {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private destroy$ = new Subject<void>();
   private promotions$ = new BehaviorSubject<Promotion[]>([]);
 
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
@@ -43,8 +46,8 @@ export class PromotionService implements OnDestroy {
   }
 
   getPromotions(): Observable<Promotion[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/promotion/all', {})
         .pipe(take(1))

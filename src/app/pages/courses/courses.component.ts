@@ -19,6 +19,7 @@ export class CoursesComponent implements OnInit {
   searchQuery = '';
   courses: Course[] = [];
   source: LocalDataSource = new LocalDataSource();
+  isDataLoaded = false;
 
   constructor(
     public utils: UtilsService,
@@ -95,6 +96,9 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.courseService.isDataLoaded$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((reqTeam) => (this.isDataLoaded = reqTeam));
     this.courseService
       .getCourses()
       .pipe(takeUntil(this.destroy$))

@@ -75,6 +75,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   prospects: Prospect[] = [];
   searchQuery = '';
   isProspectTab = false;
+  isDataLoaded = false;
   get filtredUsers(): User[] {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
@@ -225,6 +226,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    combineLatest([this.userService.isDataLoaded$, this.prospectService.isDataLoaded$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([reqUser, reqProspector]) => {
+        this.isDataLoaded = reqUser && reqProspector;
+      });
     this.userService
       .getUsers()
       .pipe(takeUntil(this.destroy$))

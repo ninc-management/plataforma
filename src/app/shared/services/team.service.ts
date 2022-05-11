@@ -16,10 +16,13 @@ import { User } from '@models/user';
   providedIn: 'root',
 })
 export class TeamService implements OnDestroy {
-  private requested = false;
+  private requested$ = new BehaviorSubject<boolean>(false);
   private destroy$ = new Subject<void>();
   private teams$ = new BehaviorSubject<Team[]>([]);
 
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
@@ -50,8 +53,8 @@ export class TeamService implements OnDestroy {
   }
 
   getTeams(): Observable<Team[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/team/all', {})
         .pipe(take(1))

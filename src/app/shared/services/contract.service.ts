@@ -81,12 +81,16 @@ export interface ExpenseTypesSum {
   providedIn: 'root',
 })
 export class ContractService implements OnDestroy {
-  private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
+  private requested$ = new BehaviorSubject<boolean>(false);
   edited$ = new Subject<void>();
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this.requested$.asObservable();
+  }
 
   constructor(
     private http: HttpClient,
@@ -152,8 +156,8 @@ export class ContractService implements OnDestroy {
   }
 
   getContracts(): Observable<Contract[]> {
-    if (!this.requested) {
-      this.requested = true;
+    if (!this.requested$.getValue()) {
+      this.requested$.next(true);
       this.http
         .post('/api/contract/all', {})
         .pipe(take(1))

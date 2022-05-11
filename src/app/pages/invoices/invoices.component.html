@@ -23,7 +23,7 @@
         </div>
       </nb-card-header>
       <div
-        *ngIf="invoices.length == 0; else table"
+        *ngIf="!isDataLoaded; else table"
         [nbSpinner]="true"
         nbSpinnerStatus="primary"
         nbSpinnerSize="giant"
