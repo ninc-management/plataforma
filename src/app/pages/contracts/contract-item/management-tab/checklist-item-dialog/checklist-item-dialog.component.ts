@@ -26,6 +26,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
   assigneeSearch = '';
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   avaliableActionStatus = Object.values(AVALIABLE_MANAGEMENT_ITEM_STATUS);
+  isChecklistEdited = false;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -64,6 +65,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
 
   removeAction(index: number): void {
     this.actionList.splice(index, 1);
+    this.isChecklistEdited = true;
   }
 
   updateAction(): void {

@@ -343,7 +343,13 @@
 
           <div class="row">
             <div class="col-12">
-              <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty">
+              <button
+                nbButton
+                fullWidth
+                status="primary"
+                size="large"
+                [disabled]="(!form.valid || !form.dirty) && !isChecklistEdited"
+              >
                 Atualizar
               </button>
             </div>

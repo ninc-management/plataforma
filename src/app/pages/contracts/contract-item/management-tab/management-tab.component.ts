@@ -15,7 +15,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
@@ -55,6 +55,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   isEditionGranted = false;
   isCommentGranted = false;
   actionsData: TaskModel[] = [];
+  checklistItems: ContractChecklistItem[] = [];
+  isChecklistEdited = false;
 
   constructor(
     public userService: UserService,
@@ -117,6 +119,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         });
 
       this.actionsData = this.transformActionsData();
+      this.checklistItems = cloneDeep(this.iContract.checklist);
     }
   }
 
@@ -135,6 +138,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   updateContractManagement(): void {
     this.contractService.editContract(this.iContract);
+    this.checklistItems = cloneDeep(this.iContract.checklist);
+    this.isChecklistEdited = false;
   }
 
   checklistTotalDays(): number | undefined {
@@ -258,6 +263,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
+        if (!isEqual(this.iContract.checklist, this.checklistItems)) this.isChecklistEdited = true;
         this.isDialogBlocked.next(false);
       });
   }
