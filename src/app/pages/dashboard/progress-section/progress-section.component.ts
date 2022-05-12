@@ -10,7 +10,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, startWith, takeUntil, skipWhile } from 'rxjs/operators';
+import { take, map, takeUntil, skipWhile } from 'rxjs/operators';
 import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
 import { FinancialService } from 'app/shared/services/financial.service';
@@ -18,6 +18,9 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { startOfMonth, subMonths } from 'date-fns';
 import { NbDialogService } from '@nebular/theme';
 import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
+import { ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 
 interface MetricItem {
   title: string;
@@ -54,7 +57,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private userService: UserService,
     private stringUtil: StringUtilService,
     private financialService: FinancialService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private contractService: ContractService,
+    private invoiceService: InvoiceService,
+    private contractorService: ContractorService
   ) {}
 
   ngOnDestroy(): void {
@@ -96,9 +102,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.receivedValueNortan(monthStart, today, user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: this.contractService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isContractDataLoaded) => !isContractDataLoaded)
           ),
         });
         this.METRICS.push({
@@ -116,9 +122,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.receivedValueNortan(monthStart, today, user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: this.contractService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isContractDataLoaded) => !isContractDataLoaded)
           ),
         });
         this.METRICS.push({
@@ -137,9 +143,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.contractsAsManger(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
         this.METRICS.push({
@@ -159,9 +165,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.contractsAsMember(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
         this.METRICS.push({
@@ -180,9 +186,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.invoicesAsManger(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: this.invoiceService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isInvoiceDataLoaded) => !isInvoiceDataLoaded)
           ),
         });
         this.METRICS.push({
@@ -201,9 +207,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.metricsService.invoicesAsMember(user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: this.invoiceService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isInvoiceDataLoaded) => !isInvoiceDataLoaded)
           ),
         });
         this.METRICS.push({
@@ -223,9 +229,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
                   this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global)
               )
             ),
-          loading: this.metricsService.receivedValueNortan(monthStart, today, user._id).pipe(
-            map((x) => x == undefined),
-            startWith(true)
+          loading: this.contractService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isContractDataLoaded) => !isContractDataLoaded)
           ),
         });
         this.METRICS.push({
@@ -238,9 +244,16 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             })
           ),
           description: of(''),
-          loading: this.metricsService.userReceivableValue(user._id).pipe(
-            map((userReceivable) => userReceivable == undefined),
-            startWith(true)
+          loading: combineLatest([
+            this.contractService.isDataLoaded$,
+            this.invoiceService.isDataLoaded$,
+            this.contractorService.isDataLoaded$,
+          ]).pipe(
+            takeUntil(this.destroy$),
+            map(
+              ([isContractDataLoaded, isInvoiceDataLoaded, isContractorDataLoaded]) =>
+                !(isContractDataLoaded && isInvoiceDataLoaded && isContractorDataLoaded)
+            )
           ),
         });
       });
