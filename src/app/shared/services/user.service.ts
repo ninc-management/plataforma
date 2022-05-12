@@ -82,11 +82,11 @@ export const NORTAN = {
   providedIn: 'root',
 })
 export class UserService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
-  private isLoaded = false;
+  private requested = false;
   private _currentUser$ = new BehaviorSubject<User>(new User());
   private destroy$ = new Subject<void>();
   private users$ = new BehaviorSubject<User[]>([]);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get currentUser$(): Observable<User> {
     if (this._currentUser$.value._id == undefined) {
@@ -96,7 +96,7 @@ export class UserService implements OnDestroy {
   }
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -134,7 +134,7 @@ export class UserService implements OnDestroy {
   getUser(userEmail: string): BehaviorSubject<User | undefined> {
     const user$ = new BehaviorSubject<User | undefined>(undefined);
     this.getUsers()
-      .pipe(take(this.isLoaded ? 1 : 2), last())
+      .pipe(take(this._isDataLoaded$.getValue() ? 1 : 2), last())
       .subscribe((users) => {
         const matchedUsers = users.filter((user) => user.email == userEmail);
         if (matchedUsers.length > 0) user$.next(cloneDeep(matchedUsers[0]));
@@ -144,8 +144,7 @@ export class UserService implements OnDestroy {
   }
 
   getUsers(): BehaviorSubject<User[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))
@@ -153,10 +152,10 @@ export class UserService implements OnDestroy {
           const tmp = this.utils.reviveDates(users);
           this.users$.next(
             (tmp as User[]).sort((a, b) => {
-              this.isLoaded = true;
               return this.utils.nameSort(1, a.fullName, b.fullName);
             })
           );
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

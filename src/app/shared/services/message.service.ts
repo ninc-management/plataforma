@@ -11,9 +11,14 @@ import { UtilsService } from './utils.service';
   providedIn: 'root',
 })
 export class MessageService {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private messages$ = new BehaviorSubject<Message[]>([]);
   private destroy$ = new Subject<void>();
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this._isDataLoaded$.asObservable();
+  }
 
   constructor(
     private http: HttpClient,
@@ -30,14 +35,14 @@ export class MessageService {
   }
 
   getMessages(): Observable<Message[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
       this.http
         .post('/api/contract/allMessages', {})
         .pipe(take(1))
         .subscribe((messages: any) => {
           const tmp = this.utils.reviveDates(messages);
           this.messages$.next(tmp as Message[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

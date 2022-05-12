@@ -12,12 +12,13 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class ContractorService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private destroy$ = new Subject<void>();
   private contractors$ = new BehaviorSubject<Contractor[]>([]);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -47,8 +48,7 @@ export class ContractorService implements OnDestroy {
   }
 
   getContractors(): Observable<Contractor[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
       this.http
         .post('/api/contractor/all', {})
         .pipe(take(1))
@@ -58,6 +58,7 @@ export class ContractorService implements OnDestroy {
               return this.utils.nameSort(1, a.fullName, b.fullName);
             })
           );
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

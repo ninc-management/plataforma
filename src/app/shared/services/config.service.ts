@@ -9,9 +9,14 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class ConfigService implements OnDestroy {
+  private requested = false;
   private destroy$ = new Subject<void>();
   private config$ = new BehaviorSubject<PlatformConfig[]>([]);
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
+
+  get isDataLoaded$(): Observable<boolean> {
+    return this._isDataLoaded$.asObservable();
+  }
 
   constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
 
@@ -29,13 +34,14 @@ export class ConfigService implements OnDestroy {
 
   //INVARIANT: There's only one PlatformConfig object in the collection
   getConfig(): Observable<PlatformConfig[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/config/all', {})
         .pipe(take(1))
         .subscribe((config: any) => {
           this.config$.next(config as PlatformConfig[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

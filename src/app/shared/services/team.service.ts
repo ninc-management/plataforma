@@ -16,12 +16,13 @@ import { User } from '@models/user';
   providedIn: 'root',
 })
 export class TeamService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private destroy$ = new Subject<void>();
   private teams$ = new BehaviorSubject<Team[]>([]);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
   constructor(
     private http: HttpClient,
@@ -53,8 +54,7 @@ export class TeamService implements OnDestroy {
   }
 
   getTeams(): Observable<Team[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
       this.http
         .post('/api/team/all', {})
         .pipe(take(1))
@@ -62,6 +62,7 @@ export class TeamService implements OnDestroy {
           const tmp = this.utils.reviveDates(teams);
           this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')
