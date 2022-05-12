@@ -159,7 +159,6 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
-      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -189,7 +188,6 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return this.invoiceService.getInvoices().pipe(
-      filter((invoices) => invoices.length > 0),
       map((invoices) => {
         return invoices
           .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
@@ -219,7 +217,6 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return combineLatest([this.contractService.getContracts(), this.invoiceService.getInvoices()]).pipe(
-      filter(([contracts, invoices]) => contracts.length > 0 && invoices.length > 0),
       map(([contracts, invoices]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -249,7 +246,6 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return this.invoiceService.getInvoices().pipe(
-      filter((invoices) => invoices.length > 0),
       map((invoices) => {
         return invoices
           .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
@@ -274,7 +270,6 @@ export class MetricsService implements OnDestroy {
 
   receivedValueBySectors(start: Date, end: Date, uId?: string): Observable<UserAndSectors> {
     return this.contractService.getContracts().pipe(
-      filter((contracts) => contracts.length > 0),
       map((contracts) => {
         return contracts.reduce((received: UserAndSectors, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
@@ -769,9 +764,6 @@ export class MetricsService implements OnDestroy {
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
     ]).pipe(
-      filter(
-        ([contracts, invoices, contractors]) => contracts.length > 0 && invoices.length > 0 && contractors.length > 0
-      ),
       map(([contracts, invoices, contractors]) => {
         return contracts.reduce(
           (userReceivable: UserReceivable, contract) => {
