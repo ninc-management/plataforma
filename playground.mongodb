@@ -659,6 +659,10 @@ db.users.find().forEach((user) => {
   db.users.replaceOne({ _id: user._id }, user);
 });
 
+db.teams.find().forEach((team) => {
+  team.isOrganizationTeam = false;
+  db.teams.replaceOne({ _id: team._id }, team);
+});
 db.invoices.find().forEach((invoice) => {
   delete invoice.valuesTablePageBreak;
   invoice.hasPageBreak = {

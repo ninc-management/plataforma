@@ -162,4 +162,8 @@ export class TeamService implements OnDestroy {
     if (this.utils.isOfType<User>(user, ['fullName', 'sectors', 'position']) && !user._id) return [];
     return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
+
+  hasOrganitazionTeam(): boolean {
+    return !!this.teams$.getValue().find((team) => team.isOrganizationTeam);
+  }
 }
