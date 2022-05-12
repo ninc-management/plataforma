@@ -10,6 +10,7 @@
     </div>
   </nb-tab>
   <nb-tab
+    *ngIf="nortanTeam"
     [tabTitle]="utils.isPhone() ? '' : tabTitles.NORTAN"
     [tabIcon]="nortanIcon"
     [tabId]="nortanTeam ? nortanTeam._id : ''"

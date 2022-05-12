@@ -17,7 +17,17 @@
     >
       <nb-card-header>
         {{ title }}
-        <div class="buttons">
+        <div class="buttons" [ngStyle]="{ width: iTeam._id ? '250px' : 'auto' }">
+          <nb-toggle
+            *ngIf="iTeam._id"
+            [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganitazionTeam()"
+            (ngModelChange)="handleTeamStatusChange()"
+            [(ngModel)]="iTeam.isOrganizationTeam"
+            name="organizationTeam"
+            labelPosition="start"
+          >
+            Time da organização
+          </nb-toggle>
           <button
             nbButton
             ghost

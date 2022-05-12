@@ -53,7 +53,7 @@ export class DashboardComponent {
   };
   start = startOfMonth(new Date());
   end = endOfMonth(new Date());
-  open$: Observable<number>;
+  open$: Observable<number> = of(0);
   toReceive$: Observable<number> = of(0);
   expenses$: Observable<string> = of('');
   contractsBalance$: Observable<number> = of(0);
@@ -78,26 +78,26 @@ export class DashboardComponent {
         take(1)
       )
       .subscribe((teams) => {
-        const nortanTeam = teams.find((team) => team.name == 'Administrativo');
+        const nortanTeam = teams.find((team) => team.isOrganizationTeam);
         if (nortanTeam !== undefined) {
           this.nortanTeam = nortanTeam;
           this.expenses$ = metricsService
             .teamExpenses(nortanTeam._id, this.start, this.end)
             .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
+          this.open$ = metricsService
+            .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
+            .pipe(map((metricInfo) => metricInfo.count));
+          this.toReceive$ = metricsService
+            .countContracts(CONTRACT_STATOOS.A_RECEBER)
+            .pipe(map((metricInfo) => metricInfo.count));
+          this.contractsBalance$ = this.metricsService
+            .nortanValue(this.start, this.end)
+            .pipe(map((metricInfo) => metricInfo.global));
+          this.taxesBalance$ = this.metricsService
+            .nortanValue(this.start, this.end, 'taxes')
+            .pipe(map((metricInfo) => metricInfo.global));
         }
       });
-    this.open$ = metricsService
-      .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
-      .pipe(map((metricInfo) => metricInfo.count));
-    this.toReceive$ = metricsService
-      .countContracts(CONTRACT_STATOOS.A_RECEBER)
-      .pipe(map((metricInfo) => metricInfo.count));
-    this.contractsBalance$ = this.metricsService
-      .nortanValue(this.start, this.end)
-      .pipe(map((metricInfo) => metricInfo.global));
-    this.taxesBalance$ = this.metricsService
-      .nortanValue(this.start, this.end, 'taxes')
-      .pipe(map((metricInfo) => metricInfo.global));
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       this.teamService
         .getTeams()

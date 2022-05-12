@@ -113,6 +113,9 @@ export class Team extends Base<string> {
   @prop({ required: true })
   abrev!: string;
 
+  @prop({ required: true })
+  isOrganizationTeam: boolean = false;
+
   balance = '0,00';
 
   leaderName = '';
