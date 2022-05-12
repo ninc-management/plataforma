@@ -49,6 +49,14 @@ $hamburger-layer-border-radius: 4px;
     display: inline-block;
     text-align: justify;
     word-break: break-word;
+
+    pre {
+      display: block;
+      white-space: break-spaces;
+      margin: 1rem 0 0;
+      font-family: var(--font-family-primary);
+      color: var(--text-basic-color);
+    }
   }
 
   nb-badge {

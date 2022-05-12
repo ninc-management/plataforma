@@ -317,7 +317,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.newComment.body = this.applyBold(this.newComment.body);
+    this.newComment.body = this.stringUtils.applyBoldToMention(this.newComment.body);
     this.messageService.saveMessage(this.newComment);
     this.newComment.body = '';
   }
@@ -387,13 +387,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     const matches = body.match(new RegExp(/(\*@).+?\*/g));
     if (!matches) return [];
     return matches.map((match) => match.slice(2, -1));
-  }
-
-  private applyBold(body: string): string {
-    const regex = new RegExp(/(\*@).+?\*/g);
-    return body.replace(regex, (match) => {
-      return '<b>' + match.slice(1, -1) + ' </b>';
-    });
   }
 
   private searchUsersToNotify(users: User[], mentionedUsers: string[]): User[] {

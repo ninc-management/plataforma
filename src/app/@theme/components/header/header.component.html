@@ -91,9 +91,7 @@
               "
             ></nb-user>
             <div class="notification">
-              <span style="position: relative; top: 15px">
-                {{ notification.message }}
-              </span>
+              <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
               <br />
               <br />
               <span style="float: right">

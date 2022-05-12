@@ -21,6 +21,7 @@ import { NbAccessChecker } from '@nebular/security';
 import { Permissions } from 'app/shared/services/utils.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { PlatformConfig } from '@models/platformConfig';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 interface NbMenuItem {
   title: string;
@@ -57,7 +58,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
-    public utils: UtilsService
+    public utils: UtilsService,
+    public stringUtils: StringUtilService
   ) {}
 
   ngOnInit(): void {
