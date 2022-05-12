@@ -658,3 +658,19 @@ db.users.find().forEach((user) => {
   delete user.emailNortan;
   db.users.replaceOne({ _id: user._id }, user);
 });
+
+db.invoices.find().forEach((invoice) => {
+  delete invoice.valuesTablePageBreak;
+  invoice.hasPageBreak = {
+    valuesTable: false,
+    stagesTable: false,
+    materialTable: false,
+    preliminaryStage: false,
+    executiveStage: false,
+    complementaryStage: false,
+    importants: false,
+    contractor: false,
+    subject: false,
+  };
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});

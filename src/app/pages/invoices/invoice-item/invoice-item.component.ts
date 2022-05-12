@@ -194,7 +194,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     if (this.tempInvoice.contactPlural == undefined) this.tempInvoice.contactPlural = false;
-    if (this.tempInvoice.valuesTablePageBreak == undefined) this.tempInvoice.valuesTablePageBreak = false;
     if (this.tempInvoice.peep == undefined)
       this.tempInvoice.peep =
         '20 dias úteis para o primeiro estudo preliminar, mais 15 dias úteis para cada pedido de alteração feito pelo cliente';

@@ -562,7 +562,6 @@ export class PdfService {
             fontSize: 8,
           },
         ],
-        pageBreak: invoice.team ? (invoice.team.length == 5 ? 'after' : 'none') : 'none',
         style: 'insideText',
       });
     }
@@ -599,7 +598,6 @@ export class PdfService {
           color: '#79BA9E',
         },
       ],
-      pageBreak: invoice.team ? (invoice.team.length == 3 || invoice.team.length == 4 ? 'before' : 'none') : 'none',
     });
 
     pdf.add(pdf.ln(1));
@@ -618,6 +616,7 @@ export class PdfService {
         },
       ],
       style: 'insideText',
+      pageBreak: invoice.hasPageBreak.contractor ? 'before' : '',
     });
 
     pdf.add(pdf.ln(1));
@@ -639,6 +638,7 @@ export class PdfService {
       text: 'Assunto:',
       bold: true,
       style: 'insideText',
+      pageBreak: invoice.hasPageBreak.subject ? 'before' : '',
     });
 
     pdf.add(pdf.ln(1));
@@ -658,8 +658,9 @@ export class PdfService {
       text: subject,
       style: 'insideText',
       alignment: 'justify',
-      pageBreak: invoice.team ? (invoice.team.length > 2 ? 'none' : 'after') : 'after',
     });
+
+    pdf.add(pdf.ln(1));
 
     // Body - Invoice Info Early Stage - Page 2
     if (this.config.hasPreliminary || this.config.hasExecutive || this.config.hasComplementary) {
@@ -667,6 +668,12 @@ export class PdfService {
         text: 'Descrição do serviço:',
         bold: true,
         style: 'insideText',
+        pageBreak:
+          invoice.hasPageBreak.preliminaryStage ||
+          (!this.config.hasPreliminary && invoice.hasPageBreak.executiveStage) ||
+          (!this.config.hasPreliminary && !this.config.hasExecutive && invoice.hasPageBreak.complementaryStage)
+            ? 'before'
+            : '', // ver se usa o preliminary ou os outros
       });
       if (this.config.hasPreliminary) {
         pdf.add(pdf.ln(1));
@@ -754,6 +761,7 @@ export class PdfService {
             ],
           },
           layout: this.noBorderTable('#BCDCCE'),
+          pageBreak: this.config.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
         });
       }
 
@@ -804,6 +812,10 @@ export class PdfService {
             ],
           },
           layout: this.noBorderTable('#BCDCCE'),
+          pageBreak:
+            (this.config.hasPreliminary || this.config.hasExecutive) && invoice.hasPageBreak.complementaryStage
+              ? 'before'
+              : '',
         });
       }
     }
@@ -831,7 +843,7 @@ export class PdfService {
       text: 'Valores:',
       bold: true,
       style: 'insideText',
-      pageBreak: invoice.valuesTablePageBreak ? 'before' : '',
+      pageBreak: invoice.hasPageBreak.valuesTable ? 'before' : '',
     });
 
     pdf.add(pdf.ln(1));
@@ -1035,6 +1047,7 @@ export class PdfService {
         text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
         bold: true,
         style: 'insideText',
+        pageBreak: invoice.hasPageBreak.stagesTable ? 'before' : '',
       });
 
       pdf.add(pdf.ln(1));
@@ -1244,6 +1257,7 @@ export class PdfService {
         text: 'Lista de materias:',
         bold: true,
         style: 'insideText',
+        pageBreak: invoice.hasPageBreak.materialTable ? 'before' : '',
       });
 
       pdf.add(pdf.ln(1));
@@ -1267,6 +1281,7 @@ export class PdfService {
         text: 'Importante:',
         bold: true,
         style: 'insideText',
+        pageBreak: invoice.hasPageBreak.importants ? 'before' : '',
       });
 
       pdf.add(pdf.ln(1));
