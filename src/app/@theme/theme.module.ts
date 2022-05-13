@@ -22,6 +22,7 @@ import {
   NbListModule,
   NbTabsetModule,
   NbToggleModule,
+  NbFormFieldModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbSecurityModule } from '@nebular/security';
@@ -67,6 +68,7 @@ const NB_MODULES = [
   NbListModule,
   NbTabsetModule,
   NbToggleModule,
+  NbFormFieldModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,

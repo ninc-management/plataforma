@@ -59,6 +59,23 @@ export class InvoiceConfig {
   hasMaterialList: boolean = true;
 }
 
+export class SocialConfig {
+  @prop({ required: true })
+  youtubeLink: string = '';
+
+  @prop({ required: true })
+  linkedinLink: string = '';
+
+  @prop({ required: true })
+  instagramLink: string = '';
+
+  @prop({ required: true })
+  glassfrogLink: string = '';
+
+  @prop({ required: true })
+  gathertownLink: string = '';
+}
+
 export class PlatformConfig extends Base<string> {
   @prop({ required: true, type: () => [ExpenseType] })
   expenseTypes: ExpenseType[] = [];
@@ -68,6 +85,9 @@ export class PlatformConfig extends Base<string> {
 
   @prop({ required: true })
   profileConfig: ProfileConfig = new ProfileConfig();
+
+  @prop({ required: true })
+  socialConfig: SocialConfig = new SocialConfig();
 }
 
 export default getModelForClass(PlatformConfig);

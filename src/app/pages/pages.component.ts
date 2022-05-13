@@ -1,14 +1,15 @@
 import { Component, DoCheck, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 
-import { MENU_ITEMS, SOCIAL_ITEMS } from './pages-menu';
+import { MENU_ITEMS } from './pages-menu';
 import { Router } from '@angular/router';
-import { NbIconLibraries, NbSidebarService, NbMenuService } from '@nebular/theme';
+import { NbIconLibraries, NbSidebarService, NbMenuService, NbMenuItem } from '@nebular/theme';
 import { LayoutService } from '../@core/utils';
 import { takeUntil, take } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
 import { Permissions } from 'app/shared/services/utils.service';
+import { ConfigService } from 'app/shared/services/config.service';
 
 @Component({
   selector: 'ngx-pages',
@@ -26,7 +27,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
   @ViewChild(OneColumnLayoutComponent, { static: false })
   private layout!: OneColumnLayoutComponent;
   menu = MENU_ITEMS;
-  social = SOCIAL_ITEMS;
+  social: NbMenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -34,8 +35,83 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit {
     private layoutService: LayoutService,
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
-    private accessChecker: NbAccessChecker
+    private accessChecker: NbAccessChecker,
+    private configService: ConfigService
   ) {
+    this.configService
+      .getConfig()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((configs) => {
+        if (configs[0]) {
+          this.social = [];
+          if (configs[0].socialConfig.glassfrogLink) {
+            this.social.push({
+              title: 'GlassFrog',
+              icon: {
+                icon: 'glassfrog',
+                pack: 'fac',
+              },
+              url: configs[0].socialConfig.glassfrogLink,
+              target: '_blank,',
+              pathMatch: 'full',
+              selected: false,
+            });
+          }
+          if (configs[0].socialConfig.gathertownLink) {
+            this.social.push({
+              title: 'Gather Town',
+              icon: {
+                icon: 'gtown',
+                pack: 'fac',
+              },
+              url: configs[0].socialConfig.gathertownLink,
+              target: '_blank,',
+              pathMatch: 'full',
+              selected: false,
+            });
+          }
+          if (configs[0].socialConfig.youtubeLink) {
+            this.social.push({
+              title: 'YouTube',
+              icon: {
+                icon: 'social-youtube',
+                pack: 'ion',
+              },
+              url: configs[0].socialConfig.youtubeLink,
+              target: '_blank,',
+              pathMatch: 'full',
+              selected: false,
+            });
+          }
+          if (configs[0].socialConfig.linkedinLink) {
+            this.social.push({
+              title: 'LinkedIn',
+              icon: {
+                icon: 'social-linkedin',
+                pack: 'ion',
+              },
+              url: configs[0].socialConfig.linkedinLink,
+              target: '_blank,',
+              pathMatch: 'full',
+              selected: false,
+            });
+          }
+          if (configs[0].socialConfig.instagramLink) {
+            this.social.push({
+              title: 'Instagram',
+              icon: {
+                icon: 'social-instagram',
+                pack: 'ion',
+              },
+              url: configs[0].socialConfig.instagramLink,
+              target: '_blank,',
+              pathMatch: 'full',
+              selected: false,
+            });
+          }
+        }
+      });
+
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'view-users')
       .pipe(take(1))

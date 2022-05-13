@@ -440,4 +440,119 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
+  <nb-tab tabId="social-tab" [tabTitle]="utils.isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
+    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-youtube-link">Link do YouTube</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.youtubeLink"
+                #youtubeLink="ngModel"
+                id="input-youtube-link"
+                name="youtubeLink"
+                placeholder="https://www.youtube.com/"
+                fullWidth
+                fieldSize="large"
+                [status]="youtubeLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="youtubeLink.invalid && youtubeLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-linkedin-link">Link do LinkedIn</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-linkedin" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.linkedinLink"
+                #linkedinLink="ngModel"
+                id="input-linkedin-link"
+                name="linkedinLink"
+                placeholder="https://www.linkedin.com/"
+                fullWidth
+                fieldSize="large"
+                [status]="linkedinLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="linkedinLink.invalid && linkedinLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-instagram-link">Link do Instagram</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-instagram" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.instagramLink"
+                #instagramLink="ngModel"
+                id="input-instagram-link"
+                name="instagramLink"
+                placeholder="https://www.instagram.com"
+                fullWidth
+                fieldSize="large"
+                [status]="instagramLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="instagramLink.invalid && instagramLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-glassfrog-link">Link do GlassFrog</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="glassfrog" pack="fac"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.glassfrogLink"
+                #glassfrogLink="ngModel"
+                id="input-glassfrog-link"
+                name="glassfrogLink"
+                placeholder="https://www.glassfrog.com"
+                fullWidth
+                fieldSize="large"
+                [status]="glassfrogLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="glassfrogLink.invalid && glassfrogLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-gathertown-link">Link do Gather Town</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="gtown" pack="fac"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.gathertownLink"
+                #gathertownLink="ngModel"
+                id="input-gathertown-link"
+                name="gathertownLink"
+                placeholder="https://app.gather.town/app"
+                fullWidth
+                fieldSize="large"
+                [status]="gathertownLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="gathertownLink.invalid && gathertownLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+    </form>
+  </nb-tab>
 </nb-tabset>
