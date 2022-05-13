@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Course } from '@models/course';
+import { Course, CourseParticipant } from '@models/course';
 import { NbDialogService } from '@nebular/theme';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -58,8 +58,7 @@ export class CoursesComponent implements OnInit {
       },
       speaker: {
         title: 'Ministrante',
-        valuePrepareFunction: (speaker: string): string =>
-          this.utils.idToProperty(speaker, this.userService.idToUser.bind(this.userService), 'fullName'),
+        valuePrepareFunction: (speaker: CourseParticipant): string => speaker.name,
         type: 'string',
       },
       participantsQuantity: {
