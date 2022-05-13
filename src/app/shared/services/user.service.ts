@@ -145,6 +145,7 @@ export class UserService implements OnDestroy {
 
   getUsers(): BehaviorSubject<User[]> {
     if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/user/all', {})
         .pipe(take(1))

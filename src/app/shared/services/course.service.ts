@@ -34,6 +34,7 @@ export class CourseService {
 
   getCourses(): Observable<Course[]> {
     if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/course/all', {})
         .pipe(take(1))

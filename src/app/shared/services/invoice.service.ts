@@ -69,6 +69,8 @@ export class InvoiceService implements OnDestroy {
 
   getInvoices(): Observable<Invoice[]> {
     if (!this.requested) {
+      this.requested = true;
+
       this.http
         .post('/api/invoice/all', {})
         .pipe(take(1))

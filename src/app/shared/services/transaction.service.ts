@@ -55,6 +55,7 @@ export class TransactionService implements OnDestroy {
 
   getTransactions(): Observable<Transaction[]> {
     if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/transaction/all', {})
         .pipe(take(1))

@@ -49,6 +49,7 @@ export class ContractorService implements OnDestroy {
 
   getContractors(): Observable<Contractor[]> {
     if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/contractor/all', {})
         .pipe(take(1))

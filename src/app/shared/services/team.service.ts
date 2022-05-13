@@ -55,6 +55,7 @@ export class TeamService implements OnDestroy {
 
   getTeams(): Observable<Team[]> {
     if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/team/all', {})
         .pipe(take(1))

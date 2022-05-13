@@ -36,6 +36,8 @@ export class MessageService {
 
   getMessages(): Observable<Message[]> {
     if (!this.requested) {
+      this.requested = true;
+
       this.http
         .post('/api/contract/allMessages', {})
         .pipe(take(1))

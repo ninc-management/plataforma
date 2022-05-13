@@ -48,6 +48,8 @@ export class PromotionService implements OnDestroy {
 
   getPromotions(): Observable<Promotion[]> {
     if (!this.requested) {
+      this.requested = true;
+
       this.http
         .post('/api/promotion/all', {})
         .pipe(take(1))

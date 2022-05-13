@@ -11,12 +11,13 @@ import { cloneDeep } from 'lodash';
   providedIn: 'root',
 })
 export class ProspectService {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private prospects$ = new BehaviorSubject<Prospect[]>([]);
   private destroy$ = new Subject<void>();
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -32,8 +33,8 @@ export class ProspectService {
   }
 
   getProspects(): BehaviorSubject<Prospect[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/user/allProspects', {})
         .pipe(take(1))
@@ -41,6 +42,7 @@ export class ProspectService {
           this.prospects$.next(
             (prospects as Prospect[]).sort((a, b) => this.utils.nameSort(1, a.fullName, b.fullName))
           );
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')
