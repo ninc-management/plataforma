@@ -152,7 +152,7 @@ export class MetricsService implements OnDestroy {
     }
   }
 
-  contractsAsManger(
+  contractsAsManager(
     uId: string,
     last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
@@ -190,7 +190,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoicesAsManger(
+  invoicesAsManager(
     uId: string,
     last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
     number = 1,
@@ -439,8 +439,8 @@ export class MetricsService implements OnDestroy {
     const combined$ =
       role == 'manager'
         ? combineLatest([
-            this.contractsAsManger(uId, last, number, fromToday),
-            this.invoicesAsManger(uId, last, number, fromToday),
+            this.contractsAsManager(uId, last, number, fromToday),
+            this.invoicesAsManager(uId, last, number, fromToday),
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
@@ -468,8 +468,8 @@ export class MetricsService implements OnDestroy {
     const combined$ =
       role == 'manager'
         ? combineLatest([
-            this.contractsAsManger(uId, last, number, fromToday),
-            this.invoicesAsManger(uId, last, number, fromToday),
+            this.contractsAsManager(uId, last, number, fromToday),
+            this.invoicesAsManager(uId, last, number, fromToday),
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),

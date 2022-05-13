@@ -131,9 +131,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Contratos como gestor',
           tooltip: 'Número de propostas de orçamento, criados por você, fechadas com o cliente no mês corrente',
           value: this.metricsService
-            .contractsAsManger(user._id)
+            .contractsAsManager(user._id)
             .pipe(map((pastContracts) => pastContracts.count.toString())),
-          description: this.metricsService.contractsAsManger(user._id, 'Mês').pipe(
+          description: this.metricsService.contractsAsManager(user._id, 'Mês').pipe(
             map((pastContracts) => {
               return (
                 this.metricsService.plural('Mês', 1) +
@@ -174,9 +174,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Orçamentos como gestor',
           tooltip: 'Número de propostas de orçamento criados por você no mês corrente',
           value: this.metricsService
-            .invoicesAsManger(user._id)
+            .invoicesAsManager(user._id)
             .pipe(map((pastInvoices) => pastInvoices.count.toString())),
-          description: this.metricsService.invoicesAsManger(user._id, 'Mês').pipe(
+          description: this.metricsService.invoicesAsManager(user._id, 'Mês').pipe(
             map((pastInvoices) => {
               return (
                 this.metricsService.plural('Mês', 1) +
