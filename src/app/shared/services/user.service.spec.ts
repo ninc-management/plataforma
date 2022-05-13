@@ -107,17 +107,21 @@ describe('UserService', () => {
     service
       .getUser('test1@te.st')
       .pipe(
-        take(1),
+        take(2),
+        last(),
         mergeMap((user) => {
           expect(user).toBeTruthy();
           expect(user).toEqual(utilsService.reviveDates(mockedUsers[0]));
-          return service.getUser('test3@te.st').pipe(take(1));
+          return service.getUser('test3@te.st').pipe(take(2), last());
         })
       )
       .subscribe((user) => {
         expect(user).toBe(undefined);
-        done();
       });
+
+    setTimeout(() => {
+      done();
+    }, 100);
   });
 
   baseTest('getUsers should work', (expectdUsers: User[], done: DoneFn) => done());
