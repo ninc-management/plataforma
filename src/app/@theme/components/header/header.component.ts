@@ -46,7 +46,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   user = new User();
   logoIcon = 'logo';
   currentNotifications = 0;
-  newMessage = false;
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
   userMenu: NbMenuItem[] = [
@@ -91,7 +90,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         const matchedUser = users.find((currentUser) => this.userService.isEqual(currentUser._id, this.user._id));
         if (matchedUser) {
           if (this.currentNotifications < matchedUser.notifications.length) {
-            this.newMessage = true;
             this.state = 'active';
           }
           this.user = matchedUser;
@@ -162,7 +160,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onDone(event: any) {
     this.state = 'inactive';
-    this.newMessage = false;
   }
 
   changeTheme(): void {
