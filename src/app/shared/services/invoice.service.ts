@@ -22,13 +22,14 @@ export enum INVOICE_STATOOS {
   providedIn: 'root',
 })
 export class InvoiceService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private invoices$ = new BehaviorSubject<Invoice[]>([]);
   private destroy$ = new Subject<void>();
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -67,14 +68,16 @@ export class InvoiceService implements OnDestroy {
   }
 
   getInvoices(): Observable<Invoice[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
+
       this.http
         .post('/api/invoice/all', {})
         .pipe(take(1))
         .subscribe((invoices: any) => {
           const tmp = this.utils.reviveDates(invoices);
           this.invoices$.next(tmp as Invoice[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

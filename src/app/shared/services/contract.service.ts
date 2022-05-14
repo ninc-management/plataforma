@@ -81,15 +81,16 @@ export interface ExpenseTypesSum {
   providedIn: 'root',
 })
 export class ContractService implements OnDestroy {
+  private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
   edited$ = new Subject<void>();
   EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -156,14 +157,15 @@ export class ContractService implements OnDestroy {
   }
 
   getContracts(): Observable<Contract[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/contract/all', {})
         .pipe(take(1))
         .subscribe((contracts: any) => {
           const tmp = this.utils.reviveDates(contracts);
           this.contracts$.next(tmp as Contract[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

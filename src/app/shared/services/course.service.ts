@@ -11,12 +11,13 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class CourseService {
+  private requested = false;
   private courses$ = new BehaviorSubject<Course[]>([]);
   private destroy$ = new Subject<void>();
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
 
   constructor(
@@ -32,12 +33,15 @@ export class CourseService {
   }
 
   getCourses(): Observable<Course[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/course/all', {})
         .pipe(take(1))
-        .subscribe((courses: any) => this.courses$.next(courses as Course[]));
+        .subscribe((courses: any) => {
+          this.courses$.next(courses as Course[]);
+          this._isDataLoaded$.next(true);
+        });
       this.socket
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))

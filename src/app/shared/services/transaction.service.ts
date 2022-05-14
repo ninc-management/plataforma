@@ -11,12 +11,13 @@ import { WebSocketService } from './web-socket.service';
   providedIn: 'root',
 })
 export class TransactionService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private destroy$ = new Subject<void>();
   private transactions$ = new BehaviorSubject<Transaction[]>([]);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
   constructor(
     private http: HttpClient,
@@ -53,14 +54,15 @@ export class TransactionService implements OnDestroy {
   }
 
   getTransactions(): Observable<Transaction[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
       this.http
         .post('/api/transaction/all', {})
         .pipe(take(1))
         .subscribe((transactions: any) => {
           const tmp = this.utils.reviveDates(transactions);
           this.transactions$.next(tmp as Transaction[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')

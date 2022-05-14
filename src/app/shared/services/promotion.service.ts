@@ -12,12 +12,13 @@ import { Socket } from 'ngx-socket-io';
   providedIn: 'root',
 })
 export class PromotionService implements OnDestroy {
-  private requested$ = new BehaviorSubject<boolean>(false);
+  private requested = false;
   private destroy$ = new Subject<void>();
   private promotions$ = new BehaviorSubject<Promotion[]>([]);
+  private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   get isDataLoaded$(): Observable<boolean> {
-    return this.requested$.asObservable();
+    return this._isDataLoaded$.asObservable();
   }
   constructor(
     private http: HttpClient,
@@ -46,14 +47,16 @@ export class PromotionService implements OnDestroy {
   }
 
   getPromotions(): Observable<Promotion[]> {
-    if (!this.requested$.getValue()) {
-      this.requested$.next(true);
+    if (!this.requested) {
+      this.requested = true;
+
       this.http
         .post('/api/promotion/all', {})
         .pipe(take(1))
         .subscribe((promotions: any) => {
           const tmp = this.utils.reviveDates(promotions);
           this.promotions$.next(tmp as Promotion[]);
+          this._isDataLoaded$.next(true);
         });
       this.socket
         .fromEvent('dbchange')
