@@ -164,11 +164,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, , ,]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
             const created = contract.created;
@@ -197,7 +194,7 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
-      skipWhile(([_, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+      skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
       map(([invoices, _]) => {
         return invoices
           .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
@@ -232,11 +229,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, _]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
             const created = contract.created;
@@ -265,7 +259,7 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<MetricInfo> {
     return combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
-      skipWhile(([_, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+      skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
       map(([invoices, _]) => {
         return invoices
           .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
@@ -290,7 +284,7 @@ export class MetricsService implements OnDestroy {
 
   receivedValueBySectors(start: Date, end: Date, uId?: string): Observable<UserAndSectors> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
         return contracts.reduce((received: UserAndSectors, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
@@ -359,7 +353,7 @@ export class MetricsService implements OnDestroy {
     return this.receivedValueBySectors(start, end, uId).pipe(
       map((userSector: UserAndSectors) => {
         const userTeams = cloneDeep(this.defaultUserAndTeams);
-        for (let i in userSector.user) {
+        for (const i in userSector.user) {
           userTeams.user[userSector.user[i].teamIdx].value += userSector.user[i].value;
           userTeams.global[userSector.global[i].teamIdx].value += userSector.global[i].value;
         }
@@ -386,10 +380,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.userService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, users, isContractDataLoaded, isUserDataLoaded]) => !(isContractDataLoaded && isUserDataLoaded)
-      ),
-      map(([contracts, users, isContractDataLoaded, isUserDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isUserDataLoaded]) => !(isContractDataLoaded && isUserDataLoaded)),
+      map(([contracts, users, ,]) => {
         const partial = contracts.reduce((received: any, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
             const value = contract.payments.reduce((paid: any, payment) => {
@@ -493,7 +485,7 @@ export class MetricsService implements OnDestroy {
     fromToday = false
   ): Observable<number> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
         return contracts.reduce((sum, contract) => {
           if (this.contractService.hasReceipts(contract._id)) {
@@ -515,7 +507,6 @@ export class MetricsService implements OnDestroy {
           }
           return sum;
         }, 0.0);
-        return 0.0;
       }),
       map((sumNetValue) => Math.trunc(sumNetValue / 1000))
     );
@@ -528,11 +519,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, , ,]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
             const created = contract.created;
@@ -556,7 +544,7 @@ export class MetricsService implements OnDestroy {
 
   receivedValue(uId: string, start: Date, end: Date): Observable<MetricInfo> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
@@ -608,11 +596,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, , ,]) => {
         return contracts.reduce(
           (metricInfo: UserAndGlobalMetric, contract) => {
             if (this.contractService.hasReceipts(contract._id)) {
@@ -650,8 +635,8 @@ export class MetricsService implements OnDestroy {
 
   teamExpenses(tId: string, start: Date, end: Date): Observable<MetricInfo> {
     return combineLatest([this.teamService.getTeams(), this.teamService.isDataLoaded$]).pipe(
-      skipWhile(([teams, isTeamsDataLoaded]) => !isTeamsDataLoaded),
-      map(([teams, isTeamsDataLoaded]) => {
+      skipWhile(([, isTeamsDataLoaded]) => !isTeamsDataLoaded),
+      map(() => {
         return this.teamService
           .idToTeam(tId)
           .expenses.filter((expense) => expense.paid)
@@ -686,11 +671,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, , ,]) => {
         return contracts.reduce(
           (metricInfo: MetricInfo, contract) => {
             if (contract.status == status) {
@@ -711,7 +693,7 @@ export class MetricsService implements OnDestroy {
 
   receivedValueTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
         const fContracts = contracts.filter((contract) => this.contractService.hasPayments(contract));
         const timeSeriesItems = fContracts.map((contract) => {
@@ -741,7 +723,7 @@ export class MetricsService implements OnDestroy {
 
   expensesTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
         const fContracts = cloneDeep(contracts.filter((contract) => this.contractService.hasExpenses(contract)));
         const timeSeriesItems = fContracts.map((contract) => {
@@ -780,11 +762,8 @@ export class MetricsService implements OnDestroy {
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
     ]).pipe(
-      skipWhile(
-        ([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) =>
-          !(isContractDataLoaded && isInvoiceDataLoaded)
-      ),
-      map(([contracts, invoices, isContractDataLoaded, isInvoiceDataLoaded]) => {
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, , ,]) => {
         let fContracts = contracts.map((iContract) => {
           const contract = cloneDeep(iContract);
           if (contract.invoice) contract.value = this.invoiceService.idToInvoice(contract.invoice).value;
@@ -827,10 +806,10 @@ export class MetricsService implements OnDestroy {
       this.contractorService.isDataLoaded$,
     ]).pipe(
       skipWhile(
-        ([contracts, invoices, contractors, isContractDataLoaded, isInvoiceDataLoaded, isContractorDataLoaded]) =>
+        ([, , , isContractDataLoaded, isInvoiceDataLoaded, isContractorDataLoaded]) =>
           !(isContractDataLoaded && isInvoiceDataLoaded && isContractorDataLoaded)
       ),
-      map(([contracts, invoices, contractors, isContractDataLoaded, isInvoiceDataLoaded, isContractorDataLoaded]) => {
+      map(([contracts, , , , ,]) => {
         return contracts.reduce(
           (userReceivable: UserReceivable, contract) => {
             if (

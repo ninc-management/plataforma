@@ -21,6 +21,7 @@ import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
+import { UtilsService } from 'app/shared/services/utils.service';
 
 interface MetricItem {
   title: string;
@@ -60,7 +61,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private dialogService: NbDialogService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    private contractorService: ContractorService
+    private contractorService: ContractorService,
+    private utils: UtilsService
   ) {}
 
   ngOnDestroy(): void {
@@ -102,10 +104,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.contractService.isDataLoaded$.pipe(
-            takeUntil(this.destroy$),
-            map((isContractDataLoaded) => !isContractDataLoaded)
-          ),
+          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Nº de IMPUL$$O$',
@@ -122,10 +121,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.contractService.isDataLoaded$.pipe(
-            takeUntil(this.destroy$),
-            map((isContractDataLoaded) => !isContractDataLoaded)
-          ),
+          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Contratos como gestor',
@@ -186,10 +182,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.invoiceService.isDataLoaded$.pipe(
-            takeUntil(this.destroy$),
-            map((isInvoiceDataLoaded) => !isInvoiceDataLoaded)
-          ),
+          loading: this.utils.NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Orçamentos como equipe',
@@ -207,10 +200,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.invoiceService.isDataLoaded$.pipe(
-            takeUntil(this.destroy$),
-            map((isInvoiceDataLoaded) => !isInvoiceDataLoaded)
-          ),
+          loading: this.utils.NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'IMPUL$$O$ na Nortan',
@@ -229,10 +219,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
                   this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global)
               )
             ),
-          loading: this.contractService.isDataLoaded$.pipe(
-            takeUntil(this.destroy$),
-            map((isContractDataLoaded) => !isContractDataLoaded)
-          ),
+          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Valor a receber',
