@@ -22,6 +22,8 @@ import { Permissions } from 'app/shared/services/utils.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { PlatformConfig } from '@models/platformConfig';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { transition, trigger, useAnimation } from '@angular/animations';
+import { tada } from './animation';
 
 interface NbMenuItem {
   title: string;
@@ -33,6 +35,7 @@ interface NbMenuItem {
   selector: 'ngx-header',
   styleUrls: ['./header.component.scss'],
   templateUrl: './header.component.html',
+  animations: [trigger('shake', [transition('inactive => active', useAnimation(tada))])],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
@@ -42,8 +45,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userPictureOnly = false;
   user = new User();
   logoIcon = 'logo';
+  currentNotifications = 0;
+  state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
-
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
@@ -70,6 +74,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, config]) => {
         this.user = currentUser;
+        this.currentNotifications = currentUser.notifications.length;
         this.changeTheme();
         if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];
@@ -83,7 +88,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe((users) => {
         const matchedUser = users.find((currentUser) => this.userService.isEqual(currentUser._id, this.user._id));
-        if (matchedUser) this.user = matchedUser;
+        if (matchedUser) {
+          if (this.currentNotifications < matchedUser.notifications.length) {
+            this.state = 'active';
+          }
+          this.user = matchedUser;
+          this.currentNotifications = matchedUser.notifications.length;
+        }
       });
 
     this.accessChecker
@@ -145,6 +156,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onDone(event: any) {
+    this.state = 'inactive';
   }
 
   changeTheme(): void {
