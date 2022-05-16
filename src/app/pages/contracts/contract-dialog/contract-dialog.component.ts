@@ -12,6 +12,8 @@ import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
 import { HttpClient } from '@angular/common/http';
+import { ReportGenerator } from 'app/shared/report-generator';
+import saveAs from 'file-saver';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -138,6 +140,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
             }, 4000); // Tempo para a cópia da pasta ser realizada
         });
   }
+
   openPDFnewtab(): void {
     this.http
       .post('/api/public/metric/all/', {})
@@ -146,5 +149,11 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
         if (this.contract.invoice)
           this.pdf.generate(this.invoiceService.idToInvoice(this.contract.invoice), metrics, false, true);
       });
+  }
+
+  downloadExpensesReport(contract: Contract): void {
+    const csv = ReportGenerator.generateExpensesReport(contract);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'relatorio_despesas.csv');
   }
 }
