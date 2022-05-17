@@ -31,11 +31,7 @@ export class CourseItemComponent implements OnInit {
 
   get speakerName(): string {
     if (this.iCourse._id != undefined) {
-      return this.utils.idToProperty(
-        this.course.speaker,
-        this.courseService.idToParticipant.bind(this.courseService),
-        'name'
-      );
+      return this.course.speaker.name;
     } else {
       return (this.course.speaker as any)?.name;
     }
