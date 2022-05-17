@@ -12,7 +12,7 @@ import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
 import { HttpClient } from '@angular/common/http';
-import { ReportGenerator } from 'app/shared/report-generator';
+import { generateExpensesReport } from 'app/shared/report-generator';
 import saveAs from 'file-saver';
 
 export enum COMPONENT_TYPES {
@@ -152,7 +152,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   downloadExpensesReport(contract: Contract): void {
-    const csv = ReportGenerator.generateExpensesReport(contract);
+    const csv = generateExpensesReport(contract);
     const blob = new Blob([csv], { type: 'text/csv' });
     saveAs(blob, 'relatorio_despesas.csv');
   }
