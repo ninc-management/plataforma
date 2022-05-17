@@ -78,9 +78,6 @@ export class ExpenseType {
 }
 
 export class TeamConfig {
-  @prop({ required: true, type: () => [Sector] })
-  sectors: Sector[] = [];
-
   @prop({ required: true })
   path: string = '';
 }
@@ -89,8 +86,8 @@ export class Team extends Base<string> {
   @prop({ required: true })
   name!: string;
 
-  @prop({ required: true, ref: () => User })
-  leader!: Ref<User>;
+  @prop({ ref: () => User })
+  leader?: Ref<User>;
 
   @prop({ type: () => [TeamMember] })
   members: TeamMember[] = [];
@@ -115,6 +112,9 @@ export class Team extends Base<string> {
 
   @prop({ required: true })
   isOrganizationTeam: boolean = false;
+
+  @prop({ required: true, type: () => [Sector] })
+  sectors: Sector[] = [];
 
   balance = '0,00';
 

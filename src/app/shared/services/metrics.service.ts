@@ -113,9 +113,7 @@ export class MetricsService implements OnDestroy {
       .subscribe((teams) => {
         const baseTeams = teams.map((team): TeamInfo => ({ id: team._id, value: 0 }));
         const baseSectors = teams
-          .map((team, idx) =>
-            team.config.sectors.map((sector): SectorInfo => ({ id: sector._id, value: 0, teamIdx: idx }))
-          )
+          .map((team, idx) => team.sectors.map((sector): SectorInfo => ({ id: sector._id, value: 0, teamIdx: idx })))
           .flat();
 
         this.defaultUserAndTeams = { user: cloneDeep(baseTeams), global: cloneDeep(baseTeams) };

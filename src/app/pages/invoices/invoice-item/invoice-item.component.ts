@@ -152,8 +152,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tempInvoice.created = new Date();
         this.tempInvoice.lastUpdate = new Date();
       }
-      if (this.tempInvoice.nortanTeam)
-        this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
+      if (this.tempInvoice.nortanTeam) this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).sectors;
       this.contractorSearch = this.utils.idToProperty(
         this.tempInvoice.contractor,
         this.contractorService.idToContractor.bind(this.contractorService),
@@ -375,8 +374,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateSector(): void {
     this.tempInvoice.sector = undefined;
-    if (this.tempInvoice.nortanTeam)
-      this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).config.sectors;
+    if (this.tempInvoice.nortanTeam) this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).sectors;
   }
 
   addColaborator(): void {
