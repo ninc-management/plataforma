@@ -76,6 +76,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   };
   LEVELS: string[] = [];
   permissions = Permissions;
+  isDataLoading = true;
   THEMES = [
     {
       value: 'default',
@@ -132,32 +133,31 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       .subscribe((configs) => {
         if (configs[0]) this.config = configs[0].profileConfig;
       });
-    this.teamService
-      .getTeams()
+    combineLatest([
+      this.teamService.getTeams(),
+      this.configService.getConfig(),
+      this.userService.currentUser$,
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
       .pipe(
-        filter((teams) => teams.length > 0),
+        skipWhile(([, , user, isTeamLoaded, isConfigLoaded]) => user === undefined && !isTeamLoaded && !isConfigLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(() => {
+      .subscribe(([, configs, user, ,]) => {
+        if (configs[0]) this.config = configs[0].profileConfig;
         this.states = this.statecityService.buildStateList();
         if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
-        else
-          this.userService.currentUser$
-            .pipe(
-              skipWhile((user) => user === undefined),
-              take(1)
-            )
-            .subscribe((user) => {
-              this.iUser = user;
-              this.user = cloneDeep(this.iUser);
-              this.isCurrentUser = true;
-            });
+        else {
+          this.iUser = user;
+          this.user = cloneDeep(this.iUser);
+          this.isCurrentUser = true;
+        }
         if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
-        if (this.user.expertise == undefined) this.user.expertise = [];
-        if (this.user.theme == undefined) this.user.theme = 'default';
         this.buildGrupedSectors();
         this.buildPositionsList();
         this.buildLevelList();
+        this.isDataLoading = false;
         this.refreshExpertises();
         this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
           map(([users, _]) => {
@@ -170,7 +170,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
             });
           })
         );
-
         this.checkPrivileges();
       });
   }

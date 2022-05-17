@@ -1,631 +1,656 @@
 <div class="row">
   <div class="col-12">
-    <nb-card [nbSpinner]="user?._id == undefined" nbSpinnerStatus="primary">
+    <nb-card>
       <nb-card-body>
-        <div class="row">
-          <div class="col-md-2">
-            <nb-user
-              class="profile"
-              [onlyPicture]="true"
-              [picture]="user.profilePicture ? user.profilePicture : ''"
-              [name]="user.fullName"
-              size="giant"
-            ></nb-user>
-            <div style="margin-top: 20px; margin-bottom: 20px">
-              <button nbButton status="primary" (click)="uploadDialog()">Editar foto</button>
+        <div
+          *ngIf="isDataLoading; else profile"
+          [nbSpinner]="true"
+          nbSpinnerStatus="primary"
+          nbSpinnerSize="giant"
+          style="width: 100%; height: 654px"
+        ></div>
+        <ng-template #profile>
+          <div class="row">
+            <div class="col-md-2">
+              <nb-user
+                class="profile"
+                [onlyPicture]="true"
+                [picture]="user.profilePicture ? user.profilePicture : ''"
+                [name]="user.fullName"
+                size="giant"
+              ></nb-user>
+              <div style="margin-top: 20px; margin-bottom: 20px">
+                <button nbButton status="primary" (click)="uploadDialog()">Editar foto</button>
+              </div>
             </div>
-          </div>
-          <div class="col-md-10">
-            <form #form="ngForm" aria-labelledby="title">
-              <button
-                *ngIf="!isEditing"
-                style="margin-bottom: 10px"
-                nbButton
-                outline
-                fullWidth
-                status="info"
-                size="large"
-                (click)="enableEditing()"
-              >
-                Habilitar Edição
-              </button>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-name">Nome completo:</label>
-                    <input
-                      nbInput
-                      [(ngModel)]="user.fullName"
-                      #fullName="ngModel"
-                      id="input-name"
-                      name="fullName"
-                      placeholder="Nome completo"
-                      autofocus
-                      fullWidth
-                      fieldSize="large"
-                      [required]="validation.fullName.required"
-                      [minlength]="validation.fullName.minLength"
-                      [maxlength]="validation.fullName.maxLength"
-                      [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
-                      [disabled]="!isEditing"
-                    />
-                    <ng-container *ngIf="fullName.invalid && fullName.touched">
-                      <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
-                      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
-                        O nome deve conter entre {{ validation.fullName.minLength }} a
-                        {{ validation.fullName.maxLength }} caracteres
-                      </p>
-                    </ng-container>
+            <div class="col-md-10">
+              <form #form="ngForm" aria-labelledby="title">
+                <button
+                  *ngIf="!isEditing"
+                  style="margin-bottom: 10px"
+                  nbButton
+                  outline
+                  fullWidth
+                  status="info"
+                  size="large"
+                  (click)="enableEditing()"
+                >
+                  Habilitar Edição
+                </button>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-name">Nome completo:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="user.fullName"
+                        #fullName="ngModel"
+                        id="input-name"
+                        name="fullName"
+                        placeholder="Nome completo"
+                        autofocus
+                        fullWidth
+                        fieldSize="large"
+                        [required]="validation.fullName.required"
+                        [minlength]="validation.fullName.minLength"
+                        [maxlength]="validation.fullName.maxLength"
+                        [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
+                        [disabled]="!isEditing"
+                      />
+                      <ng-container *ngIf="fullName.invalid && fullName.touched">
+                        <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength"
+                        >
+                          O nome deve conter entre {{ validation.fullName.minLength }} a
+                          {{ validation.fullName.maxLength }} caracteres
+                        </p>
+                      </ng-container>
+                    </div>
                   </div>
-                </div>
 
-                <div class="col-md-3">
-                  <div class="form-control-group">
-                    <label class="label" for="input-ename">Nome de exibição:</label>
-                    <input
-                      nbInput
-                      [(ngModel)]="user.exibitionName"
-                      #exibitionName="ngModel"
-                      id="input-ename"
-                      name="exibitionName"
-                      placeholder="Nome de exibição"
-                      fullWidth
-                      fieldSize="large"
-                      [required]="validation.exibitionName.required"
-                      [minlength]="validation.exibitionName.minLength"
-                      [maxlength]="validation.exibitionName.maxLength"
-                      [status]="exibitionName.dirty ? (exibitionName.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="exibitionName.invalid && exibitionName.touched ? true : null"
-                      [disabled]="!isEditing"
-                    />
-                    <ng-container *ngIf="exibitionName.invalid && exibitionName.touched">
-                      <p
-                        class="caption status-danger"
-                        *ngIf="exibitionName.errors?.minlength || exibitionName.errors?.maxlength"
+                  <div class="col-md-3">
+                    <div class="form-control-group">
+                      <label class="label" for="input-ename">Nome de exibição:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="user.exibitionName"
+                        #exibitionName="ngModel"
+                        id="input-ename"
+                        name="exibitionName"
+                        placeholder="Nome de exibição"
+                        fullWidth
+                        fieldSize="large"
+                        [required]="validation.exibitionName.required"
+                        [minlength]="validation.exibitionName.minLength"
+                        [maxlength]="validation.exibitionName.maxLength"
+                        [status]="exibitionName.dirty ? (exibitionName.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="exibitionName.invalid && exibitionName.touched ? true : null"
+                        [disabled]="!isEditing"
+                      />
+                      <ng-container *ngIf="exibitionName.invalid && exibitionName.touched">
+                        <p
+                          class="caption status-danger"
+                          *ngIf="exibitionName.errors?.minlength || exibitionName.errors?.maxlength"
+                        >
+                          O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a
+                          {{ validation.exibitionName.maxLength }} caracteres
+                        </p>
+                      </ng-container>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-control-group">
+                      <label class="label" for="input-theme-selector">Tema:</label>
+                      <nb-select
+                        [(ngModel)]="user.theme"
+                        #themeSelector="ngModel"
+                        id="input-theme-selector"
+                        name="themeSelector"
+                        placeholder="Selecione o tema"
+                        fullWidth
+                        size="large"
+                        [required]="validation.themeSelector.required"
+                        [status]="themeSelector.dirty ? (themeSelector.invalid ? 'danger' : 'success') : 'basic'"
+                        (selectedChange)="changeTheme()"
+                        [attr.aria-invalid]="themeSelector.invalid && themeSelector.touched ? true : null"
+                        [disabled]="!isEditing"
                       >
-                        O nome de exibição deve conter entre {{ validation.exibitionName.minLength }} a
-                        {{ validation.exibitionName.maxLength }} caracteres
-                      </p>
-                    </ng-container>
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <div class="form-control-group">
-                    <label class="label" for="input-theme-selector">Tema:</label>
-                    <nb-select
-                      [(ngModel)]="user.theme"
-                      #themeSelector="ngModel"
-                      id="input-theme-selector"
-                      name="themeSelector"
-                      placeholder="Selecione o tema"
-                      fullWidth
-                      size="large"
-                      [required]="validation.themeSelector.required"
-                      [status]="themeSelector.dirty ? (themeSelector.invalid ? 'danger' : 'success') : 'basic'"
-                      (selectedChange)="changeTheme()"
-                      [attr.aria-invalid]="themeSelector.invalid && themeSelector.touched ? true : null"
-                      [disabled]="!isEditing"
-                    >
-                      <nb-option *ngFor="let theme of THEMES" [value]="theme.value">{{ theme.name }}</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-email">Email pessoal:</label>
-                    <input
-                      nbInput
-                      [(ngModel)]="user.email"
-                      #email="ngModel"
-                      id="input-email"
-                      name="email"
-                      pattern=".+@.+\..+"
-                      placeholder="Endereço de email"
-                      fullWidth
-                      fieldSize="large"
-                      [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
-                      [required]="validation.email.required"
-                      [attr.aria-invalid]="email.invalid && email.touched ? true : null"
-                      [disabled]="true"
-                    />
-                    <ng-container *ngIf="email.invalid && email.touched">
-                      <p class="caption status-danger" *ngIf="email.errors?.required">O email é obrigatório!</p>
-                      <p class="caption status-danger" *ngIf="email.errors?.pattern">Digite um email válido!</p>
-                    </ng-container>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-professional-email">Email profissional:</label>
-                    <input
-                      nbInput
-                      email
-                      [(ngModel)]="user.professionalEmail"
-                      #professionalEmail="ngModel"
-                      id="input-corporate-email"
-                      name="professionalEmail"
-                      placeholder="Endereço de email profissional"
-                      fullWidth
-                      fieldSize="large"
-                      [status]="professionalEmail.dirty ? (professionalEmail.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="professionalEmail.invalid && professionalEmail.touched ? true : null"
-                      [disabled]="!isEditing"
-                    />
-                    <p class="caption status-danger" *ngIf="professionalEmail.errors?.email">Digite um email válido!</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-control-group">
-                    <label class="label" for="input-document">CPF/CNPJ:</label>
-                    <input
-                      nbInput
-                      [(ngModel)]="user.document"
-                      #document="ngModel"
-                      id="input-document"
-                      name="document"
-                      placeholder="CPF/CNPJ"
-                      fullWidth
-                      fieldSize="large"
-                      [brmasker]="{ person: true }"
-                      ngxSelectAllText
-                      [required]="validation.document.required"
-                      [minlength]="validation.document.minLength"
-                      [maxlength]="validation.document.maxLength"
-                      [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="document.invalid && document.touched ? true : null"
-                      [disabled]="!isEditing"
-                    />
-                    <ng-container *ngIf="document.invalid && document.touched">
-                      <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
-                      <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
-                        O CPF/CNPJ deve ter 11 ou 14 caracteres
-                      </p>
-                    </ng-container>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-control-group">
-                    <label class="label" for="input-phone">Telefone para contato:</label>
-                    <input
-                      nbInput
-                      [(ngModel)]="user.phone"
-                      #phone="ngModel"
-                      id="input-phone"
-                      name="phone"
-                      placeholder="Telefone com DDD"
-                      fullWidth
-                      fieldSize="large"
-                      [brmasker]="{ phone: true }"
-                      ngxSelectAllText
-                      [required]="validation.phone.required"
-                      [minlength]="validation.phone.minLength"
-                      [maxlength]="validation.phone.maxLength"
-                      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
-                      [disabled]="!isEditing"
-                    />
-                    <ng-container *ngIf="phone.invalid && phone.touched">
-                      <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
-                      <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
-                        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a
-                        {{ validation.phone.maxLength - 4 }} números
-                      </p>
-                    </ng-container>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-control-group">
-                    <label class="label" for="input-article">Artigo de tratamento:</label>
-                    <nb-select
-                      [(ngModel)]="user.article"
-                      #article="ngModel"
-                      id="input-article"
-                      name="article"
-                      placeholder="Selecione o artigo"
-                      fullWidth
-                      size="large"
-                      [required]="validation.article.required"
-                      [status]="article.dirty ? (article.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="article.invalid && article.touched ? true : null"
-                      (selectedChange)="buildPositionsList(); buildLevelList(); fixPositionAndLevel()"
-                      [disabled]="!isEditing"
-                    >
-                      <nb-option value="a">A</nb-option>
-                      <nb-option value="o">O</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-state">Estado:</label>
-                    <nb-select
-                      [(ngModel)]="user.state"
-                      #state="ngModel"
-                      id="input-state"
-                      name="state"
-                      placeholder="Selecione o estado"
-                      fullWidth
-                      size="large"
-                      [required]="validation.state.required"
-                      [status]="state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="state.invalid && state.touched ? true : null"
-                      (selectedChange)="buildCityList(state.value)"
-                      [disabled]="!isEditing"
-                    >
-                      <nb-option *ngFor="let state of states" [value]="state">{{ state }}</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-city">Cidade:</label>
-                    <nb-select
-                      [(ngModel)]="user.city"
-                      #city="ngModel"
-                      id="input-city"
-                      name="city"
-                      placeholder="Selecione a cidade"
-                      fullWidth
-                      size="large"
-                      [required]="validation.city.required"
-                      [status]="city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="city.invalid && city.touched ? true : null"
-                      [disabled]="!isEditing"
-                    >
-                      <nb-option *ngFor="let city of cities" [value]="city">{{ city }}</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12 col-md-6">
-                  <div class="form-control-group">
-                    <label class="label" for="input-position">
-                      Papeis:
-                      <nb-icon
-                        status="info"
-                        icon="info"
-                        pack="eva"
-                        [options]="{ animation: { type: 'pulse' } }"
-                        [nbTooltip]="positionMessage"
-                        nbTooltipPlacement="top"
-                        nbTooltipStatus="info"
-                      ></nb-icon>
-                    </label>
-                    <nb-select
-                      [(ngModel)]="user.position"
-                      #position="ngModel"
-                      id="input-position"
-                      name="position"
-                      placeholder="Selecione os seus papeis"
-                      fullWidth
-                      multiple
-                      size="large"
-                      [required]="validation.position.required"
-                      [status]="position.dirty ? (position.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="position.invalid && position.touched ? true : null"
-                      [disabled]="!isEditing || !isEloPrincipal"
-                    >
-                      <nb-option *ngFor="let position of POSITIONS" [value]="position">{{ position }}</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-                <div class="col-12 col-md-6">
-                  <div class="form-control-group" *ngIf="config.hasLevels">
-                    <label class="label" for="input-level">
-                      Enquadramento:
-                      <nb-icon
-                        *ngIf="utils.NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
-                        status="info"
-                        icon="info"
-                        pack="eva"
-                        [options]="{ animation: { type: 'pulse' } }"
-                        nbTooltip="Somente o elo principal pode alterar o enquadramento dos associados."
-                        nbTooltipPlacement="top"
-                        nbTooltipStatus="info"
-                      ></nb-icon>
-                    </label>
-                    <nb-select
-                      [(ngModel)]="user.level"
-                      #level="ngModel"
-                      id="input-level"
-                      name="level"
-                      placeholder="Selecione o seu enquadramento"
-                      fullWidth
-                      size="large"
-                      [required]="validation.level.required"
-                      [status]="level.dirty ? (level.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="level.invalid && level.touched ? true : null"
-                      [disabled]="!isEditing || !isEloPrincipal"
-                    >
-                      <nb-option *ngFor="let level of LEVELS" [value]="level">{{ level }}</nb-option>
-                    </nb-select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row" *ngIf="isCurrentUser && isAER">
-                <div class="col">
-                  <div class="form-control-group">
-                    <label class="label" for="input-user">Colaboradores assessorados:</label>
-                    <nb-completer
-                      [(ngModel)]="userSearch"
-                      [inputName]="'userListCompleter'"
-                      (selected)="userAER = $event"
-                      #userList="ngModel"
-                      id="input-user"
-                      name="userList"
-                      nameField="fullName"
-                      pictureField="profilePicture"
-                      [data$]="availableUsers"
-                      [minSearchLength]="0"
-                      [placeholder]="'Digite e selecione o nome do colaborador'"
-                      [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
-                      [fullWidth]="true"
-                      [fieldSize]="'large'"
-                      [disabled]="!isEditing"
-                      [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
-                    ></nb-completer>
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <button
-                    nbButton
-                    type="button"
-                    fullWidth
-                    status="primary"
-                    size="large"
-                    style="margin-top: 28px"
-                    [disabled]="!userList.value"
-                    (click)="addToAER()"
-                  >
-                    <nb-icon icon="plus"></nb-icon>
-                  </button>
-                </div>
-                <nb-list style="width: 100%; padding: 10px 0">
-                  <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
-                    <div class="row irow">
-                      <div class="col">
-                        {{
-                          [AERuser, this.userService.idToUser.bind(this.userService), 'fullName']
-                            | transformPipe: this.utils.idToProperty
-                        }}
-                      </div>
-                      <div class="col-auto" style="text-align: right" *ngIf="isEditing">
-                        <nb-icon
-                          class="xIcon"
-                          status="basic"
-                          icon="trash-2-outline"
-                          pack="eva"
-                          (click)="user ? userService.idToUser(user).AER.splice(i, 1) : ''; memberChanged$.next(true)"
-                          [options]="{ animation: { type: 'shake' } }"
-                        ></nb-icon>
-                      </div>
+                        <nb-option *ngFor="let theme of THEMES" [value]="theme.value">{{ theme.name }}</nb-option>
+                      </nb-select>
                     </div>
-                  </nb-list-item>
-                </nb-list>
-              </div>
-
-              <div class="row" *ngIf="config.hasTeam">
-                <div class="col">
-                  <div class="form-control-group" style="margin: 0px">
-                    <label class="label" for="input-user">Membro dos times:</label>
                   </div>
                 </div>
-                <nb-list style="width: 100%">
-                  <nb-list-item
-                    *ngFor="
-                      let team of teamService.userToTeamsMembersFiltered(user);
-                      let i = index;
-                      trackBy: utils.trackByIndex
-                    "
-                  >
-                    <div class="row irow">
-                      <div class="col">
-                        {{ team.name }} -
-                        {{ [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }}
-                        -
-                        {{ [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
-                      </div>
-                    </div>
-                  </nb-list-item>
-                </nb-list>
-              </div>
 
-              <div class="form-control-group" *ngIf="config.hasSector">
-                <label class="label" for="input-interests">Setores atuantes:</label>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-email">Email pessoal:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="user.email"
+                        #email="ngModel"
+                        id="input-email"
+                        name="email"
+                        pattern=".+@.+\..+"
+                        placeholder="Endereço de email"
+                        fullWidth
+                        fieldSize="large"
+                        [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
+                        [required]="validation.email.required"
+                        [attr.aria-invalid]="email.invalid && email.touched ? true : null"
+                        [disabled]="true"
+                      />
+                      <ng-container *ngIf="email.invalid && email.touched">
+                        <p class="caption status-danger" *ngIf="email.errors?.required">O email é obrigatório!</p>
+                        <p class="caption status-danger" *ngIf="email.errors?.pattern">Digite um email válido!</p>
+                      </ng-container>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-professional-email">Email profissional:</label>
+                      <input
+                        nbInput
+                        email
+                        [(ngModel)]="user.professionalEmail"
+                        #professionalEmail="ngModel"
+                        id="input-corporate-email"
+                        name="professionalEmail"
+                        placeholder="Endereço de email profissional"
+                        fullWidth
+                        fieldSize="large"
+                        [status]="
+                          professionalEmail.dirty ? (professionalEmail.invalid ? 'danger' : 'success') : 'basic'
+                        "
+                        [attr.aria-invalid]="professionalEmail.invalid && professionalEmail.touched ? true : null"
+                        [disabled]="!isEditing"
+                      />
+                      <p class="caption status-danger" *ngIf="professionalEmail.errors?.email">
+                        Digite um email válido!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="row">
                   <div class="col-md-4">
-                    <div
-                      class="form-control-group"
-                      *ngFor="let sector of groupedSectors[0]; let i = index; trackBy: utils.trackByIndex"
-                    >
-                      <nb-checkbox
-                        [(ngModel)]="groupedSectors[0][i].isChecked"
-                        name="sector-checkbox-i-{{ i }}"
-                        [status]="groupedSectors[0][i].isChecked ? 'success' : 'basic'"
+                    <div class="form-control-group">
+                      <label class="label" for="input-document">CPF/CNPJ:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="user.document"
+                        #document="ngModel"
+                        id="input-document"
+                        name="document"
+                        placeholder="CPF/CNPJ"
+                        fullWidth
+                        fieldSize="large"
+                        [brmasker]="{ person: true }"
+                        ngxSelectAllText
+                        [required]="validation.document.required"
+                        [minlength]="validation.document.minLength"
+                        [maxlength]="validation.document.maxLength"
+                        [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="document.invalid && document.touched ? true : null"
                         [disabled]="!isEditing"
-                        (ngModelChange)="updateSectors(groupedSectors[0][i]); refreshExpertises()"
-                      >
-                        {{ sector.abrev }} - {{ sector.name }}
-                      </nb-checkbox>
-                      <br />
+                      />
+                      <ng-container *ngIf="document.invalid && document.touched">
+                        <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="document.errors?.minlength || document.errors?.maxlength"
+                        >
+                          O CPF/CNPJ deve ter 11 ou 14 caracteres
+                        </p>
+                      </ng-container>
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <div
-                      class="form-control-group"
-                      *ngFor="let sector of groupedSectors[1]; let j = index; trackBy: utils.trackByIndex"
-                    >
-                      <nb-checkbox
-                        [(ngModel)]="groupedSectors[1][j].isChecked"
-                        name="sector-checkbox-j-{{ j }}"
-                        [status]="groupedSectors[1][j].isChecked ? 'success' : 'basic'"
+                    <div class="form-control-group">
+                      <label class="label" for="input-phone">Telefone para contato:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="user.phone"
+                        #phone="ngModel"
+                        id="input-phone"
+                        name="phone"
+                        placeholder="Telefone com DDD"
+                        fullWidth
+                        fieldSize="large"
+                        [brmasker]="{ phone: true }"
+                        ngxSelectAllText
+                        [required]="validation.phone.required"
+                        [minlength]="validation.phone.minLength"
+                        [maxlength]="validation.phone.maxLength"
+                        [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
                         [disabled]="!isEditing"
-                        (ngModelChange)="updateSectors(groupedSectors[1][j]); refreshExpertises()"
-                      >
-                        {{ sector.abrev }} - {{ sector.name }}
-                      </nb-checkbox>
-                      <br />
+                      />
+                      <ng-container *ngIf="phone.invalid && phone.touched">
+                        <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
+                        <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+                          O telefone deve conter entre {{ validation.phone.minLength - 4 }} a
+                          {{ validation.phone.maxLength - 4 }} números
+                        </p>
+                      </ng-container>
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <div
-                      class="form-control-group"
-                      *ngFor="let sector of groupedSectors[2]; let k = index; trackBy: utils.trackByIndex"
-                    >
-                      <nb-checkbox
-                        [(ngModel)]="groupedSectors[2][k].isChecked"
-                        name="sector-checkbox-k-{{ k }}"
-                        [status]="groupedSectors[2][k].isChecked ? 'success' : 'basic'"
+                    <div class="form-control-group">
+                      <label class="label" for="input-article">Artigo de tratamento:</label>
+                      <nb-select
+                        [(ngModel)]="user.article"
+                        #article="ngModel"
+                        id="input-article"
+                        name="article"
+                        placeholder="Selecione o artigo"
+                        fullWidth
+                        size="large"
+                        [required]="validation.article.required"
+                        [status]="article.dirty ? (article.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="article.invalid && article.touched ? true : null"
+                        (selectedChange)="buildPositionsList(); buildLevelList(); fixPositionAndLevel()"
                         [disabled]="!isEditing"
-                        (ngModelChange)="updateSectors(groupedSectors[2][k]); refreshExpertises()"
                       >
-                        {{ sector.abrev }} - {{ sector.name }}
-                      </nb-checkbox>
-                      <br />
+                        <nb-option value="a">A</nb-option>
+                        <nb-option value="o">O</nb-option>
+                      </nb-select>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="form-control-group" *ngIf="config.hasExpertiseBySector">
-                <label class="label" for="input-expertise">Perfis de atuação por setor:</label>
-                <nb-tabset fullWidth #expertiseTabs>
-                  <nb-tab
-                    [tabTitle]="
-                      [user.expertise[idx].sector, teamService.idToSector.bind(teamService), 'abrev']
-                        | transformPipe: utils.idToProperty.bind(utils)
-                    "
-                    *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
-                  >
-                    <label class="label" for="input-shortExpertise">Especialidade:</label>
-                    <textarea
-                      nbInput
-                      [(ngModel)]="user.expertise[idx].shortExpertise"
-                      #shortExpertise="ngModel"
-                      id="input-shortExpertise"
-                      name="shortExpertise"
-                      placeholder="Descreva a sua especialidade no {{
-                        [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
-                      }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-state">Estado:</label>
+                      <nb-select
+                        [(ngModel)]="user.state"
+                        #state="ngModel"
+                        id="input-state"
+                        name="state"
+                        placeholder="Selecione o estado"
+                        fullWidth
+                        size="large"
+                        [required]="validation.state.required"
+                        [status]="state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="state.invalid && state.touched ? true : null"
+                        (selectedChange)="buildCityList(state.value)"
+                        [disabled]="!isEditing"
+                      >
+                        <nb-option *ngFor="let state of states" [value]="state">{{ state }}</nb-option>
+                      </nb-select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-city">Cidade:</label>
+                      <nb-select
+                        [(ngModel)]="user.city"
+                        #city="ngModel"
+                        id="input-city"
+                        name="city"
+                        placeholder="Selecione a cidade"
+                        fullWidth
+                        size="large"
+                        [required]="validation.city.required"
+                        [status]="city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="city.invalid && city.touched ? true : null"
+                        [disabled]="!isEditing"
+                      >
+                        <nb-option *ngFor="let city of cities" [value]="city">{{ city }}</nb-option>
+                      </nb-select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-control-group">
+                      <label class="label" for="input-position">
+                        Papeis:
+                        <nb-icon
+                          status="info"
+                          icon="info"
+                          pack="eva"
+                          [options]="{ animation: { type: 'pulse' } }"
+                          [nbTooltip]="positionMessage"
+                          nbTooltipPlacement="top"
+                          nbTooltipStatus="info"
+                        ></nb-icon>
+                      </label>
+                      <nb-select
+                        [(ngModel)]="user.position"
+                        #position="ngModel"
+                        id="input-position"
+                        name="position"
+                        placeholder="Selecione os seus papeis"
+                        fullWidth
+                        multiple
+                        size="large"
+                        [required]="validation.position.required"
+                        [status]="position.dirty ? (position.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="position.invalid && position.touched ? true : null"
+                        [disabled]="!isEditing || !isEloPrincipal"
+                      >
+                        <nb-option *ngFor="let position of POSITIONS" [value]="position">{{ position }}</nb-option>
+                      </nb-select>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-control-group" *ngIf="config.hasLevels">
+                      <label class="label" for="input-level">
+                        Enquadramento:
+                        <nb-icon
+                          *ngIf="utils.NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
+                          status="info"
+                          icon="info"
+                          pack="eva"
+                          [options]="{ animation: { type: 'pulse' } }"
+                          nbTooltip="Somente o elo principal pode alterar o enquadramento dos associados."
+                          nbTooltipPlacement="top"
+                          nbTooltipStatus="info"
+                        ></nb-icon>
+                      </label>
+                      <nb-select
+                        [(ngModel)]="user.level"
+                        #level="ngModel"
+                        id="input-level"
+                        name="level"
+                        placeholder="Selecione o seu enquadramento"
+                        fullWidth
+                        size="large"
+                        [required]="validation.level.required"
+                        [status]="level.dirty ? (level.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="level.invalid && level.touched ? true : null"
+                        [disabled]="!isEditing || !isEloPrincipal"
+                      >
+                        <nb-option *ngFor="let level of LEVELS" [value]="level">{{ level }}</nb-option>
+                      </nb-select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf="isCurrentUser && isAER">
+                  <div class="col">
+                    <div class="form-control-group">
+                      <label class="label" for="input-user">Colaboradores assessorados:</label>
+                      <nb-completer
+                        [(ngModel)]="userSearch"
+                        [inputName]="'userListCompleter'"
+                        (selected)="userAER = $event"
+                        #userList="ngModel"
+                        id="input-user"
+                        name="userList"
+                        nameField="fullName"
+                        pictureField="profilePicture"
+                        [data$]="availableUsers"
+                        [minSearchLength]="0"
+                        [placeholder]="'Digite e selecione o nome do colaborador'"
+                        [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
+                        [fullWidth]="true"
+                        [fieldSize]="'large'"
+                        [disabled]="!isEditing"
+                        [status]="userList.dirty && userSearch ? (userList.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
+                      ></nb-completer>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button
+                      nbButton
+                      type="button"
                       fullWidth
-                      fieldSize="large"
-                      [required]="validation.shortExpertise.required"
-                      [minlength]="validation.shortExpertise.minLength"
-                      [maxlength]="validation.shortExpertise.maxLength"
-                      [status]="shortExpertise.dirty ? (shortExpertise.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="shortExpertise.invalid && shortExpertise.touched ? true : null"
-                      [disabled]="!isEditing"
-                    ></textarea>
-                    <ng-container *ngIf="shortExpertise.invalid && shortExpertise.touched">
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length != 0"
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      [disabled]="!userList.value"
+                      (click)="addToAER()"
+                    >
+                      <nb-icon icon="plus"></nb-icon>
+                    </button>
+                  </div>
+                  <nb-list style="width: 100%; padding: 10px 0">
+                    <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
+                      <div class="row irow">
+                        <div class="col">
+                          {{
+                            [AERuser, this.userService.idToUser.bind(this.userService), 'fullName']
+                              | transformPipe: this.utils.idToProperty
+                          }}
+                        </div>
+                        <div class="col-auto" style="text-align: right" *ngIf="isEditing">
+                          <nb-icon
+                            class="xIcon"
+                            status="basic"
+                            icon="trash-2-outline"
+                            pack="eva"
+                            (click)="user ? userService.idToUser(user).AER.splice(i, 1) : ''; memberChanged$.next(true)"
+                            [options]="{ animation: { type: 'shake' } }"
+                          ></nb-icon>
+                        </div>
+                      </div>
+                    </nb-list-item>
+                  </nb-list>
+                </div>
+
+                <div class="row" *ngIf="config.hasTeam">
+                  <div class="col">
+                    <div class="form-control-group" style="margin: 0px">
+                      <label class="label" for="input-user">Membro dos times:</label>
+                    </div>
+                  </div>
+                  <nb-list style="width: 100%">
+                    <nb-list-item
+                      *ngFor="
+                        let team of teamService.userToTeamsMembersFiltered(user);
+                        let i = index;
+                        trackBy: utils.trackByIndex
+                      "
+                    >
+                      <div class="row irow">
+                        <div class="col">
+                          {{ team.name }} -
+                          {{
+                            [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
+                          }}
+                          -
+                          {{
+                            [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
+                          }}
+                        </div>
+                      </div>
+                    </nb-list-item>
+                  </nb-list>
+                </div>
+
+                <div class="form-control-group" *ngIf="config.hasSector">
+                  <label class="label" for="input-interests">Setores atuantes:</label>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div
+                        class="form-control-group"
+                        *ngFor="let sector of groupedSectors[0]; let i = index; trackBy: utils.trackByIndex"
                       >
-                        É necessário preencher todas as especialidades!
-                      </p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length == 0"
+                        <nb-checkbox
+                          [(ngModel)]="groupedSectors[0][i].isChecked"
+                          name="sector-checkbox-i-{{ i }}"
+                          [status]="groupedSectors[0][i].isChecked ? 'success' : 'basic'"
+                          [disabled]="!isEditing"
+                          (ngModelChange)="updateSectors(groupedSectors[0][i]); refreshExpertises()"
+                        >
+                          {{ sector.abrev }} - {{ sector.name }}
+                        </nb-checkbox>
+                        <br />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div
+                        class="form-control-group"
+                        *ngFor="let sector of groupedSectors[1]; let j = index; trackBy: utils.trackByIndex"
                       >
-                        A especialidade em
-                        {{
-                          [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
-                        }}
-                        é obrigatória!
-                      </p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
+                        <nb-checkbox
+                          [(ngModel)]="groupedSectors[1][j].isChecked"
+                          name="sector-checkbox-j-{{ j }}"
+                          [status]="groupedSectors[1][j].isChecked ? 'success' : 'basic'"
+                          [disabled]="!isEditing"
+                          (ngModelChange)="updateSectors(groupedSectors[1][j]); refreshExpertises()"
+                        >
+                          {{ sector.abrev }} - {{ sector.name }}
+                        </nb-checkbox>
+                        <br />
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div
+                        class="form-control-group"
+                        *ngFor="let sector of groupedSectors[2]; let k = index; trackBy: utils.trackByIndex"
                       >
-                        A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a
-                        {{ validation.shortExpertise.maxLength }} caracteres
-                      </p>
-                    </ng-container>
-                    <label class="label" for="input-expertise">Perfil de atuação:</label>
-                    <p>{{ user.exibitionName }},</p>
-                    <textarea
-                      nbInput
-                      [(ngModel)]="user.expertise[idx].text"
-                      #expertise="ngModel"
-                      id="input-expertise"
-                      name="expertise"
-                      placeholder="Descreva o seu perfil de atuação no {{
-                        [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
-                      }}"
-                      fullWidth
-                      fieldSize="large"
-                      [required]="validation.expertise.required"
-                      [minlength]="validation.expertise.minLength"
-                      [maxlength]="validation.expertise.maxLength"
-                      [status]="expertise.dirty ? (expertise.invalid ? 'danger' : 'success') : 'basic'"
-                      [attr.aria-invalid]="expertise.invalid && expertise.touched ? true : null"
-                      [disabled]="!isEditing"
-                    ></textarea>
-                    <ng-container *ngIf="expertise.invalid && expertise.touched">
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.required && user.expertise[idx].text.length != 0"
-                      >
-                        É necessário preencher todos os perfis de atuação!
-                      </p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.required && user.expertise[idx].text.length == 0"
-                      >
-                        O perfil de atuação no
-                        {{
+                        <nb-checkbox
+                          [(ngModel)]="groupedSectors[2][k].isChecked"
+                          name="sector-checkbox-k-{{ k }}"
+                          [status]="groupedSectors[2][k].isChecked ? 'success' : 'basic'"
+                          [disabled]="!isEditing"
+                          (ngModelChange)="updateSectors(groupedSectors[2][k]); refreshExpertises()"
+                        >
+                          {{ sector.abrev }} - {{ sector.name }}
+                        </nb-checkbox>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-control-group" *ngIf="config.hasExpertiseBySector">
+                  <label class="label" for="input-expertise">Perfis de atuação por setor:</label>
+                  <nb-tabset fullWidth #expertiseTabs>
+                    <nb-tab
+                      [tabTitle]="
+                        [user.expertise[idx].sector, teamService.idToSector.bind(teamService), 'abrev']
+                          | transformPipe: utils.idToProperty.bind(utils)
+                      "
+                      *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
+                    >
+                      <label class="label" for="input-shortExpertise">Especialidade:</label>
+                      <textarea
+                        nbInput
+                        [(ngModel)]="user.expertise[idx].shortExpertise"
+                        #shortExpertise="ngModel"
+                        id="input-shortExpertise"
+                        name="shortExpertise"
+                        placeholder="Descreva a sua especialidade no {{
                           [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
-                        }}
-                        é obrigatório!
-                      </p>
-                      <p
-                        class="caption status-danger"
-                        *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
-                      >
-                        O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a
-                        {{ validation.expertise.maxLength }} caracteres
-                      </p>
-                    </ng-container>
-                  </nb-tab>
-                </nb-tabset>
-              </div>
+                        }}. (Ex: Arquiteta especialista em Projetos para Espaços Compactos)"
+                        fullWidth
+                        fieldSize="large"
+                        [required]="validation.shortExpertise.required"
+                        [minlength]="validation.shortExpertise.minLength"
+                        [maxlength]="validation.shortExpertise.maxLength"
+                        [status]="shortExpertise.dirty ? (shortExpertise.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="shortExpertise.invalid && shortExpertise.touched ? true : null"
+                        [disabled]="!isEditing"
+                      ></textarea>
+                      <ng-container *ngIf="shortExpertise.invalid && shortExpertise.touched">
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length != 0"
+                        >
+                          É necessário preencher todas as especialidades!
+                        </p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.required && user.expertise[idx].shortExpertise.length == 0"
+                        >
+                          A especialidade em
+                          {{
+                            [user.expertise[idx].sector]
+                              | transformPipe: teamService.idToSector.bind(teamService):'abrev'
+                          }}
+                          é obrigatória!
+                        </p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
+                        >
+                          A especialidade deve conter entre {{ validation.shortExpertise.minLength }} a
+                          {{ validation.shortExpertise.maxLength }} caracteres
+                        </p>
+                      </ng-container>
+                      <label class="label" for="input-expertise">Perfil de atuação:</label>
+                      <p>{{ user.exibitionName }},</p>
+                      <textarea
+                        nbInput
+                        [(ngModel)]="user.expertise[idx].text"
+                        #expertise="ngModel"
+                        id="input-expertise"
+                        name="expertise"
+                        placeholder="Descreva o seu perfil de atuação no {{
+                          [user.expertise[idx].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
+                        }}"
+                        fullWidth
+                        fieldSize="large"
+                        [required]="validation.expertise.required"
+                        [minlength]="validation.expertise.minLength"
+                        [maxlength]="validation.expertise.maxLength"
+                        [status]="expertise.dirty ? (expertise.invalid ? 'danger' : 'success') : 'basic'"
+                        [attr.aria-invalid]="expertise.invalid && expertise.touched ? true : null"
+                        [disabled]="!isEditing"
+                      ></textarea>
+                      <ng-container *ngIf="expertise.invalid && expertise.touched">
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.required && user.expertise[idx].text.length != 0"
+                        >
+                          É necessário preencher todos os perfis de atuação!
+                        </p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.required && user.expertise[idx].text.length == 0"
+                        >
+                          O perfil de atuação no
+                          {{
+                            [user.expertise[idx].sector]
+                              | transformPipe: teamService.idToSector.bind(teamService):'name'
+                          }}
+                          é obrigatório!
+                        </p>
+                        <p
+                          class="caption status-danger"
+                          *ngIf="expertise.errors?.minlength || expertise.errors?.maxlength"
+                        >
+                          O perfil de atuação deve conter entre {{ validation.expertise.minLength }} a
+                          {{ validation.expertise.maxLength }} caracteres
+                        </p>
+                      </ng-container>
+                    </nb-tab>
+                  </nb-tabset>
+                </div>
 
-              <div class="row" *ngIf="isEditing">
-                <div class="col-6">
-                  <button nbButton fullWidth status="danger" size="large" (click)="revert()">Cancelar</button>
+                <div class="row" *ngIf="isEditing">
+                  <div class="col-6">
+                    <button nbButton fullWidth status="danger" size="large" (click)="revert()">Cancelar</button>
+                  </div>
+                  <div class="col-6">
+                    <button
+                      nbButton
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      [disabled]="!form.valid"
+                      (click)="updateUser()"
+                    >
+                      Salvar
+                    </button>
+                  </div>
                 </div>
-                <div class="col-6">
-                  <button
-                    nbButton
-                    fullWidth
-                    status="primary"
-                    size="large"
-                    [disabled]="!form.valid"
-                    (click)="updateUser()"
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
+        </ng-template>
       </nb-card-body>
     </nb-card>
   </div>
