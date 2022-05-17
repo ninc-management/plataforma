@@ -100,7 +100,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     const newSector = new Sector();
     newSector.name = this.options.sectorName;
     newSector.abrev = this.options.sectorAbrev;
-    this.team.config.sectors.push(newSector);
+    this.team.sectors.push(newSector);
     this.options.sectorName = '';
     this.options.sectorAbrev = '';
   }

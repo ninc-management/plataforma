@@ -134,7 +134,7 @@ export class TeamService implements OnDestroy {
 
   sectorsListAll(): Sector[] {
     const teams = this.teams$.getValue();
-    const sectors = teams.map((team) => team.config.sectors);
+    const sectors = teams.map((team) => team.sectors);
     return sectors.flat().sort((a, b) => {
       return this.utils.nameSort(1, a.name, b.name);
     });
@@ -142,7 +142,7 @@ export class TeamService implements OnDestroy {
 
   sectorsList(teamAbrev: string): Sector[] {
     const team = this.teams$.getValue().find((team) => team.abrev == teamAbrev);
-    return team ? team.config.sectors : [];
+    return team ? team.sectors : [];
   }
 
   extractAbreviation(composedName: string): string {

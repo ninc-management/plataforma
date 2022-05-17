@@ -2,7 +2,13 @@
   <nb-tabset fullWidth>
     <nb-tab tabTitle="Dados" tabIcon="info-outline" responsive>
       <div class="row">
-        <div class="col-12 col-md-5">
+        <div
+          [ngClass]="{
+            'col-md-5': editing,
+            'col-md-6': !editing,
+            'col-12': true
+          }"
+        >
           <div class="form-control-group">
             <label class="label" for="input-name">Nome do time:</label>
             <input
@@ -30,7 +36,13 @@
             </p>
           </ng-container>
         </div>
-        <div class="col-12 col-md-3">
+        <div
+          [ngClass]="{
+            'col-md-3': editing,
+            'col-md-6': !editing,
+            'col-12': true
+          }"
+        >
           <div class="form-control-group">
             <label class="label" for="input-name">Abreviação:</label>
             <input
@@ -59,7 +71,7 @@
             </p>
           </ng-container>
         </div>
-        <div class="col-12 col-md-4">
+        <div *ngIf="editing" class="col-12 col-md-4">
           <div class="form-control-group">
             <label class="label" for="input-leader">
               Líder:
@@ -88,7 +100,6 @@
               nameField="fullName"
               pictureField="profilePicture"
               [data$]="availableLeaders"
-              [required]="validation.leader.required"
               [minSearchLength]="0"
               [fullWidth]="true"
               [status]="
@@ -155,98 +166,205 @@
             </ul>
           </div>
         </div>
-        <div class="col-12 col-md-6">
-          <div class="form-control-group">
-            <label class="label" for="input-member">Membro disponível:</label>
-            <nb-completer
-              [(ngModel)]="memberSearch"
-              [inputName]="'memberListCompleter'"
-              (selected)="currentMember.user = $event; updateUserSectors()"
-              #memberList="ngModel"
-              id="input-member"
-              name="memberList"
-              nameField="fullName"
-              pictureField="profilePicture"
-              [data$]="availableUsers"
-              [minSearchLength]="0"
-              [placeholder]="'Digite e selecione o nome do membro do time'"
-              [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
-              [fullWidth]="true"
-              [fieldSize]="'large'"
-              [status]="memberList.dirty && memberSearch ? (memberList.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="memberList.invalid && memberList.touched ? true : null"
-            ></nb-completer>
+        <div class="row irow" *ngIf="!editing">
+          <div class="col-12 col-md-7">
+            <div class="form-control-group">
+              <label class="label" for="input-sector-name">Setor:</label>
+              <input
+                nbInput
+                [(ngModel)]="options.sectorName"
+                #sectorNameInput="ngModel"
+                id="input-sector-name"
+                name="sector-name"
+                placeholder="Nome do setor"
+                fullWidth
+                fieldSize="large"
+                [status]="sectorNameInput.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="sectorNameInput.invalid && sectorNameInput.touched ? true : null"
+              />
+            </div>
+          </div>
+          <div class="col-10 col-md-4">
+            <div class="form-control-group">
+              <label class="label" for="input-sector-abrev">Abreviação:</label>
+              <input
+                nbInput
+                [(ngModel)]="options.sectorAbrev"
+                #sectorAbrevInput="ngModel"
+                id="input-sector-abrev"
+                name="sector-abrev"
+                placeholder="Abreviação"
+                fullWidth
+                fieldSize="large"
+                [status]="sectorAbrevInput.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="sectorAbrevInput.invalid && sectorAbrevInput.touched ? true : null"
+              />
+            </div>
+          </div>
+          <div class="col-2 col-md-1">
+            <div class="form-control-group">
+              <button
+                nbButton
+                type="button"
+                fullWidth
+                status="primary"
+                size="large"
+                style="margin-top: 28px"
+                [disabled]="!sectorNameInput.value || !sectorAbrevInput.value"
+                (click)="addSector()"
+              >
+                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+              </button>
+            </div>
+          </div>
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: utils.trackByIndex">
+              <div class="row typeRow">
+                <div class="col-12 col-md-7">
+                  <input
+                    nbInput
+                    [(ngModel)]="sector.name"
+                    id="input-sector-name-{{ i }}"
+                    name="sector-name-{{ i }}"
+                    placeholder="Nome do setor"
+                    fullWidth
+                    [status]="team.sectors[i].name.length == 0 ? 'danger' : 'basic'"
+                  />
+                </div>
+                <div class="col-10 col-md-4">
+                  <input
+                    nbInput
+                    [(ngModel)]="sector.abrev"
+                    id="input-sector-abrev-{{ i }}"
+                    name="sector-abrev-{{ i }}"
+                    placeholder="Abreviação do setor"
+                    fullWidth
+                    [status]="team.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
+                  />
+                </div>
+                <div class="col-2 col-md-1" style="text-align: right">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="team.sectors.splice(i, 1)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
+        </div>
+        <div class="row irow" *ngIf="editing">
+          <div class="col-12 col-md-6">
+            <div class="form-control-group">
+              <label class="label" for="input-member">Membro disponível:</label>
+              <nb-completer
+                [(ngModel)]="memberSearch"
+                [inputName]="'memberListCompleter'"
+                (selected)="currentMember.user = $event; updateUserSectors()"
+                #memberList="ngModel"
+                id="input-member"
+                name="memberList"
+                nameField="fullName"
+                pictureField="profilePicture"
+                [data$]="availableUsers"
+                [minSearchLength]="0"
+                [placeholder]="'Digite e selecione o nome do membro do time'"
+                [textNoResults]="'Não foi possível achar um membro com o nome digitado'"
+                [fullWidth]="true"
+                [fieldSize]="'large'"
+                [status]="memberList.dirty && memberSearch ? (memberList.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="memberList.invalid && memberList.touched ? true : null"
+              ></nb-completer>
+            </div>
+          </div>
+          <div class="col-12 col-md-5">
+            <div class="form-control-group">
+              <label class="label" for="input-member-sector">
+                Setor:
+                <nb-icon
+                  status="info"
+                  icon="info"
+                  pack="eva"
+                  [options]="{ animation: { type: 'pulse' } }"
+                  nbTooltip="Para adicionar um associado, ele deve atuar em algum setor. Esta alteração é feita no perfil do associado."
+                  nbTooltipPlacement="top"
+                  nbTooltipStatus="info"
+                ></nb-icon>
+              </label>
+
+              <nb-select
+                [(ngModel)]="currentMember.sector"
+                #memberSector="ngModel"
+                id="input-member-sector"
+                name="member-sector"
+                placeholder="Setor"
+                fullWidth
+                size="large"
+                [status]="memberSector.value?.length > 0 ? 'success' : 'basic'"
+                [attr.aria-invalid]="memberSector.invalid && memberSector.touched ? true : null"
+              >
+                <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
+                  {{ sector.abrev }} - {{ sector.name }}
+                </nb-option>
+              </nb-select>
+            </div>
+          </div>
+          <div class="col-12 col-md-1">
+            <div class="form-control-group">
+              <button
+                nbButton
+                type="button"
+                fullWidth
+                status="primary"
+                size="large"
+                style="margin-top: 28px"
+                [disabled]="!memberList.value || !memberSector.value || currentMember.user === undefined"
+                (click)="addMember()"
+              >
+                <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="col-12 col-md-5">
-          <div class="form-control-group">
-            <label class="label" for="input-member-sector">Setor:</label>
-            <nb-select
-              [(ngModel)]="currentMember.sector"
-              #memberSector="ngModel"
-              id="input-member-sector"
-              name="member-sector"
-              placeholder="Setor"
-              fullWidth
-              size="large"
-              [status]="memberSector.value?.length > 0 ? 'success' : 'basic'"
-              [attr.aria-invalid]="memberSector.invalid && memberSector.touched ? true : null"
-            >
-              <nb-option *ngFor="let sector of USER_SECTORS" [value]="sector">
-                {{ sector.abrev }} - {{ sector.name }}
-              </nb-option>
-            </nb-select>
-          </div>
-        </div>
-        <div class="col-12 col-md-1">
-          <button
-            nbButton
-            type="button"
-            fullWidth
-            status="primary"
-            size="large"
-            style="margin-top: 28px"
-            [disabled]="!memberList.value || currentMember.user === undefined"
-            (click)="addMember()"
-          >
-            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
-          </button>
-        </div>
+        <nb-list style="width: 100%; padding: 10px 0">
+          <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
+            <div class="row irow">
+              <div class="col-5 col-md-6">
+                <nb-user
+                  size="giant"
+                  [name]="
+                    [member.user, userService.idToUser.bind(userService), 'fullName']
+                      | transformPipe: utils.idToProperty
+                  "
+                  [picture]="
+                    [member.user, userService.idToUser.bind(userService), 'profilePicture']
+                      | transformPipe: utils.idToProperty
+                  "
+                ></nb-user>
+              </div>
+              <div class="col-5 col-md-5">
+                {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }} -
+                {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
+              </div>
+            </div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </nb-list-item>
+        </nb-list>
       </div>
-      <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
-          <div class="row irow">
-            <div class="col-5 col-md-6">
-              <nb-user
-                size="giant"
-                [name]="
-                  [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
-                "
-                [picture]="
-                  [member.user, userService.idToUser.bind(userService), 'profilePicture']
-                    | transformPipe: utils.idToProperty
-                "
-              ></nb-user>
-            </div>
-            <div class="col-5 col-md-5">
-              {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }} -
-              {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
-            </div>
-          </div>
-          <div class="col-2 col-md-1" style="text-align: right">
-            <nb-icon
-              class="xIcon"
-              status="basic"
-              icon="trash-2-outline"
-              pack="eva"
-              (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
-              [options]="{ animation: { type: 'shake' } }"
-            ></nb-icon>
-          </div>
-        </nb-list-item>
-      </nb-list>
     </nb-tab>
-    <nb-tab tabTitle="Configuração" tabIcon="settings-outline" responsive>
+    <nb-tab *ngIf="editing" tabTitle="Configuração" tabIcon="settings-outline" responsive>
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">Onedrive</label>
@@ -326,7 +444,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="sectorNameInput.value?.length == 0 && sectorAbrevInput.value?.length == 0"
+            [disabled]="!sectorNameInput.value || !sectorAbrevInput.value"
             (click)="addSector()"
           >
             <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
@@ -334,7 +452,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let sector of team.config.sectors; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: utils.trackByIndex">
           <div class="row typeRow">
             <div class="col-12 col-md-7">
               <input
@@ -344,7 +462,7 @@
                 name="sector-name-{{ i }}"
                 placeholder="Nome do setor"
                 fullWidth
-                [status]="team.config.sectors[i].name.length == 0 ? 'danger' : 'basic'"
+                [status]="team.sectors[i].name.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-10 col-md-4">
@@ -355,7 +473,7 @@
                 name="sector-abrev-{{ i }}"
                 placeholder="Abreviação do setor"
                 fullWidth
-                [status]="team.config.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
+                [status]="team.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -364,7 +482,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="team.config.sectors.splice(i, 1)"
+                (click)="team.sectors.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -373,7 +491,7 @@
       </nb-list>
     </nb-tab>
   </nb-tabset>
-  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">
+  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || team.sectors.length == 0">
     {{ editing ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>
