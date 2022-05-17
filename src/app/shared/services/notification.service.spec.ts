@@ -50,6 +50,7 @@ describe('NotificationService', () => {
     tmpUser._id = '0';
     tmpUser.fullName = 'Test';
     tmpUser.email = 'test@te.st';
+    tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
     tmpUser.fullName = 'Test1';
@@ -387,7 +388,7 @@ describe('NotificationService', () => {
           case 1: {
             i += 1;
             expect(users).toEqual(utilsService.reviveDates(mockedUsers));
-            service.notifyMany(mockedUsers, notificationBody);
+            service.notifyMany(mockedInvoices[0].team, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
             req.flush(null);
