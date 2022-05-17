@@ -264,7 +264,7 @@ export class ExpenseTabComponent implements OnInit {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
         tmp.created = this.utils.formatDate(tmp.created);
-        tmp.paidDate = this.utils.formatDate(tmp.paidDate);
+        tmp.paidDate = tmp.paid ? this.utils.formatDate(tmp.paidDate) : '';
         return tmp;
       })
     );
