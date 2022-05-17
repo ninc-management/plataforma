@@ -107,7 +107,7 @@ export class User extends Base<string> {
   public AER: Ref<User>[] = [];
 
   @prop()
-  public theme?: string;
+  public theme: string = 'default';
 
   @prop({ type: () => [UserFinancialTransaction] })
   public transactions: UserFinancialTransaction[] = [];
