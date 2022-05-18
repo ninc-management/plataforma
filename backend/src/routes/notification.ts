@@ -11,7 +11,7 @@ let lastNotification: UserNotification;
 
 function updateNotification(notification: UserNotification, res: any) {
   UserModel.findByIdAndUpdate(
-    (notification.to as any)._id,
+    notification.to,
     { $push: { notifications: notification } },
     { upsert: false },
     (err, savedUser) => {
@@ -21,7 +21,7 @@ function updateNotification(notification: UserNotification, res: any) {
           error: err,
         });
       }
-      if (Object.keys(usersMap).length > 0) usersMap[(notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+      if (Object.keys(usersMap).length > 0) usersMap[notification.to as any] = cloneDeep(savedUser.toJSON());
       notification$.next(notification);
       if (isEqual(notification, lastNotification)) {
         return res
@@ -32,6 +32,16 @@ function updateNotification(notification: UserNotification, res: any) {
   );
 }
 
+/**
+ * Make a request to send a notification
+ * UserNotification:
+ * @param {string} to
+ * @param {string} from
+ * @param {string} title
+ * @param {string} message
+ * @param {string} tag
+ * @return {void}
+ */
 router.post('/', (req, res, next) => {
   mutex.acquire().then((release) => {
     lastNotification = req.body.notification;
@@ -40,6 +50,16 @@ router.post('/', (req, res, next) => {
   });
 });
 
+/**
+ * Make a request to send many notifications
+ * UserNotification[]:
+ * @param {string} to
+ * @param {string} from
+ * @param {string} title
+ * @param {string} message
+ * @param {string} tag
+ * @return {void}
+ */
 router.post('/many', (req, res, next) => {
   mutex.acquire().then((release) => {
     lastNotification = req.body.notifications[req.body.notifications.length - 1];
@@ -50,12 +70,22 @@ router.post('/many', (req, res, next) => {
   });
 });
 
+/**
+ * Make a request to delete a notification
+ * UserNotification:
+ * @param {string} to
+ * @param {string} from
+ * @param {string} title
+ * @param {string} message
+ * @param {string} tag
+ * @return {void}
+ */
 router.post('/read', (req, res, next) => {
   mutex.acquire().then((release) => {
     UserModel.findByIdAndUpdate(
       { _id: req.body.notification.to },
       { $pull: { notifications: { _id: req.body.notification._id } } },
-      { safe: true, multi: false },
+      { safe: true, multi: false, upsert: false },
       (err, savedUser) => {
         if (err) {
           return res.status(500).json({
@@ -63,8 +93,7 @@ router.post('/read', (req, res, next) => {
             error: err,
           });
         }
-        if (Object.keys(usersMap).length > 0)
-          usersMap[(req.body.notification.to as any)._id] = cloneDeep(savedUser.toJSON());
+        if (Object.keys(usersMap).length > 0) usersMap[req.body.notification.to] = cloneDeep(savedUser.toJSON());
         return res.status(200).json({ message: 'Notificação marcada como lida!' });
       }
     );
