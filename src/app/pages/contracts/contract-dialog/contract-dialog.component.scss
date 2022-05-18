@@ -1,1 +1,17 @@
 @import 'app/shared/components/base-dialog/base-dialog.component';
+
+::ng-deep {
+  .icon-file-csv {
+    font-family: 'icons' !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    font-size: 1.25rem;
+
+    .icon-file-csv::before {
+      content: '\e900';
+    }
+  }
+}
