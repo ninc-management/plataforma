@@ -9,9 +9,9 @@ import { ContractorsComponent } from './contractors/contractors.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { UsersComponent } from './users/users.component';
 import { PromotionsComponent } from './promotions/promotions.component';
-import { Permissions } from 'app/shared/services/utils.service';
 import { TeamsComponent } from './teams/teams.component';
 import { CoursesComponent } from './courses/courses.component';
+import { Permissions } from 'app/shared/utils';
 
 const routes: Routes = [
   {
