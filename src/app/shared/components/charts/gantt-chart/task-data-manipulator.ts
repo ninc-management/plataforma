@@ -2,6 +2,7 @@
 
 import { Contract } from '@models/contract';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { getMinDate } from './date-manipulator';
 import { TaskModel } from './task-data.model';
 
 export class TaskDataManipulator {
@@ -58,7 +59,7 @@ export class TaskDataManipulator {
   mapZebra(taskData: TaskModel[]): any[] {
     const mappedData = [];
     const maxDate = this.getMaxDate(taskData);
-    const minDate = new Date(this._contract.created);
+    const minDate = getMinDate(taskData, this._contract);
 
     for (let index = 0; index < taskData.length; index++) {
       const item = taskData[index];

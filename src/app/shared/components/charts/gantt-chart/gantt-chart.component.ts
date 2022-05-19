@@ -19,7 +19,7 @@ import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
-import { daysLeft } from './date-manipulator';
+import { daysLeft, getMinDate } from './date-manipulator';
 import { ChartConstants, GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
@@ -159,7 +159,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     return {
       type: 'time',
       position: 'top',
-      min: new Date(this.contract.created),
+      min: getMinDate(this.taskData, this.contract),
       splitLine: {
         lineStyle: {
           color: ['#E9EDFF'],
