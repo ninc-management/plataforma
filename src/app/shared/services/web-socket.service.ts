@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { UtilsService } from './utils.service';
+import { reviveDates } from 'app/shared/utils';
 
 interface IdWise {
   _id: string;
@@ -10,12 +10,12 @@ interface IdWise {
   providedIn: 'root',
 })
 export class WebSocketService {
-  constructor(private utils: UtilsService) {}
+  constructor() {}
 
   handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]>, coll: string): void {
     if (data == new Object()) return;
     if (data.ns.coll != coll) return;
-    data = this.utils.reviveDates(data);
+    data = reviveDates(data);
     switch (data.operationType) {
       case 'update': {
         const tmpArray = oArray$.getValue();

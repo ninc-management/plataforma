@@ -6,8 +6,8 @@ import { UserService } from './user.service';
 import { TeamMember } from '@models/team';
 import { User, UserNotification } from '@models/user';
 import { InvoiceTeamMember } from '@models/invoice';
-import { UtilsService } from './utils.service';
 import { cloneDeep } from 'lodash';
+import { isOfType } from '../utils';
 
 export interface NotificationBody {
   title: string;
@@ -25,7 +25,7 @@ export enum NotificationTags {
 export class NotificationService implements OnDestroy {
   private destroy$ = new Subject<void>();
 
-  constructor(private http: HttpClient, private userService: UserService, private utils: UtilsService) {}
+  constructor(private http: HttpClient, private userService: UserService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -59,7 +59,7 @@ export class NotificationService implements OnDestroy {
       newNotification.from = user._id;
     });
     users.forEach((to) => {
-      if (this.utils.isOfType<User>(to, ['fullName', 'sectors', 'position'])) newNotification.to = to;
+      if (isOfType<User>(to, ['fullName', 'sectors', 'position'])) newNotification.to = to;
       else newNotification.to = to.user;
       if (newNotification.to) newNotification.to = this.userService.idToUser(newNotification.to)._id;
       notifications.push(cloneDeep(newNotification));

@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from './web-socket.service';
-import { UtilsService } from './utils.service';
 import { Contractor } from '@models/contractor';
 import { Observable } from 'rxjs';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
+import { nameSort, isOfType } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +21,7 @@ export class ContractorService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private http: HttpClient,
-    private wsService: WebSocketService,
-    private socket: Socket,
-    private utils: UtilsService
-  ) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -56,7 +51,7 @@ export class ContractorService implements OnDestroy {
         .subscribe((contractors: any) => {
           this.contractors$.next(
             (contractors as Contractor[]).sort((a, b) => {
-              return this.utils.nameSort(1, a.fullName, b.fullName);
+              return nameSort(1, a.fullName, b.fullName);
             })
           );
           this._isDataLoaded$.next(true);
@@ -70,7 +65,7 @@ export class ContractorService implements OnDestroy {
   }
 
   idToContractor(id: string | Contractor): Contractor {
-    if (this.utils.isOfType<Contractor>(id, ['_id', 'fullName', 'document', 'email', 'address'])) return id;
+    if (isOfType<Contractor>(id, ['_id', 'fullName', 'document', 'email', 'address'])) return id;
     const tmp = this.contractors$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

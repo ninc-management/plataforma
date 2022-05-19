@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { Socket } from 'ngx-socket-io';
 import { WebSocketService } from './web-socket.service';
-import { UtilsService } from './utils.service';
+import { reviveDates } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -20,12 +20,7 @@ export class MessageService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private http: HttpClient,
-    private socket: Socket,
-    private wsService: WebSocketService,
-    private utils: UtilsService
-  ) {}
+  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
 
   saveMessage(message: Message): void {
     const req = {
@@ -42,7 +37,7 @@ export class MessageService {
         .post('/api/contract/allMessages', {})
         .pipe(take(1))
         .subscribe((messages: any) => {
-          const tmp = this.utils.reviveDates(messages);
+          const tmp = reviveDates(messages);
           this.messages$.next(tmp as Message[]);
           this._isDataLoaded$.next(true);
         });

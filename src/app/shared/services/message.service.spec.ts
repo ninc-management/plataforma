@@ -10,11 +10,10 @@ import { MessageService } from './message.service';
 import { Socket } from 'ngx-socket-io';
 import { AuthService } from 'app/auth/auth.service';
 import { cloneDeep } from 'lodash';
-import { UtilsService } from './utils.service';
+import { reviveDates } from 'app/shared/utils';
 
 describe('MessageService', () => {
   let service: MessageService;
-  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedMessages: Message[];
   const socket$ = new Subject<any>();
@@ -32,7 +31,6 @@ describe('MessageService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(MessageService);
-    utilsService = TestBed.inject(UtilsService);
 
     mockedMessages = [];
 
@@ -84,7 +82,7 @@ describe('MessageService', () => {
           case 2: {
             i += 1;
             expect(messages.length).toBe(1);
-            expect(utilsService.reviveDates(messages)).toEqual(utilsService.reviveDates(mockedMessages));
+            expect(reviveDates(messages)).toEqual(reviveDates(mockedMessages));
             service.saveMessage(tmpMessage);
             const req = httpMock.expectOne('/api/contract/createMessage/');
             expect(req.request.method).toBe('POST');
@@ -95,7 +93,7 @@ describe('MessageService', () => {
           case 3: {
             expect(messages.length).toBe(2);
             mockedMessages.push(tmpMessage);
-            expect(utilsService.reviveDates(messages)).toEqual(utilsService.reviveDates(mockedMessages));
+            expect(reviveDates(messages)).toEqual(reviveDates(mockedMessages));
             done();
             break;
           }
@@ -125,7 +123,7 @@ describe('MessageService', () => {
             break;
           }
           case 2: {
-            const expectedMessages = utilsService.reviveDates(mockedMessages);
+            const expectedMessages = reviveDates(mockedMessages);
             expect(messages.length).toBe(1);
             expect(messages).toEqual(expectedMessages);
             done();

@@ -1,26 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
-import { UtilsService } from './utils.service';
 import { environment } from '../../../environments/environment';
 import { Invoice } from '@models/invoice';
 import { Contract } from '@models/contract';
 import { take, map } from 'rxjs/operators';
 import { Observable, Subject, of } from 'rxjs';
-import { TeamExpense } from '@models/team';
 import { TeamService } from './team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+import { isOfType } from '../utils';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OnedriveService {
-  constructor(
-    private http: HttpClient,
-    private userService: UserService,
-    private utils: UtilsService,
-    private teamService: TeamService
-  ) {
+  constructor(private http: HttpClient, private userService: UserService, private teamService: TeamService) {
     teamService
       .getTeams()
       .pipe(take(1))
@@ -120,17 +114,7 @@ export class OnedriveService {
   }
 
   webUrl(contract: Contract): Observable<string> {
-    if (
-      this.utils.isOfType<Invoice>(contract.invoice, [
-        '_id',
-        'author',
-        'nortanTeam',
-        'sector',
-        'code',
-        'type',
-        'contractor',
-      ])
-    ) {
+    if (isOfType<Invoice>(contract.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])) {
       const invoice = contract.invoice;
       const concluded = invoice.status === 'Concluído';
       return this.http.get(this.oneDriveURI() + this.generatePath(invoice, concluded)).pipe(
