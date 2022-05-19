@@ -83,7 +83,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
         // TODO: Recalcular a cada nova transação
         this.METRICS.push({
           title: 'Caixa',
-          tooltip: 'Dinheiro do associado em custódia da Nortan',
+          tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
           description: of(''),
           loading: this.userService.currentUser$.pipe(map((user) => user._id == undefined)),
@@ -203,9 +203,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           loading: this.utils.NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
-          title: 'IMPUL$$O$ na Nortan',
+          title: 'IMPUL$$O$',
           tooltip:
-            'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados Nortan, no mês corrente. (R$ total recebido / R$ total pago aos associados nortan)',
+            'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados da empresa, no mês corrente. (R$ total recebido / R$ total pago aos associados da empresa)',
           value: this.metricsService
             .receivedValueNortan(monthStart, today, user._id)
             .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
