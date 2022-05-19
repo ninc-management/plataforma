@@ -4,6 +4,7 @@ import { ExpenseType } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
 import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
+import config_validation from 'app/shared/config-validation.json';
 
 @Component({
   selector: 'ngx-config',
@@ -16,6 +17,7 @@ export class ConfigComponent {
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
+  validation = config_validation as any;
 
   expenseIcon = {
     icon: 'minus',

@@ -111,104 +111,148 @@
     </form>
   </nb-tab>
   <nb-tab tabId="invoice-tab" [tabTitle]="utils.isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
-      <div class="form-control-group">
-        <table class="table-invoice">
-          <tbody>
-            <tr>
-              <td class="td-left">Tipo de orçamento</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasType"
-                  name="toggle-type"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Cabeçalho</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasHeader"
-                  name="toggle-header"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Lista de colaboradores</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasTeam"
-                  name="toggle-team"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Etapa preliminar</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasPreliminary"
-                  name="toggle-stage-preliminary"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Etapa executiva</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasExecutive"
-                  name="toggle-stage-executive"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Etapa complementar</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasComplementary"
-                  name="toggle-stage-complementary"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Parcelamentos</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasStageName"
-                  name="toggle-stage-name"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Importantes</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasImportants"
-                  name="toggle-importants"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-left">Lista de materiais</td>
-              <td>
-                <nb-toggle
-                  [(ngModel)]="config.invoiceConfig.hasMaterialList"
-                  name="toggle-material-list"
-                  labelPosition="start"
-                ></nb-toggle>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <form (ngSubmit)="updateConfig()" #invoiceConfigForm="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="toggle-list col-12 col-lg-auto">
+          <div class="form-control-group">
+            <table class="table-invoice">
+              <tbody>
+                <tr>
+                  <td class="td-left">Tipo de orçamento</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasType"
+                      name="toggle-type"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Cabeçalho</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasHeader"
+                      name="toggle-header"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Lista de colaboradores</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasTeam"
+                      name="toggle-team"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Etapa preliminar</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasPreliminary"
+                      name="toggle-stage-preliminary"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Etapa executiva</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasExecutive"
+                      name="toggle-stage-executive"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Etapa complementar</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasComplementary"
+                      name="toggle-stage-complementary"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Parcelamentos</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasStageName"
+                      name="toggle-stage-name"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Importantes</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasImportants"
+                      name="toggle-importants"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Lista de materiais</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.invoiceConfig.hasMaterialList"
+                      name="toggle-material-list"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-12 col-lg">
+          <div class="row" style="align-items: end">
+            <div class="col-12">
+              <div class="form-control-group">
+                <label class="label" for="input-code-abbreviation">
+                  Sigla do código
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    nbTooltip="Por exemplo, caso a sigla seja ABC, o código será ORC-00/2022-ABC/*SIGLA-DO-TIME*-00"
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="config.invoiceConfig.codeAbbreviation"
+                  #codeAbbreviation="ngModel"
+                  id="input-code-abbreviation"
+                  name="codeAbbreviation"
+                  fullWidth
+                  fieldSize="large"
+                  placeholder="Sigla do código"
+                  [status]="codeAbbreviation.dirty ? (codeAbbreviation.invalid ? 'danger' : 'success') : 'basic'"
+                  [required]="validation.abbreviation.required"
+                  [minlength]="validation.abbreviation.minLength"
+                  [attr.aria-invalid]="codeAbbreviation.invalid && codeAbbreviation.touched ? true : null"
+                />
+                <ng-container *ngIf="codeAbbreviation.invalid && codeAbbreviation.touched">
+                  <p class="caption status-danger" *ngIf="codeAbbreviation.errors?.required">A sigla é obrigatória!</p>
+                  <p class="caption status-danger" *ngIf="codeAbbreviation.errors?.minlength">
+                    A abreviação deve conter pelo menos {{ validation.codeAbbreviation.minLength }} caracteres
+                  </p>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button nbButton fullWidth status="primary" size="large" [disabled]="!invoiceConfigForm.valid">Atualizar</button>
     </form>
   </nb-tab>
   <nb-tab tabId="profile-tab" [tabTitle]="utils.isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>

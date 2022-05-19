@@ -57,6 +57,9 @@ export class InvoiceConfig {
 
   @prop({ required: true })
   hasMaterialList: boolean = true;
+
+  @prop({ required: true })
+  codeAbbreviation: string = ' ';
 }
 
 export class SocialConfig {
