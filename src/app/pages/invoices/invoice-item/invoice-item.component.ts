@@ -394,7 +394,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.invoiceNumber +
         '/' +
         new Date().getFullYear() +
-        '-NRT/' +
+        '-' +
+        this.config.codeAbbreviation +
+        '/' +
         (this.tempInvoice.nortanTeam ? this.teamService.idToTeam(this.tempInvoice.nortanTeam).abrev : '') +
         '-00';
     }
