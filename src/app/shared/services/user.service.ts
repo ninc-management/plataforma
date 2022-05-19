@@ -12,6 +12,9 @@ import { User } from '@models/user';
 import { InvoiceTeamMember } from '@models/invoice';
 import { TeamMember } from '@models/team';
 
+// NINC: change for each new client
+const supportProfilePicture =
+  'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a';
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
   fullName: 'Caixa do contrato',
@@ -31,8 +34,7 @@ export const CONTRACT_BALANCE = {
   transactions: [],
   notifications: [],
   active: true,
-  profilePicture:
-    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
+  profilePicture: supportProfilePicture,
 } as User;
 
 export const CLIENT = {
@@ -54,10 +56,10 @@ export const CLIENT = {
   transactions: [],
   notifications: [],
   active: true,
-  profilePicture:
-    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
+  profilePicture: supportProfilePicture,
 } as User;
 
+// NINC: change fullName for each new client
 export const NORTAN = {
   _id: '000000000000000000000002',
   fullName: 'Nortan',
@@ -77,8 +79,7 @@ export const NORTAN = {
   transactions: [],
   notifications: [],
   active: true,
-  profilePicture:
-    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a',
+  profilePicture: supportProfilePicture,
 } as User;
 
 @Injectable({

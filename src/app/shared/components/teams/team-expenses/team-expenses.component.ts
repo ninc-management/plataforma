@@ -186,7 +186,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(TeamDialogComponent, {
         context: {
-          title: index !== undefined ? 'EDITAR GASTO NORTAN' : 'ADICIONAR GASTO NORTAN',
+          title: index !== undefined ? 'EDITAR MOVIMENTAÇÃO' : 'ADICIONAR MOVIMENTAÇÃO',
           iTeam: this.team,
           expenseIdx: index,
           componentType: TEAM_COMPONENT_TYPES.EXPENSE,
