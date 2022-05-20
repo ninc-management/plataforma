@@ -105,6 +105,7 @@
                 nbTooltipPlacement="bottom"
                 nbTooltipStatus="info"
                 style="height: 100%"
+                [disabled]="contract.expenses.length == 0"
                 (click)="downloadExpensesReport(contract)"
               >
                 <i class="icon-file-csv"></i>
