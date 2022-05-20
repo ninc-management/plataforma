@@ -5,10 +5,10 @@ import { take } from 'rxjs/operators';
 import { NbAccessChecker } from '@nebular/security';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import contract_validation from '../../../../shared/payment-validation.json';
+import { formatDate, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -43,11 +43,12 @@ export class ReceiptItemComponent implements OnInit {
     return of(this.availableContracts);
   }
 
+  formatDate = formatDate;
+
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
-    public utils: UtilsService,
     public accessChecker: NbAccessChecker
   ) {}
 
@@ -60,8 +61,8 @@ export class ReceiptItemComponent implements OnInit {
     if (this.contract.invoice) {
       const tmp = cloneDeep(this.contract);
       tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.receipt.notaFiscal = this.utils.nfPercentage(tmp);
-      this.receipt.nortanPercentage = this.utils.nortanPercentage(tmp);
+      this.receipt.notaFiscal = nfPercentage(tmp);
+      this.receipt.nortanPercentage = nortanPercentage(tmp);
       this.contractService
         .checkEditPermission(tmp.invoice)
         .pipe(take(1))

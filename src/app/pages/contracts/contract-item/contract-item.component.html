@@ -1,25 +1,25 @@
 <nb-tabset fullWidth>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
     <ngx-data-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
       [responseEvent]="responseEvent"
     ></ngx-data-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
     <ngx-management-tab [contract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <ngx-balance-tab [contract]="contract" [responseEvent]="responseEvent"></ngx-balance-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
       (receiptsChanged)="forwardResponse()"
     ></ngx-receipt-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
     <ngx-payment-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
@@ -27,7 +27,7 @@
       (paymentsChanged)="forwardResponse()"
     ></ngx-payment-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <ngx-expense-tab
       [contract]="contract"
       [clonedContract]="clonedContract"

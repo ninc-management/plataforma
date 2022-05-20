@@ -1,5 +1,5 @@
 <nb-tabset>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Detalhes'" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Detalhes'" responsive>
     <div class="container-fluid p-0">
       <div class="row">
         <div class="col-12 my-3">
@@ -69,7 +69,7 @@
                 <label class="label" for="start-date">Início:</label>
                 <input
                   nbInput
-                  [ngModel]="[contract.created] | transformPipe: utils.formatDate.bind(utils)"
+                  [ngModel]="[contract.created] | transformPipe: formatDate"
                   name="start-date"
                   fullWidth
                   fieldSize="large"
@@ -82,7 +82,7 @@
                 <label class="label" for="end-date">Fim:</label>
                 <input
                   nbInput
-                  [ngModel]="deadline ? ([deadline] | transformPipe: utils.formatDate.bind(utils)) : ''"
+                  [ngModel]="deadline ? ([deadline] | transformPipe: formatDate) : ''"
                   name="end-date"
                   fullWidth
                   fieldSize="large"
@@ -279,7 +279,7 @@
                     nbInput
                     [ngModel]="
                       [contract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
-                        | transformPipe: this.utils.idToProperty.bind(utils)
+                        | transformPipe: idToProperty
                     "
                     #assignee="ngModel"
                     id="item-assignee-{{ i }}"
@@ -366,7 +366,7 @@
       </div>
       <nb-list class="row">
         <nb-list-item
-          *ngFor="let comment of availableMessages; let i = index; trackBy: utils.trackByIndex"
+          *ngFor="let comment of availableMessages; let i = index; trackBy: trackByIndex"
           [ngClass]="{
             'comment-current-user':
               [comment.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService)
@@ -377,7 +377,7 @@
             size="large"
             [picture]="
               [comment.author, this.userService.idToUser.bind(userService), 'profilePicture']
-                | transformPipe: this.utils.idToProperty.bind(utils)
+                | transformPipe: idToProperty
             "
             onlyPicture
             shape="rectangle"
@@ -387,13 +387,12 @@
               <span>
                 <b>
                   {{
-                    [comment.author, userService.idToUser.bind(userService), 'fullName']
-                      | transformPipe: utils.idToProperty
+                    [comment.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
                   }}
                 </b>
               </span>
               <span class="label comment-created">
-                {{ [comment.created] | transformPipe: this.utils.formatDate.bind(utils) }}
+                {{ [comment.created] | transformPipe: formatDate }}
               </span>
             </div>
             <pre [innerHTML]="comment.body"></pre>
@@ -442,7 +441,7 @@
       </div>
     </div>
   </nb-tab>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Gráfico de Gantt'" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Gráfico de Gantt'" responsive>
     <ngx-gantt-chart
       *ngIf="actionsData.length > 0; else emptyChecklistAlert"
       [taskData]="actionsData"

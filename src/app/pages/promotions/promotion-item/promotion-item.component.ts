@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 import promotion_validation from 'app/shared/promotion-validation.json';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import { Promotion } from '@models/promotion';
 import { NbComponentStatus } from '@nebular/theme';
 import { NgModel } from '@angular/forms';
 import { cloneDeep } from 'lodash';
+import { isPhone } from 'app/shared/utils';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
@@ -66,12 +66,13 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
   source: LocalDataSource = new LocalDataSource();
   settings = {};
 
+  isPhone = isPhone;
+
   constructor(
     private userService: UserService,
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
-    private promotionService: PromotionService,
-    public utils: UtilsService
+    private promotionService: PromotionService
   ) {}
 
   ngOnDestroy(): void {

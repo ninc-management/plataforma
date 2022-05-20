@@ -6,11 +6,11 @@ import { NbDialogService } from '@nebular/theme';
 import course_validation from 'app/shared/course-validation.json';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CourseDialogComponent, DIALOG_TYPES } from '../course-dialog/course-dialog.component';
+import { trackByIndex } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-course-item',
@@ -37,10 +37,11 @@ export class CourseItemComponent implements OnInit {
     }
   }
 
+  trackByIndex = trackByIndex;
+
   constructor(
     private courseService: CourseService,
     public userService: UserService,
-    public utils: UtilsService,
     private dialogService: NbDialogService
   ) {}
 

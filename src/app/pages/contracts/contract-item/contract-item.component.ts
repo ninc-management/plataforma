@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { Contract } from '@models/contract';
-import { UtilsService } from 'app/shared/services/utils.service';
+import { isPhone } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-contract-item',
@@ -15,6 +15,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   clonedContract: Contract = new Contract();
   responseEvent = new Subject<void>();
+
+  isPhone = isPhone;
 
   contractIcon = {
     icon: 'file-invoice',
@@ -37,7 +39,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor(public utils: UtilsService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);

@@ -5,7 +5,6 @@ import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-ex
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
@@ -14,6 +13,7 @@ import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
 import { Team, TeamExpense } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
+import { formatDate, compareFiles } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-team-expense-item',
@@ -41,13 +41,14 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   registered: boolean = false;
   folderPath: string = '';
 
+  formatDate = formatDate;
+
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
     public configService: ConfigService,
     public teamService: TeamService,
-    public userService: UserService,
-    public utils: UtilsService
+    public userService: UserService
   ) {
     super(stringUtil, onedrive, userService);
     this.expense.code = '#0';
@@ -137,7 +138,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     const mediaFolderPath = 'SFC/Comprovantes/';
     const fn = (name: string) => {
       const type = this.expense.type;
-      const date = this.utils.formatDate(new Date(), '-');
+      const date = formatDate(new Date(), '-');
       const extension = name.match('[.].+');
       if (this.configService.expenseSubTypes(this.expense.type).length > 0) {
         const subType = this.expense.subType;
@@ -160,7 +161,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   }
 
   deleteFiles(): void {
-    const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
+    const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
     this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }

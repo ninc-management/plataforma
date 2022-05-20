@@ -185,7 +185,7 @@
           <label class="label" for="input-source">Fonte de pagamento:</label>
           <nb-completer
             [(ngModel)]="sourceSearch"
-            (selected)="expense.source = $event; utils.forceValidatorUpdate(value)"
+            (selected)="expense.source = $event; forceValidatorUpdate(value)"
             inputName="sourceListCompleter"
             #sourceList="ngModel"
             id="input-source"
@@ -243,7 +243,7 @@
           [ngStyle]="{
             'align-items': 'center',
             'margin-top.px': 5,
-            display: utils.isPhone() ? 'contents' : 'flex'
+            display: isPhone() ? 'contents' : 'flex'
           }"
         >
           <label class="label" for="input-split-type" style="margin-bottom: 0; margin-right: 10px">
@@ -258,7 +258,7 @@
             [disabled]="isRadioDisabled()"
             [ngStyle]="{
               'height.px': 16,
-              display: utils.isPhone() ? 'contents' : 'flex'
+              display: isPhone() ? 'contents' : 'flex'
             }"
           >
             <nb-radio *ngFor="let type of sTypes" [value]="type" style="height: 16px">
@@ -313,7 +313,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of expense.team; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let member of expense.team; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-4 list-name">
               {{ [teamUsers[i]] | transformPipe: userService.idToShortName.bind(userService) }}
@@ -522,7 +522,7 @@
           <label class="label" for="input-updated">Última atualização:</label>
           <input
             nbInput
-            [ngModel]="[expense.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[expense.lastUpdate] | transformPipe: formatDate"
             #updated="ngModel"
             id="input-updated"
             name="updated"

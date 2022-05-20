@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
 import { UserService } from 'app/shared/services/user.service';
 import { PdfService } from '../pdf.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { take } from 'rxjs/operators';
@@ -11,6 +10,7 @@ import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.ser
 import { Invoice, InvoiceProduct, InvoiceMaterial } from '@models/invoice';
 import { User } from '@models/user';
 import { HttpClient } from '@angular/common/http';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -22,13 +22,15 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
   @Input() invoice = new Invoice();
   tempInvoice: Invoice = new Invoice();
 
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<InvoiceDialogComponent>,
     private dialogService: NbDialogService,
     private userService: UserService,
     private pdf: PdfService,
-    public utils: UtilsService,
     private invoiceService: InvoiceService,
     private http: HttpClient
   ) {

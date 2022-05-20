@@ -26,7 +26,7 @@
             nbButton
             ghost
             nbTooltip="Fechar"
-            [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+            [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
             (click)="dismiss()"

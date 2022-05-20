@@ -5,8 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { Contractor } from '@models/contractor';
+import { nameSort } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-contractors',
@@ -29,7 +29,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         );
       });
     return this.contractors.sort((a, b) => {
-      return this.utils.nameSort(1, a.fullName, b.fullName);
+      return nameSort(1, a.fullName, b.fullName);
     });
   }
   settings = {
@@ -73,11 +73,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(
-    private dialogService: NbDialogService,
-    private contractorService: ContractorService,
-    private utils: UtilsService
-  ) {}
+  constructor(private dialogService: NbDialogService, private contractorService: ContractorService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();

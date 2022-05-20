@@ -1,5 +1,5 @@
 <nb-tabset fullWidth>
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
@@ -43,7 +43,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let eType of config.expenseTypes; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let eType of config.expenseTypes; let i = index; trackBy: trackByIndex">
           <div class="row typeRow">
             <div class="col-9 col-md-11">
               <input
@@ -56,7 +56,7 @@
                 [status]="config.expenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
               />
               <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
-                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: utils.trackByIndex">
+                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
                   <div class="row typeRow">
                     <div class="col-10 col-md-11">
                       <input
@@ -110,7 +110,8 @@
       <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab tabId="invoice-tab" [tabTitle]="utils.isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
+  <<<<<<< HEAD
+  <nb-tab tabId="invoice-tab" [tabTitle]="isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
     <form (ngSubmit)="updateConfig()" #invoiceConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
@@ -255,7 +256,7 @@
       <button nbButton fullWidth status="primary" size="large" [disabled]="!invoiceConfigForm.valid">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab tabId="profile-tab" [tabTitle]="utils.isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
+  <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
@@ -368,9 +369,7 @@
             </div>
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item
-              *ngFor="let position of config.profileConfig.positions; let i = index; trackBy: utils.trackByIndex"
-            >
+            <nb-list-item *ngFor="let position of config.profileConfig.positions; let i = index; trackBy: trackByIndex">
               <div class="row typeRow">
                 <div class="col-9 col-lg-6" style="margin: 5px 5px">
                   <input
@@ -453,7 +452,7 @@
             <hr />
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item *ngFor="let level of config.profileConfig.levels; let i = index; trackBy: utils.trackByIndex">
+            <nb-list-item *ngFor="let level of config.profileConfig.levels; let i = index; trackBy: trackByIndex">
               <div class="row typeRow">
                 <div class="col-10">
                   <input
@@ -484,7 +483,7 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab tabId="social-tab" [tabTitle]="utils.isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
+  <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-12">

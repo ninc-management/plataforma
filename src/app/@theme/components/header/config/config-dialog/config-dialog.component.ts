@@ -6,7 +6,7 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
+import { isPhone, idToProperty, tooltipTriggers } from 'app/shared/utils';
 
 export enum COMPONENT_TYPES {
   CONFIG,
@@ -26,10 +26,13 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
   @Input() componentType = COMPONENT_TYPES.CONFIG;
   types = COMPONENT_TYPES;
 
+  isPhone = isPhone;
+  idToProperty = idToProperty;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ConfigDialogComponent>,
-    public utils: UtilsService,
     public userService: UserService,
     public stringUtils: StringUtilService,
     private notificationService: NotificationService

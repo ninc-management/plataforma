@@ -4,8 +4,8 @@ import { UserService } from '../services/user.service';
 import { Observable, of } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 import { User } from '@models/user';
-import { Permissions } from 'app/shared/services/utils.service';
 import { AuthService } from 'app/auth/auth.service';
+import { Permissions } from '../utils';
 
 @Injectable()
 export class RoleProvider implements NbRoleProvider {

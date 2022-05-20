@@ -346,7 +346,7 @@
                       <label class="label" for="input-level">
                         Enquadramento:
                         <nb-icon
-                          *ngIf="utils.NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
+                          *ngIf="NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
                           status="info"
                           icon="info"
                           pack="eva"
@@ -415,12 +415,12 @@
                     </button>
                   </div>
                   <nb-list style="width: 100%; padding: 10px 0">
-                    <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: utils.trackByIndex">
+                    <nb-list-item *ngFor="let AERuser of user.AER; let i = index; trackBy: trackByIndex">
                       <div class="row irow">
                         <div class="col">
                           {{
                             [AERuser, this.userService.idToUser.bind(this.userService), 'fullName']
-                              | transformPipe: this.utils.idToProperty
+                              | transformPipe: idToProperty
                           }}
                         </div>
                         <div class="col-auto" style="text-align: right" *ngIf="isEditing">
@@ -449,7 +449,7 @@
                       *ngFor="
                         let team of teamService.userToTeamsMembersFiltered(user);
                         let i = index;
-                        trackBy: utils.trackByIndex
+                        trackBy: trackByIndex
                       "
                     >
                       <div class="row irow">
@@ -474,7 +474,7 @@
                     <div class="col-md-4">
                       <div
                         class="form-control-group"
-                        *ngFor="let sector of groupedSectors[0]; let i = index; trackBy: utils.trackByIndex"
+                        *ngFor="let sector of groupedSectors[0]; let i = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
                           [(ngModel)]="groupedSectors[0][i].isChecked"
@@ -491,7 +491,7 @@
                     <div class="col-md-4">
                       <div
                         class="form-control-group"
-                        *ngFor="let sector of groupedSectors[1]; let j = index; trackBy: utils.trackByIndex"
+                        *ngFor="let sector of groupedSectors[1]; let j = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
                           [(ngModel)]="groupedSectors[1][j].isChecked"
@@ -508,7 +508,7 @@
                     <div class="col-md-4">
                       <div
                         class="form-control-group"
-                        *ngFor="let sector of groupedSectors[2]; let k = index; trackBy: utils.trackByIndex"
+                        *ngFor="let sector of groupedSectors[2]; let k = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
                           [(ngModel)]="groupedSectors[2][k].isChecked"
@@ -531,7 +531,7 @@
                     <nb-tab
                       [tabTitle]="
                         [user.expertise[idx].sector, teamService.idToSector.bind(teamService), 'abrev']
-                          | transformPipe: utils.idToProperty.bind(utils)
+                          | transformPipe: idToProperty
                       "
                       *ngFor="let idx of ACTIVE_EXPERTISE; let i = index"
                     >

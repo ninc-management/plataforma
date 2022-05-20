@@ -13,7 +13,6 @@ import {
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
@@ -24,6 +23,7 @@ import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { isPhone, formatDate, idToProperty, trackByIndex } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-management-tab',
@@ -58,9 +58,13 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   checklistItems: ContractChecklistItem[] = [];
   isChecklistEdited = false;
 
+  isPhone = isPhone;
+  formatDate = formatDate;
+  idToProperty = idToProperty;
+  trackByIndex = trackByIndex;
+
   constructor(
     public userService: UserService,
-    public utils: UtilsService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private contractService: ContractService,
@@ -77,7 +81,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.contract._id) {
-      this.invoice = this.utils.idToProperty(
+      this.invoice = idToProperty(
         this.contract,
         this.contractService.idToContract.bind(this.contractService),
         'invoice'
@@ -88,7 +92,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       });
       this.isCommentGranted =
         this.invoice.team.findIndex((teamMember) => this.userService.isEqual(teamMember.user, this.currentUser)) != -1;
-      (this.managementAssignee = this.utils.idToProperty(
+      (this.managementAssignee = idToProperty(
         this.invoice.author,
         this.userService.idToUser.bind(this.userService),
         'fullName'
@@ -340,12 +344,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         start: item.range.start,
         end: item.range.end,
         progressPercentage: this.percentualItemProgress(item),
-        owner: this.utils.idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
-        image: this.utils.idToProperty(
-          item.assignee,
-          this.userService.idToUser.bind(this.userService),
-          'profilePicture'
-        ),
+        owner: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+        image: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
         isFinished: this.hasItemFinished(item) ? 1 : 0,
         isAction: 0,
       } as TaskModel);
@@ -362,12 +362,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
           start: action.range.start,
           end: action.range.end,
           progressPercentage: this.percentualActionProgress(action),
-          owner: this.utils.idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
-          image: this.utils.idToProperty(
-            action.assignee,
-            this.userService.idToUser.bind(this.userService),
-            'profilePicture'
-          ),
+          owner: idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+          image: idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
           isFinished: action.isFinished ? 1 : 0,
           isAction: 1,
           finishedDate: action.finishedDate,

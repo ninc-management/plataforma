@@ -7,7 +7,6 @@ import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
@@ -16,6 +15,7 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import expense_validation from 'app/shared/expense-validation.json';
 import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
+import { isPhone, formatDate, compareFiles, forceValidatorUpdate, trackByIndex } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -62,6 +62,11 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     return of(this.availableContracts);
   }
 
+  isPhone = isPhone;
+  forceValidatorUpdate = forceValidatorUpdate;
+  trackByIndex = trackByIndex;
+  formatDate = formatDate;
+
   lastType = EXPENSE_TYPES.MATERIAL;
 
   initialFiles: UploadedFile[] = [];
@@ -98,7 +103,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
     public userService: UserService,
-    public utils: UtilsService,
     public teamService: TeamService
   ) {
     super(stringUtil, onedrive, userService);
@@ -200,7 +204,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         ).toString();
         const type = this.expense.type;
         const value = this.expense.value.replace(/\./g, '');
-        const date = this.utils.formatDate(new Date(), '-');
+        const date = formatDate(new Date(), '-');
         const extension = name.match('[.].+');
         return item + '-' + type + '-' + value + '-' + date + extension;
       };
@@ -361,7 +365,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   }
 
   deleteFiles(): void {
-    const filesToRemove = this.uploadedFiles.filter((file) => !this.utils.compareFiles(this.initialFiles, file));
+    const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
     if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }

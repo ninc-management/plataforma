@@ -157,7 +157,7 @@
       <label class="label mt-3 mb-0">Participantes</label>
     </div>
     <nb-list style="width: 100%; padding: 10px 0">
-      <nb-list-item *ngFor="let participant of course.participants; let i = index; trackBy: utils.trackByIndex">
+      <nb-list-item *ngFor="let participant of course.participants; let i = index; trackBy: trackByIndex">
         <div class="col-10 col-md-11">
           {{ participant.name }} - {{ participant.isSpeaker ? 'Ministrante' : 'Ouvinte' }}
         </div>
@@ -182,7 +182,7 @@
       </button>
     </div>
     <nb-list style="width: 100%; padding: 10px 0">
-      <nb-list-item *ngFor="let resource of course.resources; let i = index; trackBy: utils.trackByIndex">
+      <nb-list-item *ngFor="let resource of course.resources; let i = index; trackBy: trackByIndex">
         <div class="col-10 col-md-11">
           <a [href]="resource.url" target="_blank">{{ resource.name }}</a>
         </div>

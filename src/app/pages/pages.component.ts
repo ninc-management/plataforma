@@ -7,8 +7,8 @@ import { skipWhile, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
-import { Permissions } from 'app/shared/services/utils.service';
 import { ConfigService } from 'app/shared/services/config.service';
+import { Permissions } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-pages',

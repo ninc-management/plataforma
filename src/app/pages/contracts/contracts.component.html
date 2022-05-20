@@ -32,7 +32,7 @@
       <ng-template #table>
         <ng2-smart-table
           class="contracts"
-          *ngIf="!utils.isPhone(); else phone"
+          *ngIf="!isPhone(); else phone"
           #smartTable
           [settings]="settings"
           [source]="source"

@@ -162,7 +162,7 @@
                     nbInput
                     [ngModel]="
                       [actionList[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
-                        | transformPipe: this.utils.idToProperty.bind(utils)
+                        | transformPipe: idToProperty
                     "
                     #actionAssignee="ngModel"
                     id="action-assignee-{{ i }}"

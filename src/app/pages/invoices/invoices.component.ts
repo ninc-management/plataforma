@@ -8,10 +8,10 @@ import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.ser
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { PdfService } from './pdf.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
 import { HttpClient } from '@angular/common/http';
+import { codeSort, valueSort, idToProperty, isPhone } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-invoices',
@@ -37,7 +37,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.invoices.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
+    return this.invoices.sort((a, b) => codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',
@@ -71,7 +71,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Código',
         type: 'string',
         sortDirection: 'desc',
-        compareFunction: this.utils.codeSort,
+        compareFunction: codeSort,
       },
       contractorName: {
         title: 'Cliente',
@@ -106,7 +106,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Valor',
         type: 'string',
         width: '10%',
-        compareFunction: this.utils.valueSort,
+        compareFunction: valueSort,
       },
       status: {
         title: 'Status',
@@ -128,7 +128,6 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
-    private utils: UtilsService,
     private contractorService: ContractorService,
     private userService: UserService,
     private pdf: PdfService,
@@ -168,7 +167,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.invoices = invoices.map((invoice: Invoice) => {
           if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
           if (invoice.contractor)
-            invoice.contractorName = this.utils.idToProperty(
+            invoice.contractorName = idToProperty(
               invoice.contractor,
               this.contractorService.idToContractor.bind(this.contractorService),
               'fullName'
@@ -185,7 +184,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     combineLatest([this.invoiceService.getInvoices(), this.contractorService.getContractors()])
       .pipe(take(3))
       .subscribe(([invoices, contractors]) => {
-        if (invoices.length > 0 && contractors.length > 0 && !this.utils.isPhone()) {
+        if (invoices.length > 0 && contractors.length > 0 && !isPhone()) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
@@ -206,7 +205,7 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialogService
       .open(InvoiceDialogComponent, {
         context: {
-          title: event.data ? (this.utils.isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE ORÇAMENTO') : 'CADASTRO DE ORÇAMENTO',
+          title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE ORÇAMENTO') : 'CADASTRO DE ORÇAMENTO',
           invoice: event.data ? event.data : new Invoice(),
         },
         dialogClass: 'my-dialog',

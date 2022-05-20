@@ -5,7 +5,6 @@ import * as contract_validation from 'app/shared/contract-validation.json';
 import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
 import { Invoice } from '@models/invoice';
 import { TeamService } from 'app/shared/services/team.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { cloneDeep, isEqual } from 'lodash';
@@ -14,6 +13,7 @@ import { Sector } from '@models/shared';
 import { User } from '@models/user';
 import { UserService } from 'app/shared/services/user.service';
 import { LocalDataSource } from 'ng2-smart-table';
+import { isPhone, idToProperty, formatDate, trackByIndex } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-data-tab',
@@ -52,6 +52,11 @@ export class DataTabComponent implements OnInit {
   memberChanged$ = new BehaviorSubject<boolean>(true);
   availableUsers: Observable<User[]> = of([]);
 
+  isPhone = isPhone;
+  idToProperty = idToProperty;
+  formatDate = formatDate;
+  trackByIndex = trackByIndex;
+
   get invoiceAdministration(): string {
     if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
     return '';
@@ -60,7 +65,6 @@ export class DataTabComponent implements OnInit {
 
   constructor(
     public teamService: TeamService,
-    public utils: UtilsService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     public stringUtil: StringUtilService,

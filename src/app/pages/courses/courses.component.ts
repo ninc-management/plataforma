@@ -3,11 +3,11 @@ import { Course, CourseParticipant } from '@models/course';
 import { NbDialogService } from '@nebular/theme';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CourseDialogComponent, DIALOG_TYPES } from './course-dialog/course-dialog.component';
+import { isPhone } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-courses',
@@ -21,8 +21,9 @@ export class CoursesComponent implements OnInit {
   source: LocalDataSource = new LocalDataSource();
   isDataLoaded = false;
 
+  isPhone = isPhone;
+
   constructor(
-    public utils: UtilsService,
     public userService: UserService,
     private dialogService: NbDialogService,
     private courseService: CourseService

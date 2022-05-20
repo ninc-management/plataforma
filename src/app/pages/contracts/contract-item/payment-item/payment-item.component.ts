@@ -7,7 +7,6 @@ import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
 import { ContractService } from 'app/shared/services/contract.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -17,6 +16,7 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import contract_validation from 'app/shared/payment-validation.json';
 import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
+import { trackByIndex, formatDate, idToProperty } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -80,13 +80,16 @@ export class PaymentItemComponent implements OnInit {
     );
   }
 
+  trackByIndex = trackByIndex;
+  formatDate = formatDate;
+  idToProperty = idToProperty;
+
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     public contractService: ContractService,
     public stringUtil: StringUtilService,
     public userService: UserService,
-    public utils: UtilsService,
     public accessChecker: NbAccessChecker,
     public teamService: TeamService
   ) {}
