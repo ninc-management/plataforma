@@ -1,0 +1,6 @@
+{
+  "abbreviation": {
+    "required": true,
+    "minLength": 2
+  }
+}
