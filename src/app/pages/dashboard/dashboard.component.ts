@@ -20,7 +20,6 @@ import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
-  NORTAN = 'Nortan',
   TEAM = 'Time',
 }
 
@@ -42,7 +41,7 @@ enum DIALOG_TYPES {
 export class DashboardComponent {
   tabTitles = TAB_TITLES;
   dialogTypes = DIALOG_TYPES;
-  activeTab = TAB_TITLES.PESSOAL;
+  activeTab: string = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoNoFill',
     pack: 'fac',
@@ -106,7 +105,7 @@ export class DashboardComponent {
           takeWhile((teams) => teams.length > 0)
         )
         .subscribe(() => {
-          this.teams = this.teamService.userToTeams(user).filter((team) => team.name.toLocaleLowerCase() != 'nortan');
+          this.teams = this.teamService.userToTeams(user).filter((team) => !team.isOrganizationTeam);
         });
       this.timeSeries$ = combineLatest([
         this.metricsService.receivedValueTimeSeries(user._id),
@@ -165,7 +164,7 @@ export class DashboardComponent {
       case DIALOG_TYPES.NORTAN_EXPENSE_TABLE: {
         this.dialogService.open(TeamDialogComponent, {
           context: {
-            title: 'GASTOS NORTAN',
+            title: 'GASTOS DA EMPRESA',
             iTeam: this.nortanTeam,
             componentType: TEAM_COMPONENT_TYPES.EXPENSES,
           },
@@ -193,7 +192,8 @@ export class DashboardComponent {
         } else {
           this.dialogService.open(TeamDialogComponent, {
             context: {
-              title: this.activeTab === TAB_TITLES.NORTAN ? 'ADICIONAR GASTO NORTAN' : 'ADICIONAR DESPESA DO TIME',
+              title:
+                this.activeTab === this.nortanTeam.name ? 'ADICIONAR GASTO DA EMPRESA' : 'ADICIONAR DESPESA DO TIME',
               iTeam: this.currentTeam,
               componentType: TEAM_COMPONENT_TYPES.EXPENSE,
             },
@@ -288,8 +288,8 @@ export class DashboardComponent {
         this.currentTeam = new Team();
         break;
       }
-      case TAB_TITLES.NORTAN.toLowerCase(): {
-        this.activeTab = TAB_TITLES.NORTAN;
+      case this.nortanTeam.name.toLowerCase(): {
+        this.activeTab = this.nortanTeam.name;
         this.currentTeam = this.teamService.idToTeam(event.tabId);
         break;
       }
