@@ -9,8 +9,8 @@ const router = express.Router();
 export function sendMail(mailOptions: any, callback: any): void {
   const transporter = nodemailer.createTransport({
     host: 'smtppro.zoho.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
       user: 'contato@ninc.digital',
       pass: process.env.EMAIL_PASSWD,
