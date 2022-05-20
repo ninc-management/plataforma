@@ -3,7 +3,7 @@ import { MENU_ITEMS } from './pages-menu';
 import { Router } from '@angular/router';
 import { NbIconLibraries, NbSidebarService, NbMenuService, NbMenuItem } from '@nebular/theme';
 import { LayoutService } from '../@core/utils';
-import { takeUntil } from 'rxjs/operators';
+import { skipWhile, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
@@ -93,7 +93,10 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
       this.configService.getConfig(),
       this.accessChecker.isGranted(Permissions.ELO_PRINCIPAL, 'view-users'),
     ])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        skipWhile(([configs, _]) => configs.length == 0)
+      )
       .subscribe(([configs, isGranted]) => {
         if (configs[0]) {
           this.social = [];
