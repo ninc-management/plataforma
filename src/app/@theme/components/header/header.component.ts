@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   env = environment;
   menuButtonClicked = false;
-  menuTitle = 'Nortan';
+  menuTitle = '';
   userPictureOnly = false;
   user = new User();
   logoIcon = 'logo';
@@ -78,6 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.changeTheme();
         if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];
+        this.menuTitle = config[0].socialConfig.companyName;
       });
 
     this.userService
@@ -118,7 +119,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
-          this.menuTitle = event.item.title === 'Início' ? 'Nortan' : event.item.title;
+          this.menuTitle = event.item.title === 'Início' ? this.config.socialConfig.companyName : event.item.title;
         }
       });
 

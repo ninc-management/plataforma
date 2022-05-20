@@ -489,6 +489,27 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
+            <label class="label" for="input-companyName">Nome da empresa</label>
+            <nb-form-field>
+              <input
+                nbInput
+                [(ngModel)]="config.socialConfig.companyName"
+                #companyName="ngModel"
+                id="input-companyName"
+                name="companyName"
+                placeholder="Digite o nome da empresa"
+                fullWidth
+                fieldSize="large"
+                [status]="companyName.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="companyName.invalid && companyName.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
             <label class="label" for="input-youtube-link">Link do YouTube</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>

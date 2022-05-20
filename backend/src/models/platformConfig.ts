@@ -77,6 +77,9 @@ export class SocialConfig {
 
   @prop({ required: true })
   gathertownLink: string = '';
+
+  @prop({ required: true })
+  companyName: string = '';
 }
 
 export class PlatformConfig extends Base<string> {
