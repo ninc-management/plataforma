@@ -4,6 +4,7 @@ import { BrMaskDirective } from './directives/br-mask.directive';
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
+import { ReportValue } from 'app/pages/users/users.component';
 
 enum GROUP_BY {
   USER = 'Usuário',
@@ -58,7 +59,7 @@ export function generateExpensesReport(contract: Contract): string {
 }
 
 export function generateUsersReport(
-  data: any,
+  data: Record<string, ReportValue>,
   groupBy: GROUP_BY,
   userRevival: (id: string | User) => User,
   sectorRevival: (id: string | Sector | undefined) => string

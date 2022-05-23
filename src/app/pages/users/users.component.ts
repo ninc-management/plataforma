@@ -44,7 +44,7 @@ interface Overview {
   concluded_contracts_team: number;
 }
 
-interface ReportValue {
+export interface ReportValue {
   monthly_data: IndividualData[];
   overview: Overview;
 }
