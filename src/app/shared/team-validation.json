@@ -1,12 +1,12 @@
 {
   "name": {
     "required": true,
-    "minLength": 3,
+    "minLength": 2,
     "maxLength": 100
   },
   "abrev": {
     "required": true,
-    "minLength": 3,
+    "minLength": 2,
     "maxLength": 5
   },
   "purpose": {

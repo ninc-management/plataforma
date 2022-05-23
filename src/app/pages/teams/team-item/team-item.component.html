@@ -179,10 +179,24 @@
                 placeholder="Nome do setor"
                 fullWidth
                 fieldSize="large"
-                [status]="sectorNameInput.value ? 'success' : 'basic'"
+                [minlength]="validation.name.minLength"
+                [maxlength]="validation.name.maxLength"
+                [status]="sectorNameInput.invalid ? 'danger' : sectorNameInput.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="sectorNameInput.invalid && sectorNameInput.touched ? true : null"
               />
             </div>
+            <ng-container *ngIf="sectorNameInput.invalid && sectorNameInput.touched">
+              <p class="caption status-danger" *ngIf="sectorNameInput.errors?.required">
+                O nome do setor é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="sectorNameInput.errors?.minlength || sectorNameInput.errors?.maxlength"
+              >
+                O nome do setor deve conter entre {{ validation.name.minLength }} a
+                {{ validation.name.maxLength }} caracteres
+              </p>
+            </ng-container>
           </div>
           <div class="col-10 col-md-4">
             <div class="form-control-group">
@@ -196,11 +210,26 @@
                 placeholder="Abreviação"
                 fullWidth
                 fieldSize="large"
-                [status]="sectorAbrevInput.value ? 'success' : 'basic'"
+                [minlength]="validation.name.minLength"
+                [maxlength]="validation.name.maxLength"
+                [status]="sectorAbrevInput.invalid ? 'danger' : sectorAbrevInput.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="sectorAbrevInput.invalid && sectorAbrevInput.touched ? true : null"
               />
             </div>
+            <ng-container *ngIf="sectorAbrevInput.invalid && sectorAbrevInput.touched">
+              <p class="caption status-danger" *ngIf="sectorAbrevInput.errors?.required">
+                A abreviação do setor é obrigatória!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="sectorAbrevInput.errors?.minlength || sectorAbrevInput.errors?.maxlength"
+              >
+                A abreviação do setor deve conter entre {{ validation.abrev.minLength }} a
+                {{ validation.abrev.maxLength }} caracteres
+              </p>
+            </ng-container>
           </div>
+
           <div class="col-2 col-md-1">
             <div class="form-control-group">
               <button
@@ -210,7 +239,7 @@
                 status="primary"
                 size="large"
                 style="margin-top: 28px"
-                [disabled]="!sectorNameInput.value || !sectorAbrevInput.value"
+                [disabled]="!sectorNameInput.dirty || !sectorAbrevInput.dirty"
                 (click)="addSector()"
               >
                 <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
