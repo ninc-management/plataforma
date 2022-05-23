@@ -248,6 +248,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     return 'primary';
   }
 
+  isItemOverdue(item: ContractChecklistItem): boolean {
+    const today = new Date();
+    if (item.range.end && isAfter(today, item.range.end)) return true;
+    return false;
+  }
+
   openItemDialog(index: number): void {
     this.isDialogBlocked.next(true);
     this.dialogService
@@ -339,7 +345,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         taskDependencies: [],
         start: item.range.start,
         end: item.range.end,
-        progressPercentage: this.percentualItemProgress(item),
+        progressPercentage: this.isItemOverdue(item) ? 100 : this.percentualItemProgress(item),
         owner: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
         image: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
         isFinished: this.hasItemFinished(item) ? 1 : 0,
