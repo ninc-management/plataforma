@@ -8,14 +8,15 @@ const router = express.Router();
 
 export function sendMail(mailOptions: any, callback: any): void {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    host: 'smtppro.zoho.com',
+    port: 465,
+    secure: true,
     auth: {
-      user: 'dad@cenaalagoas.com',
+      user: 'contato@ninc.digital',
       pass: process.env.EMAIL_PASSWD,
     },
   });
+
   transporter.sendMail(mailOptions, callback);
 }
 
