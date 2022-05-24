@@ -3,7 +3,7 @@
 import { Contract } from '@models/contract';
 import { isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
-import { DateManipulator } from './date-manipulator';
+import { daysLeft } from './date-manipulator';
 import { ChartTheme } from './gantt-chart.component';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
@@ -180,7 +180,7 @@ export class GanttRenderers {
             y: y + 38,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            text: isFinished ? 'Finalizado' : DateManipulator.daysLeft(end),
+            text: isFinished ? 'Finalizado' : daysLeft(end),
             textFill: '#000',
             fontSize: 11,
             fontFamily: this._currentTheme.variables.fontMain,
