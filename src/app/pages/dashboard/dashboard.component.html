@@ -11,7 +11,7 @@
   </nb-tab>
   <nb-tab
     *ngIf="nortanTeam"
-    [tabTitle]="utils.isPhone() ? '' : tabTitles.NORTAN"
+    [tabTitle]="utils.isPhone() ? '' : nortanTeam.name"
     [tabIcon]="nortanIcon"
     [tabId]="nortanTeam ? nortanTeam._id : ''"
     responsive
@@ -78,7 +78,7 @@
     [content]="
       activeTab == tabTitles.PESSOAL
         ? 'Despesas'
-        : activeTab == tabTitles.NORTAN
+        : activeTab == nortanTeam.name
         ? 'Gastos Administrativos'
         : 'Despesas do Time'
     "

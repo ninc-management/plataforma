@@ -17,9 +17,9 @@
     >
       <nb-card-header>
         {{ title }}
-        <div class="buttons" [ngStyle]="{ width: iTeam._id ? '250px' : 'auto' }">
+        <div class="buttons" [ngStyle]="{ width: iTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }">
           <nb-toggle
-            *ngIf="iTeam._id"
+            *ngIf="iTeam._id && componentType === dTypes.TEAM"
             [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganitazionTeam()"
             (ngModelChange)="handleTeamStatusChange()"
             [(ngModel)]="iTeam.isOrganizationTeam"
