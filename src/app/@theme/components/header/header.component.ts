@@ -7,7 +7,7 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { UtilsService } from 'app/shared/services/utils.service';
@@ -67,16 +67,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([this.userService.currentUser$, this.configService.getConfig()])
+    combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
+        skipWhile(([currentUser, configLoaded, config]) => !configLoaded),
         takeUntil(this.destroy$),
-        filter(([currentUser, config]) => currentUser._id !== undefined)
+        filter(([currentUser, configLoaded, config]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, config]) => {
+      .subscribe(([currentUser, configLoaded, config]) => {
         this.user = currentUser;
         this.currentNotifications = currentUser.notifications.length;
         this.changeTheme();
-        if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];
         this.menuTitle = config[0].socialConfig.companyName;
       });
