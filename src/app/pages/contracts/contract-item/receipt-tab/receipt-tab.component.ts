@@ -62,6 +62,7 @@ export class ReceiptTabComponent implements OnInit {
       .subscribe(() => {
         this.receiptsChanged.emit();
         this.isDialogBlocked.next(false);
+        this.clonedContract.balance = this.contractService.balance(this.clonedContract);
       });
   }
 
@@ -84,6 +85,7 @@ export class ReceiptTabComponent implements OnInit {
         if (response) {
           this.clonedContract.receipts.splice(index, 1);
           this.receiptsChanged.emit();
+          this.clonedContract.balance = this.contractService.balance(this.clonedContract);
           this.updateContract();
         }
         this.isDialogBlocked.next(false);
