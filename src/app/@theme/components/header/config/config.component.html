@@ -653,4 +653,104 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
+  <nb-tab tabId="onedrive-tab" [tabTitle]="isPhone() ? '' : 'OneDrive'" tabIcon="file-text-outline" responsive>
+    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="toggle-list col-12 col-lg-auto">
+          <div class="form-control-group">
+            <table class="table-onedrive">
+              <tbody>
+                <tr>
+                  <td class="td-left">OneDrive</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.oneDriveConfig.isActive"
+                      name="toggle-onedrive"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-12 col-lg">
+          <div class="row" style="margin-top: 8px">
+            <div class="col-auto">
+              <label>Pasta compartilhada</label>
+            </div>
+          </div>
+          <div class="row" style="align-items: end">
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-onedrive-id">
+                  Id do OneDrive
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o Onedrive;
+2-Vá no menu dos itens compartilhados;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%BBBBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores AAAAAAAAAAAAAA."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="config.oneDriveConfig.oneDriveId"
+                  #oneDriveId="ngModel"
+                  id="input-onedrive-id"
+                  name="oneDriveId"
+                  placeholder="Id do OneDrive"
+                  fullWidth
+                  fieldSize="large"
+                  [status]="oneDriveId.dirty ? (oneDriveId.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="oneDriveId.invalid && oneDriveId.touched ? true : null"
+                />
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-folder-id">
+                  Id da pasta compartilhada
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do onedrive:
+1-Abra o Onedrive;
+2-Vá no menu dos itens compartilhados da esquerda;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%BBBBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores BBBBBBB."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="config.oneDriveConfig.folderId"
+                  #folderId="ngModel"
+                  id="input-folder-id"
+                  name="folderId"
+                  fullWidth
+                  fieldSize="large"
+                  placeholder="id da pasta compatilhada"
+                  [status]="folderId.dirty ? (folderId.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="folderId.invalid && folderId.touched ? true : null"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+    </form>
+  </nb-tab>
 </nb-tabset>

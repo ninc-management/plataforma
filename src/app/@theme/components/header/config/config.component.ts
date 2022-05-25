@@ -4,7 +4,7 @@ import { ExpenseType } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
 import { cloneDeep } from 'lodash';
 import config_validation from 'app/shared/config-validation.json';
-import { isPhone, trackByIndex } from 'app/shared/utils';
+import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-config',
@@ -21,6 +21,7 @@ export class ConfigComponent {
 
   isPhone = isPhone;
   trackByIndex = trackByIndex;
+  tooltipTriggers = tooltipTriggers;
 
   expenseIcon = {
     icon: 'minus',

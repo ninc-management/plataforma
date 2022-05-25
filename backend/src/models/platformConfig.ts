@@ -90,6 +90,17 @@ export class ModulesConfig {
   hasCourse: boolean = true;
 }
 
+export class OneDrive {
+  @prop({ required: true })
+  isActive: boolean = false;
+
+  @prop()
+  oneDriveId?: string;
+
+  @prop()
+  folderId?: string;
+}
+
 export class PlatformConfig extends Base<string> {
   @prop({ required: true, type: () => [ExpenseType] })
   expenseTypes: ExpenseType[] = [];
@@ -105,6 +116,9 @@ export class PlatformConfig extends Base<string> {
 
   @prop({ required: true })
   modulesConfig: ModulesConfig = new ModulesConfig();
+
+  @prop({ required: true })
+  oneDriveConfig: OneDrive = new OneDrive();
 }
 
 export default getModelForClass(PlatformConfig);
