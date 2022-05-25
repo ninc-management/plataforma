@@ -82,6 +82,14 @@ export class SocialConfig {
   companyName: string = '';
 }
 
+export class ModulesConfig {
+  @prop({ required: true })
+  hasPromotion: boolean = true;
+
+  @prop({ required: true })
+  hasCourse: boolean = true;
+}
+
 export class PlatformConfig extends Base<string> {
   @prop({ required: true, type: () => [ExpenseType] })
   expenseTypes: ExpenseType[] = [];
@@ -94,6 +102,9 @@ export class PlatformConfig extends Base<string> {
 
   @prop({ required: true })
   socialConfig: SocialConfig = new SocialConfig();
+
+  @prop({ required: true })
+  modulesConfig: ModulesConfig = new ModulesConfig();
 }
 
 export default getModelForClass(PlatformConfig);
