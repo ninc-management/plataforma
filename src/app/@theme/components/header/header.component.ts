@@ -69,11 +69,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
-        skipWhile(([currentUser, configLoaded, config]) => !configLoaded),
+        skipWhile(([, configLoaded, _]) => !configLoaded),
         takeUntil(this.destroy$),
-        filter(([currentUser, configLoaded, config]) => currentUser._id !== undefined)
+        filter(([currentUser, ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, configLoaded, config]) => {
+      .subscribe(([currentUser, , config]) => {
         this.user = currentUser;
         this.currentNotifications = currentUser.notifications.length;
         this.changeTheme();

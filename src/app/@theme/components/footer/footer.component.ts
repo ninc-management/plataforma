@@ -7,7 +7,7 @@ import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
   styleUrls: ['./footer.component.scss'],
   template: `
     <span class="created-by">
-      © {{ year }} {{ companyName }}. Plataforma de gestão criada com ❤️
+      © {{ year }} {{ companyName }}. Plataforma de gestão criada com ❤️ pela
       <a href="https://ninc.digital/" target="_blank" style="text-decoration: none;">NINC</a>
       .
     </span>
@@ -22,10 +22,10 @@ export class FooterComponent implements OnDestroy {
   public constructor(private configService: ConfigService) {
     combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
-        skipWhile(([configLoaded, config]) => !configLoaded),
+        skipWhile(([configLoaded, _]) => !configLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([configLoaded, config]) => {
+      .subscribe(([_, config]) => {
         this.companyName = config[0].socialConfig.companyName;
       });
   }
