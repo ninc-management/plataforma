@@ -7,7 +7,7 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'app/../environments/environment';
@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   env = environment;
   menuButtonClicked = false;
-  menuTitle = 'Nortan';
+  menuTitle = '';
   userPictureOnly = false;
   user = new User();
   logoIcon = 'logo';
@@ -70,17 +70,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([this.userService.currentUser$, this.configService.getConfig()])
+    combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
+        skipWhile(([, configLoaded, _]) => !configLoaded),
         takeUntil(this.destroy$),
-        filter(([currentUser, config]) => currentUser._id !== undefined)
+        filter(([currentUser, ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, config]) => {
+      .subscribe(([currentUser, , config]) => {
         this.user = currentUser;
         this.currentNotifications = currentUser.notifications.length;
         this.changeTheme();
-        if (config.length == 0) config.push(new PlatformConfig());
         this.config = config[0];
+        this.menuTitle = config[0].socialConfig.companyName;
       });
 
     this.userService
@@ -121,7 +122,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
-          this.menuTitle = event.item.title === 'Início' ? 'Nortan' : event.item.title;
+          this.menuTitle = event.item.title === 'Início' ? this.config.socialConfig.companyName : event.item.title;
         }
       });
 
