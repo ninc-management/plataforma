@@ -110,7 +110,6 @@
       <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">Atualizar</button>
     </form>
   </nb-tab>
-  <<<<<<< HEAD
   <nb-tab tabId="invoice-tab" [tabTitle]="isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
     <form (ngSubmit)="updateConfig()" #invoiceConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
@@ -613,6 +612,41 @@
                 [attr.aria-invalid]="gathertownLink.invalid && gathertownLink.touched ? true : null"
               />
             </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+    </form>
+  </nb-tab>
+  <nb-tab tabId="modules-tab" [tabTitle]="isPhone() ? '' : 'Módulos Extras'" tabIcon="cube-outline" responsive>
+    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="toggle-list col-12 col-lg-auto">
+          <div class="form-control-group">
+            <table class="table-modules">
+              <tbody>
+                <tr>
+                  <td class="td-left">Módulo de promoções</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.modulesConfig.hasPromotion"
+                      name="toggle-header"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">Módulo de cursos</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.modulesConfig.hasCourse"
+                      name="toggle-type"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

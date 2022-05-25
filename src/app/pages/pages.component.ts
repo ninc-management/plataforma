@@ -187,24 +187,28 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
             link: '/pages/teams',
             pathMatch: 'full',
           });
-          this.menu.push({
-            title: 'Promoções',
-            icon: {
-              icon: 'trophy',
-              pack: 'fac',
-            },
-            link: '/pages/promotions',
-            pathMatch: 'full',
-          });
-          this.menu.push({
-            title: 'Cursos',
-            icon: {
-              icon: 'courses',
-              pack: 'fac',
-            },
-            link: '/pages/courses',
-            pathMatch: 'full',
-          });
+          if (configs[0].modulesConfig.hasPromotion) {
+            this.menu.push({
+              title: 'Promoções',
+              icon: {
+                icon: 'trophy',
+                pack: 'fac',
+              },
+              link: '/pages/promotions',
+              pathMatch: 'full',
+            });
+          }
+          if (configs[0].modulesConfig.hasCourse) {
+            this.menu.push({
+              title: 'Cursos',
+              icon: {
+                icon: 'courses',
+                pack: 'fac',
+              },
+              link: '/pages/courses',
+              pathMatch: 'full',
+            });
+          }
         }
       });
   }
