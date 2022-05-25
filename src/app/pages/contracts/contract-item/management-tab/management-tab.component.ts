@@ -204,7 +204,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   percentualItemProgress(item: ContractChecklistItem): number {
-    if (item.actionList.length == 0) return item.actionList.length;
+    if (item.actionList.length == 0) return 0;
 
     const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
     return this.stringUtils.moneyToNumber(
