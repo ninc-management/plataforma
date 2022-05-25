@@ -9,11 +9,10 @@ import { SocketMock } from 'types/socketio-mock';
 import { Socket } from 'ngx-socket-io';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
-import { UtilsService } from './utils.service';
+import { reviveDates } from 'app/shared/utils';
 
 describe('InternalTransactionService', () => {
   let service: InternalTransactionService;
-  let utilsService: UtilsService;
   let httpMock: HttpTestingController;
   let mockedTransactions: InternalTransaction[];
   const socket$ = new Subject<any>();
@@ -37,7 +36,7 @@ describe('InternalTransactionService', () => {
               break;
             }
             case 2: {
-              const expectedTransactions = utilsService.reviveDates(mockedTransactions);
+              const expectedTransactions = reviveDates(mockedTransactions);
               expect(transactions.length).toBe(3);
               expect(transactions).toEqual(expectedTransactions);
               test(expectedTransactions);
@@ -62,7 +61,6 @@ describe('InternalTransactionService', () => {
     TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InternalTransactionService);
-    utilsService = TestBed.inject(UtilsService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTransactions = [];
     // Ordem de Pagamento
@@ -157,7 +155,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
+            expect(transactions).toEqual(reviveDates(mockedTransactions));
             service.saveTransaction(tmpTransaction);
             const req1 = httpMock.expectOne('/api/transaction/internal/');
             expect(req1.request.method).toBe('POST');
@@ -168,7 +166,7 @@ describe('InternalTransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(4);
             mockedTransactions.push(tmpTransaction);
-            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
+            expect(transactions).toEqual(reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -221,7 +219,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
+            expect(transactions).toEqual(reviveDates(mockedTransactions));
             service.saveManyTransaction([tmpTransaction1, tmpTransaction2]);
             reqSave = httpMock.expectOne('/api/transaction/internal/many');
             expect(reqSave.request.method).toBe('POST');
@@ -251,7 +249,7 @@ describe('InternalTransactionService', () => {
             expect(transactions.length).toBe(5);
             mockedTransactions.push(tmpTransaction1);
             mockedTransactions.push(tmpTransaction2);
-            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
+            expect(transactions).toEqual(reviveDates(mockedTransactions));
             done();
             break;
           }
@@ -302,7 +300,7 @@ describe('InternalTransactionService', () => {
           case 2: {
             i += 1;
             expect(transactions.length).toBe(3);
-            expect(transactions).toEqual(utilsService.reviveDates(mockedTransactions));
+            expect(transactions).toEqual(reviveDates(mockedTransactions));
             service.editTransaction(tmpTransaction, editionHistoryItem);
             const req1 = httpMock.expectOne('/api/transaction/internal/update');
             expect(req1.request.method).toBe('POST');
@@ -313,7 +311,7 @@ describe('InternalTransactionService', () => {
           case 3: {
             expect(transactions.length).toBe(3);
             expect(transactions[0].value).toBe(tmpTransaction.value);
-            expect(utilsService.reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
+            expect(reviveDates(transactions[0].editionHistory)).toEqual([editionHistoryItem]);
             done();
             break;
           }

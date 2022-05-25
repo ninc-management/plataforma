@@ -7,7 +7,6 @@ import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { OnedriveService } from './onedrive.service';
-import { UtilsService } from './utils.service';
 import { StringUtilService } from './string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
@@ -16,6 +15,7 @@ import { Invoice } from '@models/invoice';
 import { StatusHistoryItem } from '@models/baseStatusHistory';
 import { InvoiceService } from './invoice.service';
 import { ContractorService } from './contractor.service';
+import { reviveDates, isOfType, nfPercentage, nortanPercentage, idToProperty } from '../utils';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -100,7 +100,6 @@ export class ContractService implements OnDestroy {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private socket: Socket,
-    private utils: UtilsService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService
   ) {}
@@ -142,15 +141,7 @@ export class ContractService implements OnDestroy {
         if (
           contract.status === 'Concluído' &&
           !isMoved &&
-          this.utils.isOfType<Invoice>(contract.invoice, [
-            '_id',
-            'author',
-            'nortanTeam',
-            'sector',
-            'code',
-            'type',
-            'contractor',
-          ])
+          isOfType<Invoice>(contract.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])
         )
           this.onedrive.moveToConcluded(contract.invoice);
       });
@@ -163,7 +154,7 @@ export class ContractService implements OnDestroy {
         .post('/api/contract/all', {})
         .pipe(take(1))
         .subscribe((contracts: any) => {
-          const tmp = this.utils.reviveDates(contracts);
+          const tmp = reviveDates(contracts);
           this.contracts$.next(tmp as Contract[]);
           this._isDataLoaded$.next(true);
         });
@@ -186,7 +177,7 @@ export class ContractService implements OnDestroy {
   }
 
   idToContract(id: string | Contract): Contract {
-    if (this.utils.isOfType<Contract>(id, ['_id', 'invoice', 'status'])) return id;
+    if (isOfType<Contract>(id, ['_id', 'invoice', 'status'])) return id;
     const tmp = this.contracts$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
@@ -333,8 +324,8 @@ export class ContractService implements OnDestroy {
       this.stringUtil.moneyToNumber(
         this.toNetValue(
           this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
-          this.utils.nfPercentage(contract),
-          this.utils.nortanPercentage(contract),
+          nfPercentage(contract),
+          nortanPercentage(contract),
           contract.created
         )
       ) + this.getComissionsSum(contract)
@@ -363,8 +354,8 @@ export class ContractService implements OnDestroy {
           return accumulator;
         }, 0)
       ),
-      this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract),
+      nfPercentage(contract),
+      nortanPercentage(contract),
       contract.created
     );
   }
@@ -452,7 +443,7 @@ export class ContractService implements OnDestroy {
       }
 
       if (invoice.contractor) {
-        contract.contractor = this.utils.idToProperty(
+        contract.contractor = idToProperty(
           invoice.contractor,
           this.contractorService.idToContractor.bind(this.contractorService),
           'fullName'
@@ -470,13 +461,13 @@ export class ContractService implements OnDestroy {
       contract.balance = this.balance(contract);
       contract.liquid = this.toNetValue(
         this.subtractComissions(this.stringUtil.removePercentage(contract.value, contract.ISS), contract),
-        this.utils.nfPercentage(contract),
-        this.utils.nortanPercentage(contract),
+        nfPercentage(contract),
+        nortanPercentage(contract),
         contract.created
       );
 
-      const nf = this.utils.nfPercentage(contract);
-      const nortan = this.utils.nortanPercentage(contract);
+      const nf = nfPercentage(contract);
+      const nortan = nortanPercentage(contract);
       const paid = this.toNetValue(
         this.stringUtil.numberToMoney(
           contract.receipts.reduce((accumulator: number, recipt: any) => {

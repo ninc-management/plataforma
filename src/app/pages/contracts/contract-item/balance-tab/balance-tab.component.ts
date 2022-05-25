@@ -5,8 +5,8 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { Subject, takeUntil } from 'rxjs';
+import { isPhone, trackByIndex, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
 interface ExpenseSourceSum {
   user: string;
@@ -51,11 +51,14 @@ export class BalanceTabComponent implements OnInit {
     pack: 'fa',
   };
 
+  isPhone = isPhone;
+  trackByIndex = trackByIndex;
+  idToProperty = idToProperty;
+
   constructor(
     public stringUtil: StringUtilService,
     public contractService: ContractService,
     private invoiceService: InvoiceService,
-    public utils: UtilsService,
     public userService: UserService
   ) {}
 
@@ -73,8 +76,8 @@ export class BalanceTabComponent implements OnInit {
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.options.interest = this.contract.receipts.length;
-    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    this.options.notaFiscal = nfPercentage(this.contract);
+    this.options.nortanPercentage = nortanPercentage(this.contract);
   }
 
   expenseSourceSum(): ExpenseSourceSum[] {
@@ -157,8 +160,8 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
-    this.options.notaFiscal = this.utils.nfPercentage(this.contract);
-    this.options.nortanPercentage = this.utils.nortanPercentage(this.contract);
+    this.options.notaFiscal = nfPercentage(this.contract);
+    this.options.nortanPercentage = nortanPercentage(this.contract);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.notPaid = this.stringUtil.numberToMoney(

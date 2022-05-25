@@ -89,8 +89,7 @@
           <input
             nbInput
             [ngModel]="
-              [invoice.nortanTeam, teamService.idToTeam.bind(teamService), 'abrev']
-                | transformPipe: utils.idToProperty.bind(utils)
+              [invoice.nortanTeam, teamService.idToTeam.bind(teamService), 'abrev'] | transformPipe: idToProperty
             "
             #nortanTeam="ngModel"
             id="input-nortan-team"
@@ -287,7 +286,7 @@
           <label class="label" for="input-updated">Última atualização:</label>
           <input
             nbInput
-            [ngModel]="[clonedContract.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
+            [ngModel]="[clonedContract.lastUpdate] | transformPipe: formatDate"
             #updated="ngModel"
             id="input-updated"
             name="updated"
@@ -449,7 +448,7 @@
         </button>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-3 list-name">
               {{ member.user ? userService.idToShortName(member.user) : '' }}
@@ -537,7 +536,7 @@
             </div>
           </div>
         </nb-list-item>
-        <nb-list-item *ngIf="!utils.isPhone()">
+        <nb-list-item *ngIf="!isPhone()">
           <div class="row irow totalRow">
             <div class="col-2">
               Restante:

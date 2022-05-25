@@ -3,11 +3,11 @@ import { NbDialogService } from '@nebular/theme';
 import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs/operators';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
 import { Promotion } from '@models/promotion';
 import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
+import { isPhone, nameSort } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-promotions',
@@ -26,7 +26,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
         return promotion.name.toLowerCase().includes(this.searchQuery.toLowerCase());
       });
     return this.promotions.sort((a, b) => {
-      return this.utils.nameSort(1, a.name, b.name);
+      return nameSort(1, a.name, b.name);
     });
   }
 
@@ -75,11 +75,9 @@ export class PromotionsComponent implements OnInit, OnDestroy {
     },
   };
 
-  constructor(
-    private dialogService: NbDialogService,
-    private promotionService: PromotionService,
-    public utils: UtilsService
-  ) {}
+  isPhone = isPhone;
+
+  constructor(private dialogService: NbDialogService, private promotionService: PromotionService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -102,7 +100,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   promotionDialog(event: { data?: Promotion }): void {
     this.dialogService.open(PromotionDialogComponent, {
       context: {
-        title: event.data ? (this.utils.isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE PROMOÇÃO') : 'CADASTRO DE PROMOÇÃO',
+        title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDIÇÃO DE PROMOÇÃO') : 'CADASTRO DE PROMOÇÃO',
         promotion: event.data ? event.data : new Promotion(),
       },
       dialogClass: 'my-dialog',

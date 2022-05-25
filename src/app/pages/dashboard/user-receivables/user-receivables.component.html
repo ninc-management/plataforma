@@ -1,6 +1,6 @@
 <ng2-smart-table
   #smartTable
-  *ngIf="!utils.isPhone(); else phone"
+  *ngIf="!isPhone(); else phone"
   [settings]="settings"
   [source]="source"
   (edit)="contractDialog($event)"

@@ -3,7 +3,6 @@ import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, skipWhile, take, takeWhile } from 'rxjs/operators';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -17,6 +16,7 @@ import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dial
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Team } from '@models/team';
 import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { isPhone, groupByDateTimeSerie } from 'app/shared/utils';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',
@@ -62,13 +62,14 @@ export class DashboardComponent {
   nortanTeam!: Team;
   currentTeam = new Team();
 
+  isPhone = isPhone;
+
   constructor(
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
-    private teamService: TeamService,
-    public utils: UtilsService
+    private teamService: TeamService
   ) {
     this.teamService
       .getTeams()
@@ -151,7 +152,7 @@ export class DashboardComponent {
             cumulative: true,
             symbol: 'circle',
             isMoney: true,
-            data: this.utils.groupByDateTimeSerie(receivedSeriesItems.concat(expensesSeriesItems)),
+            data: groupByDateTimeSerie(receivedSeriesItems.concat(expensesSeriesItems)),
           };
           return [received, expenses, contractsValue, balance];
         })

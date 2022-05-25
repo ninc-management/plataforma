@@ -186,7 +186,7 @@
               [inputName]="'contractorCompleter'"
               (selected)="
                 tempInvoice.contractor = $event;
-                tempInvoice.contractorFullName = utils.idToProperty(
+                tempInvoice.contractorFullName = idToProperty(
                   tempInvoice.contractor,
                   contractorService.idToContractor.bind(contractorService),
                   'fullName'
@@ -202,7 +202,7 @@
               [textNoResults]="'Não foi possível achar um cliente com o nome digitado'"
               [fullWidth]="true"
               [fieldSize]="'large'"
-              [isPhone]="utils.isPhone()"
+              [isPhone]="isPhone()"
               [showAvatar]="false"
               [tooltipFunction]="tooltipText"
               [inputObject]="tempInvoice.contractor"
@@ -227,7 +227,7 @@
               size="large"
               style="margin-top: 28px"
               nbTooltip="Adicionar cliente"
-              [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+              [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
               nbTooltipPlacement="top"
               nbTooltipStatus="info"
               (click)="addContractor()"
@@ -369,7 +369,7 @@
             <label class="label" for="input-status">Status:</label>
             <nb-select
               [(ngModel)]="tempInvoice.status"
-              (ngModelChange)="utils.forceValidatorUpdate(contractor)"
+              (ngModelChange)="forceValidatorUpdate(contractor)"
               #status="ngModel"
               id="input-status"
               name="status"
@@ -684,12 +684,10 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasTeam" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{
-                [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: utils.idToProperty
-              }}
+              {{ [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty }}
             </div>
             <div class="col-10 col-md-5">
               <nb-select
@@ -848,7 +846,7 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasPreliminary" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let activity of tempInvoice.laep; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let activity of tempInvoice.laep; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <input
@@ -983,7 +981,7 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasExecutive" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let activity of tempInvoice.laee; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let activity of tempInvoice.laee; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <input
@@ -1119,7 +1117,7 @@
       </div>
       <nb-list *ngIf="config.hasComplementary" style="width: 100%; padding: 10px 0">
         <nb-list-item
-          *ngFor="let activity of tempInvoice.laec ? tempInvoice.laec : []; let i = index; trackBy: utils.trackByIndex"
+          *ngFor="let activity of tempInvoice.laec ? tempInvoice.laec : []; let i = index; trackBy: trackByIndex"
         >
           <div class="row irow">
             <div class="col-10 col-md-11">
@@ -1369,7 +1367,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let product of tempInvoice.products; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let product of tempInvoice.products; let i = index; trackBy: trackByIndex">
           <div class="row paymentRow">
             <div
               [ngClass]="{
@@ -1389,9 +1387,7 @@
                 (focusout)="tempInvoice.products[i].name = tempInvoice.products[i].name.toUpperCase()"
               />
               <nb-list class="subproducts-list" *ngIf="product.subproducts.length > 0">
-                <nb-list-item
-                  *ngFor="let subproduct of product.subproducts; let j = index; trackBy: utils.trackByIndex"
-                >
+                <nb-list-item *ngFor="let subproduct of product.subproducts; let j = index; trackBy: trackByIndex">
                   <div class="row paymentRow">
                     <div class="col-10 col-md-11">
                       <input
@@ -1547,7 +1543,7 @@
             <div
               class="col-12 col-md-7"
               [ngStyle]="{
-                'text-align': utils.isPhone() == true ? 'left' : 'right'
+                'text-align': isPhone() == true ? 'left' : 'right'
               }"
             >
               Desconto:
@@ -1606,7 +1602,7 @@
                 status="basic"
                 icon="refresh-outline"
                 nbTooltip="Atualizar valor bruto do contrato"
-                [nbTooltipTrigger]="utils.isPhone() ? utils.tooltipTriggers.NOOP : utils.tooltipTriggers.HINT"
+                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
                 nbTooltipPlacement="top"
                 nbTooltipStatus="info"
                 pack="eva"
@@ -1721,7 +1717,7 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasStageName" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: trackByIndex">
           <div class="row paymentRow">
             <div class="col-12 col-md-7">
               <input
@@ -1857,7 +1853,7 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasImportants" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let activity of tempInvoice.importants; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let activity of tempInvoice.importants; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-10 col-md-11">
               <textarea
@@ -2062,7 +2058,7 @@
         </div>
       </div>
       <nb-list *ngIf="config.hasMaterialList" style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let material of tempInvoice.materials; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let material of tempInvoice.materials; let i = index; trackBy: trackByIndex">
           <div class="row paymentRow">
             <div
               [ngClass]="{

@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
 import { NbDialogService } from '@nebular/theme';
 import {
   ContractDialogComponent,
@@ -9,10 +8,10 @@ import {
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { isPhone, valueSort } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-user-receivables',
@@ -66,7 +65,7 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
         title: 'Valor a receber',
         type: 'string',
         sortDirection: 'desc',
-        compareFunction: this.utils.valueSort,
+        compareFunction: valueSort,
       },
     },
   };
@@ -84,8 +83,9 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
     return this.userReceivableContracts;
   }
 
+  isPhone = isPhone;
+
   constructor(
-    public utils: UtilsService,
     public invoiceService: InvoiceService,
     private dialogService: NbDialogService,
     private userService: UserService

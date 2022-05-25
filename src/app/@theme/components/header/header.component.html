@@ -1,5 +1,5 @@
 <div class="header-container">
-  <div class="logo-container" [ngStyle]="{ 'margin-top.px': utils.isPhone() ? 0 : -7 }">
+  <div class="logo-container" [ngStyle]="{ 'margin-top.px': isPhone() ? 0 : -7 }">
     <a
       class="sidebar-toggle hamburger hamburger--collapse"
       cursor="pointer"
@@ -26,7 +26,7 @@
       <nb-icon
         [icon]="logoIcon"
         pack="fac"
-        *ngIf="!utils.isPhone()"
+        *ngIf="!isPhone()"
         style="width: 30px; height: 30px; margin-bottom: 4px; margin-right: 8px"
       ></nb-icon>
       {{ menuTitle }}
@@ -78,18 +78,17 @@
         <div class="notification-list">
           <nb-list-item
             style="display: block"
-            *ngFor="let notification of user.notifications; let i = index; trackBy: utils.trackByIndex"
+            *ngFor="let notification of user.notifications; let i = index; trackBy: trackByIndex"
             (click)="openNotification(i, notification)"
           >
             <nb-user
               [name]="
-                [notification.from, userService.idToUser.bind(userService), 'fullName']
-                  | transformPipe: utils.idToProperty
+                [notification.from, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
               "
               [title]="notification.title"
               [picture]="
                 [notification.from, userService.idToUser.bind(userService), 'profilePicture']
-                  | transformPipe: utils.idToProperty
+                  | transformPipe: idToProperty
               "
             ></nb-user>
             <div class="notification">
@@ -97,7 +96,7 @@
               <br />
               <br />
               <span style="float: right">
-                {{ [notification.created] | transformPipe: utils.elapsedTime.bind(this) }}
+                {{ [notification.created] | transformPipe: elapsedTime.bind(this) }}
               </span>
             </div>
           </nb-list-item>

@@ -1,6 +1,6 @@
 <ng2-smart-table
   #smartTable
-  *ngIf="!utils.isPhone(); else phone"
+  *ngIf="!isPhone(); else phone"
   [settings]="settings"
   [source]="source"
   (create)="openDialog()"
@@ -44,12 +44,11 @@
                 <nb-user
                   [onlyPicture]="true"
                   [name]="
-                    [expense.author, userService.idToUser.bind(userService), 'fullName']
-                      | transformPipe: utils.idToProperty
+                    [expense.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
                   "
                   [picture]="
                     [expense.author, userService.idToUser.bind(userService), 'profilePicture']
-                      | transformPipe: utils.idToProperty
+                      | transformPipe: idToProperty
                   "
                 ></nb-user>
               </div>
@@ -64,7 +63,7 @@
               <div class="col-md-auto">
                 <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
                 <span style="vertical-align: 0.1em">
-                  {{ [expense.created] | transformPipe: utils.formatDate.bind(utils) }}
+                  {{ [expense.created] | transformPipe: formatDate }}
                 </span>
               </div>
             </a>

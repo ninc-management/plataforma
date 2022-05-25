@@ -64,7 +64,6 @@ import { StatecityService } from 'app/shared/services/statecity.service';
 import { StorageService } from 'app/shared/services/storage.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { AngularFireModule } from '@angular/fire/compat';
@@ -72,7 +71,6 @@ import { AngularFireStorageModule, AngularFireStorage } from '@angular/fire/comp
 import { NbAccessChecker, NbRoleProvider, NbAclService, NbSecurityModule } from '@nebular/security';
 import { of } from 'rxjs';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import { Permissions } from 'app/shared/services/utils.service';
 import { NbDateFnsDateModule } from '@nebular/date-fns';
 import { environment } from 'environments/environment';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
@@ -86,6 +84,7 @@ import { FinancialService } from 'app/shared/services/financial.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TransactionService } from 'app/shared/services/transaction.service';
+import { Permissions } from 'app/shared/utils';
 
 const roles = Object.values(Permissions);
 
@@ -240,7 +239,6 @@ const PROVIDERS = [
   TeamService,
   TransactionService,
   UserService,
-  UtilsService,
   WebSocketService,
   ConfigService,
 ];

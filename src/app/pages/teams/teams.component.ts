@@ -5,9 +5,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { TeamDialogComponent } from './team-dialog/team-dialog.component';
 import { Team } from '@models/team';
+import { isPhone, nameSort, idToProperty } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-teams',
@@ -24,15 +24,14 @@ export class TeamsComponent implements OnInit, OnDestroy {
       return this.teams.filter((team) => {
         return (
           team.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          this.utils
-            .idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName')
+          idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName')
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           team.abrev.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.teams.sort((a, b) => {
-      return this.utils.nameSort(1, a.name, b.name);
+      return nameSort(1, a.name, b.name);
     });
   }
 
@@ -73,11 +72,12 @@ export class TeamsComponent implements OnInit, OnDestroy {
     },
   };
 
+  isPhone = isPhone;
+
   constructor(
     private dialogService: NbDialogService,
     private userService: UserService,
-    private teamService: TeamService,
-    public utils: UtilsService
+    private teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -92,11 +92,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((teams) => {
         this.teams = teams.map((team) => {
-          team.leaderName = this.utils.idToProperty(
-            team.leader,
-            this.userService.idToUser.bind(this.userService),
-            'fullName'
-          );
+          team.leaderName = idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName');
           return team;
         });
         this.source.load(this.teams);

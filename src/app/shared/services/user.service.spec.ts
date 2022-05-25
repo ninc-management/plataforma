@@ -10,14 +10,13 @@ import { ConnectableObservable, Subject } from 'rxjs';
 import { AuthService } from 'app/auth/auth.service';
 import { SocketMock } from 'app/../types/socketio-mock';
 import { Socket } from 'ngx-socket-io';
-import { UtilsService } from './utils.service';
 import MockedServerSocket from 'socket.io-mock';
+import { reviveDates } from 'app/shared/utils';
 
 describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
-  let utilsService: UtilsService;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -33,7 +32,7 @@ describe('UserService', () => {
         .getUsers()
         .pipe(take(2), last())
         .subscribe((users) => {
-          const expectedUsers = utilsService.reviveDates(mockedUsers);
+          const expectedUsers = reviveDates(mockedUsers);
           expect(users.length).toBe(2);
           expect(users).toEqual(expectedUsers);
           test(expectedUsers, done);
@@ -53,7 +52,6 @@ describe('UserService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
-    utilsService = TestBed.inject(UtilsService);
     mockedUsers = [];
     const tmp = new User();
     tmp._id = '0';
@@ -92,7 +90,7 @@ describe('UserService', () => {
     authServiceSpy.userEmail.and.returnValue('test2@te.st');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
-      expect(user).toEqual(utilsService.reviveDates(mockedUsers[1]));
+      expect(user).toEqual(reviveDates(mockedUsers[1]));
       done();
     });
     // mock response
@@ -111,7 +109,7 @@ describe('UserService', () => {
         last(),
         mergeMap((user) => {
           expect(user).toBeTruthy();
-          expect(user).toEqual(utilsService.reviveDates(mockedUsers[0]));
+          expect(user).toEqual(reviveDates(mockedUsers[0]));
           return service.getUser('test3@te.st').pipe(take(2), last());
         })
       )
@@ -127,8 +125,8 @@ describe('UserService', () => {
   baseTest('getUsers should work', (expectdUsers: User[], done: DoneFn) => done());
 
   baseTest('getUsersList should work', (expectdUsers: User[], done: DoneFn) => {
-    expect(service.getUsersList()).toEqual(utilsService.reviveDates(mockedUsers));
-    expect(expectdUsers).toEqual(utilsService.reviveDates(mockedUsers));
+    expect(service.getUsersList()).toEqual(reviveDates(mockedUsers));
+    expect(expectdUsers).toEqual(reviveDates(mockedUsers));
     done();
   });
 
@@ -167,7 +165,7 @@ describe('UserService', () => {
     authServiceSpy.userEmail.and.returnValue('test2@te.st');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
-      expect(user).toEqual(utilsService.reviveDates(mockedUsers[1]));
+      expect(user).toEqual(reviveDates(mockedUsers[1]));
       service
         .getUsers()
         .pipe(take(2))
@@ -175,7 +173,7 @@ describe('UserService', () => {
           switch (i) {
             case 1: {
               i += 1;
-              expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+              expect(users).toEqual(reviveDates(mockedUsers));
               const cb = jasmine.createSpy().and.returnValue('test');
               service.updateUser(editedUser, cb, false);
               const req1 = httpMock.expectOne('/api/user/update');
@@ -239,7 +237,7 @@ describe('UserService', () => {
     authServiceSpy.userEmail.and.returnValue('test2@te.st');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
-      expect(user).toEqual(utilsService.reviveDates(mockedUsers[1]));
+      expect(user).toEqual(reviveDates(mockedUsers[1]));
       service
         .getUsers()
         .pipe(take(2))
@@ -247,7 +245,7 @@ describe('UserService', () => {
           switch (i) {
             case 1: {
               i += 1;
-              expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+              expect(users).toEqual(reviveDates(mockedUsers));
               service.updateUser(editedUser, undefined, true);
               const req1 = httpMock.expectOne('/api/user/update');
               expect(req1.request.method).toBe('POST');
@@ -259,7 +257,7 @@ describe('UserService', () => {
               expect(users[1].fullName).toEqual('Test works');
               expect(user).not.toEqual(mockedUsers[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
-                expect(utilsService.reviveDates(finalUser)).toEqual(utilsService.reviveDates(editedUser));
+                expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));
                 done();
               });
               break;
@@ -312,7 +310,7 @@ describe('UserService', () => {
     authServiceSpy.userEmail.and.returnValue('test2@te.st');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
-      expect(user).toEqual(utilsService.reviveDates(mockedUsers[1]));
+      expect(user).toEqual(reviveDates(mockedUsers[1]));
       service
         .getUsers()
         .pipe(take(2))
@@ -321,7 +319,7 @@ describe('UserService', () => {
             case 1: {
               jasmine.clock().uninstall();
               i += 1;
-              expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+              expect(users).toEqual(reviveDates(mockedUsers));
               const cb = jasmine.createSpy('test');
               service.updateUser(editedUser, cb, true);
               const req1 = httpMock.expectOne('/api/user/update');
@@ -338,7 +336,7 @@ describe('UserService', () => {
               expect(users[1].fullName).toEqual(editedUser.fullName);
               expect(user).not.toEqual(users[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
-                expect(utilsService.reviveDates(finalUser)).toEqual(utilsService.reviveDates(editedUser));
+                expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));
                 done();
               });
               break;
@@ -357,7 +355,7 @@ describe('UserService', () => {
   });
 
   baseTest('idToShortName should work', (expectedUsers: User[], done: DoneFn) => {
-    expect(expectedUsers).toEqual(utilsService.reviveDates(mockedUsers));
+    expect(expectedUsers).toEqual(reviveDates(mockedUsers));
     expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
     expect(service.idToShortName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
     expect(service.idToShortName('000000000000000000000000')).toBe('Caixa do contrato');
@@ -365,15 +363,15 @@ describe('UserService', () => {
   });
 
   baseTest('idToUser should work', (expectedUsers: User[], done: DoneFn) => {
-    expect(expectedUsers).toEqual(utilsService.reviveDates(mockedUsers));
-    expect(service.idToUser('0')).toEqual(utilsService.reviveDates(mockedUsers[0]));
+    expect(expectedUsers).toEqual(reviveDates(mockedUsers));
+    expect(service.idToUser('0')).toEqual(reviveDates(mockedUsers[0]));
     expect(service.idToUser(mockedUsers[0])).toEqual(mockedUsers[0]);
     expect(service.idToUser('000000000000000000000000')).toEqual(CONTRACT_BALANCE as User);
     done();
   });
 
   baseTest('isEqual should work', (expectedUsers: User[], done: DoneFn) => {
-    expect(expectedUsers).toEqual(utilsService.reviveDates(mockedUsers));
+    expect(expectedUsers).toEqual(reviveDates(mockedUsers));
     expect(service.isEqual(undefined, undefined)).toBe(false);
     expect(service.isEqual(undefined, '0')).toBe(false);
     expect(service.isEqual('0', undefined)).toBe(false);

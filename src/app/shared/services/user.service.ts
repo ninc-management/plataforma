@@ -7,10 +7,10 @@ import { Socket } from 'ngx-socket-io';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
-import { UtilsService } from './utils.service';
 import { User } from '@models/user';
 import { InvoiceTeamMember } from '@models/invoice';
 import { TeamMember } from '@models/team';
+import { reviveDates, nameSort, isOfType } from '../utils';
 
 // NINC: change for each new client
 const supportProfilePicture =
@@ -107,8 +107,7 @@ export class UserService implements OnDestroy {
     private http: HttpClient,
     private authService: AuthService,
     private wsService: WebSocketService,
-    private socket: Socket,
-    private utils: UtilsService
+    private socket: Socket
   ) {
     this.authService.onUserChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.refreshCurrentUser();
@@ -154,10 +153,10 @@ export class UserService implements OnDestroy {
         .post('/api/user/all', {})
         .pipe(take(1))
         .subscribe((users: any) => {
-          const tmp = this.utils.reviveDates(users);
+          const tmp = reviveDates(users);
           this.users$.next(
             (tmp as User[]).sort((a, b) => {
-              return this.utils.nameSort(1, a.fullName, b.fullName);
+              return nameSort(1, a.fullName, b.fullName);
             })
           );
           this._isDataLoaded$.next(true);
@@ -198,7 +197,7 @@ export class UserService implements OnDestroy {
   }
 
   idToUser(id: string | User): User {
-    if (this.utils.isOfType<User>(id, ['_id', 'fullName', 'email', 'phone'])) return id;
+    if (isOfType<User>(id, ['_id', 'fullName', 'email', 'phone'])) return id;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     if (id == CLIENT._id) return CLIENT as User;
     if (id == NORTAN._id) return NORTAN as User;
@@ -217,10 +216,7 @@ export class UserService implements OnDestroy {
   ): boolean {
     if (u1 == undefined) return false;
     return team.some((member: InvoiceTeamMember | TeamMember | User | string | undefined) => {
-      if (
-        this.utils.isOfType<InvoiceTeamMember>(member, ['user', 'distribution']) ||
-        this.utils.isOfType<TeamMember>(member, ['user'])
-      ) {
+      if (isOfType<InvoiceTeamMember>(member, ['user', 'distribution']) || isOfType<TeamMember>(member, ['user'])) {
         return this.isEqual(u1, member.user);
       }
       return this.isEqual(u1, member);

@@ -340,7 +340,7 @@
         <label class="label" for="input-updated">Última atualização:</label>
         <input
           nbInput
-          [ngModel]="[expense.lastUpdate] | transformPipe: utils.formatDate.bind(utils)"
+          [ngModel]="[expense.lastUpdate] | transformPipe: formatDate"
           #updated="ngModel"
           id="input-updated"
           name="updated"

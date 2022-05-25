@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import config_validation from 'app/shared/config-validation.json';
+import { isPhone, trackByIndex } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-config',
@@ -19,6 +19,9 @@ export class ConfigComponent {
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   validation = config_validation as any;
 
+  isPhone = isPhone;
+  trackByIndex = trackByIndex;
+
   expenseIcon = {
     icon: 'minus',
     pack: 'fac',
@@ -28,7 +31,7 @@ export class ConfigComponent {
     pack: 'fac',
   };
 
-  constructor(private configService: ConfigService, public utils: UtilsService) {}
+  constructor(private configService: ConfigService) {}
 
   addExpenseType(): void {
     this.config.expenseTypes.push(cloneDeep(this.newExpense));

@@ -6,11 +6,11 @@ import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
+import { isPhone, idToProperty, formatDate, valueSort } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -27,6 +27,10 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   team: Team = new Team();
   platformConfig: PlatformConfig = new PlatformConfig();
 
+  isPhone = isPhone;
+  formatDate = formatDate;
+  idToProperty = idToProperty;
+
   get filtredExpenses(): TeamExpense[] {
     if (this.searchQuery !== '')
       return this.expenses.filter((expense) => {
@@ -35,16 +39,14 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            this.utils
-              .idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            this.utils
-              .idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
-          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+          formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.expenses;
@@ -92,7 +94,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       value: {
         title: 'Valor',
         type: 'string',
-        compareFunction: this.utils.valueSort,
+        compareFunction: valueSort,
       },
       type: {
         title: 'Categoria',
@@ -140,8 +142,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     private dialogService: NbDialogService,
     private teamService: TeamService,
     private configService: ConfigService,
-    public userService: UserService,
-    public utils: UtilsService
+    public userService: UserService
   ) {}
 
   ngOnDestroy(): void {
@@ -162,7 +163,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           this.expenses.map((expense: any) => {
             const tmp = cloneDeep(expense);
             tmp.source = this.userService.idToShortName(tmp.source);
-            tmp.created = this.utils.formatDate(tmp.created);
+            tmp.created = formatDate(tmp.created);
             return tmp;
           })
         );

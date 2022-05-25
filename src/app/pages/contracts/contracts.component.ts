@@ -12,12 +12,20 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
 import { Team } from '@models/team';
 import { TeamService } from 'app/shared/services/team.service';
+import {
+  isPhone,
+  Permissions,
+  codeSort,
+  valueSort,
+  nfPercentage,
+  nortanPercentage,
+  idToProperty,
+} from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-contracts',
@@ -42,7 +50,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.contracts.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
+    return this.contracts.sort((a, b) => codeSort(-1, a.code, b.code));
   }
   settings = {
     mode: 'external',
@@ -76,7 +84,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Código',
         type: 'string',
         sortDirection: 'desc',
-        compareFunction: this.utils.codeSort,
+        compareFunction: codeSort,
       },
       contractor: {
         title: 'Cliente',
@@ -111,7 +119,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'Valor',
         type: 'string',
         width: '10%',
-        compareFunction: this.utils.valueSort,
+        compareFunction: valueSort,
       },
       interests: {
         title: 'Parcelas',
@@ -141,6 +149,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   source: LocalDataSource = new LocalDataSource();
 
+  isPhone = isPhone;
+
   constructor(
     private dialogService: NbDialogService,
     private contractService: ContractService,
@@ -149,7 +159,6 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
     private teamService: TeamService,
-    public utils: UtilsService,
     public invoiceService: InvoiceService
   ) {}
 
@@ -203,7 +212,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     ])
       .pipe(take(4))
       .subscribe(([contracts, invoices, contractors]) => {
-        if (contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && !this.utils.isPhone()) {
+        if (contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && !isPhone()) {
           setTimeout(() => {
             this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
               'Equipe Gestor';
@@ -259,8 +268,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           return accumulator;
         }, 0)
       ),
-      this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract),
+      nfPercentage(contract),
+      nortanPercentage(contract),
       contract.created
     );
   }
@@ -286,8 +295,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           return accumulator;
         }, 0)
       ),
-      this.utils.nfPercentage(contract),
-      this.utils.nortanPercentage(contract),
+      nfPercentage(contract),
+      nortanPercentage(contract),
       contract.created
     );
 
@@ -295,8 +304,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(
           invoice.value,
-          this.utils.nfPercentage(contract),
-          this.utils.nortanPercentage(contract),
+          nfPercentage(contract),
+          nortanPercentage(contract),
           contract.created
         )
       ) - this.stringUtil.moneyToNumber(paidValue)
@@ -331,13 +340,13 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
     let csv = mainHeaders.join(';') + '\r\n';
 
     contracts
-      .sort((a, b) => this.utils.codeSort(1, a.code, b.code))
+      .sort((a, b) => codeSort(1, a.code, b.code))
       .forEach((contract) => {
         if (contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(contract.invoice);
           csv += invoice.code + ';';
           csv +=
-            this.utils.idToProperty(
+            idToProperty(
               invoice.contractor,
               this.contractorService.idToContractor.bind(this.contractorService),
               'fullName'
@@ -351,8 +360,8 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.stringUtil.removePercentage(invoice.value, contract.ISS),
                 contract
               ),
-              this.utils.nfPercentage(contract),
-              this.utils.nortanPercentage(contract),
+              nfPercentage(contract),
+              nortanPercentage(contract),
               contract.created
             ) + ';';
           csv += this.getReportReceivedValue(contract) + ';';
@@ -361,7 +370,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           csv += this.contractService.balance(contract) + ';';
           csv += invoice.team
             .map((member) => {
-              this.utils.idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'fullName');
+              idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'fullName');
             })
             .join(', ');
           csv += '\r\n';

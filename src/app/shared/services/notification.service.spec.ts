@@ -13,13 +13,12 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { Socket } from 'ngx-socket-io';
-import { UtilsService } from './utils.service';
+import { reviveDates } from 'app/shared/utils';
 
 describe('NotificationService', () => {
   let service: NotificationService;
   let userService: UserService;
   let httpMock: HttpTestingController;
-  let utilsService: UtilsService;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -41,7 +40,6 @@ describe('NotificationService', () => {
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
     userService = TestBed.inject(UserService);
-    utilsService = TestBed.inject(UtilsService);
     mockedUsers = [];
     mockedInvoices = [];
     mockedTeams = [];
@@ -137,7 +135,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+            expect(users).toEqual(reviveDates(mockedUsers));
             service.notify(notification.to, notificationBody);
             socket.emit('dbchange', data);
             const req = httpMock.expectOne('/api/notify/');
@@ -146,7 +144,7 @@ describe('NotificationService', () => {
             break;
           }
           case 2: {
-            const expectedNotifications = utilsService.reviveDates([notification]);
+            const expectedNotifications = reviveDates([notification]);
             expect(users[1].notifications).toEqual(expectedNotifications);
             done();
             break;
@@ -177,7 +175,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+            expect(users).toEqual(reviveDates(mockedUsers));
             service.notifyMany(mockedInvoices[0].team, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
@@ -215,7 +213,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
+            const expectedNotifications = reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();
@@ -247,7 +245,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+            expect(users).toEqual(reviveDates(mockedUsers));
             service.notifyMany(mockedTeams[0].members, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
@@ -285,7 +283,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
+            const expectedNotifications = reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();
@@ -317,7 +315,7 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
+            expect(users).toEqual(reviveDates(mockedUsers));
             service.notifyMany(mockedUsers, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
@@ -355,7 +353,7 @@ describe('NotificationService', () => {
             break;
           }
           case 3: {
-            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
+            const expectedNotifications = reviveDates(req.request.body.notifications);
             expect(users[0].notifications).toEqual([expectedNotifications[0]]);
             expect(users[1].notifications).toEqual([expectedNotifications[1]]);
             done();
@@ -387,8 +385,8 @@ describe('NotificationService', () => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(users).toEqual(utilsService.reviveDates(mockedUsers));
-            service.notifyMany(mockedInvoices[0].team, notificationBody);
+            expect(users).toEqual(reviveDates(mockedUsers));
+            service.notifyMany(mockedUsers, notificationBody);
             req = httpMock.expectOne('/api/notify/many');
             expect(req.request.method).toBe('POST');
             req.flush(null);
@@ -409,7 +407,7 @@ describe('NotificationService', () => {
           }
           case 2: {
             i += 1;
-            const expectedNotifications = utilsService.reviveDates(req.request.body.notifications);
+            const expectedNotifications = reviveDates(req.request.body.notifications);
             expect(users[0].notifications[0]).toEqual(expectedNotifications[0]);
             service.checkNotification(expectedNotifications[0]);
             req = httpMock.expectOne('/api/notify/read');

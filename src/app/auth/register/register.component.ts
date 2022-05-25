@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { AuthService } from '../auth.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import user_validation from 'app/shared/user-validation.json';
 import { Prospect } from '@models/prospect';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-register',
@@ -25,14 +25,16 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   prospect = new Prospect();
   protected destroy$ = new Subject<void>();
 
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     private statecityService: StatecityService,
     private authService: AuthService,
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected cd: ChangeDetectorRef,
-    protected router: Router,
-    public utils: UtilsService
+    protected router: Router
   ) {
     super(service, options, cd, router);
   }

@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject, Input, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contractor } from '@models/contractor';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-contractor-dialog',
@@ -13,10 +13,12 @@ export class ContractorDialogComponent extends BaseDialogComponent implements On
   @Input() title = '';
   @Input() contractor = new Contractor();
 
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
-    @Optional() protected derivedRef: NbDialogRef<ContractorDialogComponent>,
-    public utils: UtilsService
+    @Optional() protected derivedRef: NbDialogRef<ContractorDialogComponent>
   ) {
     super(derivedDocument, derivedRef);
   }

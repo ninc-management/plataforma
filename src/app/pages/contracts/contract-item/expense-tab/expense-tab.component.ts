@@ -7,11 +7,11 @@ import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, take } from 'rxjs';
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { isPhone, formatDate, idToProperty, valueSort } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-expense-tab',
@@ -40,16 +40,14 @@ export class ExpenseTabComponent implements OnInit {
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            this.utils
-              .idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            this.utils
-              .idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
-          this.utils.formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+          formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
     return this.clonedContract.expenses;
@@ -96,7 +94,7 @@ export class ExpenseTabComponent implements OnInit {
       value: {
         title: 'Valor',
         type: 'string',
-        compareFunction: this.utils.valueSort,
+        compareFunction: valueSort,
       },
       type: {
         title: 'Categoria',
@@ -158,8 +156,11 @@ export class ExpenseTabComponent implements OnInit {
     },
   };
 
+  isPhone = isPhone;
+  idToProperty = idToProperty;
+  formatDate = formatDate;
+
   constructor(
-    public utils: UtilsService,
     private dialogService: NbDialogService,
     public contractService: ContractService,
     private invoiceService: InvoiceService,
@@ -263,8 +264,8 @@ export class ExpenseTabComponent implements OnInit {
       this.clonedContract.expenses.map((expense: any, index: number) => {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
-        tmp.created = this.utils.formatDate(tmp.created);
-        tmp.paidDate = tmp.paid ? this.utils.formatDate(tmp.paidDate) : '';
+        tmp.created = formatDate(tmp.created);
+        tmp.paidDate = tmp.paid ? formatDate(tmp.paidDate) : '';
         return tmp;
       })
     );

@@ -6,7 +6,6 @@ import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, take } from 'rxjs';
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
@@ -27,7 +26,6 @@ export class ReceiptTabComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    public utils: UtilsService,
     public stringUtil: StringUtilService,
     private dialogService: NbDialogService
   ) {}

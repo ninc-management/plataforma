@@ -16,13 +16,13 @@ import {
 } from '@angular/core';
 import { Contract } from '@models/contract';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
 import { daysLeft, getMinDate } from './date-manipulator';
 import { ChartConstants, GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
+import { formatDate } from 'app/shared/utils';
 
 export interface ChartTheme {
   palette: string[];
@@ -85,7 +85,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   private zebraData!: any[];
   private todayData!: any[];
 
-  constructor(private theme: NbThemeService, private utils: UtilsService) {}
+  constructor(private theme: NbThemeService) {}
 
   getTitleOption(): any {
     if (this.chartTitle === '') return {};
@@ -345,7 +345,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         start: 0,
         end: 100,
         labelFormatter: (value: Date): string => {
-          return this.utils.formatDate(value);
+          return formatDate(value);
         },
       },
       {

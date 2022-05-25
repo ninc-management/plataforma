@@ -4,8 +4,8 @@ import { Course, CourseParticipant } from '@models/course';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
+import { isOfType } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -20,12 +20,7 @@ export class CourseService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private http: HttpClient,
-    private socket: Socket,
-    private wsService: WebSocketService,
-    private utils: UtilsService
-  ) {}
+  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -58,7 +53,7 @@ export class CourseService {
   }
 
   idToParticipant(id: string | CourseParticipant): CourseParticipant {
-    if (this.utils.isOfType<CourseParticipant>(id, ['_id', 'name', 'email', 'isSpeaker'])) return id;
+    if (isOfType<CourseParticipant>(id, ['_id', 'name', 'email', 'isSpeaker'])) return id;
     const tmp = this.courses$
       .getValue()
       .map((course) => course.participants)

@@ -21,7 +21,7 @@ import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { UtilsService } from 'app/shared/services/utils.service';
+import { NOT } from 'app/shared/utils';
 
 interface MetricItem {
   title: string;
@@ -61,8 +61,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private dialogService: NbDialogService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    private contractorService: ContractorService,
-    private utils: UtilsService
+    private contractorService: ContractorService
   ) {}
 
   ngOnDestroy(): void {
@@ -104,7 +103,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Nº de IMPUL$$O$',
@@ -121,7 +120,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Contratos como gestor',
@@ -182,7 +181,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.utils.NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Orçamentos como equipe',
@@ -200,7 +199,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               );
             })
           ),
-          loading: this.utils.NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'IMPUL$$O$',
@@ -219,7 +218,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
                   this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global)
               )
             ),
-          loading: this.utils.NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Valor a receber',

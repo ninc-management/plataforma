@@ -10,7 +10,6 @@ import {
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { environment } from 'app/../environments/environment';
 import { User, UserNotification } from '@models/user';
 import {
@@ -18,12 +17,12 @@ import {
   ConfigDialogComponent,
 } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
 import { NbAccessChecker } from '@nebular/security';
-import { Permissions } from 'app/shared/services/utils.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { PlatformConfig } from '@models/platformConfig';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { tada } from './animation';
+import { isPhone, trackByIndex, elapsedTime, idToProperty, Permissions } from 'app/shared/utils';
 
 interface NbMenuItem {
   title: string;
@@ -53,6 +52,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { title: 'Sair', link: '/auth/logout' },
   ];
 
+  isPhone = isPhone;
+  trackByIndex = trackByIndex;
+  elapsedTime = elapsedTime;
+  idToProperty = idToProperty;
+
   public constructor(
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
@@ -62,7 +66,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
-    public utils: UtilsService,
     public stringUtils: StringUtilService
   ) {}
 

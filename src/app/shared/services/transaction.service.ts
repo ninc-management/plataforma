@@ -4,8 +4,8 @@ import { EditionHistoryItem } from '@models/shared';
 import { Transaction } from '@models/transaction';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
-import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
+import { reviveDates } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +19,7 @@ export class TransactionService implements OnDestroy {
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
-  constructor(
-    private http: HttpClient,
-    private wsService: WebSocketService,
-    private socket: Socket,
-    private utils: UtilsService
-  ) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -60,7 +55,7 @@ export class TransactionService implements OnDestroy {
         .post('/api/transaction/all', {})
         .pipe(take(1))
         .subscribe((transactions: any) => {
-          const tmp = this.utils.reviveDates(transactions);
+          const tmp = reviveDates(transactions);
           this.transactions$.next(tmp as Transaction[]);
           this._isDataLoaded$.next(true);
         });

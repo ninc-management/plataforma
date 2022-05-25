@@ -12,15 +12,14 @@ import { Socket } from 'ngx-socket-io';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { CONTRACT_BALANCE } from './user.service';
-import { UtilsService } from './utils.service';
 import MockedServerSocket from 'socket.io-mock';
+import { reviveDates } from 'app/shared/utils';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
-  let utilsService: UtilsService;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -45,7 +44,7 @@ describe('InvoiceService', () => {
               break;
             }
             case 2: {
-              const expectedInvoices = utilsService.reviveDates(mockedInvoices);
+              const expectedInvoices = reviveDates(mockedInvoices);
               expect(invoices.length).toBe(2);
               expect(invoices).toEqual(expectedInvoices);
               test(expectedInvoices);
@@ -73,7 +72,6 @@ describe('InvoiceService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
     httpMock = TestBed.inject(HttpTestingController);
-    utilsService = TestBed.inject(UtilsService);
     mockedUsers = [];
     mockedInvoices = [];
     const tmpUser = new User();
@@ -166,7 +164,7 @@ describe('InvoiceService', () => {
           case 2: {
             i += 1;
             expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
+            expect(invoices).toEqual(reviveDates(mockedInvoices));
             service.saveInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/');
             expect(req1.request.method).toBe('POST');
@@ -177,7 +175,7 @@ describe('InvoiceService', () => {
           case 3: {
             expect(invoices.length).toBe(3);
             mockedInvoices.push(tmpInvoice);
-            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
+            expect(invoices).toEqual(reviveDates(mockedInvoices));
             done();
             break;
           }
@@ -226,7 +224,7 @@ describe('InvoiceService', () => {
           case 2: {
             i += 1;
             expect(invoices.length).toBe(2);
-            expect(invoices).toEqual(utilsService.reviveDates(mockedInvoices));
+            expect(invoices).toEqual(reviveDates(mockedInvoices));
             service.editInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/update');
             expect(req1.request.method).toBe('POST');
@@ -325,7 +323,7 @@ describe('InvoiceService', () => {
   });
 
   baseTest('teamMembers should work', (expectedInvoices: Invoice[]) => {
-    expect(service.teamMembers(mockedInvoices[0])).toEqual(utilsService.reviveDates(mockedUsers.splice(1, 1)));
-    expect(service.teamMembers(mockedInvoices[1])).toEqual(utilsService.reviveDates(mockedUsers.splice(0, 1)));
+    expect(service.teamMembers(mockedInvoices[0])).toEqual(reviveDates(mockedUsers.splice(1, 1)));
+    expect(service.teamMembers(mockedInvoices[1])).toEqual(reviveDates(mockedUsers.splice(0, 1)));
   });
 });

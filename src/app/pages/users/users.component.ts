@@ -7,7 +7,6 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
@@ -19,6 +18,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { Prospect } from '@models/prospect';
 import { ProspectService } from 'app/shared/services/prospect.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { isPhone, nfPercentage, nortanPercentage, idToProperty, nameSort } from 'app/shared/utils';
 
 interface IndividualData {
   received: string;
@@ -87,7 +87,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         );
       });
     return this.users.sort((a, b) => {
-      return this.utils.nameSort(1, a.fullName, b.fullName);
+      return nameSort(1, a.fullName, b.fullName);
     });
   }
 
@@ -100,7 +100,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           prospect.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.prospects.sort((a, b) => this.utils.nameSort(1, a.fullName, b.fullName));
+    return this.prospects.sort((a, b) => nameSort(1, a.fullName, b.fullName));
   }
 
   settings = {
@@ -209,6 +209,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   source: LocalDataSource = new LocalDataSource();
   prospectSource: LocalDataSource = new LocalDataSource();
 
+  isPhone = isPhone;
+
   constructor(
     private dialogService: NbDialogService,
     private userService: UserService,
@@ -216,7 +218,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
     private prospectService: ProspectService,
-    public utils: UtilsService,
     public teamService: TeamService
   ) {}
 
@@ -391,8 +392,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 ),
                 monthContract.contract
               ),
-              this.utils.nfPercentage(monthContract.contract),
-              this.utils.nortanPercentage(monthContract.contract),
+              nfPercentage(monthContract.contract),
+              nortanPercentage(monthContract.contract),
               monthContract.contract.created
             );
             for (const uId of Object.keys(data)) {
@@ -553,8 +554,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 ),
                 monthContract.contract
               ),
-              this.utils.nfPercentage(monthContract.contract),
-              this.utils.nortanPercentage(monthContract.contract),
+              nfPercentage(monthContract.contract),
+              nortanPercentage(monthContract.contract),
               monthContract.contract.created
             );
             for (const sector of Object.keys(data)) {
@@ -744,7 +745,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         for (const key of Object.keys(data)) {
           csv +=
             (groupBy == GROUP_BY.USER
-              ? this.utils.idToProperty(key, this.userService.idToUser.bind(this.userService), 'fullName')
+              ? idToProperty(key, this.userService.idToUser.bind(this.userService), 'fullName')
               : this.teamService.idToSectorComposedName(key)) + ';';
           data[key].monthly_data.forEach((individualData) => {
             csv += individualData.received + ';';

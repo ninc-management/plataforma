@@ -218,7 +218,7 @@
             </div>
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: utils.trackByIndex">
+            <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: trackByIndex">
               <div class="row typeRow">
                 <div class="col-12 col-md-7">
                   <input
@@ -330,18 +330,17 @@
           </div>
         </div>
         <nb-list style="width: 100%; padding: 10px 0">
-          <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: utils.trackByIndex">
+          <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: trackByIndex">
             <div class="row irow">
               <div class="col-5 col-md-6">
                 <nb-user
                   size="giant"
                   [name]="
-                    [member.user, userService.idToUser.bind(userService), 'fullName']
-                      | transformPipe: utils.idToProperty
+                    [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
                   "
                   [picture]="
                     [member.user, userService.idToUser.bind(userService), 'profilePicture']
-                      | transformPipe: utils.idToProperty
+                      | transformPipe: idToProperty
                   "
                 ></nb-user>
               </div>
@@ -452,7 +451,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: utils.trackByIndex">
+        <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: trackByIndex">
           <div class="row typeRow">
             <div class="col-12 col-md-7">
               <input

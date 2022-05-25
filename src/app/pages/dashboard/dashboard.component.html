@@ -1,5 +1,5 @@
 <nb-tabset class="dashboard" (changeTab)="setActiveTab($event)">
-  <nb-tab [tabTitle]="utils.isPhone() ? '' : tabTitles.PESSOAL" tabIcon="person" responsive>
+  <nb-tab [tabTitle]="isPhone() ? '' : tabTitles.PESSOAL" tabIcon="person" responsive>
     <div class="row">
       <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
       <div class="col-12">
@@ -54,7 +54,7 @@
   </nb-tab>
   <nb-tab
     *ngFor="let team of teams"
-    [tabTitle]="utils.isPhone() ? '' : team.name"
+    [tabTitle]="isPhone() ? '' : team.name"
     [tabIcon]="teamIcon"
     [tabId]="team._id"
     responsive

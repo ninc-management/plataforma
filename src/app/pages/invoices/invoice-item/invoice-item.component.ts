@@ -12,7 +12,6 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { Invoice, InvoiceTeamMember, InvoiceMaterial, InvoiceProduct, InvoiceStage } from '@models/invoice';
 import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
@@ -25,6 +24,16 @@ import { TeamService } from 'app/shared/services/team.service';
 import { InvoiceConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
 import { NotificationBody, NotificationService } from 'app/shared/services/notification.service';
+import {
+  isPhone,
+  tooltipTriggers,
+  trackByIndex,
+  idToProperty,
+  isOfType,
+  nfPercentage,
+  nortanPercentage,
+  forceValidatorUpdate,
+} from 'app/shared/utils';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',
@@ -119,6 +128,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   STATOOS = Object.values(INVOICE_STATOOS);
   UNITx = Object.values(UNIT_OF_MEASURE);
 
+  forceValidatorUpdate = forceValidatorUpdate;
+  trackByIndex = trackByIndex;
+  isPhone = isPhone;
+  idToProperty = idToProperty;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
@@ -127,7 +142,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private configService: ConfigService,
     private notificationService: NotificationService,
     public stringUtil: StringUtilService,
-    public utils: UtilsService,
     public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
@@ -153,17 +167,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tempInvoice.lastUpdate = new Date();
       }
       if (this.tempInvoice.nortanTeam) this.SECTORS = this.teamService.idToTeam(this.tempInvoice.nortanTeam).sectors;
-      this.contractorSearch = this.utils.idToProperty(
+      this.contractorSearch = idToProperty(
         this.tempInvoice.contractor,
         this.contractorService.idToContractor.bind(this.contractorService),
         'fullName'
       );
       this.associateSearch = this.tempInvoice.prospectedBy
-        ? this.utils.idToProperty(
-            this.tempInvoice.prospectedBy,
-            this.userService.idToUser.bind(this.userService),
-            'fullName'
-          )
+        ? idToProperty(this.tempInvoice.prospectedBy, this.userService.idToUser.bind(this.userService), 'fullName')
         : '';
       this.revision = +this.tempInvoice.code?.slice(this.tempInvoice.code.length - 2);
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
@@ -254,7 +264,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.tempInvoice.author &&
                 u.AER.includes(this.userService.idToUser(this.tempInvoice.author)?._id)
               )
-                this.authorSearch = this.utils.idToProperty(
+                this.authorSearch = idToProperty(
                   this.tempInvoice.author,
                   this.userService.idToUser.bind(this.userService),
                   'fullName'
@@ -321,7 +331,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.contractService.saveContract(this.tempInvoice);
           }
         }
-        this.tempInvoice.contractorName = this.utils.idToProperty(
+        this.tempInvoice.contractorName = idToProperty(
           this.tempInvoice.contractor,
           this.contractorService.idToContractor.bind(this.contractorService),
           'fullName'
@@ -673,7 +683,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   toPercentage(item: InvoiceProduct | InvoiceStage): string {
     let p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
-    if (this.tempInvoice.productListType == '2' && this.utils.isOfType<InvoiceProduct>(item, ['amount']))
+    if (this.tempInvoice.productListType == '2' && isOfType<InvoiceProduct>(item, ['amount']))
       p = this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(item.amount) * this.stringUtil.moneyToNumber(p),
         20
@@ -701,8 +711,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.options.netValue = this.contractService.toNetValue(
         this.tempInvoice.value,
-        this.utils.nfPercentage(this.tempInvoice),
-        this.utils.nortanPercentage(this.tempInvoice),
+        nfPercentage(this.tempInvoice),
+        nortanPercentage(this.tempInvoice),
         this.tempInvoice.created
       );
     }
@@ -711,8 +721,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   updateGrossValue(): void {
     const newInvoiceValue = this.contractService.toGrossValue(
       this.options.netValue,
-      this.utils.nfPercentage(this.tempInvoice),
-      this.utils.nortanPercentage(this.tempInvoice)
+      nfPercentage(this.tempInvoice),
+      nortanPercentage(this.tempInvoice)
     );
 
     this.tempInvoice.value = newInvoiceValue;

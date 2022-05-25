@@ -6,11 +6,11 @@ import { take, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
-import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { Sector } from '@models/shared';
 import { Team } from '@models/team';
 import { User } from '@models/user';
+import { reviveDates, isOfType, nameSort } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -29,8 +29,7 @@ export class TeamService implements OnDestroy {
     private wsService: WebSocketService,
     private userService: UserService,
     private stringUtil: StringUtilService,
-    private socket: Socket,
-    private utils: UtilsService
+    private socket: Socket
   ) {}
 
   ngOnDestroy(): void {
@@ -60,7 +59,7 @@ export class TeamService implements OnDestroy {
         .post('/api/team/all', {})
         .pipe(take(1))
         .subscribe((teams: any) => {
-          const tmp = this.utils.reviveDates(teams);
+          const tmp = reviveDates(teams);
           this.keepUpdatingBalance();
           this.teams$.next(tmp as Team[]);
           this._isDataLoaded$.next(true);
@@ -84,14 +83,14 @@ export class TeamService implements OnDestroy {
   }
 
   idToTeam(id: string | Team): Team {
-    if (this.utils.isOfType<Team>(id, ['_id', 'name', 'members', 'config'])) return id;
+    if (isOfType<Team>(id, ['_id', 'name', 'members', 'config'])) return id;
     const tmp = this.teams$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
   idToSector(id: string | Sector | undefined): Sector {
     if (!id) return new Sector();
-    if (this.utils.isOfType<Sector>(id, ['_id', 'name', 'abrev'])) return id;
+    if (isOfType<Sector>(id, ['_id', 'name', 'abrev'])) return id;
     const tmp = this.sectorsListAll().find((sector) => sector._id == id);
     if (tmp) return tmp;
     return new Sector();
@@ -136,7 +135,7 @@ export class TeamService implements OnDestroy {
     const teams = this.teams$.getValue();
     const sectors = teams.map((team) => team.sectors);
     return sectors.flat().sort((a, b) => {
-      return this.utils.nameSort(1, a.name, b.name);
+      return nameSort(1, a.name, b.name);
     });
   }
 
@@ -161,7 +160,7 @@ export class TeamService implements OnDestroy {
 
   userToSectors(user: User | string | undefined): Sector[] {
     if (!user) return [];
-    if (this.utils.isOfType<User>(user, ['fullName', 'sectors', 'position']) && !user._id) return [];
+    if (isOfType<User>(user, ['fullName', 'sectors', 'position']) && !user._id) return [];
     return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
 

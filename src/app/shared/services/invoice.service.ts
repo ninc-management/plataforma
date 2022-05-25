@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
-import { UtilsService } from './utils.service';
 import { WebSocketService } from './web-socket.service';
 import { take, takeUntil } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
@@ -10,6 +9,7 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
 import { StringUtilService } from './string-util.service';
 import { cloneDeep } from 'lodash';
+import { reviveDates, isOfType } from '../utils';
 
 export enum INVOICE_STATOOS {
   EM_ANALISE = 'Em análise',
@@ -37,7 +37,6 @@ export class InvoiceService implements OnDestroy {
     private userService: UserService,
     private wsService: WebSocketService,
     private socket: Socket,
-    private utils: UtilsService,
     private stringUtil: StringUtilService
   ) {}
 
@@ -75,7 +74,7 @@ export class InvoiceService implements OnDestroy {
         .post('/api/invoice/all', {})
         .pipe(take(1))
         .subscribe((invoices: any) => {
-          const tmp = this.utils.reviveDates(invoices);
+          const tmp = reviveDates(invoices);
           this.invoices$.next(tmp as Invoice[]);
           this._isDataLoaded$.next(true);
         });
@@ -99,8 +98,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   idToInvoice(id: string | Invoice): Invoice {
-    if (this.utils.isOfType<Invoice>(id, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor']))
-      return id;
+    if (isOfType<Invoice>(id, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])) return id;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

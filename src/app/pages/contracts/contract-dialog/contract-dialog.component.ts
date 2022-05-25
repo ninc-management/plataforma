@@ -3,7 +3,6 @@ import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { map, take } from 'rxjs/operators';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PdfService } from 'app/pages/invoices/pdf.service';
@@ -14,6 +13,7 @@ import { Contract } from '@models/contract';
 import { HttpClient } from '@angular/common/http';
 import { generateExpensesReport } from 'app/shared/report-generator';
 import saveAs from 'file-saver';
+import { isPhone, codeSort, tooltipTriggers } from 'app/shared/utils';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -40,6 +40,9 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   onedriveUrl = '';
   availableContracts: Contract[] = [];
 
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ContractDialogComponent>,
@@ -49,7 +52,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private contractService: ContractService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
-    public utils: UtilsService,
     private http: HttpClient
   ) {
     super(derivedDocument, derivedRef);
@@ -74,7 +76,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => this.contractService.fillContract(contract));
-              return contracts.sort((a, b) => this.utils.codeSort(-1, a.code, b.code));
+              return contracts.sort((a, b) => codeSort(-1, a.code, b.code));
             })
           )
           .subscribe((contracts) => {

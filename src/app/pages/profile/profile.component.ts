@@ -13,20 +13,19 @@ import {
 import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, takeUntil, filter, takeWhile, skipWhile } from 'rxjs/operators';
+import { take, map, takeUntil, skipWhile } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService, Permissions } from 'app/shared/services/utils.service';
 import { User } from '@models/user';
 import { Sector } from '@models/shared';
 import user_validation from 'app/shared/user-validation.json';
 import { Team } from '@models/team';
 import { ProfileConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
-import invoice from '@models/invoice';
+import { trackByIndex, NOT, idToProperty, chunkify, Permissions } from 'app/shared/utils';
 
 interface article {
   a: string;
@@ -115,6 +114,10 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     return response;
   }
 
+  trackByIndex = trackByIndex;
+  NOT = NOT;
+  idToProperty = idToProperty;
+
   constructor(
     private statecityService: StatecityService,
     private themeService: NbThemeService,
@@ -122,8 +125,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     private configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService,
-    public accessChecker: NbAccessChecker,
-    public utils: UtilsService
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
@@ -356,7 +358,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   buildGrupedSectors(): void {
-    this.groupedSectors = this.utils.chunkify(
+    this.groupedSectors = chunkify(
       this.teamService.sectorsListAll().map((sector) => {
         if (this.user.sectors.some((sectorUser) => this.teamService.isSectorEqual(sectorUser, sector)))
           sector.isChecked = true;

@@ -3,12 +3,12 @@ import { cloneDeep, uniq } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { UserService } from 'app/shared/services/user.service';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
 import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
 import team_validation from 'app/shared/team-validation.json';
+import { trackByIndex, idToProperty } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-team-item',
@@ -32,7 +32,10 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   USER_SECTORS: Sector[] = [];
   options = { sectorName: '', sectorAbrev: '' };
 
-  constructor(public teamService: TeamService, public utils: UtilsService, public userService: UserService) {
+  trackByIndex = trackByIndex;
+  idToProperty = idToProperty;
+
+  constructor(public teamService: TeamService, public userService: UserService) {
     this.team.members = [] as TeamMember[];
   }
 
@@ -40,11 +43,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     if (this.iTeam._id !== undefined) {
       this.editing = true;
       this.team = cloneDeep(this.iTeam);
-      this.leaderSearch = this.utils.idToProperty(
-        this.team.leader,
-        this.userService.idToUser.bind(this.userService),
-        'fullName'
-      );
+      this.leaderSearch = idToProperty(this.team.leader, this.userService.idToUser.bind(this.userService), 'fullName');
     }
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) =>

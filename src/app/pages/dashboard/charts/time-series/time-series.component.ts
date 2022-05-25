@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
-import { UtilsService } from 'app/shared/services/utils.service';
 import { TimeSeries } from 'app/shared/services/metrics.service';
 import { combineLatest, Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
 import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { isWithinInterval, formatDate } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-time-series',
@@ -25,7 +25,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   };
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private utils: UtilsService, private stringUtil: StringUtilService) {}
+  constructor(private theme: NbThemeService, private stringUtil: StringUtilService) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -40,7 +40,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
       if (!serie.cumulative) return serie;
       let lastValue = 0;
       serie.data = serie.data
-        .filter((seriesItem) => this.utils.isWithinInterval(new Date(seriesItem[0]), start, end))
+        .filter((seriesItem) => isWithinInterval(new Date(seriesItem[0]), start, end))
         .map((seriesItem) => {
           const accumulated = seriesItem[1] + lastValue;
           lastValue = accumulated;
@@ -108,7 +108,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
                 return parseInt(b.value[1]) - parseInt(a.value[1]);
               });
               const date = params[0].data[0];
-              let output = '<div style="text-align:center">' + this.utils.formatDate(new Date(date)) + '</div>';
+              let output = '<div style="text-align:center">' + formatDate(new Date(date)) + '</div>';
               for (let i = 0; i < params.length; i++) {
                 const value = this.currentTimeSeries[params[i].seriesIndex].isMoney
                   ? this.stringUtil.numberToMoney(params[i].value[1])
@@ -160,7 +160,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
               endValue: zoomEnd,
               rangeMode: 'value',
               labelFormatter: (value: Date): string => {
-                return this.utils.formatDate(value);
+                return formatDate(value);
               },
             },
           ],
