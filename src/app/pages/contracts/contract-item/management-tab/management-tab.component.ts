@@ -204,16 +204,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   percentualItemProgress(item: ContractChecklistItem): number {
-    if (item.actionList.length > 0) {
-      const today = new Date();
-      if (item.range.end && isAfter(today, item.range.end)) return 100;
+    if (item.actionList.length == 0) return 0;
 
-      const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
-      return this.stringUtils.moneyToNumber(
-        this.stringUtils.toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1)
-      );
-    }
-    return 0;
+    const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
+    return this.stringUtils.moneyToNumber(
+      this.stringUtils.toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1)
+    );
   }
 
   hasItemFinished(item: ContractChecklistItem): boolean {
@@ -250,6 +246,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       }
     }
     return 'primary';
+  }
+
+  isItemOverdue(item: ContractChecklistItem): boolean {
+    const today = new Date();
+    if (item.range.end && isAfter(today, item.range.end)) return true;
+    return false;
   }
 
   openItemDialog(index: number): void {
@@ -343,7 +345,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         taskDependencies: [],
         start: item.range.start,
         end: item.range.end,
-        progressPercentage: this.percentualItemProgress(item),
+        progressPercentage: this.isItemOverdue(item) ? 100 : this.percentualItemProgress(item),
         owner: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
         image: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
         isFinished: this.hasItemFinished(item) ? 1 : 0,

@@ -11,7 +11,7 @@
   </nb-tab>
   <nb-tab
     *ngIf="nortanTeam"
-    [tabTitle]="utils.isPhone() ? '' : nortanTeam.name"
+    [tabTitle]="isPhone() ? '' : nortanTeam.name"
     [tabIcon]="nortanIcon"
     [tabId]="nortanTeam ? nortanTeam._id : ''"
     responsive
