@@ -16,7 +16,8 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import contract_validation from 'app/shared/payment-validation.json';
 import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
-import { trackByIndex, formatDate, idToProperty } from 'app/shared/utils';
+import { trackByIndex, formatDate, idToProperty, shouldNotifyManager } from 'app/shared/utils';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -87,6 +88,7 @@ export class PaymentItemComponent implements OnInit {
   constructor(
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
+    private notificationService: NotificationService,
     public contractService: ContractService,
     public stringUtil: StringUtilService,
     public userService: UserService,
@@ -198,6 +200,7 @@ export class PaymentItemComponent implements OnInit {
     this.submitted = true;
     if (this.paymentIndex !== undefined) {
       this.payment.lastUpdate = new Date();
+      if (shouldNotifyManager(this.contract.payments[this.paymentIndex], this.payment)) this.notifyManager();
       this.contract.payments[this.paymentIndex] = cloneDeep(this.payment);
     } else {
       this.contract.payments.push(cloneDeep(this.payment));
@@ -318,5 +321,21 @@ export class PaymentItemComponent implements OnInit {
   updateLastValues(): void {
     this.options.lastValue = this.payment.value ? this.payment.value.slice() : '0';
     this.options.lastTeam = cloneDeep(this.payment.team);
+  }
+
+  notifyManager(): void {
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.notificationService.notify(invoice.author, {
+        title: 'Uma ordem de pagamento do contrato ' + this.contract.code + ' foi paga!',
+        tag: NotificationTags.PAYMENT_ORDER_PAID,
+        message:
+          'A ordem de pagamento de código #' +
+          this.paymentIndex +
+          ' com o valor de R$ ' +
+          this.payment.value +
+          ' foi paga.',
+      });
+    }
   }
 }
