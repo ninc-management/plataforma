@@ -19,6 +19,7 @@ export enum NotificationTags {
   MENTION = 'mention',
   EXPENSE_PAID = 'expense-paid',
   PAYMENT_ORDER_PAID = 'payment-order-paid',
+  RECEIPT_PAID = 'receipt-paid',
 }
 
 @Injectable({

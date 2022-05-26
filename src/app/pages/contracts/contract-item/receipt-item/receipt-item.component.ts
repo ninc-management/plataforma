@@ -8,7 +8,8 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractReceipt, Contract } from '@models/contract';
 import contract_validation from '../../../../shared/payment-validation.json';
-import { formatDate, nfPercentage, nortanPercentage } from 'app/shared/utils';
+import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -48,6 +49,7 @@ export class ReceiptItemComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
+    private notificationService: NotificationService,
     private stringUtil: StringUtilService,
     public accessChecker: NbAccessChecker
   ) {}
@@ -106,6 +108,7 @@ export class ReceiptItemComponent implements OnInit {
 
     if (this.receiptIndex != undefined) {
       this.receipt.lastUpdate = new Date();
+      if (shouldNotifyManager(this.contract.receipts[this.receiptIndex], this.receipt)) this.notifyManager();
       this.contract.receipts[this.receiptIndex] = cloneDeep(this.receipt);
     } else {
       this.contract.receipts.push(cloneDeep(this.receipt));
@@ -172,5 +175,21 @@ export class ReceiptItemComponent implements OnInit {
   updatePaidDate(): void {
     if (!this.receipt.paid) this.receipt.paidDate = undefined;
     else this.receipt.paidDate = new Date();
+  }
+
+  notifyManager(): void {
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.notificationService.notify(invoice.author, {
+        title: 'Uma ordem de empenho do contrato ' + this.contract.code + ' foi paga!',
+        tag: NotificationTags.RECEIPT_PAID,
+        message:
+          'A ordem de empenho de código #' +
+          this.receiptIndex +
+          ' com o valor de R$ ' +
+          this.receipt.value +
+          ' foi paga.',
+      });
+    }
   }
 }
