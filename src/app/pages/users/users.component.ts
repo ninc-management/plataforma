@@ -19,6 +19,7 @@ import { Prospect } from '@models/prospect';
 import { ProspectService } from 'app/shared/services/prospect.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { isPhone, nfPercentage, nortanPercentage, idToProperty, nameSort } from 'app/shared/utils';
+import { generateUsersReport } from 'app/shared/report-generator';
 
 interface IndividualData {
   received: string;
@@ -43,7 +44,7 @@ interface Overview {
   concluded_contracts_team: number;
 }
 
-interface ReportValue {
+export interface ReportValue {
   monthly_data: IndividualData[];
   overview: Overview;
 }
@@ -699,74 +700,12 @@ export class UsersComponent implements OnInit, OnDestroy {
     (groupBy == GROUP_BY.USER ? this.computeReportData(type, year) : this.computeReportDataBySector(type, year))
       .pipe(take(1))
       .subscribe((data) => {
-        const header = [
-          '',
-          'Janeiro;;;;',
-          'Fevereiro;;;;',
-          'Março;;;;',
-          'Abril;;;;',
-          'Maio;;;;',
-          'Junho;;;;',
-          'Julho;;;;',
-          'Agosto;;;;',
-          'Setembro;;;;',
-          'Outubro;;;;',
-          'Novembro;;;;',
-          'Dezembro;;;;',
-          'Resumos;;;;;;;;',
-        ];
-        const monthlySubHeader = [
-          'Recebido',
-          'Despesas',
-          'Orçamentos Passados',
-          'Contratos Fechado',
-          'Contrato Finalizados',
-        ];
-        const overviewSubHeader = [
-          'Total Recebido',
-          'Total Despesas',
-          'A Receber',
-          'Total Orçamentos Gestor',
-          'Total Orçamentos Equipe',
-          'Total Contratos Gestor',
-          'Total Contratos Equipe',
-          'Total Contrato Finalizados Gestor',
-          'Total Contrato Finalizados Equipe',
-        ];
-        let csv = header.join(';');
-        csv += '\r\n';
-        csv += groupBy == GROUP_BY.USER ? 'Associados;' : 'Setores;';
-        for (let i = 0; i < 12; i++) {
-          csv += monthlySubHeader.join(';') + ';';
-        }
-        csv += overviewSubHeader.join(';');
-        csv += '\r\n';
-
-        for (const key of Object.keys(data)) {
-          csv +=
-            (groupBy == GROUP_BY.USER
-              ? idToProperty(key, this.userService.idToUser.bind(this.userService), 'fullName')
-              : this.teamService.idToSectorComposedName(key)) + ';';
-          data[key].monthly_data.forEach((individualData) => {
-            csv += individualData.received + ';';
-            csv += individualData.expenses + ';';
-            csv += (individualData.sent_invoices_manager + individualData.sent_invoices_team).toString() + ';';
-            csv += (individualData.opened_contracts_manager + individualData.opened_contracts_team).toString() + ';';
-            csv +=
-              (individualData.concluded_contracts_manager + individualData.concluded_contracts_team).toString() + ';';
-          });
-          csv += data[key].overview.received + ';';
-          csv += data[key].overview.expenses + ';';
-          csv += data[key].overview.to_receive + ';';
-          csv += data[key].overview.sent_invoices_manager.toString() + ';';
-          csv += data[key].overview.sent_invoices_team.toString() + ';';
-          csv += data[key].overview.opened_contracts_manager.toString() + ';';
-          csv += data[key].overview.opened_contracts_team.toString() + ';';
-          csv += data[key].overview.concluded_contracts_manager.toString() + ';';
-          csv += data[key].overview.concluded_contracts_team.toString();
-          csv += '\r\n';
-        }
-
+        const csv = generateUsersReport(
+          data,
+          groupBy,
+          this.userService.idToUser.bind(this.userService),
+          this.teamService.idToSectorComposedName.bind(this.teamService)
+        );
         const blob = new Blob([csv], { type: 'text/csv' });
         saveAs(blob, 'relatorio geral.csv');
       });
