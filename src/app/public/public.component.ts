@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { PlatformConfig } from '@models/platformConfig';
 import { NbIconLibraries } from '@nebular/theme';
 import { ConfigService } from 'app/shared/services/config.service';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'ngx-public',
@@ -13,11 +13,13 @@ export class NgxPublicComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
   constructor(private iconsLibrary: NbIconLibraries, private configService: ConfigService) {
-    this.configService
-      .getConfig()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((configs) => {
-        if (configs[0]) this.config = configs[0];
+    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+      .pipe(
+        skipWhile(([configLoaded, config]) => !configLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([configLoaded, config]) => {
+        this.config = config[0];
       });
     // NINC: change for each new client
     iconsLibrary.registerSvgPack('fac', {
