@@ -15,7 +15,15 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import expense_validation from 'app/shared/expense-validation.json';
 import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
-import { isPhone, formatDate, compareFiles, forceValidatorUpdate, trackByIndex } from 'app/shared/utils';
+import {
+  isPhone,
+  formatDate,
+  compareFiles,
+  forceValidatorUpdate,
+  trackByIndex,
+  shouldNotifyManager,
+} from 'app/shared/utils';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -100,6 +108,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
+    private notificationService: NotificationService,
     protected stringUtil: StringUtilService,
     protected onedrive: OnedriveService,
     public userService: UserService,
@@ -245,6 +254,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     this.contract.createdExpenses += 1;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
+      if (shouldNotifyManager(this.contract.expenses[this.expenseIndex], this.expense)) this.notifyManager();
       this.expense.lastUpdate = new Date();
       this.contract.expenses[this.expenseIndex] = cloneDeep(this.expense);
     } else {
@@ -367,5 +377,16 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
     if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
+  }
+
+  notifyManager(): void {
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.notificationService.notify(invoice.author, {
+        title: 'Uma despesa do contrato ' + this.contract.code + ' foi paga!',
+        tag: NotificationTags.EXPENSE_PAID,
+        message: 'A despesa de código ' + this.expense.code + ' com o valor de R$ ' + this.expense.value + ' foi paga.',
+      });
+    }
   }
 }

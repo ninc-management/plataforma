@@ -17,6 +17,7 @@ export interface NotificationBody {
 
 export enum NotificationTags {
   MENTION = 'mention',
+  EXPENSE_PAID = 'expense-paid',
 }
 
 @Injectable({
