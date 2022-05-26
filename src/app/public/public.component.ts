@@ -15,10 +15,10 @@ export class NgxPublicComponent implements OnDestroy {
   constructor(private iconsLibrary: NbIconLibraries, private configService: ConfigService) {
     combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
-        skipWhile(([configLoaded, config]) => !configLoaded),
+        skipWhile(([configLoaded, _]) => !configLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([configLoaded, config]) => {
+      .subscribe(([_, config]) => {
         this.config = config[0];
       });
     // NINC: change for each new client
