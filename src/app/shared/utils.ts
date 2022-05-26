@@ -19,7 +19,7 @@ import {
   differenceInDays,
   parseISO,
 } from 'date-fns';
-import { Contract } from '@models/contract';
+import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { at, groupBy, isEqual } from 'lodash';
 import { TimeSeriesItem } from './services/metrics.service';
@@ -317,4 +317,11 @@ export function reviveDates<T>(obj: T): T {
       return parseISO(value);
     return value;
   }) as T;
+}
+
+export function shouldNotifyManager(
+  currentResource: ContractReceipt | ContractPayment | ContractExpense,
+  newResource: ContractReceipt | ContractPayment | ContractExpense
+): boolean {
+  return !currentResource.paid && newResource.paid;
 }
