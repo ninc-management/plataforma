@@ -9,6 +9,14 @@
     "minLength": 2,
     "maxLength": 5
   },
+  "sectorName": {
+    "minLength": 2,
+    "maxLength": 100
+  },
+  "sectorAbrev": {
+    "minLength": 2,
+    "maxLength": 5
+  },
   "purpose": {
     "required": true,
     "minLength": 3,
