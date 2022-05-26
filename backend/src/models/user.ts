@@ -92,7 +92,7 @@ export class User extends Base<string> {
   public profilePicture?: string;
 
   @prop({ type: () => [String] })
-  public position: string[] = [];
+  public position: string[] = ['Associado'];
 
   @prop({ required: true })
   public level: string = 'Associada Trainee';
