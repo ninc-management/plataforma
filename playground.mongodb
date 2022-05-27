@@ -511,17 +511,9 @@ db.contracts.find().forEach(function (c) {
   db.contracts.replaceOne({ _id: c._id }, c);
 });
 
-//Expense collection to team expense list
-var t = db.teams.findOne({ name: 'Nortan' });
-db.expenses.find().forEach((e) => {
-  e.subType = e.fixedType;
-  delete e.fixedType;
-  convertOldExpenseTypes(e);
-  t.expenses.push(e);
-});
-db.teams.replaceOne({ _id: t._id }, t);
-db.expenses.drop();
-
+/**
+ * Start of data migration
+ */
 //Refactor coordination to sectors
 db.users.find().forEach((u) => {
   u.sectors = [];
@@ -558,6 +550,10 @@ db.users.find().forEach((u) => {
       delete expertise.coordination;
     });
 
+  u.notifications = [];
+  u.professionalEmail = u.emailNortan;
+  delete u.emailNortan;
+
   db.users.replaceOne({ _id: u._id }, u);
 });
 
@@ -581,7 +577,7 @@ db.contracts.find().forEach((contract) => {
         });
     });
 
-  contract.checklist = []
+  contract.checklist = [];
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
 
@@ -589,84 +585,8 @@ db.invoices.find().forEach((invoice) => {
   invoice.sector = convertCoordinationToSector(invoice.coordination);
   delete invoice.coordination;
   invoice.nortanTeam = convertDepartmentToNortanTeam(invoice.department, invoice.sector);
+  invoice.prospectedBy = invoice.prospectedBy ? invoice.prospectedBy : invoice.author;
   invoice.department = undefined;
-
-  if (invoice.team)
-    invoice.team.forEach((member) => {
-      member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
-      delete member.coordination;
-    });
-
-  db.invoices.replaceOne({ _id: invoice._id }, invoice);
-});
-
-db.teams.find().forEach((team) => {
-  team.expenses.forEach((expense) => {
-    convertOldExpenseTypes(expense);
-  });
-
-  team.members.forEach((member) => {
-    member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
-    delete member.coordination;
-  });
-  team.config.path = '';
-  delete team.config.expenseTypes
-  db.teams.replaceOne({ _id: team._id }, team);
-});
-
-// Add prospectedBy field to invoices
-db.invoices.find().forEach((i) => {
- i.prospectedBy = i.prospectedBy ?  i.prospectedBy : i.author;
-  db.invoices.replaceOne({ _id: i._id }, i);
-});
-
-// Add notification list to user
-db.users.find().forEach((u) => {
-  u.notifications = [];
-  db.users.replaceOne({ _id: u._id }, u);
-});
-
-db.platformconfigs.find().forEach((config) => {
-  config.invoiceConfig = {
-    hasType: true,
-    hasHeader: true,
-    hasTeam: true,
-    hasPreliminary: true,
-    hasExecutive: true,
-    hasComplementary: true,
-    hasStageName: true,
-    hasImportants: true,
-    hasMaterialList: true,
-    nfPercentage: '0,00',
-    organizationPercentage: '0,00'
-  };
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.platformconfigs.find().forEach((config) => {
-  config.profileConfig = {
-    positions: [],
-    hasLevels: true,
-    levels: [],
-    hasTeam: true,
-    hasSector: true,
-    hasExpertiseBySector: true,
-  };
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.users.find().forEach((user) => {
-  user.professionalEmail = user.emailNortan;
-  delete user.emailNortan;
-  db.users.replaceOne({ _id: user._id }, user);
-});
-
-db.teams.find().forEach((team) => {
-  team.isOrganizationTeam = false;
-  db.teams.replaceOne({ _id: team._id }, team);
-});
-db.invoices.find().forEach((invoice) => {
-  delete invoice.valuesTablePageBreak;
   invoice.hasPageBreak = {
     valuesTable: false,
     stagesTable: false,
@@ -678,5 +598,91 @@ db.invoices.find().forEach((invoice) => {
     contractor: false,
     subject: false,
   };
+
+  if (invoice.team)
+    invoice.team.forEach((member) => {
+      member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
+      delete member.coordination;
+    });
+
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
+
+db.createCollection('platformconfigs');
+const config = {
+  expenseTypes: [],
+  invoiceConfig: {
+    hasType: true,
+    hasHeader: true,
+    hasTeam: true,
+    hasPreliminary: true,
+    hasExecutive: true,
+    hasComplementary: true,
+    hasStageName: true,
+    hasImportants: true,
+    hasMaterialList: true,
+    nfPercentage: '0,00',
+    organizationPercentage: '0,00',
+    codeAbbreviation: '',
+  },
+  profileConfig: {
+    positions: [],
+    hasLevels: true,
+    levels: [],
+    hasTeam: true,
+    hasSector: true,
+    hasExpertiseBySector: true,
+  },
+  socialConfig: {
+    youtubeLink: '',
+    linkedinLink: '',
+    instagramLink: '',
+    glassfrogLink: '',
+    gathertownLink: '',
+    companyName: '',
+  },
+  modulesConfig: {
+    hasPromotion: true,
+    hasCourse: true,
+  },
+  oneDriveConfig: {
+    isActive: false,
+  }
+};
+db.platformconfigs.insertOne(config);
+
+db.teams.find().forEach((team) => {
+  team.leader = '5eeae34b9e99900017c03ea5';
+  team.members = [];
+  team.isOrganizationTeam = false;
+  db.teams.replaceOne({ _id: team._id }, team);
+});
+
+//Expense collection to team expense list
+var t = db.teams.findOne({ name: 'Nortan' });
+db.expenses.find().forEach((e) => {
+  e.subType = e.fixedType;
+  delete e.fixedType;
+  convertOldExpenseTypes(e);
+  t.expenses.push(e);
+});
+db.teams.replaceOne({ _id: t._id }, t);
+db.expenses.drop();
+
+db.teams.find().forEach((team) => {
+  team.expenses.forEach((expense) => {
+    convertOldExpenseTypes(expense);
+  });
+
+  team.members.forEach((member) => {
+    member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
+    delete member.coordination;
+  });
+  team.config.path = '';
+  delete team.config.expenseTypes;
+  db.teams.replaceOne({ _id: team._id }, team);
+});
+
+/**
+ * Endof data migration
+ */
