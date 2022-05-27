@@ -515,46 +515,46 @@ db.contracts.find().forEach(function (c) {
  * Start of data migration
  */
 //Refactor coordination to sectors
-db.users.find().forEach((u) => {
-  u.sectors = [];
-  if (u.arquitetura) u.sectors.push('6201afc938baa8d128ac4eb4');
-  delete u.arquitetura;
-  if (u.instalacoes) u.sectors.push('6201b0fb38baa8d128ac4ed5');
-  delete u.instalacoes;
-  if (u.design) u.sectors.push('6201afc938baa8d128ac4eb5');
-  delete u.design;
-  if (u.civil) u.sectors.push('6201af9438baa8d128ac4ea2');
-  delete u.civil;
-  if (u.eletrica) u.sectors.push('6201af9438baa8d128ac4ea1');
-  delete u.eletrica;
-  if (u.incendio) u.sectors.push('6201af9438baa8d128ac4ea3');
-  delete u.incendio;
-  if (u.sanitaria) u.sectors.push('6201af9438baa8d128ac4ea4');
-  delete u.sanitaria;
-  if (u.obras) u.sectors.push('6201b04838baa8d128ac4ec4');
-  delete u.obras;
-  if (u.impermeabilizacao) u.sectors.push('6201b07238baa8d128ac4ecd');
-  delete u.impermeabilizacao;
-  if (u.ambiental) u.sectors.push('6201b398329f446f16e1b3ff');
-  delete u.ambiental;
-  if (u.hidrico) u.sectors.push('6201b398329f446f16e1b3fe');
-  delete u.hidrico;
-  if (u.adm) u.sectors.push('6201b405329f446f16e1b406');
-  delete u.adm;
+db.users.find().forEach((user) => {
+  user.sectors = [];
+  if (user.arquitetura) user.sectors.push('6201afc938baa8d128ac4eb4');
+  delete user.arquitetura;
+  if (user.instalacoes) user.sectors.push('6201b0fb38baa8d128ac4ed5');
+  delete user.instalacoes;
+  if (user.design) user.sectors.push('6201afc938baa8d128ac4eb5');
+  delete user.design;
+  if (user.civil) user.sectors.push('6201af9438baa8d128ac4ea2');
+  delete user.civil;
+  if (user.eletrica) user.sectors.push('6201af9438baa8d128ac4ea1');
+  delete user.eletrica;
+  if (user.incendio) user.sectors.push('6201af9438baa8d128ac4ea3');
+  delete user.incendio;
+  if (user.sanitaria) user.sectors.push('6201af9438baa8d128ac4ea4');
+  delete user.sanitaria;
+  if (user.obras) user.sectors.push('6201b04838baa8d128ac4ec4');
+  delete user.obras;
+  if (user.impermeabilizacao) user.sectors.push('6201b07238baa8d128ac4ecd');
+  delete user.impermeabilizacao;
+  if (user.ambiental) user.sectors.push('6201b398329f446f16e1b3ff');
+  delete user.ambiental;
+  if (user.hidrico) user.sectors.push('6201b398329f446f16e1b3fe');
+  delete user.hidrico;
+  if (user.adm) user.sectors.push('6201b405329f446f16e1b406');
+  delete user.adm;
 
-  delete u.mainDepartment;
+  delete user.mainDepartment;
 
-  if (u.expertise)
-    u.expertise.forEach((expertise) => {
+  if (user.expertise)
+    user.expertise.forEach((expertise) => {
       expertise.sector = convertCoordinationToSector(expertise.coordination);
       delete expertise.coordination;
     });
 
-  u.notifications = [];
-  u.professionalEmail = u.emailNortan;
-  delete u.emailNortan;
+  user.notifications = [];
+  user.professionalEmail = user.emailNortan;
+  delete user.emailNortan;
 
-  db.users.replaceOne({ _id: u._id }, u);
+  db.users.replaceOne({ _id: user._id }, user);
 });
 
 db.contracts.find().forEach((contract) => {
@@ -659,14 +659,14 @@ db.teams.find().forEach((team) => {
 });
 
 //Expense collection to team expense list
-var t = db.teams.findOne({ name: 'Nortan' });
-db.expenses.find().forEach((e) => {
-  e.subType = e.fixedType;
-  delete e.fixedType;
-  convertOldExpenseTypes(e);
-  t.expenses.push(e);
+var nortanTeam = db.teams.findOne({ name: 'Nortan' });
+db.expenses.find().forEach((expense) => {
+  expense.subType = expense.fixedType;
+  delete expense.fixedType;
+  convertOldExpenseTypes(expense);
+  nortanTeam.expenses.push(expense);
 });
-db.teams.replaceOne({ _id: t._id }, t);
+db.teams.replaceOne({ _id: nortanTeam._id }, nortanTeam);
 db.expenses.drop();
 
 db.teams.find().forEach((team) => {
