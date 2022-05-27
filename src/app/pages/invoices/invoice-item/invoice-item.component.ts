@@ -23,7 +23,7 @@ import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
 import { InvoiceConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
-import { NotificationBody, NotificationService } from 'app/shared/services/notification.service';
+import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 import {
   isPhone,
   tooltipTriggers,
@@ -321,14 +321,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.invoiceService.editInvoice(this.tempInvoice);
         if (this.oldStatus !== this.tempInvoice.status) {
           if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) {
-            this.notificationService.notifyMany(this.tempInvoice.team, {
-              title: 'Orçamento fechado!',
-              message:
-                'O orçamento ' +
-                this.tempInvoice.code +
-                ' que você faz parte foi fechado, confira os dados do contrato!',
-            } as NotificationBody);
             this.contractService.saveContract(this.tempInvoice);
+            this.notifyInvoiceTeam();
+            this.notifyAllUsers();
           }
         }
         this.tempInvoice.contractorName = idToProperty(
@@ -746,5 +741,28 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isNotEdited(): boolean {
     return isEqual(this.iInvoice, this.tempInvoice);
+  }
+
+  notifyAllUsers(): void {
+    combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isUserDataLoaded]) => !isUserDataLoaded),
+        take(1)
+      )
+      .subscribe(([users, _]) => {
+        this.notificationService.notifyMany(users, {
+          title: 'Contrato fechado!',
+          tag: NotificationTags.CONTRACT_SIGNED,
+          message: 'Toca o sino! O contrato ' + this.tempInvoice.code + ' foi fechado!',
+        });
+      });
+  }
+
+  notifyInvoiceTeam(): void {
+    this.notificationService.notifyMany(this.tempInvoice.team, {
+      title: 'Um contrato que você faz parte foi fechado!',
+      tag: NotificationTags.CONTRACT_SIGNED,
+      message: 'O contrato ' + this.tempInvoice.code + ' que você faz parte foi fechado, confira os dados do contrato!',
+    });
   }
 }

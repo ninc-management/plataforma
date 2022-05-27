@@ -53,6 +53,9 @@ export class UserNotification extends Base<string> {
   to: Ref<User>;
 
   @prop({ required: true })
+  tag: string = '';
+
+  @prop({ required: true })
   created: Date = new Date();
 }
 
