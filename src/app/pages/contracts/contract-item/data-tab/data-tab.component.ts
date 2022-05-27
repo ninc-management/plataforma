@@ -13,7 +13,7 @@ import { Sector } from '@models/shared';
 import { User } from '@models/user';
 import { UserService } from 'app/shared/services/user.service';
 import { LocalDataSource } from 'ng2-smart-table';
-import { isPhone, idToProperty, formatDate, trackByIndex } from 'app/shared/utils';
+import { isPhone, idToProperty, formatDate, trackByIndex, nortanPercentage, nfPercentage } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-data-tab',
@@ -25,6 +25,7 @@ export class DataTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() responseEvent = new Subject<void>();
+
   isEditionGranted = false;
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
@@ -75,6 +76,8 @@ export class DataTabComponent implements OnInit {
   ngOnInit(): void {
     this.options.interest = this.contract.receipts.length;
     this.options.paid = this.contractService.paidValue(this.contract);
+    this.options.nortanPercentage = nortanPercentage(this.contract);
+    this.options.notaFiscal = nfPercentage(this.contract);
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(

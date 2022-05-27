@@ -76,8 +76,8 @@ export class BalanceTabComponent implements OnInit {
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.options.interest = this.contract.receipts.length;
-    this.options.notaFiscal = nfPercentage(this.contract);
     this.options.nortanPercentage = nortanPercentage(this.contract);
+    this.options.notaFiscal = nfPercentage(this.contract);
   }
 
   expenseSourceSum(): ExpenseSourceSum[] {
@@ -160,8 +160,6 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
-    this.options.notaFiscal = nfPercentage(this.contract);
-    this.options.nortanPercentage = nortanPercentage(this.contract);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.notPaid = this.stringUtil.numberToMoney(
