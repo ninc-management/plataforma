@@ -419,7 +419,7 @@ describe('UtilsService', () => {
   });
 });
 
-fit('shouldNotifyManager should work', () => {
+it('shouldNotifyManager should work', () => {
   const unpaidResource = { paid: false } as ContractReceipt;
   const paidResource = { paid: true } as ContractReceipt;
   expect(shouldNotifyManager(unpaidResource, paidResource)).toBe(true);
