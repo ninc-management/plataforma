@@ -1,10 +1,10 @@
 import { ElementRef } from '@angular/core';
-import { format } from 'date-fns';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
 import { ReportValue } from 'app/pages/users/users.component';
+import { codeSort, formatDate, idToProperty } from './utils';
 
 enum GROUP_BY {
   USER = 'Usuário',
@@ -182,47 +182,4 @@ function numberToMoney(value: number, decimals = 2): string {
 
 function sumMoney(value1: string, value2: string, decimals = 2): string {
   return numberToMoney(moneyToNumber(value1) + moneyToNumber(value2), decimals);
-}
-
-//TODO: trocar depois do commit do eduardo
-function formatDate(date: Date, divider = '/'): string {
-  return format(date, 'dd' + divider + 'MM' + divider + 'yyyy');
-}
-
-function idToProperty<F extends (...arg: any) => ReturnType<F>>(
-  id: Parameters<F>[0] | undefined,
-  revival: F,
-  property: keyof ReturnType<F>
-): any {
-  if (id) return revival(id)[property];
-  return '';
-}
-
-function codeSort(direction: number, a: string, b: string): number {
-  let first = { count: 0, year: 0 };
-  let second = { count: 0, year: 0 };
-  let tmp = { count: a.match(/-(\d+)\//g), year: a.match(/\/(\d+)-/g) };
-  if (tmp.count && tmp.year)
-    tmp = {
-      count: tmp.count[0].match(/\d+/g),
-      year: tmp.year[0].match(/\d+/g),
-    };
-  if (tmp.count && tmp.year) first = { count: +tmp.count[0], year: +tmp.year[0] };
-  tmp = { count: b.match(/-(\d+)\//g), year: b.match(/\/(\d+)-/g) };
-  if (tmp.count && tmp.year)
-    tmp = {
-      count: tmp.count[0].match(/\d+/g),
-      year: tmp.year[0].match(/\d+/g),
-    };
-  if (tmp.count && tmp.year) second = { count: +tmp.count[0], year: +tmp.year[0] };
-
-  if (first.year < second.year) return -1 * direction;
-
-  if (first.year > second.year) return direction;
-
-  if (first.year == second.year) {
-    if (first.count < second.count) return -1 * direction;
-    else return direction;
-  }
-  return 0;
 }
