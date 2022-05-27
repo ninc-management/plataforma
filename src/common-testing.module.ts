@@ -85,6 +85,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TransactionService } from 'app/shared/services/transaction.service';
 import { Permissions } from 'app/shared/utils';
+import { InjectorModule } from 'app/shared/injector.module';
 
 const roles = Object.values(Permissions);
 
@@ -147,6 +148,7 @@ const IMPORTS = [
   CommonModule,
   FormsModule,
   HttpClientTestingModule,
+  InjectorModule,
   NbActionsModule,
   NbAlertModule,
   NbAuthModule,

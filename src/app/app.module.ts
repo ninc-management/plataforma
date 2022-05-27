@@ -51,6 +51,7 @@ import { interceptorProviders } from './shared/interceptors/interceptors';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import langPTBR from 'app/shared/langPT-BR';
+import { InjectorModule } from './shared/injector.module';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -136,6 +137,7 @@ registerLocaleData(ptBr);
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
+    InjectorModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),
