@@ -20,6 +20,7 @@ export enum NotificationTags {
   EXPENSE_PAID = 'expense-paid',
   PAYMENT_ORDER_PAID = 'payment-order-paid',
   RECEIPT_PAID = 'receipt-paid',
+  CONTRACT_SIGNED = 'contract-signed',
 }
 
 @Injectable({
@@ -39,7 +40,7 @@ export class NotificationService implements OnDestroy {
     if (user) {
       const notification = new UserNotification();
       notification.title = body.title;
-      // notification.tag = body.tag;
+      notification.tag = body.tag;
       notification.message = body.message;
       notification.to = this.userService.idToUser(user)._id;
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -56,7 +57,7 @@ export class NotificationService implements OnDestroy {
     const notifications: UserNotification[] = [];
     const newNotification = new UserNotification();
     newNotification.title = body.title;
-    // newNotification.tag = body.tag;
+    newNotification.tag = body.tag;
     newNotification.message = body.message;
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
       newNotification.from = user._id;

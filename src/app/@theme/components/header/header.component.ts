@@ -23,6 +23,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { tada } from './animation';
 import { isPhone, trackByIndex, elapsedTime, idToProperty, Permissions } from 'app/shared/utils';
+import { NotificationTags } from 'app/shared/services/notification.service';
 
 interface NbMenuItem {
   title: string;
@@ -70,6 +71,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    const bellRingSound = new Audio('/assets/audios/bell-rings.mp3');
+
     combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
         skipWhile(([, configLoaded, _]) => !configLoaded),
@@ -94,6 +97,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         const matchedUser = users.find((currentUser) => this.userService.isEqual(currentUser._id, this.user._id));
         if (matchedUser) {
           if (this.currentNotifications < matchedUser.notifications.length) {
+            const lastNotification = matchedUser.notifications[matchedUser.notifications.length - 1];
+            if (lastNotification.tag == NotificationTags.CONTRACT_SIGNED) bellRingSound.play();
             this.state = 'active';
           }
           this.user = matchedUser;
