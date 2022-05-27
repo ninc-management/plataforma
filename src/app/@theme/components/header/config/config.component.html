@@ -107,7 +107,17 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="
+          !form.valid || !invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab tabId="invoice-tab" [tabTitle]="isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
@@ -252,7 +262,15 @@
           </div>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large" [disabled]="!invoiceConfigForm.valid">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
@@ -479,7 +497,15 @@
           </nb-list>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
@@ -615,7 +641,15 @@
           </div>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab tabId="modules-tab" [tabTitle]="isPhone() ? '' : 'Módulos Extras'" tabIcon="cube-outline" responsive>
@@ -653,7 +687,7 @@
       <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
-  <nb-tab tabId="onedrive-tab" [tabTitle]="isPhone() ? '' : 'OneDrive'" tabIcon="file-text-outline" responsive>
+  <nb-tab tabId="onedrive-tab" [tabTitle]="isPhone() ? '' : 'OneDrive'" [tabIcon]="onedriveIcon" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
@@ -665,6 +699,7 @@
                   <td>
                     <nb-toggle
                       [(ngModel)]="config.oneDriveConfig.isActive"
+                      #toggleoneDrive="ngModel"
                       name="toggle-onedrive"
                       labelPosition="start"
                     ></nb-toggle>
@@ -711,6 +746,7 @@
                   fieldSize="large"
                   [status]="oneDriveId.dirty ? (oneDriveId.invalid ? 'danger' : 'success') : 'basic'"
                   [attr.aria-invalid]="oneDriveId.invalid && oneDriveId.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
                 />
               </div>
             </div>
@@ -744,13 +780,22 @@
                   placeholder="id da pasta compatilhada"
                   [status]="folderId.dirty ? (folderId.invalid ? 'danger' : 'success') : 'basic'"
                   [attr.aria-invalid]="folderId.invalid && folderId.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
 </nb-tabset>

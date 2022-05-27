@@ -31,6 +31,10 @@ export class ConfigComponent {
     icon: 'file-invoice-dollar',
     pack: 'fac',
   };
+  onedriveIcon = {
+    icon: 'onedrive',
+    pack: 'fac',
+  };
 
   constructor(private configService: ConfigService) {}
 
