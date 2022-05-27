@@ -33,7 +33,8 @@
 
   .table-invoice,
   .table-profile,
-  .table-modules {
+  .table-modules,
+  .table-onedrive {
     text-align: left;
     .td-left {
       padding: 10px 20px 20px 0;
@@ -84,5 +85,9 @@ hr {
 
   nb-tooltip {
     white-space: pre-wrap;
+    max-width: 25rem;
+    .content span {
+      width: 100%;
+    }
   }
 }
