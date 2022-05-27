@@ -24,9 +24,10 @@ import { Invoice } from '@models/invoice';
 import { at, groupBy, isEqual } from 'lodash';
 import { TimeSeriesItem } from './services/metrics.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Team } from '@models/team';
+import { map, take } from 'rxjs/operators';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+import { appInjector } from './injector.module';
+import { ConfigService } from './services/config.service';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -60,6 +61,15 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
 }
 
 export function nfPercentage(iDocument: Contract | Invoice): string {
+  const configService = appInjector.get(ConfigService);
+  let nfPercentage: string = '0';
+  configService
+    .getConfig()
+    .pipe(take(1))
+    .subscribe((configs) => {
+      if (configs[0]) nfPercentage = configs[0].invoiceConfig.nfPercentage;
+    });
+
   let invoice!: Invoice;
   if (isOfType<Invoice>(iDocument, ['administration'])) {
     invoice = iDocument;
@@ -69,26 +79,19 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
       invoice = iDocument.invoice;
     else return '0';
   }
-
-  if (invoice.administration == 'nortan') {
-    if (invoice.nortanTeam) {
-      if (isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'members', 'config']))
-        return invoice.nortanTeam._id == '61362107f04ddc1a6a59f390' ||
-          invoice.nortanTeam._id == '614b58d90d2cf0435ea59e52' ||
-          invoice.nortanTeam._id == '613236a07f6ed15db318c7d8'
-          ? '8,5'
-          : '15,5';
-      else
-        return invoice.nortanTeam == '61362107f04ddc1a6a59f390' ||
-          invoice.nortanTeam == '614b58d90d2cf0435ea59e52' ||
-          invoice.nortanTeam == '613236a07f6ed15db318c7d8'
-          ? '8,5'
-          : '15,5';
-    } else return '0';
-  } else return '0';
+  return invoice.administration == 'nortan' ? nfPercentage : '0';
 }
 
 export function nortanPercentage(iDocument: Contract | Invoice): string {
+  const configService = appInjector.get(ConfigService);
+  let orgPercentage: string = '0';
+  configService
+    .getConfig()
+    .pipe(take(1))
+    .subscribe((configs) => {
+      if (configs[0]) orgPercentage = configs[0].invoiceConfig.organizationPercentage;
+    });
+
   let invoice!: Invoice;
   if (isOfType<Invoice>(iDocument, ['administration'])) {
     invoice = iDocument;
@@ -98,18 +101,7 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
       invoice = iDocument.invoice;
     else return '0';
   }
-
-  if (invoice.nortanTeam) {
-    if (isOfType<Team>(invoice.nortanTeam, ['_id', 'name', 'members', 'config']))
-      return invoice.nortanTeam._id == '6201b405329f446f16e1b404'
-        ? '0'
-        : invoice.administration == 'nortan'
-        ? '15'
-        : '18';
-    else
-      return invoice.nortanTeam == '6201b405329f446f16e1b404' ? '0' : invoice.administration == 'nortan' ? '15' : '18';
-  }
-  return invoice.administration == 'nortan' ? '15' : '18';
+  return invoice.administration == 'nortan' ? orgPercentage : '0';
 }
 
 export function assingOrIncrement(base: number | undefined, increment: number): number {
