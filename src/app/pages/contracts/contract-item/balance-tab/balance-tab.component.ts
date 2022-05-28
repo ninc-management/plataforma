@@ -160,6 +160,8 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
+    this.options.nortanPercentage = nortanPercentage(this.contract);
+    this.options.notaFiscal = nfPercentage(this.contract);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.notPaid = this.stringUtil.numberToMoney(
