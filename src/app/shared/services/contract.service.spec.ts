@@ -21,9 +21,9 @@ import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
-import { Team, TeamMember } from '@models/team';
+import { ExpenseType, Team, TeamMember } from '@models/team';
 import { reviveDates } from 'app/shared/utils';
-import { PlatformConfig } from '@models/platformConfig';
+import { OneDrive, PlatformConfig } from '@models/platformConfig';
 import { ConfigService } from './config.service';
 
 describe('ContractService', () => {
@@ -34,6 +34,7 @@ describe('ContractService', () => {
   let mockedInvoices: Invoice[];
   let mockedContracts: Contract[];
   let mockedTeams: Team[];
+  let mockedConfigs: PlatformConfig[];
   let mockedChecklistItem: ContractChecklistItem[];
   let mockedConfigs: PlatformConfig[];
   const socket$ = new Subject<any>();
@@ -291,10 +292,21 @@ describe('ContractService', () => {
 
     mockedContracts.push(tmpContract);
 
-    const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
-    mockedConfigs.push(tmpConfig);
+    mockedConfigs = [];
+    let mockedConfig = new PlatformConfig();
+    let mockedExpenseType = new ExpenseType();
+    let mockedOneDrive = new OneDrive();
+
+    mockedConfig._id = '0';
+    mockedConfig.invoiceConfig.nfPercentage = '15,5';
+    mockedConfig.invoiceConfig.organizationPercentage = '15,0';
+    mockedExpenseType.name = 'mockedExpenseType1';
+    mockedExpenseType.subTypes.push('mockedExpenseSubType1');
+    mockedExpenseType.subTypes.push('mockedExpenseSubType2');
+    mockedConfig.expenseTypes.push(cloneDeep(mockedExpenseType));
+    mockedOneDrive.isActive = true;
+    mockedConfig.oneDriveConfig = mockedOneDrive;
+    mockedConfigs.push(cloneDeep(mockedConfig));
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');

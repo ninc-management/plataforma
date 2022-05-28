@@ -16,6 +16,9 @@ describe('MetricsService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const configReq = httpMock.expectOne('/api/config/all');
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush([]);
   });
 
   afterEach(() => {

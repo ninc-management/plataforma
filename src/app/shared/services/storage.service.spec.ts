@@ -31,6 +31,9 @@ describe('StorageService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const configReq = httpMock.expectOne('/api/config/all');
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush([]);
     emptyFile = new File(
       [
         'Mussum Ipsum, cacilds vidis litro abertis. Mais vale um bebadis conhecidiss, que um alcoolatra anonimis. Si num tem leite então bota uma pinga aí cumpadi! Não sou faixa preta cumpadi, sou preto inteiris, inteiris. Interagi no mé, cursus quis, vehicula ac nisi.',

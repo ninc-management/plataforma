@@ -1,15 +1,18 @@
 import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { map, take } from 'rxjs/operators';
+import { map, skipWhile, take, takeUntil } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { UserService } from 'app/shared/services/user.service';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { ConfigService } from 'app/shared/services/config.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Contract } from '@models/contract';
+import { PlatformConfig } from '@models/platformConfig';
 import { HttpClient } from '@angular/common/http';
 import { generateExpensesReport } from 'app/shared/report-generator';
 import saveAs from 'file-saver';
@@ -40,6 +43,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   types = COMPONENT_TYPES;
   onedriveUrl = '';
   availableContracts: Contract[] = [];
+  config: PlatformConfig = new PlatformConfig();
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
@@ -54,13 +58,22 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private onedrive: OnedriveService,
     private pdf: PdfService,
     private http: HttpClient,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private configService: ConfigService
   ) {
     super(derivedDocument, derivedRef);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+      .pipe(
+        skipWhile(([configLoaded, _]) => !configLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([_, config]) => {
+        this.config = config[0];
+      });
     this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT) this.getOnedriveUrl();
