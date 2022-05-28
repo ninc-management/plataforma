@@ -23,15 +23,19 @@ import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { Team, TeamMember } from '@models/team';
 import { reviveDates } from 'app/shared/utils';
+import { PlatformConfig } from '@models/platformConfig';
+import { ConfigService } from './config.service';
 
 describe('ContractService', () => {
   let service: ContractService;
+  let configService: ConfigService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
   let mockedContracts: Contract[];
   let mockedTeams: Team[];
   let mockedChecklistItem: ContractChecklistItem[];
+  let mockedConfigs: PlatformConfig[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -84,12 +88,14 @@ describe('ContractService', () => {
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
+    configService = TestBed.inject(ConfigService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTeams = [];
     mockedUsers = [];
     mockedInvoices = [];
     mockedContracts = [];
     mockedChecklistItem = [];
+    mockedConfigs = [];
 
     const tmpUser = new User();
     tmpUser._id = '0';
@@ -130,15 +136,15 @@ describe('ContractService', () => {
       user: '0',
       sector: '0',
       distribution: '60,00',
-      grossValue: '600,00',
-      netValue: '549,00',
+      grossValue: '480,00',
+      netValue: '480,00',
     });
     tmpInvoice.team.push({
       user: '1',
       sector: '1',
       distribution: '40,00',
-      grossValue: '400,00',
-      netValue: '366,00',
+      grossValue: '320,00',
+      netValue: '320,00',
     });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     tmpInvoice = new Invoice();
@@ -168,10 +174,11 @@ describe('ContractService', () => {
     mockedInvoices.push(cloneDeep(tmpInvoice));
     let tmpContract = new Contract();
     tmpContract._id = '0';
+    tmpContract.created = new Date('2021/09/14');
     tmpContract.invoice = mockedInvoices[0];
-    tmpContract.liquid = '676,00';
+    tmpContract.liquid = '574,60';
     tmpContract.balance = '800,00';
-    tmpContract.notPaid = '845,00';
+    tmpContract.notPaid = '718,25';
     tmpContract.value = '1.000,00';
     let tmpExpense = new ContractExpense();
     tmpExpense.author = mockedUsers[0];
@@ -204,14 +211,14 @@ describe('ContractService', () => {
     tmpExpense.paidDate = new Date();
     tmpExpense.team.push({
       user: mockedUsers[0],
-      value: '100,00',
-      percentage: '50,00',
+      value: '120,00',
+      percentage: '60,00',
       sector: 'Trocar',
     });
     tmpExpense.team.push({
       user: mockedUsers[1],
-      value: '100,00',
-      percentage: '50,00',
+      value: '80,00',
+      percentage: '40,00',
       sector: 'Trocar',
     });
     tmpContract.expenses.push(tmpExpense);
@@ -234,6 +241,7 @@ describe('ContractService', () => {
     mockedContracts.push(tmpContract);
     tmpContract = new Contract();
     tmpContract._id = '1';
+    tmpContract.created = new Date('2021/09/14');
     tmpContract.ISS = '2,00';
     tmpContract.liquid = '1.607,20';
     tmpContract.balance = '0,00';
@@ -282,6 +290,12 @@ describe('ContractService', () => {
     tmpContract.checklist.push(cloneDeep(mockedChecklistItem[1]));
 
     mockedContracts.push(tmpContract);
+
+    const tmpConfig = new PlatformConfig();
+    tmpConfig.invoiceConfig.nfPercentage = '15,5';
+    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
+    mockedConfigs.push(tmpConfig);
+
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -290,6 +304,11 @@ describe('ContractService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush(mockedTeams);
+
+    configService.getConfig().pipe(take(1)).subscribe();
+    const configReq = httpMock.expectOne('/api/config/all');
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush(mockedConfigs);
   });
 
   afterEach(() => {
@@ -500,9 +519,9 @@ describe('ContractService', () => {
 
   it('netValueBalance should work', () => {
     expect(service.netValueBalance(mockedInvoices[0].team[0].distribution, mockedContracts[0], mockedUsers[0])).toBe(
-      '1.405,60'
+      '1.344,76'
     );
-    expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('270,40');
+    expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('229,84');
     expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('964,32');
     expect(service.netValueBalance(mockedInvoices[1].team[1].distribution, mockedContracts[1], mockedUsers[1])).toBe(
       '642,88'
@@ -521,8 +540,8 @@ describe('ContractService', () => {
   it('percentageToReceive should work', () => {
     expect(
       service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
-    ).toBe('83,87');
-    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('16,13');
+    ).toBe('85,40');
+    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('14,60');
     expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('44,38');
     expect(
       service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
@@ -538,9 +557,9 @@ describe('ContractService', () => {
 
   it('notPaidValue should work', () => {
     expect(service.notPaidValue(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])).toBe(
-      '1.405,60'
+      '1.344,76'
     );
-    expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('270,40');
+    expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('229,84');
     expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('349,32');
     expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
       '437,88'

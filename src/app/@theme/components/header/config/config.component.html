@@ -259,6 +259,54 @@
                 </ng-container>
               </div>
             </div>
+            <div class="form-control-group col-12">
+              <div class="row">
+                <div class="col-6">
+                  <label class="label" for="input-org-percentage">Porcentagem da organização:</label>
+                  <input
+                    nbInput
+                    [(ngModel)]="config.invoiceConfig.organizationPercentage"
+                    #orgPercentage="ngModel"
+                    id="input-org-percentage"
+                    name="orgPercentage"
+                    placeholder="Porcentagem"
+                    fullWidth
+                    fieldSize="large"
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 2
+                    }"
+                    ngxSelectAllText
+                    [status]="orgPercentage.dirty ? (orgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="orgPercentage.invalid && orgPercentage.touched ? true : null"
+                  />
+                </div>
+                <div class="col-6">
+                  <label class="label" for="input-nf-percentage">Porcentagem da nota fiscal:</label>
+                  <input
+                    nbInput
+                    [(ngModel)]="config.invoiceConfig.nfPercentage"
+                    #nfPercentage="ngModel"
+                    id="input-nf-percentage"
+                    name="nfPercentage"
+                    placeholder="Porcentagem"
+                    fullWidth
+                    fieldSize="large"
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 2
+                    }"
+                    ngxSelectAllText
+                    [status]="nfPercentage.dirty ? (nfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="nfPercentage.invalid && nfPercentage.touched ? true : null"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

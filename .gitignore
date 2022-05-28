@@ -1,6 +1,7 @@
 # compiled output
 .angular
 /dist
+/dump
 /backend/angular
 /backend/models
 /backend/routes

@@ -637,6 +637,8 @@ db.platformconfigs.find().forEach((config) => {
     hasStageName: true,
     hasImportants: true,
     hasMaterialList: true,
+    nfPercentage: '0,00',
+    organizationPercentage: '0,00'
   };
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

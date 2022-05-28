@@ -13,9 +13,10 @@ import { InvoiceService } from './services/invoice.service';
 import { UserService } from './services/user.service';
 import { TeamService } from './services/team.service';
 import { ContractService } from './services/contract.service';
+import { ContractorService } from './services/contractor.service';
+import { ConfigService } from './services/config.service';
 import { take } from 'rxjs';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { ContractorService } from './services/contractor.service';
 import { Contractor } from '@models/contractor';
 import {
   assingOrIncrement,
@@ -34,6 +35,7 @@ import {
   trackByIndex,
   valueSort,
 } from './utils';
+import { PlatformConfig } from '@models/platformConfig';
 
 @Component({
   selector: 'test-cmp',
@@ -72,12 +74,14 @@ describe('UtilsService', () => {
   let teamService: TeamService;
   let contractService: ContractService;
   let contractorService: ContractorService;
+  let configService: ConfigService;
 
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
   let mockedTeams: Team[];
   let mockedContracts: Contract[];
   let mockedContractors: Contractor[];
+  let mockedConfigs: PlatformConfig[];
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
@@ -87,6 +91,7 @@ describe('UtilsService', () => {
     teamService = TestBed.inject(TeamService);
     contractService = TestBed.inject(ContractService);
     contractorService = TestBed.inject(ContractorService);
+    configService = TestBed.inject(ConfigService);
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = [];
@@ -94,6 +99,7 @@ describe('UtilsService', () => {
     mockedTeams = [];
     mockedContracts = [];
     mockedContractors = [];
+    mockedConfigs = [];
 
     const tmpUser = new User();
     tmpUser._id = '0';
@@ -147,6 +153,11 @@ describe('UtilsService', () => {
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
 
+    const tmpConfig = new PlatformConfig();
+    tmpConfig.invoiceConfig.nfPercentage = '15,5';
+    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
+    mockedConfigs.push(tmpConfig);
+
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
     expect(req.request.method).toBe('POST');
@@ -171,6 +182,11 @@ describe('UtilsService', () => {
     req = httpMock.expectOne('/api/contractor/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedContractors);
+
+    configService.getConfig().pipe(take(1)).subscribe();
+    req = httpMock.expectOne('/api/config/all');
+    expect(req.request.method).toBe('POST');
+    req.flush(mockedConfigs);
   });
 
   it('assingOrIncrement should work', () => {
@@ -273,7 +289,6 @@ describe('UtilsService', () => {
   it('nfPercentage should work', () => {
     const contract: Contract = new Contract();
     const invoice: Invoice = new Invoice();
-    expect(nfPercentage(contract)).toBe('0');
     invoice._id = '0';
     invoice.author = '0';
     invoice.nortanTeam = '61362107f04ddc1a6a59f390';
@@ -281,17 +296,13 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nfPercentage(contract)).toBe('8,5');
+    expect(nfPercentage(contract)).toBe(mockedConfigs[0].invoiceConfig.nfPercentage);
     const receipt = new ContractReceipt();
     receipt.notaFiscal = '0,00';
     contract.receipts.push(receipt);
     expect(nfPercentage(contract)).toBe('0,00');
-    invoice.nortanTeam = '614b58d90d2cf0435ea59e52';
-    expect(nfPercentage(invoice)).toBe('8,5');
-    invoice.nortanTeam = '613236a07f6ed15db318c7d8';
-    expect(nfPercentage(invoice)).toBe('8,5');
     invoice.nortanTeam = '0';
-    expect(nfPercentage(invoice)).toBe('15,5');
+    expect(nfPercentage(invoice)).toBe(mockedConfigs[0].invoiceConfig.nfPercentage);
     invoice.administration = 'pessoal';
     expect(nfPercentage(invoice)).toBe('0');
   });
@@ -307,16 +318,14 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nortanPercentage(contract)).toBe('15');
+    expect(nortanPercentage(contract)).toBe(mockedConfigs[0].invoiceConfig.organizationPercentage);
     const receipt = new ContractReceipt();
     receipt.nortanPercentage = '20,00';
     contract.receipts.push(receipt);
     expect(nortanPercentage(contract)).toBe('20,00');
     invoice.nortanTeam = '1';
-    expect(nortanPercentage(invoice)).toBe('15');
+    expect(nortanPercentage(invoice)).toBe(mockedConfigs[0].invoiceConfig.organizationPercentage);
     invoice.administration = 'pessoal';
-    expect(nortanPercentage(invoice)).toBe('18');
-    invoice.nortanTeam = '6201b405329f446f16e1b404';
     expect(nortanPercentage(invoice)).toBe('0');
   });
 
