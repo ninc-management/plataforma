@@ -15,7 +15,7 @@ import { PlatformConfig } from '@models/platformConfig';
 @Injectable({
   providedIn: 'root',
 })
-export class OnedriveService implements OnDestroy {
+export class OneDriveService implements OnDestroy {
   private destroy$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
   constructor(

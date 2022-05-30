@@ -1,17 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OnedriveService } from './onedrive.service';
+import { OneDriveService } from './onedrive.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { HttpTestingController } from '@angular/common/http/testing';
 
 describe('OnedriveService', () => {
-  let service: OnedriveService;
+  let service: OneDriveService;
   let httpMock: HttpTestingController;
 
   CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    service = TestBed.inject(OnedriveService);
+    service = TestBed.inject(OneDriveService);
     httpMock = TestBed.inject(HttpTestingController);
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');

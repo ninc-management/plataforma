@@ -3,7 +3,7 @@ import { take, takeUntil, skip } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
-import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -114,7 +114,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
     protected stringUtil: StringUtilService,
-    protected onedrive: OnedriveService,
+    protected onedrive: OneDriveService,
     public userService: UserService,
     public teamService: TeamService
   ) {

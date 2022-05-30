@@ -3,7 +3,7 @@ import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { map, skipWhile, take, takeUntil } from 'rxjs';
 import { combineLatest } from 'rxjs';
-import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PdfService } from 'app/pages/invoices/pdf.service';
@@ -55,7 +55,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private stringUtil: StringUtilService,
     private userService: UserService,
     private contractService: ContractService,
-    private onedrive: OnedriveService,
+    private onedrive: OneDriveService,
     private pdf: PdfService,
     private http: HttpClient,
     private dialogService: NbDialogService,

@@ -6,7 +6,7 @@ import { Socket } from 'ngx-socket-io';
 import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
-import { OnedriveService } from './onedrive.service';
+import { OneDriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { User } from '@models/user';
@@ -96,7 +96,7 @@ export class ContractService implements OnDestroy {
   constructor(
     private http: HttpClient,
     private wsService: WebSocketService,
-    private onedrive: OnedriveService,
+    private onedrive: OneDriveService,
     private stringUtil: StringUtilService,
     private userService: UserService,
     private socket: Socket,

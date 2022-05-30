@@ -58,7 +58,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
-import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { StorageService } from 'app/shared/services/storage.service';
@@ -232,7 +232,7 @@ const PROVIDERS = [
   NbOverlayService,
   NbToastrService,
   NbTokenService,
-  OnedriveService,
+  OneDriveService,
   PromotionService,
   RedirectGuard,
   StatecityService,

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep, isEqual } from 'lodash';
 import { skip, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
@@ -45,7 +45,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   constructor(
     protected stringUtil: StringUtilService,
-    protected onedrive: OnedriveService,
+    protected onedrive: OneDriveService,
     public configService: ConfigService,
     public teamService: TeamService,
     public userService: UserService
