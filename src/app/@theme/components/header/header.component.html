@@ -78,7 +78,7 @@
         <div class="notification-list">
           <nb-list-item
             style="display: block"
-            *ngFor="let notification of user.notifications; let i = index; trackBy: trackByIndex"
+            *ngFor="let notification of user.notifications.reverse(); let i = index; trackBy: trackByIndex"
             (click)="openNotification(i, notification)"
           >
             <nb-user
