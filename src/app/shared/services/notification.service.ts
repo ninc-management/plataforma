@@ -21,6 +21,7 @@ export enum NotificationTags {
   PAYMENT_ORDER_PAID = 'payment-order-paid',
   RECEIPT_PAID = 'receipt-paid',
   CONTRACT_SIGNED = 'contract-signed',
+  APPOINTED_AS_ASSIGNEE = 'appointed-as-assignee',
 }
 
 @Injectable({
