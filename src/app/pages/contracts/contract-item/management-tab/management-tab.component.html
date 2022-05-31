@@ -171,7 +171,7 @@
                 name="input-item-name"
                 fullWidth
                 fieldSize="large"
-                [status]="nameInput.dirty ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
+                [status]="nameInput.value ? (nameInput.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
               />
             </div>
@@ -186,7 +186,7 @@
                 fullWidth
                 fieldSize="large"
                 [nbDatepicker]="rangePicker"
-                [status]="rangeInput.dirty ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
+                [status]="rangeInput.value ? (rangeInput.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="rangeInput.invalid && rangeInput.touched ? true : null"
               />
               <nb-rangepicker #rangePicker></nb-rangepicker>
@@ -218,7 +218,7 @@
                 name="input-item-status"
                 fullWidth
                 size="large"
-                [status]="statusInput.dirty ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
+                [status]="statusInput.value ? (statusInput.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="statusInput.invalid && statusInput.touched ? true : null"
               >
                 <nb-option *ngFor="let status of avaliableItemStatus" [value]="status">
