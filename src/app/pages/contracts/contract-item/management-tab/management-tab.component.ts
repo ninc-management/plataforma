@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { User } from '@models/user';
+import { User, UserNotification } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from 'app/shared/contract-validation.json';
@@ -23,7 +23,12 @@ import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
-import { isPhone, formatDate, idToProperty, trackByIndex } from 'app/shared/utils';
+import { isPhone, formatDate, idToProperty, trackByIndex, isOfType } from 'app/shared/utils';
+
+interface newTasks {
+  newItems: ContractChecklistItem[];
+  newActions: ChecklistItemAction[];
+}
 
 @Component({
   selector: 'ngx-management-tab',
@@ -142,6 +147,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   updateContractManagement(): void {
     this.contractService.editContract(this.contract);
+    this.sendNotificationsToNewAssignees();
     this.checklistItems = cloneDeep(this.contract.checklist);
     this.isChecklistEdited = false;
   }
@@ -400,5 +406,70 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
       return false;
     });
+  }
+
+  private sendNotificationsToNewAssignees(): void {
+    const { newItems, newActions } = this.verifyNewTasks();
+
+    const notifications = [
+      ...newItems.map((item) => this.createNotification(item)),
+      ...newActions.map((action) => this.createNotification(action)),
+    ];
+
+    notifications.forEach((notification) => this.notificationService.notify(notification.to, notification));
+  }
+
+  private verifyNewTasks(): newTasks {
+    const newItems: ContractChecklistItem[] = [];
+    const newActions: ChecklistItemAction[] = [];
+
+    this.contract.checklist.forEach((item) => {
+      if (item.isNew) newItems.push(item);
+      item.isNew = false;
+      item.actionList.forEach((action) => {
+        if (action.isNew) {
+          action.parentItemName = item.name;
+          newActions.push(action);
+        }
+        action.isNew = false;
+      });
+    });
+
+    return { newItems, newActions };
+  }
+
+  private createNotification(task: ContractChecklistItem | ChecklistItemAction): UserNotification {
+    const notification = new UserNotification();
+    notification.to = task.assignee;
+    notification.tag = NotificationTags.APPOINTED_AS_ASSIGNEE;
+
+    if (isOfType<ChecklistItemAction>(task, ['isFinished'])) {
+      notification.title = 'Você foi selecionado como responsável de uma nova ação de gestão do contrato!';
+      notification.message =
+        'No contrato ' +
+        this.contract.code +
+        ', você foi selecionado como responsável da ação "' +
+        task.name +
+        '" que faz parte do item "' +
+        task.parentItemName +
+        '". O prazo inicia em ' +
+        formatDate(task.range.start) +
+        (task.range.end
+          ? ' e termina em ' + formatDate(task.range.end) + '. '
+          : ' com data de término a ser definida. ') +
+        'Abra a aba de gestão do contrato citado para conferir!';
+    } else {
+      notification.title = 'Você foi selecionado como responsável de um novo item de gestão do contrato!';
+      notification.message =
+        'No contrato ' +
+        this.contract.code +
+        ', você foi selecionado como responsável do item "' +
+        task.name +
+        '" cujo status é "' +
+        task.status +
+        '". Abra a aba de gestão do contrato citado para conferir!';
+    }
+
+    return notification;
   }
 }

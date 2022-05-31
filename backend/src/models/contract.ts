@@ -148,6 +148,9 @@ export class ChecklistItemAction {
 
   @prop()
   finishedDate?: Date;
+
+  isNew: boolean = true;
+  parentItemName: string = '';
 }
 
 export class ContractChecklistItem {
@@ -168,6 +171,8 @@ export class ContractChecklistItem {
 
   @prop({ type: () => [ChecklistItemAction] })
   actionList: ChecklistItemAction[] = [];
+
+  isNew: boolean = true;
 }
 
 @plugin(mongooseUniqueValidator)
