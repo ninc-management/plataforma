@@ -218,6 +218,21 @@ export class PaymentItemComponent implements OnInit {
     this.contractService.editContract(this.contract);
     this.isFormDirty.next(false);
     this.submit.emit();
+    if (this.payment.paid) this.notifyMember();
+  }
+
+  notifyMember() {
+    this.invoice.team.forEach((member) => {
+      const notPaidValue = this.contractService.notPaidValue(member.distribution, member.user, this.contract);
+      const valueReceived = this.contractService.receivedValue(member.user, this.contract);
+      if (notPaidValue === '0,00') {
+        this.notificationService.notify(member.user, {
+          title: 'Recebimento total do valor do contrato ' + this.contract.code,
+          tag: NotificationTags.VALUE_TO_RECEIVE_PAID,
+          message: 'Parabéns! Você recebeu o valor total de R$' + valueReceived + ' do contrato ' + this.contract.code,
+        });
+      }
+    });
   }
 
   addColaborator(): void {
