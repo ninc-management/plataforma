@@ -32,6 +32,7 @@ import {
   nfPercentage,
   nortanPercentage,
   reviveDates,
+  shouldNotifyManager,
   trackByIndex,
   valueSort,
 } from './utils';
@@ -425,4 +426,12 @@ describe('UtilsService', () => {
     expect(reviveDates(JSON.parse(JSON.stringify(test3)))).not.toEqual(test3);
     expect(reviveDates(test3)).not.toEqual(test3);
   });
+});
+
+it('shouldNotifyManager should work', () => {
+  const unpaidResource = { paid: false } as ContractReceipt;
+  const paidResource = { paid: true } as ContractReceipt;
+  expect(shouldNotifyManager(unpaidResource, paidResource)).toBe(true);
+  expect(shouldNotifyManager(paidResource, paidResource)).toBe(false);
+  expect(shouldNotifyManager(unpaidResource, unpaidResource)).toBe(false);
 });
