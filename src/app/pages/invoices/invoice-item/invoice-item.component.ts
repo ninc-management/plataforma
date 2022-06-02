@@ -750,11 +750,21 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         take(1)
       )
       .subscribe(([users, _]) => {
-        this.notificationService.notifyMany(users, {
-          title: 'Contrato fechado!',
-          tag: NotificationTags.CONTRACT_SIGNED,
-          message: 'Toca o sino! O contrato ' + this.tempInvoice.code + ' foi fechado!',
-        });
+        if (this.tempInvoice.author) {
+          const author = this.userService.idToUser(this.tempInvoice.author);
+          this.notificationService.notifyMany(users, {
+            title: 'Contrato fechado!',
+            tag: NotificationTags.CONTRACT_SIGNED,
+            message:
+              'Toca o sino! O contrato ' +
+              this.tempInvoice.code +
+              ' d' +
+              author.article +
+              ' ' +
+              (author.exibitionName ? author.exibitionName : author.fullName) +
+              ' foi fechado!',
+          });
+        }
       });
   }
 
