@@ -89,8 +89,7 @@ interface UserReceivable {
 
 interface ValueByContractor {
   contractorName: string;
-  value: string;
-  percentage: string;
+  data: ContractorInfo;
 }
 
 interface ContractorInfo {
@@ -875,7 +874,10 @@ export class MetricsService implements OnDestroy {
     return Object.entries(valueByContractor)
       .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
       .map((contractor) => {
-        return { contractorName: contractor[0], value: contractor[1].value, percentage: contractor[1].percentage };
+        return {
+          contractorName: contractor[0],
+          data: { value: contractor[1].value, percentage: contractor[1].percentage },
+        };
       });
   }
 
