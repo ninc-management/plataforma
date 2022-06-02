@@ -24,6 +24,7 @@ import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 import { isPhone, formatDate, idToProperty, trackByIndex, isOfType } from 'app/shared/utils';
+import { NgForm } from '@angular/forms';
 
 interface newTasks {
   newItems: ContractChecklistItem[];
@@ -38,8 +39,11 @@ interface newTasks {
 export class ManagementTabComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('form') ngForm: NgForm = {} as NgForm;
   @Input() contract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
   newChecklistItem = new ContractChecklistItem();
@@ -132,6 +136,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   tooltipText(): string {
     if (this.invoice.contractor)
       return (
@@ -150,6 +160,10 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.sendNotificationsToNewAssignees();
     this.checklistItems = cloneDeep(this.contract.checklist);
     this.isChecklistEdited = false;
+    this.ngForm.form.markAsPristine();
+    setTimeout(() => {
+      this.isFormDirty.next(false);
+    }, 10);
   }
 
   checklistTotalDays(): number | undefined {
@@ -186,6 +200,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
     this.contract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
+    this.newChecklistItem.status = '';
     this.assigneeSearch = '';
     this.deadline = this.contractService.deadline(this.contract);
   }
@@ -282,6 +297,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   removeItem(index: number): void {
     this.contract.checklist.splice(index, 1);
+    this.isChecklistEdited = true;
   }
 
   applyManagementModel(selectedContract: Contract): void {

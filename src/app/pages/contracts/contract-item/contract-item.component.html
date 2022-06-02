@@ -8,7 +8,11 @@
     ></ngx-data-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
-    <ngx-management-tab [contract]="contract" [isDialogBlocked]="isDialogBlocked"></ngx-management-tab>
+    <ngx-management-tab
+      [contract]="contract"
+      [isDialogBlocked]="isDialogBlocked"
+      [isFormDirty]="isFormDirty"
+    ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
     <ngx-balance-tab [contract]="contract" [responseEvent]="responseEvent"></ngx-balance-tab>
