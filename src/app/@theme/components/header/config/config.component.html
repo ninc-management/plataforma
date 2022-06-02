@@ -1,6 +1,6 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #expenseConfigform="ngForm" aria-labelledby="title">
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Lista de despesas</label>
@@ -113,7 +113,11 @@
         status="primary"
         size="large"
         [disabled]="
-          !form.valid || !invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
         Atualizar
@@ -315,14 +319,20 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
       >
         Atualizar
       </button>
     </form>
   </nb-tab>
   <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #profileConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -397,6 +407,11 @@
                   [status]="newRole.roleTypeName && newRole.permission ? 'success' : 'basic'"
                   [attr.aria-invalid]="roleType.invalid && roleType.touched ? true : null"
                 />
+                <ng-container *ngIf="errorInPositions">
+                  <p class="caption status-danger" style="position: absolute">
+                    Já há um papel com este nome na lista de papéis!
+                  </p>
+                </ng-container>
               </div>
             </div>
             <div class="col-10 col-lg-4">
@@ -445,6 +460,7 @@
                     placeholder="Nome do tipo de papel"
                     fullWidth
                     [status]="!position.roleTypeName ? 'danger' : 'basic'"
+                    [required]="true"
                   />
                 </div>
                 <div class="col-9 col-lg-4" style="margin-left: 5px">
@@ -497,6 +513,9 @@
                   [status]="newLevel ? 'success' : 'basic'"
                   [attr.aria-invalid]="levelType.invalid && levelType.touched ? true : null"
                 />
+                <ng-container *ngIf="errorInLevels">
+                  <p class="caption status-danger" style="position: absolute">Já há um enquadramento com este nome!</p>
+                </ng-container>
               </div>
             </div>
             <div class="col-2">
@@ -528,6 +547,7 @@
                     placeholder="Nome do tipo de enquadramento"
                     fullWidth
                     [status]="config.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
+                    [required]="true"
                   />
                 </div>
                 <div class="col-2">
@@ -550,7 +570,13 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
       >
         Atualizar
       </button>
@@ -694,14 +720,20 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
       >
         Atualizar
       </button>
     </form>
   </nb-tab>
   <nb-tab tabId="modules-tab" [tabTitle]="isPhone() ? '' : 'Módulos Extras'" tabIcon="cube-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #moduleConfigform="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -732,7 +764,21 @@
           </div>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab tabId="onedrive-tab" [tabTitle]="isPhone() ? '' : 'OneDrive'" [tabIcon]="onedriveIcon" responsive>
@@ -840,7 +886,13 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="!invoiceConfigForm.valid || (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
       >
         Atualizar
       </button>

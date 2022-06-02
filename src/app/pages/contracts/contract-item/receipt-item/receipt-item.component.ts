@@ -1,16 +1,18 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { cloneDeep } from 'lodash';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map, skipWhile, take } from 'rxjs/operators';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { ContractReceipt, Contract } from '@models/contract';
 import contract_validation from '../../../../shared/payment-validation.json';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
-import { NgForm } from '@angular/forms';
+import { UserService } from 'app/shared/services/user.service';
+import { ConfigService } from 'app/shared/services/config.service';
+import { ContractReceipt, Contract } from '@models/contract';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -50,10 +52,12 @@ export class ReceiptItemComponent implements OnInit {
   formatDate = formatDate;
 
   constructor(
+    private configService: ConfigService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
     private stringUtil: StringUtilService,
+    private userService: UserService,
     public accessChecker: NbAccessChecker
   ) {}
 
@@ -138,7 +142,35 @@ export class ReceiptItemComponent implements OnInit {
     }
 
     this.isFormDirty.next(false);
+    this.notifyFinancial();
     this.contractService.editContract(this.contract);
+  }
+
+  notifyFinancial(): void {
+    combineLatest([
+      this.userService.getUsers(),
+      this.configService.getConfig(),
+      this.userService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(([_, , isUserDataLoaded, isConfigDataLoaded]) => !isUserDataLoaded || !isConfigDataLoaded),
+        take(1),
+        map(([users, config, , _]) => {
+          return users.filter((user) =>
+            config[0].profileConfig.positions.some((pos) => {
+              return user.position.includes(pos.roleTypeName) && pos.permission === 'Financeiro';
+            })
+          );
+        })
+      )
+      .subscribe((users) => {
+        this.notificationService.notifyMany(users, {
+          title: 'Nova ordem de empenho ' + this.contract.code,
+          tag: NotificationTags.RECEIPT_ORDER_CREATED,
+          message: `O gestor do contrato ${this.contract.fullName} criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.contract.code}.`,
+        });
+      });
   }
 
   updateContractStatusHistory(): void {

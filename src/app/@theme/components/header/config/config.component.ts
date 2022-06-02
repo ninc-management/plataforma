@@ -17,7 +17,10 @@ export class ConfigComponent {
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
+  PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   validation = config_validation as any;
+  errorInPositions = false;
+  errorInLevels = false;
 
   isPhone = isPhone;
   trackByIndex = trackByIndex;
@@ -44,13 +47,17 @@ export class ConfigComponent {
   }
 
   addRole(): void {
-    this.config.profileConfig.positions.push(cloneDeep(this.newRole));
+    this.errorInPositions = this.config.profileConfig.positions.some(
+      (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.PARENTS.includes(this.newRole.roleTypeName)
+    );
+    if (!this.errorInPositions) this.config.profileConfig.positions.push(cloneDeep(this.newRole));
     this.newRole.roleTypeName = '';
     this.newRole.permission = '';
   }
 
   addLevel(): void {
-    this.config.profileConfig.levels.push(this.newLevel);
+    this.errorInLevels = this.config.profileConfig.levels.includes(this.newLevel);
+    if (!this.errorInLevels) this.config.profileConfig.levels.push(this.newLevel);
     this.newLevel = '';
   }
 
