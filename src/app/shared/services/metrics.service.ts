@@ -18,6 +18,7 @@ import {
   groupByDateTimeSerie,
   nfPercentage,
   nortanPercentage,
+  valueSort,
 } from '../utils';
 
 export type TimeSeriesItem = [string, number];
@@ -84,6 +85,17 @@ export interface ReceivableByContract {
 interface UserReceivable {
   totalValue: string;
   receivableContracts: ReceivableByContract[];
+}
+
+interface ValueByContractor {
+  contractorName: string;
+  value: string;
+  percentage: string;
+}
+
+interface ContractorInfo {
+  value: string;
+  percentage: string;
 }
 
 @Injectable({
@@ -837,6 +849,73 @@ export class MetricsService implements OnDestroy {
         );
       })
     );
+  }
+
+  accumulatedValueByContractor(topK = 10): Observable<ValueByContractor[]> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.contractorService.getContractors(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(
+        ([, , , isContractDataLoaded, isContractorDataLoaded, isInvoiceDataLoaded]) =>
+          !(isContractDataLoaded && isContractorDataLoaded && isInvoiceDataLoaded)
+      ),
+      map(([contracts, , , , ,]) => {
+        const valueByContractor = this.contractValueSumByContractor(contracts);
+        return this.sortContractorsByValue(valueByContractor).slice(0, topK);
+      })
+    );
+  }
+
+  private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
+    return Object.entries(valueByContractor)
+      .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
+      .map((contractor) => {
+        return { contractorName: contractor[0], value: contractor[1].value, percentage: contractor[1].percentage };
+      });
+  }
+
+  private calculatePercentagesByContractor(
+    valueByContractor: Record<string, ContractorInfo>,
+    totalValue: string
+  ): void {
+    Object.keys(valueByContractor).forEach((contractorName) => {
+      valueByContractor[contractorName].percentage = this.stringUtil.toPercentage(
+        valueByContractor[contractorName].value,
+        totalValue
+      );
+    });
+  }
+
+  private contractValueSumByContractor(contracts: Contract[]): Record<string, ContractorInfo> {
+    let totalValue = '0,00';
+    const valueByContractor = contracts.reduce((valueByContractor: Record<string, ContractorInfo>, contract) => {
+      if (contract.invoice) {
+        const invoice = this.invoiceService.idToInvoice(contract.invoice);
+        if (invoice.contractor) {
+          const contractorName = this.contractorService.idToContractor(invoice.contractor).fullName;
+
+          if (!valueByContractor[contractorName]) {
+            valueByContractor[contractorName] = { value: '0,00', percentage: '0,00%' };
+          }
+
+          valueByContractor[contractorName].value = this.stringUtil.sumMoney(
+            valueByContractor[contractorName].value,
+            invoice.value
+          );
+
+          totalValue = this.stringUtil.sumMoney(totalValue, invoice.value);
+        }
+      }
+      return valueByContractor;
+    }, {});
+
+    this.calculatePercentagesByContractor(valueByContractor, totalValue);
+    return valueByContractor;
   }
 
   private receivableValue(contract: Contract, member: InvoiceTeamMember): string {
