@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Contract } from '@models/contract';
 import { BehaviorSubject, combineLatest, map, Observable, of, Subject, take, takeUntil } from 'rxjs';
 import * as contract_validation from 'app/shared/contract-validation.json';
@@ -14,6 +14,7 @@ import { User } from '@models/user';
 import { UserService } from 'app/shared/services/user.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { isPhone, idToProperty, formatDate, trackByIndex, nortanPercentage, nfPercentage } from 'app/shared/utils';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-data-tab',
@@ -25,6 +26,8 @@ export class DataTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() responseEvent = new Subject<void>();
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
   isEditionGranted = false;
   validation = (contract_validation as any).default;
@@ -110,6 +113,12 @@ export class DataTabComponent implements OnInit {
     this.updateLiquid();
     this.updateTeamTotal();
     this.applyDistribution();
+  }
+
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
   }
 
   ngOnDestroy(): void {
@@ -291,6 +300,10 @@ export class DataTabComponent implements OnInit {
     this.contract = cloneDeep(this.clonedContract);
     this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.contract);
+    this.ngForm.form.markAsPristine();
+    setTimeout(() => {
+      this.isFormDirty.next(false);
+    }, 10);
   }
 
   applyDistribution(): void {

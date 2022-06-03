@@ -11,6 +11,7 @@ import { fromEvent, BehaviorSubject, Subject } from 'rxjs';
 export class BaseDialogComponent implements OnInit {
   protected destroy$ = new Subject<void>();
   isBlocked = new BehaviorSubject<boolean>(false);
+  isFormDirty = new BehaviorSubject<boolean>(false);
 
   constructor(@Inject(NB_DOCUMENT) protected document: Document, @Optional() protected ref: NbDialogRef<any>) {}
 
