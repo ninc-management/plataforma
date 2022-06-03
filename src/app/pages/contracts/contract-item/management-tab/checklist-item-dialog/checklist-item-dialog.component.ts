@@ -1,15 +1,17 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional, ViewChild } from '@angular/core';
 import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { AVALIABLE_MANAGEMENT_ITEM_STATUS } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, take } from 'rxjs';
 import { idToProperty, formatDate } from 'app/shared/utils';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-checklist-item-dialog',
@@ -19,6 +21,7 @@ import { idToProperty, formatDate } from 'app/shared/utils';
 export class ChecklistItemDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() itemIndex?: number;
+  @ViewChild('form') ngForm: NgForm = {} as NgForm;
   invoice: Invoice = new Invoice();
   checklistItem: ContractChecklistItem = new ContractChecklistItem();
   actionList!: ChecklistItemAction[];
@@ -34,6 +37,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ChecklistItemDialogComponent>,
     private invoiceService: InvoiceService,
+    private dialogService: NbDialogService,
     public userService: UserService
   ) {
     super(derivedDocument, derivedRef);
@@ -51,8 +55,33 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     }
   }
 
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   dismiss(): void {
-    super.dismiss();
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else {
+      super.dismiss();
+    }
   }
 
   registerAction(): void {
@@ -73,7 +102,10 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
     if (this.itemIndex !== undefined) {
       this.checklistItem.actionList = cloneDeep(this.actionList);
       this.contract.checklist[this.itemIndex] = cloneDeep(this.checklistItem);
-      this.dismiss();
+      setTimeout(() => {
+        this.isFormDirty.next(false);
+        this.dismiss();
+      }, 10);
     }
   }
 

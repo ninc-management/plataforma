@@ -63,7 +63,7 @@
                 name="new-action-name"
                 fullWidth
                 fieldSize="large"
-                [status]="newNameInput.dirty ? (newNameInput.invalid ? 'danger' : 'success') : 'basic'"
+                [status]="newNameInput.value ? (newNameInput.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="newNameInput.invalid && newNameInput.touched ? true : null"
               />
             </div>
@@ -78,7 +78,7 @@
                 fullWidth
                 fieldSize="large"
                 [nbDatepicker]="inputRangePicker"
-                [status]="newRangeInput.dirty ? (newRangeInput.invalid ? 'danger' : 'success') : 'basic'"
+                [status]="newRangeInput.value ? (newRangeInput.invalid ? 'danger' : 'success') : 'basic'"
                 [attr.aria-invalid]="newRangeInput.invalid && newRangeInput.touched ? true : null"
               />
 
