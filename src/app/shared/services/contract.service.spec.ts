@@ -23,7 +23,7 @@ import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { Team, TeamMember } from '@models/team';
 import { reviveDates } from 'app/shared/utils';
-import { OneDrive, PlatformConfig } from '@models/platformConfig';
+import { OneDriveConfig, PlatformConfig } from '@models/platformConfig';
 import { ConfigService } from './config.service';
 
 describe('ContractService', () => {
@@ -294,7 +294,7 @@ describe('ContractService', () => {
 
     mockedConfigs = [];
     let mockedConfig = new PlatformConfig();
-    let mockedOneDrive = new OneDrive();
+    let mockedOneDrive = new OneDriveConfig();
 
     mockedConfig._id = '0';
     mockedConfig.invoiceConfig.nfPercentage = '15,5';

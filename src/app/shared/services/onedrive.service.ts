@@ -24,16 +24,17 @@ export class OneDriveService implements OnDestroy {
     private teamService: TeamService,
     private configService: ConfigService
   ) {
-    teamService
-      .getTeams()
-      .pipe(take(1))
-      .subscribe(() => {});
-    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+    combineLatest([
+      teamService.getTeams(),
+      this.configService.getConfig(),
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
       .pipe(
-        skipWhile(([configLoaded, _]) => !configLoaded),
+        skipWhile(([_, , isTeamDataLoaded, isConfigDataLoaded]) => !isTeamDataLoaded || !isConfigDataLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([_, config]) => {
+      .subscribe(([_, config, ,]) => {
         this.config = config[0];
       });
   }
@@ -146,7 +147,7 @@ export class OneDriveService implements OnDestroy {
         );
       }
     }
-    return of('');
+    return of('').pipe(take(1));
   }
 
   deleteFiles(path: string, filesToRemove: UploadedFile[]): void {

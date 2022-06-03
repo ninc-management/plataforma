@@ -76,7 +76,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
       });
     this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
-    if (this.componentType == COMPONENT_TYPES.CONTRACT) this.getOnedriveUrl();
+    if (this.componentType == COMPONENT_TYPES.CONTRACT && this.config.oneDriveConfig.isActive) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         this.contractService
