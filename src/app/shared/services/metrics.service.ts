@@ -887,6 +887,7 @@ export class MetricsService implements OnDestroy {
     return this.accumulatedValueByContractor().pipe(
       takeUntil(this.destroy$),
       map((valueByContractor) => {
+        //This array is ordered by descending order
         return valueByContractor.filter((contractorInfo) => {
           const contractorPercentage = this.stringUtil.moneyToNumber(contractorInfo.data.percentage.slice(0, -1));
           if (!hasAchievedLimit && accumulatedPercentage + contractorPercentage <= 80) {
