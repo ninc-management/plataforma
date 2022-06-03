@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
 import { take, takeUntil, skip } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -24,6 +24,7 @@ import {
   shouldNotifyManager,
 } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -34,6 +35,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   @Input() contract = new Contract();
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
+
   invoice = new Invoice();
   hasInitialContract = true;
   validation = expense_validation as any;
@@ -135,6 +139,12 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     });
 
     this.initialFiles = cloneDeep(this.uploadedFiles);
+  }
+
+  ngAfterViewInit(): void {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
   }
 
   fillContractData(): void {
@@ -262,7 +272,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       this.contract.expenses.push(cloneDeep(this.expense));
     }
     this.contractService.editContract(this.contract);
-    this.submit.emit();
+    setTimeout(() => {
+      this.isFormDirty.next(false);
+      this.submit.emit();
+    }, 10);
   }
 
   addAndClean(): void {
@@ -281,6 +294,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
     this.updatePaidDate();
+    this.ngForm.form.markAsPristine();
+    setTimeout(() => {
+      this.isFormDirty.next(false);
+    }, 10);
   }
 
   overPaid(): string {
