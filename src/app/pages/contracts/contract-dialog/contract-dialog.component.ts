@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { map, take } from 'rxjs/operators';
 import { OnedriveService } from 'app/shared/services/onedrive.service';
@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { generateExpensesReport } from 'app/shared/report-generator';
 import saveAs from 'file-saver';
 import { isPhone, codeSort, tooltipTriggers } from 'app/shared/utils';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 export enum COMPONENT_TYPES {
   CONTRACT,
@@ -52,7 +53,8 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     private contractService: ContractService,
     private onedrive: OnedriveService,
     private pdf: PdfService,
-    private http: HttpClient
+    private http: HttpClient,
+    private dialogService: NbDialogService
   ) {
     super(derivedDocument, derivedRef);
   }
@@ -112,7 +114,26 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   dismiss(): void {
-    super.dismiss();
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else {
+      super.dismiss();
+    }
   }
 
   getOnedriveUrl(): void {
