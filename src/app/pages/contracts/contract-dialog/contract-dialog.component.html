@@ -185,6 +185,7 @@
               [contract]="contract"
               [expenseIndex]="expenseIndex"
               [availableContracts]="availableContracts"
+              [isFormDirty]="isFormDirty"
               (submit)="dismiss()"
               *ngIf="componentType == types.EXPENSE"
             ></ngx-expense-item>
