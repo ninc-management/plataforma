@@ -45,7 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userPictureOnly = false;
   user = new User();
   logoIcon = 'logo';
-  currentNotifications = 0;
+  currentNotificationsQtd = 0;
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
   userMenu: NbMenuItem[] = [
@@ -71,7 +71,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const bellRingSound = new Audio('/assets/audios/bell-rings.mp3');
+    const multipleBellRing = new Audio('/assets/audios/multipleBellRing.mp3');
+    const singleBellRing = new Audio('/assets/audios/singleBellRing.mp3');
 
     combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
@@ -81,28 +82,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, , config]) => {
         this.user = currentUser;
-        this.currentNotifications = currentUser.notifications.length;
+        this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
         this.menuTitle = config[0].socialConfig.companyName;
       });
 
-    this.userService
-      .getUsers()
+    combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
       .pipe(
-        takeUntil(this.destroy$),
-        filter((users) => users.length > 0)
+        skipWhile(([_, isUserDataLoaded]) => !isUserDataLoaded),
+        takeUntil(this.destroy$)
       )
-      .subscribe((users) => {
+      .subscribe(([users, _]) => {
         const matchedUser = users.find((currentUser) => this.userService.isEqual(currentUser._id, this.user._id));
         if (matchedUser) {
-          if (this.currentNotifications < matchedUser.notifications.length) {
+          if (this.currentNotificationsQtd < matchedUser.notifications.length) {
             const lastNotification = matchedUser.notifications[matchedUser.notifications.length - 1];
-            if (lastNotification.tag == NotificationTags.CONTRACT_SIGNED) bellRingSound.play();
+            if (lastNotification.tag == NotificationTags.CONTRACT_SIGNED) multipleBellRing.play();
+            else singleBellRing.play();
+
             this.state = 'active';
           }
           this.user = matchedUser;
-          this.currentNotifications = matchedUser.notifications.length;
+          this.currentNotificationsQtd = matchedUser.notifications.length;
         }
       });
 
