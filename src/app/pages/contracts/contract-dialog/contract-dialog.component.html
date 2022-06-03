@@ -171,6 +171,7 @@
               [contract]="contract"
               [paymentIndex]="paymentIndex"
               [availableContracts]="availableContracts"
+              [isFormDirty]="isFormDirty"
               (submit)="dismiss()"
               *ngIf="componentType == types.PAYMENT"
             ></ngx-payment-item>

@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -18,6 +18,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
 import { trackByIndex, formatDate, idToProperty, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-payment-item',
@@ -30,7 +31,10 @@ export class PaymentItemComponent implements OnInit {
   @Input() availableContracts: Contract[] = [];
   @Input() paymentIndex?: number;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
+  @ViewChild('form') ngForm = {} as NgForm;
+
   invoice = new Invoice();
   hasInitialContract = true;
   validation = contract_validation as any;
@@ -111,6 +115,12 @@ export class PaymentItemComponent implements OnInit {
     );
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
+  }
+
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
   }
 
   confirmationDialog(index: number): void {
@@ -206,6 +216,7 @@ export class PaymentItemComponent implements OnInit {
       this.contract.payments.push(cloneDeep(this.payment));
     }
     this.contractService.editContract(this.contract);
+    this.isFormDirty.next(false);
     this.submit.emit();
   }
 
