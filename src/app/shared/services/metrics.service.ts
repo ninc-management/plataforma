@@ -881,6 +881,25 @@ export class MetricsService implements OnDestroy {
       });
   }
 
+  parettoRank(): Observable<ValueByContractor[]> {
+    let accumulatedPercentage = 0;
+    let hasAchievedLimit = false;
+    return this.accumulatedValueByContractor().pipe(
+      takeUntil(this.destroy$),
+      map((valueByContractor) => {
+        return valueByContractor.filter((contractorInfo) => {
+          const contractorPercentage = this.stringUtil.moneyToNumber(contractorInfo.data.percentage.slice(0, -1));
+          if (!hasAchievedLimit && accumulatedPercentage + contractorPercentage <= 80) {
+            accumulatedPercentage += contractorPercentage;
+            return true;
+          }
+          hasAchievedLimit = true;
+          return false;
+        });
+      })
+    );
+  }
+
   private calculatePercentagesByContractor(
     valueByContractor: Record<string, ContractorInfo>,
     totalValue: string
