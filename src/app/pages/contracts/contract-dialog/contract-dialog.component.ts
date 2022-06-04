@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
 import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { map, skipWhile, take, takeUntil } from 'rxjs';
-import { combineLatest } from 'rxjs';
+import { map, skipWhile, take, takeUntil, combineLatest } from 'rxjs';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';

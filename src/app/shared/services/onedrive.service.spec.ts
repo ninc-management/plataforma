@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
+import { HttpTestingController } from '@angular/common/http/testing';
+import { cloneDeep } from 'lodash';
 import { OneDriveService } from './onedrive.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { HttpTestingController } from '@angular/common/http/testing';
+import { DEFAULT_CONFIG } from './config.service';
 
 describe('OnedriveService', () => {
   let service: OneDriveService;
@@ -17,48 +19,11 @@ describe('OnedriveService', () => {
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
     const configReq = httpMock.expectOne('/api/config/all');
-    const defaultConfig = {
-      expenseTypes: [],
-      invoiceConfig: {
-        hasType: true,
-        hasHeader: true,
-        hasTeam: true,
-        hasPreliminary: true,
-        hasExecutive: true,
-        hasComplementary: true,
-        hasStageName: true,
-        hasImportants: true,
-        hasMaterialList: true,
-        nfPercentage: '0,00',
-        organizationPercentage: '0,00',
-        codeAbbreviation: '',
-      },
-      profileConfig: {
-        positions: [],
-        hasLevels: true,
-        levels: [],
-        hasTeam: true,
-        hasSector: true,
-        hasExpertiseBySector: true,
-      },
-      socialConfig: {
-        youtubeLink: '',
-        linkedinLink: '',
-        instagramLink: '',
-        glassfrogLink: '',
-        gathertownLink: '',
-        companyName: '',
-      },
-      modulesConfig: {
-        hasPromotion: true,
-        hasCourse: true,
-      },
-      oneDriveConfig: {
-        isActive: false,
-      },
-    };
+    const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    tmpConfig._id = '0';
+    const mockedConfigs = [tmpConfig];
     expect(configReq.request.method).toBe('POST');
-    configReq.flush(defaultConfig);
+    configReq.flush(mockedConfigs);
   });
 
   afterEach(() => {

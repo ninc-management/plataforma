@@ -5,6 +5,47 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { WebSocketService } from './web-socket.service';
 
+export const DEFAULT_CONFIG = {
+  expenseTypes: [],
+  invoiceConfig: {
+    hasType: true,
+    hasHeader: true,
+    hasTeam: true,
+    hasPreliminary: true,
+    hasExecutive: true,
+    hasComplementary: true,
+    hasStageName: true,
+    hasImportants: true,
+    hasMaterialList: true,
+    nfPercentage: '0,00',
+    organizationPercentage: '0,00',
+    codeAbbreviation: '',
+  },
+  profileConfig: {
+    positions: [],
+    hasLevels: true,
+    levels: [],
+    hasTeam: true,
+    hasSector: true,
+    hasExpertiseBySector: true,
+  },
+  socialConfig: {
+    youtubeLink: '',
+    linkedinLink: '',
+    instagramLink: '',
+    glassfrogLink: '',
+    gathertownLink: '',
+    companyName: '',
+  },
+  modulesConfig: {
+    hasPromotion: true,
+    hasCourse: true,
+  },
+  oneDriveConfig: {
+    isActive: false,
+  },
+};
+
 @Injectable({
   providedIn: 'root',
 })
