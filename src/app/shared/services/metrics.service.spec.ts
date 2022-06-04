@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MetricsService } from './metrics.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { cloneDeep } from 'lodash';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { MetricsService } from './metrics.service';
+import { DEFAULT_CONFIG } from './config.service';
 
 describe('MetricsService', () => {
   let service: MetricsService;
@@ -16,6 +18,12 @@ describe('MetricsService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const configReq = httpMock.expectOne('/api/config/all');
+    const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    tmpConfig._id = '0';
+    const mockedConfigs = [tmpConfig];
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush(mockedConfigs);
   });
 
   afterEach(() => {

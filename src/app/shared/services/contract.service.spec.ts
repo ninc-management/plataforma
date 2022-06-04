@@ -11,20 +11,20 @@ import {
   ChecklistItemAction,
 } from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '@models/user';
-import { Invoice } from '@models/invoice';
-import { Subject } from 'rxjs';
+import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
-import { AuthService } from 'app/auth/auth.service';
 import { Socket } from 'ngx-socket-io';
-import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
-import { take } from 'rxjs/operators';
-import { Team, TeamMember } from '@models/team';
+import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
-import { PlatformConfig } from '@models/platformConfig';
 import { ConfigService } from './config.service';
+import { CONTRACT_BALANCE } from './user.service';
+import { DEFAULT_CONFIG } from './config.service';
+import { User } from '@models/user';
+import { Invoice } from '@models/invoice';
+import { Team, TeamMember } from '@models/team';
+import { PlatformConfig } from '@models/platformConfig';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -34,8 +34,8 @@ describe('ContractService', () => {
   let mockedInvoices: Invoice[];
   let mockedContracts: Contract[];
   let mockedTeams: Team[];
-  let mockedChecklistItem: ContractChecklistItem[];
   let mockedConfigs: PlatformConfig[];
+  let mockedChecklistItem: ContractChecklistItem[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -291,10 +291,12 @@ describe('ContractService', () => {
 
     mockedContracts.push(tmpContract);
 
-    const tmpConfig = new PlatformConfig();
+    let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    tmpConfig._id = '0';
     tmpConfig.invoiceConfig.nfPercentage = '15,5';
     tmpConfig.invoiceConfig.organizationPercentage = '15,0';
-    mockedConfigs.push(tmpConfig);
+    tmpConfig.oneDriveConfig.isActive = true;
+    mockedConfigs = [tmpConfig];
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');

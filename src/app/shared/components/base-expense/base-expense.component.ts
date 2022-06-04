@@ -4,7 +4,7 @@ import { User } from '@models/user';
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { SPLIT_TYPES } from 'app/shared/services/contract.service';
-import { OnedriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
@@ -48,7 +48,7 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
 
   constructor(
     protected stringUtil: StringUtilService,
-    protected onedrive: OnedriveService,
+    protected onedrive: OneDriveService,
     public userService: UserService
   ) {}
 

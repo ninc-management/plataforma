@@ -5,7 +5,7 @@ import { from, Observable, Subject } from 'rxjs';
 import { switchMap, take, filter } from 'rxjs/operators';
 import { StorageProvider } from 'app/@theme/components/file-uploader/file-uploader.model';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { OnedriveService } from './onedrive.service';
+import { OneDriveService } from './onedrive.service';
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
   downloadUrl$: Observable<UploadedFile | string>;
@@ -20,7 +20,7 @@ export class StorageService implements OnDestroy {
   constructor(
     private storage: AngularFireStorage,
     private http: HttpClient,
-    private onedriveService: OnedriveService
+    private onedriveService: OneDriveService
   ) {}
 
   ngOnDestroy(): void {

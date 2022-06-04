@@ -31,6 +31,49 @@ describe('StorageService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const configReq = httpMock.expectOne('/api/config/all');
+    const defaultConfig = {
+      expenseTypes: [],
+      invoiceConfig: {
+        hasType: true,
+        hasHeader: true,
+        hasTeam: true,
+        hasPreliminary: true,
+        hasExecutive: true,
+        hasComplementary: true,
+        hasStageName: true,
+        hasImportants: true,
+        hasMaterialList: true,
+        nfPercentage: '0,00',
+        organizationPercentage: '0,00',
+        codeAbbreviation: '',
+      },
+      profileConfig: {
+        positions: [],
+        hasLevels: true,
+        levels: [],
+        hasTeam: true,
+        hasSector: true,
+        hasExpertiseBySector: true,
+      },
+      socialConfig: {
+        youtubeLink: '',
+        linkedinLink: '',
+        instagramLink: '',
+        glassfrogLink: '',
+        gathertownLink: '',
+        companyName: '',
+      },
+      modulesConfig: {
+        hasPromotion: true,
+        hasCourse: true,
+      },
+      oneDriveConfig: {
+        isActive: false,
+      },
+    };
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush(defaultConfig);
     emptyFile = new File(
       [
         'Mussum Ipsum, cacilds vidis litro abertis. Mais vale um bebadis conhecidiss, que um alcoolatra anonimis. Si num tem leite então bota uma pinga aí cumpadi! Não sou faixa preta cumpadi, sou preto inteiris, inteiris. Interagi no mé, cursus quis, vehicula ac nisi.',

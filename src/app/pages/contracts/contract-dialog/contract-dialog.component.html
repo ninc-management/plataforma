@@ -110,31 +110,33 @@
               >
                 <i class="icon-file-csv"></i>
               </button>
-              <a
-                *ngIf="onedriveUrl.length > 0 && componentType == types.CONTRACT"
-                nbButton
-                ghost
-                [href]="onedriveUrl"
-                target="_blank"
-                nbTooltip="Abrir no Onedrive"
-                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                nbTooltipPlacement="bottom"
-                nbTooltipStatus="info"
-              >
-                <nb-icon icon="onedrive" pack="fac"></nb-icon>
-              </a>
-              <button
-                *ngIf="onedriveUrl?.length === 0 && componentType == types.CONTRACT"
-                nbButton
-                ghost
-                nbTooltip="Criar pasta no Onedrive"
-                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                nbTooltipPlacement="bottom"
-                nbTooltipStatus="info"
-                (click)="addToOnedrive()"
-              >
-                <nb-icon icon="onedrive-add" pack="fac"></nb-icon>
-              </button>
+              <div *ngIf="config.oneDriveConfig.isActive">
+                <a
+                  *ngIf="onedriveUrl.length > 0 && componentType == types.CONTRACT"
+                  nbButton
+                  ghost
+                  [href]="onedriveUrl"
+                  target="_blank"
+                  nbTooltip="Abrir no Onedrive"
+                  [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                  nbTooltipPlacement="bottom"
+                  nbTooltipStatus="info"
+                >
+                  <nb-icon icon="onedrive" pack="fac"></nb-icon>
+                </a>
+                <button
+                  *ngIf="onedriveUrl?.length === 0 && componentType == types.CONTRACT"
+                  nbButton
+                  ghost
+                  nbTooltip="Criar pasta no Onedrive"
+                  [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                  nbTooltipPlacement="bottom"
+                  nbTooltipStatus="info"
+                  (click)="addToOnedrive()"
+                >
+                  <nb-icon icon="onedrive-add" pack="fac"></nb-icon>
+                </button>
+              </div>
               <button
                 nbButton
                 ghost

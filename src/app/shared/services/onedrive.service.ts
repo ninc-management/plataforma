@@ -1,24 +1,41 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
 import { environment } from '../../../environments/environment';
 import { Invoice } from '@models/invoice';
 import { Contract } from '@models/contract';
-import { take, map } from 'rxjs/operators';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, of, combineLatest, take, map, skipWhile, takeUntil } from 'rxjs';
 import { TeamService } from './team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { isOfType } from '../utils';
+import { ConfigService } from './config.service';
+import { PlatformConfig } from '@models/platformConfig';
 
 @Injectable({
   providedIn: 'root',
 })
-export class OnedriveService {
-  constructor(private http: HttpClient, private userService: UserService, private teamService: TeamService) {
-    teamService
-      .getTeams()
-      .pipe(take(1))
-      .subscribe(() => {});
+export class OneDriveService implements OnDestroy {
+  private destroy$ = new Subject<void>();
+  config: PlatformConfig = new PlatformConfig();
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+    private teamService: TeamService,
+    private configService: ConfigService
+  ) {
+    combineLatest([
+      teamService.getTeams(),
+      this.configService.getConfig(),
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(([_, , isTeamDataLoaded, isConfigDataLoaded]) => !isTeamDataLoaded || !isConfigDataLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([_, config, ,]) => {
+        this.config = config[0];
+      });
   }
 
   private generateBasePath(invoice: Invoice, concluded = false): string {
@@ -68,82 +85,96 @@ export class OnedriveService {
     const modelFolder = 'ORC-000_ANO-NOME DO CONTRATO-GESTOR';
     const path = this.generateBasePath(invoice) + modelFolder;
     const isComplete$ = new Subject<boolean>();
-
-    this.http
-      .get(this.oneDriveURI() + path)
-      .pipe(take(1))
-      .subscribe((metadata: any) => {
-        const body = {
-          parentReference: {
-            driveId: metadata.parentReference.driveId,
-            id: metadata.parentReference.id,
-          },
-          name: this.generateFolderName(invoice),
-        };
-        if (environment.onedriveUri) {
-          let copyURI: string;
-          if (environment.onedriveUri.match(/root/g)?.length) copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
-          else copyURI = environment.onedriveUri;
-          this.http
-            .post(copyURI + metadata.id + '/copy', body)
-            .pipe(take(1))
-            .subscribe(() => isComplete$.next(true));
-        }
-      });
+    if (this.config.oneDriveConfig.isActive) {
+      this.http
+        .get(this.oneDriveURI() + path)
+        .pipe(take(1))
+        .subscribe((metadata: any) => {
+          const body = {
+            parentReference: {
+              driveId: metadata.parentReference.driveId,
+              id: metadata.parentReference.id,
+            },
+            name: this.generateFolderName(invoice),
+          };
+          if (environment.onedriveUri) {
+            let copyURI: string;
+            if (environment.onedriveUri.match(/root/g)?.length)
+              copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
+            else copyURI = environment.onedriveUri;
+            this.http
+              .post(copyURI + metadata.id + '/copy', body)
+              .pipe(take(1))
+              .subscribe(() => isComplete$.next(true));
+          }
+        });
+    }
     return isComplete$;
   }
 
   moveToConcluded(invoice: Invoice): void {
     const originalPath = this.generatePath(invoice);
-
-    this.http
-      .get(this.oneDriveURI() + this.generateBasePath(invoice, true))
-      .pipe(take(1))
-      .subscribe((metadata: any) => {
-        const body = {
-          parentReference: {
-            id: metadata.id,
-          },
-          name: this.generateFolderName(invoice),
-        };
-        this.http
-          .patch(this.oneDriveURI() + originalPath, body)
-          .pipe(take(1))
-          .subscribe();
-      });
+    if (this.config.oneDriveConfig.isActive) {
+      this.http
+        .get(this.oneDriveURI() + this.generateBasePath(invoice, true))
+        .pipe(take(1))
+        .subscribe((metadata: any) => {
+          const body = {
+            parentReference: {
+              id: metadata.id,
+            },
+            name: this.generateFolderName(invoice),
+          };
+          this.http
+            .patch(this.oneDriveURI() + originalPath, body)
+            .pipe(take(1))
+            .subscribe();
+        });
+    }
   }
 
   webUrl(contract: Contract): Observable<string> {
-    if (isOfType<Invoice>(contract.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])) {
-      const invoice = contract.invoice;
-      const concluded = invoice.status === 'Concluído';
-      return this.http.get(this.oneDriveURI() + this.generatePath(invoice, concluded)).pipe(
-        take(1),
-        map((metadata: any): string => metadata.webUrl)
-      );
+    if (this.config.oneDriveConfig.isActive) {
+      if (
+        isOfType<Invoice>(contract.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])
+      ) {
+        const invoice = contract.invoice;
+        const concluded = invoice.status === 'Concluído';
+        return this.http.get(this.oneDriveURI() + this.generatePath(invoice, concluded)).pipe(
+          take(1),
+          map((metadata: any): string => metadata.webUrl)
+        );
+      }
     }
-    return of('');
+    return of('').pipe(take(1));
   }
 
   deleteFiles(path: string, filesToRemove: UploadedFile[]): void {
-    this.http
-      .get(this.oneDriveURI() + path + ':/children')
-      .pipe(take(1))
-      .subscribe((metadata: any) => {
-        if (metadata.value) {
-          metadata.value.forEach((data: any) => {
-            filesToRemove.forEach((file) => {
-              if (file.name === data.name) {
-                this.http
-                  .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
-                  .pipe(take(1))
-                  .subscribe(() => console.log('Arquivo apagado!'));
-                const index = filesToRemove.indexOf(file, 0);
-                if (index > -1) filesToRemove.splice(index, 1);
-              }
+    if (this.config.oneDriveConfig.isActive) {
+      this.http
+        .get(this.oneDriveURI() + path + ':/children')
+        .pipe(take(1))
+        .subscribe((metadata: any) => {
+          if (metadata.value) {
+            metadata.value.forEach((data: any) => {
+              filesToRemove.forEach((file) => {
+                if (file.name === data.name) {
+                  this.http
+                    .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
+                    .pipe(take(1))
+                    .subscribe(() => console.log('Arquivo apagado!'));
+                  const index = filesToRemove.indexOf(file, 0);
+                  if (index > -1) filesToRemove.splice(index, 1);
+                }
+              });
             });
-          });
-        }
-      });
+          }
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

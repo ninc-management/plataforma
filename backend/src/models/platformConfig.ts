@@ -96,7 +96,7 @@ export class ModulesConfig {
   hasCourse: boolean = true;
 }
 
-export class OneDrive {
+export class OneDriveConfig {
   @prop({ required: true })
   isActive: boolean = false;
 
@@ -124,7 +124,7 @@ export class PlatformConfig extends Base<string> {
   modulesConfig: ModulesConfig = new ModulesConfig();
 
   @prop({ required: true })
-  oneDriveConfig: OneDrive = new OneDrive();
+  oneDriveConfig: OneDriveConfig = new OneDriveConfig();
 }
 
 export default getModelForClass(PlatformConfig);
