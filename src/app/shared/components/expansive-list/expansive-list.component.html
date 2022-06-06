@@ -1,0 +1,13 @@
+<div>
+  <nb-card [ngStyle]="{ 'max-height.px': isExpanded ? null : maxHeight }">
+    <nb-card-header #cardHeader>{{ title }}</nb-card-header>
+    <nb-list>
+      <nb-list-item #listItem *ngFor="let contractor of itens; let i = index; trackBy: trackByIndex">
+        {{ contractor }}
+      </nb-list-item>
+    </nb-list>
+  </nb-card>
+  <button nbButton type="button" fullWidth size="small" class="show-more" (click)="toggleExpansive()">
+    Mostrar {{ isExpanded ? 'menos' : 'mais' }}
+  </button>
+</div>
