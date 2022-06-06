@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { NbAccessChecker } from '@nebular/security';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
@@ -10,6 +10,7 @@ import { ContractReceipt, Contract } from '@models/contract';
 import contract_validation from '../../../../shared/payment-validation.json';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -20,6 +21,8 @@ export class ReceiptItemComponent implements OnInit {
   @Input() contract = new Contract();
   @Input() availableContracts: Contract[] = [];
   @Input() receiptIndex?: number;
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
   hasInitialContract = true;
   validation = contract_validation as any;
   today = new Date();
@@ -57,6 +60,12 @@ export class ReceiptItemComponent implements OnInit {
   ngOnInit(): void {
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
+  }
+
+  ngAfterViewInit(): void {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
   }
 
   fillContractData(): void {
@@ -128,6 +137,7 @@ export class ReceiptItemComponent implements OnInit {
       this.updateContractStatusHistory();
     }
 
+    this.isFormDirty.next(false);
     this.contractService.editContract(this.contract);
   }
 
