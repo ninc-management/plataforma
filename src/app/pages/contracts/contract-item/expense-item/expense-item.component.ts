@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { take, takeUntil, skip, skipWhile, map } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { take, takeUntil, skip } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
@@ -114,7 +114,6 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
-    private configService: ConfigService,
     protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
     public userService: UserService,
@@ -273,42 +272,19 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       this.expense.code = '#' + this.contract.createdExpenses.toString();
       this.contract.expenses.push(cloneDeep(this.expense));
     }
-    this.notifyFinancial();
+    if (this.expense.author) {
+      const expenseAuthor = this.userService.idToUser(this.expense.author);
+      this.notificationService.notifyFinancial({
+        title: 'Nova ordem de despesa ' + this.contract.code,
+        tag: NotificationTags.EXPENSE_ORDER_CREATED,
+        message: `${expenseAuthor.fullName} criou a ordem de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
+      });
+    }
     this.contractService.editContract(this.contract);
     setTimeout(() => {
       this.isFormDirty.next(false);
       this.submit.emit();
     }, 10);
-  }
-
-  notifyFinancial(): void {
-    combineLatest([
-      this.userService.getUsers(),
-      this.configService.getConfig(),
-      this.userService.isDataLoaded$,
-      this.configService.isDataLoaded$,
-    ])
-      .pipe(
-        skipWhile(([_, isUserDataLoaded, isConfigDataLoaded]) => !isUserDataLoaded || !isConfigDataLoaded),
-        take(1),
-        map(([users, config]) => {
-          return users.filter((user) =>
-            config[0].profileConfig.positions.some((pos) => {
-              return user.position.includes(pos.roleTypeName) && pos.permission === 'Financeiro';
-            })
-          );
-        })
-      )
-      .subscribe((users) => {
-        if (this.expense.author) {
-          const expenseAuthor = this.userService.idToUser(this.expense.author);
-          this.notificationService.notifyMany(users, {
-            title: 'Nova ordem de despesa ' + this.contract.code,
-            tag: NotificationTags.EXPENSE_ORDER_CREATED,
-            message: `${expenseAuthor.fullName} criou a ordem de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
-          });
-        }
-      });
   }
 
   addAndClean(): void {

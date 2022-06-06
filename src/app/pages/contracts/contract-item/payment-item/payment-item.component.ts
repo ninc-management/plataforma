@@ -2,8 +2,8 @@ import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angu
 import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map, skipWhile, take } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -217,7 +217,11 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.contract.payments.push(cloneDeep(this.payment));
     }
-    this.notifyFinancial();
+    this.notificationService.notifyFinancial({
+      title: 'Nova pagamento ' + this.contract.code,
+      tag: NotificationTags.PAYMENT_ORDER_CREATED,
+      message: `O gestor do contrato ${this.contract.fullName} criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.code}.`,
+    });
     this.contractService.editContract(this.contract);
     this.isFormDirty.next(false);
     this.submit.emit();
@@ -240,33 +244,6 @@ export class PaymentItemComponent implements OnInit {
         }
       }
     });
-  }
-
-  notifyFinancial(): void {
-    combineLatest([
-      this.userService.getUsers(),
-      this.configService.getConfig(),
-      this.userService.isDataLoaded$,
-      this.configService.isDataLoaded$,
-    ])
-      .pipe(
-        skipWhile(([_, isUserDataLoaded, isConfigDataLoaded]) => !isUserDataLoaded || !isConfigDataLoaded),
-        take(1),
-        map(([users, config]) => {
-          return users.filter((user) =>
-            config[0].profileConfig.positions.some((pos) => {
-              return user.position.includes(pos.roleTypeName) && pos.permission === 'Financeiro';
-            })
-          );
-        })
-      )
-      .subscribe((users) => {
-        this.notificationService.notifyMany(users, {
-          title: 'Nova pagamento ' + this.contract.code,
-          tag: NotificationTags.PAYMENT_ORDER_CREATED,
-          message: `O gestor do contrato ${this.contract.fullName} criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.code}.`,
-        });
-      });
   }
 
   addColaborator(): void {

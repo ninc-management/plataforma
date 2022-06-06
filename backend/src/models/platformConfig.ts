@@ -1,12 +1,9 @@
-import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
-import mongooseUniqueValidator from 'mongoose-unique-validator';
-
+import { prop, getModelForClass } from '@typegoose/typegoose';
 import { Base } from './base';
 import { ExpenseType } from './team';
 
-@plugin(mongooseUniqueValidator)
 export class AccessControl {
-  @prop({ required: true, unique: true })
+  @prop({ required: true })
   roleTypeName: string = '';
 
   @prop({ required: true })
