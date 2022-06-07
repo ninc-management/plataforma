@@ -27,7 +27,11 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-promotion-item [iPromotion]="promotion" (submit)="dismiss()"></ngx-promotion-item>
+        <ngx-promotion-item
+          [iPromotion]="promotion"
+          [isFormDirty]="isFormDirty"
+          (submit)="dismiss()"
+        ></ngx-promotion-item>
       </nb-card-body>
     </nb-card>
   </div>
