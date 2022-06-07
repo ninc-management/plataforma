@@ -11,6 +11,7 @@ import { Invoice, InvoiceProduct, InvoiceMaterial } from '@models/invoice';
 import { User } from '@models/user';
 import { HttpClient } from '@angular/common/http';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'ngx-invoice-dialog',
@@ -44,7 +45,26 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
   }
 
   dismiss(): void {
-    super.dismiss();
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else {
+      super.dismiss();
+    }
   }
 
   useAsModel(): void {

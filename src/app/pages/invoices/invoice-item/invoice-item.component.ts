@@ -17,7 +17,7 @@ import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
 import invoice_validation from 'app/shared/invoice-validation.json';
-import { NgModel, ValidatorFn, Validators } from '@angular/forms';
+import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { Team } from '@models/team';
 import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
@@ -52,9 +52,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() iInvoice = new Invoice();
   @Input() tempInvoice = new Invoice();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
-  @ViewChild('contractor', { static: true })
-  contractorFieldRef!: NgModel;
+  @ViewChild('contractor', { static: true }) contractorFieldRef!: NgModel;
+  @ViewChild('form') ngForm = {} as NgForm;
+
   private CONTRACTOR_NAME = 'teste';
   teamMember: InvoiceTeamMember = {
     user: undefined,
@@ -293,6 +295,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     //TODO: Trocar para addValidator no Angular 12
     this.contractorFieldRef.control.setValidators([Validators.required, this.isTestContractor()]);
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
   }
 
   isTestContractor(): ValidatorFn {
@@ -333,6 +338,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         );
 
         this.iInvoice = cloneDeep(this.tempInvoice);
+        this.isFormDirty.next(false);
       }
     } else {
       this.tempInvoice.lastUpdate = new Date();
@@ -347,6 +353,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
           this.notifyAllUsers();
         }
       });
+      this.isFormDirty.next(false);
       this.submit.emit();
     }
   }
