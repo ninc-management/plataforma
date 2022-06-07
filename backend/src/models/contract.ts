@@ -123,6 +123,9 @@ export class ContractReceipt {
 
   @prop()
   paidDate?: Date;
+
+  @prop()
+  dueDate?: Date;
 }
 
 export class DateRange {
