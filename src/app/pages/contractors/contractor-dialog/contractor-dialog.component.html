@@ -27,7 +27,11 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-contractor-item [iContractor]="contractor" (submit)="dismiss()"></ngx-contractor-item>
+        <ngx-contractor-item
+          [iContractor]="contractor"
+          (submit)="dismiss()"
+          [isFormDirty]="isFormDirty"
+        ></ngx-contractor-item>
       </nb-card-body>
     </nb-card>
   </div>
