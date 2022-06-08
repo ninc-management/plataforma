@@ -20,9 +20,10 @@ import teamRoutes from './routes/team';
 import courseRoutes from './routes/course';
 import publicRoutes from './routes/public';
 import configRoutes from './routes/platformConfig';
-import notificationRoutes, { overdueReceiptNotification } from './routes/notification';
+import notificationRoutes from './routes/notification';
 import transactionRoutes from './routes/transaction';
 import internalTransactionRoutes from './routes/internalTransaction';
+import { overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public app;

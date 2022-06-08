@@ -1,18 +1,15 @@
 import * as express from 'express';
-import UserModel, { User } from '../models/user';
-import InvoiceModel, { Invoice } from '../models/invoice';
-import ContractModel, { Contract } from '../models/contract';
+import UserModel from '../models/user';
 import { UserNotification } from '../models/user';
 import { Mutex } from 'async-mutex';
 import { notification$, usersMap } from '../shared/global';
 import { cloneDeep, isEqual } from 'lodash';
-import { differenceInDays } from 'date-fns';
 
 const router = express.Router();
 const mutex = new Mutex();
 let lastNotification: UserNotification;
 
-function updateNotification(notification: UserNotification, res: any) {
+export function updateNotification(notification: UserNotification, res: any) {
   UserModel.findByIdAndUpdate(
     notification.to,
     { $push: { notifications: notification } },
@@ -33,40 +30,6 @@ function updateNotification(notification: UserNotification, res: any) {
       }
     }
   );
-}
-
-function sendNotification(invoice: Invoice, author: User, days: number): void {
-  const notification = new UserNotification();
-  notification.title = 'Pagamento pendente';
-  notification.message =
-    days > 0
-      ? `A data prevista para o pagamento de uma das parcelas da ordem de empenho do contrato ${invoice.code} já passou fazem ${days} dias.`
-      : `Faltam ${
-          days * -1
-        } dias para a data prevista do pagamento de uma das parcelas da ordens de empenho do contrato ${invoice.code}.`;
-  notification.to = author._id;
-  notification.from = author._id;
-  lastNotification = notification;
-  updateNotification(notification, undefined);
-}
-
-export async function overdueReceiptNotification() {
-  const contracts: Contract[] = await ContractModel.find({});
-  contracts.map((contract) => {
-    contract.receipts.map(async (receipt) => {
-      const dueDate = receipt.dueDate;
-      if (dueDate && !receipt.paid) {
-        const invoice = await InvoiceModel.findOne({ _id: contract.invoice });
-        const author = await UserModel.findOne({ _id: invoice.author });
-        const days = differenceInDays(new Date().getTime(), dueDate.getTime());
-        if (days == -3) {
-          sendNotification(invoice, author, days);
-        } else if (days % 3 == 0 && days > 0) {
-          sendNotification(invoice, author, days);
-        }
-      }
-    });
-  });
 }
 
 /**
