@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, of, take } from 'rxjs';
 import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
 import contract_validation from '../../../../shared/payment-validation.json';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
@@ -53,6 +54,7 @@ export class ReceiptItemComponent implements OnInit {
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
     private stringUtil: StringUtilService,
+    private userService: UserService,
     public accessChecker: NbAccessChecker
   ) {}
 
@@ -137,11 +139,19 @@ export class ReceiptItemComponent implements OnInit {
     }
 
     this.isFormDirty.next(false);
-    this.notificationService.notifyFinancial({
-      title: 'Nova ordem de empenho ' + this.contract.code,
-      tag: NotificationTags.RECEIPT_ORDER_CREATED,
-      message: `O gestor do contrato ${this.contract.fullName} criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.contract.code}.`,
-    });
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      if (invoice.author) {
+        const manager = this.userService.idToUser(invoice.author);
+        this.notificationService.notifyFinancial({
+          title: 'Nova ordem de empenho ' + this.contract.code,
+          tag: NotificationTags.RECEIPT_ORDER_CREATED,
+          message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
+            manager.fullName
+          } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.contract.code}.`,
+        });
+      }
+    }
     this.contractService.editContract(this.contract);
   }
 

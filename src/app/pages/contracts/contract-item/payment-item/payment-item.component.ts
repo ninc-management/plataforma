@@ -217,11 +217,19 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.contract.payments.push(cloneDeep(this.payment));
     }
-    this.notificationService.notifyFinancial({
-      title: 'Nova pagamento ' + this.contract.code,
-      tag: NotificationTags.PAYMENT_ORDER_CREATED,
-      message: `O gestor do contrato ${this.contract.fullName} criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.code}.`,
-    });
+    if (this.contract.invoice) {
+      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      if (invoice.author) {
+        const manager = this.userService.idToUser(invoice.author);
+        this.notificationService.notifyFinancial({
+          title: 'Nova pagamento ' + this.contract.code,
+          tag: NotificationTags.PAYMENT_ORDER_CREATED,
+          message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
+            manager.fullName
+          } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.code}.`,
+        });
+      }
+    }
     this.contractService.editContract(this.contract);
     this.isFormDirty.next(false);
     this.submit.emit();

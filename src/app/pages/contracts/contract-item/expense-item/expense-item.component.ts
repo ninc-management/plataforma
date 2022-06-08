@@ -277,7 +277,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       this.notificationService.notifyFinancial({
         title: 'Nova ordem de despesa ' + this.contract.code,
         tag: NotificationTags.EXPENSE_ORDER_CREATED,
-        message: `${expenseAuthor.fullName} criou a ordem de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
+        message: `${expenseAuthor.article.toUpperCase()} ${
+          expenseAuthor.fullName
+        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
       });
     }
     this.contractService.editContract(this.contract);
