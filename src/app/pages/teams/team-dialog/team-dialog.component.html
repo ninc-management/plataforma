@@ -42,11 +42,17 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-team-item *ngIf="componentType === dTypes.TEAM" (submit)="dismiss()" [iTeam]="iTeam"></ngx-team-item>
+        <ngx-team-item
+          *ngIf="componentType === dTypes.TEAM"
+          (submit)="dismiss()"
+          [iTeam]="iTeam"
+          [isFormDirty]="isFormDirty"
+        ></ngx-team-item>
         <ngx-team-expense-item
           *ngIf="componentType === dTypes.EXPENSE"
           [iTeam]="iTeam"
           [expenseIdx]="expenseIdx"
+          [isFormDirty]="isFormDirty"
           (submit)="dismiss()"
         ></ngx-team-expense-item>
         <ngx-team-expenses
@@ -55,7 +61,11 @@
           [iTeam]="iTeam._id"
           (submit)="dismiss()"
         ></ngx-team-expenses>
-        <ngx-user-transaction *ngIf="componentType === dTypes.TRANSFER" (submit)="dismiss()"></ngx-user-transaction>
+        <ngx-user-transaction
+          *ngIf="componentType === dTypes.TRANSFER"
+          [isFormDirty]="isFormDirty"
+          (submit)="dismiss()"
+        ></ngx-user-transaction>
       </nb-card-body>
     </nb-card>
   </div>

@@ -1,9 +1,11 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { Team } from '@models/team';
 import { TeamService } from 'app/shared/services/team.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { take } from 'rxjs';
 
 export enum TEAM_COMPONENT_TYPES {
   TEAM,
@@ -31,6 +33,7 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<TeamDialogComponent>,
+    private dialogService: NbDialogService,
     public teamService: TeamService
   ) {
     super(derivedDocument, derivedRef);
@@ -41,7 +44,26 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   }
 
   dismiss(): void {
-    super.dismiss();
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else {
+      super.dismiss();
+    }
   }
 
   handleTeamStatusChange(): void {
