@@ -12,8 +12,8 @@
         'overflow-y': hasOverflow && isExpanded ? 'scroll' : 'hidden'
       }"
     >
-      <nb-list-item #listItem *ngFor="let contractor of itens; let i = index; trackBy: trackByIndex">
-        {{ contractor }}
+      <nb-list-item #listItem *ngFor="let item of itens; let i = index; trackBy: trackByIndex">
+        {{ item }}
       </nb-list-item>
     </nb-list>
   </nb-card>
