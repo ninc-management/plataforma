@@ -44,7 +44,7 @@ export class CourseDialogComponent extends BaseDialogComponent implements OnInit
       this.dialogService
         .open(ConfirmationDialogComponent, {
           context: {
-            question: 'Deseja descartar as alterações feitas',
+            question: 'Deseja descartar as alterações feitas?',
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
