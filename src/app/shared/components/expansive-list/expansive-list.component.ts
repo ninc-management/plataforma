@@ -9,7 +9,7 @@ import { trackByIndex } from 'app/shared/utils';
 export class ExpansiveListComponent implements OnInit {
   @ViewChild('list', { read: ElementRef }) list!: ElementRef;
   @Input() title = '';
-  @Input() itens: string[] = [];
+  @Input() items: string[] = [];
   @Input() min?: number = 5;
   @Input() max?: number;
 
@@ -24,8 +24,8 @@ export class ExpansiveListComponent implements OnInit {
   ngOnInit(): void {
     if (!this.max && this.min) {
       this.max = this.min * 2;
-      if (this.itens.length > this.max) this.hasOverflow = true;
-      if (this.itens.length <= this.min) this.hasUnderflow = true;
+      if (this.items.length > this.max) this.hasOverflow = true;
+      if (this.items.length <= this.min) this.hasUnderflow = true;
     }
 
     //All values are used as rem

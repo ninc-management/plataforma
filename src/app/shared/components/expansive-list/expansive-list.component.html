@@ -12,7 +12,7 @@
         'overflow-y': hasOverflow && isExpanded ? 'scroll' : 'hidden'
       }"
     >
-      <nb-list-item #listItem *ngFor="let item of itens; let i = index; trackBy: trackByIndex">
+      <nb-list-item #listItem *ngFor="let item of items; let i = index; trackBy: trackByIndex">
         {{ item }}
       </nb-list-item>
     </nb-list>
