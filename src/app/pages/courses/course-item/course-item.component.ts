@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Course } from '@models/course';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
@@ -11,15 +11,18 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CourseDialogComponent, DIALOG_TYPES } from '../course-dialog/course-dialog.component';
 import { trackByIndex } from 'app/shared/utils';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-course-item',
   templateUrl: './course-item.component.html',
   styleUrls: ['./course-item.component.scss'],
 })
-export class CourseItemComponent implements OnInit {
+export class CourseItemComponent implements OnInit, AfterViewInit {
   @Input() iCourse = new Course();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
   course: Course = new Course();
   validation = course_validation as any;
   editing = false;
@@ -55,12 +58,19 @@ export class CourseItemComponent implements OnInit {
     this.availableParticipants = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
   }
 
+  ngAfterViewInit(): void {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   registerCourse(): void {
     if (this.iCourse._id != undefined) {
       this.courseService.editCourse(this.course);
     } else {
       this.courseService.saveCourse(this.course);
     }
+    this.isFormDirty.next(false);
   }
 
   addSpeaker(): void {
