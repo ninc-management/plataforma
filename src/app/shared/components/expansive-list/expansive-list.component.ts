@@ -15,18 +15,12 @@ export class ExpansiveListComponent implements OnInit {
 
   minHeight = 0;
   maxHeight = 0;
-  hasOverflow = false;
-  hasUnderflow = false;
   isExpanded = false;
 
   trackByIndex = trackByIndex;
 
   ngOnInit(): void {
-    if (!this.max && this.min) {
-      this.max = this.min * 2;
-      if (this.items.length > this.max) this.hasOverflow = true;
-      if (this.items.length <= this.min) this.hasUnderflow = true;
-    }
+    if (!this.max && this.min) this.max = this.min * 2;
 
     //All values are used as rem
     const borderWitdh = 0.063;
@@ -39,7 +33,7 @@ export class ExpansiveListComponent implements OnInit {
   }
 
   toggleExpansive(): void {
-    if (this.hasOverflow && this.isExpanded) this.list.nativeElement.scrollTop = 0;
+    if (this.max && this.items.length > this.max && this.isExpanded) this.list.nativeElement.scrollTop = 0;
     this.isExpanded = !this.isExpanded;
   }
 }
