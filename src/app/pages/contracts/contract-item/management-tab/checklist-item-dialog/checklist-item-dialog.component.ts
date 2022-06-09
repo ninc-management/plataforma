@@ -66,7 +66,7 @@ export class ChecklistItemDialogComponent extends BaseDialogComponent implements
       this.dialogService
         .open(ConfirmationDialogComponent, {
           context: {
-            question: 'Deseja descartar as alterações feitas',
+            question: 'Deseja descartar as alterações feitas?',
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
