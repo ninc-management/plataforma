@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { trackByIndex } from 'app/shared/utils';
 
 @Component({
@@ -6,10 +6,8 @@ import { trackByIndex } from 'app/shared/utils';
   templateUrl: './expansive-list.component.html',
   styleUrls: ['./expansive-list.component.scss'],
 })
-export class ExpansiveListComponent implements OnInit, AfterViewInit {
+export class ExpansiveListComponent implements OnInit {
   @ViewChild('list', { read: ElementRef }) list!: ElementRef;
-  @ViewChild('listItem', { read: ElementRef }) listItem!: ElementRef;
-  @ViewChild('cardHeader', { read: ElementRef }) cardHeader!: ElementRef;
   @Input() title = '';
   @Input() itens: string[] = [];
   @Input() min?: number = 5;
@@ -23,25 +21,21 @@ export class ExpansiveListComponent implements OnInit, AfterViewInit {
 
   trackByIndex = trackByIndex;
 
-  constructor() {}
-
   ngOnInit(): void {
     if (!this.max && this.min) {
       this.max = this.min * 2;
       if (this.itens.length > this.max) this.hasOverflow = true;
-      if (this.itens.length < this.min) this.hasUnderflow = true;
+      if (this.itens.length <= this.min) this.hasUnderflow = true;
     }
-  }
 
-  ngAfterViewInit(): void {
-    const cardOffset = 4;
-
-    setTimeout(() => {
-      const cardHeaderHeight = this.cardHeader.nativeElement.offsetHeight;
-      const listItemHeight = this.listItem.nativeElement.offsetHeight;
-      if (this.min) this.minHeight = cardHeaderHeight - cardOffset + listItemHeight * this.min;
-      if (this.max) this.maxHeight = cardHeaderHeight - cardOffset + listItemHeight * this.max;
-    }, 10);
+    //All values are used as rem
+    const borderWitdh = 0.063;
+    //Padding (top + bottom) + line height + border for both constants
+    const cardHeaderHeight = 2 + 1.5 + borderWitdh;
+    const listItemHeight = 2 + 1.25 + borderWitdh;
+    //It's necessary to sum 1 borderWitdh because the first list item has a top border
+    if (this.min) this.minHeight = cardHeaderHeight + borderWitdh + listItemHeight * this.min;
+    if (this.max) this.maxHeight = cardHeaderHeight + borderWitdh + listItemHeight * this.max;
   }
 
   toggleExpansive(): void {
