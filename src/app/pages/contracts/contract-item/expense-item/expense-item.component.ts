@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { take, takeUntil, skip } from 'rxjs/operators';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
@@ -9,11 +10,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
-import { User } from '@models/user';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import expense_validation from 'app/shared/expense-validation.json';
-import { Sector } from '@models/shared';
 import { TeamService } from 'app/shared/services/team.service';
 import {
   isPhone,
@@ -24,7 +21,11 @@ import {
   shouldNotifyManager,
 } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
-import { NgForm } from '@angular/forms';
+import { ConfigService } from 'app/shared/services/config.service';
+import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Sector } from '@models/shared';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -270,6 +271,16 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     } else {
       this.expense.code = '#' + this.contract.createdExpenses.toString();
       this.contract.expenses.push(cloneDeep(this.expense));
+    }
+    if (this.expense.author) {
+      const expenseAuthor = this.userService.idToUser(this.expense.author);
+      this.notificationService.notifyFinancial({
+        title: 'Nova ordem de despesa ' + this.contract.code,
+        tag: NotificationTags.EXPENSE_ORDER_CREATED,
+        message: `${expenseAuthor.article.toUpperCase()} ${
+          expenseAuthor.fullName
+        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
+      });
     }
     this.contractService.editContract(this.contract);
     setTimeout(() => {
