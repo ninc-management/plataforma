@@ -4,7 +4,7 @@ import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
-
+import cron from 'node-cron';
 // import logger from 'morgan';
 // Import API endpoint routes
 import { isUserAuthenticated, notifyByEmail } from './shared/util';
@@ -23,6 +23,7 @@ import configRoutes from './routes/platformConfig';
 import notificationRoutes from './routes/notification';
 import transactionRoutes from './routes/transaction';
 import internalTransactionRoutes from './routes/internalTransaction';
+import { overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public app;
@@ -88,6 +89,17 @@ class NortanAPI {
     notification$.subscribe((notification) => {
       notifyByEmail(notification);
     });
+
+    cron.schedule(
+      '0 00 07 * * *',
+      () => {
+        overdueReceiptNotification();
+      },
+      {
+        scheduled: true,
+        timezone: 'America/Sao_Paulo',
+      }
+    );
   }
 }
 

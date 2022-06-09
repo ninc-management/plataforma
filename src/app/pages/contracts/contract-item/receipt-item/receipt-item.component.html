@@ -222,7 +222,34 @@
           </ng-container>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-6 col-md-2">
+        <div class="form-control-group">
+          <label class="label" for="input-paidDate">Será pago em:</label>
+          <input
+            nbInput
+            [(ngModel)]="receipt.dueDate"
+            #dueDate="ngModel"
+            id="input-due-date"
+            name="dueDate"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="pDatepicker"
+            [status]="
+              dueDate.dirty
+                ? dueDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : receiptIndex === undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="dueDate.invalid && dueDate.touched ? true : null"
+          />
+          <nb-datepicker #pDatepicker></nb-datepicker>
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
         <div class="form-control-group">
           <label class="label" for="input-paidCheck">Pago?</label>
           <nb-select
@@ -244,7 +271,7 @@
           </nb-select>
         </div>
       </div>
-      <div class="col-6 col-md-3">
+      <div class="col-6 col-md-2">
         <div class="form-control-group">
           <label class="label" for="input-paidDate">Data do pagamento:</label>
           <input

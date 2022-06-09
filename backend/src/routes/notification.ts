@@ -9,13 +9,13 @@ const router = express.Router();
 const mutex = new Mutex();
 let lastNotification: UserNotification;
 
-function updateNotification(notification: UserNotification, res: any) {
+export function updateNotification(notification: UserNotification, res: any) {
   UserModel.findByIdAndUpdate(
     notification.to,
     { $push: { notifications: notification } },
     { upsert: false },
     (err, savedUser) => {
-      if (err) {
+      if (err && res) {
         return res.status(500).json({
           message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
           error: err,
@@ -23,7 +23,7 @@ function updateNotification(notification: UserNotification, res: any) {
       }
       if (Object.keys(usersMap).length > 0) usersMap[notification.to as any] = cloneDeep(savedUser.toJSON());
       notification$.next(notification);
-      if (isEqual(notification, lastNotification)) {
+      if (isEqual(notification, lastNotification) && res) {
         return res
           .status(200)
           .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });

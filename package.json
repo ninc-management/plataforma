@@ -82,6 +82,7 @@
     "ng2-smart-table": "github:nortan-projetos/ng2-smart-table#m1.7.2",
     "ngx-echarts": "^7.0.2",
     "ngx-socket-io": "^4.1.0",
+    "node-cron": "^3.0.0",
     "nodemailer": "^6.7.2",
     "normalize.css": "6.0.0",
     "pace-js": "1.0.2",
