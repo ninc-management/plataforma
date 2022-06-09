@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
-import { combineLatest, Observable, of } from 'rxjs';
-import { map, skipWhile, take, takeWhile } from 'rxjs/operators';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { UserService } from 'app/shared/services/user.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
@@ -39,6 +39,8 @@ enum DIALOG_TYPES {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent {
+  private destroy$ = new Subject<void>();
+
   tabTitles = TAB_TITLES;
   dialogTypes = DIALOG_TYPES;
   activeTab: string = TAB_TITLES.PESSOAL;
@@ -61,6 +63,7 @@ export class DashboardComponent {
   teams: Team[] = [];
   nortanTeam!: Team;
   currentTeam = new Team();
+  parettoRank: string[] = [];
 
   isPhone = isPhone;
 
@@ -158,6 +161,18 @@ export class DashboardComponent {
         })
       );
     });
+
+    this.metricsService
+      .parettoRank()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((parettoRank) => {
+        this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openDialog(dType: DIALOG_TYPES): void {
