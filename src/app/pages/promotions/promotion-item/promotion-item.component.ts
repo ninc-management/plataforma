@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import promotion_validation from 'app/shared/promotion-validation.json';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
@@ -9,7 +9,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { Promotion } from '@models/promotion';
 import { NbComponentStatus } from '@nebular/theme';
-import { NgModel } from '@angular/forms';
+import { NgForm, NgModel } from '@angular/forms';
 import { cloneDeep } from 'lodash';
 import { isPhone } from 'app/shared/utils';
 
@@ -45,13 +45,14 @@ interface UserTableItem {
   templateUrl: './promotion-item.component.html',
   styleUrls: ['./promotion-item.component.scss'],
 })
-export class PromotionItemComponent implements OnInit, OnDestroy {
+export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$: Subject<void> = new Subject();
 
   @ViewChild(Ng2SmartTableComponent)
   table!: Ng2SmartTableComponent;
-  @Input()
-  iPromotion = new Promotion();
+  @Input() iPromotion = new Promotion();
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
   @Output() submit: EventEmitter<void> = new EventEmitter();
   promotion = new Promotion();
   validation = promotion_validation as any;
@@ -103,6 +104,12 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
     this.loadTableSettings();
   }
 
+  ngAfterViewInit(): void {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   registerPromotion(): void {
     if (this.editing) {
       this.promotionService.editPromotion(this.promotion);
@@ -110,6 +117,7 @@ export class PromotionItemComponent implements OnInit, OnDestroy {
       this.promotionService.savePromotion(this.promotion);
       this.submit.emit();
     }
+    this.isFormDirty.next(false);
   }
 
   updateTableItems(): void {
