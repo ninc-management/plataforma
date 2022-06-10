@@ -1,12 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Team, TeamFinancialTransaction } from '@models/team';
 import { User, UserFinancialTransaction } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import transaction_validation from 'app/shared/transaction-validation.json';
 import { UserService } from 'app/shared/services/user.service';
 import { take } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-user-transaction',
@@ -15,6 +16,8 @@ import { cloneDeep } from 'lodash';
 })
 export class UserTransactionComponent implements OnInit {
   @Input() transactionIndex?: number;
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
   currentUser!: User;
   currentDestination!: Team;
   transaction = new UserFinancialTransaction();
@@ -31,6 +34,12 @@ export class UserTransactionComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   registerTransaction(): void {
     const teamTransaction = new TeamFinancialTransaction();
     teamTransaction.from = this.currentUser;
@@ -38,6 +47,7 @@ export class UserTransactionComponent implements OnInit {
     teamTransaction.description = this.transaction.description;
     teamTransaction.value = this.transaction.value;
     this.currentDestination.transactions.push(cloneDeep(teamTransaction));
+    this.isFormDirty.next(false);
     this.teamService.editTeam(this.currentDestination);
   }
 }

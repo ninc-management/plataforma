@@ -14,6 +14,7 @@ import { of } from 'rxjs/internal/observable/of';
 import { Team, TeamExpense } from '@models/team';
 import { ConfigService } from 'app/shared/services/config.service';
 import { formatDate, compareFiles } from 'app/shared/utils';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'ngx-team-expense-item',
@@ -23,8 +24,10 @@ import { formatDate, compareFiles } from 'app/shared/utils';
 export class TeamExpenseItemComponent extends BaseExpenseComponent implements OnInit {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
+  @ViewChild('form') ngForm = {} as NgForm;
   @Input() iTeam: Team = new Team();
   @Input() expenseIdx?: number;
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   validation = expense_validation as any;
   types: string[] = [];
   subTypes: string[] = [];
@@ -97,6 +100,12 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     });
   }
 
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   ngOnDestroy(): void {
     if (!this.registered && !isEqual(this.initialFiles, this.uploadedFiles)) {
       this.deleteFiles();
@@ -116,6 +125,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       this.iTeam.expenses.push(cloneDeep(this.expense));
     }
     this.teamService.editTeam(cloneDeep(this.iTeam), creatingExpense);
+    this.isFormDirty.next(false);
     this.submit.emit();
   }
 
@@ -132,6 +142,8 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
+    this.ngForm.form.markAsPristine();
+    this.isFormDirty.next(false);
   }
 
   updateUploaderOptions(): void {

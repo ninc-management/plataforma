@@ -380,7 +380,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true)"
+                (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -530,7 +530,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="team.sectors.splice(i, 1)"
+                (click)="team.sectors.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>

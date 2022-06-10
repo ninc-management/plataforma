@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { cloneDeep, uniq } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
 import team_validation from 'app/shared/team-validation.json';
 import { trackByIndex, idToProperty } from 'app/shared/utils';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-team-item',
@@ -17,6 +18,8 @@ import { trackByIndex, idToProperty } from 'app/shared/utils';
 })
 export class TeamItemComponent implements OnInit, OnDestroy {
   @Input() iTeam = new Team();
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @ViewChild('form') ngForm = {} as NgForm;
   validation = team_validation as any;
   team: Team = new Team();
   editing = false;
@@ -60,6 +63,12 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -71,6 +80,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     } else {
       this.teamService.saveTeam(this.team);
     }
+    this.isFormDirty.next(false);
   }
 
   addMember(): void {
