@@ -66,12 +66,6 @@ router.post('/update', async (req, res, next) => {
   );
 });
 
-router.post('/count', (req, res) => {
-  res.json({
-    size: Array.from(Object.values(invoicesMap)).length,
-  });
-});
-
 router.post('/all', async (req, res) => {
   if (!requested) {
     const invoices: Invoice[] = await InvoiceModel.find({});

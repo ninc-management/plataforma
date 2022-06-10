@@ -58,12 +58,6 @@ router.post('/update', async (req, res, next) => {
   );
 });
 
-router.post('/count', (req, res) => {
-  res.json({
-    size: Array.from(Object.values(contractsMap)).length,
-  });
-});
-
 router.post('/all', async (req, res) => {
   if (!requested) {
     const contracts: Contract[] = await ContractModel.find({});

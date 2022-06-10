@@ -166,16 +166,6 @@ export class ContractService implements OnDestroy {
     return this.contracts$;
   }
 
-  contractsSize(): Observable<number> {
-    this.http
-      .post('/api/contract/count', {})
-      .pipe(take(1))
-      .subscribe((numberJson: any) => {
-        this.size$.next(+numberJson['size'] + 1);
-      });
-    return this.size$;
-  }
-
   idToContract(id: string | Contract): Contract {
     if (isOfType<Contract>(id, ['_id', 'invoice', 'status'])) return id;
     const tmp = this.contracts$.getValue();

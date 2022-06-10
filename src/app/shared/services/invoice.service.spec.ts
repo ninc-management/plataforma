@@ -254,37 +254,6 @@ describe('InvoiceService', () => {
 
   baseTest('getInvoices should work', (expectedInvoices: Invoice[]) => {});
 
-  it('invoicesSize should work', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .invoicesSize()
-      .pipe(take(2))
-      .subscribe((size) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(size).toBe(0);
-            break;
-          }
-          case 2: {
-            expect(size).toEqual(3);
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      });
-    // mock response
-    const req = httpMock.expectOne('/api/invoice/count');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush({ size: '2' });
-    }, 50);
-  });
-
   baseTest('idToInvoice should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToInvoice('0')).toEqual(expectedInvoices[0]);
     expect(service.idToInvoice(expectedInvoices[0])).toEqual(expectedInvoices[0]);
