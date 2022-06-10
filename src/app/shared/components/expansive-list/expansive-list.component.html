@@ -6,8 +6,15 @@
     }"
   >
     <nb-card-header>{{ title }}</nb-card-header>
-    <nb-card-body *ngIf="isLoading; else listTemplate">
-      <div class="loading-spinner" [nbSpinner]="true" nbSpinnerStatus="primary" nbSpinnerSize="giant"></div>
+    <nb-card-body *ngIf="isLoading || items.length == 0; else listTemplate">
+      <div
+        *ngIf="isLoading"
+        class="loading-spinner"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+      ></div>
+      <span *ngIf="!isLoading && items.length == 0">Não há itens para mostrar.</span>
     </nb-card-body>
     <ng-template #listTemplate>
       <nb-list
