@@ -85,8 +85,8 @@ router.delete('/approveProspect', async (req, res, next) => {
         })
         .catch((newUserErr) => {
           ProspectModel.create(req.body.prospect)
-            .then(() => {
-              prospectMap[req.body.prospect._id] = cloneDeep(req.body.prospect.toJSON());
+            .then((prospect) => {
+              prospectMap[prospect._id] = cloneDeep(prospect.toJSON());
               return res.status(500).json({
                 message: 'Erro ao criar novo usuário! Prospecto recriado.',
                 error: newUserErr,
