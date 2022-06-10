@@ -5,12 +5,11 @@ import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
 import { Prospect } from '../models/prospect';
 import ProspectModel from '../models/prospect';
-import { usersMap } from '../shared/global';
+import { prospectMap, usersMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
 let prospectRequested = false;
-const prospectMap: Record<string, Prospect> = {};
 const mutex = new Mutex();
 
 router.post('/', (req, res, next) => {
@@ -72,34 +71,40 @@ router.post('/allProspects', async (req, res) => {
 });
 
 router.delete('/approveProspect', async (req, res, next) => {
-  ProspectModel.deleteOne({ _id: req.body.prospect._id }).catch((err) => {
-    return res.status(500).json({
-      message: 'Erro ao apagar o prospecto!',
-      error: err,
-    });
-  });
-  const newUser = new UserModel(req.body.prospect);
-  newUser
-    .save()
+  ProspectModel.deleteOne({ _id: req.body.prospect._id })
     .then(() => {
-      return res.status(201).json({
-        message: 'Prospecto aprovado com sucesso!',
-      });
-    })
-    .catch((newUserErr) => {
-      ProspectModel.create(req.body.prospect)
-        .then(() => {
-          return res.status(500).json({
-            message: 'Erro ao criar novo usuário! Prospecto recriado.',
-            error: newUserErr,
+      delete prospectMap[req.body.prospect._id];
+      const newUser = new UserModel(req.body.prospect);
+      newUser
+        .save()
+        .then((savedUser) => {
+          usersMap[savedUser._id] = cloneDeep(savedUser.toJSON());
+          return res.status(201).json({
+            message: 'Prospecto aprovado com sucesso!',
           });
         })
-        .catch((prospectErr) => {
-          return res.status(500).json({
-            message: 'Erro ao recriar prospecto!',
-            error: prospectErr,
-          });
+        .catch((newUserErr) => {
+          ProspectModel.create(req.body.prospect)
+            .then(() => {
+              prospectMap[req.body.prospect._id] = cloneDeep(req.body.prospect.toJSON());
+              return res.status(500).json({
+                message: 'Erro ao criar novo usuário! Prospecto recriado.',
+                error: newUserErr,
+              });
+            })
+            .catch((prospectErr) => {
+              return res.status(500).json({
+                message: 'Erro ao recriar prospecto!',
+                error: prospectErr,
+              });
+            });
         });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        message: 'Erro ao apagar o prospecto! Não foi possível aprovar.',
+        error: err,
+      });
     });
 });
 
