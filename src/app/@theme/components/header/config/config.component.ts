@@ -1,10 +1,13 @@
 import { Component, Input } from '@angular/core';
+
+import { ConfigService } from 'app/shared/services/config.service';
+import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
+import { cloneDeep } from 'lodash';
+
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
-import { ConfigService } from 'app/shared/services/config.service';
-import { cloneDeep } from 'lodash';
+
 import config_validation from 'app/shared/config-validation.json';
-import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-config',
@@ -13,14 +16,15 @@ import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
 })
 export class ConfigComponent {
   @Input() config: PlatformConfig = new PlatformConfig();
-  newExpense: ExpenseType = new ExpenseType();
+  newAdminExpense: ExpenseType = new ExpenseType();
+  newContractExpense: ExpenseType = new ExpenseType();
   newRole = { roleTypeName: '', permission: '' };
-  newLevel: string = '';
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
+  newLevel: string = '';
 
   isPhone = isPhone;
   trackByIndex = trackByIndex;
@@ -45,9 +49,14 @@ export class ConfigComponent {
 
   constructor(private configService: ConfigService) {}
 
-  addExpenseType(): void {
-    this.config.expenseTypes.push(cloneDeep(this.newExpense));
-    this.newExpense = new ExpenseType();
+  addExpenseType(expenseType: string): void {
+    if (expenseType == 'Administrativa') {
+      this.config.adminExpenses.push(this.newAdminExpense);
+      this.newAdminExpense = new ExpenseType();
+    } else if (expenseType == 'Contrato') {
+      this.config.contractExpenses.push(cloneDeep(this.newContractExpense));
+      this.newContractExpense = new ExpenseType();
+    }
   }
 
   addRole(): void {

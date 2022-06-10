@@ -6,7 +6,8 @@ import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { WebSocketService } from './web-socket.service';
 
 export const DEFAULT_CONFIG = {
-  expenseTypes: [],
+  adminExpenses: [],
+  contractExpenses: [],
   invoiceConfig: {
     hasType: true,
     hasHeader: true,
@@ -101,7 +102,7 @@ export class ConfigService implements OnDestroy {
 
   expenseSubTypes(type: string): string[] {
     if (!type) return [];
-    const tmpType = this.config$.value[0].expenseTypes.find((eType) => eType.name === type);
+    const tmpType = this.config$.value[0].adminExpenses.find((eType) => eType.name === type);
     return tmpType ? tmpType.subTypes : [];
   }
 }
