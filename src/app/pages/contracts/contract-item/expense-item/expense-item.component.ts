@@ -219,9 +219,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       const mediaFolderPath =
         this.onedrive.generatePath(this.invoiceService.idToInvoice(this.contract.invoice)) + '/Recibos';
       const fn = (name: string) => {
-        const item = (
-          this.expenseIndex !== undefined ? this.expenseIndex + 1 : this.contract.expenses.length + 1
-        ).toString();
+        const item =
+          this.expenseIndex !== undefined
+            ? this.contract.expenses[this.expenseIndex as number].code.replace('#', '')
+            : this.contract.createdExpenses + 1;
         const type = this.expense.type;
         const value = this.expense.value.replace(/\./g, '');
         const date = formatDate(new Date(), '-');
@@ -262,13 +263,13 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   registerExpense(): void {
     this.registered = true;
-    this.contract.createdExpenses += 1;
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     if (this.expenseIndex !== undefined) {
       if (shouldNotifyManager(this.contract.expenses[this.expenseIndex], this.expense)) this.notifyManager();
       this.expense.lastUpdate = new Date();
       this.contract.expenses[this.expenseIndex] = cloneDeep(this.expense);
     } else {
+      this.contract.createdExpenses += 1;
       this.expense.code = '#' + this.contract.createdExpenses.toString();
       this.contract.expenses.push(cloneDeep(this.expense));
     }
