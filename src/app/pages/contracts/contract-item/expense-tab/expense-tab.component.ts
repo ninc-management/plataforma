@@ -211,7 +211,7 @@ export class ExpenseTabComponent implements OnInit {
 
   confirmationDialog(index: number): void {
     this.isDialogBlocked.next(true);
-    const item = 'a despesa #' + (index + 1).toString() + '?';
+    const item = 'a despesa ' + this.clonedContract.expenses[index].code + '?';
 
     this.dialogService
       .open(ConfirmationDialogComponent, {
