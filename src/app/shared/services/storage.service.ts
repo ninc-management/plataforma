@@ -28,6 +28,7 @@ export class StorageService implements OnDestroy {
     this.destroy$.complete();
   }
 
+  //It's necessary to remove isTeamFolder parameter later
   uploadFileAndGetMetadata(
     mediaFolderPath: string,
     fileToUpload: File,
@@ -51,7 +52,7 @@ export class StorageService implements OnDestroy {
         fileToUpload.arrayBuffer().then((f) => {
           this.http
             .put(
-              this.onedriveService.oneDriveURI(isTeamFolder) +
+              this.onedriveService.oneDriveURI() +
                 mediaFolderPath +
                 '/' +
                 fileName +

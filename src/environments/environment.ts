@@ -16,7 +16,7 @@ export const environment = {
   msalRedirectUri: ENV_VARS.MSAL_REDIRECT_URI
     ? ENV_VARS.MSAL_REDIRECT_URI
     : ENV_VARS.GITPOD_WORKSPACE_URL.slice(0, 8) + '4200-' + ENV_VARS.GITPOD_WORKSPACE_URL.slice(8),
-  onedriveUri: 'https://graph.microsoft.com/v1.0/drive/root:/',
+  onedriveUri: 'https://graph.microsoft.com/v1.0/drives/',
   onedriveNortanID: ENV_VARS.ONEDRIVE_NORTAN_ID,
   onedriveAdmID: ENV_VARS.ONEDRIVE_ADM_ID,
   demo: ENV_VARS.DEMO,
