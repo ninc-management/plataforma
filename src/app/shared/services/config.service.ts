@@ -6,7 +6,38 @@ import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { WebSocketService } from './web-socket.service';
 
 export const DEFAULT_CONFIG = {
-  expenseTypes: [],
+  adminExpenses: [],
+  contractExpenses: [],
+  notificationConfig: {
+    contractClosed: {
+      email: true,
+      platform: true,
+    },
+    userMentioned: {
+      email: true,
+      platform: true,
+    },
+    transactionCreated: {
+      email: true,
+      platform: true,
+    },
+    transactionPaid: {
+      email: true,
+      platform: true,
+    },
+    teamMemberPaid: {
+      email: true,
+      platform: true,
+    },
+    receiptDue: {
+      email: true,
+      platform: true,
+    },
+    stageResponsible: {
+      email: true,
+      platform: true,
+    },
+  },
   invoiceConfig: {
     hasType: true,
     hasHeader: true,
@@ -101,7 +132,7 @@ export class ConfigService implements OnDestroy {
 
   expenseSubTypes(type: string): string[] {
     if (!type) return [];
-    const tmpType = this.config$.value[0].expenseTypes.find((eType) => eType.name === type);
+    const tmpType = this.config$.value[0].adminExpenses.find((eType) => eType.name === type);
     return tmpType ? tmpType.subTypes : [];
   }
 }

@@ -3,7 +3,7 @@
     <form (ngSubmit)="updateConfig()" #expenseConfigform="ngForm" aria-labelledby="title">
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
-          <label class="label-divider">Lista de despesas</label>
+          <label class="label-divider">Despesas administrativas</label>
         </div>
         <div class="col">
           <hr />
@@ -12,18 +12,18 @@
       <div class="row">
         <div class="col-10 col-md-11">
           <div class="form-control-group">
-            <label class="label" for="input-expense-type">Tipo da despesa</label>
+            <label class="label" for="input-admin-type">Tipo de despesa</label>
             <input
               nbInput
-              [(ngModel)]="newExpense.name"
-              #expenseType="ngModel"
-              id="input-expense-type"
-              name="expenseType"
+              [(ngModel)]="newAdminExpense.name"
+              #adminType="ngModel"
+              id="input-admin-type"
+              name="adminType"
               placeholder="Nome do tipo da despesa"
               fullWidth
               fieldSize="large"
-              [status]="expenseType.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="expenseType.invalid && expenseType.touched ? true : null"
+              [status]="adminType.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="adminType.invalid && adminType.touched ? true : null"
             />
           </div>
         </div>
@@ -35,15 +35,15 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="!expenseType.value"
-            (click)="addExpenseType()"
+            [disabled]="!adminType.value"
+            (click)="addExpenseType(configExpenseTypes.ADMINISTRATIVA)"
           >
             <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
           </button>
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let eType of config.expenseTypes; let i = index; trackBy: trackByIndex">
+        <nb-list-item *ngFor="let eType of adminExpenseTypes; let i = index; trackBy: trackByIndex">
           <div class="row typeRow">
             <div class="col-9 col-md-11">
               <input
@@ -51,9 +51,9 @@
                 [(ngModel)]="eType.name"
                 id="input-expense-type-{{ i }}"
                 name="expense-type-{{ i }}"
-                placeholder="Nome do tipo da despesa"
                 fullWidth
-                [status]="config.expenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+                [status]="adminExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+                [readonly]="true"
               />
               <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
                 <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
@@ -61,12 +61,14 @@
                     <div class="col-10 col-md-11">
                       <input
                         nbInput
-                        [(ngModel)]="eType.subTypes[j]"
+                        [(ngModel)]="eType.subTypes[j].name"
                         id="input-subtype-{{ i }}-{{ j }}"
                         name="subtype-{{ i }}-{{ j }}"
                         placeholder="Nome do subtipo da despesa"
                         fullWidth
-                        [status]="eType.subTypes[j].length == 0 ? 'danger' : 'basic'"
+                        [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
+                        [readonly]="!eType.subTypes[j].isNew"
+                        [required]="true"
                       />
                     </div>
                     <div class="col-2 col-md-1" style="text-align: right">
@@ -89,7 +91,12 @@
                 status="basic"
                 icon="plus-outline"
                 pack="eva"
-                (click)="eType.subTypes.push('')"
+                (click)="
+                  eType.subTypes.push({
+                    name: '',
+                    isNew: true
+                  })
+                "
                 [options]="{ animation: { type: 'pulse' } }"
                 nbTooltip="Adicionar subtipo da despesa"
                 nbTooltipPlacement="top"
@@ -100,7 +107,120 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="config.expenseTypes.splice(i, 1)"
+                (click)="adminExpenseTypes.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
+      <div class="row" style="margin-top: 8px">
+        <div class="col-auto">
+          <label class="label-divider">Despesas de contratos</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-10 col-md-11">
+          <div class="form-control-group">
+            <label class="label" for="input-contract-type">Tipo de despesa</label>
+            <input
+              nbInput
+              [(ngModel)]="newContractExpense.name"
+              #contractType="ngModel"
+              id="input-contract-type"
+              name="contractType"
+              placeholder="Nome do tipo da despesa"
+              fullWidth
+              fieldSize="large"
+              [status]="contractType.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="contractType.invalid && contractType.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-2 col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!contractType.value"
+            (click)="addExpenseType(configExpenseTypes.CONTRATO)"
+          >
+            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+          </button>
+        </div>
+      </div>
+      <nb-list style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let eType of contractExpenseTypes; let i = index; trackBy: trackByIndex">
+          <div class="row typeRow">
+            <div class="col-9 col-md-11">
+              <input
+                nbInput
+                [(ngModel)]="eType.name"
+                id="input-expense-type-{{ i }}"
+                name="expense-type-{{ i }}"
+                fullWidth
+                [status]="contractExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+                [readonly]="true"
+              />
+              <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
+                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
+                  <div class="row typeRow">
+                    <div class="col-10 col-md-11">
+                      <input
+                        nbInput
+                        [(ngModel)]="eType.subTypes[j].name"
+                        id="input-subtype-{{ i }}-{{ j }}"
+                        name="subtype-{{ i }}-{{ j }}"
+                        placeholder="Nome do subtipo da despesa"
+                        fullWidth
+                        [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
+                        [readonly]="!eType.subTypes[j].isNew"
+                        [required]="true"
+                      />
+                    </div>
+                    <div class="col-2 col-md-1" style="text-align: right">
+                      <nb-icon
+                        class="xIcon"
+                        status="basic"
+                        icon="trash-2-outline"
+                        pack="eva"
+                        (click)="eType.subTypes.splice(j, 1)"
+                        [options]="{ animation: { type: 'shake' } }"
+                      ></nb-icon>
+                    </div>
+                  </div>
+                </nb-list-item>
+              </nb-list>
+            </div>
+            <div class="col-3 col-md-1" style="text-align: right">
+              <nb-icon
+                class="addIcon"
+                status="basic"
+                icon="plus-outline"
+                pack="eva"
+                (click)="
+                  eType.subTypes.push({
+                    name: '',
+                    isNew: true
+                  })
+                "
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Adicionar subtipo da despesa"
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="contractExpenseTypes.splice(i, 1)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -135,7 +255,7 @@
                   <td class="td-left">Tipo de orçamento</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasType"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasType"
                       name="toggle-type"
                       labelPosition="start"
                     ></nb-toggle>
@@ -145,7 +265,7 @@
                   <td class="td-left">Cabeçalho</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasHeader"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasHeader"
                       name="toggle-header"
                       labelPosition="start"
                     ></nb-toggle>
@@ -155,7 +275,7 @@
                   <td class="td-left">Lista de colaboradores</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasTeam"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasTeam"
                       name="toggle-team"
                       labelPosition="start"
                     ></nb-toggle>
@@ -165,7 +285,7 @@
                   <td class="td-left">Etapa preliminar</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasPreliminary"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasPreliminary"
                       name="toggle-stage-preliminary"
                       labelPosition="start"
                     ></nb-toggle>
@@ -175,7 +295,7 @@
                   <td class="td-left">Etapa executiva</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasExecutive"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasExecutive"
                       name="toggle-stage-executive"
                       labelPosition="start"
                     ></nb-toggle>
@@ -185,7 +305,7 @@
                   <td class="td-left">Etapa complementar</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasComplementary"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasComplementary"
                       name="toggle-stage-complementary"
                       labelPosition="start"
                     ></nb-toggle>
@@ -195,7 +315,7 @@
                   <td class="td-left">Parcelamentos</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasStageName"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasStageName"
                       name="toggle-stage-name"
                       labelPosition="start"
                     ></nb-toggle>
@@ -205,7 +325,7 @@
                   <td class="td-left">Importantes</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasImportants"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasImportants"
                       name="toggle-importants"
                       labelPosition="start"
                     ></nb-toggle>
@@ -215,7 +335,7 @@
                   <td class="td-left">Lista de materiais</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.invoiceConfig.hasMaterialList"
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasMaterialList"
                       name="toggle-material-list"
                       labelPosition="start"
                     ></nb-toggle>
@@ -243,7 +363,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="config.invoiceConfig.codeAbbreviation"
+                  [(ngModel)]="clonedConfig.invoiceConfig.codeAbbreviation"
                   #codeAbbreviation="ngModel"
                   id="input-code-abbreviation"
                   name="codeAbbreviation"
@@ -269,7 +389,7 @@
                   <label class="label" for="input-org-percentage">Porcentagem da organização:</label>
                   <input
                     nbInput
-                    [(ngModel)]="config.invoiceConfig.organizationPercentage"
+                    [(ngModel)]="clonedConfig.invoiceConfig.organizationPercentage"
                     #orgPercentage="ngModel"
                     id="input-org-percentage"
                     name="orgPercentage"
@@ -291,7 +411,7 @@
                   <label class="label" for="input-nf-percentage">Porcentagem da nota fiscal:</label>
                   <input
                     nbInput
-                    [(ngModel)]="config.invoiceConfig.nfPercentage"
+                    [(ngModel)]="clonedConfig.invoiceConfig.nfPercentage"
                     #nfPercentage="ngModel"
                     id="input-nf-percentage"
                     name="nfPercentage"
@@ -342,7 +462,7 @@
                   <td class="td-left">Enquadramentos</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.profileConfig.hasLevels"
+                      [(ngModel)]="clonedConfig.profileConfig.hasLevels"
                       name="toggle-levels"
                       labelPosition="start"
                     ></nb-toggle>
@@ -352,7 +472,7 @@
                   <td class="td-left">Lista de times</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.profileConfig.hasTeam"
+                      [(ngModel)]="clonedConfig.profileConfig.hasTeam"
                       name="toggle-team"
                       labelPosition="start"
                     ></nb-toggle>
@@ -362,7 +482,7 @@
                   <td class="td-left">Lista de setores</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.profileConfig.hasSector"
+                      [(ngModel)]="clonedConfig.profileConfig.hasSector"
                       name="toggle-sector"
                       labelPosition="start"
                     ></nb-toggle>
@@ -372,7 +492,7 @@
                   <td class="td-left">Perfil de atuação</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.profileConfig.hasExpertiseBySector"
+                      [(ngModel)]="clonedConfig.profileConfig.hasExpertiseBySector"
                       name="toggle-expertise-profile"
                       labelPosition="start"
                     ></nb-toggle>
@@ -449,7 +569,9 @@
             </div>
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item *ngFor="let position of config.profileConfig.positions; let i = index; trackBy: trackByIndex">
+            <nb-list-item
+              *ngFor="let position of clonedConfig.profileConfig.positions; let i = index; trackBy: trackByIndex"
+            >
               <div class="row typeRow">
                 <div class="col-9 col-lg-6" style="margin: 5px 5px">
                   <input
@@ -461,6 +583,7 @@
                     fullWidth
                     [status]="!position.roleTypeName ? 'danger' : 'basic'"
                     [required]="true"
+                    [readonly]="true"
                   />
                 </div>
                 <div class="col-9 col-lg-4" style="margin-left: 5px">
@@ -482,7 +605,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="config.profileConfig.positions.splice(i, 1)"
+                    (click)="clonedConfig.profileConfig.positions.splice(i, 1)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -536,18 +659,19 @@
             <hr />
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item *ngFor="let level of config.profileConfig.levels; let i = index; trackBy: trackByIndex">
+            <nb-list-item *ngFor="let level of clonedConfig.profileConfig.levels; let i = index; trackBy: trackByIndex">
               <div class="row typeRow">
                 <div class="col-10">
                   <input
                     nbInput
-                    [(ngModel)]="config.profileConfig.levels[i]"
+                    [(ngModel)]="clonedConfig.profileConfig.levels[i]"
                     id="input-level-type-{{ i }}"
                     name="level-type-{{ i }}"
                     placeholder="Nome do tipo de enquadramento"
                     fullWidth
-                    [status]="config.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
+                    [status]="clonedConfig.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
                     [required]="true"
+                    [readonly]="true"
                   />
                 </div>
                 <div class="col-2">
@@ -556,7 +680,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="config.profileConfig.levels.splice(i, 1)"
+                    (click)="clonedConfig.profileConfig.levels.splice(i, 1)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -591,7 +715,7 @@
             <nb-form-field>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.companyName"
+                [(ngModel)]="clonedConfig.socialConfig.companyName"
                 #companyName="ngModel"
                 id="input-companyName"
                 name="companyName"
@@ -613,7 +737,7 @@
               <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.youtubeLink"
+                [(ngModel)]="clonedConfig.socialConfig.youtubeLink"
                 #youtubeLink="ngModel"
                 id="input-youtube-link"
                 name="youtubeLink"
@@ -635,7 +759,7 @@
               <nb-icon nbPrefix icon="social-linkedin" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.linkedinLink"
+                [(ngModel)]="clonedConfig.socialConfig.linkedinLink"
                 #linkedinLink="ngModel"
                 id="input-linkedin-link"
                 name="linkedinLink"
@@ -657,7 +781,7 @@
               <nb-icon nbPrefix icon="social-instagram" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.instagramLink"
+                [(ngModel)]="clonedConfig.socialConfig.instagramLink"
                 #instagramLink="ngModel"
                 id="input-instagram-link"
                 name="instagramLink"
@@ -679,7 +803,7 @@
               <nb-icon nbPrefix icon="glassfrog" pack="fac"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.glassfrogLink"
+                [(ngModel)]="clonedConfig.socialConfig.glassfrogLink"
                 #glassfrogLink="ngModel"
                 id="input-glassfrog-link"
                 name="glassfrogLink"
@@ -701,7 +825,7 @@
               <nb-icon nbPrefix icon="gtown" pack="fac"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="config.socialConfig.gathertownLink"
+                [(ngModel)]="clonedConfig.socialConfig.gathertownLink"
                 #gathertownLink="ngModel"
                 id="input-gathertown-link"
                 name="gathertownLink"
@@ -743,7 +867,7 @@
                   <td class="td-left">Módulo de promoções</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.modulesConfig.hasPromotion"
+                      [(ngModel)]="clonedConfig.modulesConfig.hasPromotion"
                       name="toggle-header"
                       labelPosition="start"
                     ></nb-toggle>
@@ -753,7 +877,7 @@
                   <td class="td-left">Módulo de cursos</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.modulesConfig.hasCourse"
+                      [(ngModel)]="clonedConfig.modulesConfig.hasCourse"
                       name="toggle-type"
                       labelPosition="start"
                     ></nb-toggle>
@@ -792,7 +916,7 @@
                   <td class="td-left">OneDrive</td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.oneDriveConfig.isActive"
+                      [(ngModel)]="clonedConfig.oneDriveConfig.isActive"
                       #toggleoneDrive="ngModel"
                       name="toggle-onedrive"
                       labelPosition="start"
@@ -831,7 +955,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="config.oneDriveConfig.oneDriveId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.oneDriveId"
                   #oneDriveId="ngModel"
                   id="input-onedrive-id"
                   name="oneDriveId"
@@ -865,7 +989,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="config.oneDriveConfig.folderId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.folderId"
                   #folderId="ngModel"
                   id="input-folder-id"
                   name="folderId"
@@ -927,7 +1051,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.contractClosed.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.contractClosed.platform"
                       #notificationContractClosedPlatform="ngModel"
                       name="notification-contract-closed-p"
                       labelPosition="start"
@@ -935,7 +1059,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.contractClosed.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.contractClosed.email"
                       #notificationContractClosedEmail="ngModel"
                       name="notification-contract-closed-e"
                       labelPosition="start"
@@ -957,7 +1081,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.receiptDue.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.receiptDue.platform"
                       #notificationReceiptDuePlatform="ngModel"
                       name="notification-receipt-due-p"
                       labelPosition="start"
@@ -965,7 +1089,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.receiptDue.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.receiptDue.email"
                       #notificationReceiptDueEmail="ngModel"
                       name="notification-receipt-due-e"
                       labelPosition="start"
@@ -987,7 +1111,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.transactionCreated.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.transactionCreated.platform"
                       #notificationTransactionCreatedPlatform="ngModel"
                       name="notification-transaction-created-p"
                       labelPosition="start"
@@ -995,7 +1119,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.transactionCreated.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.transactionCreated.email"
                       #notificationTransactionCreatedEmail="ngModel"
                       name="notification-transaction-created-e"
                       labelPosition="start"
@@ -1017,7 +1141,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.transactionPaid.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.transactionPaid.platform"
                       #notificationTransactionPaidPlatform="ngModel"
                       name="notification-transaction-paid-p"
                       labelPosition="start"
@@ -1025,7 +1149,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.transactionPaid.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.transactionPaid.email"
                       #notificationTransactionPaidEmail="ngModel"
                       name="notification-transaction-paid-e"
                       labelPosition="start"
@@ -1047,7 +1171,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.userMentioned.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.userMentioned.platform"
                       #notificationUserMentionedPlatform="ngModel"
                       name="notification-user-mentioned-p"
                       labelPosition="start"
@@ -1055,7 +1179,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.userMentioned.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.userMentioned.email"
                       #notificationUserMentionedEmail="ngModel"
                       name="notification-user-mentioned-e"
                       labelPosition="start"
@@ -1077,7 +1201,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.stageResponsible.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.stageResponsible.platform"
                       #notificationStageResponsiblePlatform="ngModel"
                       name="notification-stage-responsible-p"
                       labelPosition="start"
@@ -1085,7 +1209,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.stageResponsible.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.stageResponsible.email"
                       #notificationStageResponsibleEmail="ngModel"
                       name="notification-stage-responsible-e"
                       labelPosition="start"
@@ -1107,7 +1231,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.teamMemberPaid.platform"
+                      [(ngModel)]="clonedConfig.notificationConfig.teamMemberPaid.platform"
                       #notificationMemberPaidPlatform="ngModel"
                       name="notification-member-paid-p"
                       labelPosition="start"
@@ -1115,7 +1239,7 @@
                   </td>
                   <td>
                     <nb-toggle
-                      [(ngModel)]="config.notificationConfig.teamMemberPaid.email"
+                      [(ngModel)]="clonedConfig.notificationConfig.teamMemberPaid.email"
                       #notificationMemberPaidEmail="ngModel"
                       name="notification-member-paid-e"
                       labelPosition="start"

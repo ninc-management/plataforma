@@ -53,7 +53,8 @@ describe('AuthGuard', () => {
     mockedExpenseType.name = 'mockedExpenseType1';
     mockedExpenseType.subTypes.push('mockedExpenseSubType1');
     mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.expenseTypes.push(cloneDeep(mockedExpenseType));
+    mockedConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
+    mockedConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
     mockedProfileConfig.positions.push(
       { roleTypeName: 'teste', permission: 'Administrador' },
       { roleTypeName: 'teste2', permission: 'Membro' },

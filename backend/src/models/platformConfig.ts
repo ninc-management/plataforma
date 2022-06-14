@@ -140,7 +140,10 @@ export class NotificationConfig {
 
 export class PlatformConfig extends Base<string> {
   @prop({ required: true, type: () => [ExpenseType] })
-  expenseTypes: ExpenseType[] = [];
+  adminExpenses: ExpenseType[] = [];
+
+  @prop({ required: true, type: () => [ExpenseType] })
+  contractExpenses: ExpenseType[] = [];
 
   @prop({ required: true })
   invoiceConfig: InvoiceConfig = new InvoiceConfig();

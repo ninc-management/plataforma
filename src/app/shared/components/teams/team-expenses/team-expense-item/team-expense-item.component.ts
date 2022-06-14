@@ -70,7 +70,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
         takeUntil(this.destroy$)
       )
       .subscribe((config) => {
-        this.types = config[0].expenseTypes.map((eType) => eType.name);
+        this.types = config[0].adminExpenses.map((eType) => eType.name);
       });
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);

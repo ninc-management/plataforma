@@ -610,7 +610,38 @@ db.invoices.find().forEach((invoice) => {
 
 db.createCollection('platformconfigs');
 const config = {
-  expenseTypes: [],
+  adminExpenses: [],
+  contractExpenses: [],
+  notificationConfig: {
+    contractClosed: {
+      email: true,
+      platform: true,
+    },
+    userMentioned: {
+      email: true,
+      platform: true,
+    },
+    transactionCreated: {
+      email: true,
+      platform: true,
+    },
+    transactionPaid: {
+      email: true,
+      platform: true,
+    },
+    teamMemberPaid: {
+      email: true,
+      platform: true,
+    },
+    receiptDue: {
+      email: true,
+      platform: true,
+    },
+    stageResponsible: {
+      email: true,
+      platform: true,
+    },
+  },
   invoiceConfig: {
     hasType: true,
     hasHeader: true,
@@ -647,7 +678,7 @@ const config = {
   },
   oneDriveConfig: {
     isActive: false,
-  }
+  },
 };
 db.platformconfigs.insertOne(config);
 
@@ -683,41 +714,43 @@ db.teams.find().forEach((team) => {
   db.teams.replaceOne({ _id: team._id }, team);
 });
 
-db.platformconfigs.find().forEach((config) => {
-  config.notificationConfig = {
-    contractClosed : {
-      email: true,
-      platform: true,
-    },
-    userMentioned : {
-      email: true,
-      platform: true,
-    },
-    transactionCreated : {
-      email: true,
-      platform: true,
-    },
-    transactionPaid : {
-      email: true,
-      platform: true,
-    },
-    teamMemberPaid : {
-      email: true,
-      platform: true,
-    },
-    receiptDue : {
-      email: true,
-      platform: true,
-    },
-    stageResponsible : {
-      email: true,
-      platform: true,
-    },
-  }
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
 /**
  * Endof data migration
  */
 
+db.platformconfigs.find().forEach((config) => {
+  config.adminExpenses = config.expenseTypes;
+  config.contractExpenses = [];
+  delete config.expenseTypes;
+  config.notificationConfig = {
+    contractClosed: {
+      email: true,
+      platform: true,
+    },
+    userMentioned: {
+      email: true,
+      platform: true,
+    },
+    transactionCreated: {
+      email: true,
+      platform: true,
+    },
+    transactionPaid: {
+      email: true,
+      platform: true,
+    },
+    teamMemberPaid: {
+      email: true,
+      platform: true,
+    },
+    receiptDue: {
+      email: true,
+      platform: true,
+    },
+    stageResponsible: {
+      email: true,
+      platform: true,
+    },
+  };
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
