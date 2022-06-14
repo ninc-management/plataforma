@@ -38,6 +38,10 @@ export class ConfigComponent {
     icon: 'onedrive',
     pack: 'fac',
   };
+  notificationIcon = {
+    icon: 'bell',
+    pack: 'fa',
+  };
 
   constructor(private configService: ConfigService) {}
 

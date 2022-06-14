@@ -898,4 +898,250 @@
       </button>
     </form>
   </nb-tab>
+  <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" [tabIcon]="notificationIcon" responsive>
+    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="col-12 col-lg-auto" style="margin-bottom: 11px; height: auto">
+          <div class="form-control-group">
+            <table class="table-notification">
+              <thead>
+                <tr>
+                  <th class="td-left">Notificações</th>
+                  <th>Plataforma</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="td-left">
+                    Fechamento de Contrato
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar todos na plataforma e tocar o som do sino. Também notificar o time para revisar as informações do contrato."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.contractClosed.platform"
+                      #notificationContractClosedPlatform="ngModel"
+                      name="notification-contract-closed-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.contractClosed.email"
+                      #notificationContractClosedEmail="ngModel"
+                      name="notification-contract-closed-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Parcelas das Ordens de Empenho
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar o gestor do contrato quando faltar 3 dias e a cada 3 dias de atraso da criação da OE daquela parcela."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.receiptDue.platform"
+                      #notificationReceiptDuePlatform="ngModel"
+                      name="notification-receipt-due-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.receiptDue.email"
+                      #notificationReceiptDueEmail="ngModel"
+                      name="notification-receipt-due-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Movimentação criada
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar setor financeiro ao criar uma Ordem de Empenho, Pagemento ou Despesa."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.transactionCreated.platform"
+                      #notificationTransactionCreatedPlatform="ngModel"
+                      name="notification-transaction-created-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.transactionCreated.email"
+                      #notificationTransactionCreatedEmail="ngModel"
+                      name="notification-transaction-created-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Movimentação paga
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar gestor quando uma Ordem de Empenho, Pagemento ou Despesa for paga."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.transactionPaid.platform"
+                      #notificationTransactionPaidPlatform="ngModel"
+                      name="notification-transaction-paid-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.transactionPaid.email"
+                      #notificationTransactionPaidEmail="ngModel"
+                      name="notification-transaction-paid-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Usuário mencionado
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar usuário que foi mencionado em um comentário na aba de gestão do contrato."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.userMentioned.platform"
+                      #notificationUserMentionedPlatform="ngModel"
+                      name="notification-user-mentioned-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.userMentioned.email"
+                      #notificationUserMentionedEmail="ngModel"
+                      name="notification-user-mentioned-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Atribuição em etapa do contrato
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar responsável que foi selecionado ao criar uma etapa na aba de gestão do contrato."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.stageResponsible.platform"
+                      #notificationStageResponsiblePlatform="ngModel"
+                      name="notification-stage-responsible-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.stageResponsible.email"
+                      #notificationStageResponsibleEmail="ngModel"
+                      name="notification-stage-responsible-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td-left">
+                    Recebimento do valor total
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Notificar quando o membro do time receber todo o valor do contrato."
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.teamMemberPaid.platform"
+                      #notificationMemberPaidPlatform="ngModel"
+                      name="notification-member-paid-p"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="config.notificationConfig.teamMemberPaid.email"
+                      #notificationMemberPaidEmail="ngModel"
+                      name="notification-member-paid-e"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="
+          !expenseConfigform.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !moduleConfigform.valid ||
+          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+        "
+      >
+        Atualizar
+      </button>
+    </form>
+  </nb-tab>
 </nb-tabset>

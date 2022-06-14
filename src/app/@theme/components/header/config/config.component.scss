@@ -40,6 +40,18 @@
       padding: 10px 20px 20px 0;
     }
   }
+
+  .table-notification {
+    .td-left {
+      border-left: var(--tabset-divider-width) var(--tabset-divider-style) var(--tabset-divider-color);
+    }
+  }
+
+  .table-notification td,
+  th {
+    border-right: var(--tabset-divider-width) var(--tabset-divider-style) var(--tabset-divider-color);
+    padding: 5px 10px 10px;
+  }
 }
 
 @include media-breakpoint-down(md) {
