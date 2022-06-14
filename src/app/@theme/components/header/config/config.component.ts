@@ -1,31 +1,48 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { ConfigService } from 'app/shared/services/config.service';
 import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
 import { cloneDeep } from 'lodash';
 
 import { PlatformConfig } from '@models/platformConfig';
-import { ExpenseType } from '@models/team';
 
 import config_validation from 'app/shared/config-validation.json';
+
+interface SubTypeItem {
+  name: string;
+  isNew: boolean;
+}
+
+interface TypeItem {
+  name: string;
+  subTypes: SubTypeItem[];
+}
+
+enum CONFIG_EXPENSE_TYPES {
+  ADMINISTRATIVA = 'Administrativa',
+  CONTRATO = 'Contrato',
+}
 
 @Component({
   selector: 'ngx-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss'],
 })
-export class ConfigComponent {
+export class ConfigComponent implements OnInit {
   @Input() config: PlatformConfig = new PlatformConfig();
-  newAdminExpense: ExpenseType = new ExpenseType();
-  newContractExpense: ExpenseType = new ExpenseType();
-  newRole = { roleTypeName: '', permission: '' };
+  clonedConfig: PlatformConfig = new PlatformConfig();
+  newAdminExpense: TypeItem = { name: '', subTypes: [] };
+  newContractExpense: TypeItem = { name: '', subTypes: [] };
+  adminExpenseTypes: TypeItem[] = [];
+  contractExpenseTypes: TypeItem[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
+  newRole = { roleTypeName: '', permission: '' };
+  newLevel: string = '';
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
-  newLevel: string = '';
-
+  configExpenseTypes = CONFIG_EXPENSE_TYPES;
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   tooltipTriggers = tooltipTriggers;
@@ -49,32 +66,70 @@ export class ConfigComponent {
 
   constructor(private configService: ConfigService) {}
 
-  addExpenseType(expenseType: string): void {
-    if (expenseType == 'Administrativa') {
-      this.config.adminExpenses.push(this.newAdminExpense);
-      this.newAdminExpense = new ExpenseType();
-    } else if (expenseType == 'Contrato') {
-      this.config.contractExpenses.push(cloneDeep(this.newContractExpense));
-      this.newContractExpense = new ExpenseType();
+  ngOnInit() {
+    this.clonedConfig = cloneDeep(this.config);
+    this.adminExpenseTypes = this.clonedConfig.adminExpenses.map((eType: any) => {
+      if (eType.subTypes.length) {
+        eType.subTypes = eType.subTypes.map((subType: any) => ({
+          name: subType,
+          isNew: false,
+        }));
+      }
+      eType.subTypes = eType.subTypes as SubTypeItem[];
+      return eType;
+    });
+    this.contractExpenseTypes = this.clonedConfig.contractExpenses.map((eType: any) => {
+      if (eType.subTypes.length) {
+        eType.subTypes = eType.subTypes.map((subType: any) => ({
+          name: subType,
+          isNew: false,
+        }));
+      }
+      eType.subTypes = eType.subTypes as SubTypeItem[];
+      return eType;
+    });
+  }
+
+  addExpenseType(expenseType: CONFIG_EXPENSE_TYPES): void {
+    if (expenseType == CONFIG_EXPENSE_TYPES.ADMINISTRATIVA) {
+      this.adminExpenseTypes.push(this.newAdminExpense);
+      this.newAdminExpense = { name: '', subTypes: [] };
+    } else if (expenseType == CONFIG_EXPENSE_TYPES.CONTRATO) {
+      this.contractExpenseTypes.push(cloneDeep(this.newContractExpense));
+      this.newContractExpense = { name: '', subTypes: [] };
     }
   }
 
   addRole(): void {
-    this.errorInPositions = this.config.profileConfig.positions.some(
+    this.errorInPositions = this.clonedConfig.profileConfig.positions.some(
       (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.PARENTS.includes(this.newRole.roleTypeName)
     );
-    if (!this.errorInPositions) this.config.profileConfig.positions.push(cloneDeep(this.newRole));
+    if (!this.errorInPositions) this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
     this.newRole.roleTypeName = '';
     this.newRole.permission = '';
   }
 
   addLevel(): void {
-    this.errorInLevels = this.config.profileConfig.levels.includes(this.newLevel);
-    if (!this.errorInLevels) this.config.profileConfig.levels.push(this.newLevel);
+    this.errorInLevels = this.clonedConfig.profileConfig.levels.includes(this.newLevel);
+    if (!this.errorInLevels) this.clonedConfig.profileConfig.levels.push(this.newLevel);
     this.newLevel = '';
   }
 
   updateConfig(): void {
-    this.configService.editConfig(this.config);
+    this.clonedConfig.adminExpenses = this.adminExpenseTypes.map((eType: any) => {
+      if (eType.subTypes.length) {
+        eType.subTypes = eType.subTypes.map((subType: any) => subType.name);
+      }
+      eType.subTypes = eType.subTypes as string[];
+      return eType;
+    });
+    this.clonedConfig.contractExpenses = this.contractExpenseTypes.map((eType: any) => {
+      if (eType.subTypes.length) {
+        eType.subTypes = eType.subTypes.map((subType: any) => subType.name);
+      }
+      eType.subTypes = eType.subTypes as string[];
+      return eType;
+    });
+    this.configService.editConfig(this.clonedConfig);
   }
 }

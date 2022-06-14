@@ -8,6 +8,36 @@ import { WebSocketService } from './web-socket.service';
 export const DEFAULT_CONFIG = {
   adminExpenses: [],
   contractExpenses: [],
+  notificationConfig: {
+    contractClosed: {
+      email: true,
+      platform: true,
+    },
+    userMentioned: {
+      email: true,
+      platform: true,
+    },
+    transactionCreated: {
+      email: true,
+      platform: true,
+    },
+    transactionPaid: {
+      email: true,
+      platform: true,
+    },
+    teamMemberPaid: {
+      email: true,
+      platform: true,
+    },
+    receiptDue: {
+      email: true,
+      platform: true,
+    },
+    stageResponsible: {
+      email: true,
+      platform: true,
+    },
+  },
   invoiceConfig: {
     hasType: true,
     hasHeader: true,
