@@ -296,8 +296,8 @@ describe('ContractService', () => {
     tmpConfig.invoiceConfig.nfPercentage = '15,5';
     tmpConfig.invoiceConfig.organizationPercentage = '15,0';
     tmpConfig.oneDriveConfig.isActive = true;
-    tmpConfig.oneDriveConfig.oneDriveId = 'B69DD62C61100224';
-    tmpConfig.oneDriveConfig.folderId = '526804';
+    tmpConfig.oneDriveConfig.oneDriveId = '0';
+    tmpConfig.oneDriveConfig.folderId = '1';
     mockedConfigs = [tmpConfig];
 
     // mock response
@@ -365,10 +365,30 @@ describe('ContractService', () => {
             expect(req1.request.method).toBe('POST');
             req1.flush(null);
             const req2 = httpMock.expectOne(
-              'https://graph.microsoft.com/v1.0/drives/b69dd62c61100224/items/B69DD62C61100224!526804:/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
+              'https://graph.microsoft.com/v1.0/drives/0/items/0!1:/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
             );
             expect(req2.request.method).toBe('GET');
-            req2.flush({ parentReference: { driveId: '0', id: '0' }, id: '0' });
+            const folderMetaData = {
+              parentReference: {
+                driveId: mockedConfigs[0].oneDriveConfig.oneDriveId,
+                id: mockedConfigs[0].oneDriveConfig.folderId,
+              },
+              id: '2',
+            };
+
+            req2.flush(folderMetaData);
+
+            const req3 = httpMock.expectOne(
+              'https://graph.microsoft.com/v1.0/drives/' +
+                folderMetaData.parentReference.driveId +
+                '/items/' +
+                folderMetaData.id +
+                '/copy'
+            );
+            expect(req3.request.method).toBe('POST');
+            expect(req3.request.body.parentReference).toEqual(folderMetaData.parentReference);
+            req3.flush(null);
+
             socket.emit('dbchange', data);
             break;
           }
@@ -376,9 +396,6 @@ describe('ContractService', () => {
             expect(contracts.length).toBe(3);
             mockedContracts.push(tmpContract);
             expect(contracts).toEqual(reviveDates(mockedContracts));
-            const req3 = httpMock.expectOne('https://graph.microsoft.com/v1.0/drives/0/copy');
-            expect(req3.request.method).toBe('POST');
-            req3.flush(null);
             done();
             break;
           }
