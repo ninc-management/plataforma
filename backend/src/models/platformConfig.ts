@@ -107,6 +107,37 @@ export class OneDriveConfig {
   folderId?: string;
 }
 
+export class NotificationConfigTuple {
+  @prop({ required: true })
+  email: boolean = true;
+
+  @prop({ required: true })
+  platform: boolean = true;
+}
+
+export class NotificationConfig {
+  @prop({ required: true })
+  contractClosed: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  userMentioned: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  transactionCreated: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  transactionPaid: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  teamMemberPaid: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  receiptDue: NotificationConfigTuple = new NotificationConfigTuple();
+
+  @prop({ required: true })
+  stageResponsible: NotificationConfigTuple = new NotificationConfigTuple();
+}
+
 export class PlatformConfig extends Base<string> {
   @prop({ required: true, type: () => [ExpenseType] })
   expenseTypes: ExpenseType[] = [];
@@ -125,6 +156,9 @@ export class PlatformConfig extends Base<string> {
 
   @prop({ required: true })
   oneDriveConfig: OneDriveConfig = new OneDriveConfig();
+
+  @prop({ required: true })
+  notificationConfig: NotificationConfig = new NotificationConfig();
 }
 
 export default getModelForClass(PlatformConfig);
