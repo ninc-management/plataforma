@@ -100,11 +100,9 @@ export class OneDriveService implements OnDestroy {
             },
             name: this.generateFolderName(invoice),
           };
-          if (environment.onedriveUri) {
-            let copyURI: string;
-            if (environment.onedriveUri.match(/root/g)?.length)
-              copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
-            else copyURI = environment.onedriveUri;
+          if (this.config.oneDriveConfig.oneDriveId) {
+            const copyURI = environment.onedriveUri + this.config.oneDriveConfig.oneDriveId.toLowerCase() + '/items/';
+
             this.http
               .post(copyURI + metadata.id + '/copy', body)
               .pipe(take(1))
