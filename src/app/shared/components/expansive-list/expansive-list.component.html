@@ -5,14 +5,14 @@
       'height.rem': isExpanded ? maxHeight : minHeight
     }"
   >
-    <nb-card-header #cardHeader>{{ title }}</nb-card-header>
+    <nb-card-header>{{ title }}</nb-card-header>
     <nb-list
       #list
       [ngStyle]="{
         'overflow-y': max && items.length > max && isExpanded ? 'scroll' : 'hidden'
       }"
     >
-      <nb-list-item #listItem *ngFor="let item of items; let i = index; trackBy: trackByIndex">
+      <nb-list-item *ngFor="let item of items; let i = index; trackBy: trackByIndex">
         {{ item }}
       </nb-list-item>
     </nb-list>
