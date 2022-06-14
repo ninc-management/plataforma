@@ -38,6 +38,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import langPTBR from 'app/shared/langPT-BR';
 import { GanttChartComponent } from './components/charts/gantt-chart/gantt-chart.component';
+import { ExpansiveListComponent } from './components/expansive-list/expansive-list.component';
 
 echarts.registerLocale('PT-BR', langPTBR);
 
@@ -74,6 +75,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TransformPipe,
     EchartsBarComponent,
     GanttChartComponent,
+    ExpansiveListComponent,
   ],
   declarations: [
     BrMaskDirective,
@@ -95,6 +97,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TransformPipe,
     EchartsBarComponent,
     GanttChartComponent,
+    ExpansiveListComponent,
   ],
 })
 export class SharedModule {}

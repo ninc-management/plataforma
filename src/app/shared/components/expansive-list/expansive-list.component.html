@@ -1,0 +1,31 @@
+<div>
+  <nb-card
+    [ngStyle]="{
+      'max-height.rem': maxHeight,
+      'height.rem': isExpanded ? maxHeight : minHeight
+    }"
+  >
+    <nb-card-header>{{ title }}</nb-card-header>
+    <nb-list
+      #list
+      [ngStyle]="{
+        'overflow-y': max && items.length > max && isExpanded ? 'scroll' : 'hidden'
+      }"
+    >
+      <nb-list-item *ngFor="let item of items; let i = index; trackBy: trackByIndex">
+        {{ item }}
+      </nb-list-item>
+    </nb-list>
+  </nb-card>
+  <button
+    *ngIf="min && items.length > min"
+    nbButton
+    type="button"
+    fullWidth
+    size="small"
+    class="show-more"
+    (click)="toggleExpansive()"
+  >
+    Mostrar {{ isExpanded ? 'menos' : 'mais' }}
+  </button>
+</div>
