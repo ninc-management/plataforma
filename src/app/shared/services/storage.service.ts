@@ -28,13 +28,11 @@ export class StorageService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  //It's necessary to remove isTeamFolder parameter later
   uploadFileAndGetMetadata(
     mediaFolderPath: string,
     fileToUpload: File,
     fileName: string,
-    provider: StorageProvider,
-    isTeamFolder?: boolean
+    provider: StorageProvider
   ): FilesUploadMetadata {
     switch (provider) {
       case StorageProvider.FIREBASE: {

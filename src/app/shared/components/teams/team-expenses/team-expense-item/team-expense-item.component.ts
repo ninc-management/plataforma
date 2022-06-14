@@ -159,7 +159,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       return 'Comprovante-' + type + '-' + date + extension;
     };
     this.folderPath = mediaFolderPath;
-    super.updateUploaderOptions(mediaFolderPath, fn, true);
+    super.updateUploaderOptions(mediaFolderPath, fn);
   }
 
   handleTypeChange(): void {
