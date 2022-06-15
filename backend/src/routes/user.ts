@@ -1,11 +1,13 @@
 import * as express from 'express';
-import UserModel from '../models/user';
-import { User } from '../models/user';
 import { Mutex } from 'async-mutex';
 import { cloneDeep } from 'lodash';
+
+import { prospectMap, usersMap } from '../shared/global';
+
+import { User } from '../models/user';
+import UserModel from '../models/user';
 import { Prospect } from '../models/prospect';
 import ProspectModel from '../models/prospect';
-import { prospectMap, usersMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
