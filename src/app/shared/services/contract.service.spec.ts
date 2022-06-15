@@ -364,9 +364,17 @@ describe('ContractService', () => {
             const req1 = httpMock.expectOne('/api/contract/');
             expect(req1.request.method).toBe('POST');
             req1.flush(null);
-            const req2 = httpMock.expectOne(
-              'https://graph.microsoft.com/v1.0/drives/0/items/0!1:/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR'
-            );
+
+            const queryModelFolderURI =
+              'https://graph.microsoft.com/v1.0/drives/' +
+              mockedConfigs[0].oneDriveConfig.oneDriveId +
+              '/items/' +
+              mockedConfigs[0].oneDriveConfig.oneDriveId +
+              '!' +
+              mockedConfigs[0].oneDriveConfig.folderId +
+              ':/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR';
+
+            const req2 = httpMock.expectOne(queryModelFolderURI);
             expect(req2.request.method).toBe('GET');
             const folderMetaData = {
               parentReference: {
