@@ -32,7 +32,11 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-config [config]="config" *ngIf="componentType === types.CONFIG; else notify"></ngx-config>
+        <ngx-config
+          [config]="config"
+          [isFormDirty]="isFormDirty"
+          *ngIf="componentType === types.CONFIG; else notify"
+        ></ngx-config>
         <ng-template #notify>
           <div class="row">
             <div style="padding: 0 1rem">

@@ -1,12 +1,16 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { PlatformConfig } from '@models/platformConfig';
-import { UserNotification } from '@models/user';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { take } from 'rxjs';
+
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { isPhone, idToProperty, tooltipTriggers } from 'app/shared/utils';
+
+import { PlatformConfig } from '@models/platformConfig';
+import { UserNotification } from '@models/user';
 
 export enum COMPONENT_TYPES {
   CONFIG,
@@ -33,9 +37,10 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ConfigDialogComponent>,
+    private notificationService: NotificationService,
+    private dialogService: NbDialogService,
     public userService: UserService,
-    public stringUtils: StringUtilService,
-    private notificationService: NotificationService
+    public stringUtils: StringUtilService
   ) {
     super(derivedDocument, derivedRef);
   }
@@ -45,13 +50,32 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
   }
 
   dismiss(): void {
-    if (
-      this.componentType === COMPONENT_TYPES.NOTIFICATION &&
-      this.notification.to &&
-      this.notificationIndex != undefined
-    ) {
-      this.notificationService.checkNotification(this.notification);
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else {
+      if (
+        this.componentType === COMPONENT_TYPES.NOTIFICATION &&
+        this.notification.to &&
+        this.notificationIndex != undefined
+      ) {
+        this.notificationService.checkNotification(this.notification);
+      }
+      super.dismiss();
     }
-    super.dismiss();
   }
 }

@@ -77,7 +77,7 @@
                         status="basic"
                         icon="trash-2-outline"
                         pack="eva"
-                        (click)="eType.subTypes.splice(j, 1)"
+                        (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
                         [options]="{ animation: { type: 'shake' } }"
                       ></nb-icon>
                     </div>
@@ -107,7 +107,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="adminExpenseTypes.splice(i, 1)"
+                (click)="adminExpenseTypes.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -190,7 +190,7 @@
                         status="basic"
                         icon="trash-2-outline"
                         pack="eva"
-                        (click)="eType.subTypes.splice(j, 1)"
+                        (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
                         [options]="{ animation: { type: 'shake' } }"
                       ></nb-icon>
                     </div>
@@ -220,7 +220,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="contractExpenseTypes.splice(i, 1)"
+                (click)="contractExpenseTypes.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -605,7 +605,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="clonedConfig.profileConfig.positions.splice(i, 1)"
+                    (click)="clonedConfig.profileConfig.positions.splice(i, 1); isFormDirty.next(true)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -680,7 +680,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="clonedConfig.profileConfig.levels.splice(i, 1)"
+                    (click)="clonedConfig.profileConfig.levels.splice(i, 1); isFormDirty.next(true)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>

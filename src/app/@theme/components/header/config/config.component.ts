@@ -1,8 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { cloneDeep } from 'lodash';
 
 import { ConfigService } from 'app/shared/services/config.service';
 import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
-import { cloneDeep } from 'lodash';
 
 import { PlatformConfig } from '@models/platformConfig';
 
@@ -29,7 +31,9 @@ enum CONFIG_EXPENSE_TYPES {
   styleUrls: ['./config.component.scss'],
 })
 export class ConfigComponent implements OnInit {
+  @ViewChildren(NgForm) ngForms = {} as QueryList<NgForm>;
   @Input() config: PlatformConfig = new PlatformConfig();
+  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   clonedConfig: PlatformConfig = new PlatformConfig();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
@@ -37,12 +41,16 @@ export class ConfigComponent implements OnInit {
   contractExpenseTypes: TypeItem[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
+
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
   configExpenseTypes = CONFIG_EXPENSE_TYPES;
+
+  forms: NgForm[] = [];
+
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   tooltipTriggers = tooltipTriggers;
@@ -90,6 +98,22 @@ export class ConfigComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    const observables$ = this.ngForms
+      .map((form) => form.statusChanges)
+      .filter((observable$): observable$ is Observable<any> => observable$ != undefined);
+    this.forms = this.ngForms.toArray();
+    combineLatest(observables$).subscribe(() => {
+      const isDirty = this.forms.some((form) => {
+        if (form.dirty) return true;
+        return false;
+      });
+      if (isDirty) {
+        this.isFormDirty.next(true);
+      }
+    });
+  }
+
   addExpenseType(expenseType: CONFIG_EXPENSE_TYPES): void {
     if (expenseType == CONFIG_EXPENSE_TYPES.ADMINISTRATIVA) {
       this.adminExpenseTypes.push(this.newAdminExpense);
@@ -130,6 +154,7 @@ export class ConfigComponent implements OnInit {
       eType.subTypes = eType.subTypes as string[];
       return eType;
     });
+    this.isFormDirty.next(false);
     this.configService.editConfig(this.clonedConfig);
   }
 }
