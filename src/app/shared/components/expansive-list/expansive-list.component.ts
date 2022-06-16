@@ -12,6 +12,7 @@ export class ExpansiveListComponent implements OnInit {
   @Input() items: string[] = [];
   @Input() min?: number = 5;
   @Input() max?: number;
+  @Input() isLoading: boolean = false;
 
   minHeight = 0;
   maxHeight = 0;

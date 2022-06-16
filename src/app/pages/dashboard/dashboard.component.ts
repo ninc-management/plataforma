@@ -64,6 +64,7 @@ export class DashboardComponent {
   nortanTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
+  isParettoRankLoaded = false;
 
   isPhone = isPhone;
 
@@ -167,6 +168,7 @@ export class DashboardComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe((parettoRank) => {
         this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
+        this.isParettoRankLoaded = true;
       });
   }
 
