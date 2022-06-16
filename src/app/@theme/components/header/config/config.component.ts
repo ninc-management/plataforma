@@ -76,25 +76,27 @@ export class ConfigComponent implements OnInit {
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
-    this.adminExpenseTypes = this.clonedConfig.adminExpenses.map((eType: any) => {
-      if (eType.subTypes.length) {
-        eType.subTypes = eType.subTypes.map((subType: any) => ({
+    this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenses.map((eType: any) => {
+      const typeItem = cloneDeep(eType);
+      if (typeItem.subTypes.length) {
+        typeItem.subTypes = typeItem.subTypes.map((subType: any) => ({
           name: subType,
           isNew: false,
         }));
       }
-      eType.subTypes = eType.subTypes as SubTypeItem[];
-      return eType;
+      typeItem.subTypes = typeItem.subTypes as SubTypeItem[];
+      return typeItem;
     });
-    this.contractExpenseTypes = this.clonedConfig.contractExpenses.map((eType: any) => {
-      if (eType.subTypes.length) {
-        eType.subTypes = eType.subTypes.map((subType: any) => ({
+    this.contractExpenseTypes = this.clonedConfig.expenseConfig.contractExpenses.map((eType: any) => {
+      const typeItem = cloneDeep(eType);
+      if (typeItem.subTypes.length) {
+        typeItem.subTypes = typeItem.subTypes.map((subType: any) => ({
           name: subType,
           isNew: false,
         }));
       }
-      eType.subTypes = eType.subTypes as SubTypeItem[];
-      return eType;
+      typeItem.subTypes = typeItem.subTypes as SubTypeItem[];
+      return typeItem;
     });
   }
 
@@ -140,21 +142,25 @@ export class ConfigComponent implements OnInit {
   }
 
   updateConfig(): void {
-    this.clonedConfig.adminExpenses = this.adminExpenseTypes.map((eType: any) => {
-      if (eType.subTypes.length) {
-        eType.subTypes = eType.subTypes.map((subType: any) => subType.name);
+    this.clonedConfig.expenseConfig.adminExpenses = this.adminExpenseTypes.map((eType: any) => {
+      const typeItem = cloneDeep(eType);
+      if (typeItem.subTypes.length) {
+        typeItem.subTypes = typeItem.subTypes.map((subType: any) => subType.name);
       }
-      eType.subTypes = eType.subTypes as string[];
-      return eType;
+      typeItem.subTypes = typeItem.subTypes as string[];
+      return typeItem;
     });
-    this.clonedConfig.contractExpenses = this.contractExpenseTypes.map((eType: any) => {
-      if (eType.subTypes.length) {
-        eType.subTypes = eType.subTypes.map((subType: any) => subType.name);
+    this.clonedConfig.expenseConfig.contractExpenses = this.contractExpenseTypes.map((eType: any) => {
+      const typeItem = cloneDeep(eType);
+      if (typeItem.subTypes.length) {
+        typeItem.subTypes = typeItem.subTypes.map((subType: any) => subType.name);
       }
-      eType.subTypes = eType.subTypes as string[];
-      return eType;
+      typeItem.subTypes = typeItem.subTypes as string[];
+      return typeItem;
     });
     this.isFormDirty.next(false);
+    if (this.clonedConfig.expenseConfig.isDuplicated)
+      this.clonedConfig.expenseConfig.contractExpenses = cloneDeep(this.clonedConfig.expenseConfig.adminExpenses);
     this.configService.editConfig(this.clonedConfig);
   }
 }

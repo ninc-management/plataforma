@@ -4,7 +4,7 @@ import { AuthGuard } from './auth.guard';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Observable, of, take } from 'rxjs';
-import { ConfigService } from '../services/config.service';
+import { ConfigService, DEFAULT_CONFIG } from '../services/config.service';
 import { PlatformConfig, ProfileConfig } from '@models/platformConfig';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ExpenseType } from '@models/team';
@@ -46,22 +46,14 @@ describe('AuthGuard', () => {
     httpMock = TestBed.inject(HttpTestingController);
     configService = TestBed.inject(ConfigService);
     mockedConfigs = [];
-    let mockedConfig = new PlatformConfig();
-    let mockedProfileConfig = new ProfileConfig();
-    let mockedExpenseType = new ExpenseType();
+    let mockedConfig = cloneDeep(DEFAULT_CONFIG) as any;
     mockedConfig._id = '0';
-    mockedExpenseType.name = 'mockedExpenseType1';
-    mockedExpenseType.subTypes.push('mockedExpenseSubType1');
-    mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
-    mockedConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
-    mockedProfileConfig.positions.push(
+    mockedConfig.profileConfig.levels.push('teste');
+    mockedConfig.profileConfig.positions.push(
       { roleTypeName: 'teste', permission: 'Administrador' },
       { roleTypeName: 'teste2', permission: 'Membro' },
       { roleTypeName: 'teste3', permission: 'Financeiro' }
     );
-    mockedProfileConfig.levels.push('teste');
-    mockedConfig.profileConfig = mockedProfileConfig;
     mockedConfigs.push(cloneDeep(mockedConfig));
     configService.getConfig().pipe(take(1)).subscribe();
     const req = httpMock.expectOne('/api/config/all');

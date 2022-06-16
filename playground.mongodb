@@ -610,8 +610,6 @@ db.invoices.find().forEach((invoice) => {
 
 db.createCollection('platformconfigs');
 const config = {
-  adminExpenses: [],
-  contractExpenses: [],
   notificationConfig: {
     contractClosed: {
       email: true,
@@ -641,6 +639,11 @@ const config = {
       email: true,
       platform: true,
     },
+  },
+  expenseConfig: {
+    adminExpenses: [],
+    contractExpenses: [],
+    isDuplicated: false,
   },
   invoiceConfig: {
     hasType: true,
@@ -719,8 +722,11 @@ db.teams.find().forEach((team) => {
  */
 
 db.platformconfigs.find().forEach((config) => {
-  config.adminExpenses = config.expenseTypes;
-  config.contractExpenses = [];
+  config.expenseConfig = {
+    adminExpenses: config.expenseTypes,
+    contractExpenses: [],
+    isDuplicated: false,
+  };
   delete config.expenseTypes;
   config.notificationConfig = {
     contractClosed: {

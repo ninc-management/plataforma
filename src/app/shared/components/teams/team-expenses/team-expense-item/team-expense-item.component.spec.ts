@@ -24,8 +24,8 @@ describe('TeamExpenseItemComponent', () => {
     mockedExpenseType.name = 'mockedExpenseType1';
     mockedExpenseType.subTypes.push('mockedExpenseSubType1');
     mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
-    mockedConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
+    mockedConfig.expenseConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
+    mockedConfig.expenseConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
     mockedConfigs.push(cloneDeep(mockedConfig));
 
     configService = TestBed.inject(ConfigService);

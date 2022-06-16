@@ -76,8 +76,8 @@ describe('ConfigService', () => {
     mockedExpenseType.name = 'mockedExpenseType1';
     mockedExpenseType.subTypes.push('mockedExpenseSubType1');
     mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
-    mockedConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
+    mockedConfig.expenseConfig.adminExpenses.push(cloneDeep(mockedExpenseType));
+    mockedConfig.expenseConfig.contractExpenses.push(cloneDeep(mockedExpenseType));
     mockedConfigs.push(cloneDeep(mockedConfig));
   });
 
@@ -154,12 +154,14 @@ describe('ConfigService', () => {
       },
       updateDescription: {
         updatedFields: {
-          adminExpenses: [
-            {
-              name: 'editTestExpenseType',
-              subTypes: ['editTestExpenseSubType'],
-            },
-          ],
+          expenseConfig: {
+            adminExpenses: [
+              {
+                name: 'editTestExpenseType',
+                subTypes: ['editTestExpenseSubType'],
+              },
+            ],
+          },
         },
         removedFields: [] as any[],
       },
@@ -189,7 +191,7 @@ describe('ConfigService', () => {
           }
           case 3: {
             expect(configs.length).toBe(1);
-            expect(configs[0].adminExpenses).toEqual([
+            expect(configs[0].expenseConfig.adminExpenses).toEqual([
               { name: 'editTestExpenseType', subTypes: ['editTestExpenseSubType'] },
             ]);
             done();
@@ -212,12 +214,12 @@ describe('ConfigService', () => {
   baseTest('getConfig should work', (expectedConfigs: PlatformConfig[]) => {});
 
   baseTest('expenseSubTypes should work', (expectedConfigs: PlatformConfig[]) => {
-    expect(service.expenseSubTypes(expectedConfigs[0].adminExpenses[0].name)).toEqual([
+    expect(service.expenseSubTypes(expectedConfigs[0].expenseConfig.adminExpenses[0].name)).toEqual([
       'mockedExpenseSubType1',
       'mockedExpenseSubType2',
     ]);
 
-    mockedConfigs[0].adminExpenses[0].subTypes = [];
-    expect(service.expenseSubTypes(mockedConfigs[0].adminExpenses[0].name)).toEqual([]);
+    mockedConfigs[0].expenseConfig.adminExpenses[0].subTypes = [];
+    expect(service.expenseSubTypes(mockedConfigs[0].expenseConfig.adminExpenses[0].name)).toEqual([]);
   });
 });
