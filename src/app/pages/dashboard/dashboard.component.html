@@ -1,11 +1,18 @@
 <nb-tabset class="dashboard" (changeTab)="setActiveTab($event)">
   <nb-tab [tabTitle]="isPhone() ? '' : tabTitles.PESSOAL" tabIcon="person" responsive>
     <div class="row">
-      <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
-      <div class="col-12">
-        <nb-card>
-          <ngx-time-series [series$]="timeSeries$"></ngx-time-series>
-        </nb-card>
+      <div class="col-12 col-md-6">
+        <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
+        <div class="col-12">
+          <nb-card>
+            <ngx-time-series [series$]="timeSeries$"></ngx-time-series>
+          </nb-card>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="col-12">
+          <ngx-expansive-list [title]="'Ranking de Paretto'" [items]="parettoRank"></ngx-expansive-list>
+        </div>
       </div>
     </div>
   </nb-tab>
