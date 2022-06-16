@@ -1,232 +1,252 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <form (ngSubmit)="updateConfig()" #expenseConfigform="ngForm" aria-labelledby="title">
-      <div class="row" style="margin-top: 8px">
-        <div class="col-auto">
-          <label class="label-divider">Despesas administrativas</label>
-        </div>
-        <div class="col">
-          <hr />
-        </div>
-      </div>
       <div class="row">
-        <div class="col-10 col-md-11">
-          <div class="form-control-group">
-            <label class="label" for="input-admin-type">Tipo de despesa</label>
-            <input
-              nbInput
-              [(ngModel)]="newAdminExpense.name"
-              #adminType="ngModel"
-              id="input-admin-type"
-              name="adminType"
-              placeholder="Nome do tipo da despesa"
-              fullWidth
-              fieldSize="large"
-              [status]="adminType.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="adminType.invalid && adminType.touched ? true : null"
-            />
+        <div class="col-12 col-lg">
+          <div class="row" style="margin-top: 8px">
+            <div class="col-auto">
+              <label class="label-divider">Despesas administrativas</label>
+            </div>
+            <div class="col">
+              <hr />
+            </div>
+            <div style="margin-left: 14px">
+              <nb-toggle
+                [(ngModel)]="clonedConfig.expenseConfig.isDuplicated"
+                name="toggle-isDuplicated"
+                labelPosition="start"
+              >
+                Duplicar lista
+              </nb-toggle>
+            </div>
           </div>
-        </div>
-        <div class="col-2 col-md-1">
-          <button
-            nbButton
-            type="button"
-            fullWidth
-            status="primary"
-            size="large"
-            style="margin-top: 28px"
-            [disabled]="!adminType.value"
-            (click)="addExpenseType(configExpenseTypes.ADMINISTRATIVA)"
-          >
-            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
-          </button>
-        </div>
-      </div>
-      <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let eType of adminExpenseTypes; let i = index; trackBy: trackByIndex">
-          <div class="row typeRow">
-            <div class="col-9 col-md-11">
-              <input
-                nbInput
-                [(ngModel)]="eType.name"
-                id="input-expense-type-{{ i }}"
-                name="expense-type-{{ i }}"
-                fullWidth
-                [status]="adminExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
-                [readonly]="true"
-              />
-              <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
-                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
-                  <div class="row typeRow">
-                    <div class="col-10 col-md-11">
-                      <input
-                        nbInput
-                        [(ngModel)]="eType.subTypes[j].name"
-                        id="input-subtype-{{ i }}-{{ j }}"
-                        name="subtype-{{ i }}-{{ j }}"
-                        placeholder="Nome do subtipo da despesa"
-                        fullWidth
-                        [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
-                        [readonly]="!eType.subTypes[j].isNew"
-                        [required]="true"
-                      />
-                    </div>
-                    <div class="col-2 col-md-1" style="text-align: right">
-                      <nb-icon
-                        class="xIcon"
-                        status="basic"
-                        icon="trash-2-outline"
-                        pack="eva"
-                        (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
-                        [options]="{ animation: { type: 'shake' } }"
-                      ></nb-icon>
-                    </div>
+          <div class="row" style="align-items: end">
+            <div class="col-10 col-md-11">
+              <div class="form-control-group">
+                <label class="label" for="input-admin-type">Tipo de despesa:</label>
+                <input
+                  nbInput
+                  [(ngModel)]="newAdminExpense.name"
+                  #adminType="ngModel"
+                  id="input-admin-type"
+                  name="adminType"
+                  placeholder="Nome do tipo da despesa"
+                  fullWidth
+                  fieldSize="large"
+                  [status]="adminType.value ? 'success' : 'basic'"
+                  [attr.aria-invalid]="adminType.invalid && adminType.touched ? true : null"
+                />
+              </div>
+            </div>
+            <div class="col-2 col-md-1">
+              <div class="form-control-group">
+                <button
+                  nbButton
+                  type="button"
+                  fullWidth
+                  status="primary"
+                  size="large"
+                  style="margin-top: 28px"
+                  [disabled]="!adminType.value"
+                  (click)="addExpenseType(configExpenseTypes.ADMINISTRATIVA)"
+                >
+                  <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item *ngFor="let eType of adminExpenseTypes; let i = index; trackBy: trackByIndex">
+              <div class="row typeRow">
+                <div class="col-9 col-md-11">
+                  <input
+                    nbInput
+                    [(ngModel)]="eType.name"
+                    id="input-expense-type-{{ i }}"
+                    name="expense-type-{{ i }}"
+                    fullWidth
+                    [status]="adminExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+                    [readonly]="true"
+                  />
+                  <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
+                    <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
+                      <div class="row typeRow">
+                        <div class="col-10 col-md-11">
+                          <input
+                            nbInput
+                            [(ngModel)]="eType.subTypes[j].name"
+                            id="input-subtype-{{ i }}-{{ j }}"
+                            name="subtype-{{ i }}-{{ j }}"
+                            placeholder="Nome do subtipo da despesa"
+                            fullWidth
+                            [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
+                            [readonly]="!eType.subTypes[j].isNew"
+                            [required]="true"
+                          />
+                        </div>
+                        <div class="col-2 col-md-1" style="text-align: right">
+                          <nb-icon
+                            class="xIcon"
+                            status="basic"
+                            icon="trash-2-outline"
+                            pack="eva"
+                            (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
+                            [options]="{ animation: { type: 'shake' } }"
+                          ></nb-icon>
+                        </div>
+                      </div>
+                    </nb-list-item>
+                  </nb-list>
+                </div>
+                <div class="col-3 col-md-1" style="text-align: right">
+                  <nb-icon
+                    class="addIcon"
+                    status="basic"
+                    icon="plus-outline"
+                    pack="eva"
+                    (click)="
+                      eType.subTypes.push({
+                        name: '',
+                        isNew: true
+                      })
+                    "
+                    [options]="{ animation: { type: 'pulse' } }"
+                    nbTooltip="Adicionar subtipo da despesa"
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="adminExpenseTypes.splice(i, 1); isFormDirty.next(true)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
+          <ng-container *ngIf="!clonedConfig.expenseConfig.isDuplicated">
+            <div class="row" style="margin-top: 8px">
+              <div class="col-auto">
+                <label class="label-divider">Despesas de contratos</label>
+              </div>
+              <div class="col">
+                <hr />
+              </div>
+            </div>
+            <div class="row" style="align-items: end">
+              <div class="col-10 col-md-11">
+                <div class="form-control-group">
+                  <label class="label" for="input-contract-type">Tipo de despesa:</label>
+                  <input
+                    nbInput
+                    [(ngModel)]="newContractExpense.name"
+                    #contractType="ngModel"
+                    id="input-contract-type"
+                    name="contractType"
+                    placeholder="Nome do tipo da despesa"
+                    fullWidth
+                    fieldSize="large"
+                    [status]="contractType.value ? 'success' : 'basic'"
+                    [attr.aria-invalid]="contractType.invalid && contractType.touched ? true : null"
+                  />
+                </div>
+              </div>
+              <div class="col-2 col-md-1">
+                <div class="form-control-group">
+                  <button
+                    nbButton
+                    type="button"
+                    fullWidth
+                    status="primary"
+                    size="large"
+                    style="margin-top: 28px"
+                    [disabled]="!contractType.value"
+                    (click)="addExpenseType(configExpenseTypes.CONTRATO)"
+                  >
+                    <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                  </button>
+                </div>
+              </div>
+              <hr />
+            </div>
+            <nb-list style="width: 100%; padding: 10px 0">
+              <nb-list-item *ngFor="let eType of contractExpenseTypes; let i = index; trackBy: trackByIndex">
+                <div class="row typeRow">
+                  <div class="col-9 col-md-11">
+                    <input
+                      nbInput
+                      [(ngModel)]="eType.name"
+                      id="input-expense-type-{{ i }}"
+                      name="expense-type-{{ i }}"
+                      fullWidth
+                      [status]="contractExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
+                      [readonly]="true"
+                    />
+                    <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
+                      <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
+                        <div class="row typeRow">
+                          <div class="col-10 col-md-11">
+                            <input
+                              nbInput
+                              [(ngModel)]="eType.subTypes[j].name"
+                              id="input-subtype-{{ i }}-{{ j }}"
+                              name="subtype-{{ i }}-{{ j }}"
+                              placeholder="Nome do subtipo da despesa"
+                              fullWidth
+                              [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
+                              [readonly]="!eType.subTypes[j].isNew"
+                              [required]="true"
+                            />
+                          </div>
+                          <div class="col-2 col-md-1" style="text-align: right">
+                            <nb-icon
+                              class="xIcon"
+                              status="basic"
+                              icon="trash-2-outline"
+                              pack="eva"
+                              (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
+                              [options]="{ animation: { type: 'shake' } }"
+                            ></nb-icon>
+                          </div>
+                        </div>
+                      </nb-list-item>
+                    </nb-list>
                   </div>
-                </nb-list-item>
-              </nb-list>
-            </div>
-            <div class="col-3 col-md-1" style="text-align: right">
-              <nb-icon
-                class="addIcon"
-                status="basic"
-                icon="plus-outline"
-                pack="eva"
-                (click)="
-                  eType.subTypes.push({
-                    name: '',
-                    isNew: true
-                  })
-                "
-                [options]="{ animation: { type: 'pulse' } }"
-                nbTooltip="Adicionar subtipo da despesa"
-                nbTooltipPlacement="top"
-                nbTooltipStatus="info"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="adminExpenseTypes.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
-            </div>
-          </div>
-        </nb-list-item>
-      </nb-list>
-      <div class="row" style="margin-top: 8px">
-        <div class="col-auto">
-          <label class="label-divider">Despesas de contratos</label>
-        </div>
-        <div class="col">
-          <hr />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-10 col-md-11">
-          <div class="form-control-group">
-            <label class="label" for="input-contract-type">Tipo de despesa</label>
-            <input
-              nbInput
-              [(ngModel)]="newContractExpense.name"
-              #contractType="ngModel"
-              id="input-contract-type"
-              name="contractType"
-              placeholder="Nome do tipo da despesa"
-              fullWidth
-              fieldSize="large"
-              [status]="contractType.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="contractType.invalid && contractType.touched ? true : null"
-            />
-          </div>
-        </div>
-        <div class="col-2 col-md-1">
-          <button
-            nbButton
-            type="button"
-            fullWidth
-            status="primary"
-            size="large"
-            style="margin-top: 28px"
-            [disabled]="!contractType.value"
-            (click)="addExpenseType(configExpenseTypes.CONTRATO)"
-          >
-            <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
-          </button>
-        </div>
-      </div>
-      <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let eType of contractExpenseTypes; let i = index; trackBy: trackByIndex">
-          <div class="row typeRow">
-            <div class="col-9 col-md-11">
-              <input
-                nbInput
-                [(ngModel)]="eType.name"
-                id="input-expense-type-{{ i }}"
-                name="expense-type-{{ i }}"
-                fullWidth
-                [status]="contractExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
-                [readonly]="true"
-              />
-              <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
-                <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
-                  <div class="row typeRow">
-                    <div class="col-10 col-md-11">
-                      <input
-                        nbInput
-                        [(ngModel)]="eType.subTypes[j].name"
-                        id="input-subtype-{{ i }}-{{ j }}"
-                        name="subtype-{{ i }}-{{ j }}"
-                        placeholder="Nome do subtipo da despesa"
-                        fullWidth
-                        [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
-                        [readonly]="!eType.subTypes[j].isNew"
-                        [required]="true"
-                      />
-                    </div>
-                    <div class="col-2 col-md-1" style="text-align: right">
-                      <nb-icon
-                        class="xIcon"
-                        status="basic"
-                        icon="trash-2-outline"
-                        pack="eva"
-                        (click)="eType.subTypes.splice(j, 1); isFormDirty.next(true)"
-                        [options]="{ animation: { type: 'shake' } }"
-                      ></nb-icon>
-                    </div>
+                  <div class="col-3 col-md-1" style="text-align: right">
+                    <nb-icon
+                      class="addIcon"
+                      status="basic"
+                      icon="plus-outline"
+                      pack="eva"
+                      (click)="
+                        eType.subTypes.push({
+                          name: '',
+                          isNew: true
+                        })
+                      "
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Adicionar subtipo da despesa"
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                    <nb-icon
+                      class="xIcon"
+                      status="basic"
+                      icon="trash-2-outline"
+                      pack="eva"
+                      (click)="contractExpenseTypes.splice(i, 1); isFormDirty.next(true)"
+                      [options]="{ animation: { type: 'shake' } }"
+                    ></nb-icon>
                   </div>
-                </nb-list-item>
-              </nb-list>
-            </div>
-            <div class="col-3 col-md-1" style="text-align: right">
-              <nb-icon
-                class="addIcon"
-                status="basic"
-                icon="plus-outline"
-                pack="eva"
-                (click)="
-                  eType.subTypes.push({
-                    name: '',
-                    isNew: true
-                  })
-                "
-                [options]="{ animation: { type: 'pulse' } }"
-                nbTooltip="Adicionar subtipo da despesa"
-                nbTooltipPlacement="top"
-                nbTooltipStatus="info"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="contractExpenseTypes.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
-            </div>
-          </div>
-        </nb-list-item>
-      </nb-list>
+                </div>
+              </nb-list-item>
+            </nb-list>
+          </ng-container>
+        </div>
+      </div>
       <button
         nbButton
         fullWidth

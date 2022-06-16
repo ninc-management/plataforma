@@ -138,12 +138,20 @@ export class NotificationConfig {
   stageResponsible: NotificationConfigTuple = new NotificationConfigTuple();
 }
 
-export class PlatformConfig extends Base<string> {
+export class ExpenseConfig {
   @prop({ required: true, type: () => [ExpenseType] })
   adminExpenses: ExpenseType[] = [];
 
   @prop({ required: true, type: () => [ExpenseType] })
   contractExpenses: ExpenseType[] = [];
+
+  @prop({ required: true })
+  isDuplicated: boolean = false;
+}
+
+export class PlatformConfig extends Base<string> {
+  @prop({ required: true })
+  expenseConfig: ExpenseConfig = new ExpenseConfig();
 
   @prop({ required: true })
   invoiceConfig: InvoiceConfig = new InvoiceConfig();

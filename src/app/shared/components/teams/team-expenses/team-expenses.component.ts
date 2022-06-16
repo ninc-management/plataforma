@@ -103,7 +103,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: this.platformConfig.adminExpenses.map((type) => ({
+            list: this.platformConfig.expenseConfig.adminExpenses.map((type) => ({
               value: type.name,
               title: type.name,
             })),
@@ -222,7 +222,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   reloadTableSettings(): void {
     const newSettings = this.settings;
-    newSettings.columns.type.filter.config.list = this.platformConfig.adminExpenses.map((type) => ({
+    newSettings.columns.type.filter.config.list = this.platformConfig.expenseConfig.adminExpenses.map((type) => ({
       value: type.name,
       title: type.name,
     }));
