@@ -11,7 +11,11 @@
       </div>
       <div class="col-12 col-md-6">
         <div class="col-12">
-          <ngx-expansive-list [title]="'Ranking de Paretto'" [items]="parettoRank"></ngx-expansive-list>
+          <ngx-expansive-list
+            [title]="'Ranking de Paretto'"
+            [items]="parettoRank"
+            [isLoading]="!isParettoRankLoaded"
+          ></ngx-expansive-list>
         </div>
       </div>
     </div>
