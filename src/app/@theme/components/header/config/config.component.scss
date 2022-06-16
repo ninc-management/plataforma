@@ -41,12 +41,6 @@
     }
   }
 
-  .table-notification {
-    .td-left {
-      border-left: var(--tabset-divider-width) var(--tabset-divider-style) var(--tabset-divider-color);
-    }
-  }
-
   .table-notification td,
   th {
     border-right: var(--tabset-divider-width) var(--tabset-divider-style) var(--tabset-divider-color);
