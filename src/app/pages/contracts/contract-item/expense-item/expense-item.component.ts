@@ -1,31 +1,33 @@
-import { Component, OnInit, Input, OnDestroy, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { take, takeUntil, skip } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
-import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
-import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
-import expense_validation from 'app/shared/expense-validation.json';
-import { TeamService } from 'app/shared/services/team.service';
+import { ConfigService, EXPENSE_OBJECT_TYPES, EXPENSE_TYPES } from 'app/shared/services/config.service';
+import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import {
-  isPhone,
-  formatDate,
   compareFiles,
   forceValidatorUpdate,
-  trackByIndex,
+  formatDate,
+  isPhone,
   shouldNotifyManager,
+  trackByIndex,
 } from 'app/shared/utils';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
-import { ConfigService } from 'app/shared/services/config.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
+
 import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
+import { ExpenseType } from '@models/team';
+
+import expense_validation from 'app/shared/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',
@@ -37,15 +39,15 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   @Input() expenseIndex?: number;
   @Input() availableContracts: Contract[] = [];
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
-  @ViewChild('form') ngForm = {} as NgForm;
 
   invoice = new Invoice();
   hasInitialContract = true;
   validation = expense_validation as any;
   USER_SECTORS: Sector[] = [];
-  types = Object.values(EXPENSE_TYPES);
   expenseTypes = EXPENSE_TYPES;
+  contractExpenseTypes: ExpenseType[] = [];
   splitTypes = SPLIT_TYPES;
+  expenseObjectTypes = EXPENSE_OBJECT_TYPES;
   balanceID = CONTRACT_BALANCE._id;
   isEditionGranted = false;
   expense: ContractExpense = {
@@ -80,7 +82,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   trackByIndex = trackByIndex;
   formatDate = formatDate;
 
-  lastType = EXPENSE_TYPES.MATERIAL;
+  lastType = EXPENSE_TYPES.COMISSAO;
 
   initialFiles: UploadedFile[] = [];
   registered: boolean = false;
@@ -114,8 +116,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
-    protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
+    protected stringUtil: StringUtilService,
+    public configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService
   ) {
@@ -135,16 +138,22 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
 
-    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
-      if (status === 'VALID' && this.expense.nf === true) this.updateUploaderOptions();
-    });
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isLoaded]) => !isLoaded),
+        take(1)
+      )
+      .subscribe(([configs, _]) => {
+        this.contractExpenseTypes = configs[0].expenseConfig.contractExpenseTypes;
+      });
 
     this.initialFiles = cloneDeep(this.uploadedFiles);
   }
 
   ngAfterViewInit(): void {
-    this.ngForm.statusChanges?.subscribe(() => {
-      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (this.formRef.dirty) this.isFormDirty.next(true);
+      if (status === 'VALID' && this.expense.nf === true) this.updateUploaderOptions();
     });
   }
 
@@ -305,7 +314,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
     this.updatePaidDate();
-    this.ngForm.form.markAsPristine();
+    this.formRef.form.markAsPristine();
     setTimeout(() => {
       this.isFormDirty.next(false);
     }, 10);

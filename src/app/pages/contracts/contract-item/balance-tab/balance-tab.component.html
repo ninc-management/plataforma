@@ -208,7 +208,7 @@
           <nb-list style="width: 100%; padding: 10px 0; text-align: center">
             <nb-list-item
               *ngFor="
-                let expense of this.contractService.expenseTypesSum(false, contract);
+                let expense of this.contractService.expenseTypesSum(false, contract) | async;
                 let i = index;
                 trackBy: trackByIndex
               "
@@ -246,7 +246,7 @@
           <nb-list style="width: 100%; padding: 10px 0; text-align: center">
             <nb-list-item
               *ngFor="
-                let expense of contractService.expenseTypesSum(true, contract);
+                let expense of contractService.expenseTypesSum(true, contract) | async;
                 let i = index;
                 trackBy: trackByIndex
               "

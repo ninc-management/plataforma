@@ -87,19 +87,23 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
             const series: EchartBar[] = [];
             const currentContract = contracts.find((contract) => contract._id === this.contractId);
             if (currentContract) {
-              const result = this.contractService.expenseTypesSum(false, currentContract);
-              result
-                .filter((x) => x.type !== 'TOTAL')
-                .map((expense) => {
-                  const temp: EchartBar = {
-                    type: 'bar',
-                    barGap: '-100%',
-                    barWidth: '30%',
-                    data: [[expense.type, this.stringUtilService.moneyToNumber(expense.value)]],
-                  };
-                  series.push(temp);
+              this.contractService
+                .expenseTypesSum(false, currentContract)
+                .pipe(take(1))
+                .subscribe((result) => {
+                  result
+                    .filter((x) => x.type !== 'TOTAL')
+                    .map((expense) => {
+                      const temp: EchartBar = {
+                        type: 'bar',
+                        barGap: '-100%',
+                        barWidth: '30%',
+                        data: [[expense.type, this.stringUtilService.moneyToNumber(expense.value)]],
+                      };
+                      series.push(temp);
+                    });
+                  this.toHandleChart(series);
                 });
-              this.toHandleChart(series);
             }
           });
       });

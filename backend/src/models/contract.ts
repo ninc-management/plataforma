@@ -35,6 +35,9 @@ export class ContractExpense {
   @prop({ required: true })
   type!: string;
 
+  @prop()
+  subType?: string;
+
   @prop({ required: true })
   splitType!: string;
 

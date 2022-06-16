@@ -8,7 +8,7 @@ import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
+import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -18,8 +18,9 @@ import { TeamService } from 'app/shared/services/team.service';
 import { Prospect } from '@models/prospect';
 import { ProspectService } from 'app/shared/services/prospect.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { isPhone, nfPercentage, nortanPercentage, idToProperty, nameSort } from 'app/shared/utils';
+import { isPhone, nfPercentage, nortanPercentage, nameSort } from 'app/shared/utils';
 import { generateUsersReport } from 'app/shared/report-generator';
+import { EXPENSE_TYPES } from 'app/shared/services/config.service';
 
 interface IndividualData {
   received: string;

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES, SPLIT_TYPES } from './contract.service';
+import { ContractService, CONTRACT_STATOOS, SPLIT_TYPES } from './contract.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import {
   Contract,
@@ -18,7 +18,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
-import { ConfigService } from './config.service';
+import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { CONTRACT_BALANCE } from './user.service';
 import { DEFAULT_CONFIG } from './config.service';
 import { User } from '@models/user';

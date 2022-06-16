@@ -140,10 +140,10 @@ export class NotificationConfig {
 
 export class ExpenseConfig {
   @prop({ required: true, type: () => [ExpenseType] })
-  adminExpenses: ExpenseType[] = [];
+  adminExpenseTypes: ExpenseType[] = [];
 
   @prop({ required: true, type: () => [ExpenseType] })
-  contractExpenses: ExpenseType[] = [];
+  contractExpenseTypes: ExpenseType[] = [];
 
   @prop({ required: true })
   isDuplicated: boolean = false;
