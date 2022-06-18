@@ -49,11 +49,11 @@ describe('AuthGuard', () => {
     let mockedConfig = cloneDeep(DEFAULT_CONFIG) as any;
     mockedConfig._id = '0';
     mockedConfig.profileConfig.levels.push('teste');
-    mockedConfig.profileConfig.positions.push(
+    mockedConfig.profileConfig.positions = [
       { roleTypeName: 'teste', permission: 'Administrador' },
       { roleTypeName: 'teste2', permission: 'Membro' },
-      { roleTypeName: 'teste3', permission: 'Financeiro' }
-    );
+      { roleTypeName: 'teste3', permission: 'Financeiro' },
+    ];
     mockedConfigs.push(cloneDeep(mockedConfig));
     configService.getConfig().pipe(take(1)).subscribe();
     const req = httpMock.expectOne('/api/config/all');

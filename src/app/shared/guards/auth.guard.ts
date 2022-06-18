@@ -13,7 +13,7 @@ import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 import { ConfigService } from '../services/config.service';
-
+// TODO: Remove this part
 let accessControl = {
   Parceiro: {
     parceiro: '*',
