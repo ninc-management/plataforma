@@ -1,17 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Contract, ContractExpense } from '@models/contract';
-import { Invoice } from '@models/invoice';
 import { NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
+
+import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { ConfigService } from 'app/shared/services/config.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { ContractService, EXPENSE_TYPES, SPLIT_TYPES } from 'app/shared/services/contract.service';
+import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { cloneDeep } from 'lodash';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, take } from 'rxjs';
-import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
-import { isPhone, formatDate, idToProperty, valueSort } from 'app/shared/utils';
+import { formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+
+import { Contract, ContractExpense } from '@models/contract';
+import { Invoice } from '@models/invoice';
+import { PlatformConfig } from '@models/platformConfig';
 
 @Component({
   selector: 'ngx-expense-tab',
@@ -28,9 +32,9 @@ export class ExpenseTabComponent implements OnInit {
   isEditionGranted = false;
   invoice: Invoice = new Invoice();
   source: LocalDataSource = new LocalDataSource();
-  EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
   searchQuery = '';
   comissionSum = '';
+  platformConfig: PlatformConfig = new PlatformConfig();
 
   get filtredExpenses(): ContractExpense[] {
     if (this.searchQuery !== '')
@@ -103,10 +107,7 @@ export class ExpenseTabComponent implements OnInit {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: this.EXPENSE_OPTIONS.map((type) => ({
-              value: type,
-              title: type,
-            })),
+            list: [] as any[],
           },
         },
       },
@@ -162,20 +163,30 @@ export class ExpenseTabComponent implements OnInit {
 
   constructor(
     private dialogService: NbDialogService,
-    public contractService: ContractService,
     private invoiceService: InvoiceService,
+    private configService: ConfigService,
+    public contractService: ContractService,
     public userService: UserService,
     public stringUtil: StringUtilService
   ) {}
 
   ngOnInit(): void {
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
-    this.contractService
-      .checkEditPermission(this.invoice)
-      .pipe(take(1))
-      .subscribe((isGranted) => {
+    //INVARIANT: The config service data must be loaded for the code to be synchronous
+    combineLatest([
+      this.contractService.checkEditPermission(this.invoice),
+      this.configService.getConfig(),
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(([, , isLoaded]) => !isLoaded),
+        take(1)
+      )
+      .subscribe(([isGranted, configs, _]) => {
         this.isEditionGranted = isGranted;
         this.loadTableExpenses();
+        this.platformConfig = configs[0];
+        this.reloadTableSettings();
       });
   }
 
@@ -261,7 +272,7 @@ export class ExpenseTabComponent implements OnInit {
     this.settings.actions.add = this.isEditionGranted;
     this.settings.actions.delete = this.isEditionGranted;
     this.source.load(
-      this.clonedContract.expenses.map((expense: any, index: number) => {
+      this.clonedContract.expenses.map((expense: any) => {
         const tmp = cloneDeep(expense);
         tmp.source = this.userService.idToShortName(tmp.source);
         tmp.created = formatDate(tmp.created);
@@ -282,5 +293,16 @@ export class ExpenseTabComponent implements OnInit {
       return direction;
     }
     return 0;
+  }
+
+  reloadTableSettings(): void {
+    const newSettings = this.settings;
+    newSettings.columns.type.filter.config.list = this.platformConfig.expenseConfig.contractExpenseTypes.map(
+      (type) => ({
+        value: type.name,
+        title: type.name,
+      })
+    );
+    this.settings = Object.assign({}, newSettings);
   }
 }

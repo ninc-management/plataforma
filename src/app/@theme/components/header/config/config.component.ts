@@ -76,7 +76,7 @@ export class ConfigComponent implements OnInit {
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
-    this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenses.map((eType: any) => {
+    this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
         typeItem.subTypes = typeItem.subTypes.map((subType: any) => ({
@@ -87,7 +87,7 @@ export class ConfigComponent implements OnInit {
       typeItem.subTypes = typeItem.subTypes as SubTypeItem[];
       return typeItem;
     });
-    this.contractExpenseTypes = this.clonedConfig.expenseConfig.contractExpenses.map((eType: any) => {
+    this.contractExpenseTypes = this.clonedConfig.expenseConfig.contractExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
         typeItem.subTypes = typeItem.subTypes.map((subType: any) => ({
@@ -142,7 +142,7 @@ export class ConfigComponent implements OnInit {
   }
 
   updateConfig(): void {
-    this.clonedConfig.expenseConfig.adminExpenses = this.adminExpenseTypes.map((eType: any) => {
+    this.clonedConfig.expenseConfig.adminExpenseTypes = this.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
         typeItem.subTypes = typeItem.subTypes.map((subType: any) => subType.name);
@@ -150,7 +150,7 @@ export class ConfigComponent implements OnInit {
       typeItem.subTypes = typeItem.subTypes as string[];
       return typeItem;
     });
-    this.clonedConfig.expenseConfig.contractExpenses = this.contractExpenseTypes.map((eType: any) => {
+    this.clonedConfig.expenseConfig.contractExpenseTypes = this.contractExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
         typeItem.subTypes = typeItem.subTypes.map((subType: any) => subType.name);
@@ -160,7 +160,9 @@ export class ConfigComponent implements OnInit {
     });
     this.isFormDirty.next(false);
     if (this.clonedConfig.expenseConfig.isDuplicated)
-      this.clonedConfig.expenseConfig.contractExpenses = cloneDeep(this.clonedConfig.expenseConfig.adminExpenses);
+      this.clonedConfig.expenseConfig.contractExpenseTypes = cloneDeep(
+        this.clonedConfig.expenseConfig.adminExpenseTypes
+      );
     this.configService.editConfig(this.clonedConfig);
   }
 }

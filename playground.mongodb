@@ -152,8 +152,8 @@ function convertOldExpenseTypes(expense) {
       expense.subType = 'Divisão de lucro';
       break;
     case 'Folha de pagamento':
-      expense.type = 'Custo variável';
-      expense.subType = 'Pagamento de colaborador externo';
+      expense.type = 'Custo fixo';
+      expense.subType = 'Folha de Pagamento';
       break;
     case 'Reembolso':
       expense.type = 'Despesa variável';
@@ -165,7 +165,7 @@ function convertOldExpenseTypes(expense) {
       break;
     case 'Custo operacional':
       expense.type = 'Custo fixo';
-      expense.subType = 'Pagamento de colaborador interno';
+      expense.subType = 'Outros';
       break;
     case 'Gastos fixos': {
       expense.type = 'Custo fixo';
@@ -174,14 +174,19 @@ function convertOldExpenseTypes(expense) {
           expense.type = 'Despesa fixa';
           break;
         case 'Administrativo':
-          expense.subType = 'Pagamento de colaborador interno';
+          expense.subType = 'Folha de Pagamento';
           break;
         default:
           break;
       }
       break;
     }
-    case 'Pré-Obra': // CONTRATO
+  }
+}
+
+function convertOldContractExpenseTypes(expense) {
+  switch (expense.type) {
+    case 'Pré-Obra':
       expense.type = 'Pré-serviço';
       break;
     case 'Transporte e Alimentação':
@@ -560,7 +565,7 @@ db.users.find().forEach((user) => {
 db.contracts.find().forEach((contract) => {
   if (contract.expenses)
     contract.expenses.forEach((expense) => {
-      convertOldExpenseTypes(expense);
+      convertOldContractExpenseTypes(expense);
       if (expense.team)
         expense.team.forEach((member) => {
           member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
@@ -641,8 +646,195 @@ const config = {
     },
   },
   expenseConfig: {
-    adminExpenses: [],
-    contractExpenses: [],
+    adminExpenseTypes: [
+      {
+        name: 'Empréstimos',
+        subTypes: [],
+      },
+      {
+        name: 'Custo Fixo',
+        subTypes: [
+          'Aluguel',
+          'Anuidade em Conselhos',
+          'Divisão de Lucro',
+          'Energia',
+          'Equipamentos',
+          'Internet',
+          'Folha de Pagamento',
+          'Transporte - colaborador interno',
+          'Veículos',
+          'Outros',
+        ],
+      },
+      {
+        name: 'Custo Variável',
+        subTypes: ['Combustível', 'Equipamentos', 'Manutenção', 'Veículos', 'Softwares', 'Outros'],
+      },
+      {
+        name: 'Despesa Fixa',
+        subTypes: ['Benefícios-colaboradores', 'Infraestrutura digital', 'Limpeza e copa', 'Marketing', 'Outros'],
+      },
+      {
+        name: 'Despesa Variável',
+        subTypes: [
+          'Bonificação/Premiação',
+          'Cursos',
+          'Eventos',
+          'Fardas e similares',
+          'Infraestrutura',
+          'Infraestrutura digital',
+          'Manutenção',
+          'Minuterias - escritório',
+          'Tercerização',
+          'Outros',
+        ],
+      },
+      {
+        name: 'Encargos',
+        subTypes: [],
+      },
+      {
+        name: 'Impostos',
+        subTypes: [],
+      },
+      {
+        name: 'Investimentos',
+        subTypes: [],
+      },
+      {
+        name: 'Receita',
+        subTypes: [],
+      },
+      {
+        name: 'Outros',
+        subTypes: [],
+      },
+    ],
+    contractExpenseTypes: [
+      {
+        name: 'Alimentação',
+        subTypes: [],
+      },
+      {
+        name: ' Aporte',
+        subTypes: [],
+      },
+      {
+        name: 'Comissão',
+        subTypes: [],
+      },
+      {
+        name: 'Folha de Pagamento',
+        subTypes: [],
+      },
+      {
+        name: 'Gasolina',
+        subTypes: [],
+      },
+      {
+        name: 'Material',
+        subTypes: [
+          'Aditivos - Massas',
+          'Andaimes',
+          'Areia',
+          'Argamassa',
+          'Bacias - pia',
+          'Bacias - sanitário',
+          'Bloco cerámico',
+          'Brita',
+          'Cabos Elétricos',
+          'Caixas - Hidrossanitário',
+          'Caixas - Quadros Elétricas',
+          'Cerâmica',
+          'Cimento',
+          'Conexões - Elétrico',
+          'Conexões - Hidrossanitário',
+          'Drywall',
+          'EPI/EPC',
+          'Escoras',
+          'Estruturas Metálicas',
+          'Ferramentas / Máquinas',
+          'Ferro',
+          'Gesso - forro',
+          'Gesso - parede',
+          'Granito ',
+          'Impermeabilizante Mantas',
+          'Impermeabilizantes Líquidos',
+          'Isobloco',
+          'Janelas - Madeira',
+          'Janelas - metálicas',
+          'Janelas - PVC',
+          'Lã de vidro, pet ou similares',
+          'Lajota Cerámica',
+          'Lajota Isopor',
+          'Lampadas e Luminárias',
+          'Madeira estrutural',
+          'Madeira',
+          'Malhas de ferro',
+          'Nervura',
+          'Peças - Esquadria',
+          'Peças - Elétrica',
+          'Peças - Hidrossanitário',
+          'Pintura',
+          'Placa cimentícia',
+          'Placa de EPS',
+          'Porcelanato',
+          'Portas',
+          'PVC - forro',
+          'Steal frame',
+          'Telhas',
+          'Tijolo',
+          'Tomadas',
+          'Tubos Elétrico',
+          'Tubos hidrossanitário',
+          'Vidros',
+          'Outros',
+        ],
+      },
+      {
+        name: 'Pré-Serviço',
+        subTypes: [],
+      },
+      {
+        name: 'Receita',
+        subTypes: [],
+      },
+      {
+        name: 'Tercerização',
+        subTypes: [
+          'Estudos técnicos especializados',
+          'Instalação Elétrica',
+          'Servicos preliminares e gerais',
+          'Trabalhos em terra',
+          'Infra-estrutura',
+          'Supra-estrutura',
+          'Alvenaria / Vedação',
+          'Coberta / Forros',
+          'Impermeabilizações',
+          'Instalacoes hidrosanitaria',
+          'Louças e metais - instalação (materiais fornecidos pelo cliente)',
+          'Instalacoes eletricas / telefônicas',
+          'Esquadrias',
+          'Revestimentos',
+          'Pavimentacão',
+          'Execução de muro',
+          'Pintura geral',
+          'Serviços complementares',
+        ],
+      },
+      {
+        name: 'Transporte',
+        subTypes: [],
+      },
+      {
+        name: 'Locação',
+        subTypes: ['Escoras', 'Andaimes', 'Gerador', 'Martelete', 'Furadeira', 'Serra disco', 'Outros'],
+      },
+      {
+        name: 'Outros',
+        subTypes: [],
+      },
+    ],
     isDuplicated: false,
   },
   invoiceConfig: {
@@ -657,10 +849,23 @@ const config = {
     hasMaterialList: true,
     nfPercentage: '0,00',
     organizationPercentage: '0,00',
-    codeAbbreviation: '',
+    codeAbbreviation: 'NINC',
   },
   profileConfig: {
-    positions: [],
+    positions: [
+      {
+        roleTypeName: 'Administrador',
+        permission: 'Administrador',
+      },
+      {
+        roleTypeName: 'Membro',
+        permission: 'Membro',
+      },
+      {
+        roleTypeName: 'Financeiro',
+        permission: 'Financeiro',
+      },
+    ],
     hasLevels: true,
     levels: [],
     hasTeam: true,
@@ -673,7 +878,7 @@ const config = {
     instagramLink: '',
     glassfrogLink: '',
     gathertownLink: '',
-    companyName: '',
+    companyName: 'NINC',
   },
   modulesConfig: {
     hasPromotion: true,
@@ -712,6 +917,7 @@ db.teams.find().forEach((team) => {
     member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
     delete member.coordination;
   });
+  team.transactions = [];
   team.config.path = '';
   delete team.config.expenseTypes;
   db.teams.replaceOne({ _id: team._id }, team);

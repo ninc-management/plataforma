@@ -1,32 +1,24 @@
-import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, take, takeUntil } from 'rxjs/operators';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { Socket } from 'ngx-socket-io';
+import { Injectable, OnDestroy } from '@angular/core';
 import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
-import { WebSocketService } from './web-socket.service';
+import { Socket } from 'ngx-socket-io';
+import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
+import { map, take, takeUntil } from 'rxjs/operators';
+
+import { idToProperty, isOfType, nfPercentage, nortanPercentage, reviveDates } from '../utils';
+import { ConfigService, EXPENSE_TYPES } from './config.service';
+import { ContractorService } from './contractor.service';
+import { InvoiceService } from './invoice.service';
 import { OneDriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
-import { User } from '@models/user';
+import { WebSocketService } from './web-socket.service';
+
+import { StatusHistoryItem } from '@models/baseStatusHistory';
 import { ChecklistItemAction, Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { InvoiceService } from './invoice.service';
-import { ContractorService } from './contractor.service';
-import { reviveDates, isOfType, nfPercentage, nortanPercentage, idToProperty } from '../utils';
-
-export enum EXPENSE_TYPES {
-  APORTE = 'Aporte',
-  COMISSAO = 'Comissão',
-  FOLHA = 'Folha de Pagamento',
-  MATERIAL = 'Material',
-  PRE_OBRA = 'Pré-Obra',
-  TRANSPORTE_ALIMENTACAO = 'Transporte e Alimentação',
-  GASOLINA = 'Gasolina',
-  OUTROS = 'Outros',
-}
+import { User } from '@models/user';
 
 export enum SPLIT_TYPES {
   INDIVIDUAL = 'Individual',
@@ -87,21 +79,21 @@ export class ContractService implements OnDestroy {
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
   edited$ = new Subject<void>();
-  EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
 
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
 
   constructor(
+    private configService: ConfigService,
+    private contractorService: ContractorService,
     private http: HttpClient,
-    private wsService: WebSocketService,
+    private invoiceService: InvoiceService,
     private onedrive: OneDriveService,
+    private socket: Socket,
     private stringUtil: StringUtilService,
     private userService: UserService,
-    private socket: Socket,
-    private invoiceService: InvoiceService,
-    private contractorService: ContractorService
+    private wsService: WebSocketService
   ) {}
 
   ngOnDestroy(): void {
@@ -288,28 +280,6 @@ export class ContractService implements OnDestroy {
             }
             accumulator.global.contribution += contributionValue;
           }
-
-          if (expense.nf) {
-            let cashbackValue = -1;
-            if (expense.paidDate && isBefore(expense.paidDate, new Date('2021/11/01'))) {
-              if (expense.uploadedFiles.length >= (expense.type == EXPENSE_TYPES.GASOLINA ? 4 : 1))
-                cashbackValue = this.stringUtil.moneyToNumber(this.stringUtil.applyPercentage(expense.value, '15,00'));
-            } else {
-              if (expense.uploadedFiles.length >= 1 && expense.type == EXPENSE_TYPES.MATERIAL)
-                cashbackValue = this.stringUtil.moneyToNumber(this.stringUtil.applyPercentage(expense.value, '15,00'));
-            }
-            if (cashbackValue != -1) {
-              const member = expense.team.find((el) => {
-                return this.userService.isEqual(el.user, user);
-              });
-              if (member) {
-                accumulator.user.cashback += this.stringUtil.moneyToNumber(
-                  this.stringUtil.applyPercentage(this.stringUtil.numberToMoney(cashbackValue), member.percentage)
-                );
-              }
-              accumulator.global.cashback += cashbackValue;
-            }
-          }
           return accumulator;
         },
         {
@@ -488,31 +458,36 @@ export class ContractService implements OnDestroy {
     return contract;
   }
 
-  expenseTypesSum(wantsClient = false, contract: Contract): ExpenseTypesSum[] {
-    const result = contract.expenses.reduce(
-      (sum: ExpenseTypesSum[], expense: ContractExpense) => {
-        if (
-          expense.source &&
-          (wantsClient
-            ? this.userService.isEqual(expense.source, CLIENT._id)
-            : !this.userService.isEqual(expense.source, CLIENT._id))
-        ) {
-          const idx = sum.findIndex((el) => el.type == expense.type);
-          sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
-        }
-        return sum;
-      },
-      this.EXPENSE_OPTIONS.map((type) => ({
-        type: type,
-        value: '0,00',
-      }))
+  expenseTypesSum(wantsClient = false, contract: Contract): Observable<ExpenseTypesSum[]> {
+    return combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$]).pipe(
+      skipWhile(([_, isLoaded]) => !isLoaded),
+      map(([configs, _]) => {
+        const result = contract.expenses.reduce(
+          (sum: ExpenseTypesSum[], expense: ContractExpense) => {
+            if (
+              expense.source &&
+              (wantsClient
+                ? this.userService.isEqual(expense.source, CLIENT._id)
+                : !this.userService.isEqual(expense.source, CLIENT._id))
+            ) {
+              const idx = sum.findIndex((el) => el.type == expense.type);
+              sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+            }
+            return sum;
+          },
+          configs[0].expenseConfig.contractExpenseTypes.map((type) => ({
+            type: type.name,
+            value: '0,00',
+          }))
+        );
+        const total = result.reduce(
+          (sum: string, expense: ExpenseTypesSum) => this.stringUtil.sumMoney(sum, expense.value),
+          '0,00'
+        );
+        result.push({ type: 'TOTAL', value: total });
+        return result;
+      })
     );
-    const total = result.reduce(
-      (sum: string, expense: ExpenseTypesSum) => this.stringUtil.sumMoney(sum, expense.value),
-      '0,00'
-    );
-    result.push({ type: 'TOTAL', value: total });
-    return result;
   }
 
   deadline(contract: Contract): Date | undefined {

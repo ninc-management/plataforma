@@ -8,7 +8,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
 import { isPhone, idToProperty, formatDate, valueSort } from 'app/shared/utils';
 
@@ -103,10 +103,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           type: 'list',
           config: {
             selectText: 'Todos',
-            list: this.platformConfig.expenseConfig.adminExpenses.map((type) => ({
-              value: type.name,
-              title: type.name,
-            })),
+            list: [] as any[],
           },
         },
       },
@@ -152,10 +149,19 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   //INVARIANT: The settings object must be filled before the ngAfterViewInit cycle
   ngOnInit(): void {
-    this.teamService
-      .getTeams()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((teams) => {
+    combineLatest([
+      this.teamService.getTeams(),
+      this.configService.getConfig(),
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(([, , isTeamLoaded, isConfigLoaded]) => !isTeamLoaded && !isConfigLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([teams, configs, ,]) => {
+        this.platformConfig = configs[0];
+        this.reloadTableSettings();
         const tmp = teams.find((team) => team._id === this.iTeam);
         this.team = tmp ? tmp : new Team();
         this.expenses = cloneDeep(this.team.expenses);
@@ -167,18 +173,6 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
             return tmp;
           })
         );
-      });
-
-    //INVARIANT: The config service data must be loaded for the code to be synchronous
-    this.configService
-      .getConfig()
-      .pipe(
-        skipWhile((config) => config.length == 0),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((config) => {
-        this.platformConfig = config[0];
-        this.reloadTableSettings();
       });
   }
 
@@ -222,7 +216,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   reloadTableSettings(): void {
     const newSettings = this.settings;
-    newSettings.columns.type.filter.config.list = this.platformConfig.expenseConfig.adminExpenses.map((type) => ({
+    newSettings.columns.type.filter.config.list = this.platformConfig.expenseConfig.adminExpenseTypes.map((type) => ({
       value: type.name,
       title: type.name,
     }));

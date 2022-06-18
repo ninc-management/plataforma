@@ -1,20 +1,23 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Contract } from '@models/contract';
-import { BehaviorSubject, combineLatest, map, Observable, of, Subject, take, takeUntil } from 'rxjs';
-import * as contract_validation from 'app/shared/contract-validation.json';
-import { ContractService, CONTRACT_STATOOS, EXPENSE_TYPES } from 'app/shared/services/contract.service';
-import { Invoice } from '@models/invoice';
-import { TeamService } from 'app/shared/services/team.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
+import { NgForm } from '@angular/forms';
 import { cloneDeep, isEqual } from 'lodash';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, combineLatest, map, Observable, of, Subject, take, takeUntil } from 'rxjs';
+
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { formatDate, idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
-import { UserService } from 'app/shared/services/user.service';
-import { LocalDataSource } from 'ng2-smart-table';
-import { isPhone, idToProperty, formatDate, trackByIndex, nortanPercentage, nfPercentage } from 'app/shared/utils';
-import { NgForm } from '@angular/forms';
+
+import * as contract_validation from 'app/shared/contract-validation.json';
 
 @Component({
   selector: 'ngx-data-tab',
@@ -32,7 +35,6 @@ export class DataTabComponent implements OnInit {
   isEditionGranted = false;
   validation = (contract_validation as any).default;
   STATOOS = Object.values(CONTRACT_STATOOS);
-  EXPENSE_OPTIONS = Object.values(EXPENSE_TYPES);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
   invoice: Invoice = new Invoice();
   comissionSum = '';
