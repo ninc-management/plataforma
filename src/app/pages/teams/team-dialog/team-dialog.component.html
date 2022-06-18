@@ -17,12 +17,11 @@
     >
       <nb-card-header>
         {{ title }}
-        <div class="buttons" [ngStyle]="{ width: iTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }">
+        <div class="buttons" [ngStyle]="{ width: clonedTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }">
           <nb-toggle
-            *ngIf="iTeam._id && componentType === dTypes.TEAM"
+            *ngIf="clonedTeam._id && componentType === dTypes.TEAM"
             [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganitazionTeam()"
-            (ngModelChange)="handleTeamStatusChange()"
-            [(ngModel)]="iTeam.isOrganizationTeam"
+            [(ngModel)]="clonedTeam.isOrganizationTeam"
             name="organizationTeam"
             labelPosition="start"
           >
@@ -45,7 +44,7 @@
         <ngx-team-item
           *ngIf="componentType === dTypes.TEAM"
           (submit)="dismiss()"
-          [iTeam]="iTeam"
+          [clonedTeam]="clonedTeam"
           [isFormDirty]="isFormDirty"
         ></ngx-team-item>
         <ngx-team-expense-item
