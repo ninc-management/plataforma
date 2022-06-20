@@ -16,7 +16,7 @@ import { Invoice, InvoiceTeamMember, InvoiceMaterial, InvoiceProduct, InvoiceSta
 import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { User } from '@models/user';
 import { Contractor } from '@models/contractor';
-import invoice_validation from 'app/shared/invoice-validation.json';
+import invoice_validation from 'app/shared/validators/invoice-validation.json';
 import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { Team } from '@models/team';
 import { Sector } from '@models/shared';

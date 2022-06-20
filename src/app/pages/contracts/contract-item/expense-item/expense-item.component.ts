@@ -27,7 +27,7 @@ import { Sector } from '@models/shared';
 import { User } from '@models/user';
 import { ExpenseType } from '@models/team';
 
-import expense_validation from 'app/shared/expense-validation.json';
+import expense_validation from 'app/shared/validators/expense-validation.json';
 
 @Component({
   selector: 'ngx-expense-item',

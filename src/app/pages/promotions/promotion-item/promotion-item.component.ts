@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
-import promotion_validation from 'app/shared/promotion-validation.json';
+import promotion_validation from 'app/shared/validators/promotion-validation.json';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';

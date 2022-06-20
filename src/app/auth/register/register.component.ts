@@ -7,7 +7,7 @@ import { AuthService } from '../auth.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import user_validation from 'app/shared/user-validation.json';
+import user_validation from 'app/shared/validators/user-validation.json';
 import { Prospect } from '@models/prospect';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 

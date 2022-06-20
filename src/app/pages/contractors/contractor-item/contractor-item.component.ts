@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angu
 import { cloneDeep } from 'lodash';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { Contractor } from '@models/contractor';
-import contractor_validation from 'app/shared/contractor-validation.json';
+import contractor_validation from 'app/shared/validators/contractor-validation.json';
 import { BehaviorSubject } from 'rxjs';
 import { NgForm } from '@angular/forms';
 

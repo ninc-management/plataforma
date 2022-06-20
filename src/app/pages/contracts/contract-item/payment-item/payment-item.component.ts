@@ -11,7 +11,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import contract_validation from 'app/shared/payment-validation.json';
+import contract_validation from 'app/shared/validators/payment-validation.json';
 import { TeamService } from 'app/shared/services/team.service';
 import { trackByIndex, formatDate, idToProperty, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';

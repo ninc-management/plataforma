@@ -17,7 +17,7 @@ import { Invoice } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
 
-import * as contract_validation from 'app/shared/contract-validation.json';
+import * as contract_validation from 'app/shared/validators/contract-validation.json';
 
 @Component({
   selector: 'ngx-data-tab',
