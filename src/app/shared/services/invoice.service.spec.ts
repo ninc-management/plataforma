@@ -254,6 +254,37 @@ describe('InvoiceService', () => {
 
   baseTest('getInvoices should work', (expectedInvoices: Invoice[]) => {});
 
+  it('currentYearInvoices should work', (done: DoneFn) => {
+    let i = 1;
+
+    service
+      .currentYearInvoices()
+      .pipe(take(2))
+      .subscribe((accumulated) => {
+        switch (i) {
+          case 1: {
+            i += 1;
+            expect(accumulated).toBe(0);
+            break;
+          }
+          case 2: {
+            expect(accumulated).toEqual(2);
+            done();
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      });
+    // mock response
+    const req = httpMock.expectOne('/api/invoice/currentYearInvoices');
+    expect(req.request.method).toBe('POST');
+    setTimeout(() => {
+      req.flush({ accumulated: '2' });
+    }, 50);
+  });
+
   baseTest('idToInvoice should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToInvoice('0')).toEqual(expectedInvoices[0]);
     expect(service.idToInvoice(expectedInvoices[0])).toEqual(expectedInvoices[0]);
