@@ -4,6 +4,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Contract } from './contract';
 import { Team } from './team';
 import { Sector } from './shared';
+import { Notification } from './notification';
 
 export class UserExpertise {
   @prop({ required: true, ref: () => Sector })
@@ -37,26 +38,6 @@ export class UserFinancialTransaction {
 
   @prop({ required: true })
   value!: string;
-}
-
-export class UserNotification extends Base<string> {
-  @prop({ required: true })
-  title: string = '';
-
-  @prop({ required: true })
-  message: string = '';
-
-  @prop({ ref: () => User })
-  from: Ref<User>;
-
-  @prop({ ref: () => User })
-  to: Ref<User>;
-
-  @prop({ required: true })
-  tag: string = '';
-
-  @prop({ required: true })
-  created: Date = new Date();
 }
 
 @plugin(mongooseUniqueValidator)
@@ -118,8 +99,8 @@ export class User extends Base<string> {
   @prop({ required: true })
   public active: boolean = true;
 
-  @prop({ type: () => [UserNotification] })
-  public notifications: UserNotification[] = [];
+  @prop({ type: () => [Notification] })
+  public notifications: Notification[] = [];
 }
 
 export default getModelForClass(User);

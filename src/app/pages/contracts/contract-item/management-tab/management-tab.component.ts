@@ -1,7 +1,8 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { User, UserNotification } from '@models/user';
+import { User } from '@models/user';
+import { Notification, NotificationTags } from '@models/notification';
 import { NbDialogService } from '@nebular/theme';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import * as contract_validation from 'app/shared/contract-validation.json';
@@ -22,7 +23,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { Message } from '@models/message';
 import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
-import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { isPhone, formatDate, idToProperty, trackByIndex, isOfType } from 'app/shared/utils';
 import { NgForm } from '@angular/forms';
 
@@ -454,8 +455,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     return { newItems, newActions };
   }
 
-  private createNotification(task: ContractChecklistItem | ChecklistItemAction): UserNotification {
-    const notification = new UserNotification();
+  private createNotification(task: ContractChecklistItem | ChecklistItemAction): Notification {
+    const notification = new Notification();
     notification.to = task.assignee;
     notification.tag = NotificationTags.APPOINTED_AS_ASSIGNEE;
 

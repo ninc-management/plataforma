@@ -10,7 +10,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { isPhone, idToProperty, tooltipTriggers } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
-import { UserNotification } from '@models/user';
+import { Notification } from '@models/notification';
 
 export enum COMPONENT_TYPES {
   CONFIG,
@@ -25,7 +25,7 @@ export enum COMPONENT_TYPES {
 export class ConfigDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() config: PlatformConfig = new PlatformConfig();
-  @Input() notification: UserNotification = new UserNotification();
+  @Input() notification: Notification = new Notification();
   @Input() notificationIndex?: number;
   @Input() componentType = COMPONENT_TYPES.CONFIG;
   types = COMPONENT_TYPES;

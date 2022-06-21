@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { NotificationBody, NotificationService } from './notification.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { User, UserNotification } from '@models/user';
+import { User } from '@models/user';
+import { Notification } from '@models/notification';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { Team, TeamMember } from '@models/team';
 import { cloneDeep } from 'lodash';
@@ -104,7 +105,7 @@ describe('NotificationService', () => {
 
   it('notify should work', (done: DoneFn) => {
     const notificationBody = { title: 'Title 1', tag: 'T1', message: 'Message 1' } as NotificationBody;
-    const notification = new UserNotification();
+    const notification = new Notification();
     notification.title = notificationBody.title;
     notification.message = notificationBody.message;
     notification.from = mockedUsers[0]._id;

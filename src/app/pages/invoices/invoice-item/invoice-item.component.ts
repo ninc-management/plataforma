@@ -20,10 +20,11 @@ import invoice_validation from 'app/shared/invoice-validation.json';
 import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { Team } from '@models/team';
 import { Sector } from '@models/shared';
+import { NotificationTags } from '@models/notification';
 import { TeamService } from 'app/shared/services/team.service';
 import { InvoiceConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';
-import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import {
   isPhone,
   tooltipTriggers,

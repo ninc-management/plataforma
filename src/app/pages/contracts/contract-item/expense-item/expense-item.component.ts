@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
 import { cloneDeep, isEqual } from 'lodash';
 
@@ -14,7 +14,7 @@ import {
   trackByIndex,
 } from 'app/shared/utils';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -26,6 +26,7 @@ import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
 import { ExpenseType } from '@models/team';
+import { NotificationTags } from '@models/notification';
 
 import expense_validation from 'app/shared/expense-validation.json';
 
