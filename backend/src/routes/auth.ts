@@ -1,4 +1,7 @@
 import * as express from 'express';
+import { cloneDeep } from 'lodash';
+
+import { prospectMap } from '../shared/global';
 
 import ProspectModel from '../models/prospect';
 import UserModel from '../models/user';
@@ -13,7 +16,8 @@ router.post('/register', (req, res, next) => {
     if (!user) {
       prospect
         .save()
-        .then(() => {
+        .then((prospect) => {
+          prospectMap[prospect._id] = cloneDeep(prospect.toJSON());
           res.redirect(307, '/api/sendmail');
         })
         .catch((err) => {
