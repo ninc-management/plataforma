@@ -230,13 +230,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante',
       ];
     this.invoiceService
-      .invoicesSize()
-      .pipe(
-        skipWhile((size) => size == 0),
-        take(1)
-      )
-      .subscribe((size: number) => {
-        this.invoiceNumber = size;
+      .currentYearInvoices()
+      .pipe(take(2))
+      .subscribe((accumulated: number) => {
+        this.invoiceNumber = accumulated + 1;
         this.updateCode();
       });
 

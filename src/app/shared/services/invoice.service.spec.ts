@@ -254,21 +254,21 @@ describe('InvoiceService', () => {
 
   baseTest('getInvoices should work', (expectedInvoices: Invoice[]) => {});
 
-  it('invoicesSize should work', (done: DoneFn) => {
+  it('currentYearInvoices should work', (done: DoneFn) => {
     let i = 1;
 
     service
-      .invoicesSize()
+      .currentYearInvoices()
       .pipe(take(2))
-      .subscribe((size) => {
+      .subscribe((accumulated) => {
         switch (i) {
           case 1: {
             i += 1;
-            expect(size).toBe(0);
+            expect(accumulated).toBe(0);
             break;
           }
           case 2: {
-            expect(size).toEqual(3);
+            expect(accumulated).toEqual(2);
             done();
             break;
           }
@@ -278,10 +278,10 @@ describe('InvoiceService', () => {
         }
       });
     // mock response
-    const req = httpMock.expectOne('/api/invoice/count');
+    const req = httpMock.expectOne('/api/invoice/currentYearInvoices');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush({ size: '2' });
+      req.flush({ accumulated: '2' });
     }, 50);
   });
 

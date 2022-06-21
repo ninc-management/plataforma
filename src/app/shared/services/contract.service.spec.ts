@@ -454,38 +454,6 @@ describe('ContractService', () => {
 
   baseTest('getContracts should work', (expectedContracts: Contract[]) => {});
 
-  it('contractsSize should work', (done: DoneFn) => {
-    let i = 1;
-
-    service
-      .contractsSize()
-      .pipe(take(2))
-      .subscribe((size) => {
-        switch (i) {
-          case 1: {
-            i += 1;
-            expect(size).toBe(0);
-            break;
-          }
-          case 2: {
-            i += 1;
-            expect(size).toBe(mockedContracts.length + 1);
-            done();
-            break;
-          }
-          default: {
-            break;
-          }
-        }
-      });
-    // mock response
-    const req = httpMock.expectOne('/api/contract/count');
-    expect(req.request.method).toBe('POST');
-    setTimeout(() => {
-      req.flush({ size: mockedContracts.length });
-    }, 50);
-  });
-
   baseTest('idToContract should work', (expectedContracts: Contract[]) => {
     expect(service.idToContract('0')).toEqual(expectedContracts[0]);
     expect(service.idToContract(expectedContracts[0])).toEqual(expectedContracts[0]);

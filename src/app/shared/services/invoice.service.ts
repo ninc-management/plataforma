@@ -23,7 +23,7 @@ export enum INVOICE_STATOOS {
 })
 export class InvoiceService implements OnDestroy {
   private requested = false;
-  private size$ = new BehaviorSubject<number>(0);
+  private accumulated$ = new BehaviorSubject<number>(0);
   private invoices$ = new BehaviorSubject<Invoice[]>([]);
   private destroy$ = new Subject<void>();
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
@@ -87,16 +87,6 @@ export class InvoiceService implements OnDestroy {
     return this.invoices$;
   }
 
-  invoicesSize(): Observable<number> {
-    this.http
-      .post('/api/invoice/count', {})
-      .pipe(take(1))
-      .subscribe((numberJson: any) => {
-        this.size$.next(+numberJson['size'] + 1);
-      });
-    return this.size$;
-  }
-
   idToInvoice(id: string | Invoice): Invoice {
     if (isOfType<Invoice>(id, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor'])) return id;
     const tmp = this.invoices$.getValue();
@@ -149,5 +139,15 @@ export class InvoiceService implements OnDestroy {
         return member.user ? this.userService.idToUser(member.user) : undefined;
       })
       .filter((user: User | undefined): user is User => user !== undefined);
+  }
+
+  currentYearInvoices(): Observable<number> {
+    this.http
+      .post('/api/invoice/currentYearInvoices', {})
+      .pipe(take(1))
+      .subscribe((numberJson: any) => {
+        this.accumulated$.next(+numberJson['accumulated']);
+      });
+    return this.accumulated$;
   }
 }
