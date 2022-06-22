@@ -4,8 +4,14 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+  ],
   globals: {},
+  plugins: ['import'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
@@ -30,5 +36,41 @@ module.exports = {
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/no-empty-function': 'warn',
     '@typescript-eslint/member-delimiter-style': ['off'],
+    'sort-imports': [
+      'error',
+      {
+        ignoreCase: true,
+        ignoreDeclarationSort: true,
+      },
+    ],
+    'import/named': 'warn',
+    'import/no-unresolved': 'off',
+    'import/order': [
+      'error',
+      {
+        groups: [['external', 'builtin'], ['internal', 'sibling', 'parent', 'index'], 'object'],
+        pathGroups: [
+          {
+            pattern: '**/validators/**',
+            group: 'object',
+          },
+          {
+            pattern: 'app/**',
+            group: 'internal',
+          },
+          {
+            pattern: '@models/**',
+            group: 'object',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['builtin'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
   },
 };
