@@ -67,18 +67,21 @@ export class OneDriveService implements OnDestroy {
     return this.generateBasePath(invoice, concluded) + this.generateFolderName(invoice);
   }
 
-  oneDriveURI(isAdm?: boolean): string {
-    let URI = '';
-    if (environment.onedriveUri) {
-      if (environment.onedriveUri.match(/root/g)?.length) URI = environment.onedriveUri;
-      else {
-        URI =
-          environment.onedriveUri +
-          (isAdm !== undefined ? environment.onedriveAdmID : environment.onedriveNortanID) +
-          ':/';
-      }
+  oneDriveURI(): string {
+    if (this.config.oneDriveConfig.oneDriveId && this.config.oneDriveConfig.folderId) {
+      const URI =
+        environment.onedriveUri +
+        this.config.oneDriveConfig.oneDriveId.toLowerCase() +
+        '/items/' +
+        this.config.oneDriveConfig.oneDriveId.toUpperCase() +
+        '!' +
+        this.config.oneDriveConfig.folderId +
+        ':/';
+
+      return URI;
     }
-    return URI;
+
+    return '';
   }
 
   copyModelFolder(invoice: Invoice): Observable<boolean> {
@@ -97,11 +100,9 @@ export class OneDriveService implements OnDestroy {
             },
             name: this.generateFolderName(invoice),
           };
-          if (environment.onedriveUri) {
-            let copyURI: string;
-            if (environment.onedriveUri.match(/root/g)?.length)
-              copyURI = environment.onedriveUri.slice(0, -6) + 'items/';
-            else copyURI = environment.onedriveUri;
+          if (this.config.oneDriveConfig.oneDriveId) {
+            const copyURI = environment.onedriveUri + this.config.oneDriveConfig.oneDriveId.toLowerCase() + '/items/';
+
             this.http
               .post(copyURI + metadata.id + '/copy', body)
               .pipe(take(1))

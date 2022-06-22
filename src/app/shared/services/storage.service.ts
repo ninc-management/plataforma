@@ -32,8 +32,7 @@ export class StorageService implements OnDestroy {
     mediaFolderPath: string,
     fileToUpload: File,
     fileName: string,
-    provider: StorageProvider,
-    isTeamFolder?: boolean
+    provider: StorageProvider
   ): FilesUploadMetadata {
     switch (provider) {
       case StorageProvider.FIREBASE: {
@@ -51,7 +50,7 @@ export class StorageService implements OnDestroy {
         fileToUpload.arrayBuffer().then((f) => {
           this.http
             .put(
-              this.onedriveService.oneDriveURI(isTeamFolder) +
+              this.onedriveService.oneDriveURI() +
                 mediaFolderPath +
                 '/' +
                 fileName +
