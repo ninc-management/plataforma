@@ -220,7 +220,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
               new Event('change')
             );
             this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].value =
-              'Em andamento A receber';
+              'Em andamento A receber Finalizado';
             this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
               new Event('change')
             );
