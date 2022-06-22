@@ -61,11 +61,16 @@ export class StorageService implements OnDestroy {
             )
             .pipe(take(1))
             .subscribe((res: any) => {
-              fileComplete$.next(100);
-              downloadUrl$.next({
-                name: res['name'],
-                url: res['@microsoft.graph.downloadUrl'],
-              });
+              this.http
+                .post(this.onedriveService.createLinkURI(res['id']), { type: 'view' })
+                .pipe(take(1))
+                .subscribe((uploadRes: any) => {
+                  fileComplete$.next(100);
+                  downloadUrl$.next({
+                    name: res['name'],
+                    url: uploadRes['link']['webUrl'],
+                  });
+                });
             });
         });
         return {

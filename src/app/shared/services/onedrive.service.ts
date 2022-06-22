@@ -180,4 +180,14 @@ export class OneDriveService implements OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  createLinkURI(id: string): string {
+    if (this.config.oneDriveConfig.oneDriveId && this.config.oneDriveConfig.folderId) {
+      return (
+        environment.onedriveUri + this.config.oneDriveConfig.oneDriveId.toLowerCase() + '/items/' + id + '/createLink'
+      );
+    }
+
+    return '';
+  }
 }
