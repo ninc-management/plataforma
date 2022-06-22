@@ -119,10 +119,10 @@ describe('UtilsService', () => {
     tmpTeam.config.path = `test`;
     const tmpTeamMember = new TeamMember();
     tmpTeamMember.user = mockedUsers[0];
-    tmpTeamMember.sector = '0';
+    tmpTeamMember.sectors = ['0'];
     tmpTeam.members.push(cloneDeep(tmpTeamMember));
     tmpTeamMember.user = '1';
-    tmpTeamMember.sector = '1';
+    tmpTeamMember.sectors = ['1'];
     tmpTeam.members.push(cloneDeep(tmpTeamMember));
     mockedTeams.push(cloneDeep(tmpTeam));
 
