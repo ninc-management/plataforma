@@ -455,13 +455,11 @@
                       <div class="row irow">
                         <div class="col">
                           {{ team.name }} -
-                          {{
-                            [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev'
-                          }}
-                          -
-                          {{
-                            [team.members[0].sector] | transformPipe: teamService.idToSector.bind(teamService):'name'
-                          }}
+                          <span *ngFor="let sector of team.members[0].sectors; trackBy:trackByIndex">
+                            {{
+                              [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService)
+                            }}
+                          </span>
                         </div>
                       </div>
                     </nb-list-item>

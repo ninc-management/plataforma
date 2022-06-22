@@ -61,7 +61,11 @@ export class TeamItemComponent implements OnInit, OnDestroy {
     );
 
     this.memberChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.SECTORS = uniq(this.team.members.map((member: TeamMember) => this.teamService.idToSector(member.sector)));
+      this.SECTORS = uniq(
+        this.team.members
+          .map((member: TeamMember) => member.sectors.map((sector) => this.teamService.idToSector(sector)))
+          .flat()
+      );
     });
   }
 
@@ -86,9 +90,10 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   }
 
   addMember(): void {
+    console.log(cloneDeep(this.currentMember));
     this.team.members.push(cloneDeep(this.currentMember));
     this.memberSearch = '';
-    this.currentMember.sector = new Sector();
+    this.currentMember.sectors = [];
     this.currentMember.user = new User();
     this.memberChanged$.next(true);
   }
