@@ -90,7 +90,6 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   }
 
   addMember(): void {
-    console.log(cloneDeep(this.currentMember));
     this.team.members.push(cloneDeep(this.currentMember));
     this.memberSearch = '';
     this.currentMember.sectors = [];
