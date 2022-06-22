@@ -21,7 +21,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { User } from '@models/user';
 import { Sector } from '@models/shared';
-import user_validation from 'app/shared/user-validation.json';
+import user_validation from 'app/shared/validators/user-validation.json';
 import { Team } from '@models/team';
 import { ProfileConfig } from '@models/platformConfig';
 import { ConfigService } from 'app/shared/services/config.service';

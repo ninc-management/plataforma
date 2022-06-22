@@ -7,7 +7,7 @@ import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import contract_validation from '../../../../shared/payment-validation.json';
+import contract_validation from '../../../../shared/validators/payment-validation.json';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
 import { ContractReceipt, Contract } from '@models/contract';

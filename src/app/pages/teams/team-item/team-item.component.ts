@@ -7,7 +7,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { Sector } from '@models/shared';
 import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
-import team_validation from 'app/shared/team-validation.json';
+import team_validation from 'app/shared/validators/team-validation.json';
 import { trackByIndex, idToProperty } from 'app/shared/utils';
 import { NgForm } from '@angular/forms';
 

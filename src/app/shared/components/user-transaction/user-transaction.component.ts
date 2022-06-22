@@ -3,7 +3,7 @@ import { Team, TeamFinancialTransaction } from '@models/team';
 import { User, UserFinancialTransaction } from '@models/user';
 import { TeamService } from 'app/shared/services/team.service';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import transaction_validation from 'app/shared/transaction-validation.json';
+import transaction_validation from 'app/shared/validators/transaction-validation.json';
 import { UserService } from 'app/shared/services/user.service';
 import { take } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';

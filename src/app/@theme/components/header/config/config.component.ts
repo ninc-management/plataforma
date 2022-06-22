@@ -8,7 +8,7 @@ import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
 
-import config_validation from 'app/shared/config-validation.json';
+import config_validation from 'app/shared/validators/config-validation.json';
 
 interface SubTypeItem {
   name: string;

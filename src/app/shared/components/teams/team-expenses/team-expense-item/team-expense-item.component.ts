@@ -8,7 +8,7 @@ import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { User } from '@models/user';
-import expense_validation from 'app/shared/expense-validation.json';
+import expense_validation from 'app/shared/validators/expense-validation.json';
 import { NgForm } from '@angular/forms';
 import { of } from 'rxjs/internal/observable/of';
 import { Team, TeamExpense } from '@models/team';

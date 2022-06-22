@@ -3,7 +3,7 @@ import { Course } from '@models/course';
 import { User } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 
-import course_validation from 'app/shared/course-validation.json';
+import course_validation from 'app/shared/validators/course-validation.json';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';

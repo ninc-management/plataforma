@@ -4,7 +4,7 @@ import { Invoice } from '@models/invoice';
 import { User, UserNotification } from '@models/user';
 import { NbDialogService } from '@nebular/theme';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import * as contract_validation from 'app/shared/contract-validation.json';
+import * as contract_validation from 'app/shared/validators/contract-validation.json';
 import {
   AVALIABLE_MANAGEMENT_STATUS,
   AVALIABLE_MANAGEMENT_ITEM_STATUS,

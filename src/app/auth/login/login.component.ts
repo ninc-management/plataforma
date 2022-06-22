@@ -2,7 +2,7 @@ import { Component, ChangeDetectorRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbLoginComponent, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
 
-import user_validation from 'app/shared/user-validation.json';
+import user_validation from 'app/shared/validators/user-validation.json';
 import { AuthService } from '../auth.service';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { combineLatest, Subject } from 'rxjs';
