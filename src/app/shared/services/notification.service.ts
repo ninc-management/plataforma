@@ -4,8 +4,9 @@ import { combineLatest, Subject } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { TeamMember } from '@models/team';
-import { User, UserNotification } from '@models/user';
+import { User } from '@models/user';
 import { InvoiceTeamMember } from '@models/invoice';
+import { Notification } from '@models/notification';
 import { cloneDeep } from 'lodash';
 import { isOfType } from '../utils';
 import { ConfigService } from './config.service';
@@ -14,19 +15,6 @@ export interface NotificationBody {
   title: string;
   tag: string;
   message: string;
-}
-
-export enum NotificationTags {
-  MENTION = 'mention',
-  EXPENSE_PAID = 'expense-paid',
-  PAYMENT_ORDER_PAID = 'payment-order-paid',
-  RECEIPT_PAID = 'receipt-paid',
-  CONTRACT_SIGNED = 'contract-signed',
-  APPOINTED_AS_ASSIGNEE = 'appointed-as-assignee',
-  VALUE_TO_RECEIVE_PAID = 'value-to-receive-paid',
-  EXPENSE_ORDER_CREATED = 'expense-order-created',
-  PAYMENT_ORDER_CREATED = 'payment-order-created',
-  RECEIPT_ORDER_CREATED = 'receipt-order-created',
 }
 
 @Injectable({
@@ -44,7 +32,7 @@ export class NotificationService implements OnDestroy {
 
   notify(user: User | string | undefined, body: NotificationBody): void {
     if (user) {
-      const notification = new UserNotification();
+      const notification = new Notification();
       notification.title = body.title;
       notification.tag = body.tag;
       notification.message = body.message;
@@ -60,8 +48,8 @@ export class NotificationService implements OnDestroy {
   }
 
   notifyMany(users: User[] | TeamMember[] | InvoiceTeamMember[], body: NotificationBody): void {
-    const notifications: UserNotification[] = [];
-    const newNotification = new UserNotification();
+    const notifications: Notification[] = [];
+    const newNotification = new Notification();
     newNotification.title = body.title;
     newNotification.tag = body.tag;
     newNotification.message = body.message;
@@ -81,7 +69,7 @@ export class NotificationService implements OnDestroy {
     this.http.post('/api/notify/many', req).pipe(take(1)).subscribe();
   }
 
-  checkNotification(notification: UserNotification) {
+  checkNotification(notification: Notification) {
     if (notification.to && notification.from) {
       notification.to = this.userService.idToUser(notification.to)._id;
       notification.from = this.userService.idToUser(notification.from)._id;

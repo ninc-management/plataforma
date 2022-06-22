@@ -7,7 +7,8 @@ import { PlatformConfig } from '../models/platformConfig';
 import { Promotion } from '../models/promotion';
 import { Prospect } from '../models/prospect';
 import { Team } from '../models/team';
-import { User, UserNotification } from '../models/user';
+import { User } from '../models/user';
+import { Notification } from '../models/notification';
 import { Subject } from 'rxjs';
 
 export const usersMap: Record<string, User> = {};
@@ -20,4 +21,4 @@ export const configMap: Record<string, PlatformConfig> = {};
 export const invoicesMap: Record<string, Invoice> = {};
 export const coursesMap: Record<string, Course> = {};
 export const contractorsMap: Record<string, Contractor> = {};
-export const notification$ = new Subject<UserNotification>();
+export const notification$ = new Subject<Notification>();

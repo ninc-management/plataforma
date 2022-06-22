@@ -1,40 +1,49 @@
 import * as express from 'express';
 import UserModel from '../models/user';
-import { UserNotification } from '../models/user';
+import { Notification, NotificationApps } from '../models/notification';
 import { Mutex } from 'async-mutex';
 import { notification$, usersMap } from '../shared/global';
 import { cloneDeep, isEqual } from 'lodash';
+import { PlatformConfig } from '../models/platformConfig';
+import PlatformConfigModel from '../models/platformConfig';
+import { isNotificationEnabled } from '../shared/util';
 
 const router = express.Router();
 const mutex = new Mutex();
-let lastNotification: UserNotification;
+let lastNotification: Notification;
 
-export function updateNotification(notification: UserNotification, res: any) {
-  UserModel.findByIdAndUpdate(
-    notification.to,
-    { $push: { notifications: notification } },
-    { upsert: false },
-    (err, savedUser) => {
-      if (err && res) {
-        return res.status(500).json({
-          message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
-          error: err,
-        });
+export async function updateNotification(notification: Notification, res: any) {
+  const platformConfig: PlatformConfig[] = await PlatformConfigModel.find({});
+  if (
+    platformConfig.length > 0 &&
+    isNotificationEnabled(platformConfig[0].notificationConfig, notification.tag, NotificationApps.PLATFORM)
+  ) {
+    UserModel.findByIdAndUpdate(
+      notification.to,
+      { $push: { notifications: notification } },
+      { upsert: false },
+      (err, savedUser) => {
+        if (err && res) {
+          return res.status(500).json({
+            message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
+            error: err,
+          });
+        }
+        if (Object.keys(usersMap).length > 0) usersMap[notification.to as any] = cloneDeep(savedUser.toJSON());
+        notification$.next(notification);
+        if (isEqual(notification, lastNotification) && res) {
+          return res
+            .status(200)
+            .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
+        }
       }
-      if (Object.keys(usersMap).length > 0) usersMap[notification.to as any] = cloneDeep(savedUser.toJSON());
-      notification$.next(notification);
-      if (isEqual(notification, lastNotification) && res) {
-        return res
-          .status(200)
-          .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
-      }
-    }
-  );
+    );
+  } else notification$.next(notification);
 }
 
 /**
  * Make a request to send a notification
- * UserNotification:
+ * Notification:
  * @param {string} to
  * @param {string} from
  * @param {string} title
@@ -52,7 +61,7 @@ router.post('/', (req, res, next) => {
 
 /**
  * Make a request to send many notifications
- * UserNotification[]:
+ * Notification[]:
  * @param {string} to
  * @param {string} from
  * @param {string} title
@@ -72,7 +81,7 @@ router.post('/many', (req, res, next) => {
 
 /**
  * Make a request to delete a notification
- * UserNotification:
+ * Notification:
  * @param {string} to
  * @param {string} from
  * @param {string} title

@@ -9,8 +9,9 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
 import contract_validation from '../../../../shared/validators/payment-validation.json';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
-import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { ContractReceipt, Contract } from '@models/contract';
+import { NotificationTags } from '@models/notification';
 
 @Component({
   selector: 'ngx-receipt-item',

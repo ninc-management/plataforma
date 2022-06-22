@@ -11,7 +11,8 @@ import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { combineLatest, Subject } from 'rxjs';
 import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'app/../environments/environment';
-import { User, UserNotification } from '@models/user';
+import { User } from '@models/user';
+import { Notification, NotificationTags } from '@models/notification';
 import {
   COMPONENT_TYPES,
   ConfigDialogComponent,
@@ -23,7 +24,6 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { tada } from './animation';
 import { isPhone, trackByIndex, elapsedTime, idToProperty, Permissions } from 'app/shared/utils';
-import { NotificationTags } from 'app/shared/services/notification.service';
 
 interface NbMenuItem {
   title: string;
@@ -188,7 +188,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  openNotification(idx: number, notification: UserNotification): void {
+  openNotification(idx: number, notification: Notification): void {
     this.dialogService.open(ConfigDialogComponent, {
       context: {
         title: notification.title,

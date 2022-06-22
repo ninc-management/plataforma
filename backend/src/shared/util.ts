@@ -1,9 +1,11 @@
 import InvoiceModel, { Invoice } from '../models/invoice';
 import ContractModel, { Contract } from '../models/contract';
-import UserModel, { User, UserNotification } from '../models/user';
+import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { differenceInDays } from 'date-fns';
+import { Notification, NotificationTags } from '../models/notification';
 import { updateNotification } from '../routes/notification';
+import { NotificationConfig } from '../models/platformConfig';
 
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
@@ -34,7 +36,7 @@ export function isUserAuthenticated(req, res, next): boolean {
   } else next();
 }
 
-export function notifyByEmail(notification: UserNotification): void {
+export function notifyByEmail(notification: Notification): void {
   const mailOptions = {
     from: 'Contato NINC <contato@ninc.digital>',
     to: (notification.to as User).email,
@@ -47,7 +49,7 @@ export function notifyByEmail(notification: UserNotification): void {
 }
 
 function sendNotification(invoice: Invoice, author: User, days: number): void {
-  const notification = new UserNotification();
+  const notification = new Notification();
   notification.title = 'Pagamento pendente';
   notification.message =
     days > 0
@@ -55,6 +57,7 @@ function sendNotification(invoice: Invoice, author: User, days: number): void {
       : `Faltam ${
           days * -1
         } dias para a data prevista do pagamento de uma das parcelas da ordens de empenho do contrato ${invoice.code}.`;
+  notification.tag = 'receipt-due';
   notification.to = author._id;
   notification.from = author._id;
   updateNotification(notification, undefined);
@@ -77,6 +80,33 @@ export async function overdueReceiptNotification() {
       }
     });
   });
+}
+
+export function isNotificationEnabled(
+  notificationConfigs: NotificationConfig,
+  notificationTag: string,
+  platform: string
+): boolean {
+  switch (notificationTag) {
+    case NotificationTags.APPOINTED_AS_ASSIGNEE:
+      return notificationConfigs.stageResponsible[platform];
+    case NotificationTags.CONTRACT_SIGNED:
+      return notificationConfigs.contractClosed[platform];
+    case NotificationTags.MENTION:
+      return notificationConfigs.userMentioned[platform];
+    case NotificationTags.RECEIPT_DUE:
+      return notificationConfigs.receiptDue[platform];
+    case NotificationTags.VALUE_TO_RECEIVE_PAID:
+      return notificationConfigs.teamMemberPaid[platform];
+    case NotificationTags.EXPENSE_ORDER_CREATED ||
+      NotificationTags.PAYMENT_ORDER_CREATED ||
+      NotificationTags.RECEIPT_ORDER_CREATED:
+      return notificationConfigs.transactionCreated[platform];
+    case NotificationTags.EXPENSE_PAID || NotificationTags.PAYMENT_ORDER_PAID || NotificationTags.RECEIPT_PAID:
+      return notificationConfigs.transactionPaid[platform];
+    default:
+      break;
+  }
 }
 
 export default {

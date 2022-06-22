@@ -14,12 +14,13 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import contract_validation from 'app/shared/validators/payment-validation.json';
 import { TeamService } from 'app/shared/services/team.service';
 import { trackByIndex, formatDate, idToProperty, shouldNotifyManager } from 'app/shared/utils';
-import { NotificationService, NotificationTags } from 'app/shared/services/notification.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractUserPayment, ContractPayment, Contract } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
+import { NotificationTags } from '@models/notification';
 
 @Component({
   selector: 'ngx-payment-item',
