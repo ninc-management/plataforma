@@ -1,11 +1,13 @@
-import { Component, OnInit, Inject, Optional, Input } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Course, CourseParticipant } from '@models/course';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { saveAs } from 'file-saver';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { take } from 'rxjs/operators';
+
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Course, CourseParticipant } from '@models/course';
 
 export enum DIALOG_TYPES {
   COURSE,

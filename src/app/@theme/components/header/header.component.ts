@@ -1,4 +1,6 @@
+import { transition, trigger, useAnimation } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NbAccessChecker } from '@nebular/security';
 import {
   NbDialogService,
   NbMediaBreakpointsService,
@@ -6,24 +8,23 @@ import {
   NbSidebarService,
   NbThemeService,
 } from '@nebular/theme';
-
-import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
-import { combineLatest, Subject } from 'rxjs';
-import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'app/../environments/environment';
-import { User } from '@models/user';
-import { Notification, NotificationTags } from '@models/notification';
+import { combineLatest, Subject } from 'rxjs';
+import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
+
+import { tada } from './animation';
 import {
   COMPONENT_TYPES,
   ConfigDialogComponent,
 } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
-import { NbAccessChecker } from '@nebular/security';
 import { ConfigService } from 'app/shared/services/config.service';
-import { PlatformConfig } from '@models/platformConfig';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { transition, trigger, useAnimation } from '@angular/animations';
-import { tada } from './animation';
-import { isPhone, trackByIndex, elapsedTime, idToProperty, Permissions } from 'app/shared/utils';
+import { UserService } from 'app/shared/services/user.service';
+import { elapsedTime, idToProperty, isPhone, Permissions, trackByIndex } from 'app/shared/utils';
+
+import { Notification, NotificationTags } from '@models/notification';
+import { PlatformConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 interface NbMenuItem {
   title: string;

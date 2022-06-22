@@ -3,19 +3,34 @@
  * Copyright Akveo. All Rights Reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import ptBr from '@angular/common/locales/pt';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { CoreModule } from './@core/core.module';
-import { ThemeModule } from './@theme/theme.module';
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-routing.module';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
-import { environment } from '../environments/environment';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  MSAL_GUARD_CONFIG,
+  MSAL_INSTANCE,
+  MSAL_INTERCEPTOR_CONFIG,
+  MsalBroadcastService,
+  MsalGuard,
+  MsalGuardConfiguration,
+  MsalInterceptor,
+  MsalInterceptorConfiguration,
+  MsalModule,
+  MsalService,
+} from '@azure/msal-angular';
+import {
+  BrowserCacheLocation,
+  InteractionType,
+  IPublicClientApplication,
+  LogLevel,
+  PublicClientApplication,
+} from '@azure/msal-browser';
+import { NbDateFnsDateModule } from '@nebular/date-fns';
 import {
   NbChatModule,
   NbDatepickerModule,
@@ -25,33 +40,18 @@ import {
   NbToastrModule,
   NbWindowModule,
 } from '@nebular/theme';
-import { NbDateFnsDateModule } from '@nebular/date-fns';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import {
-  MsalModule,
-  MsalInterceptorConfiguration,
-  MsalGuardConfiguration,
-  MsalInterceptor,
-  MSAL_INSTANCE,
-  MSAL_GUARD_CONFIG,
-  MSAL_INTERCEPTOR_CONFIG,
-  MsalService,
-  MsalGuard,
-  MsalBroadcastService,
-} from '@azure/msal-angular';
-import {
-  LogLevel,
-  IPublicClientApplication,
-  PublicClientApplication,
-  BrowserCacheLocation,
-  InteractionType,
-} from '@azure/msal-browser';
-import { interceptorProviders } from './shared/interceptors/interceptors';
-
-import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
-import langPTBR from 'app/shared/langPT-BR';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
+import { environment } from '../environments/environment';
+import { CoreModule } from './@core/core.module';
+import { ThemeModule } from './@theme/theme.module';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 import { InjectorModule } from './shared/injector.module';
+import { interceptorProviders } from './shared/interceptors/interceptors';
+import langPTBR from 'app/shared/langPT-BR';
 
 echarts.registerLocale('PT-BR', langPTBR);
 

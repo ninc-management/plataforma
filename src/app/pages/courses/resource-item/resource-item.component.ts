@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Course, CourseResource } from '@models/course';
-import course_validation from 'app/shared/validators/course-validation.json';
-import { CourseService } from 'app/shared/services/course.service';
 import { cloneDeep } from 'lodash';
+
+import { CourseService } from 'app/shared/services/course.service';
+
+import { Course, CourseResource } from '@models/course';
+
+import course_validation from 'app/shared/validators/course-validation.json';
 
 @Component({
   selector: 'ngx-resource-item',

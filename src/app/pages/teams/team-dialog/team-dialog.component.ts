@@ -1,11 +1,13 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { take } from 'rxjs';
+
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Team } from '@models/team';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TeamService } from 'app/shared/services/team.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { take } from 'rxjs';
+
+import { Team } from '@models/team';
 
 export enum TEAM_COMPONENT_TYPES {
   TEAM,

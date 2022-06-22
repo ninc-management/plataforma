@@ -1,13 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject } from 'rxjs';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PromotionService } from 'app/shared/services/promotion.service';
+
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
-import { Promotion } from '@models/promotion';
 import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
+import { PromotionService } from 'app/shared/services/promotion.service';
 import { isPhone, nameSort } from 'app/shared/utils';
+
+import { Promotion } from '@models/promotion';
 
 @Component({
   selector: 'ngx-promotions',

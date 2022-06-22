@@ -1,17 +1,19 @@
 import { Component, Inject, Input, OnInit, Optional, ViewChild } from '@angular/core';
-import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
-import { Invoice } from '@models/invoice';
-import { User } from '@models/user';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { NgForm } from '@angular/forms';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, take } from 'rxjs';
+
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { AVALIABLE_MANAGEMENT_ITEM_STATUS } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { cloneDeep } from 'lodash';
-import { BehaviorSubject, take } from 'rxjs';
-import { idToProperty, formatDate } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { NgForm } from '@angular/forms';
+import { formatDate, idToProperty } from 'app/shared/utils';
+
+import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
+import { Invoice } from '@models/invoice';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-checklist-item-dialog',

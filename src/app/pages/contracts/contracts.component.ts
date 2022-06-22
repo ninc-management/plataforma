@@ -1,31 +1,33 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { NbDialogService, NbComponentStatus } from '@nebular/theme';
-import { LocalDataSource } from 'ng2-smart-table';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NbAccessChecker } from '@nebular/security';
+import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
-import { take, takeUntil, filter } from 'rxjs/operators';
-import { Subject, combineLatest } from 'rxjs';
-import { NbAccessChecker } from '@nebular/security';
-import { ContractDialogComponent, COMPONENT_TYPES } from './contract-dialog/contract-dialog.component';
-import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { LocalDataSource } from 'ng2-smart-table';
+import { combineLatest, Subject } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
+
+import { COMPONENT_TYPES, ContractDialogComponent } from './contract-dialog/contract-dialog.component';
+import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { UserService } from 'app/shared/services/user.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
-import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
-import { Team } from '@models/team';
 import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
 import {
-  isPhone,
-  Permissions,
   codeSort,
-  valueSort,
+  idToProperty,
+  isPhone,
   nfPercentage,
   nortanPercentage,
-  idToProperty,
+  Permissions,
+  valueSort,
 } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
+import { Team } from '@models/team';
 
 @Component({
   selector: 'ngx-contracts',

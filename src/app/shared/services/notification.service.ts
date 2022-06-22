@@ -1,15 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { cloneDeep } from 'lodash';
 import { combineLatest, Subject } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
-import { UserService } from './user.service';
-import { TeamMember } from '@models/team';
-import { User } from '@models/user';
-import { InvoiceTeamMember } from '@models/invoice';
-import { Notification } from '@models/notification';
-import { cloneDeep } from 'lodash';
+
 import { isOfType } from '../utils';
 import { ConfigService } from './config.service';
+import { UserService } from './user.service';
+
+import { InvoiceTeamMember } from '@models/invoice';
+import { Notification } from '@models/notification';
+import { TeamMember } from '@models/team';
+import { User } from '@models/user';
 
 export interface NotificationBody {
   title: string;

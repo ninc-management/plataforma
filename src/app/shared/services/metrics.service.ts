@@ -1,25 +1,27 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Subject, Observable, combineLatest } from 'rxjs';
-import { takeUntil, map, take, skipWhile } from 'rxjs/operators';
-import { ContractService, CONTRACT_STATOOS } from './contract.service';
-import { InvoiceService, INVOICE_STATOOS } from './invoice.service';
-import { UserService, CONTRACT_BALANCE, CLIENT } from './user.service';
-import { StringUtilService } from './string-util.service';
-import { cloneDeep, mergeWith, add } from 'lodash';
 import { format } from 'date-fns';
-import { TeamService } from './team.service';
-import { Contract } from '@models/contract';
-import { ContractorService } from './contractor.service';
-import { InvoiceTeamMember } from '@models/invoice';
+import { add, cloneDeep, mergeWith } from 'lodash';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
+
 import {
+  groupByDateTimeSerie,
+  idToProperty,
   isValidDate,
   isWithinInterval,
-  idToProperty,
-  groupByDateTimeSerie,
   nfPercentage,
   nortanPercentage,
   valueSort,
 } from '../utils';
+import { CONTRACT_STATOOS, ContractService } from './contract.service';
+import { ContractorService } from './contractor.service';
+import { INVOICE_STATOOS, InvoiceService } from './invoice.service';
+import { StringUtilService } from './string-util.service';
+import { TeamService } from './team.service';
+import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
+
+import { Contract } from '@models/contract';
+import { InvoiceTeamMember } from '@models/invoice';
 
 export type TimeSeriesItem = [string, number];
 

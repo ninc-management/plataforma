@@ -1,5 +1,6 @@
-import { Directive, Input, Injectable } from '@angular/core';
-import { NG_VALIDATORS, AbstractControl, Validator } from '@angular/forms';
+import { Directive, Injectable, Input } from '@angular/core';
+import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
+
 import { StringUtilService } from '../services/string-util.service';
 
 @Directive({

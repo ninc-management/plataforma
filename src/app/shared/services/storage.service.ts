@@ -1,11 +1,12 @@
-import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { AngularFireStorage, AngularFireUploadTask } from '@angular/fire/compat/storage';
 import { from, Observable, Subject } from 'rxjs';
-import { switchMap, take, filter } from 'rxjs/operators';
+import { filter, switchMap, take } from 'rxjs/operators';
+
+import { OneDriveService } from './onedrive.service';
 import { StorageProvider } from 'app/@theme/components/file-uploader/file-uploader.model';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { OneDriveService } from './onedrive.service';
 export interface FilesUploadMetadata {
   uploadProgress$: Observable<number>;
   downloadUrl$: Observable<UploadedFile | string>;

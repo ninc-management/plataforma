@@ -1,12 +1,13 @@
-import { Component, DoCheck, AfterViewInit, OnDestroy, ViewChild, OnInit } from '@angular/core';
-import { MENU_ITEMS } from './pages-menu';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NbIconLibraries, NbSidebarService, NbMenuService, NbMenuItem } from '@nebular/theme';
-import { LayoutService } from '../@core/utils';
-import { skipWhile, takeUntil } from 'rxjs/operators';
-import { combineLatest, Subject } from 'rxjs';
-import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { NbAccessChecker } from '@nebular/security';
+import { NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
+import { combineLatest, Subject } from 'rxjs';
+import { skipWhile, takeUntil } from 'rxjs/operators';
+
+import { LayoutService } from '../@core/utils';
+import { OneColumnLayoutComponent } from '../@theme/layouts';
+import { MENU_ITEMS } from './pages-menu';
 import { ConfigService } from 'app/shared/services/config.service';
 import { Permissions } from 'app/shared/utils';
 

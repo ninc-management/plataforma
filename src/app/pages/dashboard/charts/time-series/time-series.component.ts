@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
-import { TimeSeries } from 'app/shared/services/metrics.service';
+import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
+import { cloneDeep } from 'lodash';
 import { combineLatest, Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { cloneDeep } from 'lodash';
-import { addDays, format, isSameDay, startOfMonth } from 'date-fns';
+
+import { TimeSeries } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { isWithinInterval, formatDate } from 'app/shared/utils';
+import { formatDate, isWithinInterval } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-time-series',
@@ -90,7 +91,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
             position: (pos: any, params: any, dom: any, rect: any, size: any) => {
               // tooltip will be fixed on the right if mouse hovering on the left,
               // and on the left if h: anyovering on the right.
-              let obj: any = { top: '5%' };
+              const obj: any = { top: '5%' };
               const mouseX = pos[0];
               const tooltipWidth = size.contentSize[0];
               const canvasWidth = size.viewSize[0];

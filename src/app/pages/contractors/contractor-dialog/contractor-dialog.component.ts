@@ -1,10 +1,12 @@
-import { Component, OnInit, Inject, Input, Optional } from '@angular/core';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Contractor } from '@models/contractor';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { take } from 'rxjs';
+
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Contractor } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractor-dialog',

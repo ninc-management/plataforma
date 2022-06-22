@@ -1,8 +1,8 @@
-import * as express from 'express';
-import InternalTransactionModel from '../models/internalTransaction';
-import { InternalTransaction } from '../models/internalTransaction';
 import { Mutex } from 'async-mutex';
+import * as express from 'express';
 import { cloneDeep, isEqual } from 'lodash';
+
+import InternalTransactionModel, { InternalTransaction } from '../models/internalTransaction';
 
 const router = express.Router();
 let requested = false;

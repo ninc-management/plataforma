@@ -1,8 +1,10 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Contract } from '@models/contract';
+import { BehaviorSubject, Subject } from 'rxjs';
+
 import { isPhone } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
 
 @Component({
   selector: 'ngx-contract-item',

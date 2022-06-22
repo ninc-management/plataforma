@@ -1,16 +1,18 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { PlatformConfig } from '@models/platformConfig';
-import { Team, TeamExpense } from '@models/team';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
-import { ConfigService } from 'app/shared/services/config.service';
-import { TeamService } from 'app/shared/services/team.service';
-import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
-import { isPhone, idToProperty, formatDate, valueSort } from 'app/shared/utils';
+
+import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { ConfigService } from 'app/shared/services/config.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+
+import { PlatformConfig } from '@models/platformConfig';
+import { Team, TeamExpense } from '@models/team';
 
 @Component({
   selector: 'ngx-team-expenses',

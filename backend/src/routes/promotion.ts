@@ -1,8 +1,8 @@
-import * as express from 'express';
-import PromotionModel from '../models/promotion';
-import { Promotion } from '../models/promotion';
 import { Mutex } from 'async-mutex';
+import * as express from 'express';
 import { cloneDeep } from 'lodash';
+
+import PromotionModel, { Promotion } from '../models/promotion';
 import { promotionsMap } from '../shared/global';
 
 const router = express.Router();

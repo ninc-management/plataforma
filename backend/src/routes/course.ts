@@ -1,8 +1,8 @@
-import * as express from 'express';
-import CourseModel from '../models/course';
-import { Course } from '../models/course';
 import { Mutex } from 'async-mutex';
+import * as express from 'express';
 import { cloneDeep } from 'lodash';
+
+import CourseModel, { Course } from '../models/course';
 import { coursesMap } from '../shared/global';
 
 const router = express.Router();

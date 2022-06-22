@@ -1,33 +1,35 @@
-import { DEFAULT_MEDIA_BREAKPOINTS, NbTrigger } from '@nebular/theme';
 import { NgModel } from '@angular/forms';
+import { DEFAULT_MEDIA_BREAKPOINTS, NbTrigger } from '@nebular/theme';
 import {
   addMonths,
   addYears,
+  differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
   endOfMonth,
   endOfYear,
   format,
   isSameMonth,
-  isWithinInterval as withinInterval,
+  parseISO,
   startOfMonth,
   startOfYear,
   subDays,
   subMonths,
   subYears,
-  differenceInHours,
-  differenceInMinutes,
-  differenceInSeconds,
-  differenceInDays,
-  parseISO,
+  isWithinInterval as withinInterval,
 } from 'date-fns';
-import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
-import { Invoice } from '@models/invoice';
 import { at, groupBy, isEqual } from 'lodash';
-import { TimeSeriesItem } from './services/metrics.service';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+
 import { appInjector } from './injector.module';
 import { ConfigService } from './services/config.service';
+import { TimeSeriesItem } from './services/metrics.service';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+
+import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',

@@ -1,6 +1,7 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Output, OnInit, Input } from '@angular/core';
-import { NbFileUploaderService } from './file-uploader.service';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+
 import { NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
+import { NbFileUploaderService } from './file-uploader.service';
 
 @Directive({ selector: '[nbFileDrop]' })
 export class FileDropDirective implements OnInit {

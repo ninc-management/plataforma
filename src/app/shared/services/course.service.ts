@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Course, CourseParticipant } from '@models/course';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { WebSocketService } from './web-socket.service';
+
 import { isOfType } from '../utils';
+import { WebSocketService } from './web-socket.service';
+
+import { Course, CourseParticipant } from '@models/course';
 
 @Injectable({
   providedIn: 'root',

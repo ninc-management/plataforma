@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Inject, Optional, ViewChild, ElementRef } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { Component, ElementRef, Inject, Input, OnInit, Optional, ViewChild } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
 @Component({

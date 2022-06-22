@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import json_state_city from '../state-city.json';
 
 @Injectable({
@@ -6,7 +7,7 @@ import json_state_city from '../state-city.json';
 })
 export class StatecityService {
   buildStateList(): string[] {
-    let states: string[] = [];
+    const states: string[] = [];
     for (const state of json_state_city.estados) {
       states.push(state.sigla);
     }

@@ -1,9 +1,10 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { Invoice } from './invoice';
+import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
+
 import { StatusHistory } from './baseStatusHistory';
+import { Invoice } from './invoice';
 import { Sector, UploadedFile } from './shared';
 import { User } from './user';
-import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export class ContractExpenseTeamMember {
   @prop({ required: true, ref: () => User })

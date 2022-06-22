@@ -1,8 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Course, CourseParticipant } from '@models/course';
-import participant_validation from 'app/shared/validators/participant-validation.json';
-import { CourseService } from 'app/shared/services/course.service';
 import { cloneDeep } from 'lodash';
+
+import { CourseService } from 'app/shared/services/course.service';
+
+import { Course, CourseParticipant } from '@models/course';
+
+import participant_validation from 'app/shared/validators/participant-validation.json';
 
 @Component({
   selector: 'ngx-participant-item',

@@ -1,14 +1,15 @@
 import {
-  Component,
-  Input,
-  ContentChildren,
-  ChangeDetectorRef,
   AfterContentInit,
+  ChangeDetectorRef,
+  Component,
+  ContentChildren,
+  Input,
   OnDestroy,
   Output,
 } from '@angular/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
 import { FabItemComponent } from './fab-item/fab-item.component';
 
 @Component({

@@ -1,7 +1,8 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { ReceivableByContract } from 'app/shared/services/metrics.service';
+import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+
 import { BaseDialogComponent } from '../../../../shared/components/base-dialog/base-dialog.component';
+import { ReceivableByContract } from 'app/shared/services/metrics.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 @Component({

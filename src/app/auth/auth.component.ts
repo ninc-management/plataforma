@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component } from '@angular/core';
 import { NbAuthComponent, NbAuthService } from '@nebular/auth';
+
 import { AuthService } from './auth.service';
 
 @Component({

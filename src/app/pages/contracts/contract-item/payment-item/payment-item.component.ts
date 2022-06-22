@@ -1,26 +1,28 @@
-import { Component, OnInit, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
-import { BehaviorSubject } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
 import { cloneDeep } from 'lodash';
-import { ContractService } from 'app/shared/services/contract.service';
-import { UserService } from 'app/shared/services/user.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, take } from 'rxjs/operators';
+
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import contract_validation from 'app/shared/validators/payment-validation.json';
-import { TeamService } from 'app/shared/services/team.service';
-import { trackByIndex, formatDate, idToProperty, shouldNotifyManager } from 'app/shared/utils';
-import { NotificationService } from 'app/shared/services/notification.service';
 import { ConfigService } from 'app/shared/services/config.service';
-import { ContractUserPayment, ContractPayment, Contract } from '@models/contract';
+import { ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { formatDate, idToProperty, shouldNotifyManager, trackByIndex } from 'app/shared/utils';
+
+import { Contract, ContractPayment, ContractUserPayment } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { NotificationTags } from '@models/notification';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
-import { NotificationTags } from '@models/notification';
+
+import contract_validation from 'app/shared/validators/payment-validation.json';
 
 @Component({
   selector: 'ngx-payment-item',

@@ -1,6 +1,7 @@
 import {
   Directive,
   ElementRef,
+  EventEmitter,
   Host,
   HostListener,
   Injectable,
@@ -8,7 +9,6 @@ import {
   OnInit,
   Optional,
   Output,
-  EventEmitter,
 } from '@angular/core';
 
 export class BrMaskModel {

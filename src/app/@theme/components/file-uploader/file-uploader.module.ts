@@ -4,14 +4,14 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NbProgressBarModule, NbButtonModule } from '@nebular/theme';
+import { NgModule } from '@angular/core';
+import { NbButtonModule, NbProgressBarModule } from '@nebular/theme';
 
-import { NbFileUploaderComponent } from './file-uploader.component';
-import { NbUploadQueueComponent } from './upload-queue.component';
-import { NbUploadQueueItemComponent } from './upload-queue-item.component';
 import { FileDropDirective } from './file-drop.directive';
+import { NbFileUploaderComponent } from './file-uploader.component';
+import { NbUploadQueueItemComponent } from './upload-queue-item.component';
+import { NbUploadQueueComponent } from './upload-queue.component';
 
 @NgModule({
   imports: [CommonModule, NbProgressBarModule, NbButtonModule],

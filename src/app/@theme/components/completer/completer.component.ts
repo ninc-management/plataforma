@@ -1,9 +1,9 @@
 'use strict';
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild, forwardRef, ElementRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NbComponentSize, NbComponentStatus, NbTrigger } from '@nebular/theme';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NbTrigger, NbComponentStatus, NbComponentSize } from '@nebular/theme';
 
 const MAX_CHARS = 524288; // the default max length per the html maxlength attribute
 const MIN_SEARCH_LENGTH = 3;

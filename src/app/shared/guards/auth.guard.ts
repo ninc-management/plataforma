@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import {
-  CanActivate,
   ActivatedRouteSnapshot,
+  CanActivate,
+  CanActivateChild,
+  Router,
   RouterStateSnapshot,
   UrlTree,
-  Router,
-  CanActivateChild,
 } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
 import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker, NbAclService } from '@nebular/security';
-import { MsalService } from '@azure/msal-angular';
 import { Observable } from 'rxjs';
 import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+
 import { ConfigService } from '../services/config.service';
 // TODO: Remove this part
-let accessControl = {
+const accessControl = {
   Parceiro: {
     parceiro: '*',
   },
@@ -132,7 +133,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       skipWhile((configs) => configs.length == 0),
       take(1),
       map((configs) => {
-        let obj: any = {};
+        const obj: any = {};
         if (configs[0]) {
           configs[0].profileConfig.positions.forEach((position) => {
             if (position.permission == 'Administrador') {

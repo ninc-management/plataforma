@@ -1,7 +1,8 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+
 import { Base } from './base';
-import { User } from './user';
 import { Sector, UploadedFile } from './shared';
+import { User } from './user';
 
 export class TeamMember {
   @prop({ required: true, ref: () => User })

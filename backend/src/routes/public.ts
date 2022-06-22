@@ -1,10 +1,8 @@
 import * as express from 'express';
-import UserModel from '../models/user';
-import ContractModel from '../models/contract';
-import ContractorModel from '../models/contractor';
-import { User } from '../models/user';
-import { Contract } from '../models/contract';
-import { Contractor } from '../models/contractor';
+
+import ContractModel, { Contract } from '../models/contract';
+import ContractorModel, { Contractor } from '../models/contractor';
+import UserModel, { User } from '../models/user';
 
 const router = express.Router();
 

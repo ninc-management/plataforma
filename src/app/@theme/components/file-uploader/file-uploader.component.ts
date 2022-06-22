@@ -4,11 +4,11 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
+import { NbFileItem, NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 import { NbFileUploaderService } from './file-uploader.service';
-import { NbFileUploaderOptions, StorageProvider, NbFileItem } from './file-uploader.model';
-import { Subject, BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'nb-file-uploader',

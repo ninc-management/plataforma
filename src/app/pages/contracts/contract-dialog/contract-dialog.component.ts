@@ -1,22 +1,24 @@
-import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { HttpClient } from '@angular/common/http';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import saveAs from 'file-saver';
 import { cloneDeep } from 'lodash';
-import { map, skipWhile, take, takeUntil, combineLatest } from 'rxjs';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { combineLatest, map, skipWhile, take, takeUntil } from 'rxjs';
+
 import { PdfService } from 'app/pages/invoices/pdf.service';
-import { UserService } from 'app/shared/services/user.service';
-import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
-import { ConfigService } from 'app/shared/services/config.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { generateExpensesReport } from 'app/shared/report-generator';
+import { ConfigService } from 'app/shared/services/config.service';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
+import { codeSort, isPhone, tooltipTriggers } from 'app/shared/utils';
+
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
-import { HttpClient } from '@angular/common/http';
-import { generateExpensesReport } from 'app/shared/report-generator';
-import saveAs from 'file-saver';
-import { isPhone, codeSort, tooltipTriggers } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 export enum COMPONENT_TYPES {
   CONTRACT,

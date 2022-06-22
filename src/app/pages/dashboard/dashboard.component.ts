@@ -1,22 +1,24 @@
 import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
+import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
-import { endOfMonth, startOfMonth } from 'date-fns';
-import { UserService } from 'app/shared/services/user.service';
-import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
-import { TeamService } from 'app/shared/services/team.service';
-import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+
+import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
 import {
   COMPONENT_TYPES,
   ContractDialogComponent,
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
-import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
+import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { groupByDateTimeSerie, isPhone } from 'app/shared/utils';
+
 import { Team } from '@models/team';
-import { TeamDialogComponent, TEAM_COMPONENT_TYPES } from 'app/pages/teams/team-dialog/team-dialog.component';
-import { isPhone, groupByDateTimeSerie } from 'app/shared/utils';
 
 enum TAB_TITLES {
   PESSOAL = 'Pessoal',

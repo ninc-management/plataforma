@@ -1,9 +1,10 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
+import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+
 import { Base } from './base';
-import { User } from './user';
-import { EditionHistoryItem } from './shared';
 import { Contract } from './contract';
+import { EditionHistoryItem } from './shared';
 import { Team } from './team';
+import { User } from './user';
 
 export class InternalTransaction extends Base<string> {
   @prop({ required: true, enum: ['User', 'Contract', 'Team'] })

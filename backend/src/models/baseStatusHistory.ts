@@ -1,4 +1,5 @@
 import { prop } from '@typegoose/typegoose';
+
 import { Base } from './base';
 
 export class StatusHistoryItem {

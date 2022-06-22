@@ -1,8 +1,11 @@
 // server.js
+/* eslint-disable import/order */
 const app = require('./backend/app').default;
+
 const debug = require('debug')('node-angular');
 const http = require('http');
 const util = require('./backend/shared/util').default;
+/* eslint-enable import/order */
 
 const onError = (error) => {
   if (error.syscall !== 'listen') {

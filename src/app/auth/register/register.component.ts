@@ -1,15 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
-import { NbRegisterComponent, NbAuthService, NB_AUTH_OPTIONS } from '@nebular/auth';
-
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
+import { NB_AUTH_OPTIONS, NbAuthService, NbRegisterComponent } from '@nebular/auth';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { AuthService } from '../auth.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import user_validation from 'app/shared/validators/user-validation.json';
-import { Prospect } from '@models/prospect';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Prospect } from '@models/prospect';
+
+import user_validation from 'app/shared/validators/user-validation.json';
 
 @Component({
   selector: 'ngx-register',

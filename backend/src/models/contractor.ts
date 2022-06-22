@@ -1,6 +1,7 @@
-import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
-import { Base } from './base';
+import { getModelForClass, plugin, prop } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+
+import { Base } from './base';
 
 @plugin(mongooseUniqueValidator)
 export class Contractor extends Base<string> {

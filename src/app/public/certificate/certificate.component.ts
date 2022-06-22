@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Course, CourseParticipant } from '@models/course';
-import { CourseService } from 'app/shared/services/course.service';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { CourseService } from 'app/shared/services/course.service';
+
+import { Course, CourseParticipant } from '@models/course';
 
 @Component({
   selector: 'ngx-certificate',

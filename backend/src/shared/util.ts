@@ -1,11 +1,12 @@
-import InvoiceModel, { Invoice } from '../models/invoice';
+import { differenceInDays } from 'date-fns';
+
 import ContractModel, { Contract } from '../models/contract';
+import InvoiceModel, { Invoice } from '../models/invoice';
+import { Notification, NotificationTags } from '../models/notification';
+import { NotificationConfig } from '../models/platformConfig';
 import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
-import { differenceInDays } from 'date-fns';
-import { Notification, NotificationTags } from '../models/notification';
 import { updateNotification } from '../routes/notification';
-import { NotificationConfig } from '../models/platformConfig';
 
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);

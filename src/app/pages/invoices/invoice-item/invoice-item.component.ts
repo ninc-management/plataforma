@@ -1,40 +1,43 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
-import { map, skipWhile, take } from 'rxjs/operators';
-import { Subject, BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { map, skipWhile, take } from 'rxjs/operators';
+
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
-import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
+import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
+import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { UserService } from 'app/shared/services/user.service';
-import { Invoice, InvoiceTeamMember, InvoiceMaterial, InvoiceProduct, InvoiceStage } from '@models/invoice';
-import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
-import { User } from '@models/user';
-import { Contractor } from '@models/contractor';
-import invoice_validation from 'app/shared/validators/invoice-validation.json';
-import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
-import { Team } from '@models/team';
-import { Sector } from '@models/shared';
-import { NotificationTags } from '@models/notification';
-import { TeamService } from 'app/shared/services/team.service';
-import { InvoiceConfig } from '@models/platformConfig';
-import { ConfigService } from 'app/shared/services/config.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
 import {
-  isPhone,
-  tooltipTriggers,
-  trackByIndex,
+  forceValidatorUpdate,
   idToProperty,
   isOfType,
+  isPhone,
   nfPercentage,
   nortanPercentage,
-  forceValidatorUpdate,
+  tooltipTriggers,
+  trackByIndex,
 } from 'app/shared/utils';
+
+import { Contractor } from '@models/contractor';
+import { Invoice, InvoiceMaterial, InvoiceProduct, InvoiceStage, InvoiceTeamMember } from '@models/invoice';
+import { NotificationTags } from '@models/notification';
+import { InvoiceConfig } from '@models/platformConfig';
+import { Sector } from '@models/shared';
+import { Team } from '@models/team';
+import { User } from '@models/user';
+
+import invoice_validation from 'app/shared/validators/invoice-validation.json';
 
 export enum UNIT_OF_MEASURE {
   METRO_QUADRADO = 'm²',

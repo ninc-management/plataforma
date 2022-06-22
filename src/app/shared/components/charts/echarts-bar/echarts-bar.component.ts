@@ -1,9 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
+import { EChartsOption } from 'echarts';
+import { Subject, take, takeUntil } from 'rxjs';
+
 import { ContractService } from 'app/shared/services/contract.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Subject, take, takeUntil } from 'rxjs';
-import { EChartsOption } from 'echarts';
 
 type EchartBarItem = [string, number];
 

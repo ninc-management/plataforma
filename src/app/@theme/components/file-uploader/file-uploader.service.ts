@@ -5,11 +5,11 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subject, EMPTY, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
+import { catchError, filter, map, takeUntil } from 'rxjs/operators';
 
-import { NbFileUploaderOptions, NbFileItem, FilterFunction } from './file-uploader.model';
 import { StorageService } from '../../../shared/services/storage.service';
-import { takeUntil, catchError, map, filter } from 'rxjs/operators';
+import { FilterFunction, NbFileItem, NbFileUploaderOptions } from './file-uploader.model';
 
 export interface UploadedFile {
   name: string;

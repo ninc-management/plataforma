@@ -1,11 +1,11 @@
-import * as express from 'express';
-import UserModel from '../models/user';
-import { Notification, NotificationApps } from '../models/notification';
 import { Mutex } from 'async-mutex';
-import { notification$, usersMap } from '../shared/global';
+import * as express from 'express';
 import { cloneDeep, isEqual } from 'lodash';
-import { PlatformConfig } from '../models/platformConfig';
-import PlatformConfigModel from '../models/platformConfig';
+
+import { Notification, NotificationApps } from '../models/notification';
+import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
+import UserModel from '../models/user';
+import { notification$, usersMap } from '../shared/global';
 import { isNotificationEnabled } from '../shared/util';
 
 const router = express.Router();

@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
-import { Subject, BehaviorSubject, Observable } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
 import { cloneDeep } from 'lodash';
+import { Socket } from 'ngx-socket-io';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+
+import { isOfType, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
+
 import { Sector } from '@models/shared';
 import { Team } from '@models/team';
 import { User } from '@models/user';
-import { reviveDates, isOfType, nameSort } from '../utils';
 
 @Injectable({
   providedIn: 'root',

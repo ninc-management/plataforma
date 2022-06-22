@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { NbRoleProvider } from '@nebular/security';
-import { UserService } from '../services/user.service';
 import { Observable, of } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
-import { User } from '@models/user';
-import { AuthService } from 'app/auth/auth.service';
+
+import { UserService } from '../services/user.service';
 import { Permissions } from '../utils';
+import { AuthService } from 'app/auth/auth.service';
+
+import { User } from '@models/user';
 
 @Injectable()
 export class RoleProvider implements NbRoleProvider {

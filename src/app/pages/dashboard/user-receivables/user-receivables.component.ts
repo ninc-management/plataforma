@@ -1,17 +1,19 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Contract } from '@models/contract';
 import { NbDialogService } from '@nebular/theme';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import {
-  ContractDialogComponent,
   COMPONENT_TYPES,
+  ContractDialogComponent,
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { isPhone, valueSort } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
 
 @Component({
   selector: 'ngx-user-receivables',

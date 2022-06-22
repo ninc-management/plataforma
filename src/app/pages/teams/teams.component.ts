@@ -3,11 +3,13 @@ import { NbDialogService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+import { TeamDialogComponent } from './team-dialog/team-dialog.component';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { TeamDialogComponent } from './team-dialog/team-dialog.component';
+import { idToProperty, isPhone, nameSort } from 'app/shared/utils';
+
 import { Team } from '@models/team';
-import { isPhone, nameSort, idToProperty } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-teams',

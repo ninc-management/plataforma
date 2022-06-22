@@ -1,12 +1,12 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-  OnInit,
   ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
 } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { skip, take } from 'rxjs/operators';

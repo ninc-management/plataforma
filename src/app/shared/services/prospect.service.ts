@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Prospect } from '@models/prospect';
-import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Socket } from 'ngx-socket-io';
-import { WebSocketService } from './web-socket.service';
+import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash';
+import { Socket } from 'ngx-socket-io';
+import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
+
 import { nameSort } from '../utils';
+import { WebSocketService } from './web-socket.service';
+
+import { Prospect } from '@models/prospect';
 
 @Injectable({
   providedIn: 'root',

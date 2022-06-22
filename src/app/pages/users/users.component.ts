@@ -1,26 +1,28 @@
-import { Component, OnInit, OnDestroy, Inject, Input } from '@angular/core';
-import { NbDialogRef, NbDialogService, NbTabComponent, NB_DOCUMENT } from '@nebular/theme';
+import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService, NbTabComponent } from '@nebular/theme';
 import { getMonth, getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
-import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
-import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
-import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { User } from '@models/user';
-import { Invoice } from '@models/invoice';
-import { TeamService } from 'app/shared/services/team.service';
-import { Prospect } from '@models/prospect';
-import { ProspectService } from 'app/shared/services/prospect.service';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { isPhone, nfPercentage, nortanPercentage, nameSort } from 'app/shared/utils';
 import { generateUsersReport } from 'app/shared/report-generator';
 import { EXPENSE_TYPES } from 'app/shared/services/config.service';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { ProspectService } from 'app/shared/services/prospect.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { isPhone, nameSort, nfPercentage, nortanPercentage } from 'app/shared/utils';
+
+import { Invoice } from '@models/invoice';
+import { Prospect } from '@models/prospect';
+import { User } from '@models/user';
 
 interface IndividualData {
   received: string;

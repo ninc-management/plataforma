@@ -1,8 +1,32 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireStorage, AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterTestingModule } from '@angular/router/testing';
+import {
+  MSAL_GUARD_CONFIG,
+  MsalBroadcastService,
+  MsalGuardConfiguration,
+  MsalModule,
+  MsalService,
+} from '@azure/msal-angular';
+import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import {
+  NbAuthModule,
+  NbAuthService,
+  NbAuthTokenParceler,
+  NbDummyAuthStrategy,
+  NbTokenLocalStorage,
+  NbTokenService,
+  NbTokenStorage,
+} from '@nebular/auth';
+import { NbDateFnsDateModule } from '@nebular/date-fns';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NbAccessChecker, NbAclService, NbRoleProvider, NbSecurityModule } from '@nebular/security';
 import {
   NbActionsModule,
   NbAlertModule,
@@ -34,28 +58,22 @@ import {
   NbTooltipModule,
   NbUserModule,
 } from '@nebular/theme';
-import {
-  NbAuthModule,
-  NbAuthService,
-  NbAuthTokenParceler,
-  NbDummyAuthStrategy,
-  NbTokenLocalStorage,
-  NbTokenService,
-  NbTokenStorage,
-} from '@nebular/auth';
-import {
-  MSAL_GUARD_CONFIG,
-  MsalBroadcastService,
-  MsalGuardConfiguration,
-  MsalModule,
-  MsalService,
-} from '@azure/msal-angular';
-import { InteractionType, PublicClientApplication } from '@azure/msal-browser';
+import { environment } from 'environments/environment';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { of } from 'rxjs';
+
+import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
+import { routes } from 'app/app-routing.module';
 import { AuthService } from 'app/auth/auth.service';
+import { PagesModule } from 'app/pages/pages.module';
 import { AuthGuard } from 'app/shared/guards/auth.guard';
 import { RedirectGuard } from 'app/shared/guards/redirect.guard';
+import { InjectorModule } from 'app/shared/injector.module';
+import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
+import { FinancialService } from 'app/shared/services/financial.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
@@ -63,29 +81,12 @@ import { PromotionService } from 'app/shared/services/promotion.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { StorageService } from 'app/shared/services/storage.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { AngularFireModule } from '@angular/fire/compat';
-import { AngularFireStorageModule, AngularFireStorage } from '@angular/fire/compat/storage';
-import { NbAccessChecker, NbRoleProvider, NbAclService, NbSecurityModule } from '@nebular/security';
-import { of } from 'rxjs';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import { NbDateFnsDateModule } from '@nebular/date-fns';
-import { environment } from 'environments/environment';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
-import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
-import { routes } from 'app/app-routing.module';
 import { SharedModule } from 'app/shared/shared.module';
-import { PagesModule } from 'app/pages/pages.module';
-import { CommonModule } from '@angular/common';
-import { TeamService } from 'app/shared/services/team.service';
-import { FinancialService } from 'app/shared/services/financial.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ConfigService } from 'app/shared/services/config.service';
-import { TransactionService } from 'app/shared/services/transaction.service';
 import { Permissions } from 'app/shared/utils';
-import { InjectorModule } from 'app/shared/injector.module';
 
 const roles = Object.values(Permissions);
 

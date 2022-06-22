@@ -1,12 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Subject, takeUntil } from 'rxjs';
+
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
-import { Subject, takeUntil } from 'rxjs';
-import { isPhone, trackByIndex, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
+import { idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 interface ExpenseSourceSum {
   user: string;

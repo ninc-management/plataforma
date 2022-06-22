@@ -1,14 +1,16 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { User } from '@models/user';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-base-expense',

@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { combineLatest, filter, Observable, of } from 'rxjs';
+
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 @Component({
   selector: 'ngx-gauge',

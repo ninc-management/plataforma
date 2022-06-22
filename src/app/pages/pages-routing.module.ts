@@ -1,16 +1,16 @@
-import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import { PagesComponent } from './pages.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { ProfileComponent } from './profile/profile.component';
-import { ContractsComponent } from './contracts/contracts.component';
 import { ContractorsComponent } from './contractors/contractors.component';
+import { ContractsComponent } from './contracts/contracts.component';
+import { CoursesComponent } from './courses/courses.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import { UsersComponent } from './users/users.component';
+import { PagesComponent } from './pages.component';
+import { ProfileComponent } from './profile/profile.component';
 import { PromotionsComponent } from './promotions/promotions.component';
 import { TeamsComponent } from './teams/teams.component';
-import { CoursesComponent } from './courses/courses.component';
+import { UsersComponent } from './users/users.component';
 import { Permissions } from 'app/shared/utils';
 
 const routes: Routes = [

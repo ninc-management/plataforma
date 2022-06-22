@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Course, CourseParticipant } from '@models/course';
 import { NbDialogService } from '@nebular/theme';
-import { CourseService } from 'app/shared/services/course.service';
-import { UserService } from 'app/shared/services/user.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
 import { CourseDialogComponent, DIALOG_TYPES } from './course-dialog/course-dialog.component';
+import { CourseService } from 'app/shared/services/course.service';
+import { UserService } from 'app/shared/services/user.service';
 import { isPhone } from 'app/shared/utils';
+
+import { Course, CourseParticipant } from '@models/course';
 
 @Component({
   selector: 'ngx-courses',

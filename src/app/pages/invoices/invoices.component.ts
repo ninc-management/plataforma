@@ -1,17 +1,19 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { NbDialogService, NbComponentStatus } from '@nebular/theme';
-import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
-import { LocalDataSource } from 'ng2-smart-table';
-import { filter, take, takeUntil } from 'rxjs/operators';
-import { Subject, combineLatest } from 'rxjs';
-import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
-import { PdfService } from './pdf.service';
-import { UserService } from 'app/shared/services/user.service';
-import { Invoice } from '@models/invoice';
-import { TeamService } from 'app/shared/services/team.service';
 import { HttpClient } from '@angular/common/http';
-import { codeSort, valueSort, idToProperty, isPhone } from 'app/shared/utils';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import { LocalDataSource } from 'ng2-smart-table';
+import { combineLatest, Subject } from 'rxjs';
+import { filter, take, takeUntil } from 'rxjs/operators';
+
+import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
+import { PdfService } from './pdf.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { codeSort, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'ngx-invoices',

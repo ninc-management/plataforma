@@ -1,12 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { LocalDataSource } from 'ng2-smart-table';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { Contractor } from '@models/contractor';
 import { nameSort } from 'app/shared/utils';
+
+import { Contractor } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractors',

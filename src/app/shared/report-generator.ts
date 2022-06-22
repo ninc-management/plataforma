@@ -1,10 +1,12 @@
 import { ElementRef } from '@angular/core';
+
 import { BrMaskDirective } from './directives/br-mask.directive';
+import { codeSort, formatDate, idToProperty } from './utils';
+import { ReportValue } from 'app/pages/users/users.component';
+
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
-import { ReportValue } from 'app/pages/users/users.component';
-import { codeSort, formatDate, idToProperty } from './utils';
 
 enum GROUP_BY {
   USER = 'Usuário',

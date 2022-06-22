@@ -1,4 +1,5 @@
-import { NbJSThemeOptions, CORPORATE_THEME as baseTheme } from '@nebular/theme';
+import { CORPORATE_THEME as baseTheme, NbJSThemeOptions } from '@nebular/theme';
+
 import { ChartThemeFactory } from './echarts.theme';
 
 let theme = baseTheme;

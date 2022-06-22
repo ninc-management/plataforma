@@ -1,15 +1,18 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { cloneDeep, uniq } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { UserService } from 'app/shared/services/user.service';
+
 import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
+import { idToProperty, trackByIndex } from 'app/shared/utils';
+
 import { Sector } from '@models/shared';
 import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
+
 import team_validation from 'app/shared/validators/team-validation.json';
-import { trackByIndex, idToProperty } from 'app/shared/utils';
-import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'ngx-team-item',

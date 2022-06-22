@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+
 import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { UserService } from './user.service';
+
 import { User } from '@models/user';
 
 @Injectable({

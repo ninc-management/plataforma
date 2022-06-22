@@ -1,12 +1,14 @@
 // This code was initially made by https://github.com/mfandre
 
-import { Contract } from '@models/contract';
 import { isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
+
 import { daysLeft } from './date-manipulator';
 import { ChartTheme } from './gantt-chart.component';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
+
+import { Contract } from '@models/contract';
 
 export enum ChartConstants {
   ZOOM_BOX_OFFSET = 70,

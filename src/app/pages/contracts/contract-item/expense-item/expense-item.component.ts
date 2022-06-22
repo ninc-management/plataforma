@@ -1,10 +1,17 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep, isEqual } from 'lodash';
+import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
 
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { ConfigService, EXPENSE_OBJECT_TYPES, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
 import {
   compareFiles,
   forceValidatorUpdate,
@@ -13,20 +20,13 @@ import {
   shouldNotifyManager,
   trackByIndex,
 } from 'app/shared/utils';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { NotificationService } from 'app/shared/services/notification.service';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { TeamService } from 'app/shared/services/team.service';
-import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
-import { UserService, CONTRACT_BALANCE, CLIENT } from 'app/shared/services/user.service';
 
-import { ContractExpenseTeamMember, ContractExpense, Contract } from '@models/contract';
+import { Contract, ContractExpense, ContractExpenseTeamMember } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
-import { Sector } from '@models/shared';
-import { User } from '@models/user';
-import { ExpenseType } from '@models/team';
 import { NotificationTags } from '@models/notification';
+import { Sector } from '@models/shared';
+import { ExpenseType } from '@models/team';
+import { User } from '@models/user';
 
 import expense_validation from 'app/shared/validators/expense-validation.json';
 

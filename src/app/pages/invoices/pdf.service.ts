@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { PdfMakeWrapper, Img } from 'pdfmake-wrapper';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Subject, take } from 'rxjs';
-import { UserService } from 'app/shared/services/user.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
 import extenso from 'extenso';
+import { Img, PdfMakeWrapper } from 'pdfmake-wrapper';
 import pdfMake from 'pdfmake/build/pdfmake';
-import { ContentTable, TableCell, ContextPageSize } from 'pdfmake/interfaces';
-import { Invoice } from '@models/invoice';
-import { User } from '@models/user';
-import { TeamService } from 'app/shared/services/team.service';
+import { ContentTable, ContextPageSize, TableCell } from 'pdfmake/interfaces';
+import { Subject, take } from 'rxjs';
+
 import { ConfigService } from 'app/shared/services/config.service';
-import { InvoiceConfig } from '@models/platformConfig';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { UserService } from 'app/shared/services/user.service';
 import { idToProperty } from 'app/shared/utils';
+
+import { Invoice } from '@models/invoice';
+import { InvoiceConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 pdfMake.fonts = {
   Sans: {

@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { PlatformConfig } from '@models/platformConfig';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
+
 import { WebSocketService } from './web-socket.service';
+
+import { PlatformConfig } from '@models/platformConfig';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',

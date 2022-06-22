@@ -1,9 +1,9 @@
-import { Injectable, Inject } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { MSAL_GUARD_CONFIG, MsalGuardConfiguration, MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { filter, take, map, takeUntil } from 'rxjs/operators';
-import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
+import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map, take, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,9 @@
 import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { User } from '@models/user';
 import { NbComponentSize, NbComponentStatus } from '@nebular/theme';
 import { combineLatest, map, Observable, of, Subject } from 'rxjs';
+
+import { User } from '@models/user';
 
 const MAX_CHARS = 524288; // the default max length per the html maxlength attribute
 const MIN_SEARCH_LENGTH = 3;

@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+import { BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { fromEvent, BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'ngx-base-dialog',

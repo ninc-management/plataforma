@@ -1,4 +1,5 @@
 import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+
 import { Base } from './base';
 import { User } from './user';
 

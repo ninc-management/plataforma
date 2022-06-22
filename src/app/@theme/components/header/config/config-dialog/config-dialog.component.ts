@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -7,10 +7,10 @@ import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { isPhone, idToProperty, tooltipTriggers } from 'app/shared/utils';
+import { idToProperty, isPhone, tooltipTriggers } from 'app/shared/utils';
 
-import { PlatformConfig } from '@models/platformConfig';
 import { Notification } from '@models/notification';
+import { PlatformConfig } from '@models/platformConfig';
 
 export enum COMPONENT_TYPES {
   CONFIG,

@@ -1,15 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
+import { cloneDeep } from 'lodash';
+import { Socket } from 'ngx-socket-io';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+
+import { isOfType, reviveDates } from '../utils';
+import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
-import { take, takeUntil } from 'rxjs/operators';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
-import { Socket } from 'ngx-socket-io';
+
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { User } from '@models/user';
-import { StringUtilService } from './string-util.service';
-import { cloneDeep } from 'lodash';
-import { reviveDates, isOfType } from '../utils';
 
 export enum INVOICE_STATOOS {
   EM_ANALISE = 'Em análise',

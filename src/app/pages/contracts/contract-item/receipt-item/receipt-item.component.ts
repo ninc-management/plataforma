@@ -1,16 +1,18 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of, take } from 'rxjs';
-import { ContractService, CONTRACT_STATOOS } from 'app/shared/services/contract.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { UserService } from 'app/shared/services/user.service';
+
 import contract_validation from '../../../../shared/validators/payment-validation.json';
-import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { ContractReceipt, Contract } from '@models/contract';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
+import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
+
+import { Contract, ContractReceipt } from '@models/contract';
 import { NotificationTags } from '@models/notification';
 
 @Component({

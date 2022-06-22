@@ -1,14 +1,16 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, take } from 'rxjs';
+
+import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { cloneDeep } from 'lodash';
-import { BehaviorSubject, take } from 'rxjs';
-import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'ngx-receipt-tab',

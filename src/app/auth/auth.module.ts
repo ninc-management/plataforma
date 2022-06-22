@@ -2,26 +2,26 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-import { NgxAuthRoutingModule } from './auth-routing.module';
 import { NbAuthModule } from '@nebular/auth';
 import {
   NbAlertModule,
   NbButtonModule,
   NbCardModule,
   NbCheckboxModule,
+  NbDatepickerModule,
   NbIconModule,
   NbInputModule,
   NbLayoutModule,
-  NbDatepickerModule,
   NbSelectModule,
   NbTooltipModule,
 } from '@nebular/theme';
+
+import { SharedModule } from '../shared/shared.module';
+import { NgxAuthRoutingModule } from './auth-routing.module';
 import { NgxAuthComponent } from './auth.component';
 import { NgxLoginComponent } from './login/login.component';
 import { NgxLogoutComponent } from './logout/logout.component';
 import { NgxRegisterComponent } from './register/register.component';
-import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   imports: [

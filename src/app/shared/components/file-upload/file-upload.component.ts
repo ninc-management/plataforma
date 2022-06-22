@@ -1,10 +1,11 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
-import { NbFileUploaderOptions, StorageProvider, NbFileItem } from '../../../@theme/components';
-import { take, takeUntil } from 'rxjs/operators';
+import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { take, takeUntil } from 'rxjs/operators';
+
+import { NbFileItem, NbFileUploaderOptions, StorageProvider } from '../../../@theme/components';
 import { UploadedFile } from '../../../@theme/components/file-uploader/file-uploader.service';
+import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
 @Component({
   selector: 'ngx-file-upload',

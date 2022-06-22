@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { NgxCertificateComponent } from './certificate/certificate.component';
 import { NgxPublicComponent } from './public.component';
 

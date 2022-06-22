@@ -1,12 +1,13 @@
-import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WebSocketService } from './web-socket.service';
-import { Contractor } from '@models/contractor';
-import { Observable } from 'rxjs';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
-import { nameSort, isOfType } from '../utils';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
+
+import { isOfType, nameSort } from '../utils';
+import { WebSocketService } from './web-socket.service';
+
+import { Contractor } from '@models/contractor';
 
 @Injectable({
   providedIn: 'root',

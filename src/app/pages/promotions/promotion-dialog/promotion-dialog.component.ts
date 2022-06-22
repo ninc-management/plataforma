@@ -1,10 +1,12 @@
-import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NbDialogService, NB_DOCUMENT } from '@nebular/theme';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { Promotion } from '@models/promotion';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { take } from 'rxjs/operators';
+
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Promotion } from '@models/promotion';
 
 @Component({
   selector: 'ngx-promotion-dialog',

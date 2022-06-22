@@ -5,8 +5,8 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { NbComponentStatus } from '@nebular/theme';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'nb-upload-queue-item',

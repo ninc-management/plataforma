@@ -1,6 +1,7 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { Base } from './base';
+import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+
+import { Base } from './base';
 
 export class CourseResource extends Base<string> {
   @prop({ required: true })

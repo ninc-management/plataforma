@@ -1,16 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil, take, last, skipWhile } from 'rxjs/operators';
-import { Socket } from 'ngx-socket-io';
+import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
+import { Socket } from 'ngx-socket-io';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { last, skipWhile, take, takeUntil } from 'rxjs/operators';
+
+import { isOfType, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
-import { User } from '@models/user';
+
 import { InvoiceTeamMember } from '@models/invoice';
 import { TeamMember } from '@models/team';
-import { reviveDates, nameSort, isOfType } from '../utils';
+import { User } from '@models/user';
 
 // NINC: change for each new client
 const supportProfilePicture =

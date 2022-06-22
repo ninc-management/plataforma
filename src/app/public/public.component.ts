@@ -1,8 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
-import { PlatformConfig } from '@models/platformConfig';
 import { NbIconLibraries } from '@nebular/theme';
-import { ConfigService } from 'app/shared/services/config.service';
 import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
+
+import { ConfigService } from 'app/shared/services/config.service';
+
+import { PlatformConfig } from '@models/platformConfig';
 
 @Component({
   selector: 'ngx-public',

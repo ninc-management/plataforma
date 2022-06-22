@@ -1,31 +1,34 @@
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
-import { Invoice } from '@models/invoice';
-import { User } from '@models/user';
-import { Notification, NotificationTags } from '@models/notification';
+import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
-import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import * as contract_validation from 'app/shared/validators/contract-validation.json';
-import {
-  AVALIABLE_MANAGEMENT_STATUS,
-  AVALIABLE_MANAGEMENT_ITEM_STATUS,
-  ContractService,
-} from 'app/shared/services/contract.service';
-import { ContractorService } from 'app/shared/services/contractor.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { UserService } from 'app/shared/services/user.service';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
+
 import { ChecklistItemDialogComponent } from './checklist-item-dialog/checklist-item-dialog.component';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { Message } from '@models/message';
-import { MessageService } from 'app/shared/services/message.service';
 import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import {
+  AVALIABLE_MANAGEMENT_ITEM_STATUS,
+  AVALIABLE_MANAGEMENT_STATUS,
+  ContractService,
+} from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { MessageService } from 'app/shared/services/message.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { isPhone, formatDate, idToProperty, trackByIndex, isOfType } from 'app/shared/utils';
-import { NgForm } from '@angular/forms';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
+import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
+
+import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
+import { Invoice } from '@models/invoice';
+import { Message } from '@models/message';
+import { Notification, NotificationTags } from '@models/notification';
+import { User } from '@models/user';
+
+import * as contract_validation from 'app/shared/validators/contract-validation.json';
 
 interface newTasks {
   newItems: ContractChecklistItem[];

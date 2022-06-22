@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { delay, shareReplay, debounceTime } from 'rxjs/operators';
+import { debounceTime, delay, shareReplay } from 'rxjs/operators';
 
 @Injectable()
 export class LayoutService {

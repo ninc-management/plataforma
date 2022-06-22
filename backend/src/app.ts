@@ -1,29 +1,29 @@
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
-import path from 'path';
-import mongoose from 'mongoose';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
 import cron from 'node-cron';
+import path from 'path';
+
 // import logger from 'morgan';
 // Import API endpoint routes
-import { isUserAuthenticated, notifyByEmail } from './shared/util';
-import { notification$ } from './shared/global';
 import authRoutes from './routes/auth';
-import emailRoutes from './routes/email';
-import userRoutes from './routes/user';
-import contractorRoutes from './routes/contractor';
 import contractRoutes from './routes/contract';
-import invoiceRoutes from './routes/invoice';
-import promotionRoutes from './routes/promotion';
-import teamRoutes from './routes/team';
+import contractorRoutes from './routes/contractor';
 import courseRoutes from './routes/course';
-import publicRoutes from './routes/public';
-import configRoutes from './routes/platformConfig';
-import notificationRoutes from './routes/notification';
-import transactionRoutes from './routes/transaction';
+import emailRoutes from './routes/email';
 import internalTransactionRoutes from './routes/internalTransaction';
-import { overdueReceiptNotification } from './shared/util';
+import invoiceRoutes from './routes/invoice';
+import notificationRoutes from './routes/notification';
+import configRoutes from './routes/platformConfig';
+import promotionRoutes from './routes/promotion';
+import publicRoutes from './routes/public';
+import teamRoutes from './routes/team';
+import transactionRoutes from './routes/transaction';
+import userRoutes from './routes/user';
+import { notification$ } from './shared/global';
+import { isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public app;

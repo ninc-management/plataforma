@@ -1,15 +1,16 @@
+import { Subject } from 'rxjs';
+
 import { Contract } from '../models/contract';
 import { Contractor } from '../models/contractor';
 import { Course } from '../models/course';
 import { Invoice } from '../models/invoice';
 import { Message } from '../models/message';
+import { Notification } from '../models/notification';
 import { PlatformConfig } from '../models/platformConfig';
 import { Promotion } from '../models/promotion';
 import { Prospect } from '../models/prospect';
 import { Team } from '../models/team';
 import { User } from '../models/user';
-import { Notification } from '../models/notification';
-import { Subject } from 'rxjs';
 
 export const usersMap: Record<string, User> = {};
 export const prospectMap: Record<string, Prospect> = {};

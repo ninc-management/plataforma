@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { EditionHistoryItem } from '@models/shared';
-import { InternalTransaction } from '@models/internalTransaction';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
-import { WebSocketService } from './web-socket.service';
+
 import { reviveDates } from '../utils';
+import { WebSocketService } from './web-socket.service';
+
+import { InternalTransaction } from '@models/internalTransaction';
+import { EditionHistoryItem } from '@models/shared';
 
 @Injectable({
   providedIn: 'root',

@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT } from '@nebular/theme';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
+
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
 @Component({

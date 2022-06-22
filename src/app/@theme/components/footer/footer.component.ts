@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ConfigService } from 'app/shared/services/config.service';
 import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
+
+import { ConfigService } from 'app/shared/services/config.service';
 
 @Component({
   selector: 'ngx-footer',

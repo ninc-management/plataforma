@@ -14,15 +14,17 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { Contract } from '@models/contract';
 import { NbJSThemeVariable, NbThemeService } from '@nebular/theme';
 import { differenceInCalendarDays, isAfter } from 'date-fns';
 import * as echarts from 'echarts/core';
+
 import { daysLeft, getMinDate } from './date-manipulator';
 import { ChartConstants, GanttRenderers } from './gantt-renderers';
 import { TaskDataManipulator } from './task-data-manipulator';
 import { TaskModel } from './task-data.model';
 import { formatDate } from 'app/shared/utils';
+
+import { Contract } from '@models/contract';
 
 export interface ChartTheme {
   palette: string[];

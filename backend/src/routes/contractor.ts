@@ -1,8 +1,8 @@
-import * as express from 'express';
-import ContractorModel from '../models/contractor';
-import { Contractor } from '../models/contractor';
 import { Mutex } from 'async-mutex';
+import * as express from 'express';
 import { cloneDeep } from 'lodash';
+
+import ContractorModel, { Contractor } from '../models/contractor';
 import { contractorsMap } from '../shared/global';
 
 const router = express.Router();

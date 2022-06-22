@@ -1,17 +1,20 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
-import promotion_validation from 'app/shared/validators/promotion-validation.json';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
-import { BehaviorSubject, Subject, Observable, of, forkJoin, combineLatest } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
-import { UserService } from 'app/shared/services/user.service';
-import { MetricsService } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { PromotionService } from 'app/shared/services/promotion.service';
-import { Promotion } from '@models/promotion';
-import { NbComponentStatus } from '@nebular/theme';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
+import { NbComponentStatus } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
+import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+
+import { MetricsService } from 'app/shared/services/metrics.service';
+import { PromotionService } from 'app/shared/services/promotion.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
 import { isPhone } from 'app/shared/utils';
+
+import { Promotion } from '@models/promotion';
+
+import promotion_validation from 'app/shared/validators/promotion-validation.json';
 
 export enum PROMOTION_STATOOS {
   EM_ANDAMENTO = 'Em andamento',

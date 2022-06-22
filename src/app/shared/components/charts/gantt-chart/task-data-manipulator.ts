@@ -1,9 +1,10 @@
 // This code was initially made by https://github.com/mfandre
 
-import { Contract } from '@models/contract';
-import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { getMinDate } from './date-manipulator';
 import { TaskModel } from './task-data.model';
+import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+
+import { Contract } from '@models/contract';
 
 export class TaskDataManipulator {
   COLOURS: string[];

@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Message } from '@models/message';
+import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { Socket } from 'ngx-socket-io';
-import { WebSocketService } from './web-socket.service';
+
 import { reviveDates } from '../utils';
+import { WebSocketService } from './web-socket.service';
+
+import { Message } from '@models/message';
 
 @Injectable({
   providedIn: 'root',

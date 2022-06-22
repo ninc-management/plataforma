@@ -10,22 +10,25 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { NbAccessChecker } from '@nebular/security';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, takeUntil, skipWhile } from 'rxjs/operators';
+import { NbDialogService, NbThemeService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
+
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { ConfigService } from 'app/shared/services/config.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { User } from '@models/user';
-import { Sector } from '@models/shared';
-import user_validation from 'app/shared/validators/user-validation.json';
-import { Team } from '@models/team';
+import { chunkify, idToProperty, NOT, Permissions, trackByIndex } from 'app/shared/utils';
+
 import { ProfileConfig } from '@models/platformConfig';
-import { ConfigService } from 'app/shared/services/config.service';
-import { trackByIndex, NOT, idToProperty, chunkify, Permissions } from 'app/shared/utils';
+import { Sector } from '@models/shared';
+import { Team } from '@models/team';
+import { User } from '@models/user';
+
+import user_validation from 'app/shared/validators/user-validation.json';
 
 interface article {
   a: string;

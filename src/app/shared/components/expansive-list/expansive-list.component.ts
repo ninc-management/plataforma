@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+
 import { trackByIndex } from 'app/shared/utils';
 
 @Component({

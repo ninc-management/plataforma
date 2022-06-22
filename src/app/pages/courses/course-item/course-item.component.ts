@@ -1,17 +1,19 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Course } from '@models/course';
-import { User } from '@models/user';
+import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
-
-import course_validation from 'app/shared/validators/course-validation.json';
-import { CourseService } from 'app/shared/services/course.service';
-import { UserService } from 'app/shared/services/user.service';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+
 import { CourseDialogComponent, DIALOG_TYPES } from '../course-dialog/course-dialog.component';
+import { CourseService } from 'app/shared/services/course.service';
+import { UserService } from 'app/shared/services/user.service';
 import { trackByIndex } from 'app/shared/utils';
-import { NgForm } from '@angular/forms';
+
+import { Course } from '@models/course';
+import { User } from '@models/user';
+
+import course_validation from 'app/shared/validators/course-validation.json';
 
 @Component({
   selector: 'ngx-course-item',

@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { cloneDeep } from 'lodash';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 
 import { ConfigService } from 'app/shared/services/config.service';
-import { isPhone, trackByIndex, tooltipTriggers } from 'app/shared/utils';
+import { isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
 

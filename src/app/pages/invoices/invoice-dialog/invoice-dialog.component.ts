@@ -1,17 +1,19 @@
-import { Component, OnInit, Input, Inject, Optional } from '@angular/core';
-import { NbDialogRef, NB_DOCUMENT, NbDialogService } from '@nebular/theme';
-import { UserService } from 'app/shared/services/user.service';
-import { PdfService } from '../pdf.service';
-import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
-import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
-import { take } from 'rxjs/operators';
-import { cloneDeep } from 'lodash';
-import { InvoiceService, INVOICE_STATOOS } from 'app/shared/services/invoice.service';
-import { Invoice, InvoiceProduct, InvoiceMaterial } from '@models/invoice';
-import { User } from '@models/user';
 import { HttpClient } from '@angular/common/http';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
+import { take } from 'rxjs/operators';
+
+import { PdfService } from '../pdf.service';
+import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Invoice, InvoiceMaterial, InvoiceProduct } from '@models/invoice';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-invoice-dialog',

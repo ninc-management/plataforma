@@ -9,18 +9,19 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { take, map, takeUntil, skipWhile } from 'rxjs/operators';
-import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
-import { UserService } from 'app/shared/services/user.service';
-import { FinancialService } from 'app/shared/services/financial.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
-import { startOfMonth, subMonths } from 'date-fns';
 import { NbDialogService } from '@nebular/theme';
+import { startOfMonth, subMonths } from 'date-fns';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
+
 import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
+import { FinancialService } from 'app/shared/services/financial.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+import { UserService } from 'app/shared/services/user.service';
 import { NOT } from 'app/shared/utils';
 
 interface MetricItem {

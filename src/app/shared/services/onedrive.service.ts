@@ -1,14 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from './user.service';
+import { Injectable, OnDestroy } from '@angular/core';
+import { combineLatest, map, Observable, of, skipWhile, Subject, take, takeUntil } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
-import { Invoice } from '@models/invoice';
-import { Contract } from '@models/contract';
-import { Observable, Subject, of, combineLatest, take, map, skipWhile, takeUntil } from 'rxjs';
-import { TeamService } from './team.service';
-import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { isOfType } from '../utils';
 import { ConfigService } from './config.service';
+import { TeamService } from './team.service';
+import { UserService } from './user.service';
+import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
+
+import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 
 @Injectable({

@@ -1,10 +1,13 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { cloneDeep } from 'lodash';
-import { ContractorService } from 'app/shared/services/contractor.service';
-import { Contractor } from '@models/contractor';
-import contractor_validation from 'app/shared/validators/contractor-validation.json';
-import { BehaviorSubject } from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject } from 'rxjs';
+
+import { ContractorService } from 'app/shared/services/contractor.service';
+
+import { Contractor } from '@models/contractor';
+
+import contractor_validation from 'app/shared/validators/contractor-validation.json';
 
 @Component({
   selector: 'ngx-contractor-item',

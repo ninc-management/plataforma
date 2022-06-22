@@ -1,9 +1,9 @@
-import { Injectable, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { NB_DOCUMENT } from '@nebular/theme';
-import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 @Injectable()
 export class SeoService implements OnDestroy {

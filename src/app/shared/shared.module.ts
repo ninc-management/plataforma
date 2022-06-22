@@ -1,44 +1,45 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  NbCardModule,
   NbButtonModule,
+  NbCardModule,
+  NbDatepickerModule,
   NbIconModule,
+  NbInputModule,
+  NbListModule,
   NbSelectModule,
   NbSpinnerModule,
   NbTooltipModule,
-  NbInputModule,
-  NbListModule,
   NbUserModule,
-  NbDatepickerModule,
 } from '@nebular/theme';
-import { BrMaskDirective } from './directives/br-mask.directive';
-import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
-import { CommonModule } from '@angular/common';
-import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
-import { OverPaidDirective } from './directives/over-paid.directive';
-import { LastPaymentDirective } from './directives/last-payment.directive';
-import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
-import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
-import { FabComponent } from './components/fab/fab.component';
-import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
-import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
-import { SelectAllTextDirective } from './directives/select-all-text.directive';
-import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
-import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
-import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
-import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
-import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
-import { TransformPipe } from './pipes/transform.pipe';
-import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
-import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
-import langPTBR from 'app/shared/langPT-BR';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { NgxEchartsModule } from 'ngx-echarts';
+
+import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
+import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
+import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
+import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
 import { GanttChartComponent } from './components/charts/gantt-chart/gantt-chart.component';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 import { ExpansiveListComponent } from './components/expansive-list/expansive-list.component';
+import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
+import { FabComponent } from './components/fab/fab.component';
+import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
+import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
+import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
+import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
+import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
+import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
+import { BrMaskDirective } from './directives/br-mask.directive';
+import { LastPaymentDirective } from './directives/last-payment.directive';
+import { OverPaidDirective } from './directives/over-paid.directive';
+import { SelectAllTextDirective } from './directives/select-all-text.directive';
+import { TransformPipe } from './pipes/transform.pipe';
+import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
+import langPTBR from 'app/shared/langPT-BR';
 
 echarts.registerLocale('PT-BR', langPTBR);
 

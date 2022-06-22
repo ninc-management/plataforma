@@ -1,8 +1,10 @@
 // This code was initially made by https://github.com/mfandre
 
-import { Contract } from '@models/contract';
 import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns';
+
 import { TaskModel } from './task-data.model';
+
+import { Contract } from '@models/contract';
 
 export function daysLeft(endDate: number): string {
   const today = new Date();

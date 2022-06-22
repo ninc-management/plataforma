@@ -1,10 +1,9 @@
-import * as express from 'express';
-import ContractModel from '../models/contract';
-import MessageModel from '../models/message';
-import { Contract } from '../models/contract';
-import { Message } from '../models/message';
 import { Mutex } from 'async-mutex';
+import * as express from 'express';
 import { cloneDeep } from 'lodash';
+
+import ContractModel, { Contract } from '../models/contract';
+import MessageModel, { Message } from '../models/message';
 import { contractsMap, messagesMap } from '../shared/global';
 
 const router = express.Router();

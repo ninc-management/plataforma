@@ -1,10 +1,11 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { Base } from './base';
+import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+
+import { Base } from './base';
 import { Contract } from './contract';
-import { Team } from './team';
-import { Sector } from './shared';
 import { Notification } from './notification';
+import { Sector } from './shared';
+import { Team } from './team';
 
 export class UserExpertise {
   @prop({ required: true, ref: () => Sector })
