@@ -130,7 +130,18 @@
       <ng-container *ngIf="!clonedConfig.expenseConfig.isDuplicated">
         <div class="row">
           <div class="col-auto">
-            <label class="label-divider">Despesas de contratos</label>
+            <label class="label-divider">
+              Despesas de contratos
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Aporte e Comissão sempre fazem parte da lista."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
           </div>
           <div class="col">
             <hr />
