@@ -3,7 +3,12 @@
     'width.px': dialogWidth()
   }"
 >
-  <nb-card-header>{{ title }}</nb-card-header>
+  <nb-card-header>
+    {{ title }}
+    <button nbButton ghost (click)="dismiss()">
+      <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+    </button>
+  </nb-card-header>
   <nb-card-body>
     <label class="label" for="input-selector">{{ label }}</label>
     <nb-select
