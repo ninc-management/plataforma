@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import cron from 'node-cron';
 import path from 'path';
 
+import { NotificationApps } from './models/notification';
 // import logger from 'morgan';
 // Import API endpoint routes
 import authRoutes from './routes/auth';
@@ -23,7 +24,7 @@ import teamRoutes from './routes/team';
 import transactionRoutes from './routes/transaction';
 import userRoutes from './routes/user';
 import { notification$ } from './shared/global';
-import { isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
+import { isNotificationEnabled, isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public app;
@@ -86,8 +87,8 @@ class NortanAPI {
       res.sendFile(path.join(__dirname, '/angular/index.html'));
     });
 
-    notification$.subscribe((notification) => {
-      notifyByEmail(notification);
+    notification$.subscribe(async (notification) => {
+      if (await isNotificationEnabled(notification.tag, NotificationApps.EMAIL)) notifyByEmail(notification);
     });
 
     cron.schedule(

@@ -3,7 +3,7 @@ import { differenceInDays } from 'date-fns';
 import ContractModel, { Contract } from '../models/contract';
 import InvoiceModel, { Invoice } from '../models/invoice';
 import { Notification, NotificationTags } from '../models/notification';
-import { NotificationConfig } from '../models/platformConfig';
+import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
 import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { updateNotification } from '../routes/notification';
@@ -83,31 +83,31 @@ export async function overdueReceiptNotification() {
   });
 }
 
-export function isNotificationEnabled(
-  notificationConfigs: NotificationConfig,
-  notificationTag: string,
-  platform: string
-): boolean {
-  switch (notificationTag) {
-    case NotificationTags.APPOINTED_AS_ASSIGNEE:
-      return notificationConfigs.stageResponsible[platform];
-    case NotificationTags.CONTRACT_SIGNED:
-      return notificationConfigs.contractClosed[platform];
-    case NotificationTags.MENTION:
-      return notificationConfigs.userMentioned[platform];
-    case NotificationTags.RECEIPT_DUE:
-      return notificationConfigs.receiptDue[platform];
-    case NotificationTags.VALUE_TO_RECEIVE_PAID:
-      return notificationConfigs.teamMemberPaid[platform];
-    case NotificationTags.EXPENSE_ORDER_CREATED ||
-      NotificationTags.PAYMENT_ORDER_CREATED ||
-      NotificationTags.RECEIPT_ORDER_CREATED:
-      return notificationConfigs.transactionCreated[platform];
-    case NotificationTags.EXPENSE_PAID || NotificationTags.PAYMENT_ORDER_PAID || NotificationTags.RECEIPT_PAID:
-      return notificationConfigs.transactionPaid[platform];
-    default:
-      break;
+export async function isNotificationEnabled(notificationTag: string, platform: string): Promise<boolean> {
+  const platformConfig: PlatformConfig[] = await PlatformConfigModel.find({});
+  if (platformConfig.length > 0) {
+    switch (notificationTag) {
+      case NotificationTags.APPOINTED_AS_ASSIGNEE:
+        return platformConfig[0].notificationConfig.stageResponsible[platform];
+      case NotificationTags.CONTRACT_SIGNED:
+        return platformConfig[0].notificationConfig.contractClosed[platform];
+      case NotificationTags.MENTION:
+        return platformConfig[0].notificationConfig.userMentioned[platform];
+      case NotificationTags.RECEIPT_DUE:
+        return platformConfig[0].notificationConfig.receiptDue[platform];
+      case NotificationTags.VALUE_TO_RECEIVE_PAID:
+        return platformConfig[0].notificationConfig.teamMemberPaid[platform];
+      case NotificationTags.EXPENSE_ORDER_CREATED ||
+        NotificationTags.PAYMENT_ORDER_CREATED ||
+        NotificationTags.RECEIPT_ORDER_CREATED:
+        return platformConfig[0].notificationConfig.transactionCreated[platform];
+      case NotificationTags.EXPENSE_PAID || NotificationTags.PAYMENT_ORDER_PAID || NotificationTags.RECEIPT_PAID:
+        return platformConfig[0].notificationConfig.transactionPaid[platform];
+      default:
+        return false;
+    }
   }
+  return false;
 }
 
 export default {

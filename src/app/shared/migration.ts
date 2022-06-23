@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { ContractExpense } from '@models/contract';
+import { cloneDeep } from 'lodash';
+import { combineLatest } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
+
 import { appInjector } from './injector.module';
 import { ContractService } from './services/contract.service';
 import { InvoiceService } from './services/invoice.service';
 import { OneDriveService } from './services/onedrive.service';
-import { combineLatest } from 'rxjs';
-import { cloneDeep } from 'lodash';
+
+import { ContractExpense } from '@models/contract';
 
 export function migrateExpensesAttachmentsLink(): void {
   const contractService = appInjector.get(ContractService);

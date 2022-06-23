@@ -3,7 +3,6 @@ import * as express from 'express';
 import { cloneDeep, isEqual } from 'lodash';
 
 import { Notification, NotificationApps } from '../models/notification';
-import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
 import UserModel from '../models/user';
 import { notification$, usersMap } from '../shared/global';
 import { isNotificationEnabled } from '../shared/util';
@@ -13,11 +12,7 @@ const mutex = new Mutex();
 let lastNotification: Notification;
 
 export async function updateNotification(notification: Notification, res: any) {
-  const platformConfig: PlatformConfig[] = await PlatformConfigModel.find({});
-  if (
-    platformConfig.length > 0 &&
-    isNotificationEnabled(platformConfig[0].notificationConfig, notification.tag, NotificationApps.PLATFORM)
-  ) {
+  if (await isNotificationEnabled(notification.tag, NotificationApps.PLATFORM)) {
     UserModel.findByIdAndUpdate(
       notification.to,
       { $push: { notifications: notification } },
