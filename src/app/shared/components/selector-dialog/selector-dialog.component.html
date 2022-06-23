@@ -5,7 +5,15 @@
 >
   <nb-card-header>
     {{ title }}
-    <button nbButton ghost (click)="dismiss()">
+    <button
+      nbButton
+      ghost
+      (click)="dismiss()"
+      nbTooltip="Fechar"
+      [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+      nbTooltipPlacement="bottom"
+      nbTooltipStatus="info"
+    >
       <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
     </button>
   </nb-card-header>
