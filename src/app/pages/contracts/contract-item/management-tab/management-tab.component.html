@@ -79,14 +79,25 @@
             </div>
             <div class="col-2">
               <div class="form-control-group">
-                <label class="label" for="end-date">Fim:</label>
+                <label class="label" for="end-date">
+                  Fim:
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    nbTooltip="A data final da gestão é a data final do item da checklist que terminar por último. Por exemplo, caso haja dois itens onde um termina dia 05/01 e outro termina dia 15/01, a data final da gestão será 15/01."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
                 <input
                   nbInput
                   [ngModel]="deadline ? ([deadline] | transformPipe: formatDate) : ''"
                   name="end-date"
                   fullWidth
                   fieldSize="large"
-                  [readonly]="true"
+                  [disabled]="true"
                 />
               </div>
             </div>
