@@ -446,7 +446,7 @@
             (click)="registerNewComment()"
             [disabled]="!commentInput.value"
           >
-            <nb-icon style="width: 20px; height: 20px" status="basic" icon="paper-plane-outline" pack="eva"></nb-icon>
+            <nb-icon style="width: 20px; height: 20px" [status]="commentInput.value ? 'control' : 'basic'" icon="paper-plane-outline" pack="eva"></nb-icon>
           </button>
         </div>
       </div>
