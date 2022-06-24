@@ -964,5 +964,10 @@ db.platformconfigs.find().forEach((config) => {
       platform: true,
     },
   };
+
+   config.socialConfig.address = ''
+   config.socialConfig.cnpj = ''
+   config.socialConfig.qrcodeURL = ''
+
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

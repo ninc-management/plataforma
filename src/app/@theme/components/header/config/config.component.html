@@ -761,6 +761,71 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
+            <label class="label" for="input-address">Endereço</label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.address"
+              #address="ngModel"
+              id="input-address"
+              name="address"
+              placeholder="Av. Dr. Antônio Gouveia, 549 - Pajuçara, Maceió - AL, 57030-170"
+              fullWidth
+              fieldSize="large"
+              [status]="address.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="address.invalid && address.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-cnpj">CNPJ</label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.cnpj"
+              #cnpj="ngModel"
+              id="input-cnpj"
+              name="cnpj"
+              placeholder="00.000.000/0000-00"
+              fullWidth
+              fieldSize="large"
+              [status]="cnpj.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-qrcode-url">URL do QRCode</label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.qrcodeURL"
+              #qrcodeURL="ngModel"
+              id="input-qrcode-url"
+              name="qrcodeURL"
+              placeholder="http://www.ninc.digital"
+              fullWidth
+              fieldSize="large"
+              [status]="qrcodeURL.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="qrcodeURL.invalid && qrcodeURL.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Redes sociais</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
             <label class="label" for="input-youtube-link">Link do YouTube</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>

@@ -87,6 +87,15 @@ export class SocialConfig {
 
   @prop({ required: true })
   companyName: string = '';
+
+  @prop({ required: true })
+  address: string = '';
+
+  @prop({ required: true })
+  cnpj: string = '';
+
+  @prop({ required: true })
+  qrcodeURL: string = '';
 }
 
 export class ModulesConfig {
