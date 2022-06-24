@@ -95,6 +95,13 @@ $hamburger-layer-border-radius: 4px;
   justify-content: space-between;
   width: 100%;
 
+  .logoIcon {
+    height: 30px;
+    width: auto;
+    margin-bottom: 4px;
+    margin-right: 8px;
+  }
+
   .logo-container {
     display: flex;
     align-items: center;

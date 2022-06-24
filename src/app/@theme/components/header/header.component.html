@@ -23,12 +23,7 @@
       [matRippleCentered]="false"
       style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center; font-family: marcellus"
     >
-      <nb-icon
-        [icon]="logoIcon"
-        pack="fac"
-        *ngIf="!isPhone()"
-        style="width: 30px; height: 30px; margin-bottom: 4px; margin-right: 8px"
-      ></nb-icon>
+      <nb-icon class="logoIcon" [icon]="logoIcon" pack="fac" *ngIf="!isPhone()"></nb-icon>
       {{ menuTitle }}
     </a>
   </div>
