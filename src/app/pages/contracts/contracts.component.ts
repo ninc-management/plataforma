@@ -3,11 +3,11 @@ import { NbAccessChecker } from '@nebular/security';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
-import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from './contract-dialog/contract-dialog.component';
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';

@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { TeamDialogComponent } from './team-dialog/team-dialog.component';
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { idToProperty, isPhone, nameSort } from 'app/shared/utils';

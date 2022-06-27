@@ -3,11 +3,11 @@ import { NB_DOCUMENT, NbDialogRef, NbDialogService, NbTabComponent } from '@nebu
 import { getMonth, getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
-import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, map, take, takeUntil } from 'rxjs/operators';
 
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { generateUsersReport } from 'app/shared/report-generator';

@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';

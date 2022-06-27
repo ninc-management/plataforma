@@ -16,7 +16,6 @@ import {
   NbUserModule,
 } from '@nebular/theme';
 import * as echarts from 'echarts';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 import { GaugeComponent } from './charts/gauge/gauge.component';
@@ -26,6 +25,7 @@ import { ProgressSectionComponent } from './progress-section/progress-section.co
 import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
 import { UserReceivablesComponent } from './user-receivables/user-receivables.component';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
+import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
 import { ThemeModule } from 'app/@theme/theme.module';
 import langPTBR from 'app/shared/langPT-BR';
 import { SharedModule } from 'app/shared/shared.module';
@@ -53,7 +53,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     NgxEchartsModule.forRoot({ echarts }),
     SharedModule,
     ThemeModule,
-    Ng2SmartTableModule,
+    NbSmartTableModule,
   ],
   declarations: [
     DashboardComponent,
