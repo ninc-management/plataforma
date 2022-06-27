@@ -966,3 +966,11 @@ db.platformconfigs.find().forEach((config) => {
   };
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.teams.find().forEach((team) => {
+  team.organizationPercentage = '';
+  team.nfPercentage = '';
+  team.overridePercentages = false;
+  db.teams.replaceOne({ _id: team._id }, team);
+});
+

@@ -28,7 +28,6 @@ export class TeamItemComponent implements OnInit, OnDestroy {
   editing = false;
   memberChanged$ = new BehaviorSubject<boolean>(true);
   private destroy$ = new Subject<void>();
-
   leaderSearch = '';
   memberSearch = '';
   currentMember = new TeamMember();
