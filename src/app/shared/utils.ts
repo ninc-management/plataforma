@@ -307,7 +307,19 @@ export function elapsedTime(time: Date, elapsedLocalTime: Date = new Date()): st
 
 export function reviveDates<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj), (key, value) => {
-    if (['created', 'lastUpdate', 'paidDate', 'start', 'end', 'date', 'finishedDate', 'dueDate'].includes(key))
+    if (
+      [
+        'created',
+        'date',
+        'dueDate',
+        'end',
+        'finishedDate',
+        'lastUpdate',
+        'paidDate',
+        'predictedDate',
+        'start',
+      ].includes(key)
+    )
       return parseISO(value);
     return value;
   }) as T;

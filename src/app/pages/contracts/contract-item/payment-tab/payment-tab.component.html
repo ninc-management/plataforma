@@ -6,9 +6,17 @@
           <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex">
             <div class="col-1">#{{ +i + 1 }}</div>
             <div class="col">{{ payment.service }}</div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
               <span style="vertical-align: 0.1em">{{ payment.value }}</span>
+            </div>
+            <div class="col-md-2">
+              <nb-icon icon="calendar" pack="fa" status="warning"></nb-icon>
+              <span style="vertical-align: 0.1em">{{ [payment.predictedDate] | transformPipe: formatDate}}</span>
+            </div>
+            <div class="col-md-2">
+              <nb-icon icon="calendar-check" pack="fa" status="success"></nb-icon>
+              <span style="vertical-align: 0.1em">{{ payment.paidDate ? ( [payment.paidDate] | transformPipe: formatDate ): "Não pago"}}</span>
             </div>
           </a>
         </div>

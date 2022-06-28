@@ -38,7 +38,6 @@ export class PaymentItemComponent implements OnInit {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
   @ViewChild('form') ngForm = {} as NgForm;
-
   invoice = new Invoice();
   hasInitialContract = true;
   validation = contract_validation as any;
@@ -55,6 +54,7 @@ export class PaymentItemComponent implements OnInit {
     paid: false,
     created: this.today,
     lastUpdate: this.today,
+    predictedDate: this.today,
     service: '',
     value: '0,00',
   };
