@@ -160,8 +160,7 @@
             <label class="label" for="input-expertise">Áreas de atuação:</label>
             <ul>
               <li *ngFor="let sector of SECTORS">
-                {{ [sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }} -
-                {{ [sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
+                {{ [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService) }}
               </li>
             </ul>
           </div>
@@ -321,13 +320,14 @@
               </label>
 
               <nb-select
-                [(ngModel)]="currentMember.sector"
+                [(ngModel)]="currentMember.sectors"
                 #memberSector="ngModel"
                 id="input-member-sector"
                 name="member-sector"
                 placeholder="Setor"
                 fullWidth
                 size="large"
+                multiple
                 [status]="memberSector.value?.length > 0 ? 'success' : 'basic'"
                 [attr.aria-invalid]="memberSector.invalid && memberSector.touched ? true : null"
               >
@@ -370,8 +370,9 @@
                 ></nb-user>
               </div>
               <div class="col-5 col-md-5">
-                {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'abrev' }} -
-                {{ [member.sector] | transformPipe: teamService.idToSector.bind(teamService):'name' }}
+                <div *ngFor="let sector of member.sectors; trackBy:trackByIndex">
+                  {{ [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService) }}
+                </div>
               </div>
             </div>
             <div class="col-2 col-md-1" style="text-align: right">

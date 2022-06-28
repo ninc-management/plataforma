@@ -65,10 +65,10 @@ describe('NotificationService', () => {
     tmpTeam.config.path = `test`;
     const tmpTeamMember = new TeamMember();
     tmpTeamMember.user = mockedUsers[0]._id;
-    tmpTeamMember.sector = '0';
+    tmpTeamMember.sectors = ['0'];
     tmpTeam.members.push(cloneDeep(tmpTeamMember));
     tmpTeamMember.user = mockedUsers[1]._id;
-    tmpTeamMember.sector = '1';
+    tmpTeamMember.sectors = ['1'];
     tmpTeam.members.push(cloneDeep(tmpTeamMember));
     mockedTeams.push(cloneDeep(tmpTeam));
 

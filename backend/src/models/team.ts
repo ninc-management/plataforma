@@ -9,7 +9,7 @@ export class TeamMember {
   user!: Ref<User>;
 
   @prop({ required: true, ref: () => Sector })
-  sector!: Ref<Sector>;
+  sectors!: Ref<Sector>[];
 }
 
 export class TeamFinancialTransaction {

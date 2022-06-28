@@ -971,6 +971,12 @@ db.teams.find().forEach((team) => {
   team.organizationPercentage = '';
   team.nfPercentage = '';
   team.overridePercentages = false;
-  db.teams.replaceOne({ _id: team._id }, team);
-});
 
+  team.members.forEach((member) => {
+    member.sectors = []
+    if(member.sector) member.sectors.push(member.sector)
+    delete member.sector
+  })
+
+  db.teams.replaceOne({ _id: team._id }, team);
+})
