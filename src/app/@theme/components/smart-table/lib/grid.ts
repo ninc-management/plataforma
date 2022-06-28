@@ -117,21 +117,17 @@ export class Grid {
 
   create(row: Row, confirmEmitter: EventEmitter<any>) {
     const deferred = new Deferred();
-    deferred.promise
-      .then((newData) => {
-        newData = newData ? newData : row.getNewData();
-        if (deferred.resolve.skipAdd) {
+    deferred.promise.then((newData) => {
+      newData = newData ? newData : row.getNewData();
+      if (deferred.resolve.skipAdd) {
+        this.createFormShown = false;
+      } else {
+        this.source.prepend(newData).then(() => {
           this.createFormShown = false;
-        } else {
-          this.source.prepend(newData).then(() => {
-            this.createFormShown = false;
-            this.dataSet.createNewRow();
-          });
-        }
-      })
-      .catch((err) => {
-        // doing nothing
-      });
+          this.dataSet.createNewRow();
+        });
+      }
+    });
 
     if (this.getSetting('add.confirmCreate')) {
       confirmEmitter.emit({
@@ -146,20 +142,16 @@ export class Grid {
 
   save(row: Row, confirmEmitter: EventEmitter<any>) {
     const deferred = new Deferred();
-    deferred.promise
-      .then((newData) => {
-        newData = newData ? newData : row.getNewData();
-        if (deferred.resolve.skipEdit) {
+    deferred.promise.then((newData) => {
+      newData = newData ? newData : row.getNewData();
+      if (deferred.resolve.skipEdit) {
+        row.isInEditing = false;
+      } else {
+        this.source.update(row.getData(), newData).then(() => {
           row.isInEditing = false;
-        } else {
-          this.source.update(row.getData(), newData).then(() => {
-            row.isInEditing = false;
-          });
-        }
-      })
-      .catch((err) => {
-        // doing nothing
-      });
+        });
+      }
+    });
 
     if (this.getSetting('edit.confirmSave')) {
       confirmEmitter.emit({
@@ -175,13 +167,9 @@ export class Grid {
 
   delete(row: Row, confirmEmitter: EventEmitter<any>) {
     const deferred = new Deferred();
-    deferred.promise
-      .then(() => {
-        this.source.remove(row.getData());
-      })
-      .catch((err) => {
-        // doing nothing
-      });
+    deferred.promise.then(() => {
+      this.source.remove(row.getData());
+    });
 
     if (this.getSetting('delete.confirmDelete')) {
       confirmEmitter.emit({

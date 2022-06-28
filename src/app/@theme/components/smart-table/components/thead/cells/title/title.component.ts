@@ -46,8 +46,6 @@ export class TitleComponent implements OnChanges {
           } else {
             this.currentDirection = '';
           }
-
-          sortConf.forEach((fieldConf: any) => {});
         });
     }
   }
