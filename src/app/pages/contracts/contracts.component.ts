@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbAccessChecker } from '@nebular/security';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { getYear } from 'date-fns';
@@ -34,7 +34,7 @@ import { Team } from '@models/team';
   templateUrl: './contracts.component.html',
   styleUrls: ['./contracts.component.scss'],
 })
-export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ContractsComponent implements OnInit, OnDestroy {
   @ViewChild('smartTable', { read: ElementRef }) tableRef!: ElementRef;
   private destroy$ = new Subject<void>();
   contracts: Contract[] = [];
@@ -198,37 +198,13 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(([contracts, invoices, contractors, user]) => {
         this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.source.load(this.contracts);
+        this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
+        this.source.setFilter([{ field: 'status', search: 'Em andamento A receber Finalizado' }]);
       });
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
-  }
-  /* eslint-enable indent */
-
-  ngAfterViewInit(): void {
-    combineLatest([
-      this.contractService.getContracts(),
-      this.invoiceService.getInvoices(),
-      this.contractorService.getContractors(),
-    ])
-      .pipe(take(4))
-      .subscribe(([contracts, invoices, contractors]) => {
-        if (contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && !isPhone()) {
-          setTimeout(() => {
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
-              'Equipe Gestor';
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
-              new Event('change')
-            );
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].value =
-              'Em andamento A receber Finalizado';
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[8].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
-              new Event('change')
-            );
-          }, 1);
-        }
-      });
   }
 
   contractDialog(event: { data?: Contract }, isEditing: boolean): void {
