@@ -1,7 +1,8 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+import { NB_DOCUMENT, NbDialogRef, NbTrigger } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { isPhone } from 'app/shared/utils';
 
 @Component({
   selector: 'ngx-selector-dialog',
@@ -16,6 +17,9 @@ export class SelectorDialogComponent extends BaseDialogComponent implements OnIn
   @Input() label: string = '';
   @Input() placeholder: string = '';
   selected = '';
+
+  isPhone = isPhone;
+  tooltipTriggers = NbTrigger;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,

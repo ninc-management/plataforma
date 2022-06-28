@@ -413,7 +413,7 @@ export class ContractsComponent implements OnInit, OnDestroy, AfterViewInit {
           selectorList: this.teamService.teamsList(),
           valueTransformer: (team) => team._id,
           textTransformer: (team) => team.abrev + ' - ' + team.name,
-          title: 'Relatório dos contratos abertos:',
+          title: 'Relatório dos contratos abertos',
           label: 'Selecione o time',
           placeholder: 'Selecione o time',
         },

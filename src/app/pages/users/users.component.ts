@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { NB_DOCUMENT, NbDialogRef, NbDialogService, NbTabComponent } from '@nebular/theme';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService, NbTabComponent, NbTrigger } from '@nebular/theme';
 import { getMonth, getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
@@ -744,7 +744,20 @@ export class UsersComponent implements OnInit, OnDestroy {
         'width.px': dialogWidth()
       }"
     >
-      <nb-card-header>{{ title }}</nb-card-header>
+      <nb-card-header class="report-dialog-header">
+        {{ title }}
+        <button
+          nbButton
+          ghost
+          (click)="dismiss()"
+          nbTooltip="Fechar"
+          [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+          nbTooltipPlacement="bottom"
+          nbTooltipStatus="info"
+        >
+          <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+        </button>
+      </nb-card-header>
       <nb-card-body>
         <label class="label" for="input-selector">Selecione o tipo de agrupamento dos dados:</label>
         <nb-radio-group
@@ -811,6 +824,9 @@ export class ReportConfigDialogComponent extends BaseDialogComponent implements 
     year: '',
   };
   years = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
+
+  isPhone = isPhone;
+  tooltipTriggers = NbTrigger;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
