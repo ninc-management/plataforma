@@ -45,7 +45,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   menuTitle = '';
   userPictureOnly = false;
   user = new User();
-  logoIcon = 'logo';
+  logoIcon = 'companyLogo';
   currentNotificationsQtd = 0;
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
@@ -161,7 +161,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .onThemeChange()
       .pipe(takeUntil(this.destroy$))
       .subscribe((theme) => {
-        this.logoIcon = ['dark', 'cosmic'].includes(theme.name) ? 'logoNoFill' : 'logo';
+        this.logoIcon = ['dark', 'cosmic'].includes(theme.name) ? 'companyLogoWhite' : 'companyLogo';
       });
   }
 
