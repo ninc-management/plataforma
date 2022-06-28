@@ -792,7 +792,7 @@ const config = {
         ],
       },
       {
-        name: 'Pré-Serviço',
+        name: 'Pré-serviço',
         subTypes: [],
       },
       {
