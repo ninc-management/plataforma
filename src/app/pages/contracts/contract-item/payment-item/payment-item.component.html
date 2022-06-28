@@ -116,7 +116,7 @@
           <label class="label" for="input-predicatedDate">Data prevista do pagamento:</label>
            <input
               nbInput
-              [(ngModel)]="this.payment.predictedDate"
+              [(ngModel)]="payment.predictedDate"
               #predictedDate="ngModel"
               id="input-predictedDate"
               name="predictedDate"
@@ -124,7 +124,7 @@
               fullWidth
               fieldSize="large"
               [nbDatepicker]="pDatepicker"
-              [required]="validation.paidDate.required"
+              [required]="validation.predictedDate.required"
               [readonly]="true"
               [status]="
                 predictedDate.dirty
