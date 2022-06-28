@@ -14,7 +14,7 @@
             <input
               nbInput
               autofocus
-              [(ngModel)]="team.name"
+              [(ngModel)]="clonedTeam.name"
               #name="ngModel"
               id="input-name"
               name="name"
@@ -48,7 +48,7 @@
             <input
               nbInput
               autofocus
-              [(ngModel)]="team.abrev"
+              [(ngModel)]="clonedTeam.abrev"
               #abrev="ngModel"
               id="input-abrev"
               name="abrev"
@@ -60,7 +60,7 @@
               [maxlength]="validation.abrev.maxLength"
               [status]="abrev.touched ? (abrev.invalid ? 'danger' : 'success') : editing ? 'success' : 'basic'"
               [attr.aria-invalid]="abrev.invalid && abrev.touched ? true : null"
-              (focusout)="team.config.path = editing ? team.config.path : team.abrev"
+              (focusout)="clonedTeam.config.path = editing ? clonedTeam.config.path : clonedTeam.abrev"
             />
           </div>
           <ng-container *ngIf="abrev.invalid && abrev.touched">
@@ -87,7 +87,7 @@
             </label>
             <nb-completer
               [(ngModel)]="leaderSearch"
-              (selected)="this.team.leader = $event"
+              (selected)="this.clonedTeam.leader = $event"
               inputName="leaderListCompleter"
               #leaderList="ngModel"
               id="input-leader"
@@ -125,7 +125,7 @@
             <label class="label" for="input-purpose">Propósito do time:</label>
             <textarea
               nbInput
-              [(ngModel)]="team.purpose"
+              [(ngModel)]="clonedTeam.purpose"
               #purpose="ngModel"
               id="input-purpose"
               name="purpose"
@@ -140,7 +140,7 @@
                   ? purpose.invalid
                     ? 'danger'
                     : 'success'
-                  : editing && team.purpose
+                  : editing && clonedTeam.purpose
                   ? 'success'
                   : 'basic'
               "
@@ -242,7 +242,7 @@
             </div>
           </div>
           <nb-list style="width: 100%; padding: 10px 0">
-            <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: trackByIndex">
+            <nb-list-item *ngFor="let sector of clonedTeam.sectors; let i = index; trackBy: trackByIndex">
               <div class="row typeRow">
                 <div class="col-12 col-md-7">
                   <input
@@ -252,7 +252,7 @@
                     name="sector-name-{{ i }}"
                     placeholder="Nome do setor"
                     fullWidth
-                    [status]="team.sectors[i].name.length == 0 ? 'danger' : 'basic'"
+                    [status]="clonedTeam.sectors[i].name.length == 0 ? 'danger' : 'basic'"
                   />
                 </div>
                 <div class="col-10 col-md-4">
@@ -263,7 +263,7 @@
                     name="sector-abrev-{{ i }}"
                     placeholder="Abreviação do setor"
                     fullWidth
-                    [status]="team.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
+                    [status]="clonedTeam.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
                   />
                 </div>
                 <div class="col-2 col-md-1" style="text-align: right">
@@ -272,7 +272,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="team.sectors.splice(i, 1)"
+                    (click)="clonedTeam.sectors.splice(i, 1)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -355,7 +355,7 @@
           </div>
         </div>
         <nb-list style="width: 100%; padding: 10px 0">
-          <nb-list-item *ngFor="let member of team.members; let i = index; trackBy: trackByIndex">
+          <nb-list-item *ngFor="let member of clonedTeam.members; let i = index; trackBy: trackByIndex">
             <div class="row irow">
               <div class="col-5 col-md-6">
                 <nb-user
@@ -381,7 +381,9 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="handleLeader(i); team.members.splice(i, 1); memberChanged$.next(true); isFormDirty.next(true)"
+                (click)="
+                  handleLeader(i); clonedTeam.members.splice(i, 1); memberChanged$.next(true); isFormDirty.next(true)
+                "
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -404,7 +406,7 @@
             <label class="label" for="input-config-path">Path da pasta do time:</label>
             <input
               nbInput
-              [(ngModel)]="team.config.path"
+              [(ngModel)]="clonedTeam.config.path"
               #configPath="ngModel"
               id="input-config-path"
               name="config-path"
@@ -564,7 +566,7 @@
         </div>
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
-        <nb-list-item *ngFor="let sector of team.sectors; let i = index; trackBy: trackByIndex">
+        <nb-list-item *ngFor="let sector of clonedTeam.sectors; let i = index; trackBy: trackByIndex">
           <div class="row typeRow">
             <div class="col-12 col-md-7">
               <input
@@ -574,7 +576,7 @@
                 name="sector-name-{{ i }}"
                 placeholder="Nome do setor"
                 fullWidth
-                [status]="team.sectors[i].name.length == 0 ? 'danger' : 'basic'"
+                [status]="clonedTeam.sectors[i].name.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-10 col-md-4">
@@ -585,7 +587,7 @@
                 name="sector-abrev-{{ i }}"
                 placeholder="Abreviação do setor"
                 fullWidth
-                [status]="team.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
+                [status]="clonedTeam.sectors[i].abrev.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -594,7 +596,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="team.sectors.splice(i, 1); isFormDirty.next(true)"
+                (click)="clonedTeam.sectors.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -603,7 +605,7 @@
       </nb-list>
     </nb-tab>
   </nb-tabset>
-  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || team.sectors.length == 0">
+  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || clonedTeam.sectors.length == 0">
     {{ editing ? 'Atualizar' : 'Adicionar' }}
   </button>
 </form>

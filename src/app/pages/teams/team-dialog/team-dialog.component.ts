@@ -1,5 +1,6 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
 import { take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -26,6 +27,7 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() iTeam = new Team();
   @Input() expenseIdx?: number;
   @Input() componentType = TEAM_COMPONENT_TYPES.TEAM;
+  clonedTeam = new Team();
 
   dTypes = TEAM_COMPONENT_TYPES;
 
@@ -43,6 +45,7 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.clonedTeam = cloneDeep(this.iTeam);
   }
 
   dismiss(): void {
@@ -66,11 +69,5 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
     } else {
       super.dismiss();
     }
-  }
-
-  handleTeamStatusChange(): void {
-    setTimeout(() => {
-      this.teamService.editTeam(this.iTeam);
-    }, 10);
   }
 }
