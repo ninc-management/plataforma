@@ -7,6 +7,7 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
+import { formatDate } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -23,7 +24,7 @@ export class PaymentTabComponent implements OnInit {
   @Output() paymentsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
-
+  formatDate = formatDate;
   constructor(
     private dialogService: NbDialogService,
     private contractService: ContractService,

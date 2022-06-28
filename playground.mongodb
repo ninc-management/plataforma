@@ -580,6 +580,8 @@ db.contracts.find().forEach((contract) => {
           member.sector = member.coordination ? convertCoordinationToSector(member.coordination) : '';
           delete member.coordination;
         });
+      if (payment.paidDate) payment.predictedDate = payment.paidDate;
+      else payment.predictedDate = payment.created;
     });
 
   contract.checklist = [];
@@ -985,3 +987,12 @@ db.teams.find().forEach((team) => {
 
   db.teams.replaceOne({ _id: team._id }, team);
 })
+
+db.contracts.find().forEach((contract) => {
+  contract.payments.forEach((payment) => {
+    if (payment.paidDate) payment.predictedDate = payment.paidDate;
+    else payment.predictedDate = payment.created;
+  });
+  db.contracts.replaceOne({ _id: contract._id }, contract);
+});
+

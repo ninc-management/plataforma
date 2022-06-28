@@ -99,6 +99,9 @@ export class ContractPayment {
   @prop({ required: true })
   paid: boolean = false;
 
+  @prop({ required: true })
+  predictedDate!: Date;
+
   @prop()
   paidDate?: Date;
 }
