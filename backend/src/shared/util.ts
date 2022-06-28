@@ -3,10 +3,10 @@ import { differenceInDays } from 'date-fns';
 import ContractModel, { Contract } from '../models/contract';
 import InvoiceModel, { Invoice } from '../models/invoice';
 import { Notification, NotificationTags } from '../models/notification';
-import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
 import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { updateNotification } from '../routes/notification';
+import { configMap } from './global';
 
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
@@ -84,25 +84,25 @@ export async function overdueReceiptNotification() {
 }
 
 export async function isNotificationEnabled(notificationTag: string, platform: string): Promise<boolean> {
-  const platformConfig: PlatformConfig[] = await PlatformConfigModel.find({});
-  if (platformConfig.length > 0) {
+  const platformConfig = configMap[Object.keys(configMap)[0]];
+  if (platformConfig != undefined) {
     switch (notificationTag) {
       case NotificationTags.APPOINTED_AS_ASSIGNEE:
-        return platformConfig[0].notificationConfig.stageResponsible[platform];
+        return platformConfig.notificationConfig.stageResponsible[platform];
       case NotificationTags.CONTRACT_SIGNED:
-        return platformConfig[0].notificationConfig.contractClosed[platform];
+        return platformConfig.notificationConfig.contractClosed[platform];
       case NotificationTags.MENTION:
-        return platformConfig[0].notificationConfig.userMentioned[platform];
+        return platformConfig.notificationConfig.userMentioned[platform];
       case NotificationTags.RECEIPT_DUE:
-        return platformConfig[0].notificationConfig.receiptDue[platform];
+        return platformConfig.notificationConfig.receiptDue[platform];
       case NotificationTags.VALUE_TO_RECEIVE_PAID:
-        return platformConfig[0].notificationConfig.teamMemberPaid[platform];
+        return platformConfig.notificationConfig.teamMemberPaid[platform];
       case NotificationTags.EXPENSE_ORDER_CREATED ||
         NotificationTags.PAYMENT_ORDER_CREATED ||
         NotificationTags.RECEIPT_ORDER_CREATED:
-        return platformConfig[0].notificationConfig.transactionCreated[platform];
+        return platformConfig.notificationConfig.transactionCreated[platform];
       case NotificationTags.EXPENSE_PAID || NotificationTags.PAYMENT_ORDER_PAID || NotificationTags.RECEIPT_PAID:
-        return platformConfig[0].notificationConfig.transactionPaid[platform];
+        return platformConfig.notificationConfig.transactionPaid[platform];
       default:
         return false;
     }
