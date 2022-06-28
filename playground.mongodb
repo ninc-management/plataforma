@@ -187,7 +187,7 @@ function convertOldExpenseTypes(expense) {
 function convertOldContractExpenseTypes(expense) {
   switch (expense.type) {
     case 'Pré-Obra':
-      expense.type = 'Pré-serviço';
+      expense.type = 'Pré-Serviço';
       break;
     case 'Transporte e Alimentação':
       expense.type = 'Transporte';
