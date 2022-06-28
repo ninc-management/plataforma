@@ -428,17 +428,17 @@
           <hr />
         </div>
         <div class="col-auto">
-          <nb-toggle [(ngModel)]="team.overridePercentages" name="toggle-hide" labelPosition="start">Sobrepor</nb-toggle>
+          <nb-toggle [(ngModel)]="clonedTeam.overridePercentages" name="toggle-hide" labelPosition="start">Sobrepor</nb-toggle>
         </div>
       </div>
-      <ng-container *ngIf="team.overridePercentages">
+      <ng-container *ngIf="clonedTeam.overridePercentages">
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="form-control-group">
               <label class="label" for="input-org-percentage">Porcentagem da organização:</label>
               <input
                 nbInput
-                [(ngModel)]="team.organizationPercentage"
+                [(ngModel)]="clonedTeam.organizationPercentage"
                 #orgPercentage="ngModel"
                 id="input-org-percentage"
                 name="orgPercentage"
@@ -462,7 +462,7 @@
               <label class="label" for="input-nf-percentage">Porcentagem da nota fiscal:</label>
               <input
                 nbInput
-                [(ngModel)]="team.nfPercentage"
+                [(ngModel)]="clonedTeam.nfPercentage"
                 #nfPercentage="ngModel"
                 id="input-nf-percentage"
                 name="nfPercentage"
