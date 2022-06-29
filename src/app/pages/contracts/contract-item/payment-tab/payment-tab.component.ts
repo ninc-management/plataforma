@@ -108,8 +108,4 @@ export class PaymentTabComponent implements OnInit {
     this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.contract);
   }
-
-  isNotEdited(): boolean {
-    return isEqual(this.contract, this.clonedContract);
-  }
 }

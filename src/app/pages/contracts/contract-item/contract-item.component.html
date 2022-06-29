@@ -3,7 +3,7 @@
     <ngx-data-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
-      [responseEvent]="responseEvent"
+      [responseEvent]="responseEvent$"
       [isFormDirty]="isFormDirty"
     ></ngx-data-tab>
   </nb-tab>
@@ -15,7 +15,7 @@
     ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
-    <ngx-balance-tab [contract]="contract" [responseEvent]="responseEvent"></ngx-balance-tab>
+    <ngx-balance-tab [contract]="contract" [responseEvent$]="responseEvent$"></ngx-balance-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
@@ -38,7 +38,7 @@
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (receiptsChanged)="forwardResponse()"
+      (expensesChanged)="forwardResponse()"
     ></ngx-expense-tab>
   </nb-tab>
 </nb-tabset>

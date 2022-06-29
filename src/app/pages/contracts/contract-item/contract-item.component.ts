@@ -18,7 +18,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
 
   clonedContract: Contract = new Contract();
-  responseEvent = new Subject<void>();
+  responseEvent$ = new Subject<void>();
 
   isPhone = isPhone;
 
@@ -59,6 +59,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   }
 
   forwardResponse() {
-    this.responseEvent.next();
+    this.responseEvent$.next();
   }
 }

@@ -22,7 +22,7 @@ interface ExpenseSourceSum {
 })
 export class BalanceTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
-  @Input() responseEvent = new Subject<void>();
+  @Input() responseEvent$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   comissionSum = '';
@@ -70,7 +70,7 @@ export class BalanceTabComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.responseEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.responseEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.calculatePaidValue();
       this.calculateBalance();
     });
