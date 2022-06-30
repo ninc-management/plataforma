@@ -15,7 +15,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { idToProperty } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
-import { InvoiceConfig } from '@models/platformConfig';
+import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
 
 pdfMake.fonts = {
@@ -36,8 +36,7 @@ pdfMake.fonts = {
 export class PdfService {
   today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   pdfData$ = new Subject<string>();
-  teamImageSVG = '';
-  config = new InvoiceConfig();
+  config = new PlatformConfig();
 
   NINCLogoSvg =
     '<svg viewBox="0 0 547.23 198.39" width="962" height="300"><path style="fill:#212322" d="M154.28 78.16h33.4v117.28h-33.4z"/><path d="M126.91 171.99c-5.29 0-7.72-2.93-7.72-9.53v-41.78c0-8.32 0-45.45-42.9-45.45-19.35 0-33.37 9.17-42.94 20.75h-1.94S31.3 77.53 29 75.23l-29 8v112.2h33.4V136.8c0-16.91 9.74-32.25 31.1-32.25s21.35 16.13 21.35 32.25v32.26c.2 9.76 2.44 29.32 27.52 29.32 19 0 29.39-8.37 29.39-8.37l-5-21.9a16 16 0 0 1-10.85 3.88z" style="fill:#212322"/><path d="M334.19 171.99c-5.29 0-7.72-2.93-7.72-9.53v-41.78c0-8.32 0-45.45-42.9-45.45-19.35 0-33.37 9.17-42.94 20.75h-1.94s-.1-18.45-2.41-20.79l-29.05 8v112.24h33.36V136.8c0-16.91 9.74-32.25 31.09-32.25s21.35 16.13 21.35 32.25v32.26c.21 9.76 2.45 29.32 27.53 29.32 19 0 29.39-8.37 29.39-8.37l-5-21.9a16 16 0 0 1-10.76 3.88z" style="fill:#212322"/><path d="M451.97 155.19s-8.54 13.88-32.23 13.88c-23.46 0-32-17.41-32-32.26 0-15.94 7.74-35.18 27.07-35.18 24.13 0 19.48 24.93 19.48 24.93l30.36-5.69c0-28.47-14.28-45.63-49.84-45.63-38.09 0-61.55 26.39-61.55 61.57s27.26 61.58 66.48 61.58c34.88 0 49.31-22.15 49.31-22.15z" style="fill:#212322"/><path d="M429.91 39.09V19.56A19.55 19.55 0 0 1 449.46 0h50.84a46.93 46.93 0 0 1 46.93 46.93v70.33h-39.09V39.09Z" style="fill:#1125a9"/></svg>';
@@ -216,14 +215,13 @@ export class PdfService {
   }
 
   async generate(invoice: Invoice, metrics: any, preview = false, openPdf = false): Promise<void> {
-    this.teamImageSVG = this.NINCLogoSvg;
     const pdf = new PdfMakeWrapper();
 
     this.configService
       .getConfig()
       .pipe(take(1))
       .subscribe((configs) => {
-        if (configs[0]) this.config = configs[0].invoiceConfig;
+        if (configs[0]) this.config = configs[0];
       });
 
     // Metadata definition
@@ -287,14 +285,14 @@ export class PdfService {
     const header = {
       columns: [
         {
-          svg: this.teamImageSVG,
+          svg: this.NINCLogoSvg,
           width: 200,
         },
       ] as any,
       margin: [5, 20, 5, 5],
     };
 
-    if (this.config.hasHeader) {
+    if (this.config.invoiceConfig.hasHeader) {
       header.columns.push([
         {
           text: 'proposta de orçamento\n',
@@ -418,7 +416,7 @@ export class PdfService {
     /* eslint-enable indent*/
 
     // Body - Team
-    if (this.config.hasTeam) {
+    if (this.config.invoiceConfig.hasTeam) {
       pdf.add(pdf.ln(1));
 
       pdf.add({
@@ -604,19 +602,25 @@ export class PdfService {
     pdf.add(pdf.ln(1));
 
     // Body - Invoice Info Early Stage - Page 2
-    if (this.config.hasPreliminary || this.config.hasExecutive || this.config.hasComplementary) {
+    if (
+      this.config.invoiceConfig.hasPreliminary ||
+      this.config.invoiceConfig.hasExecutive ||
+      this.config.invoiceConfig.hasComplementary
+    ) {
       pdf.add({
         text: 'Descrição do serviço:',
         bold: true,
         style: 'insideText',
         pageBreak:
           invoice.hasPageBreak.preliminaryStage ||
-          (!this.config.hasPreliminary && invoice.hasPageBreak.executiveStage) ||
-          (!this.config.hasPreliminary && !this.config.hasExecutive && invoice.hasPageBreak.complementaryStage)
+          (!this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage) ||
+          (!this.config.invoiceConfig.hasPreliminary &&
+            !this.config.invoiceConfig.hasExecutive &&
+            invoice.hasPageBreak.complementaryStage)
             ? 'before'
             : '', // ver se usa o preliminary ou os outros
       });
-      if (this.config.hasPreliminary) {
+      if (this.config.invoiceConfig.hasPreliminary) {
         pdf.add(pdf.ln(1));
 
         const leapLength = invoice.laep ? invoice.laep.length : 0;
@@ -661,7 +665,7 @@ export class PdfService {
       }
 
       // Body - Invoice Info Mid Stage - Page 2
-      if (this.config.hasExecutive) {
+      if (this.config.invoiceConfig.hasExecutive) {
         pdf.add(pdf.ln(1));
 
         const laeeLength = invoice.laee ? invoice.laee.length : 0;
@@ -702,13 +706,13 @@ export class PdfService {
             ],
           },
           layout: this.noBorderTable('#BCDCCE'),
-          pageBreak: this.config.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
+          pageBreak: this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
         });
       }
 
       // Body - Invoice Info Final Stage - Page 2
       if (
-        this.config.hasComplementary &&
+        this.config.invoiceConfig.hasComplementary &&
         ((invoice.peec && invoice.peec?.length > 0) ||
           (invoice.laec && invoice.laec.length > 0) ||
           (invoice.dec && invoice.dec?.length > 0))
@@ -754,7 +758,8 @@ export class PdfService {
           },
           layout: this.noBorderTable('#BCDCCE'),
           pageBreak:
-            (this.config.hasPreliminary || this.config.hasExecutive) && invoice.hasPageBreak.complementaryStage
+            (this.config.invoiceConfig.hasPreliminary || this.config.invoiceConfig.hasExecutive) &&
+            invoice.hasPageBreak.complementaryStage
               ? 'before'
               : '',
         });
@@ -983,7 +988,7 @@ export class PdfService {
 
     pdf.add(pdf.ln(1));
 
-    if (this.config.hasStageName) {
+    if (this.config.invoiceConfig.hasStageName) {
       pdf.add({
         text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
         bold: true,
@@ -1071,7 +1076,7 @@ export class PdfService {
       });
     }
 
-    if (this.config.hasMaterialList && invoice.materials.length > 0) {
+    if (this.config.invoiceConfig.hasMaterialList && invoice.materials.length > 0) {
       const materials = invoice.materials.map((material) => {
         if (invoice.materialListType == '1')
           return [
@@ -1214,7 +1219,7 @@ export class PdfService {
       });
     }
 
-    if (this.config.hasImportants) {
+    if (this.config.invoiceConfig.hasImportants) {
       // Body - Importante Notes - Page 3
       pdf.add(pdf.ln(1));
 
@@ -1278,12 +1283,12 @@ export class PdfService {
           bold: true,
         },
         {
-          text: 'Av. Comendador Gustavo Paiva, 2789, Sala 28, Mezanino, Norcon Empresarial. Mangabeiras. Maceió-AL. CEP 57037-532.',
+          text: this.config.socialConfig.address,
           fontSize: 10,
           bold: true,
         },
         {
-          text: 'CNPJ: 35.571.700/0001-10',
+          text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
           fontSize: 10,
         },
       ],
@@ -1292,12 +1297,13 @@ export class PdfService {
     });
 
     // QR code
-    pdf.add({
-      absolutePosition: { x: 190, y: 841.89 - 100 },
-      qr: 'https://linktr.ee/nortanprojetos',
-      fit: '70',
-      foreground: '#052E41',
-    });
+    if (this.config.socialConfig.qrcodeURL)
+      pdf.add({
+        absolutePosition: { x: 190, y: 841.89 - 100 },
+        qr: this.config.socialConfig.qrcodeURL,
+        fit: '70',
+        foreground: '#052E41',
+      });
 
     if (preview) {
       pdf.create().getDataUrl((dataURL: any) => {
