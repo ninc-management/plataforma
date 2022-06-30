@@ -254,7 +254,7 @@
       <hr />
     </div>
   </div>
-  <ng2-smart-table #smartTable *ngIf="!isPhone(); else phone" [settings]="settings" [source]="source"></ng2-smart-table>
+  <nb-smart-table #smartTable *ngIf="!isPhone(); else phone" [settings]="settings" [source]="source"></nb-smart-table>
   <ng-template #phone></ng-template>
 </form>
 <button (click)="registerPromotion()" nbButton fullWidth status="primary" size="large" [disabled]="form.invalid">

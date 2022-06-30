@@ -30,7 +30,7 @@
         style="width: 100%; height: 654px"
       ></div>
       <ng-template #table>
-        <ng2-smart-table
+        <nb-smart-table
           class="invoices"
           *ngIf="pageWidth() >= 576; else phone"
           #smartTable
@@ -39,7 +39,7 @@
           (edit)="invoiceDialog($event)"
           (create)="invoiceDialog({})"
           (delete)="generatePDF($event)"
-        ></ng2-smart-table>
+        ></nb-smart-table>
       </ng-template>
       <ng-template #phone>
         <nb-list>

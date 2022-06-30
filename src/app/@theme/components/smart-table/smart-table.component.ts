@@ -9,7 +9,7 @@ import { Grid } from './lib/grid';
 import { deepExtend, getPageForRowIndex } from './lib/helpers';
 
 @Component({
-  selector: 'ng2-smart-table',
+  selector: 'nb-smart-table',
   styleUrls: ['./smart-table.component.scss'],
   templateUrl: './smart-table.component.html',
 })

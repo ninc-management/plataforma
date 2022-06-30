@@ -30,13 +30,13 @@
         style="width: 100%; height: 654px"
       ></div>
       <ng-template #table>
-        <ng2-smart-table
+        <nb-smart-table
           *ngIf="!isPhone(); else phone"
           [settings]="settings"
           [source]="source"
           (edit)="promotionDialog($event)"
           (create)="promotionDialog({})"
-        ></ng2-smart-table>
+        ></nb-smart-table>
       </ng-template>
       <ng-template #phone>
         <nb-list>
