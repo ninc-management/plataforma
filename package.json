@@ -79,6 +79,7 @@
     "nebular-icons": "1.1.0",
     "ng2-completer": "^9.0.1",
     "ng2-pdf-viewer": "^6.3.2",
+    "ng2-smart-table": "github:nortan-projetos/ng2-smart-table#m1.7.2",
     "ngx-echarts": "^7.0.2",
     "ngx-socket-io": "^4.1.0",
     "node-cron": "^3.0.0",

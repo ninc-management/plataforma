@@ -15,6 +15,7 @@ import {
 } from '@nebular/theme';
 import * as echarts from 'echarts';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
@@ -37,7 +38,6 @@ import { LastPaymentDirective } from './directives/last-payment.directive';
 import { OverPaidDirective } from './directives/over-paid.directive';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
 import { TransformPipe } from './pipes/transform.pipe';
-import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import langPTBR from 'app/shared/langPT-BR';
 
@@ -59,7 +59,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     NbSpinnerModule,
     NbTooltipModule,
     NbUserModule,
-    NbSmartTableModule,
+    Ng2SmartTableModule,
     PdfViewerModule,
     NgxEchartsModule.forRoot({ echarts }),
   ],

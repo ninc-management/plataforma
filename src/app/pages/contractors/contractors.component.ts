@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
+import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
-import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { nameSort } from 'app/shared/utils';
 

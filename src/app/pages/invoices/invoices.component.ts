@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import { LocalDataSource } from 'ng2-smart-table';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { PdfService } from './pdf.service';
-import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
