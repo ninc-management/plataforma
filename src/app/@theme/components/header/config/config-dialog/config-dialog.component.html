@@ -31,7 +31,7 @@
           </button>
         </div>
       </nb-card-header>
-      <nb-card-body style="padding: 0">
+      <nb-card-body style="padding: 1rem 1.5rem; overflow-x: hidden;">
         <ngx-config
           [config]="config"
           [isFormDirty]="isFormDirty"
@@ -39,8 +39,8 @@
         ></ngx-config>
         <ng-template #notify>
           <div class="row">
-            <div style="padding: 0 1rem">
-              <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
+            <div style="text-align: justify;word-break: break-word;">
+              <p [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></p>
               <p>
                 Por:
                 {{
