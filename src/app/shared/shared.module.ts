@@ -18,12 +18,12 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
+import { ExpansiveGridComponent } from '../pages/dashboard/expansive-grid/expansive-grid.component';
 import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
 import { GanttChartComponent } from './components/charts/gantt-chart/gantt-chart.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
-import { ExpansiveGridComponent } from './components/expansive-grid/expansive-grid.component';
 import { ExpansiveListComponent } from './components/expansive-list/expansive-list.component';
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { FabComponent } from './components/fab/fab.component';
@@ -78,7 +78,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     EchartsBarComponent,
     GanttChartComponent,
     ExpansiveListComponent,
-    ExpansiveGridComponent,
   ],
   declarations: [
     BrMaskDirective,
@@ -101,7 +100,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     EchartsBarComponent,
     GanttChartComponent,
     ExpansiveListComponent,
-    ExpansiveGridComponent,
   ],
 })
 export class SharedModule {}

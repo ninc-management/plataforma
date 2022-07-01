@@ -21,6 +21,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { GaugeComponent } from './charts/gauge/gauge.component';
 import { TimeSeriesComponent } from './charts/time-series/time-series.component';
 import { DashboardComponent } from './dashboard.component';
+import { ExpansiveGridComponent } from './expansive-grid/expansive-grid.component';
 import { MetricItemComponent } from './metric-item/metric-item.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
@@ -64,6 +65,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     UserReceivablesComponent,
     ReceivablesDialogComponent,
     MetricItemComponent,
+    ExpansiveGridComponent,
   ],
 })
 export class DashboardModule {}
