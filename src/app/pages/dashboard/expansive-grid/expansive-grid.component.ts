@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 
+import { MetricItem } from '../metric-item/metric-item.component';
 import { trackByIndex } from 'app/shared/utils';
 
 @Component({
@@ -10,7 +11,7 @@ import { trackByIndex } from 'app/shared/utils';
 export class ExpansiveGridComponent implements OnInit {
   @ViewChild('list', { read: ElementRef }) list!: ElementRef;
   @Input() title = '';
-  @Input() items: string[] = [];
+  @Input() items: MetricItem[] = [];
   @Input() min?: number = 5;
   @Input() max?: number;
   @Input() isLoading: boolean = false;

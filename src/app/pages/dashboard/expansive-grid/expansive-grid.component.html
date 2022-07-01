@@ -17,7 +17,11 @@
       <span *ngIf="!isLoading && items.length == 0">Não há itens para mostrar.</span>
     </nb-card-body>
     <ng-template #gridTemplate>
-
+      <div>
+        <div class="progress-info" *ngFor="let item of items" #textMetric>
+          <ngx-metric-item [metricItem]="item"></ngx-metric-item>
+        </div>
+      </div>
     </ng-template>
   </nb-card>
   <button
