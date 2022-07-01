@@ -2,10 +2,11 @@ import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Outpu
 import { NgForm, NgModel } from '@angular/forms';
 import { NbComponentStatus } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
+import { SmartTableComponent } from 'app/@theme/components/smart-table/smart-table.component';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -51,8 +52,8 @@ interface UserTableItem {
 export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$: Subject<void> = new Subject();
 
-  @ViewChild(Ng2SmartTableComponent)
-  table!: Ng2SmartTableComponent;
+  @ViewChild(SmartTableComponent)
+  table!: SmartTableComponent;
   @Input() iPromotion = new Promotion();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @ViewChild('form') ngForm = {} as NgForm;

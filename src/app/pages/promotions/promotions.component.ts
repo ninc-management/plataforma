@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
 import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
+import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { isPhone, nameSort } from 'app/shared/utils';
 
