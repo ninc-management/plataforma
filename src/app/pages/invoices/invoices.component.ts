@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
@@ -20,7 +20,7 @@ import { Invoice } from '@models/invoice';
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.scss'],
 })
-export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
+export class InvoicesComponent implements OnInit, OnDestroy {
   @ViewChild('smartTable', { read: ElementRef }) tableRef!: ElementRef;
   private destroy$ = new Subject<void>();
   invoices: any[] = [];
@@ -179,27 +179,8 @@ export class InvoicesComponent implements OnInit, OnDestroy, AfterViewInit {
           return invoice;
         });
         this.source.load(invoices);
-      });
-  }
-
-  ngAfterViewInit(): void {
-    combineLatest([this.invoiceService.getInvoices(), this.contractorService.getContractors()])
-      .pipe(take(3))
-      .subscribe(([invoices, contractors]) => {
-        if (invoices.length > 0 && contractors.length > 0 && !isPhone()) {
-          setTimeout(() => {
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].value =
-              'Equipe Gestor';
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[5].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
-              new Event('change')
-            );
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].value =
-              'Em análise';
-            this.tableRef.nativeElement.children[0].children[0].children[1].children[7].children[0].children[0].children[0].children[0].children[0].dispatchEvent(
-              new Event('change')
-            );
-          }, 1);
-        }
+        this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
+        this.source.setFilter([{ field: 'status', search: 'Em análise' }]);
       });
   }
 
