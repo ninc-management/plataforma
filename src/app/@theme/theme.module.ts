@@ -39,7 +39,6 @@ import {
 } from './components';
 import { ConfigDialogComponent } from './components/header/config/config-dialog/config-dialog.component';
 import { ConfigComponent } from './components/header/config/config.component';
-import { NbSmartTableModule } from './components/smart-table/smart-table.module';
 import { OneColumnLayoutComponent, ThreeColumnsLayoutComponent, TwoColumnsLayoutComponent } from './layouts';
 import { CapitalizePipe, NumberWithCommasPipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
 import { CORPORATE_THEME } from './styles/theme.corporate';
@@ -71,7 +70,6 @@ const NB_MODULES = [
   NbTabsetModule,
   NbToggleModule,
   NbFormFieldModule,
-  NbSmartTableModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,
