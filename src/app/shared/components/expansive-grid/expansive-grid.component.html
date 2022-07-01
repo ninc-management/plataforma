@@ -1,0 +1,34 @@
+<div>
+  <nb-card
+    [ngStyle]="{
+      'max-height.rem': maxHeight,
+      'height.rem': isExpanded ? maxHeight : minHeight
+    }"
+  >
+    <nb-card-header>{{ title }}</nb-card-header>
+    <nb-card-body *ngIf="isLoading || items.length == 0; else gridTemplate">
+      <div
+        *ngIf="isLoading"
+        class="loading-spinner"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+      ></div>
+      <span *ngIf="!isLoading && items.length == 0">Não há itens para mostrar.</span>
+    </nb-card-body>
+    <ng-template #gridTemplate>
+
+    </ng-template>
+  </nb-card>
+  <button
+    *ngIf="min && items.length > min"
+    nbButton
+    type="button"
+    fullWidth
+    size="small"
+    class="show-more"
+    (click)="toggleExpansive()"
+  >
+    Mostrar {{ isExpanded ? 'menos' : 'mais' }}
+  </button>
+</div>
