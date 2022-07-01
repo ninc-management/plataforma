@@ -20,7 +20,6 @@ import {
   NbTooltipModule,
   NbUserModule,
 } from '@nebular/theme';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { NbFileUploaderModule } from '../@theme/components/file-uploader/file-uploader.module';
 import { ThemeModule } from '../@theme/theme.module';
@@ -61,6 +60,7 @@ import { TeamItemComponent } from './teams/team-item/team-item.component';
 import { TeamsComponent } from './teams/teams.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
 import { ReportConfigDialogComponent, UsersComponent } from './users/users.component';
+import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
 
 @NgModule({
   imports: [
@@ -84,11 +84,11 @@ import { ReportConfigDialogComponent, UsersComponent } from './users/users.compo
     NbTooltipModule,
     NbUserModule,
     NbToggleModule,
-    Ng2SmartTableModule,
     PagesRoutingModule,
     SharedModule,
     ThemeModule,
     NbProgressBarModule,
+    NbSmartTableModule,
   ],
   declarations: [
     PagesComponent,
