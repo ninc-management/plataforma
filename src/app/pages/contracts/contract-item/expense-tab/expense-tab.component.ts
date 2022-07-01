@@ -33,7 +33,6 @@ export class ExpenseTabComponent implements OnInit {
   invoice: Invoice = new Invoice();
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
-  comissionSum = '';
   platformConfig: PlatformConfig = new PlatformConfig();
 
   get filtredExpenses(): ContractExpense[] {
@@ -194,7 +193,6 @@ export class ExpenseTabComponent implements OnInit {
     this.isDialogBlocked.next(true);
     index = index != undefined ? index : undefined;
     const title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
-    const previousComissionSum = this.comissionSum;
 
     this.dialogService
       .open(ContractDialogComponent, {
@@ -212,10 +210,8 @@ export class ExpenseTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe(() => {
         this.loadTableExpenses();
-        this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
-        if (previousComissionSum != this.comissionSum) {
-          this.expensesChanged.emit();
-        }
+        this.expensesChanged.emit();
+        this.clonedContract.balance = this.contractService.balance(this.clonedContract);
         this.isDialogBlocked.next(false);
       });
   }
