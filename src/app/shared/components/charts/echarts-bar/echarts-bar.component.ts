@@ -59,6 +59,7 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
           axisLabel: {
             width: 100,
             interval: 0,
+            rotate: 45,
           },
           axisTick: {
             alignWithLabel: true,
