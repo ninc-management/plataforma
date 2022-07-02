@@ -25,7 +25,9 @@ import { map, take } from 'rxjs/operators';
 
 import { appInjector } from './injector.module';
 import { ConfigService } from './services/config.service';
+import { InvoiceService } from './services/invoice.service';
 import { TimeSeriesItem } from './services/metrics.service';
+import { TeamService } from './services/team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
@@ -64,6 +66,9 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
 
 export function nfPercentage(iDocument: Contract | Invoice): string {
   const configService = appInjector.get(ConfigService);
+  const teamService = appInjector.get(TeamService);
+  const invoiceService = appInjector.get(InvoiceService);
+
   let nfPercentage: string = '0';
   configService
     .getConfig()
@@ -72,20 +77,36 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
       if (configs[0]) nfPercentage = configs[0].invoiceConfig.nfPercentage;
     });
 
-  let invoice!: Invoice;
-  if (isOfType<Invoice>(iDocument, ['administration'])) {
+  let invoice: Invoice = new Invoice();
+  if (
+    isOfType<Invoice>(iDocument, [
+      '_id',
+      'author',
+      'nortanTeam',
+      'sector',
+      'code',
+      'type',
+      'contractor',
+      'administration',
+    ])
+  ) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
-    if (isOfType<Invoice>(iDocument.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor']))
-      invoice = iDocument.invoice;
-    else return '0';
+    if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
+  }
+  if (invoice.nortanTeam) {
+    const team = teamService.idToTeam(invoice.nortanTeam);
+    if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
   }
   return invoice.administration == 'nortan' ? nfPercentage : '0';
 }
 
 export function nortanPercentage(iDocument: Contract | Invoice): string {
   const configService = appInjector.get(ConfigService);
+  const teamService = appInjector.get(TeamService);
+  const invoiceService = appInjector.get(InvoiceService);
+
   let orgPercentage: string = '0';
   configService
     .getConfig()
@@ -94,14 +115,27 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
       if (configs[0]) orgPercentage = configs[0].invoiceConfig.organizationPercentage;
     });
 
-  let invoice!: Invoice;
-  if (isOfType<Invoice>(iDocument, ['administration'])) {
+  let invoice: Invoice = new Invoice();
+  if (
+    isOfType<Invoice>(iDocument, [
+      '_id',
+      'author',
+      'nortanTeam',
+      'sector',
+      'code',
+      'type',
+      'contractor',
+      'administration',
+    ])
+  ) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
-    if (isOfType<Invoice>(iDocument.invoice, ['_id', 'author', 'nortanTeam', 'sector', 'code', 'type', 'contractor']))
-      invoice = iDocument.invoice;
-    else return '0';
+    if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
+  }
+  if (invoice.nortanTeam) {
+    const team = teamService.idToTeam(invoice.nortanTeam);
+    if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
   }
   return invoice.administration == 'nortan' ? orgPercentage : '0';
 }
