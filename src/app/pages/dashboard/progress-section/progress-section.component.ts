@@ -39,6 +39,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
   resize$ = new BehaviorSubject<boolean>(true);
   destroy$ = new Subject<void>();
   userReceivableContracts: ReceivableByContract[] = [];
+  isMetricsDataLoading = true;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
@@ -235,6 +236,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             )
           ),
         });
+        this.isMetricsDataLoading = false;
       });
   }
 
