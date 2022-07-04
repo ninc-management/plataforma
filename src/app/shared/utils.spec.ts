@@ -311,7 +311,7 @@ describe('UtilsService', () => {
   it('nortanPercentage should work', () => {
     const contract: Contract = new Contract();
     const invoice: Invoice = new Invoice();
-    expect(nortanPercentage(contract)).toBe('0');
+    expect(nortanPercentage(contract)).toBe('15,0');
     invoice._id = '0';
     invoice.author = '0';
     invoice.nortanTeam = '0';
