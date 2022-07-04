@@ -1,11 +1,11 @@
-<ng2-smart-table
+<nb-smart-table
   #smartTable
   *ngIf="!isPhone(); else phone"
   [settings]="settings"
   [source]="source"
   (create)="openDialog()"
   (edit)="openDialog(expenseIndex($event.data.code))"
-></ng2-smart-table>
+></nb-smart-table>
 <ng-template #phone>
   <div class="row">
     <div class="col-2" style="padding-left: 0; padding-right: 0">

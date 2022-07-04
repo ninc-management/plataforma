@@ -30,13 +30,13 @@
             style="width: 100%; height: 654px"
           ></div>
           <ng-template #table>
-            <ng2-smart-table
+            <nb-smart-table
               *ngIf="!isPhone(); else phone"
               [settings]="settings"
               [source]="source"
               (edit)="userDialog($event)"
               (create)="downloadReport()"
-            ></ng2-smart-table>
+            ></nb-smart-table>
           </ng-template>
           <ng-template #phone>
             <nb-list>
@@ -88,14 +88,14 @@
             style="width: 100%; height: 654px"
           ></div>
           <ng-template #prospectsTable>
-            <ng2-smart-table
+            <nb-smart-table
               class="prospectTable"
               *ngIf="!isPhone(); else prospectPhone"
               [settings]="prospectsSettings"
               [source]="prospectSource"
               (edit)="userDialog($event)"
               (delete)="approveProspect($event.data)"
-            ></ng2-smart-table>
+            ></nb-smart-table>
           </ng-template>
           <ng-template #prospectPhone>
             <nb-list>
