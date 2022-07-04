@@ -872,17 +872,6 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
-    return Object.entries(valueByContractor)
-      .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
-      .map((contractor) => {
-        return {
-          contractorName: contractor[0],
-          data: { value: contractor[1].value, percentage: contractor[1].percentage },
-        };
-      });
-  }
-
   parettoRank(): Observable<ValueByContractor[]> {
     let accumulatedPercentage = 0;
     let hasAchievedLimit = false;
@@ -901,6 +890,41 @@ export class MetricsService implements OnDestroy {
         });
       })
     );
+  }
+
+  userBalanceSumInContracts(userID: string): Observable<string> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      takeUntil(this.destroy$),
+      map(([contracts, , ,]) => {
+        const filteredContracts = contracts.filter(
+          (contract) =>
+            this.contractService.isContractActive(contract) &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
+
+        return filteredContracts.reduce((balanceSum, contract) => {
+          return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
+        }, '0,00');
+      })
+    );
+  }
+
+  private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
+    return Object.entries(valueByContractor)
+      .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
+      .map((contractor) => {
+        return {
+          contractorName: contractor[0],
+          data: { value: contractor[1].value, percentage: contractor[1].percentage },
+        };
+      });
   }
 
   private calculatePercentagesByContractor(
