@@ -20,7 +20,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
+import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { NOT } from 'app/shared/utils';
@@ -38,7 +38,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
   METRICS: MetricItem[] = [];
   resize$ = new BehaviorSubject<boolean>(true);
   destroy$ = new Subject<void>();
-  userReceivableContracts: ReceivableByContract[] = [];
   isMetricsDataLoading = true;
 
   @HostListener('window:resize', ['$event'])
@@ -219,7 +218,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma dos seus saldos e cashback de cada contrato que você faz parte',
           value: this.metricsService.userReceivableValue(user._id).pipe(
             map((userReceivable) => {
-              this.userReceivableContracts = userReceivable.receivableContracts;
               return userReceivable.totalValue ? 'R$ ' + userReceivable.totalValue : 'R$ 0,00';
             })
           ),
@@ -253,18 +251,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           }, 10);
         });
       }
-    });
-  }
-
-  openReceivablesDialog(): void {
-    this.dialogService.open(ReceivablesDialogComponent, {
-      context: {
-        userReceivableContracts: this.userReceivableContracts,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
     });
   }
 }
