@@ -11,9 +11,10 @@ import {
 } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { startOfMonth, subMonths } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
+import { MetricItem } from '../metric-item/metric-item.component';
 import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -23,15 +24,6 @@ import { MetricsService, ReceivableByContract } from 'app/shared/services/metric
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { NOT } from 'app/shared/utils';
-
-interface MetricItem {
-  title: string;
-  tooltip: string;
-  value: Observable<string>;
-  // activeProgress: Observable<number>;
-  description: Observable<string>;
-  loading: Observable<boolean>;
-}
 
 /* eslint-disable indent */
 @Component({
