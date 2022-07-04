@@ -967,6 +967,7 @@ db.platformconfigs.find().forEach((config) => {
     },
   };
 
+   config.socialConfig.hideCompanyName = true;
    config.socialConfig.address = ''
    config.socialConfig.cnpj = ''
    config.socialConfig.qrcodeURL = ''
@@ -995,4 +996,3 @@ db.contracts.find().forEach((contract) => {
   });
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
-
