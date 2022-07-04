@@ -13,12 +13,10 @@
 
     nb-card-body {
       overflow-y: hidden;
-      height: 100%;
     }
   }
 
-  .loading-spinner {
-    width: 100%;
+  .fallback-wrapper, .loading-spinner {
     height: 100%;
   }
 

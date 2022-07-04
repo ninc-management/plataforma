@@ -11,7 +11,7 @@
         'overflow-y': maxRows && items.length > maxRows && isExpanded ? 'scroll' : 'hidden'
       }"
     >
-      <div *ngIf="isLoading || items.length == 0; else gridTemplate">
+      <div class="fallback-wrapper" *ngIf="isLoading || items.length == 0; else gridTemplate">
         <div
           *ngIf="isLoading"
           class="loading-spinner"
@@ -31,7 +31,7 @@
     </nb-card-body>
   </nb-card>
   <button
-    *ngIf="minRows && items.length > minRows"
+    *ngIf="!isLoading && minRows && items.length > minRows"
     nbButton
     type="button"
     fullWidth
