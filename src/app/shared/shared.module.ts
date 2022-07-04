@@ -18,7 +18,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { NgxEchartsModule } from 'ngx-echarts';
 
 import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
-import { ExpansiveGridComponent } from '../pages/dashboard/expansive-grid/expansive-grid.component';
 import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
 import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
