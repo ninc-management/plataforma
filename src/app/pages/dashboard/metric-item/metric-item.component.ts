@@ -1,8 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Observable } from 'rxjs';
+import { map, Observable, skipWhile, take } from 'rxjs';
 
 import { ReceivablesDialogComponent } from '../user-receivables/receivables-dialog/receivables-dialog.component';
+import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
+import { UserService } from 'app/shared/services/user.service';
 
 export interface MetricItem {
   title: string;
@@ -19,15 +21,37 @@ export interface MetricItem {
 })
 export class MetricItemComponent implements OnInit {
   @Input() metricItem: MetricItem = {} as MetricItem;
+  userReceivableContracts: ReceivableByContract[] = [];
 
-  constructor(private dialogService: NbDialogService) {}
+  constructor(
+    private dialogService: NbDialogService,
+    private metricsService: MetricsService,
+    private userService: UserService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    /*TODO
+      Investigate a way to pass specific data inside metric item to avoid calling this function
+      everytime the component is initialized
+    */
+    this.userService.currentUser$
+      .pipe(
+        skipWhile((user) => user._id === undefined),
+        take(1)
+      )
+      .subscribe((user) => {
+        this.metricsService.userReceivableValue(user._id).pipe(
+          map((userReceivable) => {
+            this.userReceivableContracts = userReceivable.receivableContracts;
+          })
+        );
+      });
+  }
 
   openReceivablesDialog(): void {
     this.dialogService.open(ReceivablesDialogComponent, {
       context: {
-        userReceivableContracts: [],
+        userReceivableContracts: this.userReceivableContracts,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
