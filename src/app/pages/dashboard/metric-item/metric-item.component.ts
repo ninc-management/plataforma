@@ -29,11 +29,9 @@ export class MetricItemComponent implements OnInit {
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {
-    /*TODO
-      Investigate a way to pass specific data inside metric item to avoid calling this function
-      everytime the component is initialized
-    */
+  ngOnInit(): void {}
+
+  openReceivablesDialog(): void {
     this.userService.currentUser$
       .pipe(
         skipWhile((user) => user._id === undefined),
@@ -42,21 +40,17 @@ export class MetricItemComponent implements OnInit {
       .subscribe((user) => {
         this.metricsService.userReceivableValue(user._id).pipe(
           map((userReceivable) => {
-            this.userReceivableContracts = userReceivable.receivableContracts;
+            this.dialogService.open(ReceivablesDialogComponent, {
+              context: {
+                userReceivableContracts: userReceivable.receivableContracts,
+              },
+              dialogClass: 'my-dialog',
+              closeOnBackdropClick: false,
+              closeOnEsc: false,
+              autoFocus: false,
+            });
           })
         );
       });
-  }
-
-  openReceivablesDialog(): void {
-    this.dialogService.open(ReceivablesDialogComponent, {
-      context: {
-        userReceivableContracts: this.userReceivableContracts,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
   }
 }
