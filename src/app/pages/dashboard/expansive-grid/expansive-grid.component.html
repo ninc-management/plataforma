@@ -1,4 +1,4 @@
-<div>
+<div class="expansive-grid-wrapper">
   <nb-card
     [ngStyle]="{
       'max-height.rem': maxHeight,
@@ -6,26 +6,32 @@
     }"
   >
     <nb-card-header>{{ title }}</nb-card-header>
-    <nb-card-body *ngIf="isLoading || items.length == 0; else gridTemplate">
-      <div
-        *ngIf="isLoading"
-        class="loading-spinner"
-        [nbSpinner]="true"
-        nbSpinnerStatus="primary"
-        nbSpinnerSize="giant"
-      ></div>
-      <span *ngIf="!isLoading && items.length == 0">Não há itens para mostrar.</span>
-    </nb-card-body>
-    <ng-template #gridTemplate>
-      <div>
-        <div class="progress-info" *ngFor="let item of items" #textMetric>
-          <ngx-metric-item [metricItem]="item"></ngx-metric-item>
-        </div>
+    <nb-card-body
+      [ngStyle]="{
+        'overflow-y': maxRows && items.length > maxRows && isExpanded ? 'scroll' : 'hidden'
+      }"
+    >
+      <div *ngIf="isLoading || items.length == 0; else gridTemplate">
+        <div
+          *ngIf="isLoading"
+          class="loading-spinner"
+          [nbSpinner]="true"
+          nbSpinnerStatus="primary"
+          nbSpinnerSize="giant"
+        ></div>
+        <span *ngIf="!isLoading && items.length == 0">Não há itens para mostrar.</span>
       </div>
-    </ng-template>
+      <ng-template #gridTemplate>
+        <div class="metric-items-wrapper">
+          <div class="metric-item" *ngFor="let item of items" #textMetric>
+            <ngx-metric-item [metricItem]="item"></ngx-metric-item>
+          </div>
+        </div>
+      </ng-template>
+    </nb-card-body>
   </nb-card>
   <button
-    *ngIf="min && items.length > min"
+    *ngIf="minRows && items.length > minRows"
     nbButton
     type="button"
     fullWidth
