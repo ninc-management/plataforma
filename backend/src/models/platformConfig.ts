@@ -89,6 +89,9 @@ export class SocialConfig {
   companyName: string = '';
 
   @prop({ required: true })
+  showCompanyName: boolean = true;
+
+  @prop({ required: true })
   address: string = '';
 
   @prop({ required: true })

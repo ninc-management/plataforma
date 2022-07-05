@@ -734,7 +734,7 @@
   <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 col-md">
           <div class="form-control-group">
             <label class="label" for="input-companyName">Nome da empresa</label>
             <nb-form-field>
@@ -752,6 +752,15 @@
               />
             </nb-form-field>
           </div>
+        </div>
+        <div class="col col-md-auto" style="display: flex;flex-direction: column; justify-content: center;">
+          <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
+          <nb-toggle
+            [(ngModel)]="clonedConfig.socialConfig.showCompanyName"
+            [disabled]="!clonedConfig.socialConfig.companyName"
+            id="show-companyName"
+            name="toggle-show-companyName"
+          ></nb-toggle>
         </div>
       </div>
       <div class="row">
