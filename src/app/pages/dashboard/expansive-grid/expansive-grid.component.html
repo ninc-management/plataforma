@@ -8,7 +8,7 @@
     <nb-card-header>{{ title }}</nb-card-header>
     <nb-card-body
       [ngStyle]="{
-        'overflow-y': maxRows && items.length / 3 > maxRows && isExpanded ? 'scroll' : 'hidden'
+        'overflow-y': items.length / 3 > maxRows && isExpanded ? 'scroll' : 'hidden'
       }"
     >
       <div class="fallback-wrapper" *ngIf="isLoading || items.length == 0; else gridTemplate">
@@ -31,7 +31,7 @@
     </nb-card-body>
   </nb-card>
   <button
-    *ngIf="!isLoading && minRows && items.length / 3 > minRows"
+    *ngIf="!isLoading && items.length / 3 > minRows"
     nbButton
     type="button"
     fullWidth

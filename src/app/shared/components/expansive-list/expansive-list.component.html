@@ -20,7 +20,7 @@
       <nb-list
         #list
         [ngStyle]="{
-          'overflow-y': max && items.length > max && isExpanded ? 'scroll' : 'hidden'
+          'overflow-y': items.length > max && isExpanded ? 'scroll' : 'hidden'
         }"
       >
         <nb-list-item *ngFor="let item of items; let i = index; trackBy: trackByIndex">
@@ -30,7 +30,7 @@
     </ng-template>
   </nb-card>
   <button
-    *ngIf="min && items.length > min"
+    *ngIf="items.length > min"
     nbButton
     type="button"
     fullWidth
