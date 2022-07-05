@@ -967,7 +967,7 @@ db.platformconfigs.find().forEach((config) => {
     },
   };
 
-   config.socialConfig.hideCompanyName = true;
+   config.socialConfig.showCompanyName = true;
    config.socialConfig.address = ''
    config.socialConfig.cnpj = ''
    config.socialConfig.qrcodeURL = ''

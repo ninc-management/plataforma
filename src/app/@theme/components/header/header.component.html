@@ -24,7 +24,7 @@
       style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center; font-family: marcellus"
     >
       <nb-icon class="logoIcon" [icon]="logoIcon" pack="fac" *ngIf="!isPhone()"></nb-icon>
-     <span *ngIf="config.socialConfig.hideCompanyName"> {{ menuTitle }}</span>
+     <span *ngIf="config.socialConfig.showCompanyName"> {{ menuTitle }}</span>
     </a>
   </div>
 </div>
