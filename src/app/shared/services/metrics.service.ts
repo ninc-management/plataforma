@@ -904,7 +904,7 @@ export class MetricsService implements OnDestroy {
       map(([contracts, , ,]) => {
         const filteredContracts = contracts.filter(
           (contract) =>
-            this.isContractActive(contract) &&
+            this.contractService.isContractActive(contract) &&
             contract.invoice &&
             this.invoiceService.isInvoiceMember(contract.invoice, userID)
         );
@@ -914,10 +914,6 @@ export class MetricsService implements OnDestroy {
         }, '0,00');
       })
     );
-  }
-
-  private isContractActive(contract: Contract): boolean {
-    return contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER;
   }
 
   private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {

@@ -495,6 +495,10 @@ export class ContractService implements OnDestroy {
       .flat();
   }
 
+  isContractActive(contract: Contract): boolean {
+    return contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER;
+  }
+
   private isUserAnAER(user: User, invoice: Invoice): boolean {
     if (user.AER && user.AER.length != 0) {
       return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
