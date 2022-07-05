@@ -234,6 +234,16 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             )
           ),
         });
+        this.METRICS.push({
+          title: 'Saldo em contratos',
+          tooltip: 'Soma do seu balanço individual em cada contrato que você faz parte',
+          value: this.metricsService.userBalanceSumInContracts(user._id).pipe(map((balance) => balance)),
+          description: of(''),
+          loading: this.contractService.isDataLoaded$.pipe(
+            takeUntil(this.destroy$),
+            map((isContractDataLoaded) => !isContractDataLoaded)
+          ),
+        });
         this.isMetricsDataLoading = false;
       });
   }

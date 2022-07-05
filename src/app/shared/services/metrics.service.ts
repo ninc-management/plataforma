@@ -892,6 +892,27 @@ export class MetricsService implements OnDestroy {
     );
   }
 
+  userBalanceSumInContracts(userID: string): Observable<string> {
+    return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
+      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+      takeUntil(this.destroy$),
+      map(([contracts, _]) => {
+        const activeContracts = contracts.filter((contract) => this.isContractActive(contract));
+
+        return activeContracts.reduce((balanceSum, contract) => {
+          if (contract.invoice && this.invoiceService.isInvoiceMember(contract.invoice, userID)) {
+            return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
+          }
+          return balanceSum;
+        }, '0,00');
+      })
+    );
+  }
+
+  private isContractActive(contract: Contract): boolean {
+    return contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER;
+  }
+
   private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
     return Object.entries(valueByContractor)
       .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
