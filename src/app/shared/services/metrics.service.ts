@@ -893,17 +893,24 @@ export class MetricsService implements OnDestroy {
   }
 
   userBalanceSumInContracts(userID: string): Observable<string> {
-    return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([_, isContractDataLoaded]) => !isContractDataLoaded),
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       takeUntil(this.destroy$),
-      map(([contracts, _]) => {
-        const activeContracts = contracts.filter((contract) => this.isContractActive(contract));
+      map(([contracts, , ,]) => {
+        const filteredContracts = contracts.filter(
+          (contract) =>
+            this.isContractActive(contract) &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
 
-        return activeContracts.reduce((balanceSum, contract) => {
-          if (contract.invoice && this.invoiceService.isInvoiceMember(contract.invoice, userID)) {
-            return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
-          }
-          return balanceSum;
+        return filteredContracts.reduce((balanceSum, contract) => {
+          return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
         }, '0,00');
       })
     );

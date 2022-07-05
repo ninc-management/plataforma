@@ -239,9 +239,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma do seu balanço individual em cada contrato que você faz parte',
           value: this.metricsService.userBalanceSumInContracts(user._id).pipe(map((balance) => balance)),
           description: of(''),
-          loading: this.contractService.isDataLoaded$.pipe(
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
-            map((isContractDataLoaded) => !isContractDataLoaded)
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
         this.isMetricsDataLoading = false;
