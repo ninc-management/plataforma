@@ -31,14 +31,14 @@
           </button>
         </div>
       </nb-card-header>
-      <nb-card-body >
+      <nb-card-body style="padding: 0">
         <ngx-config
           [config]="config"
           [isFormDirty]="isFormDirty"
           *ngIf="componentType === types.CONFIG; else notify"
         ></ngx-config>
         <ng-template #notify>
-          <div class="row" style="padding: 0 1rem; overflow-x: hidden;">
+          <div class="row" style="padding: 0 2.5rem; overflow-x: hidden;">
             <div style="text-align: justify;word-break: break-word;">
               <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
               <p>
