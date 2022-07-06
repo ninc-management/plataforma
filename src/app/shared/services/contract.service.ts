@@ -359,8 +359,16 @@ export class ContractService implements OnDestroy {
     return this.expensesContributions(contract).global.comission;
   }
 
-  getMemberExpensesSum(user: User | string | undefined, contract: Contract): string {
-    const filteredExpenses = contract.expenses
+  getMemberExpensesSum(user: User | string | undefined, contract: Contract, start?: Date, end?: Date): string {
+    let validExpenses = contract.expenses;
+
+    if (start && end) {
+      validExpenses = contract.expenses.filter(
+        (expense) => expense.paidDate && isWithinInterval(expense.paidDate, start, end)
+      );
+    }
+
+    const filteredExpenses = validExpenses
       .filter((expense) => {
         return (
           expense.paid &&
