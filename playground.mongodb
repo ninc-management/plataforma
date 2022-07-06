@@ -996,3 +996,19 @@ db.contracts.find().forEach((contract) => {
   });
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
+
+db.invoices.find().forEach((invoice) => {
+  invoice.importants = invoice.importants.map((i) => {
+    return {text: i, isVisible: true};
+  });
+  invoice.laep = invoice.laep.map((p) => {
+    return {text: p, isVisible: true};
+  });
+  invoice.laee = invoice.laee.map((e) => {
+    return {text: e, isVisible: true};
+  });
+  invoice.laec = invoice.laec.map((c) => {
+    return {text: c, isVisible: true};
+  });
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});

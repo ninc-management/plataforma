@@ -227,11 +227,26 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tempInvoice.dec = 'Serão feitas 3 visitas à obra para verificar o andamento do trabalho conforme projeto.';
     if (this.tempInvoice.importants.length == 0)
       this.tempInvoice.importants = [
-        'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato',
-        'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto',
-        'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente',
-        'O produto final será entregue por e-mail em PDF para o cliente + 02 (duas) cópias impressas',
-        'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante',
+        {
+          text: 'O  pagamento pode ser feito em dinheiro, via depósito ou transferência, podendo ser combinado entre as partes no momento da assinatura do contrato',
+          isVisible: true,
+        },
+        {
+          text: 'Está incluso o registro de responsabilidade técnica, necessário para aprovação do projeto',
+          isVisible: true,
+        },
+        {
+          text: 'Não estão inclusas taxas recolhidas junto à Prefeitura Municipal ou outras taxas que sejam necessárias para a aprovação e execução do projeto, sendo de responsabilidade do cliente',
+          isVisible: true,
+        },
+        {
+          text: 'O produto final será entregue por e-mail em PDF para o cliente + 02 (duas) cópias impressas',
+          isVisible: true,
+        },
+        {
+          text: 'O orçamento é baseado nas necessidades iniciais do cliente, caso durante o projeto surjam novas demandas, será tratado entre o prestador e serviço e o contratante',
+          isVisible: true,
+        },
       ];
     this.invoiceService
       .currentYearInvoices()
