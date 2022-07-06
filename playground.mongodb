@@ -148,30 +148,30 @@ function convertDepartmentToNortanTeam(departmentString, sectorId = '') {
 function convertOldExpenseTypes(expense) {
   switch (expense.type) {
     case 'Divisão de lucro':
-      expense.type = 'Custo fixo';
-      expense.subType = 'Divisão de lucro';
+      expense.type = 'Custo Fixo';
+      expense.subType = 'Divisão de Lucro';
       break;
     case 'Folha de pagamento':
-      expense.type = 'Custo fixo';
+      expense.type = 'Custo Fixo';
       expense.subType = 'Folha de Pagamento';
       break;
     case 'Reembolso':
-      expense.type = 'Despesa variável';
+      expense.type = 'Despesa Variável';
       expense.subType = 'Outros';
       break;
     case 'Despesas':
-      expense.type = 'Despesa variável';
+      expense.type = 'Despesa Variável';
       expense.subType = 'Outros';
       break;
     case 'Custo operacional':
-      expense.type = 'Custo fixo';
+      expense.type = 'Custo Fixo';
       expense.subType = 'Outros';
       break;
     case 'Gastos fixos': {
-      expense.type = 'Custo fixo';
+      expense.type = 'Custo Fixo';
       switch (expense.subType) {
         case 'Marketing':
-          expense.type = 'Despesa fixa';
+          expense.type = 'Despesa Fixa';
           break;
         case 'Administrativo':
           expense.subType = 'Folha de Pagamento';
@@ -663,7 +663,7 @@ const config = {
           'Equipamentos',
           'Internet',
           'Folha de Pagamento',
-          'Transporte - colaborador interno',
+          'Transporte - Colaborador Interno',
           'Veículos',
           'Outros',
         ],
@@ -674,7 +674,7 @@ const config = {
       },
       {
         name: 'Despesa Fixa',
-        subTypes: ['Benefícios-colaboradores', 'Infraestrutura digital', 'Limpeza e copa', 'Marketing', 'Outros'],
+        subTypes: ['Benefícios - Colaboradores', 'Infraestrutura Digital', 'Limpeza e Copa', 'Marketing', 'Outros'],
       },
       {
         name: 'Despesa Variável',
@@ -682,12 +682,12 @@ const config = {
           'Bonificação/Premiação',
           'Cursos',
           'Eventos',
-          'Fardas e similares',
+          'Fardas e Similares',
           'Infraestrutura',
-          'Infraestrutura digital',
+          'Infraestrutura Digital',
           'Manutenção',
-          'Minuterias - escritório',
-          'Tercerização',
+          'Minuterias - Dscritório',
+          'Terceirização',
           'Outros',
         ],
       },
@@ -718,11 +718,11 @@ const config = {
         subTypes: [],
       },
       {
-        name: ' Aporte',
+        name: EXPENSE_TYPES.APORTE,
         subTypes: [],
       },
       {
-        name: 'Comissão',
+        name: EXPENSE_TYPES.COMISSAO,
         subTypes: [],
       },
       {
@@ -740,13 +740,13 @@ const config = {
           'Andaimes',
           'Areia',
           'Argamassa',
-          'Bacias - pia',
-          'Bacias - sanitário',
-          'Bloco cerámico',
+          'Bacias - Pia',
+          'Bacias - Sanitário',
+          'Bloco Cerâmico',
           'Brita',
           'Cabos Elétricos',
           'Caixas - Hidrossanitário',
-          'Caixas - Quadros Elétricas',
+          'Caixas - Quadros Elétricos',
           'Cerâmica',
           'Cimento',
           'Conexões - Elétrico',
@@ -757,20 +757,20 @@ const config = {
           'Estruturas Metálicas',
           'Ferramentas / Máquinas',
           'Ferro',
-          'Gesso - forro',
-          'Gesso - parede',
-          'Granito ',
+          'Gesso - Forro',
+          'Gesso - Parede',
+          'Granito',
           'Impermeabilizante Mantas',
           'Impermeabilizantes Líquidos',
           'Isobloco',
           'Janelas - Madeira',
-          'Janelas - metálicas',
+          'Janelas - Metálicas',
           'Janelas - PVC',
-          'Lã de vidro, pet ou similares',
-          'Lajota Cerámica',
+          'Lã de Vidro, Pet ou Similares',
+          'Lajota Cerâmica',
           'Lajota Isopor',
-          'Lampadas e Luminárias',
-          'Madeira estrutural',
+          'Lâmpadas e Luminárias',
+          'Madeira Estrutural',
           'Madeira',
           'Malhas de ferro',
           'Nervura',
@@ -778,17 +778,17 @@ const config = {
           'Peças - Elétrica',
           'Peças - Hidrossanitário',
           'Pintura',
-          'Placa cimentícia',
+          'Placa Cimentícia',
           'Placa de EPS',
           'Porcelanato',
           'Portas',
-          'PVC - forro',
-          'Steal frame',
+          'PVC - Forro',
+          'Steal Frame',
           'Telhas',
           'Tijolo',
           'Tomadas',
-          'Tubos Elétrico',
-          'Tubos hidrossanitário',
+          'Tubos Elétricos',
+          'Tubos Hidrossanitários',
           'Vidros',
           'Outros',
         ],
@@ -802,26 +802,26 @@ const config = {
         subTypes: [],
       },
       {
-        name: 'Tercerização',
+        name: 'Terceirização',
         subTypes: [
-          'Estudos técnicos especializados',
-          'Instalação Elétrica',
-          'Servicos preliminares e gerais',
-          'Trabalhos em terra',
-          'Infra-estrutura',
-          'Supra-estrutura',
           'Alvenaria / Vedação',
           'Coberta / Forros',
-          'Impermeabilizações',
-          'Instalacoes hidrosanitaria',
-          'Louças e metais - instalação (materiais fornecidos pelo cliente)',
-          'Instalacoes eletricas / telefônicas',
           'Esquadrias',
-          'Revestimentos',
+          'Estudos Técnicos Especializados',
+          'Execução de Muro',
+          'Impermeabilizações',
+          'Infra-estrutura',
+          'Instalações Elétricas',
+          'Instalacoes Hidrosanitaria',
+          'Instalacoes Telefônicas',
+          'Louças e Metais - Instalação (materiais fornecidos pelo cliente)',
           'Pavimentacão',
-          'Execução de muro',
-          'Pintura geral',
-          'Serviços complementares',
+          'Pintura Geral',
+          'Revestimentos',
+          'Serviços Complementares',
+          'Servicos Preliminares e Gerais',
+          'Supra-estrutura',
+          'Trabalhos em Terra',
         ],
       },
       {
@@ -830,7 +830,7 @@ const config = {
       },
       {
         name: 'Locação',
-        subTypes: ['Escoras', 'Andaimes', 'Gerador', 'Martelete', 'Furadeira', 'Serra disco', 'Outros'],
+        subTypes: ['Escoras', 'Andaimes', 'Gerador', 'Martelete', 'Furadeira', 'Serra Disco', 'Outros'],
       },
       {
         name: 'Outros',
