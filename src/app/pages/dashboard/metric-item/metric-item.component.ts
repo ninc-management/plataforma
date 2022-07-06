@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { map, Observable, skipWhile, take } from 'rxjs';
+import { Observable, skipWhile, take } from 'rxjs';
 
 import { ReceivablesDialogComponent } from '../user-receivables/receivables-dialog/receivables-dialog.component';
 import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
 import { UserService } from 'app/shared/services/user.service';
+
+enum METRIC_TITLES {
+  RECEIVABLE_VALUE = 'Valor a receber',
+}
 
 export interface MetricItem {
   title: string;
@@ -23,6 +27,8 @@ export class MetricItemComponent implements OnInit {
   @Input() metricItem: MetricItem = {} as MetricItem;
   userReceivableContracts: ReceivableByContract[] = [];
 
+  METRIC_TITLES = METRIC_TITLES;
+
   constructor(
     private dialogService: NbDialogService,
     private metricsService: MetricsService,
@@ -38,8 +44,10 @@ export class MetricItemComponent implements OnInit {
         take(1)
       )
       .subscribe((user) => {
-        this.metricsService.userReceivableValue(user._id).pipe(
-          map((userReceivable) => {
+        this.metricsService
+          .userReceivableValue(user._id)
+          .pipe(take(1))
+          .subscribe((userReceivable) => {
             this.dialogService.open(ReceivablesDialogComponent, {
               context: {
                 userReceivableContracts: userReceivable.receivableContracts,
@@ -49,8 +57,7 @@ export class MetricItemComponent implements OnInit {
               closeOnEsc: false,
               autoFocus: false,
             });
-          })
-        );
+          });
       });
   }
 }
