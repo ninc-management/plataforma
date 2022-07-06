@@ -179,9 +179,9 @@ export class InvoicesComponent implements OnInit, OnDestroy {
           return invoice;
         });
         this.source.load(invoices);
-        this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
-        this.source.setFilter([{ field: 'status', search: 'Em análise' }]);
       });
+    this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
+    this.source.setFilter([{ field: 'status', search: 'Em análise' }]);
   }
 
   invoiceDialog(event: { data?: Invoice }): void {
