@@ -38,8 +38,8 @@
           *ngIf="componentType === types.CONFIG; else notify"
         ></ngx-config>
         <ng-template #notify>
-          <div class="row">
-            <div style="padding: 0 1rem">
+          <div class="row" style="padding: 0 2.5rem; overflow-x: hidden;">
+            <div style="text-align: justify;word-break: break-word;">
               <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
               <p>
                 Por:
