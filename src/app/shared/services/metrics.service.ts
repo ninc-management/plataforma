@@ -48,7 +48,7 @@ export interface TimeSeries {
 }
 /* eslint-enable indent */
 
-interface MetricInfo {
+export interface MetricInfo {
   count: number;
   value: number;
 }
@@ -553,45 +553,28 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValue(uId: string, start: Date, end: Date): Observable<MetricInfo> {
+  userReceivedValue(userID: string, start: Date, end: Date): Observable<MetricInfo> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
       skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
+      takeUntil(this.destroy$),
       map(([contracts, _]) => {
-        return contracts.reduce(
-          (metricInfo: MetricInfo, contract) => {
-            if (this.contractService.hasPayments(contract._id)) {
-              const value = contract.payments.reduce(
-                (paid: MetricInfo, payment) => {
-                  if (payment.paid && payment.paidDate) {
-                    const paidDate = payment.paidDate;
-                    if (isWithinInterval(paidDate, start, end)) {
-                      const uPayments = payment.team.reduce(
-                        (upaid: MetricInfo, member) => {
-                          if (this.userService.isEqual(member.user, uId)) {
-                            upaid.count += 1;
-                            upaid.value += this.stringUtil.moneyToNumber(member.value);
-                          }
-                          return upaid;
-                        },
-                        { count: 0, value: 0 }
-                      );
-                      paid.count += uPayments.count;
-                      paid.value += uPayments.value;
-                    }
-                  }
-                  return paid;
-                },
-                { count: 0, value: 0 }
-              );
-              metricInfo.count += value.count;
-              metricInfo.value += value.value;
-            }
-            return metricInfo;
-          },
-          { count: 0, value: 0 }
-        );
-      }),
-      take(1)
+        const receivedMetricInfo = { count: 0, value: 0 };
+
+        return contracts.reduce((receivedMetricInfo, contract) => {
+          if (this.contractService.contractHasPaymentsWithUser(contract, userID)) {
+            receivedMetricInfo.value = this.stringUtil.moneyToNumber(
+              this.stringUtil.sumMoney(
+                this.stringUtil.numberToMoney(receivedMetricInfo.value),
+                this.contractService.receivedValue(userID, contract, start, end)
+              )
+            );
+
+            receivedMetricInfo.count += 1;
+          }
+
+          return receivedMetricInfo;
+        }, receivedMetricInfo);
+      })
     );
   }
 
