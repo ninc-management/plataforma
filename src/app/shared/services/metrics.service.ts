@@ -899,6 +899,34 @@ export class MetricsService implements OnDestroy {
     );
   }
 
+  userExpensesAverage(userID: string, start: Date, end: Date): Observable<string> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      takeUntil(this.destroy$),
+      map(([contracts, , ,]) => {
+        const validContracts = contracts.filter((contract) =>
+          this.contractService.contractHasExpensesWithUser(contract, userID)
+        );
+
+        if (validContracts.length == 0) return '0,00';
+
+        const expensesSum = validContracts.reduce((expensesSum, contract) => {
+          return this.stringUtil.sumMoney(
+            expensesSum,
+            this.contractService.getMemberExpensesSum(userID, contract, start, end)
+          );
+        }, '0,00');
+
+        return this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(expensesSum) / validContracts.length);
+      })
+    );
+  }
+
   private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
     return Object.entries(valueByContractor)
       .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
