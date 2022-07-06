@@ -9,18 +9,16 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
 import { startOfMonth, subMonths } from 'date-fns';
 import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { MetricItem } from '../metric-item/metric-item.component';
-import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { MetricsService } from 'app/shared/services/metrics.service';
+import { MetricInfo, MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { NOT } from 'app/shared/utils';
@@ -51,7 +49,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private userService: UserService,
     private stringUtil: StringUtilService,
     private financialService: FinancialService,
-    private dialogService: NbDialogService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService
@@ -64,8 +61,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     const today = new Date();
-    const monthStart = startOfMonth(today);
-    const previousMonth = subMonths(monthStart, 1);
+    const currentMonthStart = startOfMonth(today);
+    const previousMonthStart = subMonths(currentMonthStart, 1);
+
     this.userService.currentUser$
       .pipe(
         skipWhile((user) => user._id === undefined),
@@ -85,9 +83,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip:
             'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
           value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
+            .receivedValueNortan(currentMonthStart, today, user._id)
             .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
-          description: this.metricsService.receivedValueNortan(previousMonth, monthStart, user._id).pipe(
+          description: this.metricsService.receivedValueNortan(previousMonthStart, currentMonthStart, user._id).pipe(
             map((pastPayments) => {
               return (
                 this.metricsService.plural('Mês', 1) +
@@ -102,9 +100,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Nº de IMPUL$$O$',
           tooltip: 'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
           value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
+            .receivedValueNortan(currentMonthStart, today, user._id)
             .pipe(map((x) => Math.trunc(x.global / 1000).toString())),
-          description: this.metricsService.receivedValueNortan(previousMonth, monthStart, user._id).pipe(
+          description: this.metricsService.receivedValueNortan(previousMonthStart, currentMonthStart, user._id).pipe(
             map((pastImpulses) => {
               return (
                 this.metricsService.plural('Mês', 1) +
@@ -199,10 +197,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip:
             'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados da empresa, no mês corrente. (R$ total recebido / R$ total pago aos associados da empresa)',
           value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
+            .receivedValueNortan(currentMonthStart, today, user._id)
             .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
           description: this.metricsService
-            .receivedValueNortan(previousMonth, monthStart, user._id)
+            .receivedValueNortan(previousMonthStart, currentMonthStart, user._id)
             .pipe(
               map(
                 (userGlobal) =>
@@ -244,6 +242,27 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
+
+        this.METRICS.push({
+          title: 'Média do valor recebido',
+          tooltip:
+            'Soma do valor recebido por você no mês corrente dividido pela quantidade de contratos que você faz parte',
+          value: this.metricsService.userReceivedValue(user._id, currentMonthStart, today).pipe(
+            takeUntil(this.destroy$),
+            map((userReceivedValueData) => this.userReceivedAverageValue(userReceivedValueData))
+          ),
+          description: this.metricsService.userReceivedValue(user._id, previousMonthStart, currentMonthStart).pipe(
+            takeUntil(this.destroy$),
+            map((userReceivedValueData) => {
+              return 'No mês passado, a sua média foi de ' + this.userReceivedAverageValue(userReceivedValueData);
+            })
+          ),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
         this.isMetricsDataLoading = false;
       });
   }
@@ -262,5 +281,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
         });
       }
     });
+  }
+
+  private userReceivedAverageValue(userReceivedValueData: MetricInfo): string {
+    if (userReceivedValueData.count == 0) return 'R$ 0,00';
+    return 'R$ ' + this.stringUtil.numberToMoney(userReceivedValueData.value / userReceivedValueData.count);
   }
 }

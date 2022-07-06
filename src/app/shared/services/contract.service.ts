@@ -6,7 +6,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 
-import { idToProperty, isOfType, nfPercentage, nortanPercentage, reviveDates } from '../utils';
+import { idToProperty, isOfType, isWithinInterval, nfPercentage, nortanPercentage, reviveDates } from '../utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
@@ -294,8 +294,16 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 
-  receivedValue(user: User | string | undefined, contract: Contract): string {
-    const received = contract.payments
+  receivedValue(user: User | string | undefined, contract: Contract, start?: Date, end?: Date): string {
+    let validPayments = contract.payments;
+
+    if (start && end) {
+      validPayments = contract.payments.filter(
+        (payment) => payment.paidDate && isWithinInterval(payment.paidDate, start, end)
+      );
+    }
+
+    const received = validPayments
       .filter((payment) => payment.paid)
       .map((payment) => payment.team)
       .flat()
@@ -303,6 +311,7 @@ export class ContractService implements OnDestroy {
         if (this.userService.isEqual(member.user, user)) sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);
+
     return this.stringUtil.numberToMoney(received);
   }
 
@@ -497,6 +506,12 @@ export class ContractService implements OnDestroy {
 
   isContractActive(contract: Contract): boolean {
     return contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER;
+  }
+
+  contractHasPaymentsWithUser(contract: Contract, userID: string) {
+    return contract.payments.some((payment) =>
+      payment.team.some((paymentTeamMember) => this.userService.isEqual(paymentTeamMember.user, userID))
+    );
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {
