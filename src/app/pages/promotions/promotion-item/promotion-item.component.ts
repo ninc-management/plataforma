@@ -165,7 +165,7 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
         break;
       case RULE_OBJECTS.VALOR_RECEBIDO:
         objCount = this.metricsService
-          .receivedValue(uId, this.promotion.start, this.promotion.end)
+          .userReceivedValue(uId, this.promotion.start, this.promotion.end)
           .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
         break;
       default:
