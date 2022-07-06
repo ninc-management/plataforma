@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 
-import { ConfigService } from 'app/shared/services/config.service';
+import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
@@ -41,6 +41,7 @@ export class ConfigComponent implements OnInit {
   contractExpenseTypes: TypeItem[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
+  EXPENSE_TYPES = EXPENSE_TYPES;
 
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';

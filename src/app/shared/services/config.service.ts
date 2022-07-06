@@ -119,11 +119,11 @@ export const DEFAULT_CONFIG = {
         subTypes: [],
       },
       {
-        name: ' Aporte',
+        name: EXPENSE_TYPES.APORTE,
         subTypes: [],
       },
       {
-        name: 'Comissão',
+        name: EXPENSE_TYPES.COMISSAO,
         subTypes: [],
       },
       {
@@ -327,11 +327,6 @@ export class ConfigService implements OnDestroy {
         .post('/api/config/all', {})
         .pipe(take(1))
         .subscribe((configs: any) => {
-          // TODO: Investigate if there is problem when update the list
-          if (configs.length === 1) {
-            configs[0].expenseConfig.contractExpenseTypes.push({ name: EXPENSE_TYPES.APORTE, subTypes: [] });
-            configs[0].expenseConfig.contractExpenseTypes.push({ name: EXPENSE_TYPES.COMISSAO, subTypes: [] });
-          }
           this.config$.next(configs as PlatformConfig[]);
           this._isDataLoaded$.next(true);
         });

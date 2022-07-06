@@ -240,6 +240,7 @@
                   nbTooltipStatus="info"
                 ></nb-icon>
                 <nb-icon
+                  *ngIf="eType.name != EXPENSE_TYPES.COMISSAO && eType.name != EXPENSE_TYPES.APORTE"
                   class="xIcon"
                   status="basic"
                   icon="trash-2-outline"
