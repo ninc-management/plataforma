@@ -198,13 +198,13 @@ export class ContractsComponent implements OnInit, OnDestroy {
       .subscribe(([contracts, invoices, contractors, user]) => {
         this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.source.load(this.contracts);
-        this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
-        this.source.setFilter([{ field: 'status', search: 'Em andamento A receber Finalizado' }]);
       });
     this.accessChecker
       .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
+    this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
+    this.source.setFilter([{ field: 'status', search: 'Em andamento A receber Finalizado' }]);
   }
 
   contractDialog(event: { data?: Contract }, isEditing: boolean): void {
