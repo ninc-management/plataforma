@@ -96,6 +96,14 @@ export class InvoicePageBreak {
   subject: boolean = false;
 }
 
+export class InvoiceHideableText {
+  @prop({ required: true })
+  text!: string;
+
+  @prop({ required: true })
+  isVisible: boolean = true;
+}
+
 @plugin(mongooseUniqueValidator)
 export class Invoice extends StatusHistory {
   @prop({ required: true, ref: () => User })
@@ -161,8 +169,8 @@ export class Invoice extends StatusHistory {
   @prop()
   peep?: string;
 
-  @prop({ type: () => [String] })
-  laep: string[] = [];
+  @prop({ type: () => [InvoiceHideableText] })
+  laep: InvoiceHideableText[] = [];
 
   @prop()
   dep?: string;
@@ -170,8 +178,8 @@ export class Invoice extends StatusHistory {
   @prop()
   peee?: string;
 
-  @prop({ type: () => [String] })
-  laee: string[] = [];
+  @prop({ type: () => [InvoiceHideableText] })
+  laee: InvoiceHideableText[] = [];
 
   @prop()
   dee?: string;
@@ -179,8 +187,8 @@ export class Invoice extends StatusHistory {
   @prop()
   peec?: string;
 
-  @prop({ type: () => [String] })
-  laec: string[] = [];
+  @prop({ type: () => [InvoiceHideableText] })
+  laec: InvoiceHideableText[] = [];
 
   @prop()
   dec?: string;
@@ -206,8 +214,8 @@ export class Invoice extends StatusHistory {
   @prop({ type: () => [InvoiceMaterial] })
   materials: InvoiceMaterial[] = [];
 
-  @prop({ type: () => [String] })
-  importants: string[] = [];
+  @prop({ type: () => [InvoiceHideableText] })
+  importants: InvoiceHideableText[] = [];
 
   @prop({ required: true, ref: () => User })
   prospectedBy!: Ref<User>;

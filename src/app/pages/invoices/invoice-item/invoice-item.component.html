@@ -839,7 +839,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laep.value"
-            (click)="tempInvoice.laep.push(options.aep); options.aep = ''"
+            (click)="tempInvoice.laep.push({text: options.aep, isVisible: true}); options.aep = ''"
           >
             +
           </button>
@@ -851,12 +851,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.laep[i]"
+                [(ngModel)]="tempInvoice.laep[i].text"
                 id="input-laepItem-{{ i }}"
                 name="laepItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="tempInvoice.laep[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laep[i].text.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -974,7 +974,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laee.value"
-            (click)="tempInvoice.laee.push(options.aee); options.aee = ''"
+            (click)="tempInvoice.laee.push({text: options.aee, isVisible: true}); options.aee = ''"
           >
             +
           </button>
@@ -986,12 +986,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.laee[i]"
+                [(ngModel)]="tempInvoice.laee[i].text"
                 id="input-laeeItem-{{ i }}"
                 name="laeeItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="tempInvoice.laee[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laee[i].text.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -1109,7 +1109,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laec.value"
-            (click)="tempInvoice.laec.push(options.aec); options.aec = ''"
+            (click)="tempInvoice.laec.push({text: options.aec, isVisible: true}); options.aec = ''"
           >
             +
           </button>
@@ -1123,12 +1123,12 @@
             <div class="col-10 col-md-11">
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.laec[i]"
+                [(ngModel)]="tempInvoice.laec[i].text"
                 id="input-laecItem-{{ i }}"
                 name="laecItem-{{ i }}"
                 placeholder="atividade"
                 fullWidth
-                [status]="tempInvoice.laec[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.laec[i].text.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
@@ -1834,7 +1834,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!important.value"
-            (click)="tempInvoice.importants.push(options.important); options.important = ''"
+            (click)="tempInvoice.importants.push({text: options.important, isVisible: true}); options.important = ''"
           >
             +
           </button>
@@ -1858,12 +1858,12 @@
             <div class="col-10 col-md-11">
               <textarea
                 nbInput
-                [(ngModel)]="tempInvoice.importants[i]"
+                [(ngModel)]="tempInvoice.importants[i].text"
                 id="input-important-{{ i }}"
                 name="important-{{ i }}"
                 placeholder="detalhe importante"
                 fullWidth
-                [status]="tempInvoice.importants[i].length == 0 ? 'danger' : 'basic'"
+                [status]="tempInvoice.importants[i].text.length == 0 ? 'danger' : 'basic'"
               ></textarea>
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
