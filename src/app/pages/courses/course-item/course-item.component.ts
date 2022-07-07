@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
@@ -108,5 +108,10 @@ export class CourseItemComponent implements OnInit, AfterViewInit {
       .subscribe(() => {
         this.isDialogBlocked.next(false);
       });
+  }
+
+  isNotEdited(): boolean {
+    this.iCourse.startDate = new Date(this.iCourse.startDate);
+    return isEqual(this.iCourse, this.course);
   }
 }
