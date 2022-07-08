@@ -72,6 +72,18 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
       .subscribe((user) => {
         // TODO: Recalcular a cada nova transação
         this.METRICS.push({
+          title: 'Recebido',
+          tooltip: 'Soma dos valores recebidos por você através dos contratos no mês corrente',
+          value: this.metricsService
+            .userReceivedValue(user._id, currentMonthStart, today)
+            .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
+          description: of(''),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+        this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
