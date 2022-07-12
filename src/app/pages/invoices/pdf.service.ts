@@ -627,7 +627,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laep = invoice.laep
           ? invoice.laep.map((activity, index) => {
-              return activity + (index == leapLength - 1 ? '.' : ';');
+              return activity.text + (index == leapLength - 1 ? '.' : ';');
             })
           : [];
         /* eslint-enable indent*/
@@ -672,7 +672,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laee = invoice.laee
           ? invoice.laee.map((activity, index) => {
-              return activity + (index == laeeLength - 1 ? '.' : ';');
+              return activity.text + (index == laeeLength - 1 ? '.' : ';');
             })
           : [];
         /* eslint-enable indent*/
@@ -723,7 +723,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laec = invoice.laec
           ? invoice.laec.map((activity, index) => {
-              return activity + (index == laecLength - 1 ? '.' : ';');
+              return activity.text + (index == laecLength - 1 ? '.' : ';');
             })
           : [];
         /* eslint-enable indent*/
@@ -1233,7 +1233,7 @@ export class PdfService {
       pdf.add(pdf.ln(1));
 
       const importants = invoice.importants.map((important, index) => {
-        return important + (index == invoice.importants.length - 1 ? '.' : ';');
+        return important.text + (index == invoice.importants.length - 1 ? '.' : ';');
       });
       pdf.add({
         style: 'insideText',
