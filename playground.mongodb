@@ -718,11 +718,11 @@ const config = {
         subTypes: [],
       },
       {
-        name: EXPENSE_TYPES.APORTE,
+        name: 'Aporte',
         subTypes: [],
       },
       {
-        name: EXPENSE_TYPES.COMISSAO,
+        name: 'Comissão',
         subTypes: [],
       },
       {
