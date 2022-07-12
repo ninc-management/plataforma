@@ -77,7 +77,14 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           value: this.metricsService
             .userReceivedValue(user._id, currentMonthStart, today)
             .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
-          description: of(''),
+          description: this.metricsService
+            .userReceivedValue(user._id, previousMonthStart, currentMonthStart)
+            .pipe(
+              map(
+                (received) =>
+                  'No mês passado, a soma dos valores recebidos foi R$ ' + this.stringUtil.numberToMoney(received.value)
+              )
+            ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
