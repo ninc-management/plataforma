@@ -116,7 +116,7 @@ jobs:
           # Email that you use with heroku
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           # The appname to use for deploying/updating
-          heroku_app_name: nortan-dev
+          heroku_app_name: ninc-dev
           # An optional buildpack to use when creating the heroku application
           #buildpack: # optional
           # The branch that you would like to deploy to Heroku
