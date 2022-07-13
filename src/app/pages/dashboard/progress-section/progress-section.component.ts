@@ -91,6 +91,26 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           ),
         });
         this.METRICS.push({
+          title: 'Despesas',
+          tooltip: 'Soma das suas despesas no mês corrente',
+          value: this.metricsService
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
+          description: this.metricsService
+            .userExpenses(user._id, previousMonthStart, currentMonthStart)
+            .pipe(
+              map(
+                (userExpensesMetricData) =>
+                  'No mês passado, a soma de suas despesas foi R$ ' +
+                  this.stringUtil.numberToMoney(userExpensesMetricData.value)
+              )
+            ),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+        this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
@@ -268,12 +288,12 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             'Soma do valor recebido por você no mês corrente dividido pela quantidade de contratos que você faz parte',
           value: this.metricsService.userReceivedValue(user._id, currentMonthStart, today).pipe(
             takeUntil(this.destroy$),
-            map((userReceivedValueData) => this.userReceivedAverageValue(userReceivedValueData))
+            map((userReceivedValueData) => this.userMetricsAverage(userReceivedValueData))
           ),
           description: this.metricsService.userReceivedValue(user._id, previousMonthStart, currentMonthStart).pipe(
             takeUntil(this.destroy$),
             map((userReceivedValueData) => {
-              return 'No mês passado, a sua média foi de ' + this.userReceivedAverageValue(userReceivedValueData);
+              return 'No mês passado, a sua média foi de ' + this.userMetricsAverage(userReceivedValueData);
             })
           ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
@@ -286,11 +306,13 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Média das despesas',
           tooltip: 'Soma das suas despesas no mês corrente dividido pela quantidade de contratos que você faz parte',
           value: this.metricsService
-            .userExpensesAverage(user._id, currentMonthStart, today)
-            .pipe(map((expenseAverage) => 'R$ ' + expenseAverage)),
-          description: this.metricsService
-            .userExpensesAverage(user._id, previousMonthStart, currentMonthStart)
-            .pipe(map((expenseAverage) => 'No mês passado, a sua média foi de R$ ' + expenseAverage)),
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(map((userExpensesMetricData) => this.userMetricsAverage(userExpensesMetricData))),
+          description: this.metricsService.userExpenses(user._id, previousMonthStart, currentMonthStart).pipe(
+            map((userExpensesMetricData) => {
+              return 'No mês passado, a sua média das despesas foi ' + this.userMetricsAverage(userExpensesMetricData);
+            })
+          ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
@@ -317,8 +339,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-  private userReceivedAverageValue(userReceivedValueData: MetricInfo): string {
-    if (userReceivedValueData.count == 0) return 'R$ 0,00';
-    return 'R$ ' + this.stringUtil.numberToMoney(userReceivedValueData.value / userReceivedValueData.count);
+  private userMetricsAverage(data: MetricInfo): string {
+    if (data.count == 0) return 'R$ 0,00';
+    return 'R$ ' + this.stringUtil.numberToMoney(data.value / data.count);
   }
 }

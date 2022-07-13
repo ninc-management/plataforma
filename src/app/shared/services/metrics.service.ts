@@ -899,7 +899,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  userExpensesAverage(userID: string, start: Date, end: Date): Observable<string> {
+  userExpenses(userID: string, start: Date, end: Date): Observable<MetricInfo> {
     return combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
@@ -913,8 +913,6 @@ export class MetricsService implements OnDestroy {
           this.contractService.contractHasExpensesWithUser(contract, userID)
         );
 
-        if (validContracts.length == 0) return '0,00';
-
         const expensesSum = validContracts.reduce((expensesSum, contract) => {
           return this.stringUtil.sumMoney(
             expensesSum,
@@ -922,7 +920,10 @@ export class MetricsService implements OnDestroy {
           );
         }, '0,00');
 
-        return this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(expensesSum) / validContracts.length);
+        return {
+          value: this.stringUtil.moneyToNumber(expensesSum),
+          count: validContracts.length,
+        } as MetricInfo;
       })
     );
   }
