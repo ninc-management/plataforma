@@ -217,9 +217,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Orçamentos como equipe',
           tooltip: 'Número de propostas de orçamento que você faz parta da equipe no mês corrente',
           value: this.metricsService
-            .invoicesAsMember(user._id)
+            .invoicesAsMember({ uId: user._id })
             .pipe(map((pastInvoices) => pastInvoices.count.toString())),
-          description: this.metricsService.invoicesAsMember(user._id, 'Mês').pipe(
+          description: this.metricsService.invoicesAsMember({ uId: user._id, last: 'Mês' }).pipe(
             map((pastInvoices) => {
               return (
                 this.metricsService.plural('Mês', 1) +

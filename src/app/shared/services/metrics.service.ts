@@ -99,6 +99,15 @@ interface ContractorInfo {
   percentage: string;
 }
 
+interface InvoicesAsMemberParams {
+  uId: string;
+  last?: 'Hoje' | 'Dia' | 'Mês' | 'Ano';
+  number?: number;
+  fromToday?: boolean;
+  allowedStatuses?: INVOICE_STATOOS[];
+  onlyNew?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -266,24 +275,32 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoicesAsMember(
-    uId: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
+  invoicesAsMember({
+    uId,
+    last = 'Hoje',
     number = 1,
-    fromToday = false
-  ): Observable<MetricInfo> {
+    fromToday = false,
+    allowedStatuses = [INVOICE_STATOOS.EM_ANALISE, INVOICE_STATOOS.FECHADO, INVOICE_STATOOS.NEGADO],
+    onlyNew = true,
+  }: InvoicesAsMemberParams): Observable<MetricInfo> {
     return combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
       skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
       map(([invoices, _]) => {
         return invoices
-          .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
+          .filter((invoices) => allowedStatuses.includes(invoices.status as INVOICE_STATOOS))
           .reduce(
             (metricInfo: MetricInfo, invoice) => {
-              const created = invoice.created;
-              if (this.invoiceService.isInvoiceMember(invoice, uId) && isValidDate(created, last, number, fromToday)) {
-                metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+              if (this.invoiceService.isInvoiceMember(invoice, uId)) {
+                const created = invoice.created;
+                if (onlyNew && isValidDate(created, last, number, fromToday)) {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                } else {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                }
               }
+
               return metricInfo;
             },
             { count: 0, value: 0 }
@@ -447,7 +464,7 @@ export class MetricsService implements OnDestroy {
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember({ uId: uId, last: last, number: number, fromToday: fromToday }),
           ]);
     /* eslint-enable indent */
     return combined$.pipe(
@@ -476,7 +493,7 @@ export class MetricsService implements OnDestroy {
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember({ uId: uId, last: last, number: number, fromToday: fromToday }),
           ]);
     /* eslint-enable indent */
     return combined$.pipe(
