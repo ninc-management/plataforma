@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { format } from 'date-fns';
 import { add, cloneDeep, mergeWith } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
+import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import {
   groupByDateTimeSerie,
@@ -941,6 +941,26 @@ export class MetricsService implements OnDestroy {
           value: this.stringUtil.moneyToNumber(expensesSum),
           count: validContracts.length,
         } as MetricInfo;
+      })
+    );
+  }
+
+  userOngoingContracts(userID: string): Observable<Contract[]> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      takeUntil(this.destroy$),
+      map(([contracts, , ,]) => {
+        return contracts.filter(
+          (contract) =>
+            contract.status == CONTRACT_STATOOS.EM_ANDAMENTO &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
       })
     );
   }

@@ -141,6 +141,18 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
+          title: 'Contratos em andamento',
+          tooltip: 'Quantidade de contratos em andamento que você faz parte como equipe',
+          value: this.metricsService
+            .userOngoingContracts(user._id)
+            .pipe(map((contracts) => contracts.length.toString())),
+          description: of(''),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+        this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
