@@ -153,6 +153,18 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           ),
         });
         this.METRICS.push({
+          title: 'Contratos a receber',
+          tooltip: 'Quantidade de contratos a receber que você faz parte como equipe',
+          value: this.contractService
+            .userContractsByStatus(user._id, [CONTRACT_STATOOS.A_RECEBER])
+            .pipe(map((contracts) => contracts.length.toString())),
+          description: of(''),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+        this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
