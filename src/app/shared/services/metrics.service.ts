@@ -945,7 +945,7 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  userOngoingContracts(userID: string): Observable<Contract[]> {
+  userContractsByStatus(userID: string, allowedStatuses: CONTRACT_STATOOS[]): Observable<Contract[]> {
     return combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
@@ -957,7 +957,7 @@ export class MetricsService implements OnDestroy {
       map(([contracts, , ,]) => {
         return contracts.filter(
           (contract) =>
-            contract.status == CONTRACT_STATOOS.EM_ANDAMENTO &&
+            allowedStatuses.includes(contract.status as CONTRACT_STATOOS) &&
             contract.invoice &&
             this.invoiceService.isInvoiceMember(contract.invoice, userID)
         );
