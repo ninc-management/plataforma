@@ -91,6 +91,18 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           ),
         });
         this.METRICS.push({
+          title: 'Despesas',
+          tooltip: 'Soma das suas despesas no mês corrente',
+          value: this.metricsService
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
+          description: of(''),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+        this.METRICS.push({
           title: 'Caixa',
           tooltip: 'Dinheiro do associado em custódia da Empresa',
           value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
@@ -286,11 +298,15 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Média das despesas',
           tooltip: 'Soma das suas despesas no mês corrente dividido pela quantidade de contratos que você faz parte',
           value: this.metricsService
-            .userExpensesAverage(user._id, currentMonthStart, today)
-            .pipe(map((expenseAverage) => 'R$ ' + expenseAverage)),
-          description: this.metricsService
-            .userExpensesAverage(user._id, previousMonthStart, currentMonthStart)
-            .pipe(map((expenseAverage) => 'No mês passado, a sua média foi de R$ ' + expenseAverage)),
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(
+              map((userExpensesMetricData) =>
+                userExpensesMetricData.count
+                  ? 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value / userExpensesMetricData.count)
+                  : 'R$ 0,00'
+              )
+            ),
+          description: of(''),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
