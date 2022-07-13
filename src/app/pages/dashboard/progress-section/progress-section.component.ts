@@ -14,7 +14,7 @@ import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { MetricItem } from '../metric-item/metric-item.component';
-import { ContractService } from 'app/shared/services/contract.service';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
@@ -139,6 +139,18 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
               })
             ),
           loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+        this.METRICS.push({
+          title: 'Contratos em andamento',
+          tooltip: 'Quantidade de contratos em andamento que você faz parte como equipe',
+          value: this.contractService
+            .userContractsByStatus(user._id, [CONTRACT_STATOOS.EM_ANDAMENTO])
+            .pipe(map((contracts) => contracts.length.toString())),
+          description: of(''),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
         });
         this.METRICS.push({
           title: 'Caixa',
