@@ -96,7 +96,15 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           value: this.metricsService
             .userExpenses(user._id, currentMonthStart, today)
             .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
-          description: of(''),
+          description: this.metricsService
+            .userExpenses(user._id, previousMonthStart, currentMonthStart)
+            .pipe(
+              map(
+                (userExpensesMetricData) =>
+                  'No mês passado, a soma de suas despesas foi R$ ' +
+                  this.stringUtil.numberToMoney(userExpensesMetricData.value)
+              )
+            ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
@@ -306,7 +314,16 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
                   : 'R$ 0,00'
               )
             ),
-          description: of(''),
+          description: this.metricsService.userExpenses(user._id, previousMonthStart, currentMonthStart).pipe(
+            map((userExpensesMetricData) => {
+              return (
+                'No mês passado, a sua média das despesas foi ' +
+                (userExpensesMetricData.count
+                  ? 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value / userExpensesMetricData.count)
+                  : 'R$ 0,00')
+              );
+            })
+          ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
