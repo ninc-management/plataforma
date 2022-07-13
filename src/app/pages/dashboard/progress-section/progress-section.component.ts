@@ -17,7 +17,7 @@ import { MetricItem } from '../metric-item/metric-item.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricInfo, MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -109,6 +109,36 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
+        });
+        this.METRICS.push({
+          title: 'Orçamentos em aberto',
+          tooltip: 'Quantidade de orçamentos em aberto que você faz parte como equipe',
+          value: this.metricsService
+            .invoicesAsMember({
+              uId: user._id,
+              allowedStatuses: [INVOICE_STATOOS.EM_ANALISE],
+              onlyNew: false,
+            })
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          description: this.metricsService
+            .invoicesAsMember({
+              uId: user._id,
+              allowedStatuses: [INVOICE_STATOOS.EM_ANALISE],
+              last: 'Mês',
+              onlyNew: false,
+            })
+            .pipe(
+              map((pastInvoices) => {
+                return (
+                  this.metricsService.plural('Mês', 1) +
+                  ' você participou de ' +
+                  (pastInvoices.count == 0 ? 'nenhum' : pastInvoices.count) +
+                  (pastInvoices.count > 1 ? ' orçamentos' : ' orçamento') +
+                  ' em aberto'
+                );
+              })
+            ),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
         this.METRICS.push({
           title: 'Caixa',
@@ -217,9 +247,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           title: 'Orçamentos como equipe',
           tooltip: 'Número de propostas de orçamento que você faz parta da equipe no mês corrente',
           value: this.metricsService
-            .invoicesAsMember(user._id)
+            .invoicesAsMember({ uId: user._id })
             .pipe(map((pastInvoices) => pastInvoices.count.toString())),
-          description: this.metricsService.invoicesAsMember(user._id, 'Mês').pipe(
+          description: this.metricsService.invoicesAsMember({ uId: user._id, last: 'Mês' }).pipe(
             map((pastInvoices) => {
               return (
                 this.metricsService.plural('Mês', 1) +
