@@ -143,7 +143,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
         this.METRICS.push({
           title: 'Contratos em andamento',
           tooltip: 'Quantidade de contratos em andamento que você faz parte como equipe',
-          value: this.metricsService
+          value: this.contractService
             .userContractsByStatus(user._id, [CONTRACT_STATOOS.EM_ANDAMENTO])
             .pipe(map((contracts) => contracts.length.toString())),
           description: of(''),
