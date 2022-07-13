@@ -528,6 +528,21 @@ export class ContractService implements OnDestroy {
     );
   }
 
+  userContractsByStatus(userID: string, allowedStatuses: CONTRACT_STATOOS[]): Observable<Contract[]> {
+    return combineLatest([this.contracts$, this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
+      skipWhile(([, , isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+      takeUntil(this.destroy$),
+      map(([contracts, ,]) => {
+        return contracts.filter(
+          (contract) =>
+            allowedStatuses.includes(contract.status as CONTRACT_STATOOS) &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
+      })
+    );
+  }
+
   private isUserAnAER(user: User, invoice: Invoice): boolean {
     if (user.AER && user.AER.length != 0) {
       return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
