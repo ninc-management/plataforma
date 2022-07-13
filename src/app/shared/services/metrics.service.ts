@@ -909,8 +909,8 @@ export class MetricsService implements OnDestroy {
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       takeUntil(this.destroy$),
       map(([contracts, , ,]) => {
-        const validContracts = contracts.filter(
-          (contract) => contract.invoice && this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        const validContracts = contracts.filter((contract) =>
+          this.contractService.contractHasExpensesWithUser(contract, userID)
         );
 
         if (validContracts.length == 0) return '0,00';

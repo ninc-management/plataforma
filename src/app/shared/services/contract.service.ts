@@ -522,6 +522,12 @@ export class ContractService implements OnDestroy {
     );
   }
 
+  contractHasExpensesWithUser(contract: Contract, userID: string) {
+    return contract.expenses.some((expense) =>
+      expense.team.some((expenseTeamMember) => this.userService.isEqual(expenseTeamMember.user, userID))
+    );
+  }
+
   private isUserAnAER(user: User, invoice: Invoice): boolean {
     if (user.AER && user.AER.length != 0) {
       return user.AER.find((member) => this.userService.isEqual(member, invoice.team[0].user)) != undefined;
