@@ -288,12 +288,12 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             'Soma do valor recebido por você no mês corrente dividido pela quantidade de contratos que você faz parte',
           value: this.metricsService.userReceivedValue(user._id, currentMonthStart, today).pipe(
             takeUntil(this.destroy$),
-            map((userReceivedValueData) => this.userReceivedAverageValue(userReceivedValueData))
+            map((userReceivedValueData) => this.userMetricsAverage(userReceivedValueData))
           ),
           description: this.metricsService.userReceivedValue(user._id, previousMonthStart, currentMonthStart).pipe(
             takeUntil(this.destroy$),
             map((userReceivedValueData) => {
-              return 'No mês passado, a sua média foi de ' + this.userReceivedAverageValue(userReceivedValueData);
+              return 'No mês passado, a sua média foi de ' + this.userMetricsAverage(userReceivedValueData);
             })
           ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
@@ -307,21 +307,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma das suas despesas no mês corrente dividido pela quantidade de contratos que você faz parte',
           value: this.metricsService
             .userExpenses(user._id, currentMonthStart, today)
-            .pipe(
-              map((userExpensesMetricData) =>
-                userExpensesMetricData.count
-                  ? 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value / userExpensesMetricData.count)
-                  : 'R$ 0,00'
-              )
-            ),
+            .pipe(map((userExpensesMetricData) => this.userMetricsAverage(userExpensesMetricData))),
           description: this.metricsService.userExpenses(user._id, previousMonthStart, currentMonthStart).pipe(
             map((userExpensesMetricData) => {
-              return (
-                'No mês passado, a sua média das despesas foi ' +
-                (userExpensesMetricData.count
-                  ? 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value / userExpensesMetricData.count)
-                  : 'R$ 0,00')
-              );
+              return 'No mês passado, a sua média das despesas foi ' + this.userMetricsAverage(userExpensesMetricData);
             })
           ),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
@@ -350,8 +339,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-  private userReceivedAverageValue(userReceivedValueData: MetricInfo): string {
-    if (userReceivedValueData.count == 0) return 'R$ 0,00';
-    return 'R$ ' + this.stringUtil.numberToMoney(userReceivedValueData.value / userReceivedValueData.count);
+  private userMetricsAverage(data: MetricInfo): string {
+    if (data.count == 0) return 'R$ 0,00';
+    return 'R$ ' + this.stringUtil.numberToMoney(data.value / data.count);
   }
 }
