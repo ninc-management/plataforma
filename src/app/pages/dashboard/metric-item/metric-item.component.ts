@@ -14,7 +14,7 @@ export interface MetricItem {
   title: string;
   tooltip: string;
   value: Observable<string>;
-  description: Observable<string>;
+  previousValue?: Observable<string>;
   loading: Observable<boolean>;
 }
 
