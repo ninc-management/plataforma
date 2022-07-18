@@ -78,23 +78,13 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (
-    isOfType<Invoice>(iDocument, [
-      '_id',
-      'author',
-      'nortanTeam',
-      'sector',
-      'code',
-      'type',
-      'contractor',
-      'administration',
-    ])
-  ) {
+  if (isOfType<Invoice>(iDocument, ['author', 'products', 'type', 'administration'])) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
+
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
@@ -116,23 +106,13 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (
-    isOfType<Invoice>(iDocument, [
-      '_id',
-      'author',
-      'nortanTeam',
-      'sector',
-      'code',
-      'type',
-      'contractor',
-      'administration',
-    ])
-  ) {
+  if (isOfType<Invoice>(iDocument, ['author', 'products', 'type', 'administration'])) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
+
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
