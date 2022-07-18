@@ -1,6 +1,6 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #expenseConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #expenseConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">
@@ -259,10 +259,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -457,7 +457,80 @@
                 </div>
               </div>
             </div>
+            <div class="col-12">
+              <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">Lista de unidade de medidas para unidade de produtos</label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-10 col-md-11">
+                  <div class="form-control-group">
+                    <label class="label" for="metric-input">Nome da unidade</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="newUnit"
+                      #metric="ngModel"
+                      id="metric-input"
+                      name="metric"
+                      placeholder="Nome da unidade"
+                      fullWidth
+                      fieldSize="large"
+                      [status]="metric.value ? 'success' : 'basic'"
+                      [attr.aria-invalid]="metric.invalid && metric.touched ? true : null"
+                    />
+                  </div>
+                </div>
+                <div class="col-2 col-md-1">
+                  <div class="form-control-group">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      [disabled]="!metric.value"
+                      (click)="addUnit()"
+                    >
+                      <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                    </button>
+                  </div>
+                </div>
+                <hr />
+              </div>
+            </div>
           </div>
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item *ngFor="let unit of clonedConfig.invoiceConfig.units; let i = index; trackBy: trackByIndex">
+              <div class="row typeRow">
+                <div class="col-9 col-md-11">
+                  <input
+                    nbInput
+                    [(ngModel)]="clonedConfig.invoiceConfig.units[i]"
+                    id="metric-input{{ i }}"
+                    name="metric-{{ i }}"
+                    fullWidth
+                    [status]="clonedConfig.invoiceConfig.units.length == 0 ? 'danger' : 'basic'"
+                    [readonly]="true"
+                  />
+                </div>
+                <div class="col-3 col-md-1">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="clonedConfig.invoiceConfig.units.splice(i, 1); isFormDirty.next(true)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
         </div>
       </div>
       <button
@@ -466,10 +539,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -721,10 +794,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -967,10 +1040,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -979,7 +1052,7 @@
     </form>
   </nb-tab>
   <nb-tab tabId="modules-tab" [tabTitle]="isPhone() ? '' : 'Módulos Extras'" tabIcon="cube-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #moduleConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #moduleConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -1016,10 +1089,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -1136,10 +1209,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -1382,10 +1455,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >

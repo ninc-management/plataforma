@@ -967,6 +967,7 @@ db.platformconfigs.find().forEach((config) => {
     },
   };
 
+   config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
    config.socialConfig.showCompanyName = true;
    config.socialConfig.address = ''
    config.socialConfig.cnpj = ''

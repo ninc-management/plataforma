@@ -3,7 +3,7 @@ import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject, takeUntil } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
@@ -38,14 +38,6 @@ import { Team } from '@models/team';
 import { User } from '@models/user';
 
 import invoice_validation from 'app/shared/validators/invoice-validation.json';
-
-export enum UNIT_OF_MEASURE {
-  METRO_QUADRADO = 'm²',
-  KILO = 'km',
-  HECTO = 'ha',
-  DIA = 'dia',
-  UNIT = 'unidade',
-}
 
 @Component({
   selector: 'ngx-invoice-item',
@@ -132,7 +124,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
-  UNITx = Object.values(UNIT_OF_MEASURE);
 
   forceValidatorUpdate = forceValidatorUpdate;
   trackByIndex = trackByIndex;
@@ -160,11 +151,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.configService
-      .getConfig()
-      .pipe(take(1))
-      .subscribe((configs) => {
-        if (configs[0]) this.config = configs[0].invoiceConfig;
+    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+      .pipe(
+        skipWhile(([configLoaded, _]) => !configLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([_, config]) => {
+        this.config = config[0].invoiceConfig;
       });
     if (this.iInvoice._id || this.iInvoice.model) {
       this.editing = this.tempInvoice.model == undefined;
