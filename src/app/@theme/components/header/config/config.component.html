@@ -754,7 +754,7 @@
             </nb-form-field>
           </div>
         </div>
-        <div class="col col-md-auto" style="display: flex;flex-direction: column; justify-content: center;">
+        <div class="col col-md-auto" style="display: flex; flex-direction: column; justify-content: center">
           <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
           <nb-toggle
             [(ngModel)]="clonedConfig.socialConfig.showCompanyName"
@@ -1040,9 +1040,12 @@
           </div>
         </div>
         <div class="col-12 col-lg">
-          <div class="row" style="margin-top: 8px">
+          <div class="row">
             <div class="col-auto">
-              <label>Pasta compartilhada</label>
+              <label class="label-divider">Pasta compartilhada</label>
+            </div>
+            <div class="col">
+              <hr />
             </div>
           </div>
           <div class="row" style="align-items: end">
