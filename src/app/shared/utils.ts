@@ -352,6 +352,7 @@ export function reviveDates<T>(obj: T): T {
         'paidDate',
         'predictedDate',
         'start',
+        'startDate',
       ].includes(key)
     )
       return parseISO(value);

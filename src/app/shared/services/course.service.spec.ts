@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
+import { reviveDates } from '../utils';
 import { CourseService } from './course.service';
 
 describe('CourseService', () => {
@@ -33,7 +34,7 @@ describe('CourseService', () => {
       service
         .getCourses()
         .pipe(take(2))
-        .subscribe((courses) => {
+        .subscribe((courses: Course[]) => {
           switch (i) {
             case 1: {
               i += 1;
@@ -119,6 +120,7 @@ describe('CourseService', () => {
     tmpCourse.participants = mockedParticipants;
     tmpCourse.resources = [];
     mockedCourses.push(cloneDeep(tmpCourse));
+    mockedCourses = reviveDates(mockedCourses);
   });
 
   afterEach(() => {
@@ -162,7 +164,7 @@ describe('CourseService', () => {
           case 2: {
             i += 1;
             expect(courses.length).toBe(2);
-            expect(courses).toEqual(mockedCourses);
+            expect(courses).toEqual(reviveDates(mockedCourses));
             service.saveCourse(tmpCourse);
             const req1 = httpMock.expectOne('/api/course/');
             expect(req1.request.method).toBe('POST');
@@ -173,7 +175,7 @@ describe('CourseService', () => {
           case 3: {
             expect(courses.length).toBe(3);
             mockedCourses.push(tmpCourse);
-            expect(courses).toEqual(mockedCourses);
+            expect(courses).toEqual(reviveDates(mockedCourses));
             done();
             break;
           }
@@ -254,7 +256,7 @@ describe('CourseService', () => {
   baseTest('idToParticipant should work', (expectedCourses: Course[]) => {
     expect(service.idToParticipant('0')).toEqual(expectedCourses[0].participants[0]);
     expect(service.idToParticipant('1')).toEqual(expectedCourses[0].participants[1]);
-    expect(service.idToParticipant(mockedParticipants[0])).toEqual(expectedCourses[0].participants[0]);
-    expect(service.idToParticipant(mockedParticipants[1])).toEqual(expectedCourses[0].participants[1]);
+    expect(service.idToParticipant(reviveDates(mockedParticipants[0]))).toEqual(expectedCourses[0].participants[0]);
+    expect(service.idToParticipant(reviveDates(mockedParticipants[1]))).toEqual(expectedCourses[0].participants[1]);
   });
 });

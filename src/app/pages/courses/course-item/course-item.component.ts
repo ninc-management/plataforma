@@ -53,7 +53,6 @@ export class CourseItemComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     if (this.iCourse._id != undefined) {
       this.course = cloneDeep(this.iCourse);
-      this.course.startDate = new Date(this.course.startDate);
       this.editing = true;
     }
     this.availableSpeakers = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
@@ -111,7 +110,6 @@ export class CourseItemComponent implements OnInit, AfterViewInit {
   }
 
   isNotEdited(): boolean {
-    this.iCourse.startDate = new Date(this.iCourse.startDate);
     return isEqual(this.iCourse, this.course);
   }
 }
