@@ -1013,3 +1013,8 @@ db.invoices.find().forEach((invoice) => {
   });
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
+
+db.platformconfigs.find().forEach((config) => {
+   config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});

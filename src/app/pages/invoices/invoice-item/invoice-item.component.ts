@@ -154,7 +154,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
         skipWhile(([configLoaded, _]) => !configLoaded),
-        takeUntil(this.destroy$)
+        take(1)
       )
       .subscribe(([_, config]) => {
         this.config = config[0].invoiceConfig;
