@@ -248,6 +248,11 @@ export function isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is 
   return !values.includes(undefined);
 }
 
+export function isOfTypeNew<T>(unknownObj: any, constructor: { new (): T }): unknownObj is T {
+  const genericObject = new constructor();
+  return Object.keys(genericObject).every((key) => Object.keys(unknownObj).includes(key));
+}
+
 export function NOT(o$: Observable<boolean>): Observable<boolean> {
   return o$.pipe(map((result: boolean) => !result));
 }
