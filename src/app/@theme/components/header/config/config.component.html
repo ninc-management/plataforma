@@ -477,7 +477,7 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
+  <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person-outline" responsive>
     <form (ngSubmit)="updateConfig()" #profileConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
@@ -1147,7 +1147,7 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" [tabIcon]="notificationIcon" responsive>
+  <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" tabIcon="bell-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-12 col-lg-auto" style="margin-bottom: 11px; height: auto">
