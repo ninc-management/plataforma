@@ -68,10 +68,6 @@ export class ConfigComponent implements OnInit {
     icon: 'onedrive',
     pack: 'fac',
   };
-  notificationIcon = {
-    icon: 'bell',
-    pack: 'fa',
-  };
 
   constructor(private configService: ConfigService) {}
 
