@@ -344,14 +344,14 @@
                   <div class="col-12 col-md-6">
                     <div class="form-control-group" *ngIf="config.hasLevels">
                       <label class="label" for="input-level">
-                        Enquadramento:
+                        Cargo:
                         <nb-icon
                           *ngIf="NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
                           status="info"
                           icon="info"
                           pack="eva"
                           [options]="{ animation: { type: 'pulse' } }"
-                          nbTooltip="Somente o elo principal pode alterar o enquadramento dos associados."
+                          nbTooltip="Somente o elo principal pode alterar o cargo dos associados."
                           nbTooltipPlacement="top"
                           nbTooltipStatus="info"
                         ></nb-icon>
@@ -361,7 +361,7 @@
                         #level="ngModel"
                         id="input-level"
                         name="level"
-                        placeholder="Selecione o seu enquadramento"
+                        placeholder="Selecione o seu cargo"
                         fullWidth
                         size="large"
                         [required]="validation.level.required"
