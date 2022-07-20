@@ -90,11 +90,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         filter: {
           type: 'list',
           config: {
+            multiple: true,
             selectText: 'Todos',
             list: [
               { value: 'Gestor', title: 'Gestor' },
               { value: 'Equipe', title: 'Equipe' },
-              { value: 'Equipe Gestor', title: 'Ambos' },
               { value: 'Nenhum', title: 'Nenhum' },
             ],
           },
@@ -180,8 +180,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         });
         this.source.load(invoices);
       });
-    this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
-    this.source.setFilter([{ field: 'status', search: 'Em análise' }]);
+    this.source.setFilter([
+      { field: 'role', search: 'Equipe Gestor' },
+      { field: 'status', search: 'Em análise' },
+    ]);
   }
 
   invoiceDialog(event: { data?: Invoice }): void {
