@@ -242,8 +242,9 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     this.menuService
       .onItemSelect()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event: { tag: string; item: any }) => {
-        if (this.layout.sidebarRef.nativeElement.classList.contains('expanded')) this.toggleSidebar();
+      .subscribe(() => {
+        this.sidebarService.compact('menu-sidebar');
+        this.layoutService.changeLayoutSize();
       });
   }
 
@@ -253,12 +254,5 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         menu['selected'] = false;
       }
     }
-  }
-
-  toggleSidebar(): boolean {
-    this.sidebarService.toggle(true, 'menu-sidebar');
-    this.layoutService.changeLayoutSize();
-
-    return false;
   }
 }

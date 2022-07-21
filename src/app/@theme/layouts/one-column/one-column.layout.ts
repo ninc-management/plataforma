@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbAccessChecker } from '@nebular/security';
-import { NbSidebarComponent } from '@nebular/theme';
+import { NbSidebarComponent, NbSidebarService } from '@nebular/theme';
 import { environment } from 'app/../environments/environment';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, skipWhile, takeUntil } from 'rxjs/operators';
@@ -31,7 +31,7 @@ import { User } from '@models/user';
         [compactedBreakpoints]="['xs', 'is', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl']"
         #sidebar
       >
-        <a routerLink="/pages/profile">
+        <a routerLink="/pages/profile" (click)="sidebarService.compact('menu-sidebar')">
           <nb-user
             size="giant"
             [onlyPicture]="sidebarState == 'compacted'"
@@ -57,20 +57,23 @@ import { User } from '@models/user';
   `,
 })
 export class OneColumnLayoutComponent implements OnInit, OnDestroy {
-  @ViewChild('sidebar', { static: false, read: ElementRef }) sidebarRef!: ElementRef<HTMLElement>;
-  @ViewChild('sidebar', { static: false }) sideNav!: NbSidebarComponent;
+  @ViewChild('sidebar', { static: false }) sidebarRef!: NbSidebarComponent;
   private destroy$: Subject<void> = new Subject<void>();
   sidebarState = 'compacted';
   user = new User();
 
-  public constructor(public userService: UserService, public accessChecker: NbAccessChecker) {}
+  public constructor(
+    public userService: UserService,
+    public accessChecker: NbAccessChecker,
+    public sidebarService: NbSidebarService
+  ) {}
   ngOnInit(): void {
-    combineLatest([this.userService.currentUser$])
+    this.userService.currentUser$
       .pipe(
         takeUntil(this.destroy$),
-        filter(([currentUser, ,]) => currentUser._id !== undefined)
+        filter((currentUser) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser]) => {
+      .subscribe((currentUser) => {
         this.user = currentUser;
       });
 
@@ -86,7 +89,7 @@ export class OneColumnLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.sideNav?.stateChange.subscribe((data) => {
+    this.sidebarRef?.stateChange.subscribe((data) => {
       this.sidebarState = data;
     });
   }

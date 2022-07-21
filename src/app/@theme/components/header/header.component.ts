@@ -139,6 +139,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => (this.menuButtonClicked = !this.menuButtonClicked));
 
+    this.sidebarService
+      .onCompact()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => (this.menuButtonClicked = false));
+
     this.themeService
       .onThemeChange()
       .pipe(takeUntil(this.destroy$))
@@ -153,11 +158,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   displayIframe(): void {
-    if (!this.iframeRef.nativeElement.classList.contains('active')) {
-      this.iframeRef.nativeElement.classList.add('active');
-    } else {
-      this.iframeRef.nativeElement.classList.remove('active');
-    }
+    this.iframeRef.nativeElement.classList.toggle('active');
   }
 
   onDone(event: any): void {
