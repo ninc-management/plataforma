@@ -485,7 +485,7 @@
             <table class="table-profile">
               <tbody>
                 <tr>
-                  <td class="td-left">Enquadramentos</td>
+                  <td class="td-left">Cargos</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.profileConfig.hasLevels"
@@ -640,7 +640,7 @@
           </nb-list>
           <div class="row" style="margin-top: 8px">
             <div class="col-auto">
-              <label class="label-divider">Lista de enquadramento</label>
+              <label class="label-divider">Lista de cargos</label>
             </div>
             <div class="col">
               <hr />
@@ -649,21 +649,21 @@
           <div class="row" style="align-items: end">
             <div class="col-10">
               <div class="form-control-group">
-                <label class="label" for="input-levels-type">Tipo de enquadramento:</label>
+                <label class="label" for="input-levels-type">Tipo de cargo:</label>
                 <input
                   nbInput
                   [(ngModel)]="newLevel"
                   #levelType="ngModel"
                   id="input-levels-type"
                   name="levelsType"
-                  placeholder="Nome do tipo de enquadramento"
+                  placeholder="Nome do tipo de cargo"
                   fullWidth
                   fieldSize="large"
                   [status]="newLevel ? 'success' : 'basic'"
                   [attr.aria-invalid]="levelType.invalid && levelType.touched ? true : null"
                 />
                 <ng-container *ngIf="errorInLevels">
-                  <p class="caption status-danger" style="position: absolute">Já há um enquadramento com este nome!</p>
+                  <p class="caption status-danger" style="position: absolute">Já há um cargo com este nome!</p>
                 </ng-container>
               </div>
             </div>
@@ -693,7 +693,6 @@
                     [(ngModel)]="clonedConfig.profileConfig.levels[i]"
                     id="input-level-type-{{ i }}"
                     name="level-type-{{ i }}"
-                    placeholder="Nome do tipo de enquadramento"
                     fullWidth
                     [status]="clonedConfig.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
                     [required]="true"
