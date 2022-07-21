@@ -3,7 +3,7 @@ import { NgForm, NgModel, ValidatorFn, Validators } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, of, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 
 import { ContractorDialogComponent } from '../../contractors/contractor-dialog/contractor-dialog.component';
