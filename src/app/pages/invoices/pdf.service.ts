@@ -853,7 +853,7 @@ export class PdfService {
           border: [true, true, true, true],
         },
         {
-          text: 'VALOR',
+          text: 'VALOR UNITÁRIO',
           bold: true,
           alignment: 'center',
           border: [true, true, true, true],
@@ -910,7 +910,7 @@ export class PdfService {
           border: [true, true, true, true],
         },
         {
-          text: product.value,
+          text: 'R$ ' + product.value,
           alignment: 'center',
           border: [true, true, true, true],
         },
