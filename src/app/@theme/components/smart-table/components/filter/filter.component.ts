@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { FilterDefault } from './filter-default';
@@ -27,7 +27,7 @@ import { FilterDefault } from './filter-default';
     </div>
   `,
 })
-export class FilterComponent extends FilterDefault implements OnChanges, OnDestroy {
+export class FilterComponent extends FilterDefault implements OnChanges, OnDestroy, OnInit {
   query: string = '';
   private destroy$: Subject<void> = new Subject<void>();
 
@@ -36,26 +36,35 @@ export class FilterComponent extends FilterDefault implements OnChanges, OnDestr
     this.destroy$.complete();
   }
 
+  ngOnInit() {
+    this.handleChanges();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.source) {
       this.source
         .onChanged()
         .pipe(takeUntil(this.destroy$))
         .subscribe((dataChanges) => {
-          const filterConf = this.source.getFilter();
-          if (filterConf && filterConf.filters && filterConf.filters.length === 0) {
-            this.query = '';
-
-            // add a check for existing filters an set the query if one exists for this column
-            // this covers instances where the filter is set by user code while maintaining existing functionality
-          } else if (filterConf && filterConf.filters && filterConf.filters.length > 0) {
-            filterConf.filters.forEach((k: any, v: any) => {
-              if (k.field == this.column.id) {
-                this.query = k.search;
-              }
-            });
-          }
+          this.handleChanges();
         });
+    }
+  }
+
+  handleChanges(): void {
+    //updatequery
+    const filterConf = this.source.getFilter();
+    if (filterConf && filterConf.filters && filterConf.filters.length === 0) {
+      this.query = '';
+
+      // add a check for existing filters an set the query if one exists for this column
+      // this covers instances where the filter is set by user code while maintaining existing functionality
+    } else if (filterConf && filterConf.filters && filterConf.filters.length > 0) {
+      filterConf.filters.forEach((k: any, v: any) => {
+        if (k.field == this.column.id) {
+          this.query = k.search;
+        }
+      });
     }
   }
 }

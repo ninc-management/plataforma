@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NbDatepickerModule } from '@nebular/theme';
+import { NbDatepickerModule, NbSelectModule } from '@nebular/theme';
 import { Ng2CompleterModule } from 'ng2-completer';
 
 import { CustomFilterComponent } from './custom-filter.component';
@@ -29,7 +29,8 @@ const FILTER_COMPONENTS = [
 ];
 
 @NgModule({
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, Ng2CompleterModule, NbDatepickerModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, Ng2CompleterModule, NbSelectModule, NbDatepickerModule],
+
   declarations: [...FILTER_COMPONENTS],
   exports: [...FILTER_COMPONENTS],
 })

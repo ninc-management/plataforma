@@ -1,31 +1,43 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { NgControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
 
 import { DefaultFilter } from './default-filter';
 
 @Component({
   selector: 'select-filter',
   template: `
-    <select [ngClass]="inputClass" class="form-control" #inputControl [(ngModel)]="query">
-      <option value="">{{ column.getFilterConfig().selectText }}</option>
-      <option *ngFor="let option of column.getFilterConfig().list" [value]="option.value">
+    <nb-select
+      [ngClass]="inputClass"
+      class="form-control"
+      [(ngModel)]="selected"
+      (ngModelChange)="changeQuery()"
+      [multiple]="column.getFilterConfig().multiple"
+    >
+      <nb-option value="">{{ column.getFilterConfig().selectText }}</nb-option>
+      <nb-option *ngFor="let option of column.getFilterConfig().list" [value]="option.value">
         {{ option.title }}
-      </option>
-    </select>
+      </nb-option>
+    </nb-select>
   `,
+  styleUrls: ['./select-filter.component.scss'],
 })
-export class SelectFilterComponent extends DefaultFilter implements AfterViewInit {
-  @ViewChild('inputControl', { read: NgControl, static: true }) inputControl!: NgControl;
-
+export class SelectFilterComponent extends DefaultFilter implements OnInit {
+  selected!: string[] | string;
   constructor() {
     super();
   }
 
-  ngAfterViewInit() {
-    if (this.inputControl.valueChanges != null)
-      this.inputControl.valueChanges
-        .pipe(skip(1), distinctUntilChanged(), debounceTime(this.delay))
-        .subscribe((value: string) => this.setFilter());
+  changeQuery() {
+    this.query = this.selected instanceof Array ? this.selected.join(' ') : this.selected;
+    this.setFilter();
+  }
+
+  ngOnInit() {
+    this.selected = this.query
+      ? this.query.replace(/ ([A-Z])/g, '|$1').split('|')
+      : this.column.getFilterConfig().multiple
+      ? []
+      : '';
+    if (this.selected instanceof Array && !this.column.getFilterConfig().multiple) this.selected = this.query;
+    this.setFilter();
   }
 }

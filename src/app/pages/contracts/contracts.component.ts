@@ -103,11 +103,11 @@ export class ContractsComponent implements OnInit, OnDestroy {
         filter: {
           type: 'list',
           config: {
+            multiple: true,
             selectText: 'Todos',
             list: [
               { value: 'Gestor', title: 'Gestor' },
               { value: 'Equipe', title: 'Equipe' },
-              { value: 'Equipe Gestor', title: 'Ambos' },
               { value: 'Nenhum', title: 'Nenhum' },
             ],
           },
@@ -203,8 +203,10 @@ export class ContractsComponent implements OnInit, OnDestroy {
       .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
-    this.source.setFilter([{ field: 'role', search: 'Equipe Gestor' }]);
-    this.source.setFilter([{ field: 'status', search: 'Em andamento A receber Finalizado' }]);
+    this.source.setFilter([
+      { field: 'role', search: 'Equipe Gestor' },
+      { field: 'status', search: 'Em andamento A receber Finalizado' },
+    ]);
   }
 
   contractDialog(event: { data?: Contract }, isEditing: boolean): void {

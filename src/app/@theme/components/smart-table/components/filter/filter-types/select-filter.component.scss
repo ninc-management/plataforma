@@ -1,0 +1,12 @@
+nb-select {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+::ng-deep nb-select.appearance-outline.size-medium .select-button {
+  background: transparent;
+  border: none;
+}
+
+
