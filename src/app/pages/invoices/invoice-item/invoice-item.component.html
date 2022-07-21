@@ -1299,7 +1299,7 @@
             >
               [required]="validation.unit.required" [status]=" unit.dirty ? (unit.invalid ? 'danger' : 'success') :
               'basic' " [attr.aria-invalid]="unit.invalid && unit.touched ? true : null"
-              <nb-option *ngFor="let unit of UNITx" [value]="unit">
+              <nb-option *ngFor="let unit of config.units" [value]="unit">
                 {{ unit }}
               </nb-option>
             </nb-select>
@@ -1472,7 +1472,7 @@
                 fullWidth
                 size="large"
               >
-                <nb-option *ngFor="let unit of UNITx" [value]="unit">
+                <nb-option *ngFor="let unit of config.units" [value]="unit">
                   {{ unit }}
                 </nb-option>
               </nb-select>
