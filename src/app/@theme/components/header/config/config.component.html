@@ -400,6 +400,7 @@
                   [required]="validation.abbreviation.required"
                   [minlength]="validation.abbreviation.minLength"
                   [attr.aria-invalid]="codeAbbreviation.invalid && codeAbbreviation.touched ? true : null"
+                  (focusout)="clonedConfig.invoiceConfig.codeAbbreviation = clonedConfig.invoiceConfig.codeAbbreviation.toUpperCase()"
                 />
                 <ng-container *ngIf="codeAbbreviation.invalid && codeAbbreviation.touched">
                   <p class="caption status-danger" *ngIf="codeAbbreviation.errors?.required">A sigla é obrigatória!</p>
