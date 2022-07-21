@@ -339,7 +339,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
         context: {
           title: 'Envio de foto de perfil',
           allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg'],
-          maxFileSize: 2,
+          maxFileSize: 0.5,
           name: {
             fn: (name: string) => {
               return this.user._id;
