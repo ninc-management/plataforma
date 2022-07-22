@@ -139,10 +139,10 @@ describe('UtilsService', () => {
     let tmpContract = new Contract();
     tmpContract._id = '0';
     tmpContract.invoice = mockedInvoices[0];
-    tmpContract.liquid = '676,00';
-    tmpContract.balance = '800,00';
-    tmpContract.notPaid = '845,00';
-    tmpContract.value = '1.000,00';
+    tmpContract.locals.liquid = '676,00';
+    tmpContract.locals.balance = '800,00';
+    tmpContract.locals.notPaid = '845,00';
+    tmpContract.locals.value = '1.000,00';
     mockedContracts.push(cloneDeep(tmpContract));
 
     const tmpContractor = new Contractor();
@@ -372,12 +372,12 @@ describe('UtilsService', () => {
       mockedTeams[0].purpose
     );
     expect(idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(mockedTeams[0].abrev);
-    expect(idToProperty(undefined, contractService.idToContract.bind(contractService), 'name')).toBe('');
-    expect(idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'name')).toBe(
-      mockedContracts[0].name
+    expect(idToProperty(undefined, contractService.idToContract.bind(contractService), 'locals').name).toBe(undefined);
+    expect(idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'locals').name).toBe(
+      mockedContracts[0].locals.name
     );
-    expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'value')).toBe(
-      mockedContracts[0].value
+    expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'locals').value).toBe(
+      mockedContracts[0].locals.value
     );
     expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'fullName')).toBe('');
     expect(
