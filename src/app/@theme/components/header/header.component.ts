@@ -1,6 +1,5 @@
 import { transition, trigger, useAnimation } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NbAccessChecker } from '@nebular/security';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   NbDialogService,
   NbMediaBreakpointsService,
@@ -10,7 +9,7 @@ import {
 } from '@nebular/theme';
 import { environment } from 'app/../environments/environment';
 import { combineLatest, Subject } from 'rxjs';
-import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
+import { filter, map, skipWhile, takeUntil } from 'rxjs/operators';
 
 import { tada } from './animation';
 import {
@@ -20,17 +19,11 @@ import {
 import { ConfigService } from 'app/shared/services/config.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { elapsedTime, idToProperty, isPhone, Permissions, trackByIndex } from 'app/shared/utils';
+import { elapsedTime, idToProperty, isPhone, trackByIndex } from 'app/shared/utils';
 
 import { Notification, NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
-
-interface NbMenuItem {
-  title: string;
-  link?: string;
-  tag?: string;
-}
 
 @Component({
   selector: 'ngx-header',
@@ -39,20 +32,17 @@ interface NbMenuItem {
   animations: [trigger('shake', [transition('inactive => active', useAnimation(tada))])],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  @ViewChild('widget', { static: false, read: ElementRef }) iframeRef!: ElementRef<HTMLElement>;
   private destroy$: Subject<void> = new Subject<void>();
   env = environment;
-  menuButtonClicked = false;
-  menuTitle = '';
-  userPictureOnly = false;
   user = new User();
-  logoIcon = 'companyLogo';
-  currentNotificationsQtd = 0;
-  state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
-  userMenu: NbMenuItem[] = [
-    { title: 'Perfil', link: 'pages/profile' },
-    { title: 'Sair', link: '/auth/logout' },
-  ];
+  menuButtonClicked = false;
+  userPictureOnly = false;
+  menuTitle = '';
+  logoIcon = 'companyLogo';
+  state = 'inactive';
+  currentNotificationsQtd = 0;
 
   isPhone = isPhone;
   trackByIndex = trackByIndex;
@@ -65,7 +55,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private themeService: NbThemeService,
     private breakpointService: NbMediaBreakpointsService,
     private dialogService: NbDialogService,
-    private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
     public stringUtils: StringUtilService
@@ -109,13 +98,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'change-configs')
-      .pipe(take(1))
-      .subscribe((isGranted) => {
-        if (isGranted) this.userMenu.splice(1, 0, { title: 'Configurações', tag: 'config' });
-      });
-
     const { sm, xl } = this.breakpointService.getBreakpointsMap();
     this.themeService
       .onMediaQueryChange()
@@ -138,7 +120,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .onItemClick()
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { item: any; tag: string }) => {
-        if (event.item.tag == 'config') {
+        if (event.tag == 'config') {
           this.dialogService.open(ConfigDialogComponent, {
             context: {
               title: 'CONFIGURAÇÕES DA PLATAFORMA',
@@ -157,6 +139,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => (this.menuButtonClicked = !this.menuButtonClicked));
 
+    this.sidebarService
+      .onCompact()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => (this.menuButtonClicked = false));
+
     this.themeService
       .onThemeChange()
       .pipe(takeUntil(this.destroy$))
@@ -170,7 +157,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onDone(event: any) {
+  displayIframe(): void {
+    this.iframeRef.nativeElement.classList.toggle('active');
+  }
+
+  onDone(event: any): void {
     this.state = 'inactive';
   }
 

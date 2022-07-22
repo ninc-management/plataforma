@@ -95,6 +95,21 @@ $hamburger-layer-border-radius: 4px;
   justify-content: space-between;
   width: 100%;
 
+  .slackWidget {
+    position: fixed;
+    background-color: white;
+    top: 75px;
+    right: 0;
+    height: 90%;
+    width: 0;
+    transition: width 0.5s cubic-bezier(0.32, 0, 0.67, 0);
+  }
+
+  .active {
+    width: 50%;
+    overflow: auto;
+  }
+
   .logoIcon {
     height: 30px;
     width: auto;
@@ -150,10 +165,6 @@ $hamburger-layer-border-radius: 4px;
   @include media-breakpoint-down(sm) {
     .control-item {
       display: none;
-    }
-    .user-action {
-      border: none;
-      padding: 0;
     }
   }
 

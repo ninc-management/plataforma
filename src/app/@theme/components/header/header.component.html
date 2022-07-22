@@ -21,10 +21,10 @@
       matRipple
       [matRippleUnbounded]="false"
       [matRippleCentered]="false"
-      style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center;"
+      style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center"
     >
       <nb-icon class="logoIcon" [icon]="logoIcon" pack="fac" *ngIf="!isPhone()"></nb-icon>
-     <span *ngIf="config.socialConfig.showCompanyName"> {{ menuTitle }}</span>
+      <span *ngIf="config.socialConfig.showCompanyName">{{ menuTitle }}</span>
     </a>
   </div>
 </div>
@@ -96,20 +96,30 @@
         </div>
       </nb-card>
     </ng-template>
-
     <nb-action
-      class="user-action"
+      class="logout-action"
+      [icon]="{ icon: 'log-out', pack: 'ion' }"
+      link="/auth/logout"
       matRipple
-      [matRippleUnbounded]="false"
-      [matRippleCentered]="false"
-      style="height: 48px; border-radius: 0.17rem"
-    >
-      <nb-user
-        [nbContextMenu]="userMenu"
-        [onlyPicture]="userPictureOnly"
-        [name]="user.exibitionName ? user.exibitionName : user.fullName"
-        [picture]="user.profilePicture ? user.profilePicture : ''"
-      ></nb-user>
-    </nb-action>
+      [matRippleUnbounded]="true"
+      [matRippleCentered]="true"
+      [matRippleRadius]="20"
+    ></nb-action>
+    <nb-action
+    *ngIf="!isPhone()"
+      class="slack-action"
+      [icon]="{ icon: 'slack', pack: 'fac' }"
+      matRipple
+      (click)="displayIframe()"
+      [matRippleUnbounded]="true"
+      [matRippleCentered]="true"
+      [matRippleRadius]="20"
+    ></nb-action>
   </nb-actions>
+  <iframe
+    title="Janela de comunicação"
+    class="slackWidget"
+    src="https://nortanengenharia.slack.com"
+    #widget
+  ></iframe>
 </div>

@@ -3,15 +3,63 @@
 @import '~@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
+  @include media-breakpoint-up(sm) {
+    ::ng-deep .layout-container > .content {
+      margin-left: 4.5rem !important;
+    }
+  }
+
+
   .menu-sidebar ::ng-deep .scrollable {
     display: flex;
     flex-direction: column;
     align-content: space-between;
+    align-items: center;
     justify-content: space-between;
     padding-top: nb-theme(layout-padding-top);
 
     nb-menu {
       margin: 0 !important;
+      width: 100%;
+    }
+  }
+
+  nb-sidebar.compacted {
+    width: 4.5rem;
+    ::ng-deep .main-container,
+    ::ng-deep nb-menu {
+      width: auto;
+    }
+    ::ng-deep nb-user {
+      margin: 35px 3px;
+    }
+  }
+
+  nb-sidebar.expanded {
+    width: 22rem;
+    transition: width 0.1s ease-in;
+    ::ng-deep .main-container {
+      width: 22rem;
+    }
+
+    ::ng-deep a {
+      text-decoration: none !important;
+    }
+
+    ::ng-deep nb-user {
+      margin: 35px 3px;
+      transform: scale(1.5);
+      .info-container {
+        width: 9.5rem;
+        text-align: justify;
+        word-break: break-word;
+        div {
+          font-size: 9px;
+        }
+        div.user-name {
+          font-weight: 900;
+        }
+      }
     }
   }
 }
