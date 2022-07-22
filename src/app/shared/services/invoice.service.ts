@@ -90,7 +90,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   idToInvoice(id: string | Invoice): Invoice {
-    if (isOfTypeNew(id, Invoice)) return id;
+    if (isOfTypeNew(Invoice, id)) return id;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

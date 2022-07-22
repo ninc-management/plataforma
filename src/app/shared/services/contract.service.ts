@@ -138,7 +138,7 @@ export class ContractService implements OnDestroy {
       .pipe(take(1))
       .subscribe(() => {
         this.edited$.next();
-        if (contract.status === 'Concluído' && !isMoved && isOfTypeNew(contract.invoice, Invoice))
+        if (contract.status === 'Concluído' && !isMoved && isOfTypeNew(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
   }
