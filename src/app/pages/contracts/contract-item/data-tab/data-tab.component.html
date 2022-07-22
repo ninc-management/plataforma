@@ -6,7 +6,7 @@
           <label class="label" for="input-author">Autor:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.fullName"
+            [(ngModel)]="clonedContract.locals.fullName"
             #author="ngModel"
             id="input-author"
             name="author"
@@ -69,7 +69,7 @@
           <label class="label" for="input-code">Código do orçamento:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.code"
+            [(ngModel)]="clonedContract.locals.code"
             #code="ngModel"
             id="input-code"
             name="code"
@@ -128,7 +128,7 @@
           <label class="label" for="input-contractor">Cliente:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.contractor"
+            [(ngModel)]="clonedContract.locals.contractor"
             #contractor="ngModel"
             id="input-contractor"
             name="contractor"
@@ -178,7 +178,7 @@
       <label class="label" for="input-name">Empreendimento:</label>
       <input
         nbInput
-        [(ngModel)]="clonedContract.name"
+        [(ngModel)]="clonedContract.locals.name"
         #name="ngModel"
         id="input-name"
         name="name"
@@ -204,7 +204,7 @@
           <label class="label" for="input-value">Valor do contrato:</label>
           <input
             nbInput
-            [ngModel]="clonedContract.value"
+            [ngModel]="clonedContract.locals.value"
             #value="ngModel"
             id="input-value"
             name="value"
@@ -247,7 +247,7 @@
           </label>
           <input
             nbInput
-            [ngModel]="clonedContract.liquid"
+            [ngModel]="clonedContract.locals.liquid"
             #liquid="ngModel"
             id="input-liquid"
             name="liquid"
@@ -541,7 +541,7 @@
             <div class="col-2">
               Restante:
               {{
-                [clonedContract.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
+                [clonedContract.locals.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
               }}
             </div>
             <div class="col-3" style="text-align: right">Total:</div>
@@ -630,7 +630,7 @@
           <label class="label" for="input-balance">Caixa:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.balance"
+            [(ngModel)]="clonedContract.locals.balance"
             #balance="ngModel"
             id="input-balance"
             name="balance"
@@ -645,7 +645,7 @@
             }"
             ngxSelectAllText
             [required]="validation.balance?.required"
-            [status]="balance.invalid || clonedContract.balance[0] == '-' ? 'danger' : 'basic'"
+            [status]="balance.invalid || clonedContract.locals.balance[0] == '-' ? 'danger' : 'basic'"
             [attr.aria-invalid]="balance.invalid && balance.touched ? true : null"
             [readonly]="true"
           />

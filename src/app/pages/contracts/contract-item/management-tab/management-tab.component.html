@@ -19,7 +19,7 @@
                 <label class="label" for="contract-code">Código do Contrato:</label>
                 <input
                   nbInput
-                  [ngModel]="contract.code"
+                  [ngModel]="contract.locals.code"
                   name="contract-code"
                   fullWidth
                   fieldSize="large"
@@ -32,7 +32,7 @@
                 <label class="label" for="contractor">Cliente:</label>
                 <input
                   nbInput
-                  [ngModel]="contract.contractor"
+                  [ngModel]="contract.locals.contractor"
                   name="contractor"
                   fullWidth
                   fieldSize="large"
@@ -52,7 +52,7 @@
                   (selected)="applyManagementModel($event)"
                   id="management-model"
                   name="management-model"
-                  nameField="code"
+                  nameField="locals.code"
                   [data$]="avaliableContracts$"
                   [placeholder]="'Digite o código do contrato'"
                   [fullWidth]="true"

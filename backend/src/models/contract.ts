@@ -229,18 +229,20 @@ export class Contract extends StatusHistory {
   @prop()
   managementNotes: string = '';
 
-  balance = '';
-  value = '';
-  fullName = '';
-  code = '';
-  contractor = '';
-  name = '';
-  interests = '';
-  role = '';
-  notPaid = '';
-  liquid = '';
-  cashback = '';
-  managerPicture = '';
+  locals: Record<string, string> = {
+    balance: '',
+    value: '',
+    fullName: '',
+    code: '',
+    contractor: '',
+    name: '',
+    interests: '',
+    role: '',
+    notPaid: '',
+    liquid: '',
+    cashback: '',
+    managerPicture: '',
+  };
 }
 
 export default getModelForClass(Contract);

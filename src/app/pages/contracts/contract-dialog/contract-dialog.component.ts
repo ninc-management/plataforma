@@ -76,7 +76,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
         this.config = config[0];
       });
     this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
-    this.hasBalance = this.stringUtil.moneyToNumber(this.contract.balance) > 0;
+    this.hasBalance = this.stringUtil.moneyToNumber(this.contract.locals.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT && this.config.oneDriveConfig.isActive) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -92,7 +92,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => this.contractService.fillContract(contract));
-              return contracts.sort((a, b) => codeSort(-1, a.code, b.code));
+              return contracts.sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
             })
           )
           .subscribe((contracts) => {
@@ -107,13 +107,13 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                   break;
                 case COMPONENT_TYPES.PAYMENT:
                   this.availableContracts = contracts.filter(
-                    (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
+                    (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
                   );
                   this.hasBalance = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.EXPENSE:
                   this.availableContracts = contracts.filter(
-                    (contract) => this.stringUtil.moneyToNumber(contract.balance) > 0
+                    (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
                   );
                   this.hasBalance = this.availableContracts.length !== 0;
                   break;

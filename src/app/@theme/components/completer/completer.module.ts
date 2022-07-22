@@ -11,6 +11,7 @@ import { NbAutocompleteModule, NbInputModule, NbListModule, NbTooltipModule, NbU
 
 import { NbMessageInputComponent } from '../message-input/message-input.component';
 import { NbCompleterComponent } from './completer.component';
+import { TransformPipe } from 'app/shared/pipes/transform.pipe';
 
 @NgModule({
   imports: [
@@ -22,8 +23,8 @@ import { NbCompleterComponent } from './completer.component';
     NbAutocompleteModule,
     NbUserModule,
   ],
-  declarations: [NbCompleterComponent, NbMessageInputComponent],
-  exports: [NbCompleterComponent, NbMessageInputComponent],
+  declarations: [NbCompleterComponent, NbMessageInputComponent, TransformPipe],
+  exports: [NbCompleterComponent, NbMessageInputComponent, TransformPipe],
   providers: [],
 })
 export class NbCompleterModule {}

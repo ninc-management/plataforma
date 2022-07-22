@@ -28,8 +28,8 @@
             <div class="col-12" style="margin-bottom: 10px">
               <nb-user
                 size="giant"
-                [name]="receivable.contract.name"
-                [title]="receivable.contract.code"
+                [name]="receivable.contract.locals.name"
+                [title]="receivable.contract.locals.code"
                 [picture]="this.invoiceService.idToProfilePicture(receivable.contract.invoice)"
               ></nb-user>
             </div>
@@ -37,13 +37,13 @@
               <p>
                 <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                 <span style="vertical-align: 0.1em">
-                  {{ receivable.contract.value }}
+                  {{ receivable.contract.locals.value }}
                 </span>
               </p>
             </div>
             <div class="col-12">
               <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
-              {{ receivable.contract.contractor }}
+              {{ receivable.contract.locals.contractor }}
             </div>
           </div>
         </a>

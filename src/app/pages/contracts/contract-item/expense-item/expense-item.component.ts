@@ -286,11 +286,11 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.expense.author) {
       const expenseAuthor = this.userService.idToUser(this.expense.author);
       this.notificationService.notifyFinancial({
-        title: 'Nova ordem de despesa ' + this.contract.code,
+        title: 'Nova ordem de despesa ' + this.contract.locals.code,
         tag: NotificationTags.EXPENSE_ORDER_CREATED,
         message: `${expenseAuthor.article.toUpperCase()} ${
           expenseAuthor.fullName
-        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.code}.`,
+        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.locals.code}.`,
       });
     }
     this.contractService.editContract(this.contract);
@@ -325,8 +325,8 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   overPaid(): string {
     if (this.expense.source && this.userService.idToUser(this.expense.source)?._id === CONTRACT_BALANCE._id) {
       if (this.expenseIndex != undefined)
-        return this.stringUtil.sumMoney(this.contract.balance, this.contract.expenses[this.expenseIndex].value);
-      else return this.contract.balance;
+        return this.stringUtil.sumMoney(this.contract.locals.balance, this.contract.expenses[this.expenseIndex].value);
+      else return this.contract.locals.balance;
     }
     return this.stringUtil.numberToMoney(Number.MAX_VALUE);
   }
@@ -422,7 +422,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.contract.invoice) {
       const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       this.notificationService.notify(invoice.author, {
-        title: 'Uma despesa do contrato ' + this.contract.code + ' foi paga!',
+        title: 'Uma despesa do contrato ' + this.contract.locals.code + ' foi paga!',
         tag: NotificationTags.EXPENSE_PAID,
         message: 'A despesa de código ' + this.expense.code + ' com o valor de R$ ' + this.expense.value + ' foi paga.',
       });

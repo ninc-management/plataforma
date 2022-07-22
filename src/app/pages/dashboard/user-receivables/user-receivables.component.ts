@@ -76,9 +76,9 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.userReceivableContracts.filter((receivable) => {
         return (
-          receivable.contract.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          receivable.contract.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          receivable.contract.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          receivable.contract.locals.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          receivable.contract.locals.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          receivable.contract.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           receivable.receivableValue.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
@@ -105,9 +105,9 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
         .map((receivable) => {
           return {
             contract: receivable.contract,
-            code: receivable.contract.code,
-            contractor: receivable.contract.contractor,
-            name: receivable.contract.name,
+            code: receivable.contract.locals.code,
+            contractor: receivable.contract.locals.contractor,
+            name: receivable.contract.locals.name,
             receivableValue: receivable.receivableValue,
           };
         })

@@ -44,15 +44,15 @@ export class ContractsComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
         return (
-          contract.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contract.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contract.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contract.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contract.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.contracts.sort((a, b) => codeSort(-1, a.code, b.code));
+    return this.contracts.sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
   }
   settings = {
     mode: 'external',
@@ -78,25 +78,25 @@ export class ContractsComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      fullName: {
+      'locals.fullName': {
         title: 'Autor',
         type: 'string',
       },
-      code: {
+      'locals.code': {
         title: 'Código',
         type: 'string',
         sortDirection: 'desc',
         compareFunction: codeSort,
       },
-      contractor: {
+      'locals.contractor': {
         title: 'Cliente',
         type: 'string',
       },
-      name: {
+      'locals.name': {
         title: 'Empreendimento',
         type: 'string',
       },
-      role: {
+      'locals.role': {
         title: 'Papel',
         type: 'string',
         width: '10%',
@@ -117,13 +117,13 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return false;
         },
       },
-      value: {
+      'locals.value': {
         title: 'Valor',
         type: 'string',
         width: '10%',
         compareFunction: valueSort,
       },
-      interests: {
+      'locals.interests': {
         title: 'Parcelas',
         type: 'string',
         width: '50px',
@@ -204,7 +204,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((isGranted) => (this.settings.actions.add = isGranted));
     this.source.setFilter([
-      { field: 'role', search: 'Equipe Gestor' },
+      { field: 'locals.role', search: 'Equipe Gestor' },
       { field: 'status', search: 'Em andamento A receber Finalizado' },
     ]);
   }
@@ -320,7 +320,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     let csv = mainHeaders.join(';') + '\r\n';
 
     contracts
-      .sort((a, b) => codeSort(1, a.code, b.code))
+      .sort((a, b) => codeSort(1, a.locals.code, b.locals.code))
       .forEach((contract) => {
         if (contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(contract.invoice);

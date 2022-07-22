@@ -2,8 +2,11 @@
 import { Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NbComponentSize, NbComponentStatus, NbTrigger } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { accessNestedProperty } from 'app/shared/utils';
 
 const MAX_CHARS = 524288; // the default max length per the html maxlength attribute
 const MIN_SEARCH_LENGTH = 3;
@@ -57,18 +60,27 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   filteredDataIsEmpty$: Observable<boolean> = of(true);
   tooltipTriggers = NbTrigger;
   searchChange$ = new BehaviorSubject<boolean>(true);
+  propertiesToAccess: string[] = [];
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
 
   public ngOnInit(): void {
+    this.propertiesToAccess = this.nameField.split('.');
+
     if (this.data$) {
       this.filteredData$ = combineLatest([this.data$, this.searchChange$]).pipe(
         map(([objs, _]) => {
           if (objs.length == 0) return objs;
           this.searchActive = true;
           const filterValue = this.prepareString(this.searchStr);
+
           return objs.filter((obj: any) => {
-            const result = this.prepareString(obj[this.nameField]).includes(filterValue);
+            const value =
+              this.propertiesToAccess.length > 1
+                ? accessNestedProperty(obj, cloneDeep(this.propertiesToAccess))
+                : obj[this.nameField];
+
+            const result = this.prepareString(value).includes(filterValue);
             this.searchActive = false;
             return result;
           });
@@ -86,12 +98,12 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   }
 
   display(event: any): string {
-    return typeof event === 'string' ? event : event[this.nameField];
+    return typeof event === 'string' ? event : this.getItemValueByField(event);
   }
 
   onModelChange(event: any): void {
     if (typeof event === 'string') this.searchStr = event;
-    else this.searchStr = event[this.nameField];
+    else this.searchStr = this.getItemValueByField(event);
     this.searchChange$.next(true);
   }
 
@@ -99,7 +111,7 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
     if (this.isInitialized) {
       if (event) {
         if (typeof event === 'object') {
-          this.lastSelected = event[this.nameField];
+          this.lastSelected = this.getItemValueByField(event);
           this._onChangeCallback(this.searchStr);
           this.selected.emit(event);
         } else if (typeof event === 'string') {
@@ -115,6 +127,12 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
       this._onTouchedCallback();
       this.blur.emit();
     }, 500);
+  }
+
+  getItemValueByField(item: any): string {
+    return this.propertiesToAccess.length > 1
+      ? accessNestedProperty(item, cloneDeep(this.propertiesToAccess))
+      : item[this.nameField];
   }
 
   public writeValue(value: any): void {

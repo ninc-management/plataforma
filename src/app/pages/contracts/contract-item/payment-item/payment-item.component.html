@@ -15,7 +15,7 @@
           Não foi possível achar um contrato com o código digitado
           "
           fieldSize="large"
-          nameField="code"
+          nameField="locals.code"
           pictureField="managerPicture"
           [data$]="availableContractsData"
           [minSearchLength]="0"
@@ -67,7 +67,7 @@
             }"
             ngxSelectAllText
             [disabled]="paymentIndex != undefined"
-            [overPaid]="contract.balance"
+            [overPaid]="contract.locals.balance"
             [required]="validation.value.required"
             [minLength]="validation.value.minLength"
             [maxLength]="validation.value.maxLength"
@@ -86,7 +86,7 @@
             (focusout)="updateLastValues()"
           />
           <ng-container>
-            <p class="caption">Valor em caixa: R$ {{ contract.balance }}</p>
+            <p class="caption">Valor em caixa: R$ {{ contract.locals.balance }}</p>
             <p
               class="caption status-danger"
               *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
