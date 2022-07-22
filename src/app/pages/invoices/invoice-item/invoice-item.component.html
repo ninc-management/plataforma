@@ -859,13 +859,21 @@
                 [status]="tempInvoice.laep[i].text.length == 0 ? 'danger' : 'basic'"
               />
             </div>
-            <div class="col-2 col-md-1" style="text-align: right">
+             <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+              class="addIcon"
+                status="basic"
+                [icon]="tempInvoice.laep[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                pack="eva"
+                (click)="tempInvoice.laep[i].isVisible = !tempInvoice.laep[i].isVisible; isFormDirty.next(true);"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
               <nb-icon
                 class="xIcon"
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laep.splice(i, 1)"
+                (click)="tempInvoice.laep.splice(i, 1); isFormDirty.next(true);"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -996,11 +1004,19 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
+              class="addIcon"
+                status="basic"
+                [icon]="tempInvoice.laee[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                pack="eva"
+                (click)="tempInvoice.laee[i].isVisible = !tempInvoice.laee[i].isVisible; isFormDirty.next(true);"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+              <nb-icon
                 class="xIcon"
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laee.splice(i, 1)"
+                (click)="tempInvoice.laee.splice(i, 1); isFormDirty.next(true);"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1133,11 +1149,19 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
+              class="addIcon"
+                status="basic"
+                [icon]="tempInvoice.laec[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                pack="eva"
+                (click)="tempInvoice.laec[i].isVisible = !tempInvoice.laec[i].isVisible; isFormDirty.next(true);"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+              <nb-icon
                 class="xIcon"
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laec.splice(i, 1)"
+                (click)="tempInvoice.laec.splice(i, 1); isFormDirty.next(true);"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1275,7 +1299,7 @@
             >
               [required]="validation.unit.required" [status]=" unit.dirty ? (unit.invalid ? 'danger' : 'success') :
               'basic' " [attr.aria-invalid]="unit.invalid && unit.touched ? true : null"
-              <nb-option *ngFor="let unit of UNITx" [value]="unit">
+              <nb-option *ngFor="let unit of config.units" [value]="unit">
                 {{ unit }}
               </nb-option>
             </nb-select>
@@ -1407,7 +1431,7 @@
                         status="basic"
                         icon="trash-2-outline"
                         pack="eva"
-                        (click)="product.subproducts.splice(j, 1)"
+                        (click)="product.subproducts.splice(j, 1); isFormDirty.next(true);"
                         [options]="{ animation: { type: 'shake' } }"
                       ></nb-icon>
                     </div>
@@ -1448,7 +1472,7 @@
                 fullWidth
                 size="large"
               >
-                <nb-option *ngFor="let unit of UNITx" [value]="unit">
+                <nb-option *ngFor="let unit of config.units" [value]="unit">
                   {{ unit }}
                 </nb-option>
               </nb-select>
@@ -1868,11 +1892,19 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
+              class="addIcon"
+                status="basic"
+                [icon]="tempInvoice.importants[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                pack="eva"
+                (click)="tempInvoice.importants[i].isVisible = !tempInvoice.importants[i].isVisible; isFormDirty.next(true);"
+                [options]="{ animation: { type: 'pulse' } }"
+              ></nb-icon>
+              <nb-icon
                 class="xIcon"
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.importants.splice(i, 1)"
+                (click)="tempInvoice.importants.splice(i, 1); isFormDirty.next(true);"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -2169,7 +2201,7 @@
   fullWidth
   status="primary"
   size="large"
-  [disabled]="!form.valid || !form.dirty || isNotEdited()"
+  [disabled]="!form.valid || isNotEdited()"
 >
   {{ editing ? 'Atualizar' : 'Cadastrar' }}
 </button>

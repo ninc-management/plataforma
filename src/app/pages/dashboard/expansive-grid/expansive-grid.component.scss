@@ -1,0 +1,46 @@
+@import 'app/@theme/styles/themes';
+
+@include nb-install-component() {
+  --spinner-primary-background-color: transparent;
+
+  .expansive-grid-wrapper {
+    margin-bottom: var(--card-margin-bottom);
+  }
+
+  nb-card {
+    margin-bottom: 0;
+    transition: all 0.5s ease-in-out;
+
+    nb-card-body {
+      overflow-y: hidden;
+    }
+  }
+
+  .fallback-wrapper, .loading-spinner {
+    height: 100%;
+  }
+
+  .metric-items-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1rem 2rem;
+    margin: 1rem;
+
+    .metric-item {
+      height: 7rem;
+    }
+  }
+
+  .show-more {
+    background-color: var(--card-background-color);
+    color: var(--text-basic-color);
+    border: 0;
+
+    &:hover,
+    &:focus {
+      background-color: var(--card-background-color);
+      color: var(--text-basic-color);
+      border: 0;
+    }
+  }
+}

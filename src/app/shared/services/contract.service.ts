@@ -6,7 +6,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 
-import { idToProperty, isOfType, nfPercentage, nortanPercentage, reviveDates } from '../utils';
+import { idToProperty, isOfType, isWithinInterval, nfPercentage, nortanPercentage, reviveDates } from '../utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
@@ -294,8 +294,16 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 
-  receivedValue(user: User | string | undefined, contract: Contract): string {
-    const received = contract.payments
+  receivedValue(user: User | string | undefined, contract: Contract, start?: Date, end?: Date): string {
+    let validPayments = contract.payments;
+
+    if (start && end) {
+      validPayments = contract.payments.filter(
+        (payment) => payment.paidDate && isWithinInterval(payment.paidDate, start, end)
+      );
+    }
+
+    const received = validPayments
       .filter((payment) => payment.paid)
       .map((payment) => payment.team)
       .flat()
@@ -303,6 +311,7 @@ export class ContractService implements OnDestroy {
         if (this.userService.isEqual(member.user, user)) sum += this.stringUtil.moneyToNumber(member.value);
         return sum;
       }, 0);
+
     return this.stringUtil.numberToMoney(received);
   }
 
@@ -350,8 +359,16 @@ export class ContractService implements OnDestroy {
     return this.expensesContributions(contract).global.comission;
   }
 
-  getMemberExpensesSum(user: User | string | undefined, contract: Contract): string {
-    const filteredExpenses = contract.expenses
+  getMemberExpensesSum(user: User | string | undefined, contract: Contract, start?: Date, end?: Date): string {
+    let validExpenses = contract.expenses;
+
+    if (start && end) {
+      validExpenses = contract.expenses.filter(
+        (expense) => expense.paidDate && isWithinInterval(expense.paidDate, start, end)
+      );
+    }
+
+    const filteredExpenses = validExpenses
       .filter((expense) => {
         return (
           expense.paid &&
@@ -493,6 +510,37 @@ export class ContractService implements OnDestroy {
       .getValue()
       .map((contract) => this.actionsByContract(contract))
       .flat();
+  }
+
+  isContractActive(contract: Contract): boolean {
+    return contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER;
+  }
+
+  contractHasPaymentsWithUser(contract: Contract, userID: string) {
+    return contract.payments.some((payment) =>
+      payment.team.some((paymentTeamMember) => this.userService.isEqual(paymentTeamMember.user, userID))
+    );
+  }
+
+  contractHasExpensesWithUser(contract: Contract, userID: string) {
+    return contract.expenses.some((expense) =>
+      expense.team.some((expenseTeamMember) => this.userService.isEqual(expenseTeamMember.user, userID))
+    );
+  }
+
+  userContractsByStatus(userID: string, allowedStatuses: CONTRACT_STATOOS[]): Observable<Contract[]> {
+    return combineLatest([this.contracts$, this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
+      skipWhile(([, , isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+      takeUntil(this.destroy$),
+      map(([contracts, ,]) => {
+        return contracts.filter(
+          (contract) =>
+            allowedStatuses.includes(contract.status as CONTRACT_STATOOS) &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
+      })
+    );
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {

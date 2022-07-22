@@ -1,10 +1,11 @@
 import { transition, trigger, useAnimation } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbAccessChecker } from '@nebular/security';
 import {
   NbDialogService,
   NbMediaBreakpointsService,
   NbMenuService,
+  NbPopoverDirective,
   NbSidebarService,
   NbThemeService,
 } from '@nebular/theme';
@@ -39,6 +40,7 @@ interface NbMenuItem {
   animations: [trigger('shake', [transition('inactive => active', useAnimation(tada))])],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
+  @ViewChild(NbPopoverDirective) popover!: NbPopoverDirective;
   private destroy$: Subject<void> = new Subject<void>();
   env = environment;
   menuButtonClicked = false;

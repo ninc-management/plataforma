@@ -74,7 +74,7 @@
           <nb-list-item
             style="display: block"
             *ngFor="let notification of user.notifications.reverse(); let i = index; trackBy: trackByIndex"
-            (click)="openNotification(i, notification)"
+            (click)="openNotification(i, notification); popover.hide()"
           >
             <nb-user
               [name]="

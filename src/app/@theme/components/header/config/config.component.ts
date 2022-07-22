@@ -37,6 +37,7 @@ export class ConfigComponent implements OnInit {
   clonedConfig: PlatformConfig = new PlatformConfig();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
+  newUnit: string = '';
   adminExpenseTypes: TypeItem[] = [];
   contractExpenseTypes: TypeItem[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
@@ -67,10 +68,6 @@ export class ConfigComponent implements OnInit {
   onedriveIcon = {
     icon: 'onedrive',
     pack: 'fac',
-  };
-  notificationIcon = {
-    icon: 'bell',
-    pack: 'fa',
   };
 
   constructor(private configService: ConfigService) {}
@@ -140,6 +137,11 @@ export class ConfigComponent implements OnInit {
     this.errorInLevels = this.clonedConfig.profileConfig.levels.includes(this.newLevel);
     if (!this.errorInLevels) this.clonedConfig.profileConfig.levels.push(this.newLevel);
     this.newLevel = '';
+  }
+
+  addUnit(): void {
+    this.clonedConfig.invoiceConfig.units.push(this.newUnit);
+    this.newUnit = '';
   }
 
   updateConfig(): void {

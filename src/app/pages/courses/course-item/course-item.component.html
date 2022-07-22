@@ -198,7 +198,7 @@
         </div>
       </nb-list-item>
     </nb-list>
-    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid">
+    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || isNotEdited()">
       {{ editing ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>

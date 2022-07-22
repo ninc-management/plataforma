@@ -9,29 +9,19 @@ import {
   Renderer2,
   ViewChildren,
 } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
 import { startOfMonth, subMonths } from 'date-fns';
-import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
-import { ReceivablesDialogComponent } from 'app/pages/dashboard/user-receivables/receivables-dialog/receivables-dialog.component';
-import { ContractService } from 'app/shared/services/contract.service';
+import { MetricItem } from '../metric-item/metric-item.component';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
-import { InvoiceService } from 'app/shared/services/invoice.service';
-import { MetricsService, ReceivableByContract } from 'app/shared/services/metrics.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { MetricInfo, MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { NOT } from 'app/shared/utils';
-
-interface MetricItem {
-  title: string;
-  tooltip: string;
-  value: Observable<string>;
-  // activeProgress: Observable<number>;
-  description: Observable<string>;
-  loading: Observable<boolean>;
-}
 
 /* eslint-disable indent */
 @Component({
@@ -46,7 +36,7 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
   METRICS: MetricItem[] = [];
   resize$ = new BehaviorSubject<boolean>(true);
   destroy$ = new Subject<void>();
-  userReceivableContracts: ReceivableByContract[] = [];
+  isMetricsDataLoading = true;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any): void {
@@ -59,7 +49,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private userService: UserService,
     private stringUtil: StringUtilService,
     private financialService: FinancialService,
-    private dialogService: NbDialogService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService
@@ -72,8 +61,9 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     const today = new Date();
-    const monthStart = startOfMonth(today);
-    const previousMonth = subMonths(monthStart, 1);
+    const currentMonthStart = startOfMonth(today);
+    const previousMonthStart = subMonths(currentMonthStart, 1);
+
     this.userService.currentUser$
       .pipe(
         skipWhile((user) => user._id === undefined),
@@ -82,155 +72,43 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
       .subscribe((user) => {
         // TODO: Recalcular a cada nova transação
         this.METRICS.push({
-          title: 'Caixa',
-          tooltip: 'Dinheiro do associado em custódia da Empresa',
-          value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
-          description: of(''),
-          loading: this.userService.currentUser$.pipe(map((user) => user._id == undefined)),
-        });
-        this.METRICS.push({
-          title: 'Balanço do mês',
-          tooltip:
-            'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
+          title: 'Recebido',
+          tooltip: 'Soma dos valores recebidos por você através dos contratos no mês corrente',
           value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
-            .pipe(map((x) => 'R$ ' + this.stringUtil.numberToMoney(x.user))),
-          description: this.metricsService.receivedValueNortan(previousMonth, monthStart, user._id).pipe(
-            map((pastPayments) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você recebeu R$ ' +
-                this.stringUtil.numberToMoney(pastPayments.user)
-              );
-            })
-          ),
-          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
-        });
-        this.METRICS.push({
-          title: 'Nº de IMPUL$$O$',
-          tooltip: 'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
-          value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
-            .pipe(map((x) => Math.trunc(x.global / 1000).toString())),
-          description: this.metricsService.receivedValueNortan(previousMonth, monthStart, user._id).pipe(
-            map((pastImpulses) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' a houveram ' +
-                Math.trunc(pastImpulses.global / 1000).toString()
-              );
-            })
-          ),
-          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
-        });
-        this.METRICS.push({
-          title: 'Contratos como gestor',
-          tooltip: 'Número de propostas de orçamento, criados por você, fechadas com o cliente no mês corrente',
-          value: this.metricsService
-            .contractsAsManager(user._id)
-            .pipe(map((pastContracts) => pastContracts.count.toString())),
-          description: this.metricsService.contractsAsManager(user._id, 'Mês').pipe(
-            map((pastContracts) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você fechou ' +
-                (pastContracts.count == 0 ? 'nenhum' : pastContracts.count) +
-                (pastContracts.count > 1 ? ' contratos' : ' contrato')
-              );
-            })
-          ),
+            .userReceivedValue(user._id, currentMonthStart, today)
+            .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
+          previousValue: this.metricsService
+            .userReceivedValue(user._id, previousMonthStart, currentMonthStart)
+            .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
+
         this.METRICS.push({
-          title: 'Contratos como equipe',
-          tooltip:
-            'Número de propostas de orçamento, a qual você faz parte da equipe, fehcadas com o cliente no mês corrente',
+          title: 'Despesas',
+          tooltip: 'Soma das suas despesas no mês corrente',
           value: this.metricsService
-            .contractsAsMember(user._id)
-            .pipe(map((pastContracts) => pastContracts.count.toString())),
-          description: this.metricsService.contractsAsMember(user._id, 'Mês').pipe(
-            map((pastContracts) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você participou de ' +
-                (pastContracts.count == 0 ? 'nenhum' : pastContracts.count) +
-                (pastContracts.count > 1 ? ' contratos' : ' contrato')
-              );
-            })
-          ),
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
+          previousValue: this.metricsService
+            .userExpenses(user._id, previousMonthStart, currentMonthStart)
+            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
           ),
         });
-        this.METRICS.push({
-          title: 'Orçamentos como gestor',
-          tooltip: 'Número de propostas de orçamento criados por você no mês corrente',
-          value: this.metricsService
-            .invoicesAsManager(user._id)
-            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
-          description: this.metricsService.invoicesAsManager(user._id, 'Mês').pipe(
-            map((pastInvoices) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você enviou ' +
-                (pastInvoices.count == 0 ? 'nenhum' : pastInvoices.count) +
-                (pastInvoices.count > 1 ? ' orçamentos' : ' orçamento')
-              );
-            })
-          ),
-          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
-        });
-        this.METRICS.push({
-          title: 'Orçamentos como equipe',
-          tooltip: 'Número de propostas de orçamento que você faz parta da equipe no mês corrente',
-          value: this.metricsService
-            .invoicesAsMember(user._id)
-            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
-          description: this.metricsService.invoicesAsMember(user._id, 'Mês').pipe(
-            map((pastInvoices) => {
-              return (
-                this.metricsService.plural('Mês', 1) +
-                ' você participou de ' +
-                (pastInvoices.count == 0 ? 'nenhum' : pastInvoices.count) +
-                (pastInvoices.count > 1 ? ' orçamentos' : ' orçamento')
-              );
-            })
-          ),
-          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
-        });
-        this.METRICS.push({
-          title: 'IMPUL$$O$',
-          tooltip:
-            'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados da empresa, no mês corrente. (R$ total recebido / R$ total pago aos associados da empresa)',
-          value: this.metricsService
-            .receivedValueNortan(monthStart, today, user._id)
-            .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
-          description: this.metricsService
-            .receivedValueNortan(previousMonth, monthStart, user._id)
-            .pipe(
-              map(
-                (userGlobal) =>
-                  this.metricsService.plural('Mês', 1) +
-                  ' foi ' +
-                  this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global)
-              )
-            ),
-          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
-        });
+
         this.METRICS.push({
           title: 'Valor a receber',
           tooltip: 'Soma dos seus saldos e cashback de cada contrato que você faz parte',
           value: this.metricsService.userReceivableValue(user._id).pipe(
             map((userReceivable) => {
-              this.userReceivableContracts = userReceivable.receivableContracts;
               return userReceivable.totalValue ? 'R$ ' + userReceivable.totalValue : 'R$ 0,00';
             })
           ),
-          description: of(''),
           loading: combineLatest([
             this.contractService.isDataLoaded$,
             this.invoiceService.isDataLoaded$,
@@ -243,6 +121,198 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             )
           ),
         });
+
+        this.METRICS.push({
+          title: 'Orçamentos em aberto',
+          tooltip: 'Quantidade de orçamentos em aberto que você faz parte como equipe',
+          value: this.metricsService
+            .invoicesAsMember({
+              uId: user._id,
+              allowedStatuses: [INVOICE_STATOOS.EM_ANALISE],
+              onlyNew: false,
+            })
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'Contratos em andamento',
+          tooltip: 'Quantidade de contratos em andamento que você faz parte como equipe',
+          value: this.contractService
+            .userContractsByStatus(user._id, [CONTRACT_STATOOS.EM_ANDAMENTO])
+            .pipe(map((contracts) => contracts.length.toString())),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Contratos a receber',
+          tooltip: 'Quantidade de contratos a receber que você faz parte como equipe',
+          value: this.contractService
+            .userContractsByStatus(user._id, [CONTRACT_STATOOS.A_RECEBER])
+            .pipe(map((contracts) => contracts.length.toString())),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Caixa',
+          tooltip: 'Dinheiro do associado em custódia da Empresa',
+          value: this.financialService.userBalance(user).pipe(map((balance) => 'R$ ' + balance)),
+          loading: this.userService.currentUser$.pipe(map((user) => user._id == undefined)),
+        });
+
+        this.METRICS.push({
+          title: 'Balanço do mês',
+          tooltip:
+            'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
+          value: this.metricsService
+            .receivedValueNortan(currentMonthStart, today, user._id)
+            .pipe(
+              map((receivedValueNortanData) => 'R$ ' + this.stringUtil.numberToMoney(receivedValueNortanData.user))
+            ),
+          previousValue: this.metricsService.receivedValueNortan(previousMonthStart, currentMonthStart, user._id).pipe(
+            map((previousReceivedValueNortanData) => {
+              return 'R$ ' + this.stringUtil.numberToMoney(previousReceivedValueNortanData.user);
+            })
+          ),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'Nº de IMPUL$$O$',
+          tooltip: 'Soma do valor líquido de todas as Ordens de Empenho pagas no mês',
+          value: this.metricsService
+            .receivedValueNortan(currentMonthStart, today, user._id)
+            .pipe(map((x) => Math.trunc(x.global / 1000).toString())),
+          previousValue: this.metricsService.receivedValueNortan(previousMonthStart, currentMonthStart, user._id).pipe(
+            map((pastImpulses) => {
+              return Math.trunc(pastImpulses.global / 1000).toString();
+            })
+          ),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'Contratos como gestor',
+          tooltip: 'Número de propostas de orçamento, criados por você, fechadas com o cliente no mês corrente',
+          value: this.metricsService
+            .contractsAsManager(user._id)
+            .pipe(map((pastContracts) => pastContracts.count.toString())),
+          previousValue: this.metricsService
+            .contractsAsManager(user._id)
+            .pipe(map((pastContracts) => pastContracts.count.toString())),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Contratos como equipe',
+          tooltip:
+            'Número de propostas de orçamento, a qual você faz parte da equipe, fehcadas com o cliente no mês corrente',
+          value: this.metricsService
+            .contractsAsMember(user._id)
+            .pipe(map((pastContracts) => pastContracts.count.toString())),
+          previousValue: this.metricsService
+            .contractsAsMember(user._id, 'Mês')
+            .pipe(map((pastContracts) => pastContracts.count.toString())),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Orçamentos como gestor',
+          tooltip: 'Número de propostas de orçamento criados por você no mês corrente',
+          value: this.metricsService
+            .invoicesAsManager(user._id)
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          previousValue: this.metricsService
+            .invoicesAsManager(user._id, 'Mês')
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'Orçamentos como equipe',
+          tooltip: 'Número de propostas de orçamento que você faz parta da equipe no mês corrente',
+          value: this.metricsService
+            .invoicesAsMember({ uId: user._id })
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          previousValue: this.metricsService
+            .invoicesAsMember({ uId: user._id, last: 'Mês' })
+            .pipe(map((pastInvoices) => pastInvoices.count.toString())),
+          loading: NOT(this.invoiceService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'IMPUL$$O$',
+          tooltip:
+            'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados da empresa, no mês corrente. (R$ total recebido / R$ total pago aos associados da empresa)',
+          value: this.metricsService
+            .receivedValueNortan(currentMonthStart, today, user._id)
+            .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
+          previousValue: this.metricsService
+            .receivedValueNortan(previousMonthStart, currentMonthStart, user._id)
+            .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
+          loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
+        });
+
+        this.METRICS.push({
+          title: 'Saldo em contratos',
+          tooltip: 'Soma do seu balanço individual em cada contrato que você faz parte',
+          value: this.metricsService.userBalanceSumInContracts(user._id).pipe(map((balance) => 'R$ ' + balance)),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Média do valor recebido',
+          tooltip:
+            'Soma do valor recebido por você no mês corrente dividido pela quantidade de contratos que você faz parte',
+          value: this.metricsService.userReceivedValue(user._id, currentMonthStart, today).pipe(
+            takeUntil(this.destroy$),
+            map((userReceivedValueData) => this.userMetricsAverage(userReceivedValueData))
+          ),
+          previousValue: this.metricsService.userReceivedValue(user._id, previousMonthStart, currentMonthStart).pipe(
+            takeUntil(this.destroy$),
+            map((userReceivedValueData) => {
+              return this.userMetricsAverage(userReceivedValueData);
+            })
+          ),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.METRICS.push({
+          title: 'Média das despesas',
+          tooltip: 'Soma das suas despesas no mês corrente dividido pela quantidade de contratos que você faz parte',
+          value: this.metricsService
+            .userExpenses(user._id, currentMonthStart, today)
+            .pipe(map((userExpensesMetricData) => this.userMetricsAverage(userExpensesMetricData))),
+          previousValue: this.metricsService.userExpenses(user._id, previousMonthStart, currentMonthStart).pipe(
+            map((userExpensesMetricData) => {
+              return this.userMetricsAverage(userExpensesMetricData);
+            })
+          ),
+          loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
+            takeUntil(this.destroy$),
+            map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
+          ),
+        });
+
+        this.isMetricsDataLoading = false;
       });
   }
 
@@ -262,15 +332,8 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     });
   }
 
-  openReceivablesDialog(): void {
-    this.dialogService.open(ReceivablesDialogComponent, {
-      context: {
-        userReceivableContracts: this.userReceivableContracts,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+  private userMetricsAverage(data: MetricInfo): string {
+    if (data.count == 0) return 'R$ 0,00';
+    return 'R$ ' + this.stringUtil.numberToMoney(data.value / data.count);
   }
 }

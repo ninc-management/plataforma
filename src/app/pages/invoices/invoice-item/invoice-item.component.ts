@@ -39,14 +39,6 @@ import { User } from '@models/user';
 
 import invoice_validation from 'app/shared/validators/invoice-validation.json';
 
-export enum UNIT_OF_MEASURE {
-  METRO_QUADRADO = 'm²',
-  KILO = 'km',
-  HECTO = 'ha',
-  DIA = 'dia',
-  UNIT = 'unidade',
-}
-
 @Component({
   selector: 'ngx-invoice-item',
   templateUrl: './invoice-item.component.html',
@@ -132,7 +124,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
-  UNITx = Object.values(UNIT_OF_MEASURE);
 
   forceValidatorUpdate = forceValidatorUpdate;
   trackByIndex = trackByIndex;
@@ -160,11 +151,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.configService
-      .getConfig()
-      .pipe(take(1))
-      .subscribe((configs) => {
-        if (configs[0]) this.config = configs[0].invoiceConfig;
+    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+      .pipe(
+        skipWhile(([configLoaded, _]) => !configLoaded),
+        take(1)
+      )
+      .subscribe(([_, config]) => {
+        this.config = config[0].invoiceConfig;
       });
     if (this.iInvoice._id || this.iInvoice.model) {
       this.editing = this.tempInvoice.model == undefined;

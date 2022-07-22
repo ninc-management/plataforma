@@ -48,7 +48,7 @@ export interface TimeSeries {
 }
 /* eslint-enable indent */
 
-interface MetricInfo {
+export interface MetricInfo {
   count: number;
   value: number;
 }
@@ -97,6 +97,15 @@ interface ValueByContractor {
 interface ContractorInfo {
   value: string;
   percentage: string;
+}
+
+interface InvoicesAsMemberParams {
+  uId: string;
+  last?: 'Hoje' | 'Dia' | 'Mês' | 'Ano';
+  number?: number;
+  fromToday?: boolean;
+  allowedStatuses?: INVOICE_STATOOS[];
+  onlyNew?: boolean;
 }
 
 @Injectable({
@@ -266,24 +275,32 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  invoicesAsMember(
-    uId: string,
-    last: 'Hoje' | 'Dia' | 'Mês' | 'Ano' = 'Hoje',
+  invoicesAsMember({
+    uId,
+    last = 'Hoje',
     number = 1,
-    fromToday = false
-  ): Observable<MetricInfo> {
+    fromToday = false,
+    allowedStatuses = [INVOICE_STATOOS.EM_ANALISE, INVOICE_STATOOS.FECHADO, INVOICE_STATOOS.NEGADO],
+    onlyNew = true,
+  }: InvoicesAsMemberParams): Observable<MetricInfo> {
     return combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$]).pipe(
       skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
       map(([invoices, _]) => {
         return invoices
-          .filter((invoices) => invoices.status != INVOICE_STATOOS.INVALIDADO)
+          .filter((invoices) => allowedStatuses.includes(invoices.status as INVOICE_STATOOS))
           .reduce(
             (metricInfo: MetricInfo, invoice) => {
-              const created = invoice.created;
-              if (this.invoiceService.isInvoiceMember(invoice, uId) && isValidDate(created, last, number, fromToday)) {
-                metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+              if (this.invoiceService.isInvoiceMember(invoice, uId)) {
+                const created = invoice.created;
+                if (onlyNew && isValidDate(created, last, number, fromToday)) {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                } else {
+                  metricInfo.count += 1;
+                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                }
               }
+
               return metricInfo;
             },
             { count: 0, value: 0 }
@@ -447,7 +464,7 @@ export class MetricsService implements OnDestroy {
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember({ uId: uId, last: last, number: number, fromToday: fromToday }),
           ]);
     /* eslint-enable indent */
     return combined$.pipe(
@@ -476,7 +493,7 @@ export class MetricsService implements OnDestroy {
           ])
         : combineLatest([
             this.contractsAsMember(uId, last, number, fromToday),
-            this.invoicesAsMember(uId, last, number, fromToday),
+            this.invoicesAsMember({ uId: uId, last: last, number: number, fromToday: fromToday }),
           ]);
     /* eslint-enable indent */
     return combined$.pipe(
@@ -553,45 +570,28 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  receivedValue(uId: string, start: Date, end: Date): Observable<MetricInfo> {
+  userReceivedValue(userID: string, start: Date, end: Date): Observable<MetricInfo> {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
       skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
+      takeUntil(this.destroy$),
       map(([contracts, _]) => {
-        return contracts.reduce(
-          (metricInfo: MetricInfo, contract) => {
-            if (this.contractService.hasPayments(contract._id)) {
-              const value = contract.payments.reduce(
-                (paid: MetricInfo, payment) => {
-                  if (payment.paid && payment.paidDate) {
-                    const paidDate = payment.paidDate;
-                    if (isWithinInterval(paidDate, start, end)) {
-                      const uPayments = payment.team.reduce(
-                        (upaid: MetricInfo, member) => {
-                          if (this.userService.isEqual(member.user, uId)) {
-                            upaid.count += 1;
-                            upaid.value += this.stringUtil.moneyToNumber(member.value);
-                          }
-                          return upaid;
-                        },
-                        { count: 0, value: 0 }
-                      );
-                      paid.count += uPayments.count;
-                      paid.value += uPayments.value;
-                    }
-                  }
-                  return paid;
-                },
-                { count: 0, value: 0 }
-              );
-              metricInfo.count += value.count;
-              metricInfo.value += value.value;
-            }
-            return metricInfo;
-          },
-          { count: 0, value: 0 }
-        );
-      }),
-      take(1)
+        const receivedMetricInfo = { count: 0, value: 0 };
+
+        return contracts.reduce((receivedMetricInfo, contract) => {
+          if (this.contractService.contractHasPaymentsWithUser(contract, userID)) {
+            receivedMetricInfo.value = this.stringUtil.moneyToNumber(
+              this.stringUtil.sumMoney(
+                this.stringUtil.numberToMoney(receivedMetricInfo.value),
+                this.contractService.receivedValue(userID, contract, start, end)
+              )
+            );
+
+            receivedMetricInfo.count += 1;
+          }
+
+          return receivedMetricInfo;
+        }, receivedMetricInfo);
+      })
     );
   }
 
@@ -872,17 +872,6 @@ export class MetricsService implements OnDestroy {
     );
   }
 
-  private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
-    return Object.entries(valueByContractor)
-      .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
-      .map((contractor) => {
-        return {
-          contractorName: contractor[0],
-          data: { value: contractor[1].value, percentage: contractor[1].percentage },
-        };
-      });
-  }
-
   parettoRank(): Observable<ValueByContractor[]> {
     let accumulatedPercentage = 0;
     let hasAchievedLimit = false;
@@ -901,6 +890,70 @@ export class MetricsService implements OnDestroy {
         });
       })
     );
+  }
+
+  userBalanceSumInContracts(userID: string): Observable<string> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      takeUntil(this.destroy$),
+      map(([contracts, , ,]) => {
+        const filteredContracts = contracts.filter(
+          (contract) =>
+            this.contractService.isContractActive(contract) &&
+            contract.invoice &&
+            this.invoiceService.isInvoiceMember(contract.invoice, userID)
+        );
+
+        return filteredContracts.reduce((balanceSum, contract) => {
+          return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
+        }, '0,00');
+      })
+    );
+  }
+
+  userExpenses(userID: string, start: Date, end: Date): Observable<MetricInfo> {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      takeUntil(this.destroy$),
+      map(([contracts, , ,]) => {
+        const validContracts = contracts.filter((contract) =>
+          this.contractService.contractHasExpensesWithUser(contract, userID)
+        );
+
+        const expensesSum = validContracts.reduce((expensesSum, contract) => {
+          return this.stringUtil.sumMoney(
+            expensesSum,
+            this.contractService.getMemberExpensesSum(userID, contract, start, end)
+          );
+        }, '0,00');
+
+        return {
+          value: this.stringUtil.moneyToNumber(expensesSum),
+          count: validContracts.length,
+        } as MetricInfo;
+      })
+    );
+  }
+
+  private sortContractorsByValue(valueByContractor: Record<string, ContractorInfo>): ValueByContractor[] {
+    return Object.entries(valueByContractor)
+      .sort((contractorA, contractorB) => valueSort(-1, contractorA[1].value, contractorB[1].value))
+      .map((contractor) => {
+        return {
+          contractorName: contractor[0],
+          data: { value: contractor[1].value, percentage: contractor[1].percentage },
+        };
+      });
   }
 
   private calculatePercentagesByContractor(

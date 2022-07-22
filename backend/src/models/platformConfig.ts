@@ -60,6 +60,9 @@ export class InvoiceConfig {
   hasMaterialList: boolean = true;
 
   @prop({ required: true })
+  units: string[] = [];
+
+  @prop({ required: true })
   codeAbbreviation: string = ' ';
 
   @prop({ required: true })

@@ -47,7 +47,7 @@ export class DashboardComponent {
   dialogTypes = DIALOG_TYPES;
   activeTab: string = TAB_TITLES.PESSOAL;
   nortanIcon = {
-    icon: 'logoNoFill',
+    icon: 'logoWhite',
     pack: 'fac',
   };
   teamIcon = {

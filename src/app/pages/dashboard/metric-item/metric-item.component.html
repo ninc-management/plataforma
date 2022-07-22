@@ -1,0 +1,41 @@
+<div>
+  <div class="text-center">
+    <span class="metric-title subtitle">{{ metricItem.title }}</span>
+    <nb-icon
+      status="info"
+      icon="info"
+      pack="eva"
+      [options]="{ animation: { type: 'pulse' } }"
+      nbTooltip="{{ metricItem.tooltip }}"
+      nbTooltipPlacement="top"
+      nbTooltipStatus="info"
+    ></nb-icon>
+    <a
+      *ngIf="metricItem.title == METRIC_TITLES.RECEIVABLE_VALUE"
+      (click)="openReceivablesDialog()"
+      style="text-decoration: none; display: contents; cursor: pointer"
+    >
+      <nb-icon
+        status="info"
+        icon="diagonal-arrow-right-up"
+        pack="eva"
+        [options]="{ animation: { type: 'pulse' } }"
+      ></nb-icon>
+    </a>
+  </div>
+  <div
+    *ngIf="metricItem.loading | async; else metric"
+    [nbSpinner]="true"
+    nbSpinnerStatus="primary"
+    nbSpinnerSize="giant"
+    style="width: 100%; height: 70px"
+  ></div>
+  <ng-template #metric>
+    <h3 class="metric-value text-center">
+      {{ metricItem.value | async }}
+      <p *ngIf="metricItem.previousValue" class="text-secondary semi-bold">
+        {{ metricItem.previousValue | async }}
+      </p>
+    </h3>
+  </ng-template>
+</div>

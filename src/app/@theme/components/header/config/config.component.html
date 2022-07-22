@@ -1,6 +1,6 @@
 <nb-tabset fullWidth>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #expenseConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #expenseConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-auto">
           <label class="label-divider">
@@ -259,10 +259,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -278,7 +278,7 @@
             <table class="table-invoice">
               <tbody>
                 <tr>
-                  <td>Tipo de orçamento</td>
+                  <td class="td-left">Tipo de orçamento</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasType"
@@ -288,7 +288,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Cabeçalho</td>
+                  <td class="td-left">Cabeçalho</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasHeader"
@@ -298,7 +298,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Lista de colaboradores</td>
+                  <td class="td-left">Lista de colaboradores</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasTeam"
@@ -308,7 +308,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Etapa preliminar</td>
+                  <td class="td-left">Etapa preliminar</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasPreliminary"
@@ -318,7 +318,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Etapa executiva</td>
+                  <td class="td-left">Etapa executiva</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasExecutive"
@@ -328,7 +328,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Etapa complementar</td>
+                  <td class="td-left">Etapa complementar</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasComplementary"
@@ -338,7 +338,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Parcelamentos</td>
+                  <td class="td-left">Parcelamentos</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasStageName"
@@ -348,7 +348,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Importantes</td>
+                  <td class="td-left">Importantes</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasImportants"
@@ -358,7 +358,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Lista de materiais</td>
+                  <td class="td-left">Lista de materiais</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.invoiceConfig.hasMaterialList"
@@ -400,6 +400,7 @@
                   [required]="validation.abbreviation.required"
                   [minlength]="validation.abbreviation.minLength"
                   [attr.aria-invalid]="codeAbbreviation.invalid && codeAbbreviation.touched ? true : null"
+                  (focusout)="clonedConfig.invoiceConfig.codeAbbreviation = clonedConfig.invoiceConfig.codeAbbreviation.toUpperCase()"
                 />
                 <ng-container *ngIf="codeAbbreviation.invalid && codeAbbreviation.touched">
                   <p class="caption status-danger" *ngIf="codeAbbreviation.errors?.required">A sigla é obrigatória!</p>
@@ -457,7 +458,80 @@
                 </div>
               </div>
             </div>
+            <div class="col-12">
+              <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">Lista de unidade de medidas para unidade de produtos</label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-10 col-md-11">
+                  <div class="form-control-group">
+                    <label class="label" for="metric-input">Nome da unidade</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="newUnit"
+                      #metric="ngModel"
+                      id="metric-input"
+                      name="metric"
+                      placeholder="Nome da unidade"
+                      fullWidth
+                      fieldSize="large"
+                      [status]="metric.value ? 'success' : 'basic'"
+                      [attr.aria-invalid]="metric.invalid && metric.touched ? true : null"
+                    />
+                  </div>
+                </div>
+                <div class="col-2 col-md-1">
+                  <div class="form-control-group">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      [disabled]="!metric.value"
+                      (click)="addUnit()"
+                    >
+                      <nb-icon status="basic" icon="plus" pack="eva"></nb-icon>
+                    </button>
+                  </div>
+                </div>
+                <hr />
+              </div>
+            </div>
           </div>
+          <nb-list style="width: 100%; padding: 10px 0">
+            <nb-list-item *ngFor="let unit of clonedConfig.invoiceConfig.units; let i = index; trackBy: trackByIndex">
+              <div class="row typeRow">
+                <div class="col-9 col-md-11">
+                  <input
+                    nbInput
+                    [(ngModel)]="clonedConfig.invoiceConfig.units[i]"
+                    id="metric-input{{ i }}"
+                    name="metric-{{ i }}"
+                    fullWidth
+                    [status]="clonedConfig.invoiceConfig.units.length == 0 ? 'danger' : 'basic'"
+                    [readonly]="true"
+                  />
+                </div>
+                <div class="col-3 col-md-1">
+                  <nb-icon
+                    class="xIcon"
+                    status="basic"
+                    icon="trash-2-outline"
+                    pack="eva"
+                    (click)="clonedConfig.invoiceConfig.units.splice(i, 1); isFormDirty.next(true)"
+                    [options]="{ animation: { type: 'shake' } }"
+                  ></nb-icon>
+                </div>
+              </div>
+            </nb-list-item>
+          </nb-list>
         </div>
       </div>
       <button
@@ -466,10 +540,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -477,7 +551,7 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person" responsive>
+  <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person-outline" responsive>
     <form (ngSubmit)="updateConfig()" #profileConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
@@ -485,7 +559,7 @@
             <table class="table-profile">
               <tbody>
                 <tr>
-                  <td>Enquadramentos</td>
+                  <td class="td-left">Cargos</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.profileConfig.hasLevels"
@@ -495,7 +569,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Lista de times</td>
+                  <td class="td-left">Lista de times</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.profileConfig.hasTeam"
@@ -505,7 +579,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Lista de setores</td>
+                  <td class="td-left">Lista de setores</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.profileConfig.hasSector"
@@ -515,7 +589,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Perfil de atuação</td>
+                  <td class="td-left">Perfil de atuação</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.profileConfig.hasExpertiseBySector"
@@ -640,7 +714,7 @@
           </nb-list>
           <div class="row" style="margin-top: 8px">
             <div class="col-auto">
-              <label class="label-divider">Lista de enquadramento</label>
+              <label class="label-divider">Lista de cargos</label>
             </div>
             <div class="col">
               <hr />
@@ -649,21 +723,21 @@
           <div class="row" style="align-items: end">
             <div class="col-10">
               <div class="form-control-group">
-                <label class="label" for="input-levels-type">Tipo de enquadramento:</label>
+                <label class="label" for="input-levels-type">Tipo de cargo:</label>
                 <input
                   nbInput
                   [(ngModel)]="newLevel"
                   #levelType="ngModel"
                   id="input-levels-type"
                   name="levelsType"
-                  placeholder="Nome do tipo de enquadramento"
+                  placeholder="Nome do tipo de cargo"
                   fullWidth
                   fieldSize="large"
                   [status]="newLevel ? 'success' : 'basic'"
                   [attr.aria-invalid]="levelType.invalid && levelType.touched ? true : null"
                 />
                 <ng-container *ngIf="errorInLevels">
-                  <p class="caption status-danger" style="position: absolute">Já há um enquadramento com este nome!</p>
+                  <p class="caption status-danger" style="position: absolute">Já há um cargo com este nome!</p>
                 </ng-container>
               </div>
             </div>
@@ -693,7 +767,6 @@
                     [(ngModel)]="clonedConfig.profileConfig.levels[i]"
                     id="input-level-type-{{ i }}"
                     name="level-type-{{ i }}"
-                    placeholder="Nome do tipo de enquadramento"
                     fullWidth
                     [status]="clonedConfig.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
                     [required]="true"
@@ -721,10 +794,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -734,6 +807,16 @@
   </nb-tab>
   <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">
+            Dados da empresa
+          </label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
       <div class="row">
         <div class="col-12 col-md">
           <div class="form-control-group">
@@ -754,7 +837,7 @@
             </nb-form-field>
           </div>
         </div>
-        <div class="col col-md-auto" style="display: flex;flex-direction: column; justify-content: center;">
+        <div class="col col-md-auto" style="display: flex; flex-direction: column; justify-content: center">
           <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
           <nb-toggle
             [(ngModel)]="clonedConfig.socialConfig.showCompanyName"
@@ -957,10 +1040,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -969,14 +1052,14 @@
     </form>
   </nb-tab>
   <nb-tab tabId="modules-tab" [tabTitle]="isPhone() ? '' : 'Módulos Extras'" tabIcon="cube-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #moduleConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #moduleConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
             <table class="table-modules">
               <tbody>
                 <tr>
-                  <td>Módulo de promoções</td>
+                  <td class="td-left">Módulo de promoções</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.modulesConfig.hasPromotion"
@@ -986,7 +1069,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Módulo de cursos</td>
+                  <td class="td-left">Módulo de cursos</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.modulesConfig.hasCourse"
@@ -1006,10 +1089,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -1025,7 +1108,7 @@
             <table class="table-onedrive">
               <tbody>
                 <tr>
-                  <td>OneDrive</td>
+                  <td class="td-left">OneDrive</td>
                   <td>
                     <nb-toggle
                       [(ngModel)]="clonedConfig.oneDriveConfig.isActive"
@@ -1040,9 +1123,12 @@
           </div>
         </div>
         <div class="col-12 col-lg">
-          <div class="row" style="margin-top: 8px">
+          <div class="row">
             <div class="col-auto">
-              <label>Pasta compartilhada</label>
+              <label class="label-divider">Pasta compartilhada</label>
+            </div>
+            <div class="col">
+              <hr />
             </div>
           </div>
           <div class="row" style="align-items: end">
@@ -1123,10 +1209,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >
@@ -1134,7 +1220,7 @@
       </button>
     </form>
   </nb-tab>
-  <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" [tabIcon]="notificationIcon" responsive>
+  <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" tabIcon="bell-outline" responsive>
     <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-12 col-lg-auto" style="margin-bottom: 11px; height: auto">
@@ -1149,7 +1235,7 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Fechamento de Contrato
                     <nb-icon
                       status="info"
@@ -1179,7 +1265,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Parcelas das Ordens de Empenho
                     <nb-icon
                       status="info"
@@ -1209,7 +1295,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Movimentação criada
                     <nb-icon
                       status="info"
@@ -1239,7 +1325,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Movimentação paga
                     <nb-icon
                       status="info"
@@ -1269,7 +1355,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Usuário mencionado
                     <nb-icon
                       status="info"
@@ -1299,7 +1385,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Atribuição em etapa do contrato
                     <nb-icon
                       status="info"
@@ -1329,7 +1415,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>
+                  <td style="text-align: left" class="td-left">
                     Recebimento do valor total
                     <nb-icon
                       status="info"
@@ -1369,10 +1455,10 @@
         status="primary"
         size="large"
         [disabled]="
-          !expenseConfigform.valid ||
+          !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !moduleConfigform.valid ||
+          !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
       >

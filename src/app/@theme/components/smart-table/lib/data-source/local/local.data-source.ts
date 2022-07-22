@@ -234,7 +234,7 @@ export class LocalDataSource extends DataSource {
     if (this.filterConf.filters) {
       if (this.filterConf.andOperator) {
         this.filterConf.filters.forEach((fieldConf: any) => {
-          if (fieldConf['search'].length > 0) {
+          if (fieldConf['search']) {
             data = LocalFilter.filter(data, fieldConf['field'], fieldConf['search'], fieldConf['filter']);
           }
         });

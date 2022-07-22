@@ -627,7 +627,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laep = invoice.laep
           ? invoice.laep.map((activity, index) => {
-              return activity.text + (index == leapLength - 1 ? '.' : ';');
+              return activity.isVisible ? activity.text + (index == leapLength - 1 ? '.' : ';') : '';
             })
           : [];
         /* eslint-enable indent*/
@@ -672,7 +672,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laee = invoice.laee
           ? invoice.laee.map((activity, index) => {
-              return activity.text + (index == laeeLength - 1 ? '.' : ';');
+              return activity.isVisible ? activity.text + (index == laeeLength - 1 ? '.' : ';') : '';
             })
           : [];
         /* eslint-enable indent*/
@@ -723,7 +723,7 @@ export class PdfService {
         /* eslint-disable indent*/
         const laec = invoice.laec
           ? invoice.laec.map((activity, index) => {
-              return activity.text + (index == laecLength - 1 ? '.' : ';');
+              return activity.isVisible ? activity.text + (index == laecLength - 1 ? '.' : ';') : '';
             })
           : [];
         /* eslint-enable indent*/
@@ -853,7 +853,7 @@ export class PdfService {
           border: [true, true, true, true],
         },
         {
-          text: 'VALOR',
+          text: 'VALOR UNITÁRIO',
           bold: true,
           alignment: 'center',
           border: [true, true, true, true],
@@ -910,7 +910,7 @@ export class PdfService {
           border: [true, true, true, true],
         },
         {
-          text: product.value,
+          text: 'R$ ' + product.value,
           alignment: 'center',
           border: [true, true, true, true],
         },
@@ -1233,7 +1233,7 @@ export class PdfService {
       pdf.add(pdf.ln(1));
 
       const importants = invoice.importants.map((important, index) => {
-        return important.text + (index == invoice.importants.length - 1 ? '.' : ';');
+        return important.isVisible ? important.text + (index == invoice.importants.length - 1 ? '.' : ';') : '';
       });
       pdf.add({
         style: 'insideText',

@@ -4,7 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType } from '../utils';
+import { isOfType, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Course, CourseParticipant } from '@models/course';
@@ -36,7 +36,7 @@ export class CourseService {
         .post('/api/course/all', {})
         .pipe(take(1))
         .subscribe((courses: any) => {
-          this.courses$.next(courses as Course[]);
+          this.courses$.next(reviveDates(courses) as Course[]);
           this._isDataLoaded$.next(true);
         });
       this.socket
