@@ -20,13 +20,15 @@
       overflow: auto;
       word-break: keep-all;
     }
-    table tr th,
-    table tr th a {
+    table tr th {
       font-family: nb-theme(smart-table-header-font-family);
       font-size: nb-theme(smart-table-header-font-size);
       font-weight: nb-theme(smart-table-header-font-weight);
       line-height: nb-theme(smart-table-header-line-height);
       color: nb-theme(smart-table-header-fg);
+      a {
+        color: nb-theme(button-filled-primary-text-color);
+      }
     }
 
     table tr td {
