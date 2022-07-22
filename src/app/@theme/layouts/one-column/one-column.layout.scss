@@ -8,11 +8,7 @@
       margin-left: 4.5rem !important;
     }
   }
-  @include media-breakpoint-down(xs) {
-    ::ng-deep .layout-container > .content {
-      margin-left: 0 !important;
-    }
-  }
+
 
   .menu-sidebar ::ng-deep .scrollable {
     display: flex;
@@ -29,7 +25,6 @@
   }
 
   nb-sidebar.compacted {
-    transition: width 0.1s ease-in;
     width: 4.5rem;
     ::ng-deep .main-container,
     ::ng-deep nb-menu {

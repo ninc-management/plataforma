@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.menuService
       .onItemClick()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event) => {
+      .subscribe((event: { item: any; tag: string }) => {
         if (event.tag == 'config') {
           this.dialogService.open(ConfigDialogComponent, {
             context: {

@@ -106,6 +106,7 @@
       [matRippleRadius]="20"
     ></nb-action>
     <nb-action
+    *ngIf="!isPhone()"
       class="slack-action"
       [icon]="{ icon: 'slack', pack: 'fac' }"
       matRipple
@@ -118,7 +119,7 @@
   <iframe
     title="Janela de comunicação"
     class="slackWidget"
-    src="https://app.slack.com/client/TRL92UC9G/CRL92UHHQ"
+    src="https://nortanengenharia.slack.com"
     #widget
   ></iframe>
 </div>
