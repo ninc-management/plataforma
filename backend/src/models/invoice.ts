@@ -194,7 +194,7 @@ export class Invoice extends StatusHistory {
   dec?: string;
 
   @prop()
-  discount?: string = '0,00';
+  discount: string = '0,00';
 
   @prop()
   materialListType: string = '1';
@@ -223,10 +223,12 @@ export class Invoice extends StatusHistory {
   @prop({ required: true })
   hasPageBreak: InvoicePageBreak = new InvoicePageBreak();
 
-  model = false;
-  contractorName = '';
-  fullName = '';
-  role = 'Nenhum';
+  locals: Record<string, string | boolean> = {
+    model: false,
+    contractorName: '',
+    fullName: '',
+    role: 'Nenhum',
+  };
 }
 
 export default getModelForClass(Invoice);

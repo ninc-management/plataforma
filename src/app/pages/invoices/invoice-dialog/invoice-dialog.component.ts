@@ -92,7 +92,7 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
     oInvoice.created = new Date();
     oInvoice.lastUpdate = new Date();
     oInvoice.status = INVOICE_STATOOS.EM_ANALISE;
-    oInvoice.model = true;
+    oInvoice.locals.model = true;
     this.derivedRef.close(oInvoice);
   }
 

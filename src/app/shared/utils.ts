@@ -78,7 +78,7 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (isOfType<Invoice>(iDocument, ['author', 'products', 'type', 'administration'])) {
+  if (isOfTypeNew(iDocument, Invoice)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
@@ -106,7 +106,7 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (isOfType<Invoice>(iDocument, ['author', 'products', 'type', 'administration'])) {
+  if (isOfTypeNew(iDocument, Invoice)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
@@ -250,7 +250,9 @@ export function isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is 
 
 export function isOfTypeNew<T>(unknownObj: any, constructor: { new (): T }): unknownObj is T {
   const genericObject = new constructor();
-  return Object.keys(genericObject).every((key) => Object.keys(unknownObj).includes(key));
+  const genericObjectKeys = Object.keys(genericObject).filter((key) => key != 'locals');
+  const unknownObjKeys = Object.keys(unknownObj).filter((key) => key != 'locals');
+  return genericObjectKeys.every((key) => unknownObjKeys.includes(key));
 }
 
 export function NOT(o$: Observable<boolean>): Observable<boolean> {

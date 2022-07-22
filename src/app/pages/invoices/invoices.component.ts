@@ -30,7 +30,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
         return (
-          invoice.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.locals.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -65,7 +65,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      fullName: {
+      'locals.fullName': {
         title: 'Autor',
         type: 'string',
       },
@@ -75,7 +75,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         sortDirection: 'desc',
         compareFunction: codeSort,
       },
-      contractorName: {
+      'locals.contractorName': {
         title: 'Cliente',
         type: 'string',
       },
@@ -83,7 +83,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Empreendimento',
         type: 'string',
       },
-      role: {
+      'locals.role': {
         title: 'Papel',
         type: 'string',
         width: '10%',
@@ -167,21 +167,22 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       )
       .subscribe(([invoices, contractors, teams, user]) => {
         this.invoices = invoices.map((invoice: Invoice) => {
-          if (invoice.author) invoice.fullName = this.userService.idToShortName(invoice.author);
+          invoice.locals = {};
+          if (invoice.author) invoice.locals.fullName = this.userService.idToShortName(invoice.author);
           if (invoice.contractor)
-            invoice.contractorName = idToProperty(
+            invoice.locals.contractorName = idToProperty(
               invoice.contractor,
               this.contractorService.idToContractor.bind(this.contractorService),
               'fullName'
             );
 
-          invoice.role = this.invoiceService.role(invoice, user);
+          invoice.locals.role = this.invoiceService.role(invoice, user);
           return invoice;
         });
         this.source.load(invoices);
       });
     this.source.setFilter([
-      { field: 'role', search: 'Equipe Gestor' },
+      { field: 'locals.role', search: 'Equipe Gestor' },
       { field: 'status', search: 'Em análise' },
     ]);
   }
