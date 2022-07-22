@@ -19,16 +19,17 @@ export class LocalSorter {
     const compare: GenericFunction = customCompare ? customCompare : compareValues;
     const propertiesToAccess = field.split('.');
 
-    if (propertiesToAccess.length > 1) {
-      return data.sort((elementA, elementB) => {
-        const valueA = accessNestedProperty(elementA, cloneDeep(propertiesToAccess));
-        const valueB = accessNestedProperty(elementB, cloneDeep(propertiesToAccess));
-        return compare.call(null, dir, valueA, valueB);
-      });
-    }
-
-    return data.sort((a, b) => {
-      return compare.call(null, dir, a[field], b[field]);
+    let valueA = undefined;
+    let valueB = undefined;
+    return data.sort((elementA, elementB) => {
+      if (propertiesToAccess.length > 1) {
+        valueA = accessNestedProperty(elementA, cloneDeep(propertiesToAccess));
+        valueB = accessNestedProperty(elementB, cloneDeep(propertiesToAccess));
+      } else {
+        valueA = elementA[field];
+        valueB = elementB[field];
+      }
+      return compare.call(null, dir, valueA, valueB);
     });
   }
 }

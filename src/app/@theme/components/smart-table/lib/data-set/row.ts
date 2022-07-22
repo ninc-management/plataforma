@@ -52,12 +52,13 @@ export class Row {
     const defValue = (column as any).settings.defaultValue ? (column as any).settings.defaultValue : '';
     const propertiesToAccess = column.id.split('.');
 
+    let value = undefined;
     if (propertiesToAccess.length > 1) {
-      const value = accessNestedProperty(this.data, propertiesToAccess, defValue);
-      return new Cell(value, this, column, this._dataSet);
+      value = accessNestedProperty(this.data, propertiesToAccess, defValue);
+    } else {
+      value = typeof this.data[column.id] === 'undefined' ? defValue : this.data[column.id];
     }
 
-    const value = typeof this.data[column.id] === 'undefined' ? defValue : this.data[column.id];
     return new Cell(value, this, column, this._dataSet);
   }
 }

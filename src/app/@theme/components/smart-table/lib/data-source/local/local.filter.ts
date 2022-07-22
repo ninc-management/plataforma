@@ -12,15 +12,13 @@ export class LocalFilter {
     const filter: GenericFunction = customFilter ? customFilter : filterValues;
     const propertiesToAccess = field.split('.');
 
-    if (propertiesToAccess.length > 1) {
-      return data.filter((element) => {
-        const value = accessNestedProperty(element, cloneDeep(propertiesToAccess));
-        return filter.call(null, value, search);
-      });
-    }
-
-    return data.filter((el) => {
-      const value = typeof el[field] === 'undefined' || el[field] === null ? '' : el[field];
+    let value = undefined;
+    return data.filter((element) => {
+      if (propertiesToAccess.length > 1) {
+        value = accessNestedProperty(element, cloneDeep(propertiesToAccess));
+      } else {
+        value = typeof element[field] === 'undefined' || element[field] === null ? '' : element[field];
+      }
       return filter.call(null, value, search);
     });
   }
