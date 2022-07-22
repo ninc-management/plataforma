@@ -885,12 +885,12 @@
               fieldSize="large"
               [brmasker]="{ person: true }"
               ngxSelectAllText
-              [minlength]="validationUser.document.maxLength"
+              [minlength]="validation.document.minLength"
               [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="document.invalid && document.touched ? true : null"
             />
-            <ng-container *ngIf="document.invalid && document.touched">
-              <p class="caption status-danger" *ngIf="document.errors?.minlength">CNPJ deve ter 14 caracteres</p>
+            <ng-container *ngIf="document.errors?.minlength">
+              <p class="caption status-danger" >CNPJ deve ter 14 caracteres</p>
             </ng-container>
           </div>
         </div>

@@ -9,7 +9,6 @@ import { isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 import { PlatformConfig } from '@models/platformConfig';
 
 import config_validation from 'app/shared/validators/config-validation.json';
-import user_validation from 'app/shared/validators/user-validation.json';
 
 interface SubTypeItem {
   name: string;
@@ -44,7 +43,6 @@ export class ConfigComponent implements OnInit {
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
-  validationUser = user_validation as any;
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   validation = config_validation as any;
