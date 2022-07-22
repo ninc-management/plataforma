@@ -1,7 +1,7 @@
 import { Cell } from './cell';
 import { Column } from './column';
 import { DataSet } from './data-set';
-import { accessNestedProperties } from 'app/shared/utils';
+import { accessNestedProperty } from 'app/shared/utils';
 
 export class Row {
   isSelected: boolean = false;
@@ -53,7 +53,7 @@ export class Row {
     const propertiesToAccess = column.id.split('.');
 
     if (propertiesToAccess.length > 1) {
-      const value = accessNestedProperties(this.data, propertiesToAccess, defValue);
+      const value = accessNestedProperty(this.data, propertiesToAccess, defValue);
       return new Cell(value, this, column, this._dataSet);
     }
 

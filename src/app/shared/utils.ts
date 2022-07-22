@@ -354,9 +354,9 @@ export function shouldNotifyManager(
   return !currentResource.paid && newResource.paid;
 }
 
-export function accessNestedProperties(data: any, keys: string[], defValue: any): any {
+export function accessNestedProperty(data: any, keys: string[], defValue = ''): any {
   const currentKey = keys.shift();
   if (!currentKey) return data;
   if (data[currentKey] === undefined || data[currentKey] === null) return defValue;
-  return accessNestedProperties(data[currentKey], keys, defValue);
+  return accessNestedProperty(data[currentKey], keys, defValue);
 }

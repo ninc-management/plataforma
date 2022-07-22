@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 
-import { accessNestedProperties } from 'app/shared/utils';
+import { accessNestedProperty } from 'app/shared/utils';
 
 type GenericFunction = (...arg: any) => any;
 
@@ -21,8 +21,8 @@ export class LocalSorter {
 
     if (propertiesToAccess.length > 1) {
       return data.sort((elementA, elementB) => {
-        const valueA = accessNestedProperties(elementA, cloneDeep(propertiesToAccess), '');
-        const valueB = accessNestedProperties(elementB, cloneDeep(propertiesToAccess), '');
+        const valueA = accessNestedProperty(elementA, cloneDeep(propertiesToAccess));
+        const valueB = accessNestedProperty(elementB, cloneDeep(propertiesToAccess));
         return compare.call(null, dir, valueA, valueB);
       });
     }

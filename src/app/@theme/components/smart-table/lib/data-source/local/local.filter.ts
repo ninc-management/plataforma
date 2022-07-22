@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash';
 
-import { accessNestedProperties } from 'app/shared/utils';
+import { accessNestedProperty } from 'app/shared/utils';
 
 type GenericFunction = (...arg: any) => any;
 export function filterValues(value: string, search: string) {
@@ -14,7 +14,7 @@ export class LocalFilter {
 
     if (propertiesToAccess.length > 1) {
       return data.filter((element) => {
-        const value = accessNestedProperties(element, cloneDeep(propertiesToAccess), '');
+        const value = accessNestedProperty(element, cloneDeep(propertiesToAccess));
         return filter.call(null, value, search);
       });
     }
