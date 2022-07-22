@@ -225,11 +225,11 @@ export class PaymentItemComponent implements OnInit {
       if (invoice.author) {
         const manager = this.userService.idToUser(invoice.author);
         this.notificationService.notifyFinancial({
-          title: 'Nova pagamento ' + this.contract.code,
+          title: 'Nova pagamento ' + this.contract.locals.code,
           tag: NotificationTags.PAYMENT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
             manager.fullName
-          } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.code}.`,
+          } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.locals.code}.`,
         });
       }
     }
@@ -247,10 +247,13 @@ export class PaymentItemComponent implements OnInit {
         const valueReceived = this.contractService.receivedValue(member.user, this.contract);
         if (notPaidValue === '0,00' && this.stringUtil.moneyToNumber(paymentMember.value) != 0) {
           this.notificationService.notify(member.user, {
-            title: 'Recebimento total do valor do contrato ' + this.contract.code,
+            title: 'Recebimento total do valor do contrato ' + this.contract.locals.code,
             tag: NotificationTags.VALUE_TO_RECEIVE_PAID,
             message:
-              'Parabéns! Você recebeu o valor total de R$' + valueReceived + ' do contrato ' + this.contract.code,
+              'Parabéns! Você recebeu o valor total de R$' +
+              valueReceived +
+              ' do contrato ' +
+              this.contract.locals.code,
           });
         }
       }
@@ -375,7 +378,7 @@ export class PaymentItemComponent implements OnInit {
     if (this.contract.invoice) {
       const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       this.notificationService.notify(invoice.author, {
-        title: 'Uma ordem de pagamento do contrato ' + this.contract.code + ' foi paga!',
+        title: 'Uma ordem de pagamento do contrato ' + this.contract.locals.code + ' foi paga!',
         tag: NotificationTags.PAYMENT_ORDER_PAID,
         message:
           'A ordem de pagamento de código #' +

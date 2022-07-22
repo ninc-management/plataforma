@@ -15,7 +15,7 @@
           Não foi possível achar um contrato com o código digitado
           "
           fieldSize="large"
-          nameField="code"
+          nameField="locals.code"
           pictureField="managerPicture"
           [data$]="availableContractsData"
           [minSearchLength]="0"
@@ -120,7 +120,7 @@
           <ng-container>
             <p class="caption">
               Valor em caixa: R$
-              {{ contract.balance }}
+              {{ contract.locals.balance }}
             </p>
             <p
               class="caption status-danger"

@@ -211,7 +211,7 @@ export class ExpenseTabComponent implements OnInit {
       .subscribe(() => {
         this.loadTableExpenses();
         this.expensesChanged.emit();
-        this.clonedContract.balance = this.contractService.balance(this.clonedContract);
+        this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
         this.isDialogBlocked.next(false);
       });
   }

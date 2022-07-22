@@ -176,10 +176,10 @@ describe('ContractService', () => {
     tmpContract._id = '0';
     tmpContract.created = new Date('2021/09/14');
     tmpContract.invoice = mockedInvoices[0];
-    tmpContract.liquid = '574,60';
-    tmpContract.balance = '800,00';
-    tmpContract.notPaid = '718,25';
-    tmpContract.value = '1.000,00';
+    tmpContract.locals.liquid = '574,60';
+    tmpContract.locals.balance = '800,00';
+    tmpContract.locals.notPaid = '718,25';
+    tmpContract.locals.value = '1.000,00';
     let tmpExpense = new ContractExpense();
     tmpExpense.author = mockedUsers[0];
     tmpExpense.source = mockedUsers[0];
@@ -243,10 +243,10 @@ describe('ContractService', () => {
     tmpContract._id = '1';
     tmpContract.created = new Date('2021/09/14');
     tmpContract.ISS = '2,00';
-    tmpContract.liquid = '1.607,20';
-    tmpContract.balance = '0,00';
-    tmpContract.notPaid = '820,00';
-    tmpContract.value = '2.000,00';
+    tmpContract.locals.liquid = '1.607,20';
+    tmpContract.locals.balance = '0,00';
+    tmpContract.locals.notPaid = '820,00';
+    tmpContract.locals.value = '2.000,00';
     tmpContract.invoice = mockedInvoices[1];
     let tmpReceipt = new ContractReceipt();
     tmpReceipt.value = '1.000,00';
@@ -510,8 +510,8 @@ describe('ContractService', () => {
   });
 
   it('balance should work', () => {
-    expect(service.balance(mockedContracts[0])).toBe(mockedContracts[0].balance);
-    expect(service.balance(mockedContracts[1])).toBe(mockedContracts[1].balance);
+    expect(service.balance(mockedContracts[0])).toBe(mockedContracts[0].locals.balance);
+    expect(service.balance(mockedContracts[1])).toBe(mockedContracts[1].locals.balance);
   });
 
   it('netValueBalance should work', () => {
