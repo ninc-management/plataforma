@@ -272,7 +272,7 @@
     </form>
   </nb-tab>
   <nb-tab tabId="invoice-tab" [tabTitle]="isPhone() ? '' : 'Orçamentos'" [tabIcon]="invoiceIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #invoiceConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #invoiceConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -557,7 +557,7 @@
     </form>
   </nb-tab>
   <nb-tab tabId="profile-tab" [tabTitle]="isPhone() ? '' : 'Perfil'" tabIcon="person-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #profileConfigform="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #profileConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -890,7 +890,7 @@
               [attr.aria-invalid]="document.invalid && document.touched ? true : null"
             />
             <ng-container *ngIf="document.errors?.minlength">
-              <p class="caption status-danger" >CNPJ deve ter 14 caracteres</p>
+              <p class="caption status-danger" >CNPJ deve ter {{validation.document.minLength - 4}} números</p>
             </ng-container>
           </div>
         </div>

@@ -205,7 +205,7 @@
                           class="caption status-danger"
                           *ngIf="document.errors?.minlength || document.errors?.maxlength"
                         >
-                          O CPF/CNPJ deve ter 11 ou 14 caracteres
+                          O CPF/CNPJ deve ter {{validation.document.minLength - 3}} ou {{validation.document.maxLength - 4}} números
                         </p>
                       </ng-container>
                     </div>
