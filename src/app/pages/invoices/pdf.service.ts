@@ -979,7 +979,7 @@ export class PdfService {
     pdf.add({
       style: 'insideText',
       table: {
-        widths: invoice.productListType == '1' ? ['*', 50] : ['*', 'auto', 'auto', 'auto', 50],
+        widths: invoice.productListType == '1' ? ['*', 80] : ['*', 'auto', 'auto', 'auto', 80],
         dontBreakRows: true,
         body: [productHeader(), ...products, ...footer()],
       },
