@@ -127,22 +127,22 @@ export class BalanceTabComponent implements OnInit {
   }
 
   updateLiquid(): void {
-    this.contract.liquid = this.contractService.toNetValue(
+    this.contract.locals.liquid = this.contractService.toNetValue(
       this.contractService.subtractComissions(
-        this.stringUtil.removePercentage(this.contract.value, this.contract.ISS),
+        this.stringUtil.removePercentage(this.contract.locals.value, this.contract.ISS),
         this.contract
       ),
       this.options.notaFiscal,
       this.options.nortanPercentage,
       this.contract.created
     );
-    this.contract.cashback = this.stringUtil.numberToMoney(
+    this.contract.locals.cashback = this.stringUtil.numberToMoney(
       this.contractService.expensesContributions(this.contract).global.cashback
     );
     if (this.contract.invoice != undefined) {
       const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       invoice.team.map((member, index) => {
-        member.netValue = this.stringUtil.applyPercentage(this.contract.liquid, member.distribution);
+        member.netValue = this.stringUtil.applyPercentage(this.contract.locals.liquid, member.distribution);
         this.updateGrossValue(index);
         this.updateTeamTotal();
       });
@@ -166,10 +166,10 @@ export class BalanceTabComponent implements OnInit {
     this.options.notaFiscal = nfPercentage(this.contract);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
-    this.contract.notPaid = this.stringUtil.numberToMoney(
+    this.contract.locals.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(
-          this.contract.value,
+          this.contract.locals.value,
           this.options.notaFiscal,
           this.options.nortanPercentage,
           this.contract.created
@@ -179,6 +179,6 @@ export class BalanceTabComponent implements OnInit {
   }
 
   calculateBalance(): void {
-    this.contract.balance = this.contractService.balance(this.contract);
+    this.contract.locals.balance = this.contractService.balance(this.contract);
   }
 }

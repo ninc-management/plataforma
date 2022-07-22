@@ -78,7 +78,7 @@
         <nb-card-body>
           <p *ngIf="contract._id !== undefined; else dashboardPaymentError">
             Não é possível adicionar uma ordem de pagamento quando não há caixa no contrato para pagamentos. O valor
-            atual do caixa é R${{ contract.balance }}
+            atual do caixa é R${{ contract.locals.balance }}
           </p>
           <ng-template #dashboardPaymentError>
             <p>

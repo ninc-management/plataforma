@@ -388,7 +388,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.liquid = this.contractService.toNetValue(
+            monthContract.contract.locals.liquid = this.contractService.toNetValue(
               this.contractService.subtractComissions(
                 this.stringUtil.removePercentage(
                   this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,
@@ -550,7 +550,7 @@ export class UsersComponent implements OnInit, OnDestroy {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.liquid = this.contractService.toNetValue(
+            monthContract.contract.locals.liquid = this.contractService.toNetValue(
               this.contractService.subtractComissions(
                 this.stringUtil.removePercentage(
                   this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,

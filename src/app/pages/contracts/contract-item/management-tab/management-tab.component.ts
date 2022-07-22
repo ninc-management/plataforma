@@ -311,7 +311,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         context: {
           question:
             'Você tem certeza que deseja importar a checklist do contrato ' +
-            selectedContract.code +
+            selectedContract.locals.code +
             '? Os dados atuais serão apagados.',
         },
         dialogClass: 'my-dialog',
@@ -341,7 +341,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
         if (usersToNotify) {
           this.notificationService.notifyMany(usersToNotify, {
-            title: 'Novo comentário na gestão do contrato ' + this.contract.code,
+            title: 'Novo comentário na gestão do contrato ' + this.contract.locals.code,
             tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
@@ -467,7 +467,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de uma nova ação de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.contract.code +
+        this.contract.locals.code +
         ', você foi selecionado como responsável da ação "' +
         task.name +
         '" que faz parte do item "' +
@@ -482,7 +482,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de um novo item de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.contract.code +
+        this.contract.locals.code +
         ', você foi selecionado como responsável do item "' +
         task.name +
         '" cujo status é "' +

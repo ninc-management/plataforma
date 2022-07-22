@@ -20,7 +20,7 @@ import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 
-import { Contract } from '@models/contract';
+import { Contract, ContractLocals } from '@models/contract';
 import { InvoiceTeamMember } from '@models/invoice';
 
 export type TimeSeriesItem = [string, number];
@@ -777,7 +777,8 @@ export class MetricsService implements OnDestroy {
       map(([contracts, , ,]) => {
         let fContracts = contracts.map((iContract) => {
           const contract = cloneDeep(iContract);
-          if (contract.invoice) contract.value = this.invoiceService.idToInvoice(contract.invoice).value;
+          contract.locals = {} as ContractLocals;
+          if (contract.invoice) contract.locals.value = this.invoiceService.idToInvoice(contract.invoice).value;
           return contract;
         });
         if (uId != undefined) {
@@ -790,8 +791,8 @@ export class MetricsService implements OnDestroy {
           });
           fContracts = fContracts.map((contract) => {
             if (contract.invoice !== undefined) {
-              contract.value = this.stringUtil.applyPercentage(
-                contract.value,
+              contract.locals.value = this.stringUtil.applyPercentage(
+                contract.locals.value,
                 this.invoiceService.idToInvoice(contract.invoice).team[0].distribution
               );
             }
@@ -800,7 +801,7 @@ export class MetricsService implements OnDestroy {
         }
         const timeSeriesItems = fContracts.map((contract) => {
           const date: string = contract.created ? format(contract.created, 'yyyy/MM/dd') : '';
-          return [date, this.stringUtil.moneyToNumber(contract.value)] as TimeSeriesItem;
+          return [date, this.stringUtil.moneyToNumber(contract.locals.value)] as TimeSeriesItem;
         });
         return groupByDateTimeSerie(timeSeriesItems);
       })
