@@ -873,20 +873,25 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
-            <label class="label" for="input-cnpj">CNPJ</label>
+            <label class="label" for="input-document">CNPJ</label>
             <input
               nbInput
               [(ngModel)]="clonedConfig.socialConfig.cnpj"
-              #cnpj="ngModel"
-              id="input-cnpj"
-              name="cnpj"
+              #document="ngModel"
+              id="input-document"
+              name="document"
               placeholder="00.000.000/0000-00"
               fullWidth
               fieldSize="large"
-              [brmasker]="{ mask: '00.000.000/0000-00', len: 18 }"
-              [status]="cnpj.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
+              [brmasker]="{ person: true }"
+              ngxSelectAllText
+              [minlength]="validationUser.document.maxLength"
+              [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="document.invalid && document.touched ? true : null"
             />
+            <ng-container *ngIf="document.invalid && document.touched">
+              <p class="caption status-danger" *ngIf="document.errors?.minlength">CNPJ deve ter 14 caracteres</p>
+            </ng-container>
           </div>
         </div>
       </div>
