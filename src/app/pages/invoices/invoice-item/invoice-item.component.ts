@@ -795,4 +795,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       message: 'O contrato ' + this.tempInvoice.code + ' que você faz parte foi fechado, confira os dados do contrato!',
     });
   }
+
+  copyTextInputService(): void {
+    this.tempInvoice.subject = this.tempInvoice.service;
+  }
 }
