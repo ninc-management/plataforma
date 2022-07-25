@@ -159,8 +159,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(([_, config]) => {
         this.config = config[0].invoiceConfig;
       });
-    if (this.iInvoice._id || this.iInvoice.locals.model) {
-      this.editing = this.tempInvoice.locals.model == undefined;
+    if (this.iInvoice._id || this.iInvoice.locals.isModel) {
+      this.editing = this.tempInvoice.locals.isModel == undefined;
       if (!this.editing) {
         this.tempInvoice.created = new Date();
         this.tempInvoice.lastUpdate = new Date();

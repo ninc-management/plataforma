@@ -7,6 +7,13 @@ import { Sector } from './shared';
 import { Team } from './team';
 import { User } from './user';
 
+export interface InvoiceLocals {
+  isModel: boolean;
+  contractorName: string;
+  fullName: string;
+  role: string;
+}
+
 export class InvoiceProduct {
   @prop({ required: true })
   name: string = '';
@@ -223,8 +230,8 @@ export class Invoice extends StatusHistory {
   @prop({ required: true })
   hasPageBreak: InvoicePageBreak = new InvoicePageBreak();
 
-  locals: Record<string, string | boolean> = {
-    model: false,
+  locals: InvoiceLocals = {
+    isModel: false,
     contractorName: '',
     fullName: '',
     role: 'Nenhum',

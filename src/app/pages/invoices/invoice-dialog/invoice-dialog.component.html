@@ -16,7 +16,7 @@
           <button
             nbButton
             ghost
-            *ngIf="isPhone() && invoice._id !== undefined && !invoice.locals.model"
+            *ngIf="isPhone() && invoice._id !== undefined && !invoice.locals.isModel"
             (click)="generatePDF()"
           >
             <nb-icon icon="file-pdf" pack="far" style="font-size: 18px"></nb-icon>
@@ -24,7 +24,7 @@
           <button
             nbButton
             ghost
-            *ngIf="!isPhone() && invoice._id !== undefined && !invoice.locals.model"
+            *ngIf="!isPhone() && invoice._id !== undefined && !invoice.locals.isModel"
             nbTooltip="Visualizar orçamento"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
@@ -35,7 +35,7 @@
           <button
             nbButton
             ghost
-            *ngIf="invoice._id !== undefined && !invoice.locals.model"
+            *ngIf="invoice._id !== undefined && !invoice.locals.isModel"
             nbTooltip="Usar como modelo"
             [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"

@@ -13,7 +13,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { codeSort, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
-import { Invoice } from '@models/invoice';
+import { Invoice, InvoiceLocals } from '@models/invoice';
 
 @Component({
   selector: 'ngx-invoices',
@@ -167,7 +167,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       )
       .subscribe(([invoices, contractors, teams, user]) => {
         this.invoices = invoices.map((invoice: Invoice) => {
-          invoice.locals = {};
+          invoice.locals = {} as InvoiceLocals;
           if (invoice.author) invoice.locals.fullName = this.userService.idToShortName(invoice.author);
           if (invoice.contractor)
             invoice.locals.contractorName = idToProperty(
