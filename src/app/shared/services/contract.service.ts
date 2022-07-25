@@ -24,7 +24,7 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { ChecklistItemAction, Contract, ContractExpense } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractExpense, ContractLocals } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
 
@@ -419,7 +419,7 @@ export class ContractService implements OnDestroy {
     if (contract.invoice) {
       const invoice = this.invoiceService.idToInvoice(contract.invoice);
       contract.invoice = invoice;
-      contract.locals = {};
+      contract.locals = {} as ContractLocals;
 
       if (invoice.author) {
         const managerPicture = this.userService.idToUser(invoice.author).profilePicture;

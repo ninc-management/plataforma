@@ -20,7 +20,7 @@ import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 
-import { Contract } from '@models/contract';
+import { Contract, ContractLocals } from '@models/contract';
 import { InvoiceTeamMember } from '@models/invoice';
 
 export type TimeSeriesItem = [string, number];
@@ -777,7 +777,7 @@ export class MetricsService implements OnDestroy {
       map(([contracts, , ,]) => {
         let fContracts = contracts.map((iContract) => {
           const contract = cloneDeep(iContract);
-          contract.locals = {};
+          contract.locals = {} as ContractLocals;
           if (contract.invoice) contract.locals.value = this.invoiceService.idToInvoice(contract.invoice).value;
           return contract;
         });

@@ -6,6 +6,21 @@ import { Invoice } from './invoice';
 import { Sector, UploadedFile } from './shared';
 import { User } from './user';
 
+export interface ContractLocals {
+  balance: string;
+  value: string;
+  fullName: string;
+  code: string;
+  contractor: string;
+  name: string;
+  interests: string;
+  role: string;
+  notPaid: string;
+  liquid: string;
+  cashback: string;
+  managerPicture: string;
+}
+
 export class ContractExpenseTeamMember {
   @prop({ required: true, ref: () => User })
   user!: Ref<User>;
@@ -229,7 +244,7 @@ export class Contract extends StatusHistory {
   @prop()
   managementNotes: string = '';
 
-  locals: Record<string, string> = {
+  locals: ContractLocals = {
     balance: '',
     value: '',
     fullName: '',
