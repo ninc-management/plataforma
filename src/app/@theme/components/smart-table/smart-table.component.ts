@@ -36,6 +36,9 @@ export class SmartTableComponent implements OnChanges, OnDestroy {
   isHideHeader: boolean = false;
   isHideSubHeader: boolean = false;
   isPagerDisplay: boolean = false;
+  displaySum: boolean = false;
+  pagerSumLabel: string = '';
+  reduceFunction: () => any = Function;
   rowClassFunction: () => any = Function;
 
   grid: Grid = new Grid();
@@ -90,6 +93,8 @@ export class SmartTableComponent implements OnChanges, OnDestroy {
       display: true,
       page: 1,
       perPage: 10,
+      displaySum: false,
+      sumLabel: 'Total',
     },
     rowClassFunction: () => '',
   };
@@ -120,7 +125,9 @@ export class SmartTableComponent implements OnChanges, OnDestroy {
     this.isHideHeader = this.grid.getSetting('hideHeader');
     this.isHideSubHeader = this.grid.getSetting('hideSubHeader');
     this.isPagerDisplay = this.grid.getSetting('pager.display');
-    this.isPagerDisplay = this.grid.getSetting('pager.display');
+    this.displaySum = this.grid.getSetting('pager.displaySum');
+    this.pagerSumLabel = this.grid.getSetting('pager.sumLabel');
+    this.reduceFunction = this.grid.getSetting('pager.reduceFunction');
     this.perPageSelect = this.grid.getSetting('pager.perPageSelect');
     this.rowClassFunction = this.grid.getSetting('rowClassFunction');
   }

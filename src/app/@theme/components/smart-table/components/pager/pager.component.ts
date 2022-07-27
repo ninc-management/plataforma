@@ -2,6 +2,9 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleCha
 import { Subject, takeUntil } from 'rxjs';
 
 import { DataSource } from '../../lib/data-source/data-source';
+import { StringUtilService } from 'app/shared/services/string-util.service';
+
+type ReduceFunction = (...arg: any) => number;
 
 @Component({
   selector: 'ng2-smart-table-pager',
@@ -77,11 +80,18 @@ import { DataSource } from '../../lib/data-source/data-source';
         <option *ngFor="let item of perPageSelect" [value]="item">{{ item }}</option>
       </select>
     </nav>
+
+    <nav *ngIf="displaySum" class="ng2-smart-page-sum-value">
+      <p>{{ pagerSumLabel }}: R$ {{ pageSum }}</p>
+    </nav>
   `,
 })
 export class PagerComponent implements OnChanges, OnDestroy {
   @Input() source!: DataSource;
+  @Input() displaySum: boolean = false;
   @Input() perPageSelect: any[] = [];
+  @Input() pagerSumLabel: string = 'Total';
+  @Input() reduceFunction: ReduceFunction = () => 0;
 
   @Output() changePage = new EventEmitter<any>();
 
@@ -91,6 +101,9 @@ export class PagerComponent implements OnChanges, OnDestroy {
   protected page: number = 0;
   protected count: number = 0;
   protected perPage: number = 0;
+  pageSum: string = '0.0';
+
+  constructor(private stringUtil: StringUtilService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -113,6 +126,8 @@ export class PagerComponent implements OnChanges, OnDestroy {
 
           this.processPageChange(dataChanges);
           this.initPages();
+          if (this.displaySum)
+            this.pageSum = this.stringUtil.numberToMoney(dataChanges.elements.reduce(this.reduceFunction, 0));
         });
     }
   }
@@ -133,7 +148,7 @@ export class PagerComponent implements OnChanges, OnDestroy {
   }
 
   shouldShow(): boolean {
-    return this.source.count() > this.perPage;
+    return this.displaySum || this.source.count() > this.perPage;
   }
 
   paginate(page: number): boolean {
