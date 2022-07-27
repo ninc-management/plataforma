@@ -5,7 +5,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { last, skipWhile, take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, nameSort, reviveDates } from '../utils';
+import { isOfTypeNew, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
@@ -198,7 +198,7 @@ export class UserService implements OnDestroy {
   }
 
   idToUser(id: string | User): User {
-    if (isOfType<User>(id, ['_id', 'fullName', 'email', 'phone'])) return id;
+    if (isOfTypeNew(User, id)) return id;
     if (id == CONTRACT_BALANCE._id) return CONTRACT_BALANCE as User;
     if (id == CLIENT._id) return CLIENT as User;
     if (id == NORTAN._id) return NORTAN as User;
@@ -217,7 +217,7 @@ export class UserService implements OnDestroy {
   ): boolean {
     if (u1 == undefined) return false;
     return team.some((member: InvoiceTeamMember | TeamMember | User | string | undefined) => {
-      if (isOfType<InvoiceTeamMember>(member, ['user', 'distribution']) || isOfType<TeamMember>(member, ['user'])) {
+      if (isOfTypeNew(InvoiceTeamMember, member) || isOfTypeNew(TeamMember, member)) {
         return this.isEqual(u1, member.user);
       }
       return this.isEqual(u1, member);

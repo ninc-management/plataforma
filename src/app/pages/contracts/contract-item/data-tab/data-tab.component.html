@@ -317,11 +317,7 @@
           <nb-completer
             [(ngModel)]="userSearch"
             [inputName]="'userListCompleter'"
-            (selected)="
-              teamMember.user = $event;
-              USER_SECTORS = teamService.userToSectors(teamMember.user._id);
-              teamMember.sector = undefined
-            "
+            (selected)="onNewMemberSelected($event)"
             #userList="ngModel"
             id="input-user"
             name="userList"
@@ -364,7 +360,7 @@
           <label class="label" for="input-gross-value">R$ Bruto:</label>
           <input
             nbInput
-            [(ngModel)]="teamMember.grossValue"
+            [(ngModel)]="teamMember.locals.grossValue"
             (ngModelChange)="updateNetValue(undefined, 'gross'); updatePercentage()"
             #grossValue="ngModel"
             id="input-grossValue"
@@ -388,7 +384,7 @@
           <label class="label" for="input-net-value">R$ Líquido:</label>
           <input
             nbInput
-            [(ngModel)]="teamMember.netValue"
+            [(ngModel)]="teamMember.locals.netValue"
             (ngModelChange)="updateGrossValue(); updatePercentage()"
             #netValue="ngModel"
             id="input-netValue"
@@ -470,7 +466,7 @@
             <div class="col-6 col-md-2">
               <input
                 nbInput
-                [(ngModel)]="invoice.team[i].grossValue"
+                [(ngModel)]="invoice.team[i].locals.grossValue"
                 (ngModelChange)="updateNetValue(i, 'gross'); updatePercentage(i)"
                 id="input-gross-value-{{ i }}"
                 name="gross-value-{{ i }}"
@@ -482,13 +478,13 @@
                   decimalCaracter: ',',
                   decimal: 2
                 }"
-                [status]="invoice.team[i].grossValue ? 'basic' : 'danger'"
+                [status]="invoice.team[i].locals.grossValue ? 'basic' : 'danger'"
               />
             </div>
             <div class="col-6 col-md-2">
               <input
                 nbInput
-                [(ngModel)]="invoice.team[i].netValue"
+                [(ngModel)]="invoice.team[i].locals.netValue"
                 (ngModelChange)="updatePercentage(i); updateGrossValue(i)"
                 id="input-net-value-{{ i }}"
                 name="net-value-{{ i }}"
@@ -501,7 +497,7 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="invoice.team[i].netValue ? 'basic' : 'danger'"
+                [status]="invoice.team[i].locals.netValue ? 'basic' : 'danger'"
               />
             </div>
             <div class="col-6 col-md-2" style="display: flex; align-items: center">

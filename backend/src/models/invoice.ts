@@ -14,6 +14,11 @@ export interface InvoiceLocals {
   role: string;
 }
 
+export interface InvoiceTeamMemberLocals {
+  netValue: string;
+  grossValue: string;
+}
+
 export class InvoiceProduct {
   @prop({ required: true })
   name: string = '';
@@ -62,16 +67,18 @@ export class InvoiceStage {
 
 export class InvoiceTeamMember {
   @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
+  user: Ref<User> = new User();
 
   @prop({ required: true, ref: () => Sector })
-  sector!: Ref<Sector>;
+  sector: Ref<Sector> = new Sector();
 
   @prop({ required: true })
-  distribution!: string;
+  distribution: string = '';
 
-  netValue = '0,00';
-  grossValue = '0,00';
+  locals: InvoiceTeamMemberLocals = {
+    netValue: '0,00',
+    grossValue: '0,00',
+  };
 }
 
 export class InvoicePageBreak {

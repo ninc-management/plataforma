@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import { combineLatest, Subject } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 
-import { isOfType } from '../utils';
+import { isOfTypeNew } from '../utils';
 import { ConfigService } from './config.service';
 import { UserService } from './user.service';
 
@@ -59,7 +59,7 @@ export class NotificationService implements OnDestroy {
       newNotification.from = user._id;
     });
     users.forEach((to) => {
-      if (isOfType<User>(to, ['fullName', 'sectors', 'position'])) newNotification.to = to;
+      if (isOfTypeNew(User, to)) newNotification.to = to;
       else newNotification.to = to.user;
       if (newNotification.to) newNotification.to = this.userService.idToUser(newNotification.to)._id;
       notifications.push(cloneDeep(newNotification));

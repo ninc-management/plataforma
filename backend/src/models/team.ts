@@ -6,10 +6,10 @@ import { User } from './user';
 
 export class TeamMember {
   @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
+  user: Ref<User> = new User();
 
   @prop({ required: true, ref: () => Sector })
-  sectors!: Ref<Sector>[];
+  sectors: Ref<Sector>[] = [];
 }
 
 export class TeamFinancialTransaction {
