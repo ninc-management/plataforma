@@ -1,6 +1,7 @@
 import { Cell } from './cell';
 import { Column } from './column';
 import { DataSet } from './data-set';
+import { accessNestedProperty } from 'app/shared/utils';
 
 export class Row {
   isSelected: boolean = false;
@@ -49,7 +50,15 @@ export class Row {
 
   createCell(column: Column): Cell {
     const defValue = (column as any).settings.defaultValue ? (column as any).settings.defaultValue : '';
-    const value = typeof this.data[column.id] === 'undefined' ? defValue : this.data[column.id];
+    const propertiesToAccess = column.id.split('.');
+
+    let value = undefined;
+    if (propertiesToAccess.length > 1) {
+      value = accessNestedProperty(this.data, propertiesToAccess, defValue);
+    } else {
+      value = typeof this.data[column.id] === 'undefined' ? defValue : this.data[column.id];
+    }
+
     return new Cell(value, this, column, this._dataSet);
   }
 }

@@ -78,23 +78,13 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (
-    isOfType<Invoice>(iDocument, [
-      '_id',
-      'author',
-      'nortanTeam',
-      'sector',
-      'code',
-      'type',
-      'contractor',
-      'administration',
-    ])
-  ) {
+  if (isOfTypeNew(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
+
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
@@ -116,23 +106,13 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (
-    isOfType<Invoice>(iDocument, [
-      '_id',
-      'author',
-      'nortanTeam',
-      'sector',
-      'code',
-      'type',
-      'contractor',
-      'administration',
-    ])
-  ) {
+  if (isOfTypeNew(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
+
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
@@ -268,6 +248,13 @@ export function isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is 
   return !values.includes(undefined);
 }
 
+export function isOfTypeNew<T>(constructor: { new (): T }, unknownObj: any): unknownObj is T {
+  const genericObject = new constructor();
+  const genericObjectKeys = Object.keys(genericObject).filter((key) => key != 'locals');
+  const unknownObjKeys = Object.keys(unknownObj).filter((key) => key != 'locals');
+  return genericObjectKeys.every((key) => unknownObjKeys.includes(key));
+}
+
 export function NOT(o$: Observable<boolean>): Observable<boolean> {
   return o$.pipe(map((result: boolean) => !result));
 }
@@ -365,4 +352,11 @@ export function shouldNotifyManager(
   newResource: ContractReceipt | ContractPayment | ContractExpense
 ): boolean {
   return !currentResource.paid && newResource.paid;
+}
+
+export function accessNestedProperty(data: any, keys: string[], defValue = ''): any {
+  const currentKey = keys.shift();
+  if (!currentKey) return data;
+  if (data[currentKey] === undefined || data[currentKey] === null) return defValue;
+  return accessNestedProperty(data[currentKey], keys, defValue);
 }

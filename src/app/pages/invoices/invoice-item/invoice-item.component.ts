@@ -159,8 +159,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(([_, config]) => {
         this.config = config[0].invoiceConfig;
       });
-    if (this.iInvoice._id || this.iInvoice.model) {
-      this.editing = this.tempInvoice.model == undefined;
+    if (this.iInvoice._id || this.iInvoice.locals.isModel) {
+      this.editing = this.tempInvoice.locals.isModel == undefined;
       if (!this.editing) {
         this.tempInvoice.created = new Date();
         this.tempInvoice.lastUpdate = new Date();
@@ -340,7 +340,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.notifyAllUsers();
           }
         }
-        this.tempInvoice.contractorName = idToProperty(
+        this.tempInvoice.locals.contractorName = idToProperty(
           this.tempInvoice.contractor,
           this.contractorService.idToContractor.bind(this.contractorService),
           'fullName'

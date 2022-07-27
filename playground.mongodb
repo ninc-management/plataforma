@@ -1011,6 +1011,9 @@ db.invoices.find().forEach((invoice) => {
   invoice.laec = invoice.laec.map((c) => {
     return {text: c, isVisible: true};
   });
+
+  if(!invoice.discount) invoice.discount = '0,00'
+
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
 
