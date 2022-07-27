@@ -5,13 +5,13 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, isOfTypeNew, nameSort, reviveDates } from '../utils';
+import { isOfType, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
-import { Sector } from '@models/shared';
-import { Team } from '@models/team';
+import { Sector, SectorLocals } from '@models/shared';
+import { Team, TeamLocals } from '@models/team';
 import { User } from '@models/user';
 
 @Injectable({
@@ -61,9 +61,13 @@ export class TeamService implements OnDestroy {
         .post('/api/team/all', {})
         .pipe(take(1))
         .subscribe((teams: any) => {
-          const tmp = reviveDates(teams);
+          const teamsFromDatabase = reviveDates(teams);
+          teamsFromDatabase.forEach((team: Team) => {
+            team.locals = {} as TeamLocals;
+            team.sectors.forEach((sector) => (sector.locals = {} as SectorLocals));
+          });
           this.keepUpdatingBalance();
-          this.teams$.next(tmp as Team[]);
+          this.teams$.next(teamsFromDatabase as Team[]);
           this._isDataLoaded$.next(true);
         });
       this.socket
@@ -85,14 +89,14 @@ export class TeamService implements OnDestroy {
   }
 
   idToTeam(id: string | Team): Team {
-    if (isOfType<Team>(id, ['_id', 'name', 'members', 'config'])) return id;
+    if (isOfType(Team, id)) return id;
     const tmp = this.teams$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
   idToSector(id: string | Sector | undefined): Sector {
     if (!id) return new Sector();
-    if (isOfType<Sector>(id, ['_id', 'name', 'abrev'])) return id;
+    if (isOfType(Sector, id)) return id;
     const tmp = this.sectorsListAll().find((sector) => sector._id == id);
     if (tmp) return tmp;
     return new Sector();
@@ -121,7 +125,7 @@ export class TeamService implements OnDestroy {
   keepUpdatingBalance(): void {
     this.teams$.pipe(takeUntil(this.destroy$)).subscribe((teams) => {
       teams.map((team) => {
-        team.balance = this.stringUtil.numberToMoney(
+        team.locals.balance = this.stringUtil.numberToMoney(
           team.transactions.reduce((accumulator, t) => (accumulator += this.stringUtil.moneyToNumber(t.value)), 0)
         );
         return team;
@@ -162,7 +166,7 @@ export class TeamService implements OnDestroy {
 
   userToSectors(user: User | string | undefined): Sector[] {
     if (!user) return [];
-    if (isOfTypeNew(User, user) && !user._id) return [];
+    if (isOfType(User, user) && !user._id) return [];
     return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
 

@@ -30,7 +30,15 @@ import {
 } from 'app/shared/utils';
 
 import { Contractor } from '@models/contractor';
-import { Invoice, InvoiceMaterial, InvoiceProduct, InvoiceStage, InvoiceTeamMember } from '@models/invoice';
+import {
+  Invoice,
+  InvoiceMaterial,
+  InvoiceProduct,
+  InvoiceProductLocals,
+  InvoiceStage,
+  InvoiceStageLocals,
+  InvoiceTeamMember,
+} from '@models/invoice';
 import { NotificationTags } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';
 import { Sector } from '@models/shared';
@@ -83,10 +91,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       total: '0,00',
       name: '',
       subproducts: [] as string[],
+      locals: {} as InvoiceProductLocals,
     } as InvoiceProduct,
     stage: {
       value: '',
       name: '',
+      locals: {} as InvoiceStageLocals,
     } as InvoiceStage,
     total: '0',
     subtotal: '0',
@@ -377,19 +387,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.lastStages = cloneDeep(this.tempInvoice.stages);
   }
 
-  updateDependentValues(array: any[], type: 'stage' | 'product'): void {
+  updateDependentValues(array: InvoiceStage[] | InvoiceProduct[], type: 'stage' | 'product'): void {
     if (this.tempInvoice.value !== '0') {
       const lastArray = type == 'stage' ? this.options.lastStages : this.options.lastProducts;
       array.map((item, index) => {
         const last = lastArray[index];
-        let p = last.percentage ? last.percentage : this.toPercentage(last);
+        let p = last.locals.percentage ? last.locals.percentage : this.toPercentage(last);
         if (type == 'product') {
           p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value, 20);
         }
         if (type == 'stage') {
           item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
         }
-        item.percentage = p;
+        item.locals.percentage = p;
         return item;
       });
     }
@@ -577,7 +587,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(cloneDeep(this.options.product));
     const lastItem = this.tempInvoice.products[this.tempInvoice.products.length - 1];
-    lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
+    lastItem.locals.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.product = new InvoiceProduct();
     this.updateTotal('product');
     this.updateLastValues();
@@ -627,7 +637,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.stage.name = this.options.stage.name;
     this.tempInvoice.stages.push(cloneDeep(this.options.stage));
     const lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
-    lastItem.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
+    lastItem.locals.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
     this.updateLastValues();
@@ -692,17 +702,17 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  updateValue(array: any[], idx: number): void {
-    array[idx].value = this.stringUtil.applyPercentage(this.tempInvoice.value, array[idx].percentage);
+  updateValue(array: InvoiceStage[] | InvoiceProduct[], idx: number): void {
+    array[idx].value = this.stringUtil.applyPercentage(this.tempInvoice.value, array[idx].locals.percentage);
   }
 
-  updatePercentage(array: any[], idx: number): void {
-    array[idx].percentage = this.toPercentage(array[idx]);
+  updatePercentage(array: InvoiceStage[] | InvoiceProduct[], idx: number): void {
+    array[idx].locals.percentage = this.toPercentage(array[idx]);
   }
 
   toPercentage(item: InvoiceProduct | InvoiceStage): string {
     let p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
-    if (this.tempInvoice.productListType == '2' && isOfType<InvoiceProduct>(item, ['amount']))
+    if (this.tempInvoice.productListType == '2' && isOfType(InvoiceProduct, item))
       p = this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(item.amount) * this.stringUtil.moneyToNumber(p),
         20

@@ -21,6 +21,15 @@ export interface ContractLocals {
   managerPicture: string;
 }
 
+export interface ChecklistItemLocals {
+  isNew: boolean;
+}
+
+export interface ItemActionLocals {
+  isNew: boolean;
+  parentItemName: string;
+}
+
 export class ContractExpenseTeamMember {
   @prop({ required: true, ref: () => User })
   user!: Ref<User>;
@@ -174,8 +183,10 @@ export class ChecklistItemAction {
   @prop()
   finishedDate?: Date;
 
-  isNew?: boolean = true;
-  parentItemName?: string = '';
+  locals: ItemActionLocals = {
+    isNew: true,
+    parentItemName: '',
+  };
 }
 
 export class ContractChecklistItem {
@@ -197,7 +208,9 @@ export class ContractChecklistItem {
   @prop({ type: () => [ChecklistItemAction] })
   actionList: ChecklistItemAction[] = [];
 
-  isNew?: boolean = true;
+  locals: ChecklistItemLocals = {
+    isNew: true,
+  };
 }
 
 @plugin(mongooseUniqueValidator)

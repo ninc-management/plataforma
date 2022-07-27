@@ -1524,7 +1524,7 @@
             >
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.products[i].percentage"
+                [(ngModel)]="tempInvoice.products[i].locals.percentage"
                 (ngModelChange)="updateValue(tempInvoice.products, i); updateTotal('product')"
                 id="input-productPercentage-{{ i }}"
                 name="productPercentage-{{ i }}"
@@ -1787,7 +1787,7 @@
             <div class="col-5 col-md-2" style="display: flex; align-items: center">
               <input
                 nbInput
-                [(ngModel)]="tempInvoice.stages[i].percentage"
+                [(ngModel)]="tempInvoice.stages[i].locals.percentage"
                 (ngModelChange)="updateValue(tempInvoice.stages, i); updateTotal('stage')"
                 id="input-stagePercentage-{{ i }}"
                 name="stagePercentage-{{ i }}"

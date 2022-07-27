@@ -25,7 +25,6 @@ import {
   groupByDateTimeSerie,
   idToProperty,
   isOfType,
-  isOfTypeNew,
   isPhone,
   isValidDate,
   isWithinInterval,
@@ -284,8 +283,8 @@ describe('UtilsService', () => {
 
   it('isOfType should work', () => {
     let test: TestComponent | User = new User();
-    expect(isOfTypeNew<User>(User, test)).toBe(true);
-    expect(isOfType<TestComponent>(test, ['value', 'items'])).toBe(false);
+    expect(isOfType<User>(User, test)).toBe(true);
+    expect(isOfType(TestComponent, test)).toBe(false);
   });
 
   it('nfPercentage should work', () => {

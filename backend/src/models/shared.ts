@@ -1,19 +1,25 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { User } from './user';
+
+export interface SectorLocals {
+  isChecked: boolean;
+}
 
 /**
  * Used by User and Team
  */
 export class Sector extends Base<string> {
   @prop({ required: true })
-  name!: string;
+  name: string = '';
 
   @prop({ required: true })
-  abrev!: string;
+  abrev: string = '';
 
-  isChecked = false;
+  locals: SectorLocals = {
+    isChecked: false,
+  };
 }
 
 /**

@@ -94,7 +94,11 @@ export class TeamsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((teams) => {
         this.teams = teams.map((team) => {
-          team.leaderName = idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName');
+          team.locals.leaderName = idToProperty(
+            team.leader,
+            this.userService.idToUser.bind(this.userService),
+            'fullName'
+          );
           return team;
         });
         this.source.load(this.teams);
