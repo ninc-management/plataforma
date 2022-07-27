@@ -43,7 +43,6 @@ export class ConfigComponent implements OnInit {
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
-
   newRole = { roleTypeName: '', permission: '' };
   newLevel: string = '';
   validation = config_validation as any;

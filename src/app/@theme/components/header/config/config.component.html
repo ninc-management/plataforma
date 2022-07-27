@@ -262,6 +262,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -400,7 +401,10 @@
                   [required]="validation.abbreviation.required"
                   [minlength]="validation.abbreviation.minLength"
                   [attr.aria-invalid]="codeAbbreviation.invalid && codeAbbreviation.touched ? true : null"
-                  (focusout)="clonedConfig.invoiceConfig.codeAbbreviation = clonedConfig.invoiceConfig.codeAbbreviation.toUpperCase()"
+                  (focusout)="
+                    clonedConfig.invoiceConfig.codeAbbreviation =
+                      clonedConfig.invoiceConfig.codeAbbreviation.toUpperCase()
+                  "
                 />
                 <ng-container *ngIf="codeAbbreviation.invalid && codeAbbreviation.touched">
                   <p class="caption status-danger" *ngIf="codeAbbreviation.errors?.required">A sigla é obrigatória!</p>
@@ -543,6 +547,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -797,6 +802,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -806,12 +812,10 @@
     </form>
   </nb-tab>
   <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #socialConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-auto">
-          <label class="label-divider">
-            Dados da empresa
-          </label>
+          <label class="label-divider">Dados da empresa</label>
         </div>
         <div class="col">
           <hr />
@@ -869,19 +873,25 @@
       <div class="row">
         <div class="col-12">
           <div class="form-control-group">
-            <label class="label" for="input-cnpj">CNPJ</label>
+            <label class="label" for="input-document">CNPJ</label>
             <input
               nbInput
               [(ngModel)]="clonedConfig.socialConfig.cnpj"
-              #cnpj="ngModel"
-              id="input-cnpj"
-              name="cnpj"
+              #document="ngModel"
+              id="input-document"
+              name="document"
               placeholder="00.000.000/0000-00"
               fullWidth
               fieldSize="large"
-              [status]="cnpj.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
+              [brmasker]="{ person: true }"
+              ngxSelectAllText
+              [minlength]="validation.document.minLength"
+              [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="document.invalid && document.touched ? true : null"
             />
+            <ng-container *ngIf="document.errors?.minlength">
+              <p class="caption status-danger" >CNPJ deve ter {{validation.document.minLength - 4}} números</p>
+            </ng-container>
           </div>
         </div>
       </div>
@@ -1043,6 +1053,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -1092,6 +1103,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -1212,6 +1224,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "
@@ -1458,6 +1471,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
+          !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
           (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
         "

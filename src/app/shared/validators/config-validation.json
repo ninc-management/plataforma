@@ -2,5 +2,9 @@
   "abbreviation": {
     "required": true,
     "minLength": 2
+  },
+  "document": {
+    "required": true,
+    "minLength": 18
   }
 }
