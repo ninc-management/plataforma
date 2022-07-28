@@ -13,6 +13,7 @@ import {
   nortanPercentage,
   valueSort,
 } from '../utils';
+import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from './invoice.service';
@@ -130,7 +131,8 @@ export class MetricsService implements OnDestroy {
     private userService: UserService,
     private stringUtil: StringUtilService,
     private teamService: TeamService,
-    private contractorService: ContractorService
+    private contractorService: ContractorService,
+    private configService: ConfigService
   ) {
     this.teamService
       .getTeams()
@@ -512,9 +514,14 @@ export class MetricsService implements OnDestroy {
     number = 1,
     fromToday = false
   ): Observable<number> {
-    return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
-      map(([contracts, _]) => {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.configService.getConfig(),
+      this.contractService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isConfigDataLoaded]) => !(isContractDataLoaded && isConfigDataLoaded)),
+      map(([contracts, configs, ,]) => {
         return contracts.reduce((sum, contract) => {
           if (this.contractService.hasReceipts(contract._id)) {
             sum += contract.receipts
@@ -525,7 +532,7 @@ export class MetricsService implements OnDestroy {
                   acc += this.stringUtil.moneyToNumber(
                     this.contractService.toNetValue(
                       receipt.value,
-                      nfPercentage(contract),
+                      nfPercentage(contract, configs[0].invoiceConfig.nfPercentage),
                       nortanPercentage(contract),
                       contract.created
                     )

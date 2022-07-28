@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { cloneDeep, isEqual } from 'lodash';
-import { BehaviorSubject, combineLatest, map, Observable, of, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, of, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
+import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -76,16 +77,25 @@ export class DataTabComponent implements OnInit {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private contractService: ContractService,
-    public stringUtil: StringUtilService,
+    private configService: ConfigService,
     public teamService: TeamService,
+    public stringUtil: StringUtilService,
     public userService: UserService
   ) {}
 
   ngOnInit(): void {
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
+        take(1)
+      )
+      .subscribe(([configs, _]) => {
+        this.options.nortanPercentage = nortanPercentage(this.contract);
+        this.options.notaFiscal = nfPercentage(this.contract, configs[0].invoiceConfig.nfPercentage);
+      });
+
     this.options.interest = this.contract.receipts.length;
     this.options.paid = this.contractService.paidValue(this.contract);
-    this.options.nortanPercentage = nortanPercentage(this.contract);
-    this.options.notaFiscal = nfPercentage(this.contract);
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(

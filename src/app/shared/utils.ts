@@ -64,18 +64,9 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
   doc = d;
 }
 
-export function nfPercentage(iDocument: Contract | Invoice): string {
-  const configService = appInjector.get(ConfigService);
+export function nfPercentage(iDocument: Contract | Invoice, percentageFromConfig: string): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
-
-  let nfPercentage: string = '0';
-  configService
-    .getConfig()
-    .pipe(take(1))
-    .subscribe((configs) => {
-      if (configs[0]) nfPercentage = configs[0].invoiceConfig.nfPercentage;
-    });
 
   let invoice: Invoice = new Invoice();
   if (isOfType(Invoice, iDocument)) {
@@ -89,7 +80,7 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
   }
-  return invoice.administration == 'nortan' ? nfPercentage : '0';
+  return invoice.administration == 'nortan' ? percentageFromConfig : '0';
 }
 
 export function nortanPercentage(iDocument: Contract | Invoice): string {
