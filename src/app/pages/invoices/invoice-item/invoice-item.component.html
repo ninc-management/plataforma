@@ -2,9 +2,9 @@
   <nb-tabset fullWidth>
     <nb-tab tabTitle="Principal">
       <div class="row">
-        <div class="col-12" *ngIf="accessChecker.isGranted('aer', 'invoice-author') | async">
+        <div class="col-12" *ngIf="editing ? true : !!(accessChecker.isGranted('aer', 'invoice-author') | async)">
           <div class="form-control-group">
-            <label class="label" for="input-author">Autor:</label>
+            <label class="label" for="input-author">Gestor:</label>
             <nb-completer
               [(ngModel)]="authorSearch"
               [inputName]="'authorListCompleter'"
@@ -23,6 +23,7 @@
               [required]="validation.author.required"
               [status]="authorList.dirty && authorSearch ? (authorList.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="authorList.invalid && authorList.touched ? true : null"
+              [disabled]="isInputDisabled$.value"
             ></nb-completer>
           </div>
         </div>
@@ -850,7 +851,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laep.value"
-            (click)="tempInvoice.laep.push({text: options.aep, isVisible: true}); options.aep = ''"
+            (click)="tempInvoice.laep.push({ text: options.aep, isVisible: true }); options.aep = ''"
           >
             +
           </button>
@@ -870,13 +871,13 @@
                 [status]="tempInvoice.laep[i].text.length == 0 ? 'danger' : 'basic'"
               />
             </div>
-             <div class="col-2 col-md-1" style="text-align: right">
+            <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
-              class="addIcon"
+                class="addIcon"
                 status="basic"
                 [icon]="tempInvoice.laep[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
                 pack="eva"
-                (click)="tempInvoice.laep[i].isVisible = !tempInvoice.laep[i].isVisible; isFormDirty.next(true);"
+                (click)="tempInvoice.laep[i].isVisible = !tempInvoice.laep[i].isVisible; isFormDirty.next(true)"
                 [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               <nb-icon
@@ -884,7 +885,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laep.splice(i, 1); isFormDirty.next(true);"
+                (click)="tempInvoice.laep.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -993,7 +994,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laee.value"
-            (click)="tempInvoice.laee.push({text: options.aee, isVisible: true}); options.aee = ''"
+            (click)="tempInvoice.laee.push({ text: options.aee, isVisible: true }); options.aee = ''"
           >
             +
           </button>
@@ -1015,11 +1016,11 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
-              class="addIcon"
+                class="addIcon"
                 status="basic"
                 [icon]="tempInvoice.laee[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
                 pack="eva"
-                (click)="tempInvoice.laee[i].isVisible = !tempInvoice.laee[i].isVisible; isFormDirty.next(true);"
+                (click)="tempInvoice.laee[i].isVisible = !tempInvoice.laee[i].isVisible; isFormDirty.next(true)"
                 [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               <nb-icon
@@ -1027,7 +1028,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laee.splice(i, 1); isFormDirty.next(true);"
+                (click)="tempInvoice.laee.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1136,7 +1137,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!laec.value"
-            (click)="tempInvoice.laec.push({text: options.aec, isVisible: true}); options.aec = ''"
+            (click)="tempInvoice.laec.push({ text: options.aec, isVisible: true }); options.aec = ''"
           >
             +
           </button>
@@ -1160,11 +1161,11 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
-              class="addIcon"
+                class="addIcon"
                 status="basic"
                 [icon]="tempInvoice.laec[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
                 pack="eva"
-                (click)="tempInvoice.laec[i].isVisible = !tempInvoice.laec[i].isVisible; isFormDirty.next(true);"
+                (click)="tempInvoice.laec[i].isVisible = !tempInvoice.laec[i].isVisible; isFormDirty.next(true)"
                 [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               <nb-icon
@@ -1172,7 +1173,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.laec.splice(i, 1); isFormDirty.next(true);"
+                (click)="tempInvoice.laec.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>
@@ -1442,7 +1443,7 @@
                         status="basic"
                         icon="trash-2-outline"
                         pack="eva"
-                        (click)="product.subproducts.splice(j, 1); isFormDirty.next(true);"
+                        (click)="product.subproducts.splice(j, 1); isFormDirty.next(true)"
                         [options]="{ animation: { type: 'shake' } }"
                       ></nb-icon>
                     </div>
@@ -1869,7 +1870,7 @@
             size="large"
             style="margin-top: 28px"
             [disabled]="!important.value"
-            (click)="tempInvoice.importants.push({text: options.important, isVisible: true}); options.important = ''"
+            (click)="tempInvoice.importants.push({ text: options.important, isVisible: true }); options.important = ''"
           >
             +
           </button>
@@ -1903,11 +1904,13 @@
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
               <nb-icon
-              class="addIcon"
+                class="addIcon"
                 status="basic"
                 [icon]="tempInvoice.importants[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
                 pack="eva"
-                (click)="tempInvoice.importants[i].isVisible = !tempInvoice.importants[i].isVisible; isFormDirty.next(true);"
+                (click)="
+                  tempInvoice.importants[i].isVisible = !tempInvoice.importants[i].isVisible; isFormDirty.next(true)
+                "
                 [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
               <nb-icon
@@ -1915,7 +1918,7 @@
                 status="basic"
                 icon="trash-2-outline"
                 pack="eva"
-                (click)="tempInvoice.importants.splice(i, 1); isFormDirty.next(true);"
+                (click)="tempInvoice.importants.splice(i, 1); isFormDirty.next(true)"
                 [options]="{ animation: { type: 'shake' } }"
               ></nb-icon>
             </div>

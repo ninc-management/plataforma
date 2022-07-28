@@ -56,7 +56,10 @@ export class DataTabComponent implements OnInit {
     distribution: '0,00',
   };
   memberChanged$ = new BehaviorSubject<boolean>(true);
+  isInputDisabled$ = new BehaviorSubject<boolean>(true);
   availableUsers: Observable<User[]> = of([]);
+  authorSearch = '';
+  authorData: Observable<User[]> = of([]);
 
   isPhone = isPhone;
   idToProperty = idToProperty;
@@ -70,11 +73,11 @@ export class DataTabComponent implements OnInit {
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    public teamService: TeamService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
-    public stringUtil: StringUtilService,
     private contractService: ContractService,
+    public stringUtil: StringUtilService,
+    public teamService: TeamService,
     public userService: UserService
   ) {}
 
@@ -99,6 +102,40 @@ export class DataTabComponent implements OnInit {
       .pipe(take(1))
       .subscribe((isGranted) => {
         this.isEditionGranted = isGranted;
+        if (isGranted) {
+          this.isInputDisabled$.next(false);
+          this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+            if (user.AER) {
+              const u = cloneDeep(user);
+              u.AER.unshift(u._id);
+              if (this.invoice._id && this.invoice.author) {
+                this.authorData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+                this.authorSearch = idToProperty(
+                  this.invoice.author,
+                  this.userService.idToUser.bind(this.userService),
+                  'fullName'
+                );
+              } else {
+                this.authorData = of(
+                  u.AER.filter((u): u is User | string => u != undefined).map((u) => this.userService.idToUser(u))
+                );
+                this.authorSearch = '';
+                this.invoice.author = undefined;
+              }
+            } else {
+              if (this.invoice._id) {
+                this.authorData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+              } else {
+                this.invoice.author = user;
+              }
+              this.authorSearch = idToProperty(
+                this.invoice.author,
+                this.userService.idToUser.bind(this.userService),
+                'fullName'
+              );
+            }
+          });
+        }
       });
     this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => {
