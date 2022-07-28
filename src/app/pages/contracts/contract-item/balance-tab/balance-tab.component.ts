@@ -83,6 +83,10 @@ export class BalanceTabComponent implements OnInit {
       .subscribe(([configs, _]) => {
         this.config = configs[0];
         this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
+        this.options.nortanPercentage = nortanPercentage(
+          this.contract,
+          this.config.invoiceConfig.organizationPercentage
+        );
       });
 
     this.responseEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -95,7 +99,6 @@ export class BalanceTabComponent implements OnInit {
     this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.options.interest = this.contract.receipts.length;
-    this.options.nortanPercentage = nortanPercentage(this.contract);
   }
 
   expenseSourceSum(): ExpenseSourceSum[] {
@@ -178,7 +181,7 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
-    this.options.nortanPercentage = nortanPercentage(this.contract);
+    this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig.organizationPercentage);
     this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);

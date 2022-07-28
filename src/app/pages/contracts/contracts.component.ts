@@ -282,7 +282,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
         }, 0)
       ),
       nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
   }
@@ -309,7 +309,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
         }, 0)
       ),
       nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
 
@@ -318,7 +318,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
         this.contractService.toNetValue(
           invoice.value,
           nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-          nortanPercentage(contract),
+          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
           contract.created
         )
       ) - this.stringUtil.moneyToNumber(paidValue)
@@ -374,7 +374,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
                 contract
               ),
               nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-              nortanPercentage(contract),
+              nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
               contract.created
             ) + ';';
           csv += this.getReportReceivedValue(contract) + ';';

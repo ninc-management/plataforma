@@ -90,7 +90,10 @@ export class DataTabComponent implements OnInit {
         take(1)
       )
       .subscribe(([configs, _]) => {
-        this.options.nortanPercentage = nortanPercentage(this.contract);
+        this.options.nortanPercentage = nortanPercentage(
+          this.contract,
+          configs[0].invoiceConfig.organizationPercentage
+        );
         this.options.notaFiscal = nfPercentage(this.contract, configs[0].invoiceConfig.nfPercentage);
       });
 

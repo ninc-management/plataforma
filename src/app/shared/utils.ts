@@ -83,18 +83,9 @@ export function nfPercentage(iDocument: Contract | Invoice, percentageFromConfig
   return invoice.administration == 'nortan' ? percentageFromConfig : '0';
 }
 
-export function nortanPercentage(iDocument: Contract | Invoice): string {
-  const configService = appInjector.get(ConfigService);
+export function nortanPercentage(iDocument: Contract | Invoice, percentageFromConfig: string): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
-
-  let orgPercentage: string = '0';
-  configService
-    .getConfig()
-    .pipe(take(1))
-    .subscribe((configs) => {
-      if (configs[0]) orgPercentage = configs[0].invoiceConfig.organizationPercentage;
-    });
 
   let invoice: Invoice = new Invoice();
   if (isOfType(Invoice, iDocument)) {
@@ -108,7 +99,7 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
   }
-  return invoice.administration == 'nortan' ? orgPercentage : '0';
+  return invoice.administration == 'nortan' ? percentageFromConfig : '0';
 }
 
 export function assingOrIncrement(base: number | undefined, increment: number): number {

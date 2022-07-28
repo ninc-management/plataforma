@@ -292,7 +292,7 @@ export class ContractService implements OnDestroy, OnInit {
         this.toNetValue(
           this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
           nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-          nortanPercentage(contract),
+          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
           contract.created
         )
       ) + this.getComissionsSum(contract)
@@ -334,7 +334,7 @@ export class ContractService implements OnDestroy, OnInit {
         }, 0)
       ),
       nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
   }
@@ -450,12 +450,12 @@ export class ContractService implements OnDestroy, OnInit {
       contract.locals.liquid = this.toNetValue(
         this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
         nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-        nortanPercentage(contract),
+        nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
         contract.created
       );
 
       const nf = nfPercentage(contract, this.config.invoiceConfig.nfPercentage);
-      const nortan = nortanPercentage(contract);
+      const nortan = nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage);
       const paid = this.toNetValue(
         this.stringUtil.numberToMoney(
           contract.receipts.reduce((accumulator: number, recipt: any) => {
