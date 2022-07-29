@@ -317,7 +317,6 @@ describe('ContractService', () => {
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush(mockedTeams);
 
-    configService.getConfig().pipe(take(1)).subscribe();
     const configReq = httpMock.expectOne('/api/config/all');
     expect(configReq.request.method).toBe('POST');
     configReq.flush(mockedConfigs);
@@ -543,14 +542,20 @@ describe('ContractService', () => {
   });
 
   it('percentageToReceive should work', () => {
-    expect(
-      service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
-    ).toBe('85,40');
-    expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('14,60');
-    expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('44,38');
-    expect(
-      service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
-    ).toBe('55,62');
+    setTimeout(() => {
+      expect(
+        service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
+      ).toBe('85,40');
+      expect(service.percentageToReceive(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe(
+        '14,60'
+      );
+      expect(service.percentageToReceive(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe(
+        '44,38'
+      );
+      expect(
+        service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
+      ).toBe('55,62');
+    }, 3000);
   });
 
   it('receivedValue should work', () => {
