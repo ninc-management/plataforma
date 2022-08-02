@@ -1,7 +1,9 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
+import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -36,6 +38,7 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ConfigDialogComponent>,
     private notificationService: NotificationService,
+    private dialogService: NbDialogService,
     public userService: UserService,
     public stringUtils: StringUtilService
   ) {
@@ -58,6 +61,23 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
   }
 
   dismiss(): void {
-    super.dismiss();
+    if (this.isFormDirty.value) {
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question: 'Deseja descartar as alterações feitas?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            super.dismiss();
+          }
+        });
+    } else super.dismiss();
   }
 }
