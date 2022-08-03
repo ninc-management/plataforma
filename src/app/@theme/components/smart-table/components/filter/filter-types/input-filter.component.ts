@@ -1,41 +1,81 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NbPopoverDirective } from '@nebular/theme';
+import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
 
 import { DefaultFilter } from './default-filter';
+import { appInjector } from 'app/shared/injector.module';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 
 @Component({
   selector: 'input-filter',
   template: `
     <input
+      *ngIf="inputType == 'slider'"
+      [ngClass]="inputClass"
+      [formControl]="inputControl"
+      class="form-control"
+      type="text"
+      placeholder="{{ column.title }}"
+      [nbPopover]="rangeSliderBox"
+      nbPopoverPlacement="bottom"
+      nbPopoverTrigger="click"
+    />
+    <input
+      *ngIf="inputType == 'input'"
       [ngClass]="inputClass"
       [formControl]="inputControl"
       class="form-control"
       type="text"
       placeholder="{{ column.title }}"
     />
+    <ng-template #rangeSliderBox>
+      <nb-card class="nb-card-slider" style="padding: 20px; margin-bottom: 0;">
+        <nb-card-header style="padding-top: 0;text-align: center;">Selecione o intervalo de valores</nb-card-header>
+        <range-slider-filter
+          [minValue]="column.getFilterConfig().minValue"
+          [maxValue]="column.getFilterConfig().maxValue"
+          (valueChanged)="setInputValue($event)"
+          [query]="this.query"
+        ></range-slider-filter>
+      </nb-card>
+    </ng-template>
   `,
 })
-export class InputFilterComponent extends DefaultFilter implements OnInit, OnChanges {
+export class InputFilterComponent extends DefaultFilter implements OnInit {
   inputControl = new FormControl();
-
+  inputType = 'input';
+  @ViewChild(NbPopoverDirective) popover!: NbPopoverDirective;
   constructor() {
     super();
   }
 
   ngOnInit() {
+    if (this.column.getFilterType() === 'slider') this.inputType = 'slider';
     if (this.query) {
       this.inputControl.setValue(this.query);
     }
-    this.inputControl.valueChanges.pipe(distinctUntilChanged(), debounceTime(this.delay)).subscribe((value: string) => {
-      this.query = this.inputControl.value;
-      this.setFilter();
-    });
+    this.inputControl.valueChanges
+      .pipe(skip(1), distinctUntilChanged(), debounceTime(this.delay))
+      .subscribe((value: string) => {
+        this.query = value;
+        this.setFilter();
+      });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.query) {
-      this.inputControl.setValue(this.query);
-    }
+  setInputValue(values: { min: string; max: string }): void {
+    this.inputControl.setValue(values.min + ' - ' + values.max);
   }
+}
+
+export function sliderRangeFilter(cell: any, search?: string): boolean {
+  const stringUtil = appInjector.get(StringUtilService);
+  if (search) {
+    const range = search.split(' - ');
+    return (
+      stringUtil.moneyToNumber(cell) >= stringUtil.moneyToNumber(range[0]) &&
+      stringUtil.moneyToNumber(cell) <= stringUtil.moneyToNumber(range[1])
+    );
+  }
+  return false;
 }

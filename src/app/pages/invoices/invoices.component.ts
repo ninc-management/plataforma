@@ -6,6 +6,7 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { PdfService } from './pdf.service';
+import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/input-filter.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
@@ -108,7 +109,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Valor',
         type: 'string',
         width: '10%',
+        filter: {
+          type: 'slider',
+          config: {
+            minValue: 0,
+            maxValue: 0,
+          },
+        },
         compareFunction: valueSort,
+        filterFunction: (cell: any, search?: string) => sliderRangeFilter(cell, search),
       },
       status: {
         title: 'Status',
@@ -180,6 +189,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
           return invoice;
         });
         this.source.load(invoices);
+        this.settings.columns.value.filter.config.minValue = this.invoiceService.greaterAndSmallerInvoiceValue().min;
+        this.settings.columns.value.filter.config.maxValue = this.invoiceService.greaterAndSmallerInvoiceValue().max;
       });
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
