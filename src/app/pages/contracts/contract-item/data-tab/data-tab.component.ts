@@ -13,7 +13,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { formatDate, idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Invoice, InvoiceTeamMember, InvoiceTeamMemberLocals } from '@models/invoice';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
 
@@ -40,7 +40,7 @@ export class DataTabComponent implements OnInit {
   comissionSum = '';
   today = new Date();
   userSearch = '';
-  teamMember: any = {};
+  teamMember: InvoiceTeamMember = new InvoiceTeamMember();
   USER_SECTORS: Sector[] = [];
   options = {
     liquid: '0,00',
@@ -149,6 +149,7 @@ export class DataTabComponent implements OnInit {
       this.clonedContract.ISS = '0,00';
       this.options.hasISS = false;
     }
+    this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
     this.updateLiquid();
     this.updateTeamTotal();
     this.applyDistribution();
@@ -186,8 +187,8 @@ export class DataTabComponent implements OnInit {
   updateTeamTotal(): void {
     this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
-        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.grossValue);
-        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.netValue);
+        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.locals.grossValue);
+        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.locals.netValue);
         sum.distribution = this.stringUtil.sumMoney(sum.distribution, member.distribution);
         return sum;
       },
@@ -202,12 +203,12 @@ export class DataTabComponent implements OnInit {
   updatePercentage(idx?: number): void {
     if (idx != undefined) {
       this.invoice.team[idx].distribution = this.stringUtil
-        .toPercentage(this.invoice.team[idx].netValue, this.clonedContract.locals.liquid, 20)
+        .toPercentage(this.invoice.team[idx].locals.netValue, this.clonedContract.locals.liquid, 20)
         .slice(0, -1);
       this.updateTeamTotal();
     } else {
       this.teamMember.distribution = this.stringUtil
-        .toPercentage(this.teamMember.netValue, this.clonedContract.locals.liquid, 20)
+        .toPercentage(this.teamMember.locals.netValue, this.clonedContract.locals.liquid, 20)
         .slice(0, -1);
     }
   }
@@ -215,14 +216,14 @@ export class DataTabComponent implements OnInit {
   updateNetValue(idx?: number, source: 'gross' | 'distribution' = 'distribution'): void {
     if (idx != undefined) {
       if (source === 'gross') {
-        this.invoice.team[idx].netValue = this.contractService.toNetValue(
-          this.invoice.team[idx].grossValue,
+        this.invoice.team[idx].locals.netValue = this.contractService.toNetValue(
+          this.invoice.team[idx].locals.grossValue,
           this.options.notaFiscal,
           this.options.nortanPercentage,
           this.clonedContract.created
         );
       } else {
-        this.invoice.team[idx].netValue = this.stringUtil.applyPercentage(
+        this.invoice.team[idx].locals.netValue = this.stringUtil.applyPercentage(
           this.clonedContract.locals.liquid,
           this.invoice.team[idx].distribution
         );
@@ -230,14 +231,14 @@ export class DataTabComponent implements OnInit {
       this.updateTeamTotal();
     } else {
       if (source === 'gross') {
-        this.teamMember.netValue = this.contractService.toNetValue(
-          this.teamMember.grossValue,
+        this.teamMember.locals.netValue = this.contractService.toNetValue(
+          this.teamMember.locals.grossValue,
           this.options.notaFiscal,
           this.options.nortanPercentage,
           this.clonedContract.created
         );
       } else {
-        this.teamMember.netValue = this.stringUtil.applyPercentage(
+        this.teamMember.locals.netValue = this.stringUtil.applyPercentage(
           this.clonedContract.locals.liquid,
           this.teamMember.distribution
         );
@@ -247,15 +248,15 @@ export class DataTabComponent implements OnInit {
 
   updateGrossValue(idx?: number): void {
     if (idx != undefined) {
-      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
-        this.invoice.team[idx].netValue,
+      this.invoice.team[idx].locals.grossValue = this.contractService.toGrossValue(
+        this.invoice.team[idx].locals.netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
       this.updateTeamTotal();
     } else {
-      this.teamMember.grossValue = this.contractService.toGrossValue(
-        this.teamMember.netValue,
+      this.teamMember.locals.grossValue = this.contractService.toGrossValue(
+        this.teamMember.locals.netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
@@ -265,7 +266,7 @@ export class DataTabComponent implements OnInit {
   addColaborator(): void {
     this.invoice.team.push(Object.assign({}, this.teamMember));
     this.userSearch = '';
-    this.teamMember = {};
+    this.teamMember = new InvoiceTeamMember();
     this.updateTeamTotal();
     this.memberChanged$.next(true);
   }
@@ -316,7 +317,10 @@ export class DataTabComponent implements OnInit {
     if (this.clonedContract.invoice != undefined) {
       const invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
       invoice.team.map((member, index) => {
-        member.netValue = this.stringUtil.applyPercentage(this.clonedContract.locals.liquid, member.distribution);
+        member.locals.netValue = this.stringUtil.applyPercentage(
+          this.clonedContract.locals.liquid,
+          member.distribution
+        );
         this.updateGrossValue(index);
         this.updateTeamTotal();
       });
@@ -347,9 +351,9 @@ export class DataTabComponent implements OnInit {
 
   applyDistribution(): void {
     this.invoice.team = this.invoice.team.map((member) => {
-      member.netValue = this.stringUtil.applyPercentage(this.clonedContract.locals.liquid, member.distribution);
-      member.grossValue = this.contractService.toGrossValue(
-        member.netValue,
+      member.locals.netValue = this.stringUtil.applyPercentage(this.clonedContract.locals.liquid, member.distribution);
+      member.locals.grossValue = this.contractService.toGrossValue(
+        member.locals.netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );
@@ -359,5 +363,11 @@ export class DataTabComponent implements OnInit {
 
   isNotEdited(): boolean {
     return isEqual(this.contract, this.clonedContract);
+  }
+
+  onNewMemberSelected(event: User): void {
+    this.teamMember.user = event;
+    this.USER_SECTORS = this.teamService.userToSectors(this.teamMember.user._id);
+    this.teamMember.sector = undefined;
   }
 }

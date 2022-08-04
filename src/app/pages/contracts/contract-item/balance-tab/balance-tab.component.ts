@@ -8,7 +8,7 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.
 import { idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
-import { Invoice } from '@models/invoice';
+import { Invoice, InvoiceTeamMemberLocals } from '@models/invoice';
 
 interface ExpenseSourceSum {
   user: string;
@@ -76,6 +76,7 @@ export class BalanceTabComponent implements OnInit {
     });
     this.contractId = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+    this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.options.interest = this.contract.receipts.length;
     this.options.nortanPercentage = nortanPercentage(this.contract);
@@ -113,8 +114,8 @@ export class BalanceTabComponent implements OnInit {
   updateTeamTotal(): void {
     this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
-        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.grossValue);
-        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.netValue);
+        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.locals.grossValue);
+        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.locals.netValue);
         sum.distribution = this.stringUtil.sumMoney(sum.distribution, member.distribution);
         return sum;
       },
@@ -142,7 +143,7 @@ export class BalanceTabComponent implements OnInit {
     if (this.contract.invoice != undefined) {
       const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       invoice.team.map((member, index) => {
-        member.netValue = this.stringUtil.applyPercentage(this.contract.locals.liquid, member.distribution);
+        member.locals.netValue = this.stringUtil.applyPercentage(this.contract.locals.liquid, member.distribution);
         this.updateGrossValue(index);
         this.updateTeamTotal();
       });
@@ -151,8 +152,8 @@ export class BalanceTabComponent implements OnInit {
 
   updateGrossValue(idx?: number): void {
     if (idx != undefined) {
-      this.invoice.team[idx].grossValue = this.contractService.toGrossValue(
-        this.invoice.team[idx].netValue,
+      this.invoice.team[idx].locals.grossValue = this.contractService.toGrossValue(
+        this.invoice.team[idx].locals.netValue,
         this.options.notaFiscal,
         this.options.nortanPercentage
       );

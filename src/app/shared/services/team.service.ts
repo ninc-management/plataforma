@@ -5,7 +5,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, nameSort, reviveDates } from '../utils';
+import { isOfType, isOfTypeNew, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
@@ -162,7 +162,7 @@ export class TeamService implements OnDestroy {
 
   userToSectors(user: User | string | undefined): Sector[] {
     if (!user) return [];
-    if (isOfType<User>(user, ['fullName', 'sectors', 'position']) && !user._id) return [];
+    if (isOfTypeNew(User, user) && !user._id) return [];
     return this.userService.idToUser(user).sectors.map((sector) => this.idToSector(sector));
   }
 

@@ -128,8 +128,10 @@ export class InvoiceService implements OnDestroy {
       user: member.user,
       sector: member.sector,
       distribution: defaultDistribution,
-      netValue: '',
-      grossValue: '',
+      locals: {
+        netValue: '',
+        grossValue: '',
+      },
     }));
 
     return tmpInvoice;

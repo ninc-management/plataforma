@@ -6,19 +6,19 @@ import { Base } from './base';
 @plugin(mongooseUniqueValidator)
 export class Contractor extends Base<string> {
   @prop({ required: true })
-  fullName!: string;
+  fullName: string = '';
 
   @prop({ required: true, unique: true })
-  document!: string;
+  document: string = '';
 
   @prop({ required: true })
-  email!: string;
+  email: string = '';
 
   @prop({ required: true })
-  address!: string;
+  address: string = '';
 
   @prop({ required: true })
-  phone!: string;
+  phone: string = '';
 }
 
 export default getModelForClass(Contractor);
