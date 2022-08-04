@@ -108,6 +108,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   validation = invoice_validation as any;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
 
+  currentUser: User = new User();
+  isInputDisabled$ = new BehaviorSubject<boolean>(true);
   memberChanged$ = new BehaviorSubject<boolean>(true);
   contractorSearch = '';
   contractorData: Observable<Contractor[]> = of([]);
@@ -259,32 +261,39 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     );
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+      this.currentUser = user;
       this.accessChecker
         .isGranted('aer', 'invoice-author')
         .pipe(take(1))
         .subscribe((isGranted) => {
           if (isGranted && user.AER) {
             const u = cloneDeep(user);
-            if (u.AER) {
-              u.AER.unshift(u._id);
+            u.AER.unshift(u._id);
+            if (this.tempInvoice._id && this.tempInvoice.author) {
+              this.authorData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+              this.authorSearch = idToProperty(
+                this.tempInvoice.author,
+                this.userService.idToUser.bind(this.userService),
+                'fullName'
+              );
+            } else {
               this.authorData = of(
                 u.AER.filter((u): u is User | string => u != undefined).map((u) => this.userService.idToUser(u))
               );
-              if (
-                this.tempInvoice._id &&
-                this.tempInvoice.author &&
-                u.AER.includes(this.userService.idToUser(this.tempInvoice.author)?._id)
-              )
-                this.authorSearch = idToProperty(
-                  this.tempInvoice.author,
-                  this.userService.idToUser.bind(this.userService),
-                  'fullName'
-                );
-              else {
-                this.authorSearch = '';
-                this.tempInvoice.author = undefined;
-              }
+              this.authorSearch = '';
+              this.tempInvoice.author = undefined;
             }
+          } else {
+            if (this.tempInvoice._id) {
+              this.authorData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+            } else {
+              this.tempInvoice.author = user;
+            }
+            this.authorSearch = idToProperty(
+              this.tempInvoice.author,
+              this.userService.idToUser.bind(this.userService),
+              'fullName'
+            );
           }
         });
     });
@@ -299,6 +308,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.NORTAN_TEAMS = teams;
         this.ALL_SECTORS = this.teamService.sectorsListAll();
       });
+
+    this.enableAuthorInput();
   }
 
   ngAfterViewInit(): void {
@@ -798,5 +809,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   copyTextInputService(): void {
     this.tempInvoice.subject = this.tempInvoice.service;
+  }
+
+  enableAuthorInput(): void {
+    this.accessChecker
+      .isGranted('aer', 'invoice-author')
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        if (isGranted) {
+          this.isInputDisabled$.next(false);
+          return;
+        }
+        if (this.userService.isEqual(this.currentUser, this.iInvoice.author)) this.isInputDisabled$.next(false);
+        else this.isInputDisabled$.next(true);
+      });
   }
 }
