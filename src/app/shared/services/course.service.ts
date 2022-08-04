@@ -4,7 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, reviveDates } from '../utils';
+import { isOfTypeNew, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Course, CourseParticipant } from '@models/course';
@@ -55,7 +55,7 @@ export class CourseService {
   }
 
   idToParticipant(id: string | CourseParticipant): CourseParticipant {
-    if (isOfType<CourseParticipant>(id, ['_id', 'name', 'email', 'isSpeaker'])) return id;
+    if (isOfTypeNew(CourseParticipant, id)) return id;
     const tmp = this.courses$
       .getValue()
       .map((course) => course.participants)

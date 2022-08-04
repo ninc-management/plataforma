@@ -99,8 +99,10 @@ describe('InvoiceService', () => {
       user: '1',
       sector: 'Trocar',
       distribution: '50,00',
-      grossValue: '',
-      netValue: '',
+      locals: {
+        grossValue: '',
+        netValue: '',
+      },
     });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     tmpInvoice = new Invoice();
@@ -115,8 +117,10 @@ describe('InvoiceService', () => {
       user: '0',
       sector: 'test',
       distribution: '50,00',
-      grossValue: '',
-      netValue: '',
+      locals: {
+        grossValue: '',
+        netValue: '',
+      },
     });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     // mock response
