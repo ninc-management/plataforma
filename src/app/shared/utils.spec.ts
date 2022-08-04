@@ -25,6 +25,7 @@ import {
   groupByDateTimeSerie,
   idToProperty,
   isOfType,
+  isOfTypeNew,
   isPhone,
   isValidDate,
   isWithinInterval,
@@ -283,7 +284,7 @@ describe('UtilsService', () => {
 
   it('isOfType should work', () => {
     let test: TestComponent | User = new User();
-    expect(isOfType<User>(test, ['position', 'expertise'])).toBe(true);
+    expect(isOfTypeNew<User>(User, test)).toBe(true);
     expect(isOfType<TestComponent>(test, ['value', 'items'])).toBe(false);
   });
 

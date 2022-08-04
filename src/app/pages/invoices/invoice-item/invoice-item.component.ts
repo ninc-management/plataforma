@@ -58,8 +58,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     user: undefined,
     sector: undefined,
     distribution: '',
-    netValue: '',
-    grossValue: '',
+    locals: {
+      netValue: '',
+      grossValue: '',
+    },
   };
   options = {
     aep: '',
@@ -195,8 +197,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             user: user,
             sector: this.tempInvoice.sector ? this.tempInvoice.sector : undefined,
             distribution: '',
-            netValue: '',
-            grossValue: '',
+            locals: {
+              netValue: '',
+              grossValue: '',
+            },
           });
         }
       });

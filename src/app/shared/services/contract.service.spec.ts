@@ -136,15 +136,19 @@ describe('ContractService', () => {
       user: '0',
       sector: '0',
       distribution: '60,00',
-      grossValue: '480,00',
-      netValue: '480,00',
+      locals: {
+        grossValue: '480,00',
+        netValue: '480,00',
+      },
     });
     tmpInvoice.team.push({
       user: '1',
       sector: '1',
       distribution: '40,00',
-      grossValue: '320,00',
-      netValue: '320,00',
+      locals: {
+        grossValue: '320,00',
+        netValue: '320,00',
+      },
     });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     tmpInvoice = new Invoice();
@@ -161,15 +165,19 @@ describe('ContractService', () => {
       user: '1',
       sector: '0',
       distribution: '60,00',
-      grossValue: '1.176,00',
-      netValue: '976,08',
+      locals: {
+        grossValue: '1.176,00',
+        netValue: '976,08',
+      },
     });
     tmpInvoice.team.push({
       user: '0',
       sector: '1',
       distribution: '40,00',
-      grossValue: '784,00',
-      netValue: '650,72',
+      locals: {
+        grossValue: '784,00',
+        netValue: '650,72',
+      },
     });
     mockedInvoices.push(cloneDeep(tmpInvoice));
     let tmpContract = new Contract();
