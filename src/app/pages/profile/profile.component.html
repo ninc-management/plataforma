@@ -475,9 +475,9 @@
                         *ngFor="let sector of groupedSectors[0]; let i = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
-                          [(ngModel)]="groupedSectors[0][i].isChecked"
+                          [(ngModel)]="groupedSectors[0][i].locals.isChecked"
                           name="sector-checkbox-i-{{ i }}"
-                          [status]="groupedSectors[0][i].isChecked ? 'success' : 'basic'"
+                          [status]="groupedSectors[0][i].locals.isChecked ? 'success' : 'basic'"
                           [disabled]="!isEditing"
                           (ngModelChange)="updateSectors(groupedSectors[0][i]); refreshExpertises()"
                         >
@@ -492,9 +492,9 @@
                         *ngFor="let sector of groupedSectors[1]; let j = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
-                          [(ngModel)]="groupedSectors[1][j].isChecked"
+                          [(ngModel)]="groupedSectors[1][j].locals.isChecked"
                           name="sector-checkbox-j-{{ j }}"
-                          [status]="groupedSectors[1][j].isChecked ? 'success' : 'basic'"
+                          [status]="groupedSectors[1][j].locals.isChecked ? 'success' : 'basic'"
                           [disabled]="!isEditing"
                           (ngModelChange)="updateSectors(groupedSectors[1][j]); refreshExpertises()"
                         >
@@ -509,9 +509,9 @@
                         *ngFor="let sector of groupedSectors[2]; let k = index; trackBy: trackByIndex"
                       >
                         <nb-checkbox
-                          [(ngModel)]="groupedSectors[2][k].isChecked"
+                          [(ngModel)]="groupedSectors[2][k].locals.isChecked"
                           name="sector-checkbox-k-{{ k }}"
-                          [status]="groupedSectors[2][k].isChecked ? 'success' : 'basic'"
+                          [status]="groupedSectors[2][k].locals.isChecked ? 'success' : 'basic'"
                           [disabled]="!isEditing"
                           (ngModelChange)="updateSectors(groupedSectors[2][k]); refreshExpertises()"
                         >

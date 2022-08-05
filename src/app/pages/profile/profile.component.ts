@@ -159,7 +159,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
           this.isCurrentUser = true;
         }
         if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
-        this.buildGrupedSectors();
+        this.buildGroupedSectors();
         this.buildPositionsList();
         this.buildLevelList();
         this.isDataLoading = false;
@@ -267,7 +267,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   updateSectors(sector: Sector): void {
-    if (sector.isChecked) {
+    if (sector.locals.isChecked) {
       this.user.sectors.push(sector);
     } else {
       this.user.sectors.splice(
@@ -360,11 +360,11 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       });
   }
 
-  buildGrupedSectors(): void {
+  buildGroupedSectors(): void {
     this.groupedSectors = chunkify(
       this.teamService.sectorsListAll().map((sector) => {
         if (this.user.sectors.some((sectorUser) => this.teamService.isSectorEqual(sectorUser, sector)))
-          sector.isChecked = true;
+          sector.locals.isChecked = true;
         return sector;
       }),
       3

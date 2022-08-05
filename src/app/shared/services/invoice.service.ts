@@ -5,7 +5,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfTypeNew, reviveDates } from '../utils';
+import { isOfType, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
@@ -90,7 +90,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   idToInvoice(id: string | Invoice): Invoice {
-    if (isOfTypeNew(Invoice, id)) return id;
+    if (isOfType(Invoice, id)) return id;
     const tmp = this.invoices$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

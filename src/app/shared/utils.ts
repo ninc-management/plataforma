@@ -78,7 +78,7 @@ export function nfPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (isOfTypeNew(Invoice, iDocument)) {
+  if (isOfType(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
@@ -106,7 +106,7 @@ export function nortanPercentage(iDocument: Contract | Invoice): string {
     });
 
   let invoice: Invoice = new Invoice();
-  if (isOfTypeNew(Invoice, iDocument)) {
+  if (isOfType(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
     if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
@@ -243,12 +243,7 @@ export function trackByIndex<T>(index: number, obj: T): number {
   return index;
 }
 
-export function isOfType<T>(obj: any, properties: NonOptionalKeys<T>[]): obj is T {
-  const values = at(obj, properties);
-  return !values.includes(undefined);
-}
-
-export function isOfTypeNew<T>(constructor: { new (): T }, unknownObj: any): unknownObj is T {
+export function isOfType<T>(constructor: { new (): T }, unknownObj: any): unknownObj is T {
   const genericObject = new constructor();
   const genericObjectKeys = Object.keys(genericObject).filter((key) => key != 'locals');
   const unknownObjKeys = Object.keys(unknownObj).filter((key) => key != 'locals');

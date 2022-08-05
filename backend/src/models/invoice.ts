@@ -19,6 +19,14 @@ export interface InvoiceTeamMemberLocals {
   grossValue: string;
 }
 
+export interface InvoiceProductLocals {
+  percentage: string;
+}
+
+export interface InvoiceStageLocals {
+  percentage: string;
+}
+
 export class InvoiceProduct {
   @prop({ required: true })
   name: string = '';
@@ -38,7 +46,9 @@ export class InvoiceProduct {
   @prop({ required: true, type: () => [String] })
   subproducts: string[] = [];
 
-  percentage = '';
+  locals: InvoiceProductLocals = {
+    percentage: '',
+  };
 }
 
 export class InvoiceMaterial {
@@ -62,7 +72,9 @@ export class InvoiceStage {
   @prop({ required: true })
   value!: string;
 
-  percentage = '';
+  locals: InvoiceStageLocals = {
+    percentage: '',
+  };
 }
 
 export class InvoiceTeamMember {

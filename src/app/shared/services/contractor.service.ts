@@ -4,7 +4,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfTypeNew, nameSort } from '../utils';
+import { isOfType, nameSort } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Contractor } from '@models/contractor';
@@ -66,7 +66,7 @@ export class ContractorService implements OnDestroy {
   }
 
   idToContractor(id: string | Contractor): Contractor {
-    if (isOfTypeNew(Contractor, id)) return id;
+    if (isOfType(Contractor, id)) return id;
     const tmp = this.contractors$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
