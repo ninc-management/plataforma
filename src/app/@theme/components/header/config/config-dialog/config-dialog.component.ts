@@ -49,6 +49,17 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
     super.ngOnInit();
   }
 
+  markAsRead() {
+    if (
+      this.componentType === COMPONENT_TYPES.NOTIFICATION &&
+      this.notification.to &&
+      this.notificationIndex != undefined
+    ) {
+      this.notificationService.checkNotification(this.notification);
+    }
+    super.dismiss();
+  }
+
   dismiss(): void {
     if (this.isFormDirty.value) {
       this.dialogService
@@ -67,15 +78,6 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
             super.dismiss();
           }
         });
-    } else {
-      if (
-        this.componentType === COMPONENT_TYPES.NOTIFICATION &&
-        this.notification.to &&
-        this.notificationIndex != undefined
-      ) {
-        this.notificationService.checkNotification(this.notification);
-      }
-      super.dismiss();
-    }
+    } else super.dismiss();
   }
 }

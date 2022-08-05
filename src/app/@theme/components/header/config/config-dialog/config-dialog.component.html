@@ -19,6 +19,18 @@
         {{ title }}
         <div class="buttons">
           <button
+            *ngIf="componentType === types.NOTIFICATION"
+            nbButton
+            ghost
+            nbTooltip="Marcar como lida"
+            [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="markAsRead()"
+          >
+            <nb-icon icon="checkmark-outline"></nb-icon>
+          </button>
+          <button
             nbButton
             ghost
             nbTooltip="Fechar"
@@ -38,8 +50,8 @@
           *ngIf="componentType === types.CONFIG; else notify"
         ></ngx-config>
         <ng-template #notify>
-          <div class="row" style="padding: 0 2.5rem; overflow-x: hidden;">
-            <div style="text-align: justify;word-break: break-word;">
+          <div class="row" style="padding: 0 2.5rem; overflow-x: hidden">
+            <div style="text-align: justify; word-break: break-word">
               <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
               <p>
                 Por:
