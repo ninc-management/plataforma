@@ -4,6 +4,11 @@ import { Base } from './base';
 import { Sector, UploadedFile } from './shared';
 import { User } from './user';
 
+export interface TeamLocals {
+  balance: string;
+  leaderName: string;
+}
+
 export class TeamMember {
   @prop({ required: true, ref: () => User })
   user: Ref<User> = new User();
@@ -126,9 +131,10 @@ export class Team extends Base<string> {
   @prop()
   nfPercentage?: string;
 
-  balance = '0,00';
-
-  leaderName = '';
+  locals: TeamLocals = {
+    balance: '0,00',
+    leaderName: '',
+  };
 }
 
 export default getModelForClass(Team);

@@ -12,7 +12,7 @@ import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.ser
 import { UserService } from 'app/shared/services/user.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
-import { Invoice, InvoiceMaterial, InvoiceProduct } from '@models/invoice';
+import { Invoice, InvoiceMaterial, InvoiceProduct, InvoiceProductLocals, InvoiceStageLocals } from '@models/invoice';
 import { User } from '@models/user';
 
 @Component({
@@ -42,8 +42,11 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
 
   ngOnInit(): void {
     super.ngOnInit();
-    if (this.invoice) this.tempInvoice = cloneDeep(this.invoice);
-    else this.invoice = new Invoice();
+    if (this.invoice) {
+      this.tempInvoice = cloneDeep(this.invoice);
+      this.tempInvoice.stages.forEach((stage) => (stage.locals = {} as InvoiceStageLocals));
+      this.tempInvoice.products.forEach((product) => (product.locals = {} as InvoiceProductLocals));
+    } else this.invoice = new Invoice();
   }
 
   dismiss(): void {

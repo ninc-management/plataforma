@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { combineLatest, map, Observable, of, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { isOfTypeNew } from '../utils';
+import { isOfType } from '../utils';
 import { ConfigService } from './config.service';
 import { TeamService } from './team.service';
 import { UserService } from './user.service';
@@ -138,7 +138,7 @@ export class OneDriveService implements OnDestroy {
 
   webUrl(contract: Contract): Observable<string> {
     if (this.config.oneDriveConfig.isActive) {
-      if (isOfTypeNew(Invoice, contract.invoice)) {
+      if (isOfType(Invoice, contract.invoice)) {
         const invoice = contract.invoice;
         const concluded = invoice.status === 'Concluído';
         return this.http.get(this.oneDriveURI() + this.generatePath(invoice, concluded)).pipe(

@@ -22,7 +22,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
 
-import { ChecklistItemAction, Contract, ContractChecklistItem, DateRange } from '@models/contract';
+import { ChecklistItemAction, ChecklistItemLocals, Contract, ContractChecklistItem, DateRange } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { Message } from '@models/message';
 import { Notification, NotificationTags } from '@models/notification';
@@ -136,6 +136,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         });
 
       this.actionsData = this.transformActionsData();
+      this.contract.checklist.forEach((item) => (item.locals = {} as ChecklistItemLocals));
       this.checklistItems = cloneDeep(this.contract.checklist);
     }
   }
@@ -444,14 +445,14 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     const newActions: ChecklistItemAction[] = [];
 
     this.contract.checklist.forEach((item) => {
-      if (item.isNew) newItems.push(item);
-      item.isNew = false;
+      if (item.locals.isNew) newItems.push(item);
+      item.locals.isNew = false;
       item.actionList.forEach((action) => {
-        if (action.isNew) {
-          action.parentItemName = item.name;
+        if (action.locals.isNew) {
+          action.locals.parentItemName = item.name;
           newActions.push(action);
         }
-        action.isNew = false;
+        action.locals.isNew = false;
       });
     });
 
@@ -463,7 +464,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     notification.to = task.assignee;
     notification.tag = NotificationTags.APPOINTED_AS_ASSIGNEE;
 
-    if (isOfType<ChecklistItemAction>(task, ['isFinished'])) {
+    if (isOfType(ChecklistItemAction, task)) {
       notification.title = 'Você foi selecionado como responsável de uma nova ação de gestão do contrato!';
       notification.message =
         'No contrato ' +
@@ -471,7 +472,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         ', você foi selecionado como responsável da ação "' +
         task.name +
         '" que faz parte do item "' +
-        task.parentItemName +
+        task.locals.parentItemName +
         '". O prazo inicia em ' +
         formatDate(task.range.start) +
         (task.range.end

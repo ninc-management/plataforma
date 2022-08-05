@@ -6,15 +6,7 @@ import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 
-import {
-  idToProperty,
-  isOfType,
-  isOfTypeNew,
-  isWithinInterval,
-  nfPercentage,
-  nortanPercentage,
-  reviveDates,
-} from '../utils';
+import { idToProperty, isOfType, isWithinInterval, nfPercentage, nortanPercentage, reviveDates } from '../utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
@@ -138,7 +130,7 @@ export class ContractService implements OnDestroy {
       .pipe(take(1))
       .subscribe(() => {
         this.edited$.next();
-        if (contract.status === 'Concluído' && !isMoved && isOfTypeNew(Invoice, contract.invoice))
+        if (contract.status === 'Concluído' && !isMoved && isOfType(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
   }
@@ -163,7 +155,7 @@ export class ContractService implements OnDestroy {
   }
 
   idToContract(id: string | Contract): Contract {
-    if (isOfTypeNew(Contract, id)) return id;
+    if (isOfType(Contract, id)) return id;
     const tmp = this.contracts$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }

@@ -63,7 +63,7 @@ export class PromotionService implements OnDestroy {
   }
 
   idToPromotion(id: string | Promotion): Promotion {
-    if (isOfType<Promotion>(id, ['_id', 'name', 'start', 'end', 'rules'])) return id;
+    if (isOfType(Promotion, id)) return id;
     const tmp = this.promotions$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
