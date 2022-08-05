@@ -39,6 +39,7 @@ import {
 } from './components';
 import { ConfigDialogComponent } from './components/header/config/config-dialog/config-dialog.component';
 import { ConfigComponent } from './components/header/config/config.component';
+import { RemainingItemsComponent } from './components/header/config/remaining-items/remaining-items.component';
 import { NbSmartTableModule } from './components/smart-table/smart-table.module';
 import { OneColumnLayoutComponent, ThreeColumnsLayoutComponent, TwoColumnsLayoutComponent } from './layouts';
 import { CapitalizePipe, NumberWithCommasPipe, PluralPipe, RoundPipe, TimingPipe } from './pipes';
@@ -97,7 +98,7 @@ const themeProviders = NbThemeModule.forRoot(
 @NgModule({
   imports: [CommonModule, MatRippleModule, SharedModule, ...NB_MODULES],
   exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
-  declarations: [...COMPONENTS, ...PIPES],
+  declarations: [...COMPONENTS, ...PIPES, RemainingItemsComponent],
   providers: [{ provide: MAT_RIPPLE_GLOBAL_OPTIONS, useExisting: RippleService }],
 })
 export class ThemeModule {

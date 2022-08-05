@@ -1,12 +1,18 @@
 import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, take } from 'rxjs';
 
+import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
-import { isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
+import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
+import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 import config_validation from 'app/shared/validators/config-validation.json';
 
@@ -18,6 +24,11 @@ interface SubTypeItem {
 interface TypeItem {
   name: string;
   subTypes: SubTypeItem[];
+}
+enum KEY {
+  POSITION = 'position',
+  LEVEL = 'level',
+  UNIT = 'products.unit',
 }
 
 enum CONFIG_EXPENSE_TYPES {
@@ -37,18 +48,21 @@ export class ConfigComponent implements OnInit {
   clonedConfig: PlatformConfig = new PlatformConfig();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
-  newUnit: string = '';
+  newRole = { roleTypeName: '', permission: '' };
   adminExpenseTypes: TypeItem[] = [];
   contractExpenseTypes: TypeItem[] = [];
+  invoices: Invoice[] = [];
+  users: User[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
-  newRole = { roleTypeName: '', permission: '' };
+  configExpenseTypes = CONFIG_EXPENSE_TYPES;
+  KEY = KEY;
   newLevel: string = '';
+  newUnit: string = '';
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
-  configExpenseTypes = CONFIG_EXPENSE_TYPES;
 
   forms: NgForm[] = [];
 
@@ -69,7 +83,12 @@ export class ConfigComponent implements OnInit {
     pack: 'fac',
   };
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private invoiceService: InvoiceService,
+    private dialogService: NbDialogService,
+    public userService: UserService
+  ) {}
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
@@ -166,5 +185,60 @@ export class ConfigComponent implements OnInit {
         this.clonedConfig.expenseConfig.adminExpenseTypes
       );
     this.configService.editConfig(this.clonedConfig);
+  }
+
+  deleteUnit(i: number, key: string): void {
+    this.invoiceService
+      .getInvoices()
+      .pipe(take(1))
+      .subscribe((invoices) => (this.invoices = invoices));
+    const units = getItemsWithValue<Invoice>(this.invoices, key, this.clonedConfig.invoiceConfig.units[i]);
+    const productsWithValue: any = [];
+    units.forEach((unit) => {
+      unit.products.forEach((product) => productsWithValue.push(product.name + ': ' + unit.code));
+    });
+    if (units.length != 0) {
+      this.dialogService.open(RemainingItemsComponent, {
+        context: {
+          title: 'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:',
+          items: productsWithValue,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    } else {
+      this.clonedConfig.invoiceConfig.units.splice(i, 1);
+      this.isFormDirty.next(true);
+    }
+  }
+
+  deletePositionOrLevel(i: number, key: string, value: string): void {
+    this.userService
+      .getUsers()
+      .pipe(take(1))
+      .subscribe((users) => (this.users = users));
+    const usersList = getItemsWithValue<User>(this.users, key, value);
+    if (usersList.length != 0) {
+      this.dialogService.open(RemainingItemsComponent, {
+        context: {
+          title:
+            key == 'position'
+              ? 'Não é possível remover o item. Os seguintes usuários estão utilizando este papel'
+              : 'Não é possível remover o item. Os seguintes usuários estão utilizando este cargo',
+          items: usersList.map((user) => user.fullName),
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    } else {
+      if (key == 'position') this.clonedConfig.profileConfig.positions.splice(i, 1);
+      else this.clonedConfig.profileConfig.levels.splice(i, 1);
+
+      this.isFormDirty.next(true);
+    }
   }
 }
