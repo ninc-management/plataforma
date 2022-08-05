@@ -44,8 +44,6 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
     super.ngOnInit();
     if (this.invoice) {
       this.tempInvoice = cloneDeep(this.invoice);
-      this.tempInvoice.stages.forEach((stage) => (stage.locals = {} as InvoiceStageLocals));
-      this.tempInvoice.products.forEach((product) => (product.locals = {} as InvoiceProductLocals));
     } else this.invoice = new Invoice();
   }
 

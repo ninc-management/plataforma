@@ -216,7 +216,7 @@ export class ContractChecklistItem {
 @plugin(mongooseUniqueValidator)
 export class Contract extends StatusHistory {
   @prop({ required: true, ref: () => Invoice })
-  invoice!: Ref<Invoice>;
+  invoice: Ref<Invoice> = new Invoice();
 
   @prop({ type: () => [ContractPayment] })
   payments: ContractPayment[] = [];

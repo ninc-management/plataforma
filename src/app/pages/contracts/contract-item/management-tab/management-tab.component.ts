@@ -22,7 +22,14 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
 
-import { ChecklistItemAction, ChecklistItemLocals, Contract, ContractChecklistItem, DateRange } from '@models/contract';
+import {
+  ChecklistItemAction,
+  ChecklistItemLocals,
+  Contract,
+  ContractChecklistItem,
+  DateRange,
+  ItemActionLocals,
+} from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { Message } from '@models/message';
 import { Notification, NotificationTags } from '@models/notification';
@@ -136,7 +143,10 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         });
 
       this.actionsData = this.transformActionsData();
-      this.contract.checklist.forEach((item) => (item.locals = {} as ChecklistItemLocals));
+      this.contract.checklist.forEach((item) => {
+        item.locals = {} as ChecklistItemLocals;
+        item.actionList.forEach((action) => (action.locals = {} as ItemActionLocals));
+      });
       this.checklistItems = cloneDeep(this.contract.checklist);
     }
   }
