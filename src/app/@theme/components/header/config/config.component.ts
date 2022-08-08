@@ -2,7 +2,7 @@ import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, skipWhile, take } from 'rxjs';
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
@@ -25,7 +25,7 @@ interface TypeItem {
   name: string;
   subTypes: SubTypeItem[];
 }
-enum KEY {
+enum KEYS_TO_VERIFY {
   POSITION = 'position',
   LEVEL = 'level',
   UNIT = 'products.unit',
@@ -57,7 +57,7 @@ export class ConfigComponent implements OnInit {
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
   configExpenseTypes = CONFIG_EXPENSE_TYPES;
-  KEY = KEY;
+  KEY = KEYS_TO_VERIFY;
   newLevel: string = '';
   newUnit: string = '';
   validation = config_validation as any;
@@ -188,57 +188,63 @@ export class ConfigComponent implements OnInit {
   }
 
   deleteUnit(i: number, key: string): void {
-    this.invoiceService
-      .getInvoices()
-      .pipe(take(1))
-      .subscribe((invoices) => (this.invoices = invoices));
-    const units = getItemsWithValue<Invoice>(this.invoices, key, this.clonedConfig.invoiceConfig.units[i]);
-    const productsWithValue: any = [];
-    units.forEach((unit) => {
-      unit.products.forEach((product) => productsWithValue.push(product.name + ': ' + unit.code));
-    });
-    if (units.length != 0) {
-      this.dialogService.open(RemainingItemsComponent, {
-        context: {
-          title: 'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:',
-          items: productsWithValue,
-        },
-        dialogClass: 'my-dialog',
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        autoFocus: false,
+    combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+        take(1)
+      )
+      .subscribe(([invoices, _]) => {
+        const invoicesWithUnit = getItemsWithValue<Invoice>(invoices, key, this.clonedConfig.invoiceConfig.units[i]);
+        const productsWithValue: string[] = [];
+        invoicesWithUnit.forEach((unit) => {
+          unit.products.forEach((product) => productsWithValue.push(product.name + ': ' + unit.code));
+        });
+        if (invoicesWithUnit.length != 0) {
+          this.dialogService.open(RemainingItemsComponent, {
+            context: {
+              title:
+                'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:',
+              items: productsWithValue,
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        } else {
+          this.clonedConfig.invoiceConfig.units.splice(i, 1);
+          this.isFormDirty.next(true);
+        }
       });
-    } else {
-      this.clonedConfig.invoiceConfig.units.splice(i, 1);
-      this.isFormDirty.next(true);
-    }
   }
 
   deletePositionOrLevel(i: number, key: string, value: string): void {
-    this.userService
-      .getUsers()
-      .pipe(take(1))
-      .subscribe((users) => (this.users = users));
-    const usersList = getItemsWithValue<User>(this.users, key, value);
-    if (usersList.length != 0) {
-      this.dialogService.open(RemainingItemsComponent, {
-        context: {
-          title:
-            key == 'position'
-              ? 'Não é possível remover o item. Os seguintes usuários estão utilizando este papel'
-              : 'Não é possível remover o item. Os seguintes usuários estão utilizando este cargo',
-          items: usersList.map((user) => user.fullName),
-        },
-        dialogClass: 'my-dialog',
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        autoFocus: false,
-      });
-    } else {
-      if (key == 'position') this.clonedConfig.profileConfig.positions.splice(i, 1);
-      else this.clonedConfig.profileConfig.levels.splice(i, 1);
+    combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
+        take(1)
+      )
+      .subscribe(([users, _]) => {
+        const usersWithValue = getItemsWithValue<User>(users, key, value);
+        if (usersWithValue.length != 0) {
+          this.dialogService.open(RemainingItemsComponent, {
+            context: {
+              title:
+                'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
+                (key == 'position' ? 'papel:' : 'cargo:'),
+              items: usersWithValue.map((user) => user.fullName),
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        } else {
+          if (key == 'position') this.clonedConfig.profileConfig.positions.splice(i, 1);
+          else this.clonedConfig.profileConfig.levels.splice(i, 1);
 
-      this.isFormDirty.next(true);
-    }
+          this.isFormDirty.next(true);
+        }
+      });
   }
 }

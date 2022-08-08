@@ -5,13 +5,13 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 @Component({
-  selector: 'remaining-items',
+  selector: 'ngx-remaining-items',
   templateUrl: './remaining-items.component.html',
   styleUrls: ['./remaining-items.component.scss'],
 })
 export class RemainingItemsComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
-  @Input() items: any;
+  @Input() items!: string[];
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
   constructor(

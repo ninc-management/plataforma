@@ -365,14 +365,12 @@ export function getItemsWithValue<T>(originalList: T[], key: string, value: any)
   const keys = key.split('.');
   const objs = cloneDeep(originalList);
   return objs.filter((obj: any) => {
-    if (typeof obj[keys[0]] == 'object') {
-      if (typeof obj[keys[0]].find == 'function') {
-        obj[keys[0]] = obj[keys[0]].filter((item: any) => {
-          if (keys.length > 1) return item[keys[1]] == value;
-          else return item == value;
-        });
-        return obj[keys[0]].length != 0;
-      } else return accessNestedProperty(obj, keys) == value;
-    } else return obj[key] == value;
+    if (!(typeof obj[keys[0]] == 'object')) return obj[key] == value;
+    if (!Array.isArray(obj[keys[0]])) return accessNestedProperty(obj, keys) == value;
+    obj[keys[0]] = obj[keys[0]].filter((item: any) => {
+      if (keys.length > 1) return item[keys[1]] == value;
+      else return item == value;
+    });
+    return obj[keys[0]].length != 0;
   });
 }
