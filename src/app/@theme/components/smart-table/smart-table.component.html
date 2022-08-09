@@ -33,6 +33,9 @@
 <ng2-smart-table-pager
   *ngIf="isPagerDisplay"
   [source]="source"
+  [displaySum]="displaySum"
+  [reduceFunction]="reduceFunction"
+  [pagerSumLabel]="pagerSumLabel"
   [perPageSelect]="perPageSelect"
   (changePage)="changePage($event)"
 ></ng2-smart-table-pager>

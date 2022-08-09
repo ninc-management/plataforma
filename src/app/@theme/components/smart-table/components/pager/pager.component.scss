@@ -24,6 +24,13 @@
   }
 }
 
+.ng2-smart-page-sum-value {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding-right: 1rem;
+}
+
 :host {
   display: flex;
   justify-content: space-between;
