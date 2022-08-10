@@ -2,9 +2,11 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, Observable, of, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, take } from 'rxjs';
+import { map, skipWhile } from 'rxjs/operators';
 
 import contract_validation from '../../../../shared/validators/payment-validation.json';
+import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
@@ -14,6 +16,7 @@ import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 
 
 import { Contract, ContractReceipt } from '@models/contract';
 import { NotificationTags } from '@models/notification';
+import { PlatformConfig } from '@models/platformConfig';
 
 @Component({
   selector: 'ngx-receipt-item',
@@ -26,6 +29,7 @@ export class ReceiptItemComponent implements OnInit {
   @Input() receiptIndex?: number;
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @ViewChild('form') ngForm = {} as NgForm;
+
   hasInitialContract = true;
   validation = contract_validation as any;
   today = new Date();
@@ -44,8 +48,9 @@ export class ReceiptItemComponent implements OnInit {
     valueType: '$',
     liquid: '0',
   };
-
   contractSearch = '';
+  config: PlatformConfig = new PlatformConfig();
+
   get availableContractsData(): Observable<Contract[]> {
     return of(this.availableContracts);
   }
@@ -58,10 +63,18 @@ export class ReceiptItemComponent implements OnInit {
     private notificationService: NotificationService,
     private stringUtil: StringUtilService,
     private userService: UserService,
+    private configService: ConfigService,
     public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
+        take(1)
+      )
+      .subscribe(([configs, _]) => (this.config = configs[0]));
+
     if (this.contract._id) this.fillContractData();
     else this.hasInitialContract = false;
   }
@@ -76,8 +89,8 @@ export class ReceiptItemComponent implements OnInit {
     if (this.contract.invoice) {
       const tmp = cloneDeep(this.contract);
       tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.receipt.notaFiscal = nfPercentage(tmp);
-      this.receipt.nortanPercentage = nortanPercentage(tmp);
+      this.receipt.notaFiscal = nfPercentage(tmp, this.config.invoiceConfig.nfPercentage);
+      this.receipt.nortanPercentage = nortanPercentage(tmp, this.config.invoiceConfig.organizationPercentage);
       this.contractService
         .checkEditPermission(tmp.invoice)
         .pipe(take(1))
@@ -218,5 +231,10 @@ export class ReceiptItemComponent implements OnInit {
           ' foi paga.',
       });
     }
+  }
+
+  onContractSelected(selectedContract: Contract): void {
+    this.contract = selectedContract;
+    this.fillContractData();
   }
 }

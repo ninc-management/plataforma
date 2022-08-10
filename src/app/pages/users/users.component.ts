@@ -4,14 +4,14 @@ import { getMonth, getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { UserDialogComponent } from './user-dialog/user-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { generateUsersReport } from 'app/shared/report-generator';
-import { EXPENSE_TYPES } from 'app/shared/services/config.service';
+import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { ProspectService } from 'app/shared/services/prospect.service';
@@ -21,6 +21,7 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.
 import { isPhone, nameSort, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
+import { PlatformConfig } from '@models/platformConfig';
 import { Prospect } from '@models/prospect';
 import { User } from '@models/user';
 
@@ -79,7 +80,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   prospects: Prospect[] = [];
   searchQuery = '';
   isProspectTab = false;
-  isDataLoaded = false;
+  isTableDataLoaded = false;
+
   get filtredUsers(): User[] {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
@@ -212,6 +214,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   source: LocalDataSource = new LocalDataSource();
   prospectSource: LocalDataSource = new LocalDataSource();
+  config: PlatformConfig = new PlatformConfig();
 
   isPhone = isPhone;
 
@@ -222,6 +225,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private stringUtil: StringUtilService,
     private prospectService: ProspectService,
+    private configService: ConfigService,
     public teamService: TeamService
   ) {}
 
@@ -231,25 +235,28 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    combineLatest([this.userService.isDataLoaded$, this.prospectService.isDataLoaded$])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([reqUser, reqProspector]) => {
-        this.isDataLoaded = reqUser && reqProspector;
-      });
-    this.userService
-      .getUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: User[]) => {
+    combineLatest([
+      this.userService.getUsers(),
+      this.prospectService.getProspects(),
+      this.configService.getConfig(),
+      this.userService.isDataLoaded$,
+      this.prospectService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(
+          ([, , , isUserDataLoaded, isProspectDataLoaded, isConfigDataLoaded]) =>
+            !(isUserDataLoaded && isProspectDataLoaded && isConfigDataLoaded)
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([users, prospects, configs, isUserDataLoaded, isProspectDataLoaded]) => {
         this.users = users;
-        this.source.load(this.users);
-      });
-
-    this.prospectService
-      .getProspects()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((prospects: Prospect[]) => {
         this.prospects = prospects;
+        this.source.load(this.users);
         this.prospectSource.load(this.prospects);
+        this.isTableDataLoaded = isUserDataLoaded && isProspectDataLoaded;
+        this.config = configs[0];
       });
   }
 
@@ -396,8 +403,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 ),
                 monthContract.contract
               ),
-              nfPercentage(monthContract.contract),
-              nortanPercentage(monthContract.contract),
+              nfPercentage(monthContract.contract, this.config.invoiceConfig.nfPercentage),
+              nortanPercentage(monthContract.contract, this.config.invoiceConfig.organizationPercentage),
               monthContract.contract.created
             );
             for (const uId of Object.keys(data)) {
@@ -558,8 +565,8 @@ export class UsersComponent implements OnInit, OnDestroy {
                 ),
                 monthContract.contract
               ),
-              nfPercentage(monthContract.contract),
-              nortanPercentage(monthContract.contract),
+              nfPercentage(monthContract.contract, this.config.invoiceConfig.nfPercentage),
+              nortanPercentage(monthContract.contract, this.config.invoiceConfig.organizationPercentage),
               monthContract.contract.created
             );
             for (const sector of Object.keys(data)) {

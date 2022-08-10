@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { Socket } from 'ngx-socket-io';
@@ -18,6 +18,7 @@ import { WebSocketService } from './web-socket.service';
 import { StatusHistoryItem } from '@models/baseStatusHistory';
 import { ChecklistItemAction, Contract, ContractExpense, ContractLocals } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
 
 export enum SPLIT_TYPES {
@@ -79,6 +80,7 @@ export class ContractService implements OnDestroy {
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
   edited$ = new Subject<void>();
+  config: PlatformConfig = new PlatformConfig();
 
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
@@ -94,7 +96,14 @@ export class ContractService implements OnDestroy {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private wsService: WebSocketService
-  ) {}
+  ) {
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+      .pipe(
+        takeUntil(this.destroy$),
+        skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded)
+      )
+      .subscribe(([configs, _]) => (this.config = configs[0]));
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -280,8 +289,8 @@ export class ContractService implements OnDestroy {
       this.stringUtil.moneyToNumber(
         this.toNetValue(
           this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
-          nfPercentage(contract),
-          nortanPercentage(contract),
+          nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
           contract.created
         )
       ) + this.getComissionsSum(contract)
@@ -322,8 +331,8 @@ export class ContractService implements OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract),
-      nortanPercentage(contract),
+      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
   }
@@ -438,13 +447,13 @@ export class ContractService implements OnDestroy {
       contract.locals.balance = this.balance(contract);
       contract.locals.liquid = this.toNetValue(
         this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
-        nfPercentage(contract),
-        nortanPercentage(contract),
+        nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+        nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
         contract.created
       );
 
-      const nf = nfPercentage(contract);
-      const nortan = nortanPercentage(contract);
+      const nf = nfPercentage(contract, this.config.invoiceConfig.nfPercentage);
+      const nortan = nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage);
       const paid = this.toNetValue(
         this.stringUtil.numberToMoney(
           contract.receipts.reduce((accumulator: number, recipt: any) => {

@@ -23,7 +23,7 @@
             </div>
           </nb-card-header>
           <div
-            *ngIf="!isDataLoaded; else table"
+            *ngIf="!isTableDataLoaded; else table"
             [nbSpinner]="true"
             nbSpinnerStatus="primary"
             nbSpinnerSize="giant"
@@ -81,7 +81,7 @@
             </div>
           </nb-card-header>
           <div
-            *ngIf="!this.isDataLoaded; else prospectsTable"
+            *ngIf="!this.isTableDataLoaded; else prospectsTable"
             [nbSpinner]="true"
             nbSpinnerStatus="primary"
             nbSpinnerSize="giant"

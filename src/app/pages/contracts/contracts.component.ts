@@ -4,11 +4,12 @@ import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { getYear } from 'date-fns';
 import { saveAs } from 'file-saver';
 import { combineLatest, Subject } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from './contract-dialog/contract-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { SelectorDialogComponent } from 'app/shared/components/selector-dialog/selector-dialog.component';
+import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -27,6 +28,7 @@ import {
 
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
 
 @Component({
@@ -40,6 +42,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
   contracts: Contract[] = [];
   searchQuery = '';
   isDataLoaded = false;
+  config: PlatformConfig = new PlatformConfig();
+
   get filtredContracts(): Contract[] {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
@@ -161,6 +165,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     private stringUtil: StringUtilService,
     private accessChecker: NbAccessChecker,
     private teamService: TeamService,
+    private configService: ConfigService,
     public invoiceService: InvoiceService
   ) {}
 
@@ -172,41 +177,69 @@ export class ContractsComponent implements OnInit, OnDestroy {
   /* eslint-disable indent */
   ngOnInit(): void {
     combineLatest([
-      this.invoiceService.isDataLoaded$,
-      this.contractorService.isDataLoaded$,
-      this.teamService.isDataLoaded$,
-    ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([reqInvoice, reqContractor, reqTeam]) => {
-        this.isDataLoaded = reqInvoice && reqContractor && reqTeam;
-      });
-
-    combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
       this.teamService.getTeams(),
-      this.userService.currentUser$,
+      this.configService.getConfig(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
     ])
       .pipe(
-        takeUntil(this.destroy$),
-        filter(
-          ([contracts, invoices, contractors, teams, user]) =>
-            contracts.length > 0 && invoices.length > 0 && contractors.length > 0 && teams.length > 0
-        )
+        skipWhile(
+          ([
+            ,
+            ,
+            ,
+            ,
+            ,
+            isContractDataLoaded,
+            isInvoiceDataLoaded,
+            isContractorDataLoaded,
+            isTeamDataLoaded,
+            isConfigDataLoaded,
+          ]) =>
+            !(
+              isContractDataLoaded &&
+              isInvoiceDataLoaded &&
+              isContractorDataLoaded &&
+              isTeamDataLoaded &&
+              isConfigDataLoaded
+            )
+        ),
+        takeUntil(this.destroy$)
       )
-      .subscribe(([contracts, invoices, contractors, user]) => {
-        this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
-        this.source.load(this.contracts);
-      });
-    this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isGranted) => (this.settings.actions.add = isGranted));
+      .subscribe(
+        ([
+          contracts,
+          ,
+          ,
+          ,
+          configs,
+          isContractDataLoaded,
+          isInvoiceDataLoaded,
+          isContractorDataLoaded,
+          isTeamDataLoaded,
+        ]) => {
+          this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
+          this.source.load(this.contracts);
+          this.config = configs[0];
+          this.isDataLoaded = isContractDataLoaded && isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded;
+        }
+      );
+
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
       { field: 'status', search: 'Em andamento A receber Finalizado' },
     ]);
+
+    this.accessChecker
+      .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isGranted) => (this.settings.actions.add = isGranted));
   }
 
   contractDialog(event: { data?: Contract }, isEditing: boolean): void {
@@ -248,8 +281,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract),
-      nortanPercentage(contract),
+      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
   }
@@ -275,8 +308,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract),
-      nortanPercentage(contract),
+      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
       contract.created
     );
 
@@ -284,8 +317,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(
           invoice.value,
-          nfPercentage(contract),
-          nortanPercentage(contract),
+          nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
           contract.created
         )
       ) - this.stringUtil.moneyToNumber(paidValue)
@@ -340,8 +373,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
                 this.stringUtil.removePercentage(invoice.value, contract.ISS),
                 contract
               ),
-              nfPercentage(contract),
-              nortanPercentage(contract),
+              nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
+              nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
               contract.created
             ) + ';';
           csv += this.getReportReceivedValue(contract) + ';';

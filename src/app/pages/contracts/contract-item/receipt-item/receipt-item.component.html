@@ -5,7 +5,7 @@
         <label class="label" for="input-user">Contrato:</label>
         <nb-completer
           [(ngModel)]="contractSearch"
-          (selected)="this.contract = $event; fillContractData()"
+          (selected)="onContractSelected($event)"
           inputName="contractListCompleter"
           #contractList="ngModel"
           id="input-contract"

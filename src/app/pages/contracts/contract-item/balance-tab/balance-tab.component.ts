@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, map, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
+import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -9,6 +10,7 @@ import { idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } f
 
 import { Contract } from '@models/contract';
 import { Invoice, InvoiceTeamMemberLocals } from '@models/invoice';
+import { PlatformConfig } from '@models/platformConfig';
 
 interface ExpenseSourceSum {
   user: string;
@@ -53,14 +55,17 @@ export class BalanceTabComponent implements OnInit {
     pack: 'fa',
   };
 
+  config: PlatformConfig = new PlatformConfig();
+
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   idToProperty = idToProperty;
 
   constructor(
+    private invoiceService: InvoiceService,
+    private configService: ConfigService,
     public stringUtil: StringUtilService,
     public contractService: ContractService,
-    private invoiceService: InvoiceService,
     public userService: UserService
   ) {}
 
@@ -70,17 +75,30 @@ export class BalanceTabComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
+        take(1)
+      )
+      .subscribe(([configs, _]) => {
+        this.config = configs[0];
+        this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
+        this.options.nortanPercentage = nortanPercentage(
+          this.contract,
+          this.config.invoiceConfig.organizationPercentage
+        );
+      });
+
     this.responseEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.calculatePaidValue();
       this.calculateBalance();
     });
+
     this.contractId = this.contract._id;
     if (this.contract.invoice) this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
     this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.contract));
     this.options.interest = this.contract.receipts.length;
-    this.options.nortanPercentage = nortanPercentage(this.contract);
-    this.options.notaFiscal = nfPercentage(this.contract);
   }
 
   expenseSourceSum(): ExpenseSourceSum[] {
@@ -163,8 +181,8 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
-    this.options.nortanPercentage = nortanPercentage(this.contract);
-    this.options.notaFiscal = nfPercentage(this.contract);
+    this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig.organizationPercentage);
+    this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.locals.notPaid = this.stringUtil.numberToMoney(
