@@ -541,7 +541,7 @@ describe('ContractService', () => {
     expect(expensesContributions.global).toEqual({ expense: 0, contribution: 0, cashback: 0, comission: 0 });
   });
 
-  it('percentageToReceive should work', () => {
+  it('percentageToReceive should work', (done: DoneFn) => {
     setTimeout(() => {
       expect(
         service.percentageToReceive(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])
@@ -555,7 +555,8 @@ describe('ContractService', () => {
       expect(
         service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
       ).toBe('55,62');
-    }, 3000);
+      done()
+    }, 100);
   });
 
   it('receivedValue should work', () => {

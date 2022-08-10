@@ -73,7 +73,7 @@ export interface ExpenseTypesSum {
 @Injectable({
   providedIn: 'root',
 })
-export class ContractService implements OnDestroy, OnInit {
+export class ContractService implements OnDestroy {
   private requested = false;
   private size$ = new BehaviorSubject<number>(0);
   private destroy$ = new Subject<void>();
@@ -96,9 +96,7 @@ export class ContractService implements OnDestroy, OnInit {
     private stringUtil: StringUtilService,
     private userService: UserService,
     private wsService: WebSocketService
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
         takeUntil(this.destroy$),
