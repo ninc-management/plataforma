@@ -57,7 +57,7 @@ export class ConfigComponent implements OnInit {
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
   configExpenseTypes = CONFIG_EXPENSE_TYPES;
-  KEY = KEYS_TO_VERIFY;
+  KEYS_TO_VERIFY = KEYS_TO_VERIFY;
   newLevel: string = '';
   newUnit: string = '';
   validation = config_validation as any;
@@ -194,10 +194,10 @@ export class ConfigComponent implements OnInit {
         take(1)
       )
       .subscribe(([invoices, _]) => {
-        const invoicesWithUnit = getItemsWithValue<Invoice>(invoices, key, this.clonedConfig.invoiceConfig.units[i]);
+        const invoicesWithUnit = getItemsWithValue(invoices, key, this.clonedConfig.invoiceConfig.units[i]);
         const productsWithValue: string[] = [];
-        invoicesWithUnit.forEach((unit) => {
-          unit.products.forEach((product) => productsWithValue.push(product.name + ': ' + unit.code));
+        invoicesWithUnit.forEach((invoice) => {
+          invoice.products.forEach((product) => productsWithValue.push(product.name + ': ' + invoice.code));
         });
         if (invoicesWithUnit.length != 0) {
           this.dialogService.open(RemainingItemsComponent, {
@@ -225,7 +225,7 @@ export class ConfigComponent implements OnInit {
         take(1)
       )
       .subscribe(([users, _]) => {
-        const usersWithValue = getItemsWithValue<User>(users, key, value);
+        const usersWithValue = getItemsWithValue(users, key, value);
         if (usersWithValue.length != 0) {
           this.dialogService.open(RemainingItemsComponent, {
             context: {
