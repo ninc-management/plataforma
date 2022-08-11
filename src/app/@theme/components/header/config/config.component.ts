@@ -132,6 +132,19 @@ export class ConfigComponent implements OnInit {
     });
   }
 
+  openDialog(itemsWithValue: string[], warning: string): void {
+    this.dialogService.open(RemainingItemsComponent, {
+      context: {
+        title: warning,
+        items: itemsWithValue,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
+  }
+
   addExpenseType(expenseType: CONFIG_EXPENSE_TYPES): void {
     if (expenseType == CONFIG_EXPENSE_TYPES.ADMINISTRATIVA) {
       this.adminExpenseTypes.push(this.newAdminExpense);
@@ -187,30 +200,27 @@ export class ConfigComponent implements OnInit {
     this.configService.editConfig(this.clonedConfig);
   }
 
-  deleteUnit(i: number, key: string): void {
+  deleteUnit(i: number): void {
     combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$])
       .pipe(
         skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
         take(1)
       )
       .subscribe(([invoices, _]) => {
-        const invoicesWithUnit = getItemsWithValue(invoices, key, this.clonedConfig.invoiceConfig.units[i]);
+        const invoicesWithUnit = getItemsWithValue(
+          invoices,
+          KEYS_TO_VERIFY.UNIT,
+          this.clonedConfig.invoiceConfig.units[i]
+        );
         const productsWithValue: string[] = [];
         invoicesWithUnit.forEach((invoice) => {
           invoice.products.forEach((product) => productsWithValue.push(product.name + ': ' + invoice.code));
         });
         if (invoicesWithUnit.length != 0) {
-          this.dialogService.open(RemainingItemsComponent, {
-            context: {
-              title:
-                'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:',
-              items: productsWithValue,
-            },
-            dialogClass: 'my-dialog',
-            closeOnBackdropClick: false,
-            closeOnEsc: false,
-            autoFocus: false,
-          });
+          this.openDialog(
+            productsWithValue,
+            'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:'
+          );
         } else {
           this.clonedConfig.invoiceConfig.units.splice(i, 1);
           this.isFormDirty.next(true);
@@ -218,27 +228,26 @@ export class ConfigComponent implements OnInit {
       });
   }
 
-  deletePositionOrLevel(i: number, key: string, value: string): void {
+  deletePositionOrLevel(i: number, key: string): void {
     combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
       .pipe(
         skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
         take(1)
       )
       .subscribe(([users, _]) => {
-        const usersWithValue = getItemsWithValue(users, key, value);
+        const usersWithValue = getItemsWithValue(
+          users,
+          key,
+          key == 'position'
+            ? this.clonedConfig.profileConfig.positions[i].roleTypeName
+            : this.clonedConfig.profileConfig.levels[i]
+        );
         if (usersWithValue.length != 0) {
-          this.dialogService.open(RemainingItemsComponent, {
-            context: {
-              title:
-                'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
-                (key == 'position' ? 'papel:' : 'cargo:'),
-              items: usersWithValue.map((user) => user.fullName),
-            },
-            dialogClass: 'my-dialog',
-            closeOnBackdropClick: false,
-            closeOnEsc: false,
-            autoFocus: false,
-          });
+          this.openDialog(
+            usersWithValue.map((user) => user.fullName),
+            'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
+              (key == 'position' ? 'papel:' : 'cargo:')
+          );
         } else {
           if (key == 'position') this.clonedConfig.profileConfig.positions.splice(i, 1);
           else this.clonedConfig.profileConfig.levels.splice(i, 1);
