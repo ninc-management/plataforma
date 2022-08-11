@@ -27,6 +27,7 @@ import { appInjector } from './injector.module';
 import { ConfigService } from './services/config.service';
 import { InvoiceService } from './services/invoice.service';
 import { TimeSeriesItem } from './services/metrics.service';
+import { StringUtilService } from './services/string-util.service';
 import { TeamService } from './services/team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
@@ -350,4 +351,18 @@ export function getItemsWithValue<T>(originalList: T[], key: string, value: any)
     });
     return obj[keys[0]].length != 0;
   });
+}
+
+export function greaterAndSmallerValue<T extends { value: string }>(object: T[]): { min: number; max: number } {
+  let maxValue: number = 0;
+  let minValue: number = 0;
+  const stringUtil = appInjector.get(StringUtilService);
+
+  maxValue = stringUtil.moneyToNumber(
+    object.reduce((prev, current) => (prev.value > current.value ? prev : current)).value
+  );
+  minValue = stringUtil.moneyToNumber(
+    object.reduce((prev, current) => (prev.value < current.value ? prev : current)).value
+  );
+  return { min: minValue, max: maxValue };
 }

@@ -4,8 +4,6 @@ import { NbPopoverDirective } from '@nebular/theme';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
 
 import { DefaultFilter } from './default-filter';
-import { appInjector } from 'app/shared/injector.module';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 
 @Component({
   selector: 'input-filter',
@@ -66,16 +64,4 @@ export class InputFilterComponent extends DefaultFilter implements OnInit {
   setInputValue(values: { min: string; max: string }): void {
     this.inputControl.setValue(values.min + ' - ' + values.max);
   }
-}
-
-export function sliderRangeFilter(cell: any, search?: string): boolean {
-  const stringUtil = appInjector.get(StringUtilService);
-  if (search) {
-    const range = search.split(' - ');
-    return (
-      stringUtil.moneyToNumber(cell) >= stringUtil.moneyToNumber(range[0]) &&
-      stringUtil.moneyToNumber(cell) <= stringUtil.moneyToNumber(range[1])
-    );
-  }
-  return false;
 }

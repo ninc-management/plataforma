@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { skipWhile, take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { isOfType, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
@@ -153,24 +153,5 @@ export class InvoiceService implements OnDestroy {
         this.accumulated$.next(+numberJson['accumulated']);
       });
     return this.accumulated$;
-  }
-
-  greaterAndSmallerInvoiceValue(): { min: number; max: number } {
-    let maxValue: number = 0;
-    let minValue: number = 0;
-    this.invoices$
-      .pipe(
-        take(2),
-        skipWhile((invoices) => invoices.length == 0)
-      )
-      .subscribe((invoices) => {
-        maxValue = this.stringUtil.moneyToNumber(
-          invoices.reduce((prev, current) => (prev.value > current.value ? prev : current)).value
-        );
-        minValue = this.stringUtil.moneyToNumber(
-          invoices.reduce((prev, current) => (prev.value < current.value ? prev : current)).value
-        );
-      });
-    return { min: minValue, max: maxValue };
   }
 }
