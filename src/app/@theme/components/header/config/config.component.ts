@@ -200,7 +200,7 @@ export class ConfigComponent implements OnInit {
     this.configService.editConfig(this.clonedConfig);
   }
 
-  deleteUnit(i: number): void {
+  deleteUnit(index: number): void {
     combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$])
       .pipe(
         skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
@@ -210,7 +210,7 @@ export class ConfigComponent implements OnInit {
         const invoicesWithUnit = getItemsWithValue(
           invoices,
           KEYS_TO_VERIFY.UNIT,
-          this.clonedConfig.invoiceConfig.units[i]
+          this.clonedConfig.invoiceConfig.units[index]
         );
         const productsWithValue: string[] = [];
         invoicesWithUnit.forEach((invoice) => {
@@ -222,13 +222,13 @@ export class ConfigComponent implements OnInit {
             'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:'
           );
         } else {
-          this.clonedConfig.invoiceConfig.units.splice(i, 1);
+          this.clonedConfig.invoiceConfig.units.splice(index, 1);
           this.isFormDirty.next(true);
         }
       });
   }
 
-  deletePositionOrLevel(i: number, key: string): void {
+  deletePositionOrLevel(index: number, key: string): void {
     combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
       .pipe(
         skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
@@ -239,8 +239,8 @@ export class ConfigComponent implements OnInit {
           users,
           key,
           key == 'position'
-            ? this.clonedConfig.profileConfig.positions[i].roleTypeName
-            : this.clonedConfig.profileConfig.levels[i]
+            ? this.clonedConfig.profileConfig.positions[index].roleTypeName
+            : this.clonedConfig.profileConfig.levels[index]
         );
         if (usersWithValue.length != 0) {
           this.openDialog(
@@ -249,8 +249,8 @@ export class ConfigComponent implements OnInit {
               (key == 'position' ? 'papel:' : 'cargo:')
           );
         } else {
-          if (key == 'position') this.clonedConfig.profileConfig.positions.splice(i, 1);
-          else this.clonedConfig.profileConfig.levels.splice(i, 1);
+          if (key == 'position') this.clonedConfig.profileConfig.positions.splice(index, 1);
+          else this.clonedConfig.profileConfig.levels.splice(index, 1);
 
           this.isFormDirty.next(true);
         }
