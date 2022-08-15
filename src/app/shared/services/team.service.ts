@@ -62,10 +62,6 @@ export class TeamService implements OnDestroy {
         .pipe(take(1))
         .subscribe((teams: any) => {
           const teamsFromDatabase = reviveDates(teams);
-          teamsFromDatabase.forEach((team: Team) => {
-            team.locals = {} as TeamLocals;
-            team.sectors.forEach((sector) => (sector.locals = {} as SectorLocals));
-          });
           this.keepUpdatingBalance();
           this.teams$.next(teamsFromDatabase as Team[]);
           this._isDataLoaded$.next(true);
@@ -125,6 +121,10 @@ export class TeamService implements OnDestroy {
   keepUpdatingBalance(): void {
     this.teams$.pipe(takeUntil(this.destroy$)).subscribe((teams) => {
       teams.map((team) => {
+        if (!team.locals) team.locals = {} as TeamLocals;
+        team.sectors.forEach((sector) => {
+          if (!sector.locals) sector.locals = {} as SectorLocals;
+        });
         team.locals.balance = this.stringUtil.numberToMoney(
           team.transactions.reduce((accumulator, t) => (accumulator += this.stringUtil.moneyToNumber(t.value)), 0)
         );
