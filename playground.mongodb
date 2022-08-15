@@ -585,6 +585,9 @@ db.contracts.find().forEach((contract) => {
     });
 
   contract.checklist = [];
+  contract.managementStatus = contract.managementStatus ? contract.managementStatus : '';
+  contract.managementNotes = contract.managementNotes ? contract.managementNotes : '';
+  contract.ISS = contract.ISS ? contract.ISS : '0,00';
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
 
@@ -605,6 +608,32 @@ db.invoices.find().forEach((invoice) => {
     contractor: false,
     subject: false,
   };
+
+  if (invoice.importants)
+    invoice.importants = invoice.importants.map((i) => {
+      return { text: i, isVisible: true };
+    });
+  else invoice.importants = [];
+  if (invoice.laep)
+    invoice.laep = invoice.laep.map((p) => {
+      return { text: p, isVisible: true };
+    });
+  else invoice.laep = [];
+  if (invoice.laee)
+    invoice.laee = invoice.laee.map((e) => {
+      return { text: e, isVisible: true };
+    });
+  else invoice.laee = [];
+  if (invoice.laec)
+    invoice.laec = invoice.laec.map((c) => {
+      return { text: c, isVisible: true };
+    });
+  else invoice.laec = [];
+
+  if (!invoice.discount) invoice.discount = '0,00';
+  invoice.materialListType = invoice.materialListType ? invoice.materialListType : '1';
+  invoice.productListType = invoice.productListType ? invoice.productListType : '2';
+  invoice.invoiceType = invoice.invoiceType ? invoice.invoiceType : 'projeto';
 
   if (invoice.team)
     invoice.team.forEach((member) => {
@@ -967,11 +996,11 @@ db.platformconfigs.find().forEach((config) => {
     },
   };
 
-   config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
-   config.socialConfig.showCompanyName = true;
-   config.socialConfig.address = ''
-   config.socialConfig.cnpj = ''
-   config.socialConfig.qrcodeURL = ''
+  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
+  config.socialConfig.showCompanyName = true;
+  config.socialConfig.address = '';
+  config.socialConfig.cnpj = '';
+  config.socialConfig.qrcodeURL = '';
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
@@ -982,13 +1011,13 @@ db.teams.find().forEach((team) => {
   team.overridePercentages = false;
 
   team.members.forEach((member) => {
-    member.sectors = []
-    if(member.sector) member.sectors.push(member.sector)
-    delete member.sector
-  })
+    member.sectors = [];
+    if (member.sector) member.sectors.push(member.sector);
+    delete member.sector;
+  });
 
   db.teams.replaceOne({ _id: team._id }, team);
-})
+});
 
 db.contracts.find().forEach((contract) => {
   contract.payments.forEach((payment) => {
@@ -1000,24 +1029,29 @@ db.contracts.find().forEach((contract) => {
 
 db.invoices.find().forEach((invoice) => {
   invoice.importants = invoice.importants.map((i) => {
-    return {text: i, isVisible: true};
+    return { text: i, isVisible: true };
   });
   invoice.laep = invoice.laep.map((p) => {
-    return {text: p, isVisible: true};
+    return { text: p, isVisible: true };
   });
   invoice.laee = invoice.laee.map((e) => {
-    return {text: e, isVisible: true};
+    return { text: e, isVisible: true };
   });
   invoice.laec = invoice.laec.map((c) => {
-    return {text: c, isVisible: true};
+    return { text: c, isVisible: true };
   });
 
-  if(!invoice.discount) invoice.discount = '0,00'
+  if (!invoice.discount) invoice.discount = '0,00';
 
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
 
 db.platformconfigs.find().forEach((config) => {
-   config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
+  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
   db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
+
+db.contractors.find().forEach((contractor) => {
+  if(!contractor.phone) contractor.phone = "(82) 0000-0000";
+  db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
