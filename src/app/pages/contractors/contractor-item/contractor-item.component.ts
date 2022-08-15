@@ -9,7 +9,7 @@ import { Contractor } from '@models/contractor';
 
 import contractor_validation from 'app/shared/validators/contractor-validation.json';
 
-enum TypeOfPerson {
+enum TypesOfPerson {
   PESSOA_FISICA = 'pessoa física',
   PESSOA_JURIDICA = 'pessoa jurídica',
 }
@@ -28,8 +28,8 @@ export class ContractorItemComponent implements OnInit {
   editing = false;
   submitted = false;
   validation = contractor_validation as any;
-  typeOfPerson = TypeOfPerson;
-  selectedOption = 'pessoa física';
+  typeOfPerson = TypesOfPerson;
+  selectedOption = TypesOfPerson.PESSOA_FISICA;
 
   constructor(private contractorService: ContractorService) {}
 

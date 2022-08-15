@@ -56,9 +56,9 @@
           <input
             nbInput
             [(ngModel)]="contractor.document"
-            #document="ngModel"
-            id="input-document"
-            name="document"
+            #cpf="ngModel"
+            id="input-cpf"
+            name="cpf"
             placeholder="Digite o CPF"
             fullWidth
             fieldSize="large"
@@ -67,24 +67,24 @@
             [required]="validation.cpf.required"
             [minlength]="validation.cpf.minLength"
             [maxlength]="validation.cpf.maxLength"
-            [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="document.invalid && document.touched ? true : null"
+            [status]="cpf.dirty ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="cpf.invalid && cpf.touched ? true : null"
           />
-          <ng-container *ngIf="document.invalid && document.touched">
-            <p class="caption status-danger" *ngIf="document.errors?.required">O CPF é obrigatório!</p>
-            <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
+          <ng-container *ngIf="cpf.invalid && cpf.touched">
+            <p class="caption status-danger" *ngIf="cpf.errors?.required">O CPF é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="cpf.errors?.minlength || cpf.errors?.maxlength">
               O CPF deve ter {{ validation.cpf.minLength - 3 }} números
             </p>
           </ng-container>
         </div>
         <div class="form-control-group" *ngIf="selectedOption == typeOfPerson.PESSOA_JURIDICA">
-          <label class="label" for="input-document">CNPJ:</label>
+          <label class="label" for="input-cnpj">CNPJ:</label>
           <input
             nbInput
             [(ngModel)]="contractor.document"
-            #document="ngModel"
-            id="input-document"
-            name="document"
+            #cnpj="ngModel"
+            id="input-cnpj"
+            name="cnpj"
             placeholder="Digite o CNPJ"
             fullWidth
             fieldSize="large"
@@ -93,12 +93,12 @@
             [required]="validation.cnpj.required"
             [minlength]="validation.cnpj.minLength"
             [maxlength]="validation.cnpj.maxLength"
-            [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="document.invalid && document.touched ? true : null"
+            [status]="cnpj.dirty ? (cnpj.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
           />
-          <ng-container *ngIf="document.invalid && document.touched">
-            <p class="caption status-danger" *ngIf="document.errors?.required">O CNPJ é obrigatório!</p>
-            <p class="caption status-danger" *ngIf="document.errors?.minlength">
+          <ng-container *ngIf="cnpj.invalid && cnpj.touched">
+            <p class="caption status-danger" *ngIf="cnpj.errors?.required">O CNPJ é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="cnpj.errors?.minlength">
               O CNPJ deve ter {{ validation.cnpj.minLength - 4 }} números
             </p>
           </ng-container>
