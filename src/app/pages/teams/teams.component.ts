@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { TeamDialogComponent } from './team-dialog/team-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { idToProperty, isPhone, nameSort } from 'app/shared/utils';
+import { idToProperty, isPhone, nameSort, NOT } from 'app/shared/utils';
 
 import { Team } from '@models/team';
 
@@ -20,7 +20,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   teams: Team[] = [];
   searchQuery = '';
-  isDataLoaded = false;
+  NOT = NOT;
   get filtredTeams(): Team[] {
     if (this.searchQuery !== '')
       return this.teams.filter((team) => {
@@ -63,11 +63,14 @@ export class TeamsComponent implements OnInit, OnDestroy {
         title: 'Nome do time',
         type: 'string',
       },
-      expertise: {
-        title: 'Área de atuação',
+      sectors: {
+        title: 'Setores',
         type: 'string',
+        valuePrepareFunction: (array: any[]) => {
+          return array.map((sector: any) => this.teamService.idToSector(sector).abrev).join(', ');
+        },
       },
-      leaderName: {
+      'locals.leaderName': {
         title: 'Líder',
         type: 'string',
       },
@@ -79,7 +82,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
   constructor(
     private dialogService: NbDialogService,
     private userService: UserService,
-    private teamService: TeamService
+    public teamService: TeamService
   ) {}
 
   ngOnDestroy(): void {
@@ -88,11 +91,17 @@ export class TeamsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.teamService.isDataLoaded$.pipe(takeUntil(this.destroy$)).subscribe((reqTeam) => (this.isDataLoaded = reqTeam));
-    this.teamService
-      .getTeams()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((teams) => {
+    combineLatest([
+      this.teamService.getTeams(),
+      this.userService.getUsers(),
+      this.teamService.isDataLoaded$,
+      this.userService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(([, , teamLoaded, userLoaded]) => !teamLoaded || !userLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([teams, , ,]) => {
         this.teams = teams.map((team) => {
           team.locals.leaderName = idToProperty(
             team.leader,

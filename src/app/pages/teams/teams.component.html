@@ -23,7 +23,7 @@
         </div>
       </nb-card-header>
       <div
-        *ngIf="!isDataLoaded; else table"
+        *ngIf="NOT(teamService.isDataLoaded$) | async; else table"
         [nbSpinner]="true"
         nbSpinnerStatus="primary"
         nbSpinnerSize="giant"
