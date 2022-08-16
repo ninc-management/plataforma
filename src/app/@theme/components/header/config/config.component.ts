@@ -1,12 +1,18 @@
 import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, skipWhile, take } from 'rxjs';
 
+import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
-import { isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
+import { InvoiceService } from 'app/shared/services/invoice.service';
+import { UserService } from 'app/shared/services/user.service';
+import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
+import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 import config_validation from 'app/shared/validators/config-validation.json';
 
@@ -18,6 +24,11 @@ interface SubTypeItem {
 interface TypeItem {
   name: string;
   subTypes: SubTypeItem[];
+}
+enum KEYS_TO_VERIFY {
+  POSITION = 'position',
+  LEVEL = 'level',
+  UNIT = 'products.unit',
 }
 
 enum CONFIG_EXPENSE_TYPES {
@@ -37,18 +48,21 @@ export class ConfigComponent implements OnInit {
   clonedConfig: PlatformConfig = new PlatformConfig();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
-  newUnit: string = '';
+  newRole = { roleTypeName: '', permission: '' };
   adminExpenseTypes: TypeItem[] = [];
   contractExpenseTypes: TypeItem[] = [];
+  invoices: Invoice[] = [];
+  users: User[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
   EXPENSE_TYPES = EXPENSE_TYPES;
-  newRole = { roleTypeName: '', permission: '' };
+  configExpenseTypes = CONFIG_EXPENSE_TYPES;
+  KEYS_TO_VERIFY = KEYS_TO_VERIFY;
   newLevel: string = '';
+  newUnit: string = '';
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
-  configExpenseTypes = CONFIG_EXPENSE_TYPES;
 
   forms: NgForm[] = [];
 
@@ -69,7 +83,12 @@ export class ConfigComponent implements OnInit {
     pack: 'fac',
   };
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private invoiceService: InvoiceService,
+    private dialogService: NbDialogService,
+    public userService: UserService
+  ) {}
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
@@ -110,6 +129,19 @@ export class ConfigComponent implements OnInit {
       if (isDirty) {
         this.isFormDirty.next(true);
       }
+    });
+  }
+
+  openDialog(itemsWithValue: string[], warning: string): void {
+    this.dialogService.open(RemainingItemsComponent, {
+      context: {
+        title: warning,
+        items: itemsWithValue,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
     });
   }
 
@@ -166,5 +198,62 @@ export class ConfigComponent implements OnInit {
         this.clonedConfig.expenseConfig.adminExpenseTypes
       );
     this.configService.editConfig(this.clonedConfig);
+  }
+
+  deleteUnit(index: number): void {
+    combineLatest([this.invoiceService.getInvoices(), this.invoiceService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isInvoiceDataLoaded]) => !isInvoiceDataLoaded),
+        take(1)
+      )
+      .subscribe(([invoices, _]) => {
+        const invoicesWithUnit = getItemsWithValue(
+          invoices,
+          KEYS_TO_VERIFY.UNIT,
+          this.clonedConfig.invoiceConfig.units[index]
+        );
+        const productsWithValue: string[] = [];
+        invoicesWithUnit.forEach((invoice) => {
+          invoice.products.forEach((product) => productsWithValue.push(product.name + ': ' + invoice.code));
+        });
+        if (invoicesWithUnit.length != 0) {
+          this.openDialog(
+            productsWithValue,
+            'Não é possível remover o item. Os seguintes produtos dos orçamentos estão utilizando esta unidade:'
+          );
+        } else {
+          this.clonedConfig.invoiceConfig.units.splice(index, 1);
+          this.isFormDirty.next(true);
+        }
+      });
+  }
+
+  deletePositionOrLevel(index: number, key: string): void {
+    combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
+        take(1)
+      )
+      .subscribe(([users, _]) => {
+        const usersWithValue = getItemsWithValue(
+          users,
+          key,
+          key == 'position'
+            ? this.clonedConfig.profileConfig.positions[index].roleTypeName
+            : this.clonedConfig.profileConfig.levels[index]
+        );
+        if (usersWithValue.length != 0) {
+          this.openDialog(
+            usersWithValue.map((user) => user.fullName),
+            'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
+              (key == 'position' ? 'papel:' : 'cargo:')
+          );
+        } else {
+          if (key == 'position') this.clonedConfig.profileConfig.positions.splice(index, 1);
+          else this.clonedConfig.profileConfig.levels.splice(index, 1);
+
+          this.isFormDirty.next(true);
+        }
+      });
   }
 }

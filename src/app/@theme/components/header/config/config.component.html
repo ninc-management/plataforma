@@ -529,7 +529,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="clonedConfig.invoiceConfig.units.splice(i, 1); isFormDirty.next(true)"
+                    (click)="deleteUnit(i)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -710,7 +710,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="clonedConfig.profileConfig.positions.splice(i, 1); isFormDirty.next(true)"
+                    (click)="deletePositionOrLevel(i,KEYS_TO_VERIFY.POSITION)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -784,7 +784,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="clonedConfig.profileConfig.levels.splice(i, 1); isFormDirty.next(true)"
+                    (click)="deletePositionOrLevel(i,KEYS_TO_VERIFY.LEVEL)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>

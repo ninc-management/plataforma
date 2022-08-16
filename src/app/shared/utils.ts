@@ -19,7 +19,7 @@ import {
   subYears,
   isWithinInterval as withinInterval,
 } from 'date-fns';
-import { at, groupBy, isEqual } from 'lodash';
+import { at, cloneDeep, groupBy, isEqual } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
@@ -336,4 +336,18 @@ export function accessNestedProperty(data: any, keys: string[], defValue = ''): 
   if (!currentKey) return data;
   if (data[currentKey] === undefined || data[currentKey] === null) return defValue;
   return accessNestedProperty(data[currentKey], keys, defValue);
+}
+
+export function getItemsWithValue<T>(originalList: T[], key: string, value: any): T[] {
+  const keys = key.split('.');
+  const objs = cloneDeep(originalList);
+  return objs.filter((obj: any) => {
+    if (!(typeof obj[keys[0]] == 'object')) return obj[key] == value;
+    if (!Array.isArray(obj[keys[0]])) return accessNestedProperty(obj, keys) == value;
+    obj[keys[0]] = obj[keys[0]].filter((item: any) => {
+      if (keys.length > 1) return item[keys[1]] == value;
+      else return item == value;
+    });
+    return obj[keys[0]].length != 0;
+  });
 }
