@@ -35,6 +35,9 @@ export class Contractor extends Base<string> {
   document: string = '';
 
   @prop({ required: true })
+  corporateName: string = '';
+
+  @prop({ required: true })
   email: string = '';
 
   @prop({ type: () => Address })
