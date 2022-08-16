@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -10,6 +10,7 @@ import { Contract } from '@models/contract';
   selector: 'ngx-contract-item',
   templateUrl: './contract-item.component.html',
   styleUrls: ['./contract-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
