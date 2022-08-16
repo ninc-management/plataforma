@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 
 import { ContractorService } from 'app/shared/services/contractor.service';
+import { StatecityService } from 'app/shared/services/statecity.service';
 
 import { Contractor } from '@models/contractor';
 
@@ -30,14 +31,18 @@ export class ContractorItemComponent implements OnInit {
   validation = contractor_validation as any;
   typeOfPerson = TypesOfPerson;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
+  cities: string[] = [];
+  states: string[] = [];
 
-  constructor(private contractorService: ContractorService) {}
+  constructor(private contractorService: ContractorService, private statecityService: StatecityService) {}
 
   ngOnInit(): void {
     if (this.iContractor._id !== undefined) {
       this.editing = true;
       this.contractor = cloneDeep(this.iContractor);
     }
+    this.states = this.statecityService.buildStateList();
+    if (this.contractor.address.state) this.cities = this.statecityService.buildCityList(this.contractor.address.state);
   }
 
   ngAfterViewInit() {
@@ -52,5 +57,9 @@ export class ContractorItemComponent implements OnInit {
     else this.contractorService.saveContractor(this.contractor);
     this.isFormDirty.next(false);
     this.submit.emit();
+  }
+
+  buildCityList(state: string): void {
+    this.cities = this.statecityService.buildCityList(state);
   }
 }

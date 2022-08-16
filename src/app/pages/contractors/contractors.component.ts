@@ -26,7 +26,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         return (
           contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contractor.address.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contractor.address.streetAddress.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contractor.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });

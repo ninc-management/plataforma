@@ -147,7 +147,15 @@ describe('UtilsService', () => {
 
     const tmpContractor = new Contractor();
     tmpContractor._id = '0';
-    tmpContractor.address = 'rua teste1';
+    tmpContractor.address = {
+      zipCode: '',
+      streetAddress: 'rua teste1',
+      number: '',
+      district: '',
+      complement: '',
+      city: '',
+      state: '',
+    };
     tmpContractor.document = '000.000.000-11';
     tmpContractor.email = 'test1@te.st';
     tmpContractor.fullName = 'Test1';
