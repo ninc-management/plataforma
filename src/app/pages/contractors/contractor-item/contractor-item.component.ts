@@ -9,6 +9,11 @@ import { Contractor } from '@models/contractor';
 
 import contractor_validation from 'app/shared/validators/contractor-validation.json';
 
+enum TypesOfPerson {
+  PESSOA_FISICA = 'pessoa física',
+  PESSOA_JURIDICA = 'pessoa jurídica',
+}
+
 @Component({
   selector: 'ngx-contractor-item',
   templateUrl: './contractor-item.component.html',
@@ -23,6 +28,8 @@ export class ContractorItemComponent implements OnInit {
   editing = false;
   submitted = false;
   validation = contractor_validation as any;
+  typeOfPerson = TypesOfPerson;
+  selectedOption = TypesOfPerson.PESSOA_FISICA;
 
   constructor(private contractorService: ContractorService) {}
 

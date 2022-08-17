@@ -10,9 +10,14 @@
     "minLength": 3,
     "maxLength": 200
   },
-  "document": {
+  "cpf": {
     "required": true,
     "minLength": 14,
+    "maxLength": 14
+  },
+  "cnpj": {
+    "required": true,
+    "minLength": 18,
     "maxLength": 18
   },
   "phone": {
