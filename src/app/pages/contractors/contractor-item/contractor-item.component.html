@@ -53,8 +53,8 @@
     <div class="col-md-6">
       <label class="label" for="input-person-selector">Tipo de pessoa:</label>
       <nb-select placeholder="Selecione" fullWidth size="large" [(ngModel)]="selectedOption" name="ng-model-group">
-        <nb-option value="pessoa física">Pessoa física</nb-option>
-        <nb-option value="pessoa jurídica">Pessoa jurídica</nb-option>
+        <nb-option [value]="typeOfPerson.PESSOA_FISICA">Pessoa física</nb-option>
+        <nb-option [value]="typeOfPerson.PESSOA_JURIDICA">Pessoa jurídica</nb-option>
       </nb-select>
     </div>
     <div class="col-md-6">
