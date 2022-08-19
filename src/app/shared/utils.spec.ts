@@ -21,6 +21,7 @@ import { Contractor } from '@models/contractor';
 import {
   assingOrIncrement,
   elapsedTime,
+  Fees,
   formatDate,
   groupByDateTimeSerie,
   idToProperty,
@@ -317,7 +318,7 @@ describe('UtilsService', () => {
       mockedConfigs[0].invoiceConfig.nfPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe('0');
+    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(Fees.NF_BUSINESS_INTERMEDIATION);
   });
 
   it('nortanPercentage should work', () => {
@@ -343,7 +344,7 @@ describe('UtilsService', () => {
       mockedConfigs[0].invoiceConfig.organizationPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('0');
+    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(Fees.NORTAN_BUSINESS_INTERMEDIATION);
   });
 
   it('isPhone should work', () => {
