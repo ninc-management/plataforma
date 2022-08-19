@@ -353,16 +353,13 @@ export function getItemsWithValue<T>(originalList: T[], key: string, value: any)
   });
 }
 
-export function greaterAndSmallerValue<T extends { value: string }>(object: T[]): { min: number; max: number } {
-  let maxValue: number = 0;
-  let minValue: number = 0;
+export function greaterAndSmallerValue<T>(object: T[], key: string = 'value'): { min: number; max: number } {
   const stringUtil = appInjector.get(StringUtilService);
-
-  maxValue = stringUtil.moneyToNumber(
-    object.reduce((prev, current) => (prev.value > current.value ? prev : current)).value
-  );
-  minValue = stringUtil.moneyToNumber(
-    object.reduce((prev, current) => (prev.value < current.value ? prev : current)).value
-  );
-  return { min: minValue, max: maxValue };
+  const propertiesToAccess = key.split('.');
+  const values = object.map((obj: any) => {
+    return stringUtil.moneyToNumber(
+      propertiesToAccess.length > 1 ? accessNestedProperty(obj, cloneDeep(propertiesToAccess)) : obj[key]
+    );
+  });
+  return { min: Math.min(...values), max: Math.max(...values) };
 }
