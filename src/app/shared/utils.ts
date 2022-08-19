@@ -46,6 +46,11 @@ export enum Permissions {
   DIRETOR_TI = 'dti',
 }
 
+export enum Fees {
+  NORTAN_BUSINESS_INTERMEDIATION = '17,00',
+  NF_BUSINESS_INTERMEDIATION = '0,00',
+}
+
 type NonOptionalKeys<T> = {
   [K in keyof T]-?: T extends { [K1 in K]: any } ? K : never;
 }[keyof T];
@@ -81,7 +86,7 @@ export function nfPercentage(iDocument: Contract | Invoice, percentageFromConfig
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
   }
-  return invoice.administration == 'nortan' ? percentageFromConfig : '0';
+  return invoice.administration == 'nortan' ? percentageFromConfig : Fees.NF_BUSINESS_INTERMEDIATION;
 }
 
 export function nortanPercentage(iDocument: Contract | Invoice, percentageFromConfig: string): string {
@@ -100,7 +105,7 @@ export function nortanPercentage(iDocument: Contract | Invoice, percentageFromCo
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
   }
-  return invoice.administration == 'nortan' ? percentageFromConfig : '0';
+  return invoice.administration == 'nortan' ? percentageFromConfig : Fees.NORTAN_BUSINESS_INTERMEDIATION;
 }
 
 export function assingOrIncrement(base: number | undefined, increment: number): number {
