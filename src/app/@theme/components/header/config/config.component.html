@@ -415,7 +415,7 @@
               </div>
             </div>
             <div class="form-control-group col-12">
-              <div class="row">
+              <div class="row mt-2">
                 <div class="col-auto">
                   <label class="label-divider">Taxas para Suporte Empresarial</label>
                 </div>
@@ -425,7 +425,7 @@
               </div>
               <div class="row">
                 <div class="col-6">
-                  <label class="label" for="input-support-org-percentage">Porcentagem da organização:</label>
+                  <label class="label" for="input-support-org-percentage">Porcentagem da organização</label>
                   <input
                     nbInput
                     [(ngModel)]="clonedConfig.invoiceConfig.businessFees.support.organizationPercentage"
@@ -442,12 +442,14 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="supportOrgPercentage.dirty ? (supportOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [status]="
+                      supportOrgPercentage.dirty ? (supportOrgPercentage.invalid ? 'danger' : 'success') : 'basic'
+                    "
                     [attr.aria-invalid]="supportOrgPercentage.invalid && supportOrgPercentage.touched ? true : null"
                   />
                 </div>
                 <div class="col-6">
-                  <label class="label" for="input-support-nf-percentage">Porcentagem da nota fiscal:</label>
+                  <label class="label" for="input-support-nf-percentage">Porcentagem da nota fiscal</label>
                   <input
                     nbInput
                     [(ngModel)]="clonedConfig.invoiceConfig.businessFees.support.nfPercentage"
@@ -464,12 +466,14 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="supportNfPercentage.dirty ? (supportNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [status]="
+                      supportNfPercentage.dirty ? (supportNfPercentage.invalid ? 'danger' : 'success') : 'basic'
+                    "
                     [attr.aria-invalid]="supportNfPercentage.invalid && supportNfPercentage.touched ? true : null"
                   />
                 </div>
               </div>
-              <div class="row">
+              <div class="row mt-3">
                 <div class="col-auto">
                   <label class="label-divider">Taxas para Intermediação de Negócios</label>
                 </div>
@@ -477,9 +481,9 @@
                   <hr />
                 </div>
               </div>
-               <div class="row">
+              <div class="row">
                 <div class="col-6">
-                  <label class="label" for="input-intermediation-org-percentage">Porcentagem da organização:</label>
+                  <label class="label" for="input-intermediation-org-percentage">Porcentagem da organização</label>
                   <input
                     nbInput
                     [(ngModel)]="clonedConfig.invoiceConfig.businessFees.intermediation.organizationPercentage"
@@ -496,12 +500,20 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="intermediationOrgPercentage.dirty ? (intermediationOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                    [attr.aria-invalid]="intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null"
+                    [status]="
+                      intermediationOrgPercentage.dirty
+                        ? intermediationOrgPercentage.invalid
+                          ? 'danger'
+                          : 'success'
+                        : 'basic'
+                    "
+                    [attr.aria-invalid]="
+                      intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null
+                    "
                   />
                 </div>
                 <div class="col-6">
-                  <label class="label" for="input-intermediation-nf-percentage">Porcentagem da nota fiscal:</label>
+                  <label class="label" for="input-intermediation-nf-percentage">Porcentagem da nota fiscal</label>
                   <input
                     nbInput
                     [(ngModel)]="clonedConfig.invoiceConfig.businessFees.intermediation.nfPercentage"
@@ -518,13 +530,21 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="intermediationNfPercentage.dirty ? (intermediationNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                    [attr.aria-invalid]="intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null"
+                    [status]="
+                      intermediationNfPercentage.dirty
+                        ? intermediationNfPercentage.invalid
+                          ? 'danger'
+                          : 'success'
+                        : 'basic'
+                    "
+                    [attr.aria-invalid]="
+                      intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null
+                    "
                   />
                 </div>
               </div>
             </div>
-            <div class="col-12">
+            <div class="col-12 mt-2">
               <div class="row">
                 <div class="col-auto">
                   <label class="label-divider">Lista de unidade de medidas para unidade de produtos</label>
