@@ -48,8 +48,10 @@ export enum Permissions {
 }
 
 export enum Fees {
-  NORTAN_BUSINESS_INTERMEDIATION = '17,00',
-  NF_BUSINESS_INTERMEDIATION = '0,00',
+  NF_SUPPORT = '15,50',
+  NF_INTERMEDIATION = '0,00',
+  NORTAN_SUPPORT = '15,00',
+  NORTAN_INTERMEDIATION = '17,00',
 }
 
 type NonOptionalKeys<T> = {

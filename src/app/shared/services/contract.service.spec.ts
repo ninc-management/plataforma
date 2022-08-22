@@ -17,7 +17,7 @@ import { Socket } from 'ngx-socket-io';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { AuthService } from 'app/auth/auth.service';
-import { reviveDates } from 'app/shared/utils';
+import { Fees, reviveDates } from 'app/shared/utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { CONTRACT_BALANCE } from './user.service';
 import { DEFAULT_CONFIG } from './config.service';
@@ -301,10 +301,10 @@ describe('ContractService', () => {
 
     let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';
-    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = '15,0';
-    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = '0,00';
-    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = '0,00';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
     tmpConfig.oneDriveConfig.isActive = true;
     tmpConfig.oneDriveConfig.oneDriveId = '0';
     tmpConfig.oneDriveConfig.folderId = '1';

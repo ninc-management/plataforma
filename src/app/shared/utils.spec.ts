@@ -164,10 +164,10 @@ describe('UtilsService', () => {
     mockedContractors.push(cloneDeep(tmpContractor));
 
     const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = '15,0';
-    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = '0,00';
-    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = '0,00';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
     mockedConfigs.push(tmpConfig);
 
     teamService.getTeams().pipe(take(1)).subscribe();
@@ -328,7 +328,7 @@ describe('UtilsService', () => {
   it('nortanPercentage should work', () => {
     const contract: Contract = new Contract();
     const invoice: Invoice = new Invoice();
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('15,0');
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(Fees.NORTAN_SUPPORT);
     invoice._id = '0';
     invoice.author = '0';
     invoice.nortanTeam = '0';
