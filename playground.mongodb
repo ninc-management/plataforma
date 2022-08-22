@@ -1046,34 +1046,55 @@ db.invoices.find().forEach((invoice) => {
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
 
-db.platformconfigs.find().forEach((config) => {
-  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
 db.contractors.find().forEach((contractor) => {
   if(!contractor.phone) contractor.phone = "(82) 0000-0000";
+
   contractor.legalRepresentatives = []
   contractor.comercialRepresentatives = []
-  db.contractors.replaceOne({ _id: contractor._id }, contractor);
-});
 
-db.contractors.find().forEach((contractor) => {
   const newAddress = {
     zipCode: '',
     streetAddress: contractor.address,
     number:'',
-    district: '',
+    district: '',W
     complement: '',
     city: '',
     state:'',
   }
+
   contractor.address = newAddress;
+  c.corporateName = '';
+
   db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
 
+db.platformconfigs.find().forEach((config) => {
+  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
 
-db.contractors.find().forEach((c) => {
-  c.corporateName = '';
-  db.contractors.replaceOne({ _id: c._id }, c);
+  let intermediationNfPercentage = '0,00'
+  let intermediationOrganizationPercentage = '0,00'
+
+  let supportNfPercentage = '0,00'
+  let supportOrganizationPercentage = '0,00'
+
+  if(config.invoiceConfig.nfPercentage){
+    supportNfPercentage = config.invoiceConfig.nfPercentage
+  }
+
+  if(config.invoiceConfig.organizationPercentage){
+    supportOrganizationPercentage = config.invoiceConfig.organizationPercentage
+  }
+
+  config.invoiceConfig.businessFees = {
+    "intermediation": {
+      "nfPercentage": intermediationNfPercentage,
+      "organizationPercentage": intermediationOrganizationPercentage,
+    },
+    "support": {
+      "nfPercentage": supportNfPercentage,
+      "organizationPercentage": supportOrganizationPercentage,
+    }
+  };
+
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

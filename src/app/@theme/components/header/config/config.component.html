@@ -416,14 +416,22 @@
             </div>
             <div class="form-control-group col-12">
               <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">Taxas para Suporte Empresarial</label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-6">
-                  <label class="label" for="input-org-percentage">Porcentagem da organização:</label>
+                  <label class="label" for="input-support-org-percentage">Porcentagem da organização:</label>
                   <input
                     nbInput
-                    [(ngModel)]="clonedConfig.invoiceConfig.organizationPercentage"
-                    #orgPercentage="ngModel"
-                    id="input-org-percentage"
-                    name="orgPercentage"
+                    [(ngModel)]="clonedConfig.invoiceConfig.businessFees.support.organizationPercentage"
+                    #supportOrgPercentage="ngModel"
+                    id="input-support-org-percentage"
+                    name="supportOrgPercentage"
                     placeholder="Porcentagem"
                     fullWidth
                     fieldSize="large"
@@ -434,18 +442,18 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="orgPercentage.dirty ? (orgPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                    [attr.aria-invalid]="orgPercentage.invalid && orgPercentage.touched ? true : null"
+                    [status]="supportOrgPercentage.dirty ? (supportOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="supportOrgPercentage.invalid && supportOrgPercentage.touched ? true : null"
                   />
                 </div>
                 <div class="col-6">
-                  <label class="label" for="input-nf-percentage">Porcentagem da nota fiscal:</label>
+                  <label class="label" for="input-support-nf-percentage">Porcentagem da nota fiscal:</label>
                   <input
                     nbInput
-                    [(ngModel)]="clonedConfig.invoiceConfig.nfPercentage"
-                    #nfPercentage="ngModel"
-                    id="input-nf-percentage"
-                    name="nfPercentage"
+                    [(ngModel)]="clonedConfig.invoiceConfig.businessFees.support.nfPercentage"
+                    #supportNfPercentage="ngModel"
+                    id="input-support-nf-percentage"
+                    name="supportNfPercentage"
                     placeholder="Porcentagem"
                     fullWidth
                     fieldSize="large"
@@ -456,8 +464,62 @@
                       decimal: 2
                     }"
                     ngxSelectAllText
-                    [status]="nfPercentage.dirty ? (nfPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                    [attr.aria-invalid]="nfPercentage.invalid && nfPercentage.touched ? true : null"
+                    [status]="supportNfPercentage.dirty ? (supportNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="supportNfPercentage.invalid && supportNfPercentage.touched ? true : null"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">Taxas para Intermediação de Negócios</label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+               <div class="row">
+                <div class="col-6">
+                  <label class="label" for="input-intermediation-org-percentage">Porcentagem da organização:</label>
+                  <input
+                    nbInput
+                    [(ngModel)]="clonedConfig.invoiceConfig.businessFees.intermediation.organizationPercentage"
+                    #intermediationOrgPercentage="ngModel"
+                    id="input-intermediation-org-percentage"
+                    name="intermediationOrgPercentage"
+                    placeholder="Porcentagem"
+                    fullWidth
+                    fieldSize="large"
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 2
+                    }"
+                    ngxSelectAllText
+                    [status]="intermediationOrgPercentage.dirty ? (intermediationOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null"
+                  />
+                </div>
+                <div class="col-6">
+                  <label class="label" for="input-intermediation-nf-percentage">Porcentagem da nota fiscal:</label>
+                  <input
+                    nbInput
+                    [(ngModel)]="clonedConfig.invoiceConfig.businessFees.intermediation.nfPercentage"
+                    #intermediationNfPercentage="ngModel"
+                    id="input-nf-percentage"
+                    name="intermediationNfPercentage"
+                    placeholder="Porcentagem"
+                    fullWidth
+                    fieldSize="large"
+                    [brmasker]="{
+                      money: true,
+                      thousand: '.',
+                      decimalCaracter: ',',
+                      decimal: 2
+                    }"
+                    ngxSelectAllText
+                    [status]="intermediationNfPercentage.dirty ? (intermediationNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null"
                   />
                 </div>
               </div>
@@ -710,7 +772,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="deletePositionOrLevel(i,KEYS_TO_VERIFY.POSITION)"
+                    (click)="deletePositionOrLevel(i, KEYS_TO_VERIFY.POSITION)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -784,7 +846,7 @@
                     status="basic"
                     icon="trash-2-outline"
                     pack="eva"
-                    (click)="deletePositionOrLevel(i,KEYS_TO_VERIFY.LEVEL)"
+                    (click)="deletePositionOrLevel(i, KEYS_TO_VERIFY.LEVEL)"
                     [options]="{ animation: { type: 'shake' } }"
                   ></nb-icon>
                 </div>
@@ -890,7 +952,7 @@
               [attr.aria-invalid]="document.invalid && document.touched ? true : null"
             />
             <ng-container *ngIf="document.errors?.minlength">
-              <p class="caption status-danger" >CNPJ deve ter {{validation.document.minLength - 4}} números</p>
+              <p class="caption status-danger">CNPJ deve ter {{ validation.document.minLength - 4 }} números</p>
             </ng-container>
           </div>
         </div>
