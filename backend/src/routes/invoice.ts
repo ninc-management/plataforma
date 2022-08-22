@@ -36,26 +36,25 @@ router.post('/', async (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await InvoiceModel.findByIdAndUpdate(
-    req.body.invoice._id,
-    req.body.invoice,
-    { upsert: false },
-    async (err, savedInvoice) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar orçamento!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          invoicesMap[req.body.invoice._id] = cloneDeep(savedInvoice.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Orçamento Atualizado!',
+  try {
+    const savedInvoice = await InvoiceModel.findByIdAndUpdate(req.body.invoice._id, req.body.invoice, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        invoicesMap[req.body.invoice._id] = cloneDeep(savedInvoice.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Orçamento Atualizado!',
+      savedInvoice,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar orçamento!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {

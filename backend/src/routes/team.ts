@@ -42,22 +42,23 @@ router.post('/update', async (req, res, next) => {
       });
     }
 
-    await TeamModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false }, async (err, savedTeam) => {
-      if (err) {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao atualizar time!',
-          error: err,
-        });
-      }
+    try {
+      const savedTeam = await TeamModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
       if (requested) {
         teamMap[req.body.team._id] = cloneDeep(savedTeam.toJSON());
       }
       release();
       return res.status(200).json({
         message: 'Time Atualizado!',
+        savedTeam,
       });
-    });
+    } catch (err) {
+      release();
+      return res.status(500).json({
+        message: 'Erro ao atualizar time!',
+        error: err,
+      });
+    }
   });
 });
 

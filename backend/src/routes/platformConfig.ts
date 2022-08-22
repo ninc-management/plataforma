@@ -48,26 +48,25 @@ router.post('/all', async (req, res) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await PlatformConfigModel.findByIdAndUpdate(
-    req.body.config._id,
-    req.body.config,
-    { upsert: false },
-    async (err, savedConfig) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar configuração!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          configMap[req.body.config._id] = cloneDeep(savedConfig.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Configuração atualizada!',
+  try {
+    const savedConfig = await PlatformConfigModel.findByIdAndUpdate(req.body.config._id, req.body.config, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        configMap[req.body.config._id] = cloneDeep(savedConfig.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Configuração atualizada!',
+      savedConfig,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar configuração!',
+      error: err,
+    });
+  }
 });
 
 export default router;
