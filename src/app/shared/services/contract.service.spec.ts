@@ -301,8 +301,10 @@ describe('ContractService', () => {
 
     let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';
-    tmpConfig.invoiceConfig.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = '15,5';
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = '15,0';
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = '0,00';
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = '0,00';
     tmpConfig.oneDriveConfig.isActive = true;
     tmpConfig.oneDriveConfig.oneDriveId = '0';
     tmpConfig.oneDriveConfig.folderId = '1';

@@ -164,8 +164,10 @@ describe('UtilsService', () => {
     mockedContractors.push(cloneDeep(tmpContractor));
 
     const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = '15,5';
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = '15,0';
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = '0,00';
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = '0,00';
     mockedConfigs.push(tmpConfig);
 
     teamService.getTeams().pipe(take(1)).subscribe();
@@ -306,25 +308,27 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.nfPercentage
+    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.nfPercentage
     );
     const receipt = new ContractReceipt();
     receipt.notaFiscal = '0,00';
     contract.receipts.push(receipt);
-    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe('0,00');
+    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('0,00');
     invoice.nortanTeam = '0';
-    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.nfPercentage
+    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.nfPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(Fees.NF_BUSINESS_INTERMEDIATION);
+    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.intermediation.nfPercentage
+    );
   });
 
   it('nortanPercentage should work', () => {
     const contract: Contract = new Contract();
     const invoice: Invoice = new Invoice();
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('15,0');
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('15,0');
     invoice._id = '0';
     invoice.author = '0';
     invoice.nortanTeam = '0';
@@ -332,19 +336,21 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.organizationPercentage
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.organizationPercentage
     );
     const receipt = new ContractReceipt();
     receipt.nortanPercentage = '20,00';
     contract.receipts.push(receipt);
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('20,00');
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('20,00');
     invoice.nortanTeam = '1';
-    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.organizationPercentage
+    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.organizationPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(Fees.NORTAN_BUSINESS_INTERMEDIATION);
+    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.intermediation.organizationPercentage
+    );
   });
 
   it('isPhone should work', () => {

@@ -250,8 +250,16 @@ export const DEFAULT_CONFIG = {
     hasStageName: true,
     hasImportants: true,
     hasMaterialList: true,
-    nfPercentage: '0,00',
-    organizationPercentage: '0,00',
+    businessFees: {
+      support: {
+        organizationPercentage: '0,00',
+        nfPercentage: '0,00',
+      },
+      intermediation: {
+        nfPercentage: '0,00',
+        organizationPercentage: '0,00',
+      },
+    },
     codeAbbreviation: 'NINC',
   },
   profileConfig: {

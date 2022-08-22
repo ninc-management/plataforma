@@ -756,8 +756,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.options.netValue = this.contractService.toNetValue(
         this.tempInvoice.value,
-        nfPercentage(this.tempInvoice, this.config.nfPercentage),
-        nortanPercentage(this.tempInvoice, this.config.organizationPercentage),
+        nfPercentage(this.tempInvoice, this.config),
+        nortanPercentage(this.tempInvoice, this.config),
         this.tempInvoice.created
       );
     }
@@ -766,8 +766,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   updateGrossValue(): void {
     const newInvoiceValue = this.contractService.toGrossValue(
       this.options.netValue,
-      nfPercentage(this.tempInvoice, this.config.nfPercentage),
-      nortanPercentage(this.tempInvoice, this.config.organizationPercentage)
+      nfPercentage(this.tempInvoice, this.config),
+      nortanPercentage(this.tempInvoice, this.config)
     );
 
     this.tempInvoice.value = newInvoiceValue;

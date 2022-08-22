@@ -33,6 +33,7 @@ import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { InvoiceConfig } from '@models/platformConfig';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -70,7 +71,7 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
   doc = d;
 }
 
-export function nfPercentage(iDocument: Contract | Invoice, percentageFromConfig: string): string {
+export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: InvoiceConfig): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
 
@@ -86,10 +87,12 @@ export function nfPercentage(iDocument: Contract | Invoice, percentageFromConfig
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
   }
-  return invoice.administration == 'nortan' ? percentageFromConfig : Fees.NF_BUSINESS_INTERMEDIATION;
+  return invoice.administration == 'nortan'
+    ? invoiceConfig.businessFees.support.nfPercentage
+    : invoiceConfig.businessFees.intermediation.nfPercentage;
 }
 
-export function nortanPercentage(iDocument: Contract | Invoice, percentageFromConfig: string): string {
+export function nortanPercentage(iDocument: Contract | Invoice, invoiceConfig: InvoiceConfig): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
 
@@ -105,7 +108,9 @@ export function nortanPercentage(iDocument: Contract | Invoice, percentageFromCo
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
   }
-  return invoice.administration == 'nortan' ? percentageFromConfig : Fees.NORTAN_BUSINESS_INTERMEDIATION;
+  return invoice.administration == 'nortan'
+    ? invoiceConfig.businessFees.support.organizationPercentage
+    : invoiceConfig.businessFees.intermediation.organizationPercentage;
 }
 
 export function assingOrIncrement(base: number | undefined, increment: number): number {
