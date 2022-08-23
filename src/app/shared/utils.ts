@@ -27,6 +27,7 @@ import { appInjector } from './injector.module';
 import { ConfigService } from './services/config.service';
 import { InvoiceService } from './services/invoice.service';
 import { TimeSeriesItem } from './services/metrics.service';
+import { StringUtilService } from './services/string-util.service';
 import { TeamService } from './services/team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
@@ -334,7 +335,10 @@ export function shouldNotifyManager(
 export function accessNestedProperty(data: any, keys: string[], defValue = ''): any {
   const currentKey = keys.shift();
   if (!currentKey) return data;
-  if (data[currentKey] === undefined || data[currentKey] === null) return defValue;
+  if (data[currentKey] === undefined || data[currentKey] === null) {
+    console.error(`A propriedade ${currentKey} não existe no objeto ${data}`);
+    return defValue;
+  }
   return accessNestedProperty(data[currentKey], keys, defValue);
 }
 
@@ -350,4 +354,15 @@ export function getItemsWithValue<T>(originalList: T[], key: string, value: any)
     });
     return obj[keys[0]].length != 0;
   });
+}
+
+export function greaterAndSmallerValue<T>(object: T[], key: string = 'value'): { min: number; max: number } {
+  const stringUtil = appInjector.get(StringUtilService);
+  const propertiesToAccess = key.split('.');
+  const values = object.map((obj: any) => {
+    return stringUtil.moneyToNumber(
+      propertiesToAccess.length > 1 ? accessNestedProperty(obj, cloneDeep(propertiesToAccess)) : obj[key]
+    );
+  });
+  return { min: Math.min(...values), max: Math.max(...values) };
 }
