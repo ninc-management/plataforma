@@ -335,7 +335,10 @@ export function shouldNotifyManager(
 export function accessNestedProperty(data: any, keys: string[], defValue = ''): any {
   const currentKey = keys.shift();
   if (!currentKey) return data;
-  if (data[currentKey] === undefined || data[currentKey] === null) return defValue;
+  if (data[currentKey] === undefined || data[currentKey] === null) {
+    console.error(`A propriedade ${currentKey} não existe no objeto ${data}`);
+    return defValue;
+  }
   return accessNestedProperty(data[currentKey], keys, defValue);
 }
 
