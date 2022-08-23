@@ -24,6 +24,7 @@ import { DashboardComponent } from './dashboard.component';
 import { ExpansiveGridComponent } from './expansive-grid/expansive-grid.component';
 import { MetricItemComponent } from './metric-item/metric-item.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
+import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
 import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
 import { UserReceivablesComponent } from './user-receivables/user-receivables.component';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
@@ -66,6 +67,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     ReceivablesDialogComponent,
     MetricItemComponent,
     ExpansiveGridComponent,
+    ReportMenuDialogComponent,
   ],
 })
 export class DashboardModule {}
