@@ -1094,6 +1094,9 @@ db.platformconfigs.find().forEach((config) => {
       "nfPercentage": supportNfPercentage,
       "organizationPercentage": supportOrganizationPercentage,
     }
+
+  delete config.invoiceConfig.nfPercentage;
+  delete config.invoiceConfig.organizationPercentage;
   };
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);

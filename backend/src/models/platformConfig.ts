@@ -83,12 +83,6 @@ export class InvoiceConfig {
 
   @prop({ required: true })
   businessFees: BusinessFees = new BusinessFees();
-
-  @prop({ required: true })
-  organizationPercentage: string = '0,00';
-
-  @prop({ required: true })
-  nfPercentage: string = '0,00';
 }
 
 export class SocialConfig {
