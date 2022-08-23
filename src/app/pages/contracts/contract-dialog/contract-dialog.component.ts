@@ -187,10 +187,4 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
           this.pdf.generate(this.invoiceService.idToInvoice(this.contract.invoice), metrics, false, true);
       });
   }
-
-  downloadExpensesReport(contract: Contract): void {
-    const csv = generateExpensesReport(contract);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    saveAs(blob, 'relatorio_despesas.csv');
-  }
 }

@@ -97,20 +97,6 @@
           <nb-card-header>
             {{ title }}
             <div class="buttons">
-              <button
-                *ngIf="componentType === types.CONTRACT"
-                nbButton
-                ghost
-                nbTooltip="Baixar relatório de despesas"
-                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                nbTooltipPlacement="bottom"
-                nbTooltipStatus="info"
-                style="height: 100%"
-                [disabled]="contract.expenses.length == 0"
-                (click)="downloadExpensesReport(contract)"
-              >
-                <i class="icon-file-csv"></i>
-              </button>
               <div *ngIf="config.oneDriveConfig.isActive">
                 <a
                   *ngIf="onedriveUrl.length > 0 && componentType == types.CONTRACT"
