@@ -45,7 +45,7 @@
         </div>
         <a
           style="text-decoration: none; display: contents; cursor: pointer"
-          (click)="openDialog()"
+          (click)="openDialog(dialogTypes.NORTAN_EXPENSE_TABLE)"
         >
           <div class="col-12 col-md-2" style="text-align: center">
             <h2 style="margin-top: 15px; display: flex; align-items: flex-start; justify-content: center">
@@ -82,3 +82,61 @@
     </nb-card>
   </nb-tab>
 </nb-tabset>
+<ngx-fab icon="plus">
+  <ngx-fab-item
+    icon="minus"
+    pack="fac"
+    [content]="
+      activeTab == tabTitles.PESSOAL
+        ? 'Despesas'
+        : activeTab == nortanTeam.name
+        ? 'Gastos Administrativos'
+        : 'Despesas do Time'
+    "
+    (clicked)="openDialog(dialogTypes.EXPENSE)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab === tabTitles.PESSOAL"
+    icon="dollar-sign"
+    pack="fa"
+    content="Ordem de Pagamento"
+    (clicked)="openDialog(dialogTypes.PAYMENT)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab === tabTitles.PESSOAL"
+    icon="receipt"
+    pack="fac"
+    content="Ordem de Empenho"
+    (clicked)="openDialog(dialogTypes.RECEIPT)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab === tabTitles.PESSOAL"
+    icon="file-invoice-dollar"
+    pack="fac"
+    content="Orçamento"
+    iconTop="-3"
+    (clicked)="openDialog(dialogTypes.INVOICE)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab === tabTitles.PESSOAL"
+    icon="person-add-outline"
+    content="Cliente"
+    iconLeft="1"
+    (clicked)="openDialog(dialogTypes.CLIENT)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    *ngIf="activeTab != tabTitles.PESSOAL"
+    icon="person-add-outline"
+    content="Transferência"
+    iconLeft="1"
+    (clicked)="openDialog(dialogTypes.TRANSFER)"
+  ></ngx-fab-item>
+  <ngx-fab-item
+    icon="icon-file-csv"
+    iconTop='-3'
+    iconLeft='1'
+    pack="fac"
+    content="Relatórios"
+    (clicked)="openDialog(dialogTypes.REPORT_MENU)"
+  ></ngx-fab-item>
+</ngx-fab>

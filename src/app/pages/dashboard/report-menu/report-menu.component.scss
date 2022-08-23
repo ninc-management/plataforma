@@ -1,0 +1,12 @@
+::ng-deep {
+  .stepper-wrapper {
+    & .header {
+      width: 50%;
+      margin: auto;
+    }
+  }
+}
+
+.stepper-button {
+  margin: 2rem 2rem 0 0;
+}

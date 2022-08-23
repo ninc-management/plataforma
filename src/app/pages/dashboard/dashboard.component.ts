@@ -4,7 +4,11 @@ import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
+import { ContractorDialogComponent } from '../contractors/contractor-dialog/contractor-dialog.component';
+import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
+import { InvoiceDialogComponent } from '../invoices/invoice-dialog/invoice-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
+import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -19,6 +23,17 @@ enum TAB_TITLES {
   TEAM = 'Time',
 }
 
+enum DIALOG_TYPES {
+  INVOICE,
+  RECEIPT,
+  PAYMENT,
+  EXPENSE,
+  CLIENT,
+  NORTAN_EXPENSE_TABLE,
+  TRANSFER,
+  REPORT_MENU,
+}
+
 @Component({
   selector: 'ngx-dashboard',
   templateUrl: './dashboard.component.html',
@@ -28,6 +43,7 @@ export class DashboardComponent {
   private destroy$ = new Subject<void>();
 
   tabTitles = TAB_TITLES;
+  dialogTypes = DIALOG_TYPES;
   activeTab: string = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoWhite',
@@ -162,18 +178,137 @@ export class DashboardComponent {
     this.destroy$.complete();
   }
 
-  openDialog(): void {
-    this.dialogService.open(TeamDialogComponent, {
-      context: {
-        title: 'GASTOS DA EMPRESA',
-        iTeam: this.nortanTeam,
-        componentType: TEAM_COMPONENT_TYPES.EXPENSES,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+  openDialog(dType: DIALOG_TYPES): void {
+    switch (dType) {
+      case DIALOG_TYPES.NORTAN_EXPENSE_TABLE: {
+        this.dialogService.open(TeamDialogComponent, {
+          context: {
+            title: 'GASTOS DA EMPRESA',
+            iTeam: this.nortanTeam,
+            componentType: TEAM_COMPONENT_TYPES.EXPENSES,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.EXPENSE: {
+        if (this.activeTab == TAB_TITLES.PESSOAL) {
+          this.dialogService.open(ContractDialogComponent, {
+            context: {
+              title: 'ADICIONAR DESPESA',
+              componentType: COMPONENT_TYPES.EXPENSE,
+            },
+
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        } else {
+          this.dialogService.open(TeamDialogComponent, {
+            context: {
+              title:
+                this.activeTab === this.nortanTeam.name ? 'ADICIONAR GASTO DA EMPRESA' : 'ADICIONAR DESPESA DO TIME',
+              iTeam: this.currentTeam,
+              componentType: TEAM_COMPONENT_TYPES.EXPENSE,
+            },
+            dialogClass: 'my-dialog',
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            autoFocus: false,
+          });
+        }
+        break;
+      }
+
+      case DIALOG_TYPES.INVOICE: {
+        this.dialogService.open(InvoiceDialogComponent, {
+          context: {
+            title: 'CADASTRO DE ORÇAMENTO',
+            invoice: undefined,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.RECEIPT: {
+        this.dialogService.open(ContractDialogComponent, {
+          context: {
+            title: 'ADICIONAR ORDEM DE EMPENHO',
+            componentType: COMPONENT_TYPES.RECEIPT,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.PAYMENT: {
+        this.dialogService.open(ContractDialogComponent, {
+          context: {
+            title: 'ADICIONAR ORDEM DE PAGAMENTO',
+            componentType: COMPONENT_TYPES.PAYMENT,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.CLIENT: {
+        this.dialogService.open(ContractorDialogComponent, {
+          context: {
+            title: 'CADASTRO DE CLIENTE',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.TRANSFER: {
+        this.dialogService.open(TeamDialogComponent, {
+          context: {
+            title: 'TRANSFERÊNCIA',
+            iTeam: this.nortanTeam,
+            componentType: TEAM_COMPONENT_TYPES.TRANSFER,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.REPORT_MENU: {
+        this.dialogService.open(ReportMenuDialogComponent, {
+          context: {},
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      default:
+        break;
+    }
   }
 
   setActiveTab(event: NbTabComponent): void {
