@@ -38,4 +38,13 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/contractors',
     pathMatch: 'full',
   },
+  {
+    title: 'Fornecedores',
+    icon: {
+      icon: 'address-book',
+      pack: 'far',
+    },
+    link: '/pages/providers',
+    pathMatch: 'full',
+  },
 ];

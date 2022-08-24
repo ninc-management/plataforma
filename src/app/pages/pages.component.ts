@@ -173,7 +173,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         }
 
         if (isGranted) {
-          this.menu = this.menu.slice(0, 4);
+          this.menu = this.menu.slice(0, 5);
           this.menu.push({
             title: 'Associados',
             icon: {

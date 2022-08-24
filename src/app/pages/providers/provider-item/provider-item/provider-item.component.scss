@@ -1,0 +1,47 @@
+@import 'app/@theme/styles/themes';
+
+@include nb-install-component {
+  --checkbox-basic-disabled-text-color: nb-theme(checkbox-basic-text-color);
+  --checkbox-success-disabled-text-color: nb-theme(checkbox-basic-text-color);
+  --input-basic-disabled-text-color: nb-theme(text-basic-color);
+  --select-outline-basic-disabled-text-color: nb-theme(text-basic-color);
+  --user-giant-width: 100%;
+  --user-giant-height: auto;
+  --user-giant-initials-text-font-size: 2rem;
+  --tabset-content-padding: 0;
+}
+
+:host ::ng-deep {
+  .col-md-2 {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  .user-container {
+    width: 100%;
+    justify-content: center;
+  }
+
+  nb-user {
+    width: 100%;
+  }
+
+  .initials {
+    padding-top: 0 !important;
+  }
+
+  nb-user.profile {
+    .user-container {
+      .user-picture {
+        background-size: contain;
+        background-repeat: no-repeat;
+        padding-top: 100%;
+      }
+    }
+  }
+
+  .initials::before {
+    content: '';
+    margin-top: 100%;
+  }
+}
