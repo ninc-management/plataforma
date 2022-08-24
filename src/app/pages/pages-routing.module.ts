@@ -9,6 +9,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
 import { PagesComponent } from './pages.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PromotionsComponent } from './promotions/promotions.component';
+import { ProvidersComponent } from './providers/providers.component';
 import { TeamsComponent } from './teams/teams.component';
 import { UsersComponent } from './users/users.component';
 import { Permissions } from 'app/shared/utils';
@@ -55,6 +56,14 @@ const routes: Routes = [
         component: ContractorsComponent,
         data: {
           resource: 'view-contractors',
+          permission: Permissions.ASSOCIADO,
+        },
+      },
+      {
+        path: 'providers',
+        component: ProvidersComponent,
+        data: {
+          resource: 'view-providers',
           permission: Permissions.ASSOCIADO,
         },
       },
