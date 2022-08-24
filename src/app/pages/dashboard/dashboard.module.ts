@@ -11,6 +11,7 @@ import {
   NbRadioModule,
   NbSelectModule,
   NbSpinnerModule,
+  NbStepperModule,
   NbTabsetModule,
   NbTooltipModule,
   NbUserModule,
@@ -58,6 +59,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     SharedModule,
     ThemeModule,
     NbSmartTableModule,
+    NbStepperModule,
   ],
   declarations: [
     DashboardComponent,

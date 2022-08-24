@@ -1,0 +1,24 @@
+<div class="stepper-wrapper">
+  <nb-stepper [linear]="true">
+    <nb-step [stepControl]="reportOptionForm" label="Tipo de relatório">
+      <form #reportOptionForm="ngForm">
+        <label class="label" for="input-selector">Selecione o tipo de relatório</label>
+        <nb-radio-group
+          [(ngModel)]="selectedReportOption"
+          #reportOptionInput="ngModel"
+          id="input-report-option"
+          name="reportOptionInput"
+        >
+          <nb-radio [value]="reportTypes.ANNUAL">Relatório anual</nb-radio>
+          <nb-radio [value]="reportTypes.ONGOING_CONTRACTS">Relatório de contratos abertos</nb-radio>
+          <nb-radio [value]="reportTypes.CONTRACT_EXPENSES">Relatório de despesas do contrato</nb-radio>
+        </nb-radio-group>
+      </form>
+      <button nbButton nbStepperNext>Avançar</button>
+    </nb-step>
+    <nb-step label="Configuração adicional">
+      <button class="previous-button" nbButton nbStepperPrevious>Voltar</button>
+      <button nbButton nbStepperNext>Avançar</button>
+    </nb-step>
+  </nb-stepper>
+</div>

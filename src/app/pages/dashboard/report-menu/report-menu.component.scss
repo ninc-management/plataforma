@@ -1,0 +1,12 @@
+::ng-deep {
+  .stepper-wrapper {
+    & .header {
+      width: 50%;
+      margin: auto;
+    }
+  }
+}
+
+.previous-button {
+  margin-right: 1rem;
+}
