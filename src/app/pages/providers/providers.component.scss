@@ -1,0 +1,18 @@
+@import 'app/@theme/styles/themes';
+
+::ng-deep {
+  nb-card {
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+
+  table {
+    text-align: center;
+  }
+
+  th {
+    &[ng2-st-actions-title] {
+      width: 5%;
+    }
+  }
+}

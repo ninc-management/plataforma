@@ -1,0 +1,28 @@
+{
+  "email": { "required": true },
+  "address": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "fullName": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
+  "cpf": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 14
+  },
+  "cnpj": {
+    "required": true,
+    "minLength": 18,
+    "maxLength": 18
+  },
+  "phone": {
+    "required": true,
+    "minLength": 14,
+    "maxLength": 15
+  }
+}

@@ -9,6 +9,7 @@ import { Notification } from '../models/notification';
 import { PlatformConfig } from '../models/platformConfig';
 import { Promotion } from '../models/promotion';
 import { Prospect } from '../models/prospect';
+import { Provider } from '../models/provider';
 import { Team } from '../models/team';
 import { User } from '../models/user';
 
@@ -23,3 +24,4 @@ export const invoicesMap: Record<string, Invoice> = {};
 export const coursesMap: Record<string, Course> = {};
 export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
+export const providersMap: Record<string, Provider> = {};
