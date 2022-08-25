@@ -51,6 +51,8 @@ import {
   NbSelectModule,
   NbSidebarModule,
   NbSpinnerModule,
+  NbStepperComponent,
+  NbStepperModule,
   NbThemeModule,
   NbToastrModule,
   NbToastrService,
@@ -187,6 +189,7 @@ const IMPORTS = [
   RouterTestingModule.withRoutes(routes),
   SharedModule,
   SocketIoModule.forRoot(config),
+  NbStepperModule,
 ];
 
 const PROVIDERS = [
@@ -244,6 +247,10 @@ const PROVIDERS = [
   UserService,
   WebSocketService,
   ConfigService,
+  {
+    provide: NbStepperComponent,
+    useValue: {},
+  },
 ];
 
 @NgModule({
