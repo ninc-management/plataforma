@@ -17,8 +17,9 @@
       <button class="stepper-button" nbButton nbStepperNext>Avançar</button>
     </nb-step>
     <nb-step label="Configuração adicional">
-      <button class="stepper-button" nbButton nbStepperPrevious>Voltar</button>
-      <button class="stepper-button" nbButton nbStepperNext>Avançar</button>
+      <ng-container *ngIf="selectedReportOption == reportTypes.ONGOING_CONTRACTS">
+        <ngx-ongoing-contracts-report></ngx-ongoing-contracts-report>
+      </ng-container>
     </nb-step>
   </nb-stepper>
 </div>
