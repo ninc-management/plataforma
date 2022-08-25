@@ -58,14 +58,7 @@
       </nb-select>
     </div>
     <div class="col-md-6">
-      <label class="label" for="input-person-selector">Tipo de pessoa:</label>
-      <nb-select placeholder="Selecione" fullWidth size="large" [(ngModel)]="selectedOption" name="ng-model-group">
-        <nb-option [value]="typeOfPerson.PESSOA_FISICA">Pessoa física</nb-option>
-        <nb-option [value]="typeOfPerson.PESSOA_JURIDICA">Pessoa jurídica</nb-option>
-      </nb-select>
-    </div>
-    <div class="col-md-6">
-      <div class="form-control-group" *ngIf="selectedOption == typeOfPerson.PESSOA_FISICA">
+      <div class="form-control-group" *ngIf="selectedOption == typesOfPerson.PESSOA_FISICA">
         <label class="label" for="input-cpf">CPF:</label>
         <input
           nbInput
@@ -91,7 +84,7 @@
           </p>
         </ng-container>
       </div>
-      <div class="form-control-group" *ngIf="selectedOption == typeOfPerson.PESSOA_JURIDICA">
+      <div class="form-control-group" *ngIf="selectedOption == typesOfPerson.PESSOA_JURIDICA">
         <label class="label" for="input-cnpj">CNPJ:</label>
         <input
           nbInput
