@@ -5,9 +5,6 @@
         <nb-card>
           <nb-card-header *ngIf="isPhone()">
             <div class="row">
-              <button nbButton fullWidth status="primary" style="height: 100%" (click)="downloadReport()">
-                <i class="icon-file-csv" style="font-size: 1.5rem"></i>
-              </button>
               <div class="col-10">
                 <input
                   nbInput
@@ -35,7 +32,6 @@
               [settings]="settings"
               [source]="source"
               (edit)="userDialog($event)"
-              (create)="downloadReport()"
             ></nb-smart-table>
           </ng-template>
           <ng-template #phone>

@@ -20,6 +20,9 @@
       <ng-container *ngIf="selectedReportOption == reportTypes.ONGOING_CONTRACTS">
         <ngx-ongoing-contracts-report></ngx-ongoing-contracts-report>
       </ng-container>
+            <ng-container *ngIf="selectedReportOption == reportTypes.ANNUAL">
+        <ngx-annual-users-report></ngx-annual-users-report>
+      </ng-container>
     </nb-step>
   </nb-stepper>
 </div>
