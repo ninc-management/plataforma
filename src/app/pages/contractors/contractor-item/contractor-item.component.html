@@ -161,8 +161,7 @@
         <ng-container *ngIf="zipCode.invalid && zipCode.touched">
           <p class="caption status-danger" *ngIf="zipCode.errors?.required">O cep é obrigatório!</p>
           <p class="caption status-danger" *ngIf="zipCode.errors?.minlength || zipCode.errors?.maxlength">
-            O cep deve conter entre
-            {{ validation.address.zipCode.minLength }} a
+            O cep deve conter
             {{ validation.address.zipCode.maxLength }}
             caracteres
           </p>

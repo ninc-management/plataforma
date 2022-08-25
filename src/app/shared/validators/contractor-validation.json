@@ -3,8 +3,8 @@
   "address": {
     "zipCode": {
       "required": true,
-      "minLength": 3,
-      "maxLength": 10
+      "minLength": 9,
+      "maxLength": 9
     },
     "streetAddress": {
       "required": true,
