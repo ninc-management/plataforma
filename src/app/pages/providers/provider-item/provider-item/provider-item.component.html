@@ -197,7 +197,297 @@
                     </p>
                   </ng-container>
                 </div>
-
+                <div class="row">
+                  <div class="col-md-11">
+                    <div class="form-control-group">
+                      <label class="label" for="input-service">Serviço:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="options.serviceName"
+                        #service="ngModel"
+                        id="input-service"
+                        name="service"
+                        placeholder="Serviço"
+                        fullWidth
+                        fieldSize="large"
+                        [status]="service.value ? 'success' : 'basic'"
+                        [attr.aria-invalid]="service.invalid && service.touched ? true : null"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      [disabled]="!service.value"
+                      (click)="provider.serviceList.push(options.serviceName); options.serviceName = ''"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <nb-list style="width: 100%">
+                  <nb-list-item *ngFor="let activity of provider.serviceList; let i = index; trackBy: trackByIndex">
+                    <div class="row irow">
+                      <div class="col-10 col-md-11">
+                        <input
+                          nbInput
+                          [(ngModel)]="provider.serviceList[i]"
+                          id="input-serviceListItem-{{ i }}"
+                          name="serviceListItem-{{ i }}"
+                          placeholder="Serviço"
+                          fullWidth
+                          [status]="provider.serviceList[i].length == 0 ? 'danger' : 'basic'"
+                        />
+                      </div>
+                      <div class="col-2 col-md-1" style="text-align: right">
+                        <nb-icon
+                          class="xIcon"
+                          status="basic"
+                          icon="trash-2-outline"
+                          pack="eva"
+                          (click)="provider.serviceList.splice(i, 1); isFormDirty.next(true)"
+                          [options]="{ animation: { type: 'shake' } }"
+                        ></nb-icon>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                </nb-list>
+                <div class="row">
+                  <div class="col-md-11">
+                    <div class="form-control-group">
+                      <label class="label" for="input-product">Produto:</label>
+                      <input
+                        nbInput
+                        [(ngModel)]="options.productName"
+                        #product="ngModel"
+                        id="input-product"
+                        name="product"
+                        placeholder="Produto"
+                        fullWidth
+                        fieldSize="large"
+                        [status]="product.value ? 'success' : 'basic'"
+                        [attr.aria-invalid]="product.invalid && product.touched ? true : null"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      style="margin-top: 28px"
+                      [disabled]="!product.value"
+                      (click)="provider.productList.push(options.productName); options.productName = ''"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <nb-list style="width: 100%">
+                  <nb-list-item *ngFor="let activity of provider.productList; let i = index; trackBy: trackByIndex">
+                    <div class="row irow">
+                      <div class="col-10 col-md-11">
+                        <input
+                          nbInput
+                          [(ngModel)]="provider.productList[i]"
+                          id="input-productListItem-{{ i }}"
+                          name="productListItem-{{ i }}"
+                          placeholder="Produto"
+                          fullWidth
+                          [status]="provider.productList[i].length == 0 ? 'danger' : 'basic'"
+                        />
+                      </div>
+                      <div class="col-2 col-md-1" style="text-align: right">
+                        <nb-icon
+                          class="xIcon"
+                          status="basic"
+                          icon="trash-2-outline"
+                          pack="eva"
+                          (click)="provider.productList.splice(i, 1); isFormDirty.next(true)"
+                          [options]="{ animation: { type: 'shake' } }"
+                        ></nb-icon>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                </nb-list>
+                <div class="form-control-group">
+                  <label class="label" for="input-observation">Observação:</label>
+                  <textarea
+                    nbInput
+                    [(ngModel)]="provider.observation"
+                    #observation="ngModel"
+                    id="input-observation"
+                    name="observation"
+                    placeholder="Observação"
+                    fullWidth
+                    fieldSize="large"
+                    [minlength]="validation.observation.minLength"
+                    [maxlength]="validation.observation.maxLength"
+                    [status]="observation.dirty ? (observation.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="observation.invalid && observation.touched ? true : null"
+                  ></textarea>
+                  <ng-container *ngIf="observation.invalid && observation.touched">
+                    <p
+                      class="caption status-danger"
+                      *ngIf="observation.errors?.minlength || observation.errors?.maxlength"
+                    >
+                      A observação deve conter entre
+                      {{ validation.observation.minLength }} a
+                      {{ validation.observation.maxLength }}
+                      caracteres
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="label" for="input-bankName">Banco:</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="provider.bankData.name"
+                      #bankName="ngModel"
+                      id="input-bankName"
+                      name="input-bankName"
+                      placeholder="Banco"
+                      fullWidth
+                      fieldSize="large"
+                      ngxSelectAllText
+                      [minlength]="validation.bankData.bankName.minLength"
+                      [maxlength]="validation.bankData.bankName.maxLength"
+                      [status]="bankName.dirty ? (bankName.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="bankName.invalid && bankName.touched ? true : null"
+                    />
+                    <ng-container *ngIf="bankName.invalid && bankName.touched">
+                      <p class="caption status-danger" *ngIf="bankName.errors?.minlength || bankName.errors?.maxlength">
+                        O nome do banco deve conter entre
+                        {{ validation.bankData.bankName.minLength }} a
+                        {{ validation.bankData.bankName.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="label" for="input-agency">Agencia:</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="provider.bankData.agency"
+                      #agency="ngModel"
+                      id="input-agency"
+                      name="input-agency"
+                      placeholder="Agencia"
+                      fullWidth
+                      fieldSize="large"
+                      ngxSelectAllText
+                      [minlength]="validation.bankData.agency.minLength"
+                      [maxlength]="validation.bankData.agency.maxLength"
+                      [status]="agency.dirty ? (agency.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="agency.invalid && agency.touched ? true : null"
+                    />
+                    <ng-container *ngIf="agency.invalid && agency.touched">
+                      <p class="caption status-danger" *ngIf="agency.errors?.minlength || agency.errors?.maxlength">
+                        A agencia deve conter entre
+                        {{ validation.bankData.agency.minLength }} a
+                        {{ validation.bankData.agency.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="label" for="input-accountNumber">Número da conta:</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="provider.bankData.accountNumber"
+                      #accountNumber="ngModel"
+                      id="input-accountNumber"
+                      name="input-accountNumber"
+                      placeholder="Número da conta"
+                      fullWidth
+                      fieldSize="large"
+                      ngxSelectAllText
+                      [minlength]="validation.bankData.accountNumber.minLength"
+                      [maxlength]="validation.bankData.accountNumber.maxLength"
+                      [status]="accountNumber.dirty ? (accountNumber.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="accountNumber.invalid && accountNumber.touched ? true : null"
+                    />
+                    <ng-container *ngIf="accountNumber.invalid && accountNumber.touched">
+                      <p
+                        class="caption status-danger"
+                        *ngIf="accountNumber.errors?.minlength || accountNumber.errors?.maxlength"
+                      >
+                        O número da conta deve conter entre
+                        {{ validation.bankData.accountNumber.minLength }} a
+                        {{ validation.bankData.accountNumber.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <label class="label" for="input-operation">Operação:</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="provider.bankData.operation"
+                      #operation="ngModel"
+                      id="input-operation"
+                      name="input-operation"
+                      placeholder="Número da conta"
+                      fullWidth
+                      fieldSize="large"
+                      ngxSelectAllText
+                      [minlength]="validation.bankData.operation.minLength"
+                      [maxlength]="validation.bankData.operation.maxLength"
+                      [status]="operation.dirty ? (operation.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="operation.invalid && operation.touched ? true : null"
+                    />
+                    <ng-container *ngIf="operation.invalid && operation.touched">
+                      <p
+                        class="caption status-danger"
+                        *ngIf="operation.errors?.minlength || operation.errors?.maxlength"
+                      >
+                        A operação deve conter entre
+                        {{ validation.bankData.operation.minLength }} a
+                        {{ validation.bankData.operation.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="label" for="input-pix">Pix:</label>
+                    <input
+                      nbInput
+                      [(ngModel)]="provider.bankData.pix"
+                      #pix="ngModel"
+                      id="input-pix"
+                      name="input-pix"
+                      placeholder="Chave Pix"
+                      fullWidth
+                      fieldSize="large"
+                      ngxSelectAllText
+                      [minlength]="validation.bankData.pix.minLength"
+                      [maxlength]="validation.bankData.pix.maxLength"
+                      [status]="pix.dirty ? (pix.invalid ? 'danger' : 'success') : 'basic'"
+                      [attr.aria-invalid]="pix.invalid && pix.touched ? true : null"
+                    />
+                    <ng-container *ngIf="pix.invalid && pix.touched">
+                      <p
+                        class="caption status-danger"
+                        *ngIf="pix.errors?.minlength || pix.errors?.maxlength"
+                      >
+                        O pix deve conter entre
+                        {{ validation.bankData.pix.minLength }} a
+                        {{ validation.bankData.pix.maxLength }}
+                        caracteres
+                      </p>
+                    </ng-container>
+                  </div>
+                </div>
                 <button
                   nbButton
                   fullWidth

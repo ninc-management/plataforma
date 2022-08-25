@@ -1055,3 +1055,18 @@ db.contractors.find().forEach((contractor) => {
   if(!contractor.phone) contractor.phone = "(82) 0000-0000";
   db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
+
+db.providers.find().forEach((provider) => {
+  const bankAccount = {
+    name: '',
+    agency:'',
+    accountNumber:'',
+    pix: '',
+    operation: ''
+  }
+  provider.serviceList = [];
+  provider.productList = [];
+  provider.observation = '';
+  provider.bankData = bankAccount;
+  db.providers.replaceOne({ _id: provider._id }, provider);
+});

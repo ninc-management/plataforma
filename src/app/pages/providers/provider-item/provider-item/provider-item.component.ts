@@ -6,6 +6,7 @@ import { BehaviorSubject, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { ProviderService } from 'app/shared/services/provider.service';
+import { trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
 
@@ -34,6 +35,9 @@ export class ProviderItemComponent implements OnInit, OnDestroy, AfterViewInit {
   typeOfPerson = TypesOfPerson;
   isDataLoading = true;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
+  options = { serviceName: '', productName: '' };
+  trackByIndex = trackByIndex;
+
   constructor(private providerService: ProviderService, private dialogService: NbDialogService) {}
 
   ngOnDestroy(): void {
