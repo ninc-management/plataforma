@@ -1055,3 +1055,17 @@ db.contractors.find().forEach((contractor) => {
   if(!contractor.phone) contractor.phone = "(82) 0000-0000";
   db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
+
+db.contractors.find().forEach((contractor) => {
+  const newAddress = {
+    zipCode: '',
+    streetAddress: contractor.address,
+    number:'',
+    district: '',
+    complement: '',
+    city: '',
+    state:'',
+  }
+  contractor.address = newAddress;
+  db.contractors.replaceOne({ _id: contractor._id }, contractor);
+});

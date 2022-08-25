@@ -80,14 +80,30 @@ describe('ContractorService', () => {
     mockedUsers.push(cloneDeep(tmpUser));
     const tmpContractor = new Contractor();
     tmpContractor._id = '0';
-    tmpContractor.address = 'rua teste1';
+    tmpContractor.address = {
+      zipCode: '',
+      streetAddress: 'rua teste1',
+      number: '',
+      district: '',
+      complement: '',
+      city: '',
+      state: '',
+    };
     tmpContractor.document = '000.000.000-11';
     tmpContractor.email = 'test1@te.st';
     tmpContractor.fullName = 'Test1';
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
     tmpContractor._id = '1';
-    tmpContractor.address = 'rua teste2';
+    tmpContractor.address = {
+      zipCode: '',
+      streetAddress: 'rua teste2',
+      number: '',
+      district: '',
+      complement: '',
+      city: '',
+      state: '',
+    };
     tmpContractor.document = '000.000.000-12';
     tmpContractor.email = 'test2@te.st';
     tmpContractor.fullName = 'Test2';
@@ -106,7 +122,15 @@ describe('ContractorService', () => {
   it('saveContractor should work', (done: DoneFn) => {
     const tmpContractor = new Contractor();
     tmpContractor._id = '2';
-    tmpContractor.address = 'rua teste3';
+    tmpContractor.address = {
+      zipCode: '',
+      streetAddress: 'rua teste3',
+      number: '',
+      district: '',
+      complement: '',
+      city: '',
+      state: '',
+    };
     tmpContractor.document = '000.000.000-13';
     tmpContractor.email = 'test3@te.st';
     tmpContractor.fullName = 'Test3';

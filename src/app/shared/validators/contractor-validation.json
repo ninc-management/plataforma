@@ -1,9 +1,32 @@
 {
   "email": { "required": true },
   "address": {
-    "required": true,
-    "minLength": 3,
-    "maxLength": 200
+    "zipCode": {
+      "required": true,
+      "minLength": 9,
+      "maxLength": 9
+    },
+    "streetAddress": {
+      "required": true,
+      "minLength": 3,
+      "maxLength": 200
+    },
+    "number": {
+      "required": true,
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "district": {
+      "required": true,
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "state": {
+      "required": true
+    },
+    "city": {
+      "required": true
+    }
   },
   "fullName": {
     "required": true,

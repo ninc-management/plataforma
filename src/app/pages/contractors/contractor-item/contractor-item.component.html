@@ -139,33 +139,191 @@
     </ng-container>
   </div>
   <div class="form-control-group">
-    <label class="label" for="input-address">Endereço:</label>
-    <textarea
-      nbInput
-      [(ngModel)]="contractor.address"
-      #address="ngModel"
-      id="input-address"
-      name="address"
-      placeholder="Endereço do cliente"
-      fullWidth
-      fieldSize="large"
-      [required]="validation.address.required"
-      [minlength]="validation.address.minLength"
-      [maxlength]="validation.address.maxLength"
-      [status]="address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'"
-      [attr.aria-invalid]="address.invalid && address.touched ? true : null"
-    ></textarea>
-    <ng-container *ngIf="address.invalid && address.touched">
-      <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
-      <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
-        O endereço deve conter entre
-        {{ validation.address.minLength }} a
-        {{ validation.address.maxLength }}
-        caracteres
-      </p>
-    </ng-container>
+    <div class="row">
+      <div class="col-md-4">
+        <label class="label" for="input-zip-code">CEP:</label>
+        <input
+          nbInput
+          [(ngModel)]="contractor.address.zipCode"
+          #zipCode="ngModel"
+          id="input-zip-code"
+          name="input-zip-code"
+          placeholder="CEP"
+          fullWidth
+          fieldSize="large"
+          ngxSelectAllText
+          [required]="validation.address.zipCode.required"
+          [minlength]="validation.address.zipCode.minLength"
+          [maxlength]="validation.address.zipCode.maxLength"
+          [status]="zipCode.dirty ? (zipCode.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="zipCode.invalid && zipCode.touched ? true : null"
+        />
+        <ng-container *ngIf="zipCode.invalid && zipCode.touched">
+          <p class="caption status-danger" *ngIf="zipCode.errors?.required">O cep é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="zipCode.errors?.minlength || zipCode.errors?.maxlength">
+            O cep deve conter
+            {{ validation.address.zipCode.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="col-md-6">
+        <label class="label" for="input-street-address">Logradouro:</label>
+        <input
+          nbInput
+          [(ngModel)]="contractor.address.streetAddress"
+          #streetAddress="ngModel"
+          id="input-street-address"
+          name="input-street-address"
+          placeholder="Logradouro do endereço"
+          fullWidth
+          fieldSize="large"
+          ngxSelectAllText
+          [required]="validation.address.streetAddress.required"
+          [minlength]="validation.address.streetAddress.minLength"
+          [maxlength]="validation.address.streetAddress.maxLength"
+          [status]="streetAddress.dirty ? (streetAddress.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="streetAddress.invalid && streetAddress.touched ? true : null"
+        />
+        <ng-container *ngIf="streetAddress.invalid && streetAddress.touched">
+          <p class="caption status-danger" *ngIf="streetAddress.errors?.required">O endereço é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="streetAddress.errors?.minlength || streetAddress.errors?.maxlength">
+            O endereço deve conter entre
+            {{ validation.address.streetAddress.minLength }} a
+            {{ validation.address.streetAddress.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="col-md-2">
+        <label class="label" for="input-address-number">Nº:</label>
+        <input
+          nbInput
+          [(ngModel)]="contractor.address.number"
+          #addressNumber="ngModel"
+          id="input-address-number"
+          name="input-address-number"
+          placeholder="Número"
+          fullWidth
+          fieldSize="large"
+          ngxSelectAllText
+          [required]="validation.address.number.required"
+          [minlength]="validation.address.number.minLength"
+          [maxlength]="validation.address.number.maxLength"
+          [status]="addressNumber.dirty ? (addressNumber.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="addressNumber.invalid && addressNumber.touched ? true : null"
+        />
+        <ng-container *ngIf="addressNumber.invalid && addressNumber.touched">
+          <p class="caption status-danger" *ngIf="addressNumber.errors?.required">O número é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="addressNumber.errors?.minlength || addressNumber.errors?.maxlength">
+            O número deve conter entre
+            {{ validation.address.number.minLength }} a
+            {{ validation.address.number.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <label class="label" for="input-district">Bairro:</label>
+        <input
+          nbInput
+          [(ngModel)]="contractor.address.district"
+          #district="ngModel"
+          id="input-district"
+          name="input-district"
+          placeholder="Bairro"
+          fullWidth
+          fieldSize="large"
+          ngxSelectAllText
+          [required]="validation.address.district.required"
+          [minlength]="validation.address.district.minLength"
+          [maxlength]="validation.address.district.maxLength"
+          [status]="district.dirty ? (district.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="district.invalid && district.touched ? true : null"
+        />
+        <ng-container *ngIf="district.invalid && district.touched">
+          <p class="caption status-danger" *ngIf="district.errors?.required">O bairro é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="district.errors?.minlength || district.errors?.maxlength">
+            O bairro deve conter entre
+            {{ validation.address.district.minLength }} a
+            {{ validation.address.district.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="col-md-4">
+        <label class="label" for="input-complement">Complemento:</label>
+        <input
+          nbInput
+          [(ngModel)]="contractor.address.complement"
+          #address="ngModel"
+          id="input-complement"
+          name="input-complement"
+          placeholder="Complemento"
+          fullWidth
+          fieldSize="large"
+          ngxSelectAllText
+          [status]="address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="address.invalid && address.touched ? true : null"
+        />
+      </div>
+      <div class="col-md-2">
+        <label class="label" for="input-state">Estado:</label>
+        <nb-select
+          [(ngModel)]="contractor.address.state"
+          #state="ngModel"
+          id="input-state"
+          name="state"
+          placeholder="Selecione"
+          fullWidth
+          size="large"
+          [required]="validation.address.state.required"
+          [status]="state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="state.invalid && state.touched ? true : null"
+          (selectedChange)="buildCityList(state.value)"
+        >
+          <nb-option *ngFor="let state of states" [value]="state">{{ state }}</nb-option>
+        </nb-select>
+        <ng-container *ngIf="address.invalid && address.touched">
+          <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
+            O endereço deve conter entre
+            {{ validation.address.minLength }} a
+            {{ validation.address.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+      <div class="col-md-3">
+        <label class="label" for="input-city">Cidade:</label>
+        <nb-select
+          [(ngModel)]="contractor.address.city"
+          #city="ngModel"
+          id="input-city"
+          name="city"
+          placeholder="Selecione"
+          fullWidth
+          size="large"
+          [required]="validation.address.city.required"
+          [status]="city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="city.invalid && city.touched ? true : null"
+        >
+          <nb-option *ngFor="let city of cities" [value]="city">{{ city }}</nb-option>
+        </nb-select>
+        <ng-container *ngIf="address.invalid && address.touched">
+          <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
+            O endereço deve conter entre
+            {{ validation.address.minLength }} a
+            {{ validation.address.maxLength }}
+            caracteres
+          </p>
+        </ng-container>
+      </div>
+    </div>
   </div>
-
   <button
     nbButton
     fullWidth
