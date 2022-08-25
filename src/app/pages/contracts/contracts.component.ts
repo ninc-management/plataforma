@@ -61,11 +61,6 @@ export class ContractsComponent implements OnInit, OnDestroy {
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum contrato para o filtro selecionado.',
-    add: {
-      addButtonContent: '<i class="icon-file-csv"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
     edit: {
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
@@ -77,7 +72,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     },
     actions: {
       columnTitle: 'Ações',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
@@ -235,11 +230,6 @@ export class ContractsComponent implements OnInit, OnDestroy {
       { field: 'locals.role', search: 'Equipe Gestor' },
       { field: 'status', search: 'Em andamento A receber Finalizado' },
     ]);
-
-    this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'export-csv')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isGranted) => (this.settings.actions.add = isGranted));
   }
 
   contractDialog(event: { data?: Contract }, isEditing: boolean): void {
