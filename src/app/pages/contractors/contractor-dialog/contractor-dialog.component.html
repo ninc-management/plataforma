@@ -28,10 +28,19 @@
       </nb-card-header>
       <nb-card-body>
         <ngx-contractor-item
+          *ngIf="!representative"
+          [isDialogBlocked]="isBlocked"
           [iContractor]="contractor"
           (submit)="dismiss()"
           [isFormDirty]="isFormDirty"
         ></ngx-contractor-item>
+        <ngx-representative-item
+          *ngIf="representative"
+          [clonedContractor]="contractor"
+          [representative]="representative"
+          [isFormDirty]="isFormDirty"
+          (submit)="dismiss()"
+        ></ngx-representative-item>
       </nb-card-body>
     </nb-card>
   </div>

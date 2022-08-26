@@ -6,7 +6,7 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
-import { Contractor } from '@models/contractor';
+import { ComercialRepresentative, Contractor, LegalRepresentative } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractor-dialog',
@@ -16,6 +16,7 @@ import { Contractor } from '@models/contractor';
 export class ContractorDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() contractor = new Contractor();
+  @Input() representative?: LegalRepresentative | ComercialRepresentative;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;

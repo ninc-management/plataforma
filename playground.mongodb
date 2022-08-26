@@ -1053,6 +1053,8 @@ db.platformconfigs.find().forEach((config) => {
 
 db.contractors.find().forEach((contractor) => {
   if(!contractor.phone) contractor.phone = "(82) 0000-0000";
+  contractor.legalRepresentatives = []
+  contractor.comercialRepresentatives = []
   db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
 
