@@ -2,6 +2,7 @@ nb-select {
   display: flex;
   align-items: center;
   justify-items: center;
+  padding: 0 !important;
 }
 
 ::ng-deep nb-select.appearance-outline.size-medium .select-button {
