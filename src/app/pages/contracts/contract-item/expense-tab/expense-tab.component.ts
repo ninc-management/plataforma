@@ -270,7 +270,7 @@ export class ExpenseTabComponent implements OnInit {
     this.source.load(
       this.clonedContract.expenses.map((expense: any) => {
         const tmp = cloneDeep(expense);
-        tmp.source = this.userService.idToShortName(tmp.source);
+        tmp.source = tmp.source ? this.userService.idToShortName(tmp.source) : '';
         tmp.created = formatDate(tmp.created);
         tmp.paidDate = tmp.paid ? formatDate(tmp.paidDate) : '';
         return tmp;
