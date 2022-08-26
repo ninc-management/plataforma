@@ -139,10 +139,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
         filter: {
           type: 'list',
           config: {
+            multiple: true,
             selectText: 'Todos',
-            list: [{ value: 'Em andamento A receber Finalizado', title: 'Ativo' }].concat(
-              Object.values(CONTRACT_STATOOS).map((status) => ({ value: status, title: status }))
-            ),
+            list: Object.values(CONTRACT_STATOOS).map((status) => ({ value: status, title: status })),
           },
         },
         filterFunction(cell: string, search?: string): boolean {
