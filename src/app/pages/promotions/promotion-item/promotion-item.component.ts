@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 import { NbComponentStatus } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
@@ -57,6 +57,7 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
   @Input() iPromotion = new Promotion();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @ViewChild('form') ngForm = {} as NgForm;
+  @Output() submit: EventEmitter<void> = new EventEmitter();
   promotion = new Promotion();
   validation = promotion_validation as any;
   pTypes = Object.values(PROMOTION_STATOOS);
@@ -120,6 +121,7 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
       this.promotionService.savePromotion(this.promotion);
     }
     this.isFormDirty.next(false);
+    this.submit.emit();
   }
 
   updateTableItems(): void {
