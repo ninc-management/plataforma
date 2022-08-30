@@ -84,40 +84,42 @@
 </nb-tabset>
 <ngx-fab icon="plus">
   <ngx-fab-item
-    icon="minus"
-    pack="fac"
-    content="Despesas"
-    (clicked)="openDialog(dialogTypes.EXPENSE)"
-  ></ngx-fab-item>
-  <ngx-fab-item
-    icon="dollar-sign"
-    pack="fa"
-    content="Ordem de Pagamento"
-    (clicked)="openDialog(dialogTypes.PAYMENT)"
-  ></ngx-fab-item>
-  <ngx-fab-item
-    icon="receipt"
-    pack="fac"
-    content="Ordem de Empenho"
-    (clicked)="openDialog(dialogTypes.RECEIPT)"
-  ></ngx-fab-item>
-  <ngx-fab-item
     icon="file-invoice-dollar"
     pack="fac"
-    content="Orçamento"
+    content="Criar orçamento"
     iconTop="-3"
     (clicked)="openDialog(dialogTypes.INVOICE)"
   ></ngx-fab-item>
+  <!-- TODO: ADD FUNÇÃO PARA ABRIR A OPÇÃO DE CADASTRO DE FORNECEDOR: (clicked)="openDialog(dialogTypes.)"-->
   <ngx-fab-item
-    icon="person-add-outline"
-    content="Cliente"
-    iconLeft="1"
-    (clicked)="openDialog(dialogTypes.CLIENT)"
+    icon="plus"
+    pack="fa"
+    content="Cadastro de fornecedor"
   ></ngx-fab-item>
   <ngx-fab-item
     icon="person-add-outline"
-    content="Transferência"
+    content="Cadastro de cliente"
     iconLeft="1"
-    (clicked)="openDialog(dialogTypes.TRANSFER)"
+    (clicked)="openDialog(dialogTypes.CLIENT)"
+  ></ngx-fab-item>
+  <!-- TODO: ADD FUNÇÃO PARA ABRIR A OPÇÃO DE TRANSFERÊNCIAS: (clicked)="openDialog(dialogTypes.)"-->
+  <ngx-fab-item
+    icon="money-bill-transfer"
+    content="Transferências"
+    pack="fac"
+    iconTop="1"
+  ></ngx-fab-item>
+  <!-- TODO: ADD FUNÇÃO PARA ABRIR A OPÇÃO DE CADASTRO DE FORNECEDOR: (clicked)="openDialog(dialogTypes.)"-->
+  <ngx-fab-item
+    icon="minus"
+    pack="fac"
+    content="Transações"
+    (clicked)="openDialog(dialogTypes.EXPENSE)"
+  ></ngx-fab-item>
+  <!-- TODO: ADD FUNÇÃO PARA ABRIR A OPÇÃO DE SAQUE: (clicked)="openDialog(dialogTypes.)"-->
+  <ngx-fab-item
+    icon="hand-holding-dollar"
+    pack="fac"
+    content="Saque"
   ></ngx-fab-item>
 </ngx-fab>
