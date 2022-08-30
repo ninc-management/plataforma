@@ -11,12 +11,12 @@ export class Address {
   streetAddress: string = '';
 
   @prop({ required: true })
-  number: string = '';
+  houseNumber: string = '';
 
   @prop({ required: true })
   district: string = '';
 
-  @prop()
+  @prop({ required: true })
   complement: string = '';
 
   @prop({ required: true })
@@ -24,6 +24,38 @@ export class Address {
 
   @prop({ required: true })
   state: string = '';
+}
+
+export class ComercialRepresentative {
+  @prop({ required: true })
+  fullName: string = '';
+
+  @prop({ required: true })
+  email: string = '';
+
+  @prop({ required: true })
+  phone: string = '';
+
+  @prop({ required: true })
+  occupation: string = '';
+
+  locals = {
+    isNew: true,
+  };
+}
+
+export class LegalRepresentative extends ComercialRepresentative {
+  @prop({ required: true })
+  cpf: string = '';
+
+  @prop({ required: true })
+  nationality: string = '';
+
+  @prop({ required: true })
+  maritalStatus: string = '';
+
+  @prop({ type: () => Address })
+  address: Address = new Address();
 }
 
 @plugin(mongooseUniqueValidator)
@@ -45,6 +77,12 @@ export class Contractor extends Base<string> {
 
   @prop({ required: true })
   phone: string = '';
+
+  @prop({ required: true, type: () => [LegalRepresentative] })
+  legalRepresentatives: LegalRepresentative[] = [];
+
+  @prop({ required: true, type: () => [ComercialRepresentative] })
+  comercialRepresentatives: ComercialRepresentative[] = [];
 }
 
 export default getModelForClass(Contractor);

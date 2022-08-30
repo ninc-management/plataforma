@@ -1,0 +1,360 @@
+<form (ngSubmit)="registerRepresentative()" #form="ngForm" aria-labelledby="title">
+  <div class="form-control-group">
+    <label class="label" for="input-name">Nome completo</label>
+    <input
+      nbInput
+      [(ngModel)]="clonedRepresentative.fullName"
+      #fullName="ngModel"
+      id="input-name"
+      name="fullName"
+      placeholder="Nome completo"
+      autofocus
+      fullWidth
+      fieldSize="large"
+      [required]="validation.fullName.required"
+      [minlength]="validation.fullName.minLength"
+      [maxlength]="validation.fullName.maxLength"
+      [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
+    />
+    <ng-container *ngIf="fullName.invalid && fullName.touched">
+      <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
+        O nome deve conter entre
+        {{ validation.fullName.minLength }} a
+        {{ validation.fullName.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-occupation">Profissão/Função</label>
+    <input
+      nbInput
+      [(ngModel)]="clonedRepresentative.occupation"
+      #occupation="ngModel"
+      id="input-occupation"
+      name="occupation"
+      placeholder="Profissão/Função"
+      autofocus
+      fullWidth
+      fieldSize="large"
+      [required]="validation.representative.occupation.required"
+      [status]="occupation.dirty ? (occupation.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="occupation.invalid && occupation.touched ? true : null"
+    />
+    <ng-container *ngIf="occupation.invalid && occupation.touched">
+      <p class="caption status-danger" *ngIf="occupation.errors?.required">A profissão é obrigatória!</p>
+      <p class="caption status-danger" *ngIf="occupation.errors?.minlength || occupation.errors?.maxlength">
+        A profissão deve conter entre
+        {{ validation.representative.occupation.minLength }} a
+        {{ validation.representative.occupation.maxLength }}
+        caracteres
+      </p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-email">Melhor email para contato</label>
+    <input
+      nbInput
+      [(ngModel)]="clonedRepresentative.email"
+      #email="ngModel"
+      id="input-email"
+      name="email"
+      pattern=".+@.+\..+"
+      placeholder="Endereço de email"
+      fullWidth
+      fieldSize="large"
+      [status]="email.dirty ? (email.invalid ? 'danger' : 'success') : 'basic'"
+      [required]="validation.email.required"
+      [attr.aria-invalid]="email.invalid && email.touched ? true : null"
+    />
+    <ng-container *ngIf="email.invalid && email.touched">
+      <p class="caption status-danger" *ngIf="email.errors?.required">O email é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="email.errors?.pattern">Digite um email válido!</p>
+    </ng-container>
+  </div>
+  <div class="form-control-group">
+    <label class="label" for="input-phone">Melhor telefone para contato</label>
+    <input
+      nbInput
+      [(ngModel)]="clonedRepresentative.phone"
+      #phone="ngModel"
+      id="input-phone"
+      name="input-phone"
+      placeholder="Telefone para contato"
+      fullWidth
+      fieldSize="large"
+      [brmasker]="{ phone: true }"
+      ngxSelectAllText
+      [required]="validation.phone.required"
+      [minlength]="validation.phone.minLength"
+      [maxlength]="validation.phone.maxLength"
+      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
+    />
+    <ng-container *ngIf="phone.invalid && phone.touched">
+      <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+        O telefone deve ter {{ validation.phone.minLength }} ou {{ validation.phone.maxLength }} caracteres
+      </p>
+    </ng-container>
+  </div>
+  <fieldset *ngIf="isLegalRepresentative(this.clonedRepresentative)">
+    <div class="form-control-group">
+      <label class="label" for="input-cpf">CPF</label>
+      <input
+        nbInput
+        [(ngModel)]="clonedRepresentative.cpf"
+        #cpf="ngModel"
+        id="input-cpf"
+        name="cpf"
+        placeholder="000.000.000-00"
+        fullWidth
+        fieldSize="large"
+        [brmasker]="{ person: true }"
+        ngxSelectAllText
+        [required]="validation.cpf.required"
+        [minlength]="validation.cpf.minLength"
+        [maxlength]="validation.cpf.maxLength"
+        [status]="cpf.dirty ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
+        [attr.aria-invalid]="cpf.invalid && cpf.touched ? true : null"
+      />
+      <ng-container *ngIf="cpf.invalid && cpf.touched">
+        <p class="caption status-danger" *ngIf="cpf.errors?.required">O CPF é obrigatório!</p>
+        <p class="caption status-danger" *ngIf="cpf.errors?.minlength || cpf.errors?.maxlength">
+          O CPF deve ter {{ validation.cpf.minLength - 3 }} números
+        </p>
+      </ng-container>
+    </div>
+    <div class="form-control-group">
+      <label class="label" for="input-nationality">Nacionalidade</label>
+      <input
+        nbInput
+        [(ngModel)]="clonedRepresentative.nationality"
+        #nationality="ngModel"
+        id="input-nationality"
+        name="nationality"
+        placeholder="Brasileira"
+        fullWidth
+        fieldSize="large"
+        ngxSelectAllText
+        [required]="validation.representative.nationality.required"
+        [status]="nationality.dirty ? (nationality.invalid ? 'danger' : 'success') : 'basic'"
+        [attr.aria-invalid]="nationality.invalid && nationality.touched ? true : null"
+      />
+      <ng-container *ngIf="nationality.invalid && nationality.touched">
+        <p class="caption status-danger" *ngIf="nationality.errors?.required">A nacionalidade é obrigatório!</p>
+        <p class="caption status-danger" *ngIf="nationality.errors?.minlength || nationality.errors?.maxlength">
+          A nacionalidade deve ter {{ validation.representative.nationality.minLength }} ou
+          {{ validation.representative.nationality.maxLength }} caracteres
+        </p>
+      </ng-container>
+    </div>
+    <div class="form-control-group">
+      <label class="label" for="input-marital-status">Estado Civil</label>
+      <nb-select
+        placeholder="Selecione"
+        fullWidth
+        size="large"
+        [(ngModel)]="clonedRepresentative.maritalStatus"
+        name="maritalStatus"
+      >
+        <nb-option value="solteiro">Solteiro(a)</nb-option>
+        <nb-option value="casado">Casado(a)</nb-option>
+        <nb-option value="divorciado">Divorciado(a)</nb-option>
+        <nb-option value="viuvo">Viúvo(a)</nb-option>
+      </nb-select>
+    </div>
+    <div class="form-control-group">
+      <div class="row">
+        <div class="col-md-5">
+          <label class="label" for="input-zip-code">CEP:</label>
+          <input
+            nbInput
+            [(ngModel)]="clonedRepresentative.address.zipCode"
+            #zipCode="ngModel"
+            id="input-zip-code"
+            name="input-zip-code"
+            placeholder="CEP"
+            fullWidth
+            fieldSize="large"
+            ngxSelectAllText
+            [required]="validation.address.zipCode.required"
+            [minlength]="validation.address.zipCode.minLength"
+            [maxlength]="validation.address.zipCode.maxLength"
+            [status]="zipCode.dirty ? (zipCode.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="zipCode.invalid && zipCode.touched ? true : null"
+          />
+          <ng-container *ngIf="zipCode.invalid && zipCode.touched">
+            <p class="caption status-danger" *ngIf="zipCode.errors?.required">O cep é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="zipCode.errors?.minlength || zipCode.errors?.maxlength">
+              O cep deve conter entre
+              {{ validation.address.zipCode.minLength }} a
+              {{ validation.address.zipCode.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-md-5">
+          <label class="label" for="input-street-address">Logradouro:</label>
+          <input
+            nbInput
+            [(ngModel)]="clonedRepresentative.address.streetAddress"
+            #streetAddress="ngModel"
+            id="input-street-address"
+            name="input-street-address"
+            placeholder="Logradouro do endereço"
+            fullWidth
+            fieldSize="large"
+            ngxSelectAllText
+            [required]="validation.address.streetAddress.required"
+            [minlength]="validation.address.streetAddress.minLength"
+            [maxlength]="validation.address.streetAddress.maxLength"
+            [status]="streetAddress.dirty ? (streetAddress.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="streetAddress.invalid && streetAddress.touched ? true : null"
+          />
+          <ng-container *ngIf="streetAddress.invalid && streetAddress.touched">
+            <p class="caption status-danger" *ngIf="streetAddress.errors?.required">O endereço é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="streetAddress.errors?.minlength || streetAddress.errors?.maxlength">
+              O endereço deve conter entre
+              {{ validation.address.streetAddress.minLength }} a
+              {{ validation.address.streetAddress.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-md-2">
+          <label class="label" for="input-address-number">Nº:</label>
+          <input
+            nbInput
+            [(ngModel)]="clonedRepresentative.address.houseNumber"
+            #addressNumber="ngModel"
+            id="input-address-number"
+            name="input-address-number"
+            placeholder="Número"
+            fullWidth
+            fieldSize="large"
+            ngxSelectAllText
+            [required]="validation.address.houseNumber.required"
+            [minlength]="validation.address.houseNumber.minLength"
+            [maxlength]="validation.address.houseNumber.maxLength"
+            [status]="addressNumber.dirty ? (addressNumber.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="addressNumber.invalid && addressNumber.touched ? true : null"
+          />
+          <ng-container *ngIf="addressNumber.invalid && addressNumber.touched">
+            <p class="caption status-danger" *ngIf="addressNumber.errors?.required">O número é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="addressNumber.errors?.minlength || addressNumber.errors?.maxlength">
+              O número deve conter entre
+              {{ validation.address.houseNumber.minLength }} a
+              {{ validation.address.houseNumber.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="label" for="input-district">Bairro:</label>
+          <input
+            nbInput
+            [(ngModel)]="clonedRepresentative.address.district"
+            #district="ngModel"
+            id="input-district"
+            name="input-district"
+            placeholder="Bairro"
+            fullWidth
+            fieldSize="large"
+            ngxSelectAllText
+            [required]="validation.address.district.required"
+            [minlength]="validation.address.district.minLength"
+            [maxlength]="validation.address.district.maxLength"
+            [status]="district.dirty ? (district.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="district.invalid && district.touched ? true : null"
+          />
+          <ng-container *ngIf="district.invalid && district.touched">
+            <p class="caption status-danger" *ngIf="district.errors?.required">O bairro é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="district.errors?.minlength || district.errors?.maxlength">
+              O bairro deve conter entre
+              {{ validation.address.district.minLength }} a
+              {{ validation.address.district.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-md-4">
+          <label class="label" for="input-complement">Complemento:</label>
+          <input
+            nbInput
+            [(ngModel)]="clonedRepresentative.address.complement"
+            #address="ngModel"
+            id="input-complement"
+            name="input-complement"
+            placeholder="Complemento"
+            fullWidth
+            fieldSize="large"
+            ngxSelectAllText
+            [status]="address.dirty ? (address.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="address.invalid && address.touched ? true : null"
+          />
+        </div>
+        <div class="col-md-2">
+          <label class="label" for="input-state">Estado:</label>
+          <nb-select
+            [(ngModel)]="clonedRepresentative.address.state"
+            #state="ngModel"
+            id="input-state"
+            name="state"
+            placeholder="Selecione"
+            fullWidth
+            size="large"
+            [required]="validation.address.state.required"
+            [status]="state.dirty ? (state.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="state.invalid && state.touched ? true : null"
+            (selectedChange)="buildCityList(state.value)"
+          >
+            <nb-option *ngFor="let state of states" [value]="state">{{ state }}</nb-option>
+          </nb-select>
+          <ng-container *ngIf="address.invalid && address.touched">
+            <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
+              O endereço deve conter entre
+              {{ validation.address.minLength }} a
+              {{ validation.address.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+        <div class="col-md-3">
+          <label class="label" for="input-city">Cidade:</label>
+          <nb-select
+            [(ngModel)]="clonedRepresentative.address.city"
+            #city="ngModel"
+            id="input-city"
+            name="city"
+            placeholder="Selecione"
+            fullWidth
+            size="large"
+            [required]="validation.address.city.required"
+            [status]="city.dirty ? (city.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="city.invalid && city.touched ? true : null"
+          >
+            <nb-option *ngFor="let city of cities" [value]="city">{{ city }}</nb-option>
+          </nb-select>
+          <ng-container *ngIf="address.invalid && address.touched">
+            <p class="caption status-danger" *ngIf="address.errors?.required">O endereço é obrigatório!</p>
+            <p class="caption status-danger" *ngIf="address.errors?.minlength || address.errors?.maxlength">
+              O endereço deve conter entre
+              {{ validation.address.minLength }} a
+              {{ validation.address.maxLength }}
+              caracteres
+            </p>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid || !form.dirty|| isNotEdited()">
+    {{ isEditing ? 'ATUALIZAR' : 'CADASTRAR' }}
+  </button>
+</form>

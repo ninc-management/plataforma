@@ -52,7 +52,14 @@
   <div class="row" style="flex-direction: row-reverse">
     <div class="col-md-6">
       <label class="label" for="input-person-selector">Tipo de pessoa:</label>
-      <nb-select placeholder="Selecione" fullWidth size="large" [(ngModel)]="selectedOption" name="ng-model-group">
+      <nb-select
+        placeholder="Selecione"
+        fullWidth
+        size="large"
+        [(ngModel)]="selectedOption"
+        (ngModelChange)="hasPersonTypeChanged = true"
+        name="ng-model-group"
+      >
         <nb-option [value]="typesOfPerson.PESSOA_FISICA">Pessoa física</nb-option>
         <nb-option [value]="typesOfPerson.PESSOA_JURIDICA">Pessoa jurídica</nb-option>
       </nb-select>
@@ -74,8 +81,9 @@
           [required]="validation.cpf.required"
           [minlength]="validation.cpf.minLength"
           [maxlength]="validation.cpf.maxLength"
-          [status]="cpf.dirty ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="cpf.dirty || hasPersonTypeChanged ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="cpf.invalid && cpf.touched ? true : null"
+          (blur)="hasPersonTypeChanged = false"
         />
         <ng-container *ngIf="cpf.invalid && cpf.touched">
           <p class="caption status-danger" *ngIf="cpf.errors?.required">O CPF é obrigatório!</p>
@@ -100,8 +108,9 @@
           [required]="validation.cnpj.required"
           [minlength]="validation.cnpj.minLength"
           [maxlength]="validation.cnpj.maxLength"
-          [status]="cnpj.dirty ? (cnpj.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="cnpj.dirty || hasPersonTypeChanged ? (cnpj.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
+          (blur)="hasPersonTypeChanged = false"
         />
         <ng-container *ngIf="cnpj.invalid && cnpj.touched">
           <p class="caption status-danger" *ngIf="cnpj.errors?.required">O CNPJ é obrigatório!</p>
@@ -220,7 +229,7 @@
         <label class="label" for="input-address-number">Nº:</label>
         <input
           nbInput
-          [(ngModel)]="contractor.address.number"
+          [(ngModel)]="contractor.address.houseNumber"
           #addressNumber="ngModel"
           id="input-address-number"
           name="input-address-number"
@@ -228,9 +237,9 @@
           fullWidth
           fieldSize="large"
           ngxSelectAllText
-          [required]="validation.address.number.required"
-          [minlength]="validation.address.number.minLength"
-          [maxlength]="validation.address.number.maxLength"
+          [required]="validation.address.houseNumber.required"
+          [minlength]="validation.address.houseNumber.minLength"
+          [maxlength]="validation.address.houseNumber.maxLength"
           [status]="addressNumber.dirty ? (addressNumber.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="addressNumber.invalid && addressNumber.touched ? true : null"
         />
@@ -238,8 +247,8 @@
           <p class="caption status-danger" *ngIf="addressNumber.errors?.required">O número é obrigatório!</p>
           <p class="caption status-danger" *ngIf="addressNumber.errors?.minlength || addressNumber.errors?.maxlength">
             O número deve conter entre
-            {{ validation.address.number.minLength }} a
-            {{ validation.address.number.maxLength }}
+            {{ validation.address.houseNumber.minLength }} a
+            {{ validation.address.houseNumber.maxLength }}
             caracteres
           </p>
         </ng-container>
@@ -344,13 +353,113 @@
         </ng-container>
       </div>
     </div>
+    <div *ngIf="selectedOption == typesOfPerson.PESSOA_JURIDICA">
+      <div class="form-control-group mt-3">
+        <div class="row">
+          <div class="col-10 col-md-11">
+            <label class="label-divider mt-3 mb-0">Representantes Legais</label>
+          </div>
+          <div class="col-1">
+            <button
+              nbButton
+              type="button"
+              fullWidth
+              status="primary"
+              size="large"
+              (click)="openRepresentativeDialog(representativeTypes.LEGAL)"
+            >
+              <nb-icon icon="plus"></nb-icon>
+            </button>
+          </div>
+        </div>
+        <nb-list style="width: 100%; padding: 10px 0">
+          <nb-list-item
+            *ngFor="let representative of contractor.legalRepresentatives; let i = index; trackBy: trackByIndex"
+          >
+            <div class="row irow">
+              <div class="col-9 col-md-11">
+                {{ representative.fullName }}
+              </div>
+              <div class="col-3 col-md-1" style="text-align: right">
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  icon="edit-outline"
+                  pack="eva"
+                  (click)="openRepresentativeDialog(representativeTypes.LEGAL, contractor.legalRepresentatives[i])"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="confirmationDialog(representativeTypes.LEGAL, i)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </div>
+      <div class="form-control-group">
+        <div class="row">
+          <div class="col-10 col-md-11">
+            <label class="label-divider mt-3 mb-0">Representantes Comerciais</label>
+          </div>
+          <div class="col-1">
+            <button
+              nbButton
+              type="button"
+              fullWidth
+              status="primary"
+              size="large"
+              (click)="openRepresentativeDialog(representativeTypes.COMERCIAL)"
+            >
+              <nb-icon icon="plus"></nb-icon>
+            </button>
+          </div>
+        </div>
+        <nb-list style="width: 100%; padding: 10px 0">
+          <nb-list-item
+            *ngFor="let representative of contractor.comercialRepresentatives; let i = index; trackBy: trackByIndex"
+          >
+            <div class="row irow">
+              <div class="col-9 col-md-11">
+                {{ representative.fullName }}
+              </div>
+              <div class="col-3 col-md-1" style="text-align: right">
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  icon="edit-outline"
+                  pack="eva"
+                  (click)="
+                    openRepresentativeDialog(representativeTypes.COMERCIAL, contractor.comercialRepresentatives[i])
+                  "
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="confirmationDialog(representativeTypes.COMERCIAL, i)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </div>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </div>
+    </div>
   </div>
   <button
     nbButton
     fullWidth
     status="primary"
     size="large"
-    [disabled]="submitted || !form.valid"
+    [disabled]="submitted || !form.valid || !form.dirty || isNotEdited()"
     [class.btn-pulse]="submitted"
   >
     {{ editing ? 'ATUALIZAR' : 'CADASTRAR' }}
