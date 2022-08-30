@@ -15,15 +15,22 @@
     {{ team.name }}
   </nb-option>
 </nb-select>
-<button class="stepper-button" status="warning" size="large" nbButton nbStepperPrevious>Voltar</button>
-<button
-  class="stepper-button"
-  status="success"
-  size="large"
-  nbButton
-  nbStepperNext
-  [disabled]="!selectedTeam"
-  (click)="downloadReport()"
->
-  Gerar relatório
-</button>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <button class="stepper-button" status="warning" size="large" nbButton fullWidth nbStepperPrevious>Voltar</button>
+  </div>
+  <div class="col-12 col-md-6">
+    <button
+      class="stepper-button"
+      status="success"
+      size="large"
+      nbButton
+      fullWidth
+      nbStepperNext
+      [disabled]="!selectedTeam"
+      (click)="downloadReport()"
+    >
+      Gerar relatório
+    </button>
+  </div>
+</div>
