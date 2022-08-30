@@ -27,6 +27,7 @@ import { SharedModule } from '../shared/shared.module';
 import { ContractorDialogComponent } from './contractors/contractor-dialog/contractor-dialog.component';
 import { ContractorItemComponent } from './contractors/contractor-item/contractor-item.component';
 import { ContractorsComponent } from './contractors/contractors.component';
+import { RepresentativeItemComponent } from './contractors/representative-item/representative-item.component';
 import { ContractDialogComponent } from './contracts/contract-dialog/contract-dialog.component';
 import { BalanceTabComponent } from './contracts/contract-item/balance-tab/balance-tab.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
@@ -126,6 +127,7 @@ import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-tabl
     ReceiptTabComponent,
     PaymentTabComponent,
     ExpenseTabComponent,
+    RepresentativeItemComponent,
   ],
 })
 export class PagesModule {}

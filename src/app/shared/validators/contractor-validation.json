@@ -12,7 +12,7 @@
       "minLength": 3,
       "maxLength": 200
     },
-    "number": {
+    "houseNumber": {
       "required": true,
       "minLength": 1,
       "maxLength": 10
@@ -48,5 +48,19 @@
     "required": true,
     "minLength": 14,
     "maxLength": 15
+  },
+  "representative": {
+    "occupation": {
+      "required": true,
+      "maxLength": 200
+    },
+    "nationality": {
+      "required": true,
+      "maxLength": 200
+    },
+    "maritalStatus": {
+      "required": true,
+      "maxLength": 200
+    }
   }
 }

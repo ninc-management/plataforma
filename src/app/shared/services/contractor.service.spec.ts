@@ -83,7 +83,7 @@ describe('ContractorService', () => {
     tmpContractor.address = {
       zipCode: '',
       streetAddress: 'rua teste1',
-      number: '',
+      houseNumber: '',
       district: '',
       complement: '',
       city: '',
@@ -98,7 +98,7 @@ describe('ContractorService', () => {
     tmpContractor.address = {
       zipCode: '',
       streetAddress: 'rua teste2',
-      number: '',
+      houseNumber: '',
       district: '',
       complement: '',
       city: '',
@@ -125,7 +125,7 @@ describe('ContractorService', () => {
     tmpContractor.address = {
       zipCode: '',
       streetAddress: 'rua teste3',
-      number: '',
+      houseNumber: '',
       district: '',
       complement: '',
       city: '',

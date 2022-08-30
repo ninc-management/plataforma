@@ -150,7 +150,7 @@ describe('UtilsService', () => {
     tmpContractor.address = {
       zipCode: '',
       streetAddress: 'rua teste1',
-      number: '',
+      houseNumber: '',
       district: '',
       complement: '',
       city: '',
