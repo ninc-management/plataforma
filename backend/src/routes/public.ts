@@ -19,11 +19,7 @@ router.post('/user/all', async (req, res) => {
         profilePicture: user.profilePicture,
         exibitionName: user.exibitionName,
         teamsAsMember: teams
-          .filter((team) => {
-            return team.members.some((member) => {
-              return isEqual(member.user, user._id);
-            });
-          })
+          .filter((team) => team.members.some((member) => isEqual(member.user, user._id)))
           .map((team) => team.name),
       }))
   );
