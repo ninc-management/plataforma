@@ -82,11 +82,8 @@ export class BalanceTabComponent implements OnInit {
       )
       .subscribe(([configs, _]) => {
         this.config = configs[0];
-        this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
-        this.options.nortanPercentage = nortanPercentage(
-          this.contract,
-          this.config.invoiceConfig.organizationPercentage
-        );
+        this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig);
+        this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig);
       });
 
     this.responseEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -181,8 +178,8 @@ export class BalanceTabComponent implements OnInit {
 
   calculatePaidValue(): void {
     this.options.interest = this.contract.receipts.length;
-    this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig.organizationPercentage);
-    this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig.nfPercentage);
+    this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig);
+    this.options.notaFiscal = nfPercentage(this.contract, this.config.invoiceConfig);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.contract);
     this.contract.locals.notPaid = this.stringUtil.numberToMoney(

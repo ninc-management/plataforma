@@ -89,8 +89,8 @@ export class ReceiptItemComponent implements OnInit {
     if (this.contract.invoice) {
       const tmp = cloneDeep(this.contract);
       tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.receipt.notaFiscal = nfPercentage(tmp, this.config.invoiceConfig.nfPercentage);
-      this.receipt.nortanPercentage = nortanPercentage(tmp, this.config.invoiceConfig.organizationPercentage);
+      this.receipt.notaFiscal = nfPercentage(tmp, this.config.invoiceConfig);
+      this.receipt.nortanPercentage = nortanPercentage(tmp, this.config.invoiceConfig);
       this.contractService
         .checkEditPermission(tmp.invoice)
         .pipe(take(1))

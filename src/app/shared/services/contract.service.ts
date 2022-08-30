@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
 import { Socket } from 'ngx-socket-io';
@@ -289,8 +289,8 @@ export class ContractService implements OnDestroy {
       this.stringUtil.moneyToNumber(
         this.toNetValue(
           this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
-          nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+          nfPercentage(contract, this.config.invoiceConfig),
+          nortanPercentage(contract, this.config.invoiceConfig),
           contract.created
         )
       ) + this.getComissionsSum(contract)
@@ -331,8 +331,8 @@ export class ContractService implements OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+      nfPercentage(contract, this.config.invoiceConfig),
+      nortanPercentage(contract, this.config.invoiceConfig),
       contract.created
     );
   }
@@ -447,13 +447,13 @@ export class ContractService implements OnDestroy {
       contract.locals.balance = this.balance(contract);
       contract.locals.liquid = this.toNetValue(
         this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
-        nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-        nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+        nfPercentage(contract, this.config.invoiceConfig),
+        nortanPercentage(contract, this.config.invoiceConfig),
         contract.created
       );
 
-      const nf = nfPercentage(contract, this.config.invoiceConfig.nfPercentage);
-      const nortan = nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage);
+      const nf = nfPercentage(contract, this.config.invoiceConfig);
+      const nortan = nortanPercentage(contract, this.config.invoiceConfig);
       const paid = this.toNetValue(
         this.stringUtil.numberToMoney(
           contract.receipts.reduce((accumulator: number, recipt: any) => {
