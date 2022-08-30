@@ -59,7 +59,6 @@ router.post('/update', async (req, res, next) => {
     }
     return res.status(200).json({
       message: 'Configuração atualizada!',
-      savedConfig,
     });
   } catch (err) {
     return res.status(500).json({

@@ -43,7 +43,6 @@ router.post('/update', async (req, res, next) => {
     }
     return res.status(200).json({
       message: 'Associado Atualizado!',
-      savedUser,
     });
   } catch (err) {
     return res.status(500).json({

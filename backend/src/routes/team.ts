@@ -50,7 +50,6 @@ router.post('/update', async (req, res, next) => {
       release();
       return res.status(200).json({
         message: 'Time Atualizado!',
-        savedTeam,
       });
     } catch (err) {
       release();

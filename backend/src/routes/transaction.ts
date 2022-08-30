@@ -55,7 +55,6 @@ router.post('/update', async (req, res, next) => {
     }
     return res.status(200).json({
       message: 'Transação Atualizada!',
-      savedTransaction,
     });
   } catch (err) {
     return res.status(500).json({
