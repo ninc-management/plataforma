@@ -29,7 +29,7 @@ export class ContractorItemComponent implements OnInit {
   editing = false;
   submitted = false;
   validation = contractor_validation as any;
-  typeOfPerson = TypesOfPerson;
+  typesOfPerson = TypesOfPerson;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   cities: string[] = [];
   states: string[] = [];
@@ -40,6 +40,10 @@ export class ContractorItemComponent implements OnInit {
     if (this.iContractor._id !== undefined) {
       this.editing = true;
       this.contractor = cloneDeep(this.iContractor);
+      this.selectedOption =
+        this.contractor.document.length == this.validation.cpf.maxLength
+          ? TypesOfPerson.PESSOA_FISICA
+          : TypesOfPerson.PESSOA_JURIDICA;
     }
     this.states = this.statecityService.buildStateList();
     if (this.contractor.address.state) this.cities = this.statecityService.buildCityList(this.contractor.address.state);

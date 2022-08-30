@@ -1069,3 +1069,9 @@ db.contractors.find().forEach((contractor) => {
   contractor.address = newAddress;
   db.contractors.replaceOne({ _id: contractor._id }, contractor);
 });
+
+
+db.contractors.find().forEach((c) => {
+  c.corporateName = '';
+  db.contractors.replaceOne({ _id: c._id }, c);
+});
