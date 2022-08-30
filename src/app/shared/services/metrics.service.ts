@@ -532,8 +532,8 @@ export class MetricsService implements OnDestroy {
                   acc += this.stringUtil.moneyToNumber(
                     this.contractService.toNetValue(
                       receipt.value,
-                      nfPercentage(contract, configs[0].invoiceConfig.nfPercentage),
-                      nortanPercentage(contract, configs[0].invoiceConfig.organizationPercentage),
+                      nfPercentage(contract, configs[0].invoiceConfig),
+                      nortanPercentage(contract, configs[0].invoiceConfig),
                       contract.created
                     )
                   );

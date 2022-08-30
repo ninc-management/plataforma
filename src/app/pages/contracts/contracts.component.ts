@@ -280,8 +280,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+      nfPercentage(contract, this.config.invoiceConfig),
+      nortanPercentage(contract, this.config.invoiceConfig),
       contract.created
     );
   }
@@ -307,8 +307,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return accumulator;
         }, 0)
       ),
-      nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-      nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+      nfPercentage(contract, this.config.invoiceConfig),
+      nortanPercentage(contract, this.config.invoiceConfig),
       contract.created
     );
 
@@ -316,8 +316,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(
           invoice.value,
-          nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-          nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+          nfPercentage(contract, this.config.invoiceConfig),
+          nortanPercentage(contract, this.config.invoiceConfig),
           contract.created
         )
       ) - this.stringUtil.moneyToNumber(paidValue)
@@ -372,8 +372,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
                 this.stringUtil.removePercentage(invoice.value, contract.ISS),
                 contract
               ),
-              nfPercentage(contract, this.config.invoiceConfig.nfPercentage),
-              nortanPercentage(contract, this.config.invoiceConfig.organizationPercentage),
+              nfPercentage(contract, this.config.invoiceConfig),
+              nortanPercentage(contract, this.config.invoiceConfig),
               contract.created
             ) + ';';
           csv += this.getReportReceivedValue(contract) + ';';

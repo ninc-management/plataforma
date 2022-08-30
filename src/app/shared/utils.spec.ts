@@ -21,6 +21,7 @@ import { Contractor } from '@models/contractor';
 import {
   assingOrIncrement,
   elapsedTime,
+  Fees,
   formatDate,
   groupByDateTimeSerie,
   idToProperty,
@@ -163,8 +164,10 @@ describe('UtilsService', () => {
     mockedContractors.push(cloneDeep(tmpContractor));
 
     const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.nfPercentage = '15,5';
-    tmpConfig.invoiceConfig.organizationPercentage = '15,0';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
     mockedConfigs.push(tmpConfig);
 
     teamService.getTeams().pipe(take(1)).subscribe();
@@ -305,25 +308,27 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.nfPercentage
+    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.nfPercentage
     );
     const receipt = new ContractReceipt();
     receipt.notaFiscal = '0,00';
     contract.receipts.push(receipt);
-    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe('0,00');
+    expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('0,00');
     invoice.nortanTeam = '0';
-    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.nfPercentage
+    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.nfPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig.nfPercentage)).toBe('0');
+    expect(nfPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.intermediation.nfPercentage
+    );
   });
 
   it('nortanPercentage should work', () => {
     const contract: Contract = new Contract();
     const invoice: Invoice = new Invoice();
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('15,0');
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(Fees.NORTAN_SUPPORT);
     invoice._id = '0';
     invoice.author = '0';
     invoice.nortanTeam = '0';
@@ -331,19 +336,21 @@ describe('UtilsService', () => {
     invoice.code = '';
     invoice.contractor = '0';
     contract.invoice = invoice;
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.organizationPercentage
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.organizationPercentage
     );
     const receipt = new ContractReceipt();
     receipt.nortanPercentage = '20,00';
     contract.receipts.push(receipt);
-    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('20,00');
+    expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('20,00');
     invoice.nortanTeam = '1';
-    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe(
-      mockedConfigs[0].invoiceConfig.organizationPercentage
+    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.support.organizationPercentage
     );
     invoice.administration = 'pessoal';
-    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig.organizationPercentage)).toBe('0');
+    expect(nortanPercentage(invoice, mockedConfigs[0].invoiceConfig)).toBe(
+      mockedConfigs[0].invoiceConfig.businessFees.intermediation.organizationPercentage
+    );
   });
 
   it('isPhone should work', () => {

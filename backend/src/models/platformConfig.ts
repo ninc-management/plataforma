@@ -3,6 +3,22 @@ import { getModelForClass, prop } from '@typegoose/typegoose';
 import { Base } from './base';
 import { ExpenseType } from './team';
 
+export class FeesPercentages {
+  @prop({ required: true })
+  organizationPercentage: string = '0,00';
+
+  @prop({ required: true })
+  nfPercentage: string = '0,00';
+}
+
+export class BusinessFees {
+  @prop({ required: true })
+  intermediation: FeesPercentages = new FeesPercentages();
+
+  @prop({ required: true })
+  support: FeesPercentages = new FeesPercentages();
+}
+
 export class AccessControl {
   @prop({ required: true })
   roleTypeName: string = '';
@@ -66,10 +82,7 @@ export class InvoiceConfig {
   codeAbbreviation: string = ' ';
 
   @prop({ required: true })
-  organizationPercentage: string = '0,00';
-
-  @prop({ required: true })
-  nfPercentage: string = '0,00';
+  businessFees: BusinessFees = new BusinessFees();
 }
 
 export class SocialConfig {
