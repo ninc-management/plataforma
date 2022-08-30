@@ -119,9 +119,9 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
       this.promotionService.editPromotion(this.promotion);
     } else {
       this.promotionService.savePromotion(this.promotion);
-      this.submit.emit();
     }
     this.isFormDirty.next(false);
+    this.submit.emit();
   }
 
   updateTableItems(): void {
