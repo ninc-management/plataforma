@@ -1056,7 +1056,7 @@ db.contractors.find().forEach((contractor) => {
     zipCode: '',
     streetAddress: contractor.address,
     number:'',
-    district: '',W
+    district: '',
     complement: '',
     city: '',
     state:'',
