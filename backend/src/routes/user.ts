@@ -34,12 +34,8 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false }, async (err, savedUser) => {
-    if (err)
-      return res.status(500).json({
-        message: 'Erro ao atualizar associado!',
-        error: err,
-      });
+  try {
+    const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
     if (requested) {
       await mutex.runExclusive(async () => {
         usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());
@@ -48,7 +44,12 @@ router.post('/update', async (req, res, next) => {
     return res.status(200).json({
       message: 'Associado Atualizado!',
     });
-  });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar associado!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {

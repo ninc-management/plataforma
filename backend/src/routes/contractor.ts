@@ -32,26 +32,24 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await ContractorModel.findByIdAndUpdate(
-    req.body.contractor._id,
-    req.body.contractor,
-    { upsert: false },
-    async (err, savedContractor) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar cliente!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          contractorsMap[req.body.contractor._id] = cloneDeep(savedContractor.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Cliente Atualizado!',
+  try {
+    const savedContractor = await ContractorModel.findByIdAndUpdate(req.body.contractor._id, req.body.contractor, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        contractorsMap[req.body.contractor._id] = cloneDeep(savedContractor.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Cliente Atualizado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar cliente!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {
