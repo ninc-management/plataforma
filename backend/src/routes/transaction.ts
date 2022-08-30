@@ -44,26 +44,24 @@ router.post('/many', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await TransactionModel.findByIdAndUpdate(
-    req.body.transaction._id,
-    req.body.transaction,
-    { upsert: false },
-    async (err, savedTransaction) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar Transação!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          transactionsMap[req.body.transaction._id] = cloneDeep(savedTransaction.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Transação Atualizada!',
+  try {
+    const savedTransaction = await TransactionModel.findByIdAndUpdate(req.body.transaction._id, req.body.transaction, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        transactionsMap[req.body.transaction._id] = cloneDeep(savedTransaction.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Transação Atualizada!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar Transação!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {

@@ -35,26 +35,24 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await ContractModel.findByIdAndUpdate(
-    req.body.contract._id,
-    req.body.contract,
-    { upsert: false },
-    async (err, savedContract) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar contrato!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          contractsMap[req.body.contract._id] = cloneDeep(savedContract.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Contrato Atualizado!',
+  try {
+    const savedContract = await ContractModel.findByIdAndUpdate(req.body.contract._id, req.body.contract, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        contractsMap[req.body.contract._id] = cloneDeep(savedContract.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Contrato Atualizado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar contrato!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {

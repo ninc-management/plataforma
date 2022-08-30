@@ -32,26 +32,22 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await CourseModel.findByIdAndUpdate(
-    req.body.course._id,
-    req.body.course,
-    { upsert: false },
-    async (err, savedCourse) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar curso!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          coursesMap[req.body.course._id] = cloneDeep(savedCourse.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Curso Atualizado!',
+  try {
+    const savedCourse = await CourseModel.findByIdAndUpdate(req.body.course._id, req.body.course, { upsert: false });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        coursesMap[req.body.course._id] = cloneDeep(savedCourse.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Curso Atualizado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar curso!',
+      error: err,
+    });
+  }
 });
 
 router.post('/count', (req, res) => {

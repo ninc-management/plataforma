@@ -32,26 +32,24 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await PromotionModel.findByIdAndUpdate(
-    req.body.promotion._id,
-    req.body.promotion,
-    { upsert: false },
-    async (err, savedPromotion) => {
-      if (err)
-        return res.status(500).json({
-          message: 'Erro ao atualizar promoção!',
-          error: err,
-        });
-      if (requested) {
-        await mutex.runExclusive(async () => {
-          promotionsMap[req.body.promotion._id] = cloneDeep(savedPromotion.toJSON());
-        });
-      }
-      return res.status(200).json({
-        message: 'Promoção Atualizada!',
+  try {
+    const savedPromotion = await PromotionModel.findByIdAndUpdate(req.body.promotion._id, req.body.promotion, {
+      upsert: false,
+    });
+    if (requested) {
+      await mutex.runExclusive(async () => {
+        promotionsMap[req.body.promotion._id] = cloneDeep(savedPromotion.toJSON());
       });
     }
-  );
+    return res.status(200).json({
+      message: 'Promoção Atualizada!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar promoção!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {
