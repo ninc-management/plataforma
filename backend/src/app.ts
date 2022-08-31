@@ -40,7 +40,7 @@ class NortanAPI {
       connectTimeoutMS: 15000,
     };
 
-    const connectWithRetry = function () {
+    const connectWithRetry = () => {
       console.log('Trying to connect with database');
       return mongoose
         .connect(process.env.MONGODB_URI, options)
@@ -57,7 +57,7 @@ class NortanAPI {
     connectWithRetry();
 
     mongoose.connection.once('disconnected', () => {
-      console.warn('Mongoose as been disconnected');
+      console.warn('Mongoose has been disconnected');
       connectWithRetry();
     });
 
