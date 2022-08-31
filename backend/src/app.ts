@@ -39,15 +39,28 @@ class NortanAPI {
       serverSelectionTimeoutMS: 15000,
       connectTimeoutMS: 15000,
     };
-    mongoose
-      .connect(process.env.MONGODB_URI, options)
-      .then(() => {
-        console.log('Database connection ready!');
-      })
-      .catch((error) => {
-        console.log('Database Connection failed! ', error);
-        process.exit(1);
-      });
+
+    const connectWithRetry = () => {
+      console.log('Trying to connect with database');
+      mongoose
+        .connect(process.env.MONGODB_URI, options)
+        .then(() => {
+          console.log('Database connection ready!');
+        })
+        .catch((error) => {
+          console.error('Database connection failed! ', error);
+          console.log('Retrying in 2 seconds...');
+          setTimeout(connectWithRetry, 2000);
+        });
+    };
+
+    connectWithRetry();
+
+    mongoose.connection.once('disconnected', () => {
+      console.warn('Mongoose has been disconnected');
+      connectWithRetry();
+    });
+
     mongoose.set('returnOriginal', false);
 
     // app.use(logger('dev'));
