@@ -98,6 +98,7 @@
             {{ title }}
             <div class="buttons">
               <button
+                *ngIf="componentType === types.CONTRACT"
                 nbButton
                 ghost
                 nbTooltip="Baixar relatório de despesas"
