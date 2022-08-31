@@ -19,6 +19,7 @@ export class BrMaskModel {
   phoneNotDDD?: boolean;
   money?: boolean;
   percent?: boolean;
+  zipCode?: boolean;
   type?: 'alfa' | 'num' | 'all' = 'alfa';
   decimal?: number = 2;
   decimalCaracter?: string = ',';
@@ -126,6 +127,10 @@ export class BrMaskDirective implements OnInit {
       return this.writeValuePercent(value);
     }
 
+    if (value && config.zipCode) {
+      return this.writeValueZipCode(value);
+    }
+
     if (this.brmasker.userCaracters) {
       return this.usingSpecialCharacters(value, this.brmasker.mask, this.brmasker.len);
     }
@@ -182,6 +187,17 @@ export class BrMaskDirective implements OnInit {
   }
 
   /**
+   * For initial value zipcode
+   * @example <caption>this.writeValueZipCode(string)</caption>
+   * @param {string} value
+   * @returns {string} mask intial value
+   */
+  writeValueZipCode(value: string): string {
+    const val = value.replace(/\D/g, '');
+    return val.replace(/(\d{5})(\d{3})/gi, '$1-$2');
+  }
+
+  /**
    * Here is one of the main functions
    * responsible for identifying the type of mask
    * @author Antonio Marques <tmowna@gmail.com>
@@ -222,6 +238,9 @@ export class BrMaskDirective implements OnInit {
       }
       if (this.brmasker.userCaracters) {
         return this.usingSpecialCharacters(formValue, this.brmasker.mask, this.brmasker.len);
+      }
+      if (this.brmasker.zipCode) {
+        return this.zipcodeMask(formValue);
       }
       return this.onInput(formValue);
     } else {
@@ -490,5 +509,12 @@ export class BrMaskDirective implements OnInit {
       }
     }
     return NovoValorCampo;
+  }
+
+  private zipcodeMask(value: string): string {
+    this.brmasker.len = 9;
+    this.brmasker.mask = '99999-999';
+    const formValue = value.replace(/\D/g, '');
+    return formValue.replace(/(\d{5})(\d{3})/gi, '$1-$2');
   }
 }

@@ -182,6 +182,7 @@
           fullWidth
           fieldSize="large"
           ngxSelectAllText
+          [brmasker]="{ zipCode: true }"
           [required]="validation.address.zipCode.required"
           [minlength]="validation.address.zipCode.minLength"
           [maxlength]="validation.address.zipCode.maxLength"
