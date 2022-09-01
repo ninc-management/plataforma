@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService, NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, fromEvent, merge, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { LayoutService } from '../@core/utils';
@@ -45,6 +45,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
   dialogTypes = DIALOG_TYPES;
   social: NbMenuItem[] = [];
   nortanTeam!: Team;
+  idleTimer?: number;
 
   constructor(
     private router: Router,
@@ -55,7 +56,8 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     private dialogService: NbDialogService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -245,6 +247,15 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         const nortanTeam = teams.find((team) => team.isOrganizationTeam);
         if (nortanTeam) this.nortanTeam = nortanTeam;
       });
+
+    this.idleTimer = window.setTimeout(() => window.location.reload(), 3600000);
+    merge(
+      fromEvent(this.elementRef.nativeElement, 'mousemove'),
+      fromEvent(this.elementRef.nativeElement, 'keydown')
+    ).subscribe((event) => {
+      clearTimeout(this.idleTimer);
+      this.idleTimer = window.setTimeout(() => window.location.reload(), 3600000);
+    });
   }
 
   ngOnDestroy(): void {
