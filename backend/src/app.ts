@@ -42,7 +42,7 @@ class NortanAPI {
 
     const connectWithRetry = () => {
       console.log('Trying to connect with database');
-      return mongoose
+      mongoose
         .connect(process.env.MONGODB_URI, options)
         .then(() => {
           console.log('Database connection ready!');
