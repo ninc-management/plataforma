@@ -4,6 +4,7 @@ import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
+import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
 import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
 import {
   COMPONENT_TYPES,
@@ -33,6 +34,7 @@ enum DIALOG_TYPES {
   CLIENT,
   NORTAN_EXPENSE_TABLE,
   TRANSFER,
+  REPORT_MENU,
 }
 
 @Component({
@@ -288,6 +290,17 @@ export class DashboardComponent {
             iTeam: this.nortanTeam,
             componentType: TEAM_COMPONENT_TYPES.TRANSFER,
           },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.REPORT_MENU: {
+        this.dialogService.open(ReportMenuDialogComponent, {
+          context: {},
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
           closeOnEsc: false,
