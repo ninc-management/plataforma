@@ -34,6 +34,7 @@ export class DashboardComponent {
   private destroy$ = new Subject<void>();
 
   tabTitles = TAB_TITLES;
+  dialogTypes = DIALOG_TYPES;
   activeTab: string = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoWhite',
