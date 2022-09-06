@@ -1100,4 +1100,18 @@ db.platformconfigs.find().forEach((config) => {
   delete config.invoiceConfig.organizationPercentage;
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);
+
+db.providers.find().forEach((provider) => {
+  const bankAccount = {
+    name: '',
+    agency:'',
+    accountNumber:'',
+    pix: '',
+    operation: ''
+  }
+  provider.serviceList = [];
+  provider.productList = [];
+  provider.observation = '';
+  provider.bankData = bankAccount;
+  db.providers.replaceOne({ _id: provider._id }, provider);
 });

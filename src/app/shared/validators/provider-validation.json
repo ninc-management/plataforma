@@ -24,5 +24,31 @@
     "required": true,
     "minLength": 14,
     "maxLength": 15
+  },
+  "observation": {
+    "minLength": 3,
+    "maxLength": 300
+  },
+  "bankData": {
+    "bankName": {
+      "minLength": 3,
+      "maxLength": 30
+    },
+    "agency": {
+      "minLength": 3,
+      "maxLength": 15
+    },
+    "accountNumber": {
+      "minLength": 3,
+      "maxLength": 20
+    },
+    "operation": {
+      "minLength": 2,
+      "maxLength": 5
+    },
+    "pix": {
+      "minLength": 2,
+      "maxLength": 32
+    }
   }
 }
