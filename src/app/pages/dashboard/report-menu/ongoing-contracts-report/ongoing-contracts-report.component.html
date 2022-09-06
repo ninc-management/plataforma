@@ -1,0 +1,36 @@
+<label class="label" for="input-team-selector">Selecione o time</label>
+<nb-select
+  [(ngModel)]="selectedTeam"
+  #teamSelector="ngModel"
+  id="input-team-selector"
+  name="selectorList"
+  placeholder="Selecione o time"
+  fullWidth
+  size="large"
+  [required]="true"
+  [status]="teamSelector.dirty ? (teamSelector.invalid ? 'danger' : 'success') : 'basic'"
+  [attr.aria-invalid]="teamSelector.invalid && teamSelector.touched ? true : null"
+>
+  <nb-option *ngFor="let team of avaliableTeams" [value]="team">
+    {{ team.name }}
+  </nb-option>
+</nb-select>
+<div class="row">
+  <div class="col-12 col-md-6">
+    <button class="stepper-button" status="warning" size="large" nbButton fullWidth nbStepperPrevious>Voltar</button>
+  </div>
+  <div class="col-12 col-md-6">
+    <button
+      class="stepper-button"
+      status="success"
+      size="large"
+      nbButton
+      fullWidth
+      nbStepperNext
+      [disabled]="!selectedTeam"
+      (click)="downloadReport()"
+    >
+      Gerar relatório
+    </button>
+  </div>
+</div>

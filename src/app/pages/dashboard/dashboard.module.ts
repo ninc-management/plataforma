@@ -26,6 +26,7 @@ import { ExpansiveGridComponent } from './expansive-grid/expansive-grid.componen
 import { MetricItemComponent } from './metric-item/metric-item.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
+import { OngoingContractsReportComponent } from './report-menu/ongoing-contracts-report/ongoing-contracts-report.component';
 import { ReportMenuComponent } from './report-menu/report-menu.component';
 import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
 import { UserReceivablesComponent } from './user-receivables/user-receivables.component';
@@ -72,6 +73,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     ExpansiveGridComponent,
     ReportMenuDialogComponent,
     ReportMenuComponent,
+    OngoingContractsReportComponent,
   ],
 })
 export class DashboardModule {}
