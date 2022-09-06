@@ -40,10 +40,10 @@ export class Provider extends Base<string> {
   @prop()
   public profilePicture?: string;
 
-  @prop()
+  @prop({ type: () => [String] })
   serviceList: string[] = [];
 
-  @prop()
+  @prop({ type: () => [String] })
   productList: string[] = [];
 
   @prop()
