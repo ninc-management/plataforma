@@ -7,6 +7,7 @@ import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { LayoutService } from '../@core/utils';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
+import { ReportMenuDialogComponent } from './dashboard/report-menu-dialog/report-menu-dialog.component';
 import { MENU_ITEMS } from './pages-menu';
 import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
 import {
@@ -26,6 +27,7 @@ enum DIALOG_TYPES {
   EXPENSE,
   CLIENT,
   TRANSFER,
+  REPORT_MENU,
 }
 
 @Component({
@@ -322,6 +324,17 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
             iTeam: this.nortanTeam,
             componentType: TEAM_COMPONENT_TYPES.TRANSFER,
           },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.REPORT_MENU: {
+        this.dialogService.open(ReportMenuDialogComponent, {
+          context: {},
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
           closeOnEsc: false,

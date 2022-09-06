@@ -5,7 +5,6 @@ import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
-import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -20,11 +19,6 @@ enum TAB_TITLES {
   TEAM = 'Time',
 }
 
-enum DIALOG_TYPES {
-  NORTAN_EXPENSE_TABLE,
-  REPORT_MENU,
-}
-
 @Component({
   selector: 'ngx-dashboard',
   templateUrl: './dashboard.component.html',
@@ -34,7 +28,6 @@ export class DashboardComponent {
   private destroy$ = new Subject<void>();
 
   tabTitles = TAB_TITLES;
-  dialogTypes = DIALOG_TYPES;
   activeTab: string = TAB_TITLES.PESSOAL;
   nortanIcon = {
     icon: 'logoWhite',
@@ -169,37 +162,18 @@ export class DashboardComponent {
     this.destroy$.complete();
   }
 
-  openDialog(dType: DIALOG_TYPES): void {
-    switch (dType) {
-      case DIALOG_TYPES.NORTAN_EXPENSE_TABLE: {
-        this.dialogService.open(TeamDialogComponent, {
-          context: {
-            title: 'GASTOS DA EMPRESA',
-            iTeam: this.nortanTeam,
-            componentType: TEAM_COMPONENT_TYPES.EXPENSES,
-          },
-          dialogClass: 'my-dialog',
-          closeOnBackdropClick: false,
-          closeOnEsc: false,
-          autoFocus: false,
-        });
-        break;
-      }
-
-      case DIALOG_TYPES.REPORT_MENU: {
-        this.dialogService.open(ReportMenuDialogComponent, {
-          context: {},
-          dialogClass: 'my-dialog',
-          closeOnBackdropClick: false,
-          closeOnEsc: false,
-          autoFocus: false,
-        });
-        break;
-      }
-
-      default:
-        break;
-    }
+  openDialog(): void {
+    this.dialogService.open(TeamDialogComponent, {
+      context: {
+        title: 'GASTOS DA EMPRESA',
+        iTeam: this.nortanTeam,
+        componentType: TEAM_COMPONENT_TYPES.EXPENSES,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
   }
 
   setActiveTab(event: NbTabComponent): void {
