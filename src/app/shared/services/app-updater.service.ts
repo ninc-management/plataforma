@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { environment } from 'environments/environment';
 import { interval } from 'rxjs';
@@ -8,9 +7,9 @@ import { interval } from 'rxjs';
   providedIn: 'root',
 })
 export class AppUpdaterService {
-  constructor(updates: SwUpdate, private router: Router) {
+  constructor(updates: SwUpdate) {
     if (environment.production) {
-      const everySixHours$ = interval(6 * 60 * 60 * 1000);
+      const everySixHours$ = interval(1000 * 60 * 30);
       everySixHours$.subscribe(async () => {
         try {
           const updateFound = await updates.checkForUpdate();
@@ -20,8 +19,7 @@ export class AppUpdaterService {
               'Uma nova versão da plataforma está disponível. Deseja recarregar a página para instalar a nova versão?'
             );
             if (shouldInstallNewVersion) {
-              this.router.navigate(['/']);
-              document.location.reload();
+              window.location.reload();
             }
           }
         } catch (err) {
