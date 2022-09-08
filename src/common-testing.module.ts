@@ -7,6 +7,7 @@ import { AngularFireStorage, AngularFireStorageModule } from '@angular/fire/comp
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import {
   MSAL_GUARD_CONFIG,
   MsalBroadcastService,
@@ -190,6 +191,9 @@ const IMPORTS = [
   SharedModule,
   SocketIoModule.forRoot(config),
   NbStepperModule,
+  ServiceWorkerModule.register('ngsw-worker.js', {
+    enabled: false,
+  }),
 ];
 
 const PROVIDERS = [
