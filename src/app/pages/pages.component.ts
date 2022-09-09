@@ -1,33 +1,48 @@
 import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbAccessChecker } from '@nebular/security';
-import { NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
+import { NbDialogService, NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { LayoutService } from '../@core/utils';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
+import { ReportMenuDialogComponent } from './dashboard/report-menu-dialog/report-menu-dialog.component';
 import { MENU_ITEMS } from './pages-menu';
+import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
+import {
+  COMPONENT_TYPES,
+  ContractDialogComponent,
+} from 'app/pages/contracts/contract-dialog/contract-dialog.component';
+import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
+import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
+import { TeamService } from 'app/shared/services/team.service';
 import { Permissions } from 'app/shared/utils';
+
+import { Team } from '@models/team';
+
+enum DIALOG_TYPES {
+  INVOICE,
+  EXPENSE,
+  CLIENT,
+  TRANSFER,
+  REPORT_MENU,
+}
 
 @Component({
   selector: 'ngx-pages',
   styleUrls: ['pages.component.scss'],
-  template: `
-    <ngx-one-column-layout>
-      <nb-menu [items]="menu" tag="main" slot="main"></nb-menu>
-      <nb-menu [items]="social" tag="social" slot="social"></nb-menu>
-      <router-outlet></router-outlet>
-    </ngx-one-column-layout>
-  `,
+  templateUrl: './pages.component.html',
 })
 export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit {
   private destroy$ = new Subject<void>();
   @ViewChild(OneColumnLayoutComponent, { static: false })
   private layout!: OneColumnLayoutComponent;
   menu = MENU_ITEMS;
+  dialogTypes = DIALOG_TYPES;
   social: NbMenuItem[] = [];
+  nortanTeam!: Team;
 
   constructor(
     private router: Router,
@@ -36,7 +51,9 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     private sidebarService: NbSidebarService,
     private menuService: NbMenuService,
     private accessChecker: NbAccessChecker,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private dialogService: NbDialogService,
+    private teamService: TeamService
   ) {}
 
   ngOnInit(): void {
@@ -102,13 +119,14 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
 
     combineLatest([
       this.configService.getConfig(),
+      this.teamService.getTeams(),
       this.accessChecker.isGranted(Permissions.ELO_PRINCIPAL, 'view-users'),
     ])
       .pipe(
         takeUntil(this.destroy$),
-        skipWhile(([configs, _]) => configs.length == 0)
+        skipWhile(([configs, teams, _]) => configs.length == 0 && teams.length == 0)
       )
-      .subscribe(([configs, isGranted]) => {
+      .subscribe(([configs, teams, isGranted]) => {
         if (configs[0]) {
           this.social = [];
           if (configs[0].socialConfig.glassfrogLink) {
@@ -221,6 +239,9 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
             });
           }
         }
+
+        const nortanTeam = teams.find((team) => team.isOrganizationTeam);
+        if (nortanTeam) this.nortanTeam = nortanTeam;
       });
   }
 
@@ -251,5 +272,79 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     this.layoutService.changeLayoutSize();
 
     return false;
+  }
+
+  openDialog(dType: DIALOG_TYPES): void {
+    switch (dType) {
+      case DIALOG_TYPES.EXPENSE: {
+        this.dialogService.open(ContractDialogComponent, {
+          context: {
+            title: 'ADICIONAR DESPESA',
+            componentType: COMPONENT_TYPES.EXPENSE,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.INVOICE: {
+        this.dialogService.open(InvoiceDialogComponent, {
+          context: {
+            title: 'CADASTRO DE ORÇAMENTO',
+            invoice: undefined,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.CLIENT: {
+        this.dialogService.open(ContractorDialogComponent, {
+          context: {
+            title: 'CADASTRO DE CLIENTE',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.TRANSFER: {
+        this.dialogService.open(TeamDialogComponent, {
+          context: {
+            title: 'TRANSFERÊNCIA',
+            iTeam: this.nortanTeam,
+            componentType: TEAM_COMPONENT_TYPES.TRANSFER,
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.REPORT_MENU: {
+        this.dialogService.open(ReportMenuDialogComponent, {
+          context: {},
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      default:
+        break;
+    }
   }
 }
