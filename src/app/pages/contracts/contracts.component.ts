@@ -208,7 +208,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
 
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
-      { field: 'status', search: 'Em andamento A receber Finalizado' },
+      { field: 'status', search: 'Em andamento A receber Entregue' },
     ]);
   }
 

@@ -1134,3 +1134,10 @@ db.platformconfigs.find().forEach((config) => {
   }
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.contracts.find().forEach((contract) => {
+  if(contract.status == 'Finalizado'){
+    contract.status = 'Entregue'
+    db.contracts.replaceOne({ _id: contract._id }, contract);
+  }
+});
