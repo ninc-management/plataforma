@@ -10,6 +10,7 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 import { environment } from 'app/../environments/environment';
+import { isBefore } from 'date-fns';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -85,6 +86,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, , config]) => {
         this.user = currentUser;
+        this.sortNotifications();
         this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
@@ -107,6 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.state = 'active';
           }
           this.user = matchedUser;
+          this.sortNotifications();
           this.currentNotificationsQtd = matchedUser.notifications.length;
         }
       });
@@ -203,6 +206,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       closeOnBackdropClick: false,
       closeOnEsc: false,
       autoFocus: false,
+    });
+  }
+
+  private sortNotifications(): void {
+    this.user.notifications.sort((notificationA, notificationB) => {
+      const createdA = new Date(notificationA.created);
+      const createdB = new Date(notificationB.created);
+      return isBefore(createdA, createdB) ? 1 : -1;
     });
   }
 }
