@@ -2,7 +2,7 @@
   <nb-stepper [linear]="true" (stepChange)="onStepChange($event)">
     <nb-step [stepControl]="reportOptionForm" label="Tipo de relatório">
       <form #reportOptionForm="ngForm">
-        <label class="label" for="input-selector">Selecione o tipo de relatório</label>
+        <label class="label" for="input-report-option">Selecione o tipo de relatório</label>
         <nb-radio-group
           [(ngModel)]="selectedReportOption"
           #reportOptionInput="ngModel"
@@ -17,8 +17,9 @@
       <button class="stepper-button" status="success" size="large" nbButton fullWidth nbStepperNext>Avançar</button>
     </nb-step>
     <nb-step label="Configuração adicional">
-      <button class="stepper-button" nbButton nbStepperPrevious>Voltar</button>
-      <button class="stepper-button" nbButton nbStepperNext>Avançar</button>
+      <ng-container *ngIf="selectedReportOption == reportTypes.ONGOING_CONTRACTS">
+        <ngx-ongoing-contracts-report></ngx-ongoing-contracts-report>
+      </ng-container>
     </nb-step>
   </nb-stepper>
 </div>
