@@ -9,8 +9,8 @@ import { interval } from 'rxjs';
 export class AppUpdaterService {
   constructor(updates: SwUpdate) {
     if (environment.production) {
-      const everySixHours$ = interval(1000 * 60 * 30);
-      everySixHours$.subscribe(async () => {
+      const everyHalfHour$ = interval(1000 * 60 * 30);
+      everyHalfHour$.subscribe(async () => {
         try {
           const updateFound = await updates.checkForUpdate();
           console.log(updateFound ? 'A new version is available.' : 'Already on the latest version.');
