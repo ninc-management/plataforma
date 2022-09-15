@@ -1,15 +1,17 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 
+import { Provider } from '@models/provider';
 import { User } from '@models/user';
 
 @Component({
@@ -45,12 +47,18 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
 
   sourceSearch = '';
   sourceData: Observable<User[]> = of([]);
+
+  providerSearch = '';
+  providerData: Observable<Provider[]> = of([]);
+
   protected sourceArray = new BehaviorSubject<User[]>([]);
   protected userArray = new BehaviorSubject<User[]>([]);
+  protected providerArray = new BehaviorSubject<Provider[]>([]);
 
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
+    protected providerService: ProviderService,
     public userService: UserService
   ) {}
 
@@ -68,6 +76,17 @@ export class BaseExpenseComponent implements OnInit, OnDestroy {
 
     this.userData = this.userArray;
     this.sourceData = this.sourceArray;
+    this.providerData = this.providerArray;
+
+    this.providerService
+      .getProviders()
+      .pipe(
+        take(2),
+        skipWhile((providers) => providers.length == 0)
+      )
+      .subscribe((providers) => {
+        this.providerArray.next(providers);
+      });
   }
 
   updateUploaderOptions(folderPath: string, nameFn: (name: string) => string): void {
