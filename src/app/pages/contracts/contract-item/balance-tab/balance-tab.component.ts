@@ -24,7 +24,7 @@ interface ExpenseSourceSum {
 })
 export class BalanceTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
-  @Input() responseEvent$ = new Subject<void>();
+  @Input() recalculateEvent$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   comissionSum = '';
@@ -86,7 +86,7 @@ export class BalanceTabComponent implements OnInit {
         this.options.nortanPercentage = nortanPercentage(this.contract, this.config.invoiceConfig);
       });
 
-    this.responseEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.recalculateEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.calculatePaidValue();
       this.calculateBalance();
     });

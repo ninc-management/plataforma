@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@a
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
+import { ContractService } from 'app/shared/services/contract.service';
 import { isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -19,7 +20,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
 
   clonedContract: Contract = new Contract();
-  responseEvent$ = new Subject<void>();
+  recalculateEvent$ = new Subject<void>();
 
   isPhone = isPhone;
 
@@ -44,7 +45,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor() {}
+  constructor(private contractService: ContractService) {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);
@@ -59,7 +60,8 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
   }
 
-  forwardResponse() {
-    this.responseEvent$.next();
+  recalculateValues() {
+    this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
+    this.recalculateEvent$.next();
   }
 }

@@ -3,7 +3,7 @@
     <ngx-data-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
-      [responseEvent]="responseEvent$"
+      [recalculateEvent]="recalculateEvent$"
       [isFormDirty]="isFormDirty"
     ></ngx-data-tab>
   </nb-tab>
@@ -15,14 +15,14 @@
     ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
-    <ngx-balance-tab [contract]="contract" [responseEvent$]="responseEvent$"></ngx-balance-tab>
+    <ngx-balance-tab [contract]="contract" [recalculateEvent$]="recalculateEvent$"></ngx-balance-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (receiptsChanged)="forwardResponse()"
+      (receiptsChanged)="recalculateValues()"
     ></ngx-receipt-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
@@ -30,7 +30,7 @@
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (paymentsChanged)="forwardResponse()"
+      (paymentsChanged)="recalculateValues()"
     ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
@@ -38,7 +38,7 @@
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (expensesChanged)="forwardResponse()"
+      (expensesChanged)="recalculateValues()"
     ></ngx-expense-tab>
   </nb-tab>
 </nb-tabset>
