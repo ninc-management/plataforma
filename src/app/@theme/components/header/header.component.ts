@@ -22,7 +22,7 @@ import {
 import { ConfigService } from 'app/shared/services/config.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { elapsedTime, idToProperty, isPhone, Permissions, trackByIndex } from 'app/shared/utils';
+import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, trackByIndex } from 'app/shared/utils';
 
 import { Notification, NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
@@ -86,7 +86,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       )
       .subscribe(([currentUser, , config]) => {
         this.user = currentUser;
-        this.sortNotifications();
+        this.user.notifications.sort(sortNotifications);
         this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
@@ -109,7 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.state = 'active';
           }
           this.user = matchedUser;
-          this.sortNotifications();
+          this.user.notifications.sort(sortNotifications);
           this.currentNotificationsQtd = matchedUser.notifications.length;
         }
       });
@@ -206,14 +206,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       closeOnBackdropClick: false,
       closeOnEsc: false,
       autoFocus: false,
-    });
-  }
-
-  private sortNotifications(): void {
-    this.user.notifications.sort((notificationA, notificationB) => {
-      const createdA = new Date(notificationA.created);
-      const createdB = new Date(notificationB.created);
-      return isBefore(createdA, createdB) ? 1 : -1;
     });
   }
 }
