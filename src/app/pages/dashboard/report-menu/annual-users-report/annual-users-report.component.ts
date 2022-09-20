@@ -56,6 +56,17 @@ export interface ReportValue {
   overview: Overview;
 }
 
+const defaultMonthlyData = Array(12).fill({
+  received: '0,00',
+  expenses: '0,00',
+  sent_invoices_manager: 0,
+  sent_invoices_team: 0,
+  opened_contracts_manager: 0,
+  opened_contracts_team: 0,
+  concluded_contracts_manager: 0,
+  concluded_contracts_team: 0,
+});
+
 @Component({
   selector: 'ngx-annual-users-report',
   templateUrl: './annual-users-report.component.html',
@@ -102,21 +113,8 @@ export class AnnualUsersReportComponent implements OnInit {
     const data: Record<string, ReportValue> = {};
 
     this.users.forEach((user) => {
-      const tmp: IndividualData[] = [];
-      for (let i = 1; i <= 12; i++) {
-        tmp.push({
-          received: '0,00',
-          expenses: '0,00',
-          sent_invoices_manager: 0,
-          sent_invoices_team: 0,
-          opened_contracts_manager: 0,
-          opened_contracts_team: 0,
-          concluded_contracts_manager: 0,
-          concluded_contracts_team: 0,
-        });
-      }
       data[user._id] = {
-        monthly_data: cloneDeep(tmp),
+        monthly_data: cloneDeep(defaultMonthlyData),
         overview: {
           received: '0,00',
           expenses: '0,00',
@@ -138,21 +136,8 @@ export class AnnualUsersReportComponent implements OnInit {
     const data: Record<string, ReportValue> = {};
 
     this.teamService.sectorsListAll().forEach((sector) => {
-      const tmp: IndividualData[] = [];
-      for (let i = 1; i <= 12; i++) {
-        tmp.push({
-          received: '0,00',
-          expenses: '0,00',
-          sent_invoices_manager: 0,
-          sent_invoices_team: 0,
-          opened_contracts_manager: 0,
-          opened_contracts_team: 0,
-          concluded_contracts_manager: 0,
-          concluded_contracts_team: 0,
-        });
-      }
       data[sector._id] = {
-        monthly_data: cloneDeep(tmp),
+        monthly_data: cloneDeep(defaultMonthlyData),
         overview: {
           received: '0,00',
           expenses: '0,00',
