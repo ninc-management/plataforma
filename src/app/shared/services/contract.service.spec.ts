@@ -306,8 +306,10 @@ describe('ContractService', () => {
     tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
     tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
     tmpConfig.oneDriveConfig.isActive = true;
-    tmpConfig.oneDriveConfig.oneDriveId = '0';
-    tmpConfig.oneDriveConfig.folderId = '1';
+    tmpConfig.oneDriveConfig.contracts = {
+      "oneDriveId": '0',
+      "folderId": '1',
+    };
     mockedConfigs = [tmpConfig];
 
     // mock response
@@ -376,19 +378,19 @@ describe('ContractService', () => {
 
             const queryModelFolderURI =
               'https://graph.microsoft.com/v1.0/drives/' +
-              mockedConfigs[0].oneDriveConfig.oneDriveId +
+              mockedConfigs[0].oneDriveConfig.contracts.oneDriveId +
               '/items/' +
-              mockedConfigs[0].oneDriveConfig.oneDriveId +
+              mockedConfigs[0].oneDriveConfig.contracts.oneDriveId +
               '!' +
-              mockedConfigs[0].oneDriveConfig.folderId +
+              mockedConfigs[0].oneDriveConfig.contracts.folderId +
               ':/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR';
 
             const req2 = httpMock.expectOne(queryModelFolderURI);
             expect(req2.request.method).toBe('GET');
             const folderMetaData = {
               parentReference: {
-                driveId: mockedConfigs[0].oneDriveConfig.oneDriveId,
-                id: mockedConfigs[0].oneDriveConfig.folderId,
+                driveId: mockedConfigs[0].oneDriveConfig.contracts.oneDriveId,
+                id: mockedConfigs[0].oneDriveConfig.contracts.folderId,
               },
               id: '2',
             };

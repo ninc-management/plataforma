@@ -1100,6 +1100,7 @@ db.platformconfigs.find().forEach((config) => {
   delete config.invoiceConfig.organizationPercentage;
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
 
 db.providers.find().forEach((provider) => {
   const bankAccount = {
@@ -1114,4 +1115,22 @@ db.providers.find().forEach((provider) => {
   provider.observation = '';
   provider.bankData = bankAccount;
   db.providers.replaceOne({ _id: provider._id }, provider);
+});
+
+db.platformconfigs.find().forEach((config) => {
+  const contractIsActive = config.oneDriveConfig.contracts.isActive;
+  const contractOneDriveId = config.oneDriveConfig.contracts.oneDriveId;
+  const contractFolderId = config.oneDriveConfig.contracts.folderId;
+  config.oneDriveConfig = {
+  "isActive": contractIsActive,
+  "contracts": {
+    "oneDriveId": contractOneDriveId,
+    "folderId": contractFolderId,
+  },
+  "providers": {
+    "oneDriveId": '',
+    "folderId": ''
+  }
+  }
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

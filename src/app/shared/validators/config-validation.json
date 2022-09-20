@@ -3,8 +3,54 @@
     "required": true,
     "minLength": 2
   },
+  "adminExpenseType": {
+    "required": true,
+    "readonly": true
+  },
+  "adminExpenseSubType": {
+    "required": true
+  },
+  "address": {
+    "required": true
+  },
+  "cnpj": {
+    "required": true
+  },
+  "contractExpenseType": {
+    "required": true,
+    "readonly": true
+  },
+  "contractExpenseSubType": {
+    "required": true
+  },
+  "companyName": {
+    "required": true
+  },
   "document": {
     "required": true,
     "minLength": 18
+  },
+  "nfPercentage": {
+    "required": true
+  },
+  "oneDriveId": {
+    "required": true
+  },
+  "oneDriveFolderId": {
+    "required": true
+  },
+  "orgPercentage": {
+    "required": true
+  },
+  "permissionType": {
+    "required": true
+  },
+  "roleTypeName": {
+    "required": true,
+    "readonly": true
+  },
+  "levels": {
+    "required": true,
+    "readonly": true
   }
 }
