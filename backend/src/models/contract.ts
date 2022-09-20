@@ -3,6 +3,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { StatusHistory } from './baseStatusHistory';
 import { Invoice } from './invoice';
+import { Provider } from './provider';
 import { Sector, UploadedFile } from './shared';
 import { User } from './user';
 
@@ -50,6 +51,9 @@ export class ContractExpense {
 
   @prop({ required: true, ref: () => User })
   source!: Ref<User>;
+
+  @prop({ required: true, ref: () => Provider })
+  provider?: Ref<Provider>;
 
   @prop({ required: true })
   description!: string;

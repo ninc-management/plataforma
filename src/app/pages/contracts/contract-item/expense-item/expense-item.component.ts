@@ -9,6 +9,7 @@ import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.servi
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
@@ -119,11 +120,12 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     private notificationService: NotificationService,
     protected onedrive: OneDriveService,
     protected stringUtil: StringUtilService,
+    protected providerService: ProviderService,
     public configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService
   ) {
-    super(stringUtil, onedrive, userService);
+    super(stringUtil, onedrive, providerService, userService);
   }
 
   ngOnDestroy(): void {
@@ -181,6 +183,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       this.expense = cloneDeep(this.contract.expenses[this.expenseIndex]);
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
+      if (this.expense.provider) this.expense.provider = this.providerService.idToProvider(this.expense.provider);
 
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
@@ -215,6 +218,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
     this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
     this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
+    this.providerSearch = this.expense.provider
+      ? this.providerService.idToProvider(this.expense.provider)?.fullName
+      : '';
 
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
       if (this.splitSelectedMember._id == undefined)

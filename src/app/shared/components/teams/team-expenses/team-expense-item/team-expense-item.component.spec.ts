@@ -46,6 +46,10 @@ describe('TeamExpenseItemComponent', () => {
     const reqConfig = httpMock.expectOne('/api/config/all');
     expect(reqConfig.request.method).toBe('POST');
     reqConfig.flush(mockedConfigs);
+
+    const reqProvider = httpMock.expectOne('/api/provider/all');
+    expect(reqProvider.request.method).toBe('POST');
+    reqProvider.flush([]);
   });
 
   afterEach(() => {

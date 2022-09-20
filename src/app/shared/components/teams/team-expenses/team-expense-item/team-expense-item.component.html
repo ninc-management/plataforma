@@ -214,6 +214,39 @@
       </div>
     </div>
     <div class="col-12">
+        <div class="form-group">
+          <label class="label" for="input-provider">Fornecedor:</label>
+          <nb-completer
+            [(ngModel)]="providerSearch"
+            (selected)="expense.provider = $event; forceValidatorUpdate(value)"
+            inputName="providerListCompleter"
+            #providerList="ngModel"
+            id="input-provider"
+            name="providerList"
+            placeholder="Digite e selecione o nome do fornecedor"
+            textNoResults="
+          Não foi possível achar um fornecedor com o nome digitado
+          "
+            fieldSize="large"
+            nameField="fullName"
+            pictureField="profilePicture"
+            [data$]="providerData"
+            [minSearchLength]="0"
+            [fullWidth]="true"
+            [status]="
+              providerList.dirty
+                ? providerList.invalid
+                  ? 'danger'
+                  : 'success'
+                : expenseIdx === undefined && providerSearch !== ''
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="providerList.invalid && providerList.touched ? true : null"
+          ></nb-completer>
+        </div>
+      </div>
+    <div class="col-12">
       <div class="form-control-group">
         <label class="label" for="input-description">Descrição:</label>
         <textarea

@@ -1,6 +1,7 @@
 import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
+import { Provider } from './provider';
 import { Sector, UploadedFile } from './shared';
 import { User } from './user';
 
@@ -40,6 +41,9 @@ export class TeamExpense {
 
   @prop({ required: true, ref: () => User })
   source!: Ref<User>;
+
+  @prop({ required: true, ref: () => Provider })
+  provider?: Ref<Provider>;
 
   @prop({ required: true })
   description!: string;

@@ -9,10 +9,11 @@ import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
-import { compareFiles, formatDate } from 'app/shared/utils';
+import { compareFiles, forceValidatorUpdate, formatDate } from 'app/shared/utils';
 
 import { Team, TeamExpense } from '@models/team';
 import { User } from '@models/user';
@@ -48,15 +49,17 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   folderPath: string = '';
 
   formatDate = formatDate;
+  forceValidatorUpdate = forceValidatorUpdate;
 
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
+    protected providerService: ProviderService,
     public configService: ConfigService,
     public teamService: TeamService,
     public userService: UserService
   ) {
-    super(stringUtil, onedrive, userService);
+    super(stringUtil, onedrive, providerService, userService);
     this.expense.code = '#0';
   }
 
@@ -81,6 +84,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       this.expense = cloneDeep(this.iTeam.expenses[this.expenseIdx]);
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
+      if (this.expense.provider) this.expense.provider = this.providerService.idToProvider(this.expense.provider);
       this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       this.handleTypeChange();
       this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFile[];
@@ -94,6 +98,9 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
     this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
     this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
+    this.providerSearch = this.expense.provider
+      ? this.providerService.idToProvider(this.expense.provider)?.fullName
+      : '';
 
     this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
       if (status === 'VALID' && this.expense.nf === true)
