@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@a
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { ContractService } from 'app/shared/services/contract.service';
 import { isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -45,7 +44,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor(private contractService: ContractService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);
@@ -61,7 +60,6 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   }
 
   recalculateValues() {
-    this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
     this.recalculateEvent$.next();
   }
 }
