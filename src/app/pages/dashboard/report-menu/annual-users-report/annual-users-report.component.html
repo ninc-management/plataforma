@@ -1,0 +1,59 @@
+<label class="label" for="input-grouping-type">Selecione o tipo de agrupamento dos dados</label>
+<nb-radio-group
+  [(ngModel)]="selectedGroupingType"
+  #groupingTypeSelector="ngModel"
+  id="input-grouping-type"
+  name="groupingType"
+  style="display: flex"
+>
+  <nb-radio [value]="groupingTypes.USER">{{ groupingTypes.USER }}</nb-radio>
+  <nb-radio [value]="groupingTypes.SECTOR">{{ groupingTypes.SECTOR }}</nb-radio>
+</nb-radio-group>
+<div class="row">
+  <div class="col-6">
+    <label class="label" for="input-report-type">Selecione o tipo do relatório anual</label>
+    <nb-select
+      [(ngModel)]="selectedReportType"
+      #reportTypeSelector="ngModel"
+      id="input-report-type"
+      name="reportTypeSelector"
+      placeholder="Selecione o tipo do relatório anual"
+      fullWidth
+      size="large"
+      [required]="true"
+      [status]="reportTypeSelector.dirty ? (reportTypeSelector.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="reportTypeSelector.invalid && reportTypeSelector.touched ? true : null"
+    >
+      <nb-option *ngFor="let reportType of avaliableReportTypes" [value]="reportType">{{ reportType }}</nb-option>
+    </nb-select>
+  </div>
+  <div class="col-6">
+    <label class="label" for="input-year-selector">Selecione o ano</label>
+    <nb-select
+      [(ngModel)]="selectedYear"
+      #yearSelector="ngModel"
+      id="input-year-selector"
+      name="yearSelector"
+      placeholder="Selecione o ano"
+      fullWidth
+      size="large"
+      [required]="true"
+      [status]="yearSelector.dirty ? (yearSelector.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="yearSelector.invalid && yearSelector.touched ? true : null"
+    >
+      <nb-option *ngFor="let year of avaliableYears" [value]="year">{{ year }}</nb-option>
+    </nb-select>
+  </div>
+</div>
+<button class="stepper-button" status="warning" size="large" nbButton nbStepperPrevious>Voltar</button>
+<button
+  class="stepper-button"
+  status="success"
+  size="large"
+  nbButton
+  nbStepperNext
+  (click)="downloadReport()"
+  [disabled]="shouldDisableDownloadButton()"
+>
+  Gerar relatório
+</button>

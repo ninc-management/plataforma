@@ -63,7 +63,7 @@ import { TeamDialogComponent } from './teams/team-dialog/team-dialog.component';
 import { TeamItemComponent } from './teams/team-item/team-item.component';
 import { TeamsComponent } from './teams/teams.component';
 import { UserDialogComponent } from './users/user-dialog/user-dialog.component';
-import { ReportConfigDialogComponent, UsersComponent } from './users/users.component';
+import { UsersComponent } from './users/users.component';
 import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
 
 @NgModule({
@@ -121,7 +121,6 @@ import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-tabl
     CourseDialogComponent,
     CoursesComponent,
     ParticipantItemComponent,
-    ReportConfigDialogComponent,
     ResourceItemComponent,
     ManagementTabComponent,
     ChecklistItemDialogComponent,

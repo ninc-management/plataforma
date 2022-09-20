@@ -2,16 +2,14 @@ import { ElementRef } from '@angular/core';
 
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { codeSort, formatDate, idToProperty } from './utils';
-import { ReportValue } from 'app/pages/users/users.component';
+import {
+  GROUPING_TYPES,
+  ReportValue,
+} from 'app/pages/dashboard/report-menu/annual-users-report/annual-users-report.component';
 
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared';
 import { User } from '@models/user';
-
-enum GROUP_BY {
-  USER = 'Usuário',
-  SECTOR = 'Setor',
-}
 
 interface ExpensesData {
   expenses: ContractExpense[];
@@ -62,7 +60,7 @@ export function generateExpensesReport(contract: Contract): string {
 
 export function generateUsersReport(
   data: Record<string, ReportValue>,
-  groupBy: GROUP_BY,
+  groupBy: GROUPING_TYPES,
   userRevival: (id: string | User) => User,
   sectorRevival: (id: string | Sector | undefined) => string
 ): string {
@@ -96,7 +94,7 @@ export function generateUsersReport(
   ];
   let csv = header.join(';');
   csv += '\r\n';
-  csv += groupBy == GROUP_BY.USER ? 'Associados;' : 'Setores;';
+  csv += groupBy == GROUPING_TYPES.USER ? 'Associados;' : 'Setores;';
   for (let i = 0; i < 12; i++) {
     csv += monthlySubHeader.join(';') + ';';
   }
@@ -104,7 +102,7 @@ export function generateUsersReport(
   csv += '\r\n';
 
   for (const key of Object.keys(data)) {
-    csv += (groupBy == GROUP_BY.USER ? idToProperty(key, userRevival, 'fullName') : sectorRevival(key)) + ';';
+    csv += (groupBy == GROUPING_TYPES.USER ? idToProperty(key, userRevival, 'fullName') : sectorRevival(key)) + ';';
     data[key].monthly_data.forEach((individualData: any) => {
       csv += individualData.received + ';';
       csv += individualData.expenses + ';';
