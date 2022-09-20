@@ -9,7 +9,7 @@
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
     <ngx-management-tab
-      [contract]="contract"
+      [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
       [isFormDirty]="isFormDirty"
     ></ngx-management-tab>

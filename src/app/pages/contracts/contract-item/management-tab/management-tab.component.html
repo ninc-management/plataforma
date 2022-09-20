@@ -19,7 +19,7 @@
                 <label class="label" for="contract-code">Código do Contrato:</label>
                 <input
                   nbInput
-                  [ngModel]="contract.locals.code"
+                  [ngModel]="clonedContract.locals.code"
                   name="contract-code"
                   fullWidth
                   fieldSize="large"
@@ -32,7 +32,7 @@
                 <label class="label" for="contractor">Cliente:</label>
                 <input
                   nbInput
-                  [ngModel]="contract.locals.contractor"
+                  [ngModel]="clonedContract.locals.contractor"
                   name="contractor"
                   fullWidth
                   fieldSize="large"
@@ -69,7 +69,7 @@
                 <label class="label" for="start-date">Início:</label>
                 <input
                   nbInput
-                  [ngModel]="[contract.created] | transformPipe: formatDate"
+                  [ngModel]="[clonedContract.created] | transformPipe: formatDate"
                   name="start-date"
                   fullWidth
                   fieldSize="large"
@@ -131,7 +131,7 @@
               <div class="form-control-group">
                 <label class="label" for="management-status">Status de gestão:</label>
                 <nb-select
-                  [(ngModel)]="contract.managementStatus"
+                  [(ngModel)]="clonedContract.managementStatus"
                   #managementStatus="ngModel"
                   id="management-status"
                   name="management-status"
@@ -154,7 +154,7 @@
                 <label class="label" for="management-notes">Observações:</label>
                 <textarea
                   nbInput
-                  [(ngModel)]="contract.managementNotes"
+                  [(ngModel)]="clonedContract.managementNotes"
                   id="management-notes"
                   name="management-notes"
                   fullWidth
@@ -253,12 +253,12 @@
             </div>
           </div>
           <nb-list class="row overflow-hidden py-3">
-            <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of contract.checklist; let i = index">
+            <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of clonedContract.checklist; let i = index">
               <div class="row w-100">
                 <div class="col-3">
                   <input
                     nbInput
-                    [(ngModel)]="contract.checklist[i].name"
+                    [(ngModel)]="clonedContract.checklist[i].name"
                     #nameInput="ngModel"
                     id="item-name-{{ i }}"
                     name="item-name-{{ i }}"
@@ -272,7 +272,7 @@
                 <div class="col-2">
                   <input
                     nbInput
-                    [(ngModel)]="contract.checklist[i].range"
+                    [(ngModel)]="clonedContract.checklist[i].range"
                     #rangeInput="ngModel"
                     id="item-range-{{ i }}"
                     name="item-range-{{ i }}"
@@ -289,7 +289,7 @@
                   <input
                     nbInput
                     [ngModel]="
-                      [contract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                      [clonedContract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
                         | transformPipe: idToProperty
                     "
                     #assignee="ngModel"
@@ -302,7 +302,7 @@
                 </div>
                 <div class="col-2">
                   <nb-select
-                    [(ngModel)]="contract.checklist[i].status"
+                    [(ngModel)]="clonedContract.checklist[i].status"
                     #statusInput="ngModel"
                     id="item-status-{{ i }}"
                     name="item-status-{{ i }}"
@@ -339,13 +339,13 @@
               <div class="row w-100">
                 <div class="col-12 mt-3">
                   <nb-progress-bar
-                    [status]="[contract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
+                    [status]="[clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
                     [class]="
-                      'progress-border ' + ([contract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))
+                      'progress-border ' + ([clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))
                     "
                     [size]="'tiny'"
                     [displayValue]="true"
-                    [value]="[contract.checklist[i]] | transformPipe: percentualItemProgress.bind(this)"
+                    [value]="[clonedContract.checklist[i]] | transformPipe: percentualItemProgress.bind(this)"
                   ></nb-progress-bar>
                 </div>
               </div>
@@ -456,7 +456,7 @@
     <ngx-gantt-chart
       *ngIf="actionsData.length > 0; else emptyChecklistAlert"
       [taskData]="actionsData"
-      [contract]="contract"
+      [contract]="clonedContract"
     ></ngx-gantt-chart>
     <ng-template #emptyChecklistAlert>
       <div class="emptyChecklistAlert">
