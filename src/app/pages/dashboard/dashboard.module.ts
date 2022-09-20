@@ -27,6 +27,7 @@ import { MetricItemComponent } from './metric-item/metric-item.component';
 import { ProgressSectionComponent } from './progress-section/progress-section.component';
 import { ReportMenuDialogComponent } from './report-menu-dialog/report-menu-dialog.component';
 import { AnnualUsersReportComponent } from './report-menu/annual-users-report/annual-users-report.component';
+import { ContractExpensesReportComponent } from './report-menu/contract-expenses-report/contract-expenses-report.component';
 import { OngoingContractsReportComponent } from './report-menu/ongoing-contracts-report/ongoing-contracts-report.component';
 import { ReportMenuComponent } from './report-menu/report-menu.component';
 import { ReceivablesDialogComponent } from './user-receivables/receivables-dialog/receivables-dialog.component';
@@ -76,6 +77,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     ReportMenuComponent,
     OngoingContractsReportComponent,
     AnnualUsersReportComponent,
+    ContractExpensesReportComponent,
   ],
 })
 export class DashboardModule {}

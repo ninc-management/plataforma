@@ -1,0 +1,54 @@
+<nb-smart-table
+  #smartTable
+  *ngIf="!isPhone(); else phone"
+  [settings]="settings"
+  [source]="source"
+  (edit)="downloadExpensesReport($event.data)"
+></nb-smart-table>
+<ng-template #phone>
+  <div class="row">
+    <div class="col-12">
+      <input
+        nbInput
+        [(ngModel)]="searchQuery"
+        #search="ngModel"
+        id="input-search"
+        name="search"
+        placeholder="Busque aqui..."
+        fullWidth
+        fieldSize="large"
+      />
+    </div>
+  </div>
+  <nb-list>
+    <nb-list-item *ngFor="let contract of contracts; let i = index">
+      <div class="row" style="width: 100%">
+        <a (click)="downloadExpensesReport(contract)">
+          <div class="row">
+            <div class="col-12" style="margin-bottom: 10px">
+              <nb-user
+                size="giant"
+                [name]="contract.locals.name"
+                [title]="contract.locals.code"
+                [picture]="this.invoiceService.idToProfilePicture(contract.invoice)"
+              ></nb-user>
+            </div>
+            <div class="col-12">
+              <p>
+                <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+                <span style="vertical-align: 0.1em">
+                  {{ contract.locals.value }}
+                </span>
+              </p>
+            </div>
+            <div class="col-12">
+              <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
+              {{ contract.locals.contractor }}
+            </div>
+          </div>
+        </a>
+      </div>
+    </nb-list-item>
+  </nb-list>
+</ng-template>
+<button class="stepper-button" status="warning" size="large" nbButton fullWidth nbStepperPrevious>Voltar</button>
