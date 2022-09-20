@@ -29,7 +29,7 @@
       <p>
         <b>
           {{
-            [stringUtil.removePercentage(contract.locals.value, contract.ISS), contract]
+            [stringUtil.removePercentage(clonedContract.locals.value, clonedContract.ISS), clonedContract]
               | transformPipe: contractService.subtractComissions.bind(contractService)
           }}
         </b>
@@ -40,7 +40,7 @@
     <div class="form-control-group">
       <label class="label" for="input-liquid">Líquido a receber</label>
       <p>
-        <b>{{ contract.locals.liquid }}</b>
+        <b>{{ clonedContract.locals.liquid }}</b>
       </p>
     </div>
   </div>
@@ -56,7 +56,7 @@
     <div class="form-control-group">
       <label class="label" for="input-value">Saldo do contrato</label>
       <p>
-        <b>{{ contract.locals.notPaid }}</b>
+        <b>{{ clonedContract.locals.notPaid }}</b>
       </p>
     </div>
   </div>
@@ -90,7 +90,7 @@
           <div class="col-md-3">
             {{
               [
-                contractService.netValueBalance(member.distribution, contract, member.user),
+                contractService.netValueBalance(member.distribution, clonedContract, member.user),
                 options.notaFiscal,
                 options.nortanPercentage
               ] | transformPipe: contractService.toGrossValue.bind(contractService)
@@ -98,32 +98,32 @@
           </div>
           <div class="col-md-3">
             {{
-              [member.distribution, contract, member.user]
+              [member.distribution, clonedContract, member.user]
                 | transformPipe: contractService.netValueBalance.bind(contractService)
             }}
           </div>
           <div class="col-md-3">
             {{
-              [member.distribution, member.user, contract]
+              [member.distribution, member.user, clonedContract]
                 | transformPipe: contractService.percentageToReceive.bind(contractService)
             }}
           </div>
           <div class="col-md-3">
-            {{ [member.user, contract] | transformPipe: contractService.receivedValue.bind(contractService) }}
+            {{ [member.user, clonedContract] | transformPipe: contractService.receivedValue.bind(contractService) }}
           </div>
         </div>
         <div class="col-md-4 d-flex">
           <div class="col-md-4">
             {{
-              [member.distribution, member.user, contract]
+              [member.distribution, member.user, clonedContract]
                 | transformPipe: contractService.notPaidValue.bind(contractService)
             }}
           </div>
           <div class="col-md-4">
-            {{ [member.user, contract] | transformPipe: contractService.getMemberExpensesSum.bind(contractService) }}
+            {{ [member.user, clonedContract] | transformPipe: contractService.getMemberExpensesSum.bind(contractService) }}
           </div>
           <div class="col-md-4">
-            {{ [member.user, contract] | transformPipe: contractService.getMemberBalance.bind(contractService) }}
+            {{ [member.user, clonedContract] | transformPipe: contractService.getMemberBalance.bind(contractService) }}
           </div>
         </div>
       </div>
@@ -136,11 +136,11 @@
       <label class="label" for="input-balance">Caixa:</label>
       <p
         [ngClass]="{
-          success: contract.locals.balance[0] != '-',
-          danger: contract.locals.balance[0] == '-'
+          success: clonedContract.locals.balance[0] != '-',
+          danger: clonedContract.locals.balance[0] == '-'
         }"
       >
-        {{ contract.locals.balance }}
+        {{ clonedContract.locals.balance }}
       </p>
     </div>
   </div>
@@ -165,7 +165,7 @@
   <div class="col-md">
     <div class="form-control-group">
       <label class="label" for="input-total">Parcelas totais:</label>
-      <p>{{ contract.total }}</p>
+      <p>{{ clonedContract.total }}</p>
     </div>
   </div>
 </div>
@@ -193,7 +193,7 @@
           <nb-list style="width: 100%; padding: 10px 0; text-align: center">
             <nb-list-item
               *ngFor="
-                let expense of this.contractService.expenseTypesSum(false, contract) | async;
+                let expense of this.contractService.expenseTypesSum(false, clonedContract) | async;
                 let i = index;
                 trackBy: trackByIndex
               "
@@ -231,7 +231,7 @@
           <nb-list style="width: 100%; padding: 10px 0; text-align: center">
             <nb-list-item
               *ngFor="
-                let expense of contractService.expenseTypesSum(true, contract) | async;
+                let expense of contractService.expenseTypesSum(true, clonedContract) | async;
                 let i = index;
                 trackBy: trackByIndex
               "

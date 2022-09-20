@@ -15,7 +15,7 @@
     ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
-    <ngx-balance-tab [contract]="contract" [recalculateEvent$]="recalculateEvent$"></ngx-balance-tab>
+    <ngx-balance-tab [clonedContract]="clonedContract" [recalculateEvent$]="recalculateEvent$"></ngx-balance-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
