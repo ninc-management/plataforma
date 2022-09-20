@@ -70,14 +70,14 @@ export class OneDriveService implements OnDestroy {
   }
 
   oneDriveURI(): string {
-    if (this.config.oneDriveConfig.oneDriveId && this.config.oneDriveConfig.folderId) {
+    if (this.config.oneDriveConfig.contracts.oneDriveId && this.config.oneDriveConfig.contracts.folderId) {
       const URI =
         environment.onedriveUri +
-        this.config.oneDriveConfig.oneDriveId.toLowerCase() +
+        this.config.oneDriveConfig.contracts.oneDriveId.toLowerCase() +
         '/items/' +
-        this.config.oneDriveConfig.oneDriveId.toUpperCase() +
+        this.config.oneDriveConfig.contracts.oneDriveId.toUpperCase() +
         '!' +
-        this.config.oneDriveConfig.folderId +
+        this.config.oneDriveConfig.contracts.folderId +
         ':/';
 
       return URI;
@@ -102,8 +102,9 @@ export class OneDriveService implements OnDestroy {
             },
             name: this.generateFolderName(invoice),
           };
-          if (this.config.oneDriveConfig.oneDriveId) {
-            const copyURI = environment.onedriveUri + this.config.oneDriveConfig.oneDriveId.toLowerCase() + '/items/';
+          if (this.config.oneDriveConfig.contracts.oneDriveId) {
+            const copyURI =
+              environment.onedriveUri + this.config.oneDriveConfig.contracts.oneDriveId.toLowerCase() + '/items/';
 
             this.http
               .post(copyURI + metadata.id + '/copy', body)
@@ -180,9 +181,13 @@ export class OneDriveService implements OnDestroy {
   }
 
   createLinkURI(id: string): string {
-    if (this.config.oneDriveConfig.oneDriveId && this.config.oneDriveConfig.folderId) {
+    if (this.config.oneDriveConfig.contracts.oneDriveId && this.config.oneDriveConfig.contracts.folderId) {
       return (
-        environment.onedriveUri + this.config.oneDriveConfig.oneDriveId.toLowerCase() + '/items/' + id + '/createLink'
+        environment.onedriveUri +
+        this.config.oneDriveConfig.contracts.oneDriveId.toLowerCase() +
+        '/items/' +
+        id +
+        '/createLink'
       );
     }
 

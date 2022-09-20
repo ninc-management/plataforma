@@ -125,15 +125,23 @@ export class ModulesConfig {
   hasCourse: boolean = true;
 }
 
-export class OneDriveConfig {
-  @prop({ required: true })
-  isActive: boolean = false;
-
+export class OneDriveFolderConfig {
   @prop()
   oneDriveId?: string;
 
   @prop()
   folderId?: string;
+}
+
+export class OneDriveConfig {
+  @prop({ required: true })
+  isActive: boolean = false;
+
+  @prop()
+  contracts: OneDriveFolderConfig = new OneDriveFolderConfig();
+
+  @prop()
+  providers: OneDriveFolderConfig = new OneDriveFolderConfig();
 }
 
 export class NotificationConfigTuple {

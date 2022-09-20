@@ -62,7 +62,8 @@
                 name="expense-type-{{ i }}"
                 fullWidth
                 [status]="adminExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
-                [readonly]="true"
+                [readonly]="validation.adminExpenseType.readonly"
+                [required]="validation.adminExpenseType.required"
               />
               <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
                 <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
@@ -77,7 +78,7 @@
                         fullWidth
                         [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
                         [readonly]="!eType.subTypes[j].isNew"
-                        [required]="true"
+                        [required]="validation.adminExpenseSubType.required"
                       />
                     </div>
                     <div class="col-2 col-md-1" style="text-align: right">
@@ -190,7 +191,8 @@
                   name="expense-type-{{ i }}"
                   fullWidth
                   [status]="contractExpenseTypes[i].name.length == 0 ? 'danger' : 'basic'"
-                  [readonly]="true"
+                  [readonly]="validation.contractExpenseType.readonly"
+                  [required]="validation.contractExpenseType.required"
                 />
                 <nb-list class="subtypes-list" *ngIf="eType.subTypes.length > 0">
                   <nb-list-item *ngFor="let subType of eType.subTypes; let j = index; trackBy: trackByIndex">
@@ -205,7 +207,7 @@
                           fullWidth
                           [status]="eType.subTypes[j].name.length == 0 ? 'danger' : 'basic'"
                           [readonly]="!eType.subTypes[j].isNew"
-                          [required]="true"
+                          [required]="validation.contractExpenseSubType.required"
                         />
                       </div>
                       <div class="col-2 col-md-1" style="text-align: right">
@@ -264,7 +266,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -445,6 +447,7 @@
                     [status]="
                       supportOrgPercentage.dirty ? (supportOrgPercentage.invalid ? 'danger' : 'success') : 'basic'
                     "
+                    [required]="validation.orgPercentage.required"
                     [attr.aria-invalid]="supportOrgPercentage.invalid && supportOrgPercentage.touched ? true : null"
                   />
                 </div>
@@ -469,6 +472,7 @@
                     [status]="
                       supportNfPercentage.dirty ? (supportNfPercentage.invalid ? 'danger' : 'success') : 'basic'
                     "
+                    [required]="validation.nfPercentage.required"
                     [attr.aria-invalid]="supportNfPercentage.invalid && supportNfPercentage.touched ? true : null"
                   />
                 </div>
@@ -507,6 +511,7 @@
                           : 'success'
                         : 'basic'
                     "
+                    [required]="validation.orgPercentage.required"
                     [attr.aria-invalid]="
                       intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null
                     "
@@ -537,6 +542,7 @@
                           : 'success'
                         : 'basic'
                     "
+                    [required]="validation.nfPercentage.required"
                     [attr.aria-invalid]="
                       intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null
                     "
@@ -631,7 +637,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -769,8 +775,8 @@
                     placeholder="Nome do tipo de papel"
                     fullWidth
                     [status]="!position.roleTypeName ? 'danger' : 'basic'"
-                    [required]="true"
-                    [readonly]="true"
+                    [required]="validation.roleTypeName.required"
+                    [readonly]="validation.roleTypeName.readyonly"
                   />
                 </div>
                 <div class="col-9 col-lg-4" style="margin-left: 5px">
@@ -782,6 +788,7 @@
                     placeholder="Selecione a permissão"
                     fullWidth
                     [status]="!position.permission ? 'danger' : 'basic'"
+                    [required]="validation.permissionType.required"
                   >
                     <nb-option *ngFor="let pType of PERMISSIONS" [value]="pType">{{ pType }}</nb-option>
                   </nb-select>
@@ -856,8 +863,8 @@
                     name="level-type-{{ i }}"
                     fullWidth
                     [status]="clonedConfig.profileConfig.levels[i].length == 0 ? 'danger' : 'basic'"
-                    [required]="true"
-                    [readonly]="true"
+                    [required]="validation.levels.required"
+                    [readonly]="validation.levels.readyonly"
                   />
                 </div>
                 <div class="col-2">
@@ -886,7 +893,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -917,6 +924,7 @@
                 placeholder="Digite o nome da empresa"
                 fullWidth
                 fieldSize="large"
+                [required]="validation.companyName.required"
                 [status]="companyName.value ? 'success' : 'basic'"
                 [attr.aria-invalid]="companyName.invalid && companyName.touched ? true : null"
               />
@@ -946,6 +954,7 @@
               placeholder="Av. Dr. Antônio Gouveia, 549 - Pajuçara, Maceió - AL, 57030-170"
               fullWidth
               fieldSize="large"
+              [required]="validation.address.required"
               [status]="address.value ? 'success' : 'basic'"
               [attr.aria-invalid]="address.invalid && address.touched ? true : null"
             />
@@ -967,6 +976,7 @@
               fieldSize="large"
               [brmasker]="{ person: true }"
               ngxSelectAllText
+              [required]="validation.cnpj.required"
               [minlength]="validation.document.minLength"
               [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="document.invalid && document.touched ? true : null"
@@ -1137,7 +1147,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -1187,7 +1197,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -1195,7 +1205,7 @@
     </form>
   </nb-tab>
   <nb-tab tabId="onedrive-tab" [tabTitle]="isPhone() ? '' : 'OneDrive'" [tabIcon]="onedriveIcon" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #onedriveConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="toggle-list col-12 col-lg-auto">
           <div class="form-control-group">
@@ -1209,6 +1219,7 @@
                       #toggleoneDrive="ngModel"
                       name="toggle-onedrive"
                       labelPosition="start"
+                      required =true
                     ></nb-toggle>
                   </td>
                 </tr>
@@ -1219,7 +1230,7 @@
         <div class="col-12 col-lg">
           <div class="row">
             <div class="col-auto">
-              <label class="label-divider">Pasta compartilhada</label>
+              <label class="label-divider">Pasta compartilhada contratos</label>
             </div>
             <div class="col">
               <hr />
@@ -1247,15 +1258,18 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.oneDriveId"
-                  #oneDriveId="ngModel"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.contracts.oneDriveId"
+                  #oneDriveIdOfContracts="ngModel"
                   id="input-onedrive-id"
-                  name="oneDriveId"
+                  name="oneDriveIdOfContracts"
                   placeholder="Id do OneDrive"
                   fullWidth
                   fieldSize="large"
-                  [status]="oneDriveId.dirty ? (oneDriveId.invalid ? 'danger' : 'success') : 'basic'"
-                  [attr.aria-invalid]="oneDriveId.invalid && oneDriveId.touched ? true : null"
+                  [required]="validation.oneDriveId.required"
+                  [status]="
+                    oneDriveIdOfContracts.dirty ? (oneDriveIdOfContracts.invalid ? 'danger' : 'success') : 'basic'
+                  "
+                  [attr.aria-invalid]="oneDriveIdOfContracts.invalid && oneDriveIdOfContracts.touched ? true : null"
                   [disabled]="!toggleoneDrive.value"
                 />
               </div>
@@ -1281,15 +1295,98 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.folderId"
-                  #folderId="ngModel"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.contracts.folderId"
+                  #folderIdOfContracts="ngModel"
                   id="input-folder-id"
-                  name="folderId"
+                  name="folderIdOfContracts"
                   fullWidth
                   fieldSize="large"
                   placeholder="id da pasta compatilhada"
-                  [status]="folderId.dirty ? (folderId.invalid ? 'danger' : 'success') : 'basic'"
-                  [attr.aria-invalid]="folderId.invalid && folderId.touched ? true : null"
+                  [required]="validation.oneDriveFolderId.required"
+                  [status]="folderIdOfContracts.dirty ? (folderIdOfContracts.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="folderIdOfContracts.invalid && folderIdOfContracts.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-auto">
+              <label class="label-divider">Pasta compartilhada fornecedores</label>
+            </div>
+            <div class="col">
+              <hr />
+            </div>
+          </div>
+          <div class="row" style="align-items: end">
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-onedrive-id">
+                  Id do OneDrive
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o Onedrive;
+2-Vá no menu dos itens compartilhados;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id do OneDrive está na posição dos valores AAAAAAAAAAAAAA."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.oneDriveId"
+                  #oneDriveIdOfProviders="ngModel"
+                  id="input-onedrive-id"
+                  name="oneDriveIdOfProviders"
+                  placeholder="Id do OneDrive"
+                  fullWidth
+                  fieldSize="large"
+                  [required]="validation.oneDriveId.required"
+                  [status]="
+                    oneDriveIdOfProviders.dirty ? (oneDriveIdOfProviders.invalid ? 'danger' : 'success') : 'basic'
+                  "
+                  [attr.aria-invalid]="oneDriveIdOfProviders.invalid && oneDriveIdOfProviders.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
+                />
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-folder-id">
+                  Id da pasta compartilhada
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do onedrive:
+1-Abra o Onedrive;
+2-Vá no menu dos itens compartilhados da esquerda;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores BBBBB."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.folderId"
+                  #folderIdOfProviders="ngModel"
+                  id="input-folder-id"
+                  name="folderIdOfProviders"
+                  fullWidth
+                  fieldSize="large"
+                  placeholder="id da pasta compatilhada"
+                  [required]="validation.oneDriveFolderId.required"
+                  [status]="folderIdOfProviders.dirty ? (folderIdOfProviders.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="folderIdOfProviders.invalid && folderIdOfProviders.touched ? true : null"
                   [disabled]="!toggleoneDrive.value"
                 />
               </div>
@@ -1308,7 +1405,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
@@ -1555,7 +1652,7 @@
           !profileConfigForm.valid ||
           !socialConfigForm.valid ||
           !moduleConfigForm.valid ||
-          (toggleoneDrive.value && (!folderId.value || !oneDriveId.value))
+          !onedriveConfigForm.valid
         "
       >
         Atualizar
