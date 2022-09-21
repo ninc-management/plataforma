@@ -30,9 +30,9 @@ export enum SPLIT_TYPES {
 export enum CONTRACT_STATOOS {
   EM_ANDAMENTO = 'Em andamento',
   A_RECEBER = 'A receber',
-  FINALIZADO = 'Finalizado',
   CONCLUIDO = 'Concluído',
   ARQUIVADO = 'Arquivado',
+  ENTREGUE = 'Entregue',
 }
 
 export enum AVALIABLE_MANAGEMENT_STATUS {
@@ -133,13 +133,15 @@ export class ContractService implements OnDestroy {
       contract: contract,
     };
     const history = cloneDeep(contract.statusHistory);
-    const isMoved = history.splice(0, history.length - 1).find((el: StatusHistoryItem) => el.status === 'Concluído');
+    const isMoved = history
+      .splice(0, history.length - 1)
+      .find((el: StatusHistoryItem) => el.status === CONTRACT_STATOOS.CONCLUIDO);
     this.http
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
         this.edited$.next();
-        if (contract.status === 'Concluído' && !isMoved && isOfType(Invoice, contract.invoice))
+        if (contract.status === CONTRACT_STATOOS.CONCLUIDO && !isMoved && isOfType(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
   }

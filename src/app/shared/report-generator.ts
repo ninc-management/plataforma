@@ -80,7 +80,7 @@ export function generateUsersReport(
     'Dezembro;;;;',
     'Resumos;;;;;;;;',
   ];
-  const monthlySubHeader = ['Recebido', 'Despesas', 'Orçamentos Passados', 'Contratos Fechado', 'Contrato Finalizados'];
+  const monthlySubHeader = ['Recebido', 'Despesas', 'Orçamentos Passados', 'Contratos Fechado', 'Contrato Entregues'];
   const overviewSubHeader = [
     'Total Recebido',
     'Total Despesas',
@@ -89,8 +89,8 @@ export function generateUsersReport(
     'Total Orçamentos Equipe',
     'Total Contratos Gestor',
     'Total Contratos Equipe',
-    'Total Contrato Finalizados Gestor',
-    'Total Contrato Finalizados Equipe',
+    'Total Contrato Entregues Gestor',
+    'Total Contrato Entregues Equipe',
   ];
   let csv = header.join(';');
   csv += '\r\n';
