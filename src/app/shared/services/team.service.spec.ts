@@ -119,6 +119,7 @@ fdescribe('TeamService', () => {
 
     tmpTeam.sectors = [];
     const testSector = new Sector();
+    testSector._id = '0';
     testSector.name = 'Test Sector 1';
     testSector.abrev = 'TS1';
     tmpTeam.sectors.push(cloneDeep(testSector));
@@ -226,6 +227,13 @@ fdescribe('TeamService', () => {
     expect(service.idToTeam('0')).toEqual(expectedTeams[0]);
     expect(service.idToTeam('1')).toEqual(expectedTeams[1]);
     expect(service.idToTeam(expectedTeams[0])).toEqual(expectedTeams[0]);
+  });
+
+  baseTest('idToSector should work', (expectedTeams: Team[]) => {
+    const sectorToTest = expectedTeams[0].sectors[0];
+    expect(service.idToSector(undefined)).toEqual(new Sector());
+    expect(service.idToSector(sectorToTest)).toEqual(sectorToTest);
+    expect(service.idToSector('0')).toEqual(sectorToTest);
   });
 
   baseTest('isMember should work', (expectedTeams: Team[]) => {
