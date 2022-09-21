@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { TeamService } from './team.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { Team, TeamMember } from '@models/team';
+import { Team, TeamConfig, TeamMember } from '@models/team';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { AuthService } from 'app/auth/auth.service';
@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
+import { reviveDates } from '../utils';
 
 describe('TeamService', () => {
   let service: TeamService;
@@ -42,10 +42,7 @@ describe('TeamService', () => {
               break;
             }
             case 2: {
-              const expectedTeams = JSON.parse(JSON.stringify(mockedTeams), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Team[];
+              const expectedTeams = reviveDates(mockedTeams) as Team[];
               expect(teams.length).toBe(1);
               expect(teams).toEqual(expectedTeams);
               test(expectedTeams);
@@ -75,46 +72,53 @@ describe('TeamService', () => {
     httpMock = TestBed.inject(HttpTestingController);
     mockedUsers = [];
     mockedTeams = [];
+
     let tmpUser = new User();
     tmpUser._id = '0';
     tmpUser.fullName = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
-    tmpUser.adm = true;
-    tmpUser.design = true;
     mockedUsers.push(cloneDeep(tmpUser));
+
     tmpUser = new User();
     tmpUser._id = '1';
     tmpUser.fullName = 'Test2';
     tmpUser.email = 'test2@te.st';
     tmpUser.phone = '123456';
-    tmpUser.ambiental = true;
-    tmpUser.arquitetura = true;
     mockedUsers.push(cloneDeep(tmpUser));
+
     tmpUser = new User();
     tmpUser._id = '2';
     tmpUser.fullName = 'Test3';
     tmpUser.email = 'test3@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
+
     const tmpTeam = new Team();
     tmpTeam._id = '0';
     tmpTeam.name = 'teamTest';
     tmpTeam.leader = mockedUsers[0];
-    tmpTeam.expertise = 'teamTest1';
     tmpTeam.members = [
       {
         user: mockedUsers[0],
-        coordination: 'C.D.I - Coordenação de Design de Interiores',
+        sectors: [],
       },
       {
         user: mockedUsers[1],
-        coordination: 'C.P.A - Coordenação de Projetos Arquitetônicos',
+        sectors: [],
       },
     ] as TeamMember[];
     tmpTeam.transactions = [];
     tmpTeam.created = new Date();
     tmpTeam.purpose = 'created for testing team service methods';
+    tmpTeam.expenses = [];
+    tmpTeam.config = new TeamConfig();
+    tmpTeam.abrev = 'tt';
+    tmpTeam.isOrganizationTeam = false;
+    tmpTeam.sectors = [];
+    tmpTeam.overridePercentages = false;
+    tmpTeam.organizationPercentage = '0,00';
+    tmpTeam.nfPercentage = '0,00';
     mockedTeams.push(cloneDeep(tmpTeam));
 
     const req = httpMock.expectOne('/api/user/all');
@@ -135,15 +139,14 @@ describe('TeamService', () => {
     tmpTeam._id = '1';
     tmpTeam.name = 'teamTest2';
     tmpTeam.leader = mockedUsers[2];
-    tmpTeam.expertise = 'teamTester2';
     tmpTeam.members = [
       {
         user: mockedUsers[0],
-        coordination: 'test',
+        sectors: [],
       },
       {
         user: mockedUsers[2],
-        coordination: 'test2',
+        sectors: [],
       },
     ] as TeamMember[];
     tmpTeam.transactions = [];
@@ -171,12 +174,7 @@ describe('TeamService', () => {
           case 2: {
             i += 1;
             expect(teams.length).toBe(1);
-            expect(teams).toEqual(
-              JSON.parse(JSON.stringify(mockedTeams), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Team[]
-            );
+            expect(teams).toEqual(reviveDates(mockedTeams));
             service.saveTeam(tmpTeam);
             const req1 = httpMock.expectOne('/api/team/');
             expect(req1.request.method).toBe('POST');
@@ -187,12 +185,7 @@ describe('TeamService', () => {
           case 3: {
             expect(teams.length).toBe(2);
             mockedTeams.push(tmpTeam);
-            expect(teams).toEqual(
-              JSON.parse(JSON.stringify(mockedTeams), (k, v) => {
-                if (['created', 'lastUpdate', 'paidDate'].includes(k)) return parseISO(v);
-                return v;
-              }) as Team[]
-            );
+            expect(teams).toEqual(reviveDates(mockedTeams));
             done();
             break;
           }
@@ -209,18 +202,13 @@ describe('TeamService', () => {
       req.flush(mockedTeams);
     }, 50);
   });
-  baseTest('getTeams should work', (expectedTeams: Team[]) => {});
 
-  baseTest('idToName should work', (expectedTeams: Team[]) => {
-    expect(service.idToName('0')).toEqual(expectedTeams[0].name);
-    expect(service.idToName(mockedTeams[0])).toEqual(expectedTeams[0].name);
-  });
+  baseTest('getTeams should work', (expectedTeams: Team[]) => {});
 
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {
     expect(service.idToTeam('0')).toEqual(expectedTeams[0]);
-    expect(service.idToTeam(mockedTeams[0])).toEqual(expectedTeams[0]);
     expect(service.idToTeam('1')).toEqual(expectedTeams[1]);
-    expect(service.idToTeam(mockedTeams[1])).toEqual(expectedTeams[1]);
+    expect(service.idToTeam(expectedTeams[0])).toEqual(expectedTeams[0]);
   });
 
   baseTest('isMember should work', (expectedTeams: Team[]) => {
@@ -238,26 +226,10 @@ describe('TeamService', () => {
     expect(service.userToTeams(undefined)).toEqual([]);
   });
 
-  baseTest('usedCoordinations should work', (expectedTeams: Team[]) => {
-    expect(service.usedCoordinations('0')).toEqual(['C.D.I - Coordenação de Design de Interiores']);
-    expect(service.usedCoordinations('1')).toEqual(['C.P.A - Coordenação de Projetos Arquitetônicos']);
-    expect(service.usedCoordinations(mockedUsers[0])).toEqual(['C.D.I - Coordenação de Design de Interiores']);
-    expect(service.usedCoordinations(mockedUsers[1])).toEqual(['C.P.A - Coordenação de Projetos Arquitetônicos']);
-    expect(service.usedCoordinations(undefined)).toEqual([]);
-  });
-
-  baseTest('usedToTeamsMembersFiltered should work', (expectedTeams: Team[]) => {
-    const lastMember = expectedTeams[0].members.pop();
-    expect(service.userToTeamsMembersFiltered('0')).toEqual([expectedTeams[0]]);
-    expect(service.userToTeamsMembersFiltered(mockedUsers[0])).toEqual([expectedTeams[0]]);
-    expect(service.userToTeamsMembersFiltered(undefined)).toEqual([]);
-  });
-
-  baseTest('availableCoordinations should work', (expectedTeams: Team[]) => {
-    expect(service.availableCoordinations('0')).toEqual(['C.ADM - Coordenação de Administração']);
-    expect(service.availableCoordinations(mockedUsers[0])).toEqual(['C.ADM - Coordenação de Administração']);
-    expect(service.availableCoordinations('1')).toEqual(['C.M.A - Coordenação de Meio Ambiente']);
-    expect(service.availableCoordinations(mockedUsers[1])).toEqual(['C.M.A - Coordenação de Meio Ambiente']);
+  baseTest('userToTeamsMembersFiltered should work', (expectedTeams: Team[]) => {
+    const teamWithMembersFiltered = cloneDeep(expectedTeams[0]);
+    teamWithMembersFiltered.members.pop()
+    expect(service.userToTeamsMembersFiltered(mockedUsers[0])).toEqual([teamWithMembersFiltered]);
     expect(service.userToTeamsMembersFiltered(undefined)).toEqual([]);
   });
 });
