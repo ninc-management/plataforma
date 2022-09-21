@@ -13,8 +13,9 @@ import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { take } from 'rxjs/operators';
 import { reviveDates } from '../utils';
+import { Sector } from '@models/shared';
 
-describe('TeamService', () => {
+fdescribe('TeamService', () => {
   let service: TeamService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
@@ -113,9 +114,15 @@ describe('TeamService', () => {
     tmpTeam.purpose = 'created for testing team service methods';
     tmpTeam.expenses = [];
     tmpTeam.config = new TeamConfig();
-    tmpTeam.abrev = 'tt';
+    tmpTeam.abrev = 'TT';
     tmpTeam.isOrganizationTeam = false;
+
     tmpTeam.sectors = [];
+    const testSector = new Sector();
+    testSector.name = 'Test Sector 1';
+    testSector.abrev = 'TS1';
+    tmpTeam.sectors.push(cloneDeep(testSector));
+
     tmpTeam.overridePercentages = false;
     tmpTeam.organizationPercentage = '0,00';
     tmpTeam.nfPercentage = '0,00';
@@ -205,6 +212,16 @@ describe('TeamService', () => {
 
   baseTest('getTeams should work', (expectedTeams: Team[]) => {});
 
+  baseTest('idToComposedName should work', (expectedTeams: Team[]) => {
+    expect(service.idToComposedName(undefined)).toEqual('');
+    expect(service.idToComposedName('0')).toEqual('TT - teamTest');
+  });
+
+  // baseTest('idToSectorComposedName should work', (expectedTeams: Team[]) => {
+  //   expect(service.idToSectorComposedName(undefined)).toEqual('');
+  //   expect(service.idToSectorComposedName('0')).toEqual('TS1 - Test Sector 1');
+  // });
+
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {
     expect(service.idToTeam('0')).toEqual(expectedTeams[0]);
     expect(service.idToTeam('1')).toEqual(expectedTeams[1]);
@@ -228,7 +245,7 @@ describe('TeamService', () => {
 
   baseTest('userToTeamsMembersFiltered should work', (expectedTeams: Team[]) => {
     const teamWithMembersFiltered = cloneDeep(expectedTeams[0]);
-    teamWithMembersFiltered.members.pop()
+    teamWithMembersFiltered.members.pop();
     expect(service.userToTeamsMembersFiltered(mockedUsers[0])).toEqual([teamWithMembersFiltered]);
     expect(service.userToTeamsMembersFiltered(undefined)).toEqual([]);
   });
