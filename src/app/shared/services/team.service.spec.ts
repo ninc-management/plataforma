@@ -257,4 +257,8 @@ fdescribe('TeamService', () => {
     expect(service.userToTeamsMembersFiltered(mockedUsers[0])).toEqual([teamWithMembersFiltered]);
     expect(service.userToTeamsMembersFiltered(undefined)).toEqual([]);
   });
+
+  baseTest('teamsList should work', (expectedTeams: Team[]) => {
+    expect(service.teamsList()).toEqual(expectedTeams);
+  });
 });
