@@ -29,7 +29,7 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
-  @Input() responseEvent = new Subject<void>();
+  @Input() recalculateEvent = new Subject<void>();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
@@ -103,7 +103,7 @@ export class DataTabComponent implements OnInit {
         return users.filter((user) => !this.userService.isUserInTeam(user, this.invoice.team) && user.active);
       })
     );
-    this.responseEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.recalculateEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.options.interest = this.contract.receipts.length;
       this.options.paid = this.contractService.paidValue(this.contract);
     });

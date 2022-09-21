@@ -51,7 +51,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
-  @Input() contract: Contract = new Contract();
+  @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
 
@@ -100,9 +100,9 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.contract._id) {
+    if (this.clonedContract._id) {
       this.invoice = idToProperty(
-        this.contract,
+        this.clonedContract,
         this.contractService.idToContract.bind(this.contractService),
         'invoice'
       );
@@ -117,11 +117,11 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         this.userService.idToUser.bind(this.userService),
         'fullName'
       )),
-        (this.deadline = this.contractService.deadline(this.contract));
+        (this.deadline = this.contractService.deadline(this.clonedContract));
       this.avaliableContracts$ = this.contractService.getContracts();
       this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-        if (this.contract.invoice)
-          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.contract.invoice));
+        if (this.clonedContract.invoice)
+          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.clonedContract.invoice));
         this.actionsData = this.transformActionsData();
       });
       this.messageService
@@ -130,7 +130,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         .subscribe((messages) => {
           this.availableMessages = [];
           messages
-            .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.contract))
+            .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.clonedContract))
             .forEach((message) => {
               this.availableMessages.push(message);
             });
@@ -143,11 +143,11 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         });
 
       this.actionsData = this.transformActionsData();
-      this.contract.checklist.forEach((item) => {
+      this.clonedContract.checklist.forEach((item) => {
         item.locals = {} as ChecklistItemLocals;
         item.actionList.forEach((action) => (action.locals = {} as ItemActionLocals));
       });
-      this.checklistItems = cloneDeep(this.contract.checklist);
+      this.checklistItems = cloneDeep(this.clonedContract.checklist);
     }
   }
 
@@ -171,9 +171,9 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   updateContractManagement(): void {
-    this.contractService.editContract(this.contract);
+    this.contractService.editContract(this.clonedContract);
     this.sendNotificationsToNewAssignees();
-    this.checklistItems = cloneDeep(this.contract.checklist);
+    this.checklistItems = cloneDeep(this.clonedContract.checklist);
     this.isChecklistEdited = false;
     this.ngForm.form.markAsPristine();
     setTimeout(() => {
@@ -184,7 +184,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   checklistTotalDays(): number | undefined {
     if (this.deadline) {
       //can start be the start date from the initial checklist item?
-      return differenceInCalendarDays(this.deadline, this.contract.created);
+      return differenceInCalendarDays(this.deadline, this.clonedContract.created);
     }
     return undefined;
   }
@@ -213,11 +213,11 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   registerChecklistItem(): void {
     this.newChecklistItem.range = this.newChecklistItem.range as DateRange;
-    this.contract.checklist.push(cloneDeep(this.newChecklistItem));
+    this.clonedContract.checklist.push(cloneDeep(this.newChecklistItem));
     this.newChecklistItem = new ContractChecklistItem();
     this.newChecklistItem.status = '';
     this.assigneeSearch = '';
-    this.deadline = this.contractService.deadline(this.contract);
+    this.deadline = this.contractService.deadline(this.clonedContract);
   }
 
   totalDays(item: ContractChecklistItem | ChecklistItemAction): number | undefined {
@@ -295,7 +295,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(ChecklistItemDialogComponent, {
         context: {
-          contract: this.contract,
+          contract: this.clonedContract,
           itemIndex: index,
         },
         dialogClass: 'my-dialog',
@@ -305,13 +305,13 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        if (!isEqual(this.contract.checklist, this.checklistItems)) this.isChecklistEdited = true;
+        if (!isEqual(this.clonedContract.checklist, this.checklistItems)) this.isChecklistEdited = true;
         this.isDialogBlocked.next(false);
       });
   }
 
   removeItem(index: number): void {
-    this.contract.checklist.splice(index, 1);
+    this.clonedContract.checklist.splice(index, 1);
     this.isChecklistEdited = true;
   }
 
@@ -333,7 +333,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       .onClose.pipe(take(1))
       .subscribe((response) => {
         if (response) {
-          this.contract.checklist = cloneDeep(selectedContract.checklist);
+          this.clonedContract.checklist = cloneDeep(selectedContract.checklist);
         } else {
           this.modelSearch = '';
         }
@@ -344,7 +344,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   registerNewComment(): void {
     this.newComment.created = new Date();
     this.newComment.author = this.currentUser;
-    this.newComment.contract = this.contract;
+    this.newComment.contract = this.clonedContract;
     const mentionedUsers = this.searchMentionedUsers(this.newComment.body);
 
     if (mentionedUsers) {
@@ -352,7 +352,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
         if (usersToNotify) {
           this.notificationService.notifyMany(usersToNotify, {
-            title: 'Novo comentário na gestão do contrato ' + this.contract.locals.code,
+            title: 'Novo comentário na gestão do contrato ' + this.clonedContract.locals.code,
             tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
@@ -370,7 +370,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     let taskCount = 0;
     const taskData: TaskModel[] = [];
 
-    this.contract.checklist.forEach((item) => {
+    this.clonedContract.checklist.forEach((item) => {
       groupCount += 1;
       taskCount = 0;
 
@@ -454,7 +454,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     const newItems: ContractChecklistItem[] = [];
     const newActions: ChecklistItemAction[] = [];
 
-    this.contract.checklist.forEach((item) => {
+    this.clonedContract.checklist.forEach((item) => {
       if (item.locals.isNew) newItems.push(item);
       item.locals.isNew = false;
       item.actionList.forEach((action) => {
@@ -478,7 +478,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de uma nova ação de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.contract.locals.code +
+        this.clonedContract.locals.code +
         ', você foi selecionado como responsável da ação "' +
         task.name +
         '" que faz parte do item "' +
@@ -493,7 +493,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de um novo item de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.contract.locals.code +
+        this.clonedContract.locals.code +
         ', você foi selecionado como responsável do item "' +
         task.name +
         '" cujo status é "' +

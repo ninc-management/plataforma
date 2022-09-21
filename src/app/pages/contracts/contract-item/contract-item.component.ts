@@ -19,7 +19,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
 
   clonedContract: Contract = new Contract();
-  responseEvent$ = new Subject<void>();
+  recalculateEvent$ = new Subject<void>();
 
   isPhone = isPhone;
 
@@ -59,7 +59,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
   }
 
-  forwardResponse() {
-    this.responseEvent$.next();
+  recalculateValues() {
+    this.recalculateEvent$.next();
   }
 }
