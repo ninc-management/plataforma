@@ -261,4 +261,8 @@ fdescribe('TeamService', () => {
   baseTest('teamsList should work', (expectedTeams: Team[]) => {
     expect(service.teamsList()).toEqual(expectedTeams);
   });
+
+  baseTest('sectorsListAll should work', (expectedTeams: Team[]) => {
+    expect(service.sectorsListAll()).toEqual(expectedTeams[0].sectors);
+  });
 });
