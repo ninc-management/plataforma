@@ -33,6 +33,11 @@ export class UploadedFile {
   url!: string;
 }
 
+export class descriptionUploadedFile extends UploadedFile {
+  @prop({ required: true })
+  description!: string;
+}
+
 /**
  * Used by Transaction and Internal Transaction
  */

@@ -2,6 +2,7 @@ import { getModelForClass, plugin, prop } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { Base } from './base';
+import { descriptionUploadedFile } from './shared';
 
 export class BankAccount {
   @prop({ required: true })
@@ -45,6 +46,9 @@ export class Provider extends Base<string> {
 
   @prop({ type: () => [String] })
   productList: string[] = [];
+
+  @prop({ type: () => [descriptionUploadedFile] })
+  uploadedFiles: descriptionUploadedFile[] = [];
 
   @prop()
   observation: string = '';

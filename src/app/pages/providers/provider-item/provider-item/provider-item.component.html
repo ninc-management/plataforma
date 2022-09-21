@@ -289,34 +289,118 @@
                       +
                     </button>
                   </div>
-                </div>
-                <nb-list style="width: 100%">
-                  <nb-list-item *ngFor="let activity of provider.productList; let i = index; trackBy: trackByIndex">
-                    <div class="row irow">
-                      <div class="col-10 col-md-11">
-                        <input
-                          nbInput
-                          [(ngModel)]="provider.productList[i]"
-                          id="input-productListItem-{{ i }}"
-                          name="productListItem-{{ i }}"
-                          placeholder="Produto"
-                          fullWidth
-                          [status]="provider.productList[i].length == 0 ? 'danger' : 'basic'"
-                        />
+                  <nb-list style="width: 100%">
+                    <nb-list-item *ngFor="let activity of provider.productList; let i = index; trackBy: trackByIndex">
+                      <div class="row irow">
+                        <div class="col-10 col-md-11">
+                          <input
+                            nbInput
+                            [(ngModel)]="provider.productList[i]"
+                            id="input-productListItem-{{ i }}"
+                            name="productListItem-{{ i }}"
+                            placeholder="Produto"
+                            fullWidth
+                            [status]="provider.productList[i].length == 0 ? 'danger' : 'basic'"
+                          />
+                        </div>
+                        <div class="col-2 col-md-1" style="text-align: right">
+                          <nb-icon
+                            class="xIcon"
+                            status="basic"
+                            icon="trash-2-outline"
+                            pack="eva"
+                            (click)="provider.productList.splice(i, 1); isFormDirty.next(true)"
+                            [options]="{ animation: { type: 'shake' } }"
+                          ></nb-icon>
+                        </div>
                       </div>
-                      <div class="col-2 col-md-1" style="text-align: right">
-                        <nb-icon
-                          class="xIcon"
-                          status="basic"
-                          icon="trash-2-outline"
-                          pack="eva"
-                          (click)="provider.productList.splice(i, 1); isFormDirty.next(true)"
-                          [options]="{ animation: { type: 'shake' } }"
-                        ></nb-icon>
-                      </div>
+                    </nb-list-item>
+                  </nb-list>
+                  <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
+                    <div class="form-control-group">
+                      <label class="label" for="input-description">Comprovantes anexados:</label>
+                      <nb-list>
+                        <nb-list-item *ngFor="let file of uploadedFiles; let i = index; trackBy: trackByIndex">
+                          <div class="row irow" style="width: 100%">
+                            <div class="col-11 col-md-5">
+                              <div class="irow row">
+                                <div class="col-1">#{{ +i + 1 }}</div>
+                                <a
+                                  [href]="file.url"
+                                  class="col"
+                                  target="_blank"
+                                  style="width: 100%; cursor: pointer; display: flex"
+                                >
+                                  {{ file.name }}
+                                </a>
+                              </div>
+                            </div>
+                            <div class="col-11 col-md-6">
+                              <div class="form-control-group">
+                                <textarea
+                                  nbInput
+                                  [(ngModel)]="uploadedFiles[i].description"
+                                  id="input-description-{{ i }}"
+                                  name="descriptionFile-{{ i }}"
+                                  placeholder="Descreva os detalhes do arquivo"
+                                  fullWidth
+                                  fieldSize="large"
+                                  [required]="validation.description.required"
+                                  [minlength]="validation.description.minLength"
+                                  [maxlength]="validation.description.maxLength"
+                                  [status]="
+                                    uploadedFiles[i].description.length >= validation.description.minLength &&
+                                    uploadedFiles[i].description.length <= validation.description.maxLength
+                                      ? 'success'
+                                      : 'danger'
+                                  "
+                                ></textarea>
+                                <ng-container
+                                  *ngIf="uploadedFiles[i].description.length < validation.description.minLength"
+                                >
+                                  <p class="caption status-danger" *ngIf="!uploadedFiles[i].description.length">
+                                    O campo de descrição é obrigatório!
+                                  </p>
+                                  <p
+                                    class="caption status-danger"
+                                    *ngIf="
+                                      uploadedFiles[i].description.length < validation.description.minLength ||
+                                      uploadedFiles[i].description.length > validation.description.maxLength
+                                    "
+                                  >
+                                    O campo de descrição deve conter entre
+                                    {{ validation.description.minLength }} a
+                                    {{ validation.description.maxLength }}
+                                    caracteres
+                                  </p>
+                                </ng-container>
+                              </div>
+                            </div>
+                            <div class="col-1" style="text-align: right">
+                              <nb-icon
+                                class="xIcon"
+                                status="danger"
+                                icon="trash-2-outline"
+                                pack="eva"
+                                (click)="removeFile(i)"
+                                [options]="{ animation: { type: 'shake' } }"
+                              ></nb-icon>
+                            </div>
+                          </div>
+                        </nb-list-item>
+                      </nb-list>
                     </div>
-                  </nb-list-item>
-                </nb-list>
+                  </div>
+                  <div class="col-md-12" *ngIf="form.valid">
+                    <nb-file-uploader
+                      [options]="uploaderOptions"
+                      [isFileDrop]="true"
+                      (filesList)="urlReceiver($event)"
+                      dropAreaLabel="Arraste seu comprovante aqui ou"
+                      dropAreaFileChooserLabel="escolha um arquivo"
+                    ></nb-file-uploader>
+                  </div>
+                </div>
                 <div class="form-control-group">
                   <label class="label" for="input-observation">Observação:</label>
                   <textarea
@@ -476,10 +560,7 @@
                       [attr.aria-invalid]="pix.invalid && pix.touched ? true : null"
                     />
                     <ng-container *ngIf="pix.invalid && pix.touched">
-                      <p
-                        class="caption status-danger"
-                        *ngIf="pix.errors?.minlength || pix.errors?.maxlength"
-                      >
+                      <p class="caption status-danger" *ngIf="pix.errors?.minlength || pix.errors?.maxlength">
                         O pix deve conter entre
                         {{ validation.bankData.pix.minLength }} a
                         {{ validation.bankData.pix.maxLength }}

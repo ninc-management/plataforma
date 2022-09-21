@@ -9,6 +9,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from './file-uploader.model';
 import { NbFileUploaderService } from './file-uploader.service';
+import { OneDriveFolders } from 'app/shared/services/onedrive.service';
 
 @Component({
   selector: 'nb-file-uploader',

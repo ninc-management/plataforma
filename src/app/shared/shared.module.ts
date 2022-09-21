@@ -27,6 +27,7 @@ import { ExpansiveListComponent } from './components/expansive-list/expansive-li
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { FabComponent } from './components/fab/fab.component';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
+import { OneDriveDocumentUploader } from './components/onedrive-document-uploader/onedrive-document-uploader.component';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
@@ -88,6 +89,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     FabComponent,
     FabItemComponent,
     FileUploadDialogComponent,
+    OneDriveDocumentUploader,
     GanttChartComponent,
     LastPaymentDirective,
     OverPaidDirective,

@@ -13,6 +13,11 @@ import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 
+export enum OneDriveFolders {
+  CONTRACTS = 'contracts',
+  PROVIDERS = 'providers',
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -69,21 +74,37 @@ export class OneDriveService implements OnDestroy {
     return this.generateBasePath(invoice, concluded) + this.generateFolderName(invoice);
   }
 
-  oneDriveURI(): string {
-    if (this.config.oneDriveConfig.contracts.oneDriveId && this.config.oneDriveConfig.contracts.folderId) {
-      const URI =
-        environment.onedriveUri +
-        this.config.oneDriveConfig.contracts.oneDriveId.toLowerCase() +
-        '/items/' +
-        this.config.oneDriveConfig.contracts.oneDriveId.toUpperCase() +
-        '!' +
-        this.config.oneDriveConfig.contracts.folderId +
-        ':/';
-
-      return URI;
+  oneDriveURI(oneDriveFolder: string = OneDriveFolders.CONTRACTS): string {
+    let URI = '';
+    switch (oneDriveFolder) {
+      case OneDriveFolders.PROVIDERS: {
+        if (this.config.oneDriveConfig.providers.oneDriveId && this.config.oneDriveConfig.providers.folderId) {
+          URI =
+            environment.onedriveUri +
+            this.config.oneDriveConfig.providers.oneDriveId.toLowerCase() +
+            '/items/' +
+            this.config.oneDriveConfig.providers.oneDriveId.toUpperCase() +
+            '!' +
+            this.config.oneDriveConfig.providers.folderId +
+            ':/';
+        }
+        break;
+      }
+      default: {
+        if (this.config.oneDriveConfig.contracts.oneDriveId && this.config.oneDriveConfig.contracts.folderId) {
+          URI =
+            environment.onedriveUri +
+            this.config.oneDriveConfig.contracts.oneDriveId.toLowerCase() +
+            '/items/' +
+            this.config.oneDriveConfig.contracts.oneDriveId.toUpperCase() +
+            '!' +
+            this.config.oneDriveConfig.providers.folderId +
+            ':/';
+        }
+        break;
+      }
     }
-
-    return '';
+    return URI;
   }
 
   copyModelFolder(invoice: Invoice): Observable<boolean> {

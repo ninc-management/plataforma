@@ -77,7 +77,8 @@ export class NbFileUploaderService implements OnDestroy {
       options.mediaFolderPath,
       tempFile.rawFile,
       tempFile.name,
-      options.storageProvider
+      options.storageProvider,
+      options.oneDriveFolder
     );
 
     uploadProgress$.pipe(takeUntil(this.destroy$)).subscribe((progress: number) => {
