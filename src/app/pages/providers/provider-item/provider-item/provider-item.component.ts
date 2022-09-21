@@ -11,7 +11,7 @@ import { ProviderService } from 'app/shared/services/provider.service';
 import { compareFiles, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
-import { descriptionUploadedFile } from '@models/shared';
+import { UploadedFileWithDescription } from '@models/shared';
 
 import provider_validation from 'app/shared/validators/provider-validation.json';
 
@@ -40,7 +40,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   options = { serviceName: '', productName: '' };
   folderPath: string = '';
-  initialFiles: descriptionUploadedFile[] = [];
+  initialFiles: UploadedFileWithDescription[] = [];
   trackByIndex = trackByIndex;
 
   constructor(

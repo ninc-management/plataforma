@@ -33,7 +33,7 @@ export class UploadedFile {
   url!: string;
 }
 
-export class descriptionUploadedFile extends UploadedFile {
+export class UploadedFileWithDescription extends UploadedFile {
   @prop({ required: true })
   description!: string;
 }

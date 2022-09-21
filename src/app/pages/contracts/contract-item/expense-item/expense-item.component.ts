@@ -25,7 +25,7 @@ import {
 import { Contract, ContractExpense, ContractExpenseTeamMember } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
-import { descriptionUploadedFile, Sector } from '@models/shared';
+import { Sector, UploadedFileWithDescription } from '@models/shared';
 import { ExpenseType } from '@models/team';
 import { User } from '@models/user';
 
@@ -185,7 +185,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       if (this.expense.provider) this.expense.provider = this.providerService.idToProvider(this.expense.provider);
 
-      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as descriptionUploadedFile[];
+      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFileWithDescription[];
       if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
       this.lastType = this.expense.type as EXPENSE_TYPES;
       if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
