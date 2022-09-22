@@ -142,6 +142,7 @@ fdescribe('TeamService', () => {
     tmpTeam._id = '1';
     tmpTeam.name = 'Test Team 2';
     tmpTeam.abrev = 'TT2';
+    tmpTeam.isOrganizationTeam = true;
     tmpTeam.sectors = [cloneDeep(testSector2)];
     tmpTeam.members = [
       {
@@ -317,5 +318,9 @@ fdescribe('TeamService', () => {
     expect(service.isTeamEqual('0', '0')).toBe(true);
     expect(service.isTeamEqual(teamToTest1, teamToTest2)).toBe(false);
     expect(service.isTeamEqual(teamToTest1, teamToTest1)).toBe(true);
+  });
+
+  baseTest('hasOrganizationTeam should work', (expectedTeams: Team[]) => {
+    expect(service.hasOrganizationTeam()).toBe(true);
   });
 });
