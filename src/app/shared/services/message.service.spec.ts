@@ -7,10 +7,11 @@ import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 
 import { MessageService } from './message.service';
-import { Socket } from 'ngx-socket-io';
+
 import { AuthService } from 'app/auth/auth.service';
 import { cloneDeep } from 'lodash';
 import { reviveDates } from 'app/shared/utils';
+import { WebSocketService } from './web-socket.service';
 
 describe('MessageService', () => {
   let service: MessageService;
@@ -21,12 +22,12 @@ describe('MessageService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
   CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);

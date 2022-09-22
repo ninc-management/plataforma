@@ -9,7 +9,7 @@ import { cloneDeep } from 'lodash';
 import { ConnectableObservable, Subject } from 'rxjs';
 import { AuthService } from 'app/auth/auth.service';
 import { SocketMock } from 'app/../types/socketio-mock';
-import { Socket } from 'ngx-socket-io';
+import { WebSocketService } from './web-socket.service';
 import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
 
@@ -22,7 +22,7 @@ describe('UserService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
@@ -47,7 +47,7 @@ describe('UserService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue(undefined);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(UserService);

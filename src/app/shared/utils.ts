@@ -21,7 +21,7 @@ import {
   isWithinInterval as withinInterval,
 } from 'date-fns';
 import { cloneDeep, groupBy, isEqual } from 'lodash';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { appInjector } from './injector.module';
@@ -46,6 +46,10 @@ export enum Permissions {
   AER = 'aer',
   ELO_NORTAN = 'elo-nortan',
   DIRETOR_TI = 'dti',
+}
+
+export interface IdWise {
+  _id: string;
 }
 
 export enum Fees {
@@ -384,4 +388,49 @@ export function sortNotifications(notificationA: Notification, notificationB: No
   const createdA = new Date(notificationA.created);
   const createdB = new Date(notificationB.created);
   return isBefore(createdA, createdB) ? 1 : -1;
+}
+
+export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]>, coll: string): void {
+  if (data == new Object()) return;
+  if (data.ns.coll != coll) return;
+  data = reviveDates(data);
+  switch (data.operationType) {
+    case 'update': {
+      const tmpArray = oArray$.getValue();
+      const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
+      if (data.updateDescription.updatedFields) {
+        const fieldAndIndex = Object.keys(data.updateDescription.updatedFields)[0].split('.');
+        const isPush = fieldAndIndex.length > 1;
+        if (isPush) {
+          (tmpArray[idx] as any)[fieldAndIndex[0]].push(Object.values(data.updateDescription.updatedFields)[0]);
+        } else Object.assign(tmpArray[idx], data.updateDescription.updatedFields);
+      }
+      if (data.updateDescription.removedFields.length > 0)
+        for (const f of data.updateDescription.removedFields) delete (tmpArray[idx] as any)[f];
+      oArray$.next(tmpArray);
+      break;
+    }
+
+    case 'insert': {
+      const tmpArray = oArray$.getValue();
+      tmpArray.push(data['fullDocument']);
+      oArray$.next(tmpArray);
+      break;
+    }
+
+    case 'delete': {
+      const tmpArray = oArray$.getValue();
+      const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
+      if (idx != -1) {
+        tmpArray.splice(idx, 1);
+        oArray$.next(tmpArray);
+      }
+      break;
+    }
+
+    default: {
+      console.log('Caso não tratado!', data);
+      break;
+    }
+  }
 }

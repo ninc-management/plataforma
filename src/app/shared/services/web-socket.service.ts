@@ -1,60 +1,80 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-
-import { reviveDates } from 'app/shared/utils';
-
-interface IdWise {
-  _id: string;
-}
+import { Observable, share } from 'rxjs';
+import { Manager } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  constructor() {}
+  manager = new Manager('', { path: '/api/socket.io', transports: ['websocket'] });
+  socket: any;
+  subscribersCounter: Record<string, number> = {};
+  eventObservables$: Record<string, Observable<any>> = {};
+  ioSocket: any;
 
-  handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]>, coll: string): void {
-    if (data == new Object()) return;
-    if (data.ns.coll != coll) return;
-    data = reviveDates(data);
-    switch (data.operationType) {
-      case 'update': {
-        const tmpArray = oArray$.getValue();
-        const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
-        if (data.updateDescription.updatedFields) {
-          const fieldAndIndex = Object.keys(data.updateDescription.updatedFields)[0].split('.');
-          const isPush = fieldAndIndex.length > 1;
-          if (isPush) {
-            (tmpArray[idx] as any)[fieldAndIndex[0]].push(Object.values(data.updateDescription.updatedFields)[0]);
-          } else Object.assign(tmpArray[idx], data.updateDescription.updatedFields);
-        }
-        if (data.updateDescription.removedFields.length > 0)
-          for (const f of data.updateDescription.removedFields) delete (tmpArray[idx] as any)[f];
-        oArray$.next(tmpArray);
-        break;
-      }
+  constructor() {
+    this.ioSocket = this.manager.socket('/');
+  }
 
-      case 'insert': {
-        const tmpArray = oArray$.getValue();
-        tmpArray.push(data['fullDocument']);
-        oArray$.next(tmpArray);
-        break;
-      }
+  of(namespace: string) {
+    this.ioSocket.of(namespace);
+  }
 
-      case 'delete': {
-        const tmpArray = oArray$.getValue();
-        const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
-        if (idx != -1) {
-          tmpArray.splice(idx, 1);
-          oArray$.next(tmpArray);
-        }
-        break;
-      }
+  on(eventName: string, callback: any) {
+    this.ioSocket.on(eventName, callback);
+  }
 
-      default: {
-        console.log('Caso não tratado!', data);
-        break;
-      }
+  once(eventName: string, callback: any) {
+    this.ioSocket.once(eventName, callback);
+  }
+
+  connect() {
+    return this.ioSocket.connect();
+  }
+
+  /* eslint-disable */
+  disconnect(_close?: any) {
+    return this.ioSocket.disconnect.apply(this.ioSocket, arguments);
+  }
+
+  emit(_eventName: string, ..._args: any[]) {
+    return this.ioSocket.emit.apply(this.ioSocket, arguments);
+  }
+
+  removeListener(_eventName: string, _callback?: Function) {
+    return this.ioSocket.removeListener.apply(this.ioSocket, arguments);
+  }
+
+  removeAllListeners(_eventName?: string) {
+    return this.ioSocket.removeAllListeners.apply(this.ioSocket, arguments);
+  }
+  /* eslint-enable */
+
+  fromEvent<T>(eventName: string): Observable<T> {
+    if (!this.subscribersCounter[eventName]) {
+      this.subscribersCounter[eventName] = 0;
     }
+    this.subscribersCounter[eventName]++;
+
+    if (!this.eventObservables$[eventName]) {
+      this.eventObservables$[eventName] = new Observable((observer: any) => {
+        const listener = (data: T) => {
+          observer.next(data);
+        };
+        this.ioSocket.on(eventName, listener);
+        return () => {
+          this.subscribersCounter[eventName]--;
+          if (this.subscribersCounter[eventName] === 0) {
+            this.ioSocket.removeListener(eventName, listener);
+            delete this.eventObservables$[eventName];
+          }
+        };
+      }).pipe(share());
+    }
+    return this.eventObservables$[eventName];
+  }
+
+  fromOneTimeEvent<T>(eventName: string): Promise<T> {
+    return new Promise<T>((resolve) => this.once(eventName, resolve));
   }
 }

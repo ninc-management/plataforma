@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, DoCheck, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService, NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
-import { combineLatest, fromEvent, merge, Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { LayoutService } from '../@core/utils';
@@ -19,6 +19,7 @@ import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-
 import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { Permissions } from 'app/shared/utils';
 
 import { Team } from '@models/team';
@@ -57,7 +58,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     private configService: ConfigService,
     private dialogService: NbDialogService,
     private teamService: TeamService,
-    private elementRef: ElementRef
+    private wsService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -248,13 +249,8 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         if (nortanTeam) this.nortanTeam = nortanTeam;
       });
 
-    this.idleTimer = window.setTimeout(() => window.location.reload(), 3600000);
-    merge(
-      fromEvent(this.elementRef.nativeElement, 'mousemove'),
-      fromEvent(this.elementRef.nativeElement, 'keydown')
-    ).subscribe((event) => {
-      clearTimeout(this.idleTimer);
-      this.idleTimer = window.setTimeout(() => window.location.reload(), 3600000);
+    this.wsService.manager.on('reconnect', () => {
+      this.wsService.ioSocket.disconnect().connect();
     });
   }
 

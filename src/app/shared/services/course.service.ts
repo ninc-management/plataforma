@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, reviveDates } from '../utils';
+import { handle, isOfType, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Course, CourseParticipant } from '@models/course';
@@ -22,7 +21,7 @@ export class CourseService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -39,10 +38,10 @@ export class CourseService {
           this.courses$.next(reviveDates(courses) as Course[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.courses$, 'courses'));
+        .subscribe((data: any) => handle(data, this.courses$, 'courses'));
     }
     return this.courses$;
   }

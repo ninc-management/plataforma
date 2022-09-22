@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { last, skipWhile, take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, nameSort, reviveDates } from '../utils';
+import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
@@ -104,12 +103,7 @@ export class UserService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService,
-    private wsService: WebSocketService,
-    private socket: Socket
-  ) {
+  constructor(private http: HttpClient, private authService: AuthService, private wsService: WebSocketService) {
     this.authService.onUserChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.refreshCurrentUser();
     });
@@ -162,10 +156,10 @@ export class UserService implements OnDestroy {
           );
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.users$, 'users'));
+        .subscribe((data: any) => handle(data, this.users$, 'users'));
     }
     return this.users$;
   }

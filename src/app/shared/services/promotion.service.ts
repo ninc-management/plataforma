@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, reviveDates } from '../utils';
+import { handle, isOfType, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Promotion } from '@models/promotion';
@@ -21,7 +20,7 @@ export class PromotionService implements OnDestroy {
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
-  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -54,10 +53,10 @@ export class PromotionService implements OnDestroy {
           this.promotions$.next(tmp as Promotion[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.promotions$, 'promotions'));
+        .subscribe((data: any) => handle(data, this.promotions$, 'promotions'));
     }
     return this.promotions$;
   }

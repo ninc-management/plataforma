@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { reviveDates } from '../utils';
+import { handle, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Message } from '@models/message';
@@ -22,7 +21,7 @@ export class MessageService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   saveMessage(message: Message): void {
     const req = {
@@ -43,10 +42,10 @@ export class MessageService {
           this.messages$.next(tmp as Message[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.messages$, 'messages'));
+        .subscribe((data: any) => handle(data, this.messages$, 'messages'));
     }
     return this.messages$;
   }

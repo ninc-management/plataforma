@@ -2,11 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { isAfter, isBefore } from 'date-fns';
 import { cloneDeep } from 'lodash';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 
-import { idToProperty, isOfType, isWithinInterval, nfPercentage, nortanPercentage, reviveDates } from '../utils';
+import {
+  handle,
+  idToProperty,
+  isOfType,
+  isWithinInterval,
+  nfPercentage,
+  nortanPercentage,
+  reviveDates,
+} from '../utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
@@ -79,6 +86,7 @@ export class ContractService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
+
   edited$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
 
@@ -92,7 +100,6 @@ export class ContractService implements OnDestroy {
     private http: HttpClient,
     private invoiceService: InvoiceService,
     private onedrive: OneDriveService,
-    private socket: Socket,
     private stringUtil: StringUtilService,
     private userService: UserService,
     private wsService: WebSocketService
@@ -157,10 +164,10 @@ export class ContractService implements OnDestroy {
           this.contracts$.next(tmp as Contract[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.contracts$, 'contracts'));
+        .subscribe((data: any) => handle(data, this.contracts$, 'contracts'));
     }
     return this.contracts$;
   }

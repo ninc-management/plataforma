@@ -6,13 +6,15 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { Transaction } from '@models/transaction';
 import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
-import { Socket } from 'ngx-socket-io';
+
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
+
 import { Fees, reviveDates } from 'app/shared/utils';
 import { Team } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
 import { DEFAULT_CONFIG } from './config.service';
+import { WebSocketService } from './web-socket.service';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -22,7 +24,7 @@ describe('TransactionService', () => {
   let mockedTransactions: Transaction[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
@@ -63,7 +65,7 @@ describe('TransactionService', () => {
   };
 
   beforeEach(() => {
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TransactionService);
     httpMock = TestBed.inject(HttpTestingController);

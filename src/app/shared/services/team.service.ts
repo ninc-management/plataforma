@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, nameSort, reviveDates } from '../utils';
+import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
@@ -30,8 +29,7 @@ export class TeamService implements OnDestroy {
     private http: HttpClient,
     private wsService: WebSocketService,
     private userService: UserService,
-    private stringUtil: StringUtilService,
-    private socket: Socket
+    private stringUtil: StringUtilService
   ) {}
 
   ngOnDestroy(): void {
@@ -66,10 +64,10 @@ export class TeamService implements OnDestroy {
           this.teams$.next(teamsFromDatabase as Team[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.teams$, 'teams'));
+        .subscribe((data: any) => handle(data, this.teams$, 'teams'));
     }
     return this.teams$;
   }

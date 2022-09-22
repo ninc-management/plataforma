@@ -15,7 +15,7 @@ import { TeamService } from './services/team.service';
 import { ContractService } from './services/contract.service';
 import { ContractorService } from './services/contractor.service';
 import { ConfigService } from './services/config.service';
-import { take } from 'rxjs';
+import { BehaviorSubject, take } from 'rxjs';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Contractor } from '@models/contractor';
 import {
@@ -24,6 +24,7 @@ import {
   Fees,
   formatDate,
   groupByDateTimeSerie,
+  handle,
   idToProperty,
   isOfType,
   isPhone,
@@ -38,6 +39,13 @@ import {
   valueSort,
 } from './utils';
 import { PlatformConfig } from '@models/platformConfig';
+import { WebSocketService } from './services/web-socket.service';
+
+interface MockedUser {
+  _id: string;
+  name: string;
+  remove?: string;
+}
 
 @Component({
   selector: 'test-cmp',
@@ -77,6 +85,7 @@ describe('UtilsService', () => {
   let contractService: ContractService;
   let contractorService: ContractorService;
   let configService: ConfigService;
+  let wsService: WebSocketService;
 
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -84,6 +93,22 @@ describe('UtilsService', () => {
   let mockedContracts: Contract[];
   let mockedContractors: Contractor[];
   let mockedConfigs: PlatformConfig[];
+
+  const users$ = new BehaviorSubject<MockedUser[]>([]);
+  const data = {
+    ns: {
+      coll: 'users',
+    },
+    operationType: 'update',
+    documentKey: {
+      _id: '0',
+    },
+    fullDocument: {},
+    updateDescription: {
+      updatedFields: {},
+      removedFields: [] as any[],
+    },
+  };
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
@@ -94,7 +119,11 @@ describe('UtilsService', () => {
     contractService = TestBed.inject(ContractService);
     contractorService = TestBed.inject(ContractorService);
     configService = TestBed.inject(ConfigService);
+    wsService = TestBed.inject(WebSocketService);
     httpMock = TestBed.inject(HttpTestingController);
+
+    users$.next([{ _id: '0', name: 'Test', remove: 'test' }]);
+    spyOn(console, 'log');
 
     mockedUsers = [];
     mockedInvoices = [];
@@ -448,6 +477,34 @@ describe('UtilsService', () => {
     expect(reviveDates(test2)).toEqual(test2);
     expect(reviveDates(JSON.parse(JSON.stringify(test3)))).not.toEqual(test3);
     expect(reviveDates(test3)).not.toEqual(test3);
+  });
+
+  it('should handle update', () => {
+    data.operationType = 'update';
+    data.updateDescription.updatedFields = { name: 'Test works' };
+    data.updateDescription.removedFields.push('remove');
+    handle(data, users$, 'users');
+    expect(users$.value.length).toBe(1);
+    expect(users$.value).toEqual([{ _id: '0', name: 'Test works' }]);
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it('should handle inset', () => {
+    data.operationType = 'insert';
+    data.fullDocument = { _id: '1', name: 'Test works' };
+    handle(data, users$, 'users');
+    expect(users$.value.length).toBe(2);
+    expect(users$.value).toEqual([
+      { _id: '0', name: 'Test', remove: 'test' },
+      { _id: '1', name: 'Test works' },
+    ]);
+    expect(console.log).not.toHaveBeenCalled();
+  });
+
+  it('should handle other cases', () => {
+    data.operationType = 'test';
+    handle(data, users$, 'users');
+    expect(console.log).toHaveBeenCalled();
   });
 });
 

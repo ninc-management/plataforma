@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { isOfType, reviveDates } from '../utils';
+import { handle, isOfType, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
@@ -38,7 +37,6 @@ export class InvoiceService implements OnDestroy {
     private http: HttpClient,
     private userService: UserService,
     private wsService: WebSocketService,
-    private socket: Socket,
     private stringUtil: StringUtilService
   ) {}
 
@@ -80,10 +78,10 @@ export class InvoiceService implements OnDestroy {
           this.invoices$.next(tmp as Invoice[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.invoices$, 'invoices'));
+        .subscribe((data: any) => handle(data, this.invoices$, 'invoices'));
     }
 
     return this.invoices$;

@@ -6,10 +6,11 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { InternalTransaction } from '@models/internalTransaction';
 import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
-import { Socket } from 'ngx-socket-io';
+
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { reviveDates } from 'app/shared/utils';
+import { WebSocketService } from './web-socket.service';
 
 describe('InternalTransactionService', () => {
   let service: InternalTransactionService;
@@ -17,7 +18,7 @@ describe('InternalTransactionService', () => {
   let mockedTransactions: InternalTransaction[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
@@ -58,7 +59,7 @@ describe('InternalTransactionService', () => {
   };
 
   beforeEach(() => {
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InternalTransactionService);
     httpMock = TestBed.inject(HttpTestingController);
