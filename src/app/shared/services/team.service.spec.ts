@@ -269,4 +269,9 @@ fdescribe('TeamService', () => {
   baseTest('sectorsList should work', (expectedTeams: Team[]) => {
     expect(service.sectorsList(expectedTeams[0].abrev)).toEqual(expectedTeams[0].sectors);
   });
+
+  it('extractAbreviation should work', () => {
+    const composedName = 'CPN - Composed Name';
+    expect(service.extractAbreviation(composedName)).toEqual('CPN');
+  });
 });
