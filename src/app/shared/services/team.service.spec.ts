@@ -241,10 +241,10 @@ fdescribe('TeamService', () => {
     expect(service.idToComposedName('0')).toEqual('TT - teamTest');
   });
 
-  // baseTest('idToSectorComposedName should work', (expectedTeams: Team[]) => {
-  //   expect(service.idToSectorComposedName(undefined)).toEqual('');
-  //   expect(service.idToSectorComposedName('0')).toEqual('TS1 - Test Sector 1');
-  // });
+  baseTest('idToSectorComposedName should work', (expectedTeams: Team[]) => {
+    expect(service.idToSectorComposedName(undefined)).toEqual('');
+    expect(service.idToSectorComposedName('0')).toEqual('TS1 - Test Sector 1');
+  });
 
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {
     expect(service.idToTeam('0')).toEqual(expectedTeams[0]);
