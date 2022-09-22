@@ -236,13 +236,13 @@ fdescribe('TeamService', () => {
   baseTest('getTeams should work', (expectedTeams: Team[]) => {});
 
   baseTest('idToComposedName should work', (expectedTeams: Team[]) => {
-    expect(service.idToComposedName(undefined)).toEqual('');
-    expect(service.idToComposedName('0')).toEqual('TT - teamTest');
+    expect(service.idToComposedName(undefined)).toBe('');
+    expect(service.idToComposedName('0')).toBe('TT - teamTest');
   });
 
   baseTest('idToSectorComposedName should work', (expectedTeams: Team[]) => {
-    expect(service.idToSectorComposedName(undefined)).toEqual('');
-    expect(service.idToSectorComposedName('0')).toEqual('TS1 - Test Sector 1');
+    expect(service.idToSectorComposedName(undefined)).toBe('');
+    expect(service.idToSectorComposedName('0')).toBe('TS1 - Test Sector 1');
   });
 
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {
@@ -294,7 +294,7 @@ fdescribe('TeamService', () => {
 
   it('extractAbreviation should work', () => {
     const composedName = 'CPN - Composed Name';
-    expect(service.extractAbreviation(composedName)).toEqual('CPN');
+    expect(service.extractAbreviation(composedName)).toBe('CPN');
   });
 
   baseTest('isSectorEqual should work', (expectedTeams: Team[]) => {
