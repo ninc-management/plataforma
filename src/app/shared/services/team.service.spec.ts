@@ -79,44 +79,44 @@ fdescribe('TeamService', () => {
     mockedTeams = [];
     mockedSectors = [];
 
-    let tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
+    let mockedUser = new User();
+    mockedUser._id = '0';
+    mockedUser.fullName = 'Test1';
+    mockedUser.email = 'test1@te.st';
+    mockedUser.phone = '123456';
+    mockedUsers.push(cloneDeep(mockedUser));
 
-    tmpUser = new User();
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
-    tmpUser.email = 'test2@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
+    mockedUser = new User();
+    mockedUser._id = '1';
+    mockedUser.fullName = 'Test2';
+    mockedUser.email = 'test2@te.st';
+    mockedUser.phone = '123456';
+    mockedUsers.push(cloneDeep(mockedUser));
 
-    tmpUser = new User();
-    tmpUser._id = '2';
-    tmpUser.fullName = 'Test3';
-    tmpUser.email = 'test3@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
+    mockedUser = new User();
+    mockedUser._id = '2';
+    mockedUser.fullName = 'Test3';
+    mockedUser.email = 'test3@te.st';
+    mockedUser.phone = '123456';
+    mockedUsers.push(cloneDeep(mockedUser));
 
-    const testSector1 = new Sector();
-    testSector1._id = '0';
-    testSector1.name = 'Test Sector 1';
-    testSector1.abrev = 'TS1';
+    const mockedSector1 = new Sector();
+    mockedSector1._id = '0';
+    mockedSector1.name = 'Test Sector 1';
+    mockedSector1.abrev = 'TS1';
 
-    const testSector2 = new Sector();
-    testSector2._id = '1';
-    testSector2.name = 'Test Sector 2';
-    testSector2.abrev = 'TS2';
+    const mockedSector2 = new Sector();
+    mockedSector2._id = '1';
+    mockedSector2.name = 'Test Sector 2';
+    mockedSector2.abrev = 'TS2';
 
-    mockedSectors = [testSector1, testSector2];
+    mockedSectors = [mockedSector1, mockedSector2];
 
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'teamTest';
-    tmpTeam.leader = mockedUsers[0];
-    tmpTeam.members = [
+    const mockedTeam = new Team();
+    mockedTeam._id = '0';
+    mockedTeam.name = 'teamTest';
+    mockedTeam.leader = mockedUsers[0];
+    mockedTeam.members = [
       {
         user: mockedUsers[0],
         sectors: [],
@@ -126,31 +126,31 @@ fdescribe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    tmpTeam.transactions = [];
-    tmpTeam.created = new Date();
-    tmpTeam.purpose = 'created for testing team service methods';
-    tmpTeam.expenses = [];
-    tmpTeam.config = new TeamConfig();
-    tmpTeam.abrev = 'TT';
-    tmpTeam.isOrganizationTeam = false;
-    tmpTeam.sectors.push(cloneDeep(testSector1));
-    tmpTeam.overridePercentages = false;
-    tmpTeam.organizationPercentage = '0,00';
-    tmpTeam.nfPercentage = '0,00';
-    mockedTeams.push(cloneDeep(tmpTeam));
+    mockedTeam.transactions = [];
+    mockedTeam.created = new Date();
+    mockedTeam.purpose = 'created for testing team service methods';
+    mockedTeam.expenses = [];
+    mockedTeam.config = new TeamConfig();
+    mockedTeam.abrev = 'TT';
+    mockedTeam.isOrganizationTeam = false;
+    mockedTeam.sectors.push(cloneDeep(mockedSector1));
+    mockedTeam.overridePercentages = false;
+    mockedTeam.organizationPercentage = '0,00';
+    mockedTeam.nfPercentage = '0,00';
+    mockedTeams.push(cloneDeep(mockedTeam));
 
-    tmpTeam._id = '1';
-    tmpTeam.name = 'Test Team 2';
-    tmpTeam.abrev = 'TT2';
-    tmpTeam.isOrganizationTeam = true;
-    tmpTeam.sectors = [cloneDeep(testSector2)];
-    tmpTeam.members = [
+    mockedTeam._id = '1';
+    mockedTeam.name = 'Test Team 2';
+    mockedTeam.abrev = 'TT2';
+    mockedTeam.isOrganizationTeam = true;
+    mockedTeam.sectors = [cloneDeep(mockedSector2)];
+    mockedTeam.members = [
       {
         user: mockedUsers[2],
         sectors: [],
       },
     ];
-    mockedTeams.push(cloneDeep(tmpTeam));
+    mockedTeams.push(cloneDeep(mockedTeam));
 
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -166,11 +166,11 @@ fdescribe('TeamService', () => {
   });
 
   it('saveTeam should work', (done: DoneFn) => {
-    const tmpTeam = new Team();
-    tmpTeam._id = '1';
-    tmpTeam.name = 'teamTest2';
-    tmpTeam.leader = mockedUsers[2];
-    tmpTeam.members = [
+    const newMockedTeam = new Team();
+    newMockedTeam._id = '1';
+    newMockedTeam.name = 'teamTest2';
+    newMockedTeam.leader = mockedUsers[2];
+    newMockedTeam.members = [
       {
         user: mockedUsers[0],
         sectors: [],
@@ -180,15 +180,15 @@ fdescribe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    tmpTeam.transactions = [];
-    tmpTeam.purpose = 'created for testing team service methods';
+    newMockedTeam.transactions = [];
+    newMockedTeam.purpose = 'created for testing team service methods';
     let i = 1;
     const data = {
       ns: {
         coll: 'teams',
       },
       operationType: 'insert',
-      fullDocument: tmpTeam,
+      fullDocument: newMockedTeam,
     };
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
@@ -206,16 +206,15 @@ fdescribe('TeamService', () => {
             i += 1;
             expect(teams.length).toBe(2);
             expect(teams).toEqual(reviveDates(mockedTeams));
-            service.saveTeam(tmpTeam);
+            service.saveTeam(newMockedTeam);
             const req1 = httpMock.expectOne('/api/team/');
             expect(req1.request.method).toBe('POST');
-            req1.flush({ contractor: tmpTeam });
             socket.emit('dbchange', data);
             break;
           }
           case 3: {
             expect(teams.length).toBe(3);
-            mockedTeams.push(tmpTeam);
+            mockedTeams.push(newMockedTeam);
             expect(teams).toEqual(reviveDates(mockedTeams));
             done();
             break;
