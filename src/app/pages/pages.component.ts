@@ -251,6 +251,12 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
 
     this.wsService.manager.on('reconnect', () => {
       this.wsService.ioSocket.disconnect().connect();
+      const shouldUpdateCache = confirm(
+        'Novas alterações podem estar disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?'
+      );
+      if (shouldUpdateCache) {
+        window.location.reload();
+      }
     });
   }
 
