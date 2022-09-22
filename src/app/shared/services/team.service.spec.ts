@@ -124,6 +124,11 @@ fdescribe('TeamService', () => {
     testSector.abrev = 'TS1';
     tmpTeam.sectors.push(cloneDeep(testSector));
 
+    testSector._id = '1';
+    testSector.name = 'Test Sector 2';
+    testSector.abrev = 'TS2';
+    tmpTeam.sectors.push(cloneDeep(testSector));
+
     tmpTeam.overridePercentages = false;
     tmpTeam.organizationPercentage = '0,00';
     tmpTeam.nfPercentage = '0,00';
@@ -273,5 +278,15 @@ fdescribe('TeamService', () => {
   it('extractAbreviation should work', () => {
     const composedName = 'CPN - Composed Name';
     expect(service.extractAbreviation(composedName)).toEqual('CPN');
+  });
+
+  baseTest('isSectorEqual should work', (expectedTeams: Team[]) => {
+    const sectorToTest1 = expectedTeams[0].sectors[0];
+    const sectorToTest2 = expectedTeams[0].sectors[1];
+
+    expect(service.isSectorEqual('0', '1')).toBe(false);
+    expect(service.isSectorEqual('0', '0')).toBe(true);
+    expect(service.isSectorEqual(sectorToTest1, sectorToTest2)).toBe(false);
+    expect(service.isSectorEqual(sectorToTest1, sectorToTest1)).toBe(true);
   });
 });
