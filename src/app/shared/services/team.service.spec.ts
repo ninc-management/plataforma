@@ -15,7 +15,7 @@ import { take } from 'rxjs/operators';
 import { reviveDates } from '../utils';
 import { Sector } from '@models/shared';
 
-fdescribe('TeamService', () => {
+describe('TeamService', () => {
   let service: TeamService;
   let httpMock: HttpTestingController;
 
