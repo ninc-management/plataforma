@@ -18,8 +18,11 @@ import { Sector } from '@models/shared';
 fdescribe('TeamService', () => {
   let service: TeamService;
   let httpMock: HttpTestingController;
+
   let mockedUsers: User[];
   let mockedTeams: Team[];
+  let mockedSectors: Sector[];
+
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -44,7 +47,7 @@ fdescribe('TeamService', () => {
             }
             case 2: {
               const expectedTeams = reviveDates(mockedTeams) as Team[];
-              expect(teams.length).toBe(1);
+              expect(teams.length).toBe(2);
               expect(teams).toEqual(expectedTeams);
               test(expectedTeams);
               done();
@@ -71,8 +74,10 @@ fdescribe('TeamService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TeamService);
     httpMock = TestBed.inject(HttpTestingController);
+
     mockedUsers = [];
     mockedTeams = [];
+    mockedSectors = [];
 
     let tmpUser = new User();
     tmpUser._id = '0';
@@ -95,6 +100,18 @@ fdescribe('TeamService', () => {
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
 
+    const testSector1 = new Sector();
+    testSector1._id = '0';
+    testSector1.name = 'Test Sector 1';
+    testSector1.abrev = 'TS1';
+
+    const testSector2 = new Sector();
+    testSector2._id = '1';
+    testSector2.name = 'Test Sector 2';
+    testSector2.abrev = 'TS2';
+
+    mockedSectors = [testSector1, testSector2];
+
     const tmpTeam = new Team();
     tmpTeam._id = '0';
     tmpTeam.name = 'teamTest';
@@ -116,22 +133,22 @@ fdescribe('TeamService', () => {
     tmpTeam.config = new TeamConfig();
     tmpTeam.abrev = 'TT';
     tmpTeam.isOrganizationTeam = false;
-
-    tmpTeam.sectors = [];
-    const testSector = new Sector();
-    testSector._id = '0';
-    testSector.name = 'Test Sector 1';
-    testSector.abrev = 'TS1';
-    tmpTeam.sectors.push(cloneDeep(testSector));
-
-    testSector._id = '1';
-    testSector.name = 'Test Sector 2';
-    testSector.abrev = 'TS2';
-    tmpTeam.sectors.push(cloneDeep(testSector));
-
+    tmpTeam.sectors.push(cloneDeep(testSector1));
     tmpTeam.overridePercentages = false;
     tmpTeam.organizationPercentage = '0,00';
     tmpTeam.nfPercentage = '0,00';
+    mockedTeams.push(cloneDeep(tmpTeam));
+
+    tmpTeam._id = '1';
+    tmpTeam.name = 'Test Team 2';
+    tmpTeam.abrev = 'TT2';
+    tmpTeam.sectors = [cloneDeep(testSector2)];
+    tmpTeam.members = [
+      {
+        user: mockedUsers[2],
+        sectors: [],
+      },
+    ];
     mockedTeams.push(cloneDeep(tmpTeam));
 
     const req = httpMock.expectOne('/api/user/all');
@@ -186,7 +203,7 @@ fdescribe('TeamService', () => {
           }
           case 2: {
             i += 1;
-            expect(teams.length).toBe(1);
+            expect(teams.length).toBe(2);
             expect(teams).toEqual(reviveDates(mockedTeams));
             service.saveTeam(tmpTeam);
             const req1 = httpMock.expectOne('/api/team/');
@@ -196,7 +213,7 @@ fdescribe('TeamService', () => {
             break;
           }
           case 3: {
-            expect(teams.length).toBe(2);
+            expect(teams.length).toBe(3);
             mockedTeams.push(tmpTeam);
             expect(teams).toEqual(reviveDates(mockedTeams));
             done();
@@ -235,10 +252,10 @@ fdescribe('TeamService', () => {
   });
 
   baseTest('idToSector should work', (expectedTeams: Team[]) => {
-    const sectorToTest = expectedTeams[0].sectors[0];
+    const sectorToTest = mockedSectors[0];
     expect(service.idToSector(undefined)).toEqual(new Sector());
     expect(service.idToSector(sectorToTest)).toEqual(sectorToTest);
-    expect(service.idToSector('0')).toEqual(sectorToTest);
+    expect(service.idToSector('0')).toEqual({ ...sectorToTest });
   });
 
   baseTest('isMember should work', (expectedTeams: Team[]) => {
@@ -268,7 +285,7 @@ fdescribe('TeamService', () => {
   });
 
   baseTest('sectorsListAll should work', (expectedTeams: Team[]) => {
-    expect(service.sectorsListAll()).toEqual(expectedTeams[0].sectors);
+    expect(service.sectorsListAll()).toEqual(mockedSectors.map((sector) => ({ ...sector })));
   });
 
   baseTest('sectorsList should work', (expectedTeams: Team[]) => {
@@ -281,12 +298,24 @@ fdescribe('TeamService', () => {
   });
 
   baseTest('isSectorEqual should work', (expectedTeams: Team[]) => {
-    const sectorToTest1 = expectedTeams[0].sectors[0];
-    const sectorToTest2 = expectedTeams[0].sectors[1];
+    const sectorToTest1 = mockedSectors[0];
+    const sectorToTest2 = mockedSectors[1];
 
     expect(service.isSectorEqual('0', '1')).toBe(false);
     expect(service.isSectorEqual('0', '0')).toBe(true);
     expect(service.isSectorEqual(sectorToTest1, sectorToTest2)).toBe(false);
     expect(service.isSectorEqual(sectorToTest1, sectorToTest1)).toBe(true);
+  });
+
+  baseTest('isTeamEqual should work', (expectedTeams: Team[]) => {
+    const teamToTest1 = expectedTeams[0];
+    const teamToTest2 = expectedTeams[1];
+
+    expect(service.isTeamEqual(undefined, '1')).toBe(false);
+    expect(service.isTeamEqual('1', undefined)).toBe(false);
+    expect(service.isTeamEqual('0', '1')).toBe(false);
+    expect(service.isTeamEqual('0', '0')).toBe(true);
+    expect(service.isTeamEqual(teamToTest1, teamToTest2)).toBe(false);
+    expect(service.isTeamEqual(teamToTest1, teamToTest1)).toBe(true);
   });
 });
