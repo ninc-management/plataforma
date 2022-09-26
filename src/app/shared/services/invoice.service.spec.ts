@@ -8,12 +8,13 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import { AuthService } from 'app/auth/auth.service';
-import { Socket } from 'ngx-socket-io';
+
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
+import { WebSocketService } from './web-socket.service';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -25,7 +26,7 @@ describe('InvoiceService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
@@ -67,7 +68,7 @@ describe('InvoiceService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);

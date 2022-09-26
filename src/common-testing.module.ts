@@ -63,7 +63,6 @@ import {
 } from '@nebular/theme';
 import { environment } from 'environments/environment';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { of } from 'rxjs';
 
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
@@ -93,14 +92,6 @@ import { Permissions } from 'app/shared/utils';
 
 const roles = Object.values(Permissions);
 
-const config: SocketIoConfig = {
-  url: '',
-  options: {
-    path: '/api/socket.io',
-    transports: ['websocket'],
-  },
-};
-
 const authProviders = NbAuthModule.forRoot({
   strategies: [
     NbDummyAuthStrategy.setup({
@@ -119,7 +110,6 @@ const authProviders = NbAuthModule.forRoot({
   },
 }).providers;
 
-const socketProviders = SocketIoModule.forRoot(config).providers;
 const routerProviders = RouterTestingModule.withRoutes(routes).providers;
 
 const msalInstance = new PublicClientApplication({
@@ -189,7 +179,6 @@ const IMPORTS = [
   ReactiveFormsModule,
   RouterTestingModule.withRoutes(routes),
   SharedModule,
-  SocketIoModule.forRoot(config),
   NbStepperModule,
   ServiceWorkerModule.register('ngsw-worker.js', {
     enabled: false,
@@ -198,7 +187,6 @@ const IMPORTS = [
 
 const PROVIDERS = [
   ...(authProviders ? authProviders : []),
-  ...(socketProviders ? socketProviders : []),
   ...(routerProviders ? routerProviders : []),
   {
     provide: MSAL_GUARD_CONFIG,

@@ -43,7 +43,6 @@ import {
 } from '@nebular/theme';
 import * as echarts from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 import { environment } from '../environments/environment';
 import { CoreModule } from './@core/core.module';
@@ -55,14 +54,6 @@ import { interceptorProviders } from './shared/interceptors/interceptors';
 import langPTBR from 'app/shared/langPT-BR';
 
 echarts.registerLocale('PT-BR', langPTBR);
-
-const config: SocketIoConfig = {
-  url: '',
-  options: {
-    path: '/api/socket.io',
-    transports: ['websocket'],
-  },
-};
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
@@ -153,7 +144,6 @@ registerLocaleData(ptBr);
     ThemeModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule,
-    SocketIoModule.forRoot(config),
     MsalModule,
     NgxEchartsModule.forRoot({ echarts }),
     ServiceWorkerModule.register('ngsw-worker.js', {

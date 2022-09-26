@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
+import { handle } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { PlatformConfig } from '@models/platformConfig';
@@ -313,7 +313,7 @@ export class ConfigService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -338,10 +338,10 @@ export class ConfigService implements OnDestroy {
           this.config$.next(configs as PlatformConfig[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.config$, 'platformconfigs'));
+        .subscribe((data: any) => handle(data, this.config$, 'platformconfigs'));
     }
     return this.config$;
   }

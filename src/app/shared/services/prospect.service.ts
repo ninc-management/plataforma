@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { nameSort } from '../utils';
+import { handle, nameSort } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Prospect } from '@models/prospect';
@@ -22,7 +21,7 @@ export class ProspectService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private socket: Socket, private wsService: WebSocketService) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -39,10 +38,10 @@ export class ProspectService {
           this.prospects$.next((prospects as Prospect[]).sort((a, b) => nameSort(1, a.fullName, b.fullName)));
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.prospects$, 'prospects'));
+        .subscribe((data: any) => handle(data, this.prospects$, 'prospects'));
     }
     return this.prospects$;
   }

@@ -13,7 +13,7 @@ import {
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
-import { Socket } from 'ngx-socket-io';
+
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { AuthService } from 'app/auth/auth.service';
@@ -25,6 +25,7 @@ import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 import { Team, TeamMember } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
+import { WebSocketService } from './web-socket.service';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -41,7 +42,7 @@ describe('ContractService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
 
@@ -84,7 +85,7 @@ describe('ContractService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
@@ -559,7 +560,7 @@ describe('ContractService', () => {
       expect(
         service.percentageToReceive(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])
       ).toBe('55,62');
-      done()
+      done();
     }, 100);
   });
 

@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { isOfType, reviveDates } from '../utils';
+import { handle, isOfType, reviveDates } from '../utils';
 import { ContractService } from './contract.service';
 import { ProviderService } from './provider.service';
 import { TeamService } from './team.service';
@@ -27,11 +26,11 @@ export class TransactionService implements OnDestroy {
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
+
   constructor(
     private contractService: ContractService,
     private http: HttpClient,
     private providerService: ProviderService,
-    private socket: Socket,
     private teamService: TeamService,
     private userService: UserService,
     private wsService: WebSocketService
@@ -75,10 +74,10 @@ export class TransactionService implements OnDestroy {
           this.transactions$.next(tmp as Transaction[]);
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.transactions$, 'transactions'));
+        .subscribe((data: any) => handle(data, this.transactions$, 'transactions'));
     }
     return this.transactions$;
   }

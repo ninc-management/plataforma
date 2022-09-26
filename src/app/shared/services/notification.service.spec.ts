@@ -13,8 +13,9 @@ import { AuthService } from 'app/auth/auth.service';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
-import { Socket } from 'ngx-socket-io';
+
 import { reviveDates } from 'app/shared/utils';
+import { WebSocketService } from './web-socket.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -25,7 +26,7 @@ describe('NotificationService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -35,7 +36,7 @@ describe('NotificationService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(NotificationService);

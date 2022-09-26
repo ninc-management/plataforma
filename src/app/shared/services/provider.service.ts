@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { isOfType, nameSort } from '../utils';
+import { handle, isOfType, nameSort } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Provider } from '@models/provider';
@@ -21,7 +20,7 @@ export class ProviderService {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -56,10 +55,10 @@ export class ProviderService {
           );
           this._isDataLoaded$.next(true);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.providers$, 'providers'));
+        .subscribe((data: any) => handle(data, this.providers$, 'providers'));
     }
     return this.providers$;
   }

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ContractorService } from './contractor.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { AuthService } from 'app/auth/auth.service';
-import { Socket } from 'ngx-socket-io';
+
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { SocketMock } from 'types/socketio-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
+import { WebSocketService } from './web-socket.service';
 
 describe('ContractorService', () => {
   let service: ContractorService;
@@ -24,7 +25,7 @@ describe('ContractorService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
   CommonTestingModule.setUpTestBed();
   const baseTest = (name: string, test: (expectedContractors: Contractor[]) => void) => {
@@ -65,7 +66,7 @@ describe('ContractorService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractorService);

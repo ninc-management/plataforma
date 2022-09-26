@@ -1,9 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { reviveDates } from '../utils';
+import { handle, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { InternalTransaction } from '@models/internalTransaction';
@@ -17,7 +16,7 @@ export class InternalTransactionService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private transactions$ = new BehaviorSubject<InternalTransaction[]>([]);
 
-  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -56,10 +55,10 @@ export class InternalTransactionService implements OnDestroy {
           const tmp = reviveDates(transactions);
           this.transactions$.next(tmp as InternalTransaction[]);
         });
-      this.socket
+      this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => this.wsService.handle(data, this.transactions$, 'internaltransactions'));
+        .subscribe((data: any) => handle(data, this.transactions$, 'internaltransactions'));
     }
     return this.transactions$;
   }

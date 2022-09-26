@@ -19,6 +19,7 @@ import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-
 import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { Permissions } from 'app/shared/utils';
 
 import { Team } from '@models/team';
@@ -45,6 +46,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
   dialogTypes = DIALOG_TYPES;
   social: NbMenuItem[] = [];
   nortanTeam!: Team;
+  idleTimer?: number;
 
   constructor(
     private router: Router,
@@ -55,7 +57,8 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     private dialogService: NbDialogService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private wsService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -245,6 +248,16 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         const nortanTeam = teams.find((team) => team.isOrganizationTeam);
         if (nortanTeam) this.nortanTeam = nortanTeam;
       });
+
+    this.wsService.manager.on('reconnect', () => {
+      this.wsService.ioSocket.disconnect().connect();
+      const shouldUpdateCache = confirm(
+        'Novas alterações podem estar disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?'
+      );
+      if (shouldUpdateCache) {
+        window.location.reload();
+      }
+    });
   }
 
   ngOnDestroy(): void {
