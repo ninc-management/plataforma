@@ -16,6 +16,7 @@ import {
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { Permissions } from 'app/shared/utils';
@@ -28,6 +29,7 @@ enum DIALOG_TYPES {
   CLIENT,
   TRANSFER,
   REPORT_MENU,
+  TRANSACTION,
 }
 
 @Component({
@@ -335,6 +337,19 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
       case DIALOG_TYPES.REPORT_MENU: {
         this.dialogService.open(ReportMenuDialogComponent, {
           context: {},
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        });
+        break;
+      }
+
+      case DIALOG_TYPES.TRANSACTION: {
+        this.dialogService.open(TransactionDialogComponent, {
+          context: {
+            title: 'ADICIONAR TRANSAÇÃO',
+          },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,
           closeOnEsc: false,

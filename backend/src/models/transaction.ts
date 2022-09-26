@@ -2,12 +2,18 @@ import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { Contract } from './contract';
+import { Provider } from './provider';
 import { EditionHistoryItem, UploadedFile } from './shared';
 import { Team } from './team';
 import { User } from './user';
 
+export enum COST_CENTER_TYPES {
+  USER = 'User',
+  TEAM = 'Team',
+}
+
 export class Transaction extends Base<string> {
-  @prop({ required: true, enum: ['User', 'Team'] })
+  @prop({ required: true, enum: [COST_CENTER_TYPES.USER, COST_CENTER_TYPES.TEAM] })
   modelCostCenter!: string;
 
   @prop({ required: true, ref: () => User })
@@ -15,6 +21,9 @@ export class Transaction extends Base<string> {
 
   @prop({ required: true, refPath: 'modelCostCenter' })
   costCenter!: Ref<User | Team>;
+
+  @prop({ ref: () => Provider })
+  provider?: Ref<Provider>;
 
   @prop({ required: true })
   description!: string;

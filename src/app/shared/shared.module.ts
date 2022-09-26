@@ -31,12 +31,12 @@ import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
+import { TransactionDialogComponent } from './components/transactions/transaction-dialog/transaction-dialog.component';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
 import { OverPaidDirective } from './directives/over-paid.directive';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
-import { TransformPipe } from './pipes/transform.pipe';
 import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
 import { TextInputDialogComponent } from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import langPTBR from 'app/shared/langPT-BR';
@@ -47,56 +47,58 @@ echarts.registerLocale('PT-BR', langPTBR);
   imports: [
     CommonModule,
     FormsModule,
+    NbButtonModule,
     NbCardModule,
     NbCompleterModule,
     NbDatepickerModule,
-    NbButtonModule,
     NbFileUploaderModule,
     NbIconModule,
     NbInputModule,
     NbListModule,
     NbSelectModule,
+    NbSmartTableModule,
     NbSpinnerModule,
     NbTooltipModule,
     NbUserModule,
-    NbSmartTableModule,
     PdfViewerModule,
     NgxEchartsModule.forRoot({ echarts }),
   ],
   exports: [
     BrMaskDirective,
-    OverPaidDirective,
-    LastPaymentDirective,
+    EchartsBarComponent,
+    ExpansiveListComponent,
     FabComponent,
     FabItemComponent,
-    SelectAllTextDirective,
-    TeamExpensesComponent,
-    TeamExpenseItemComponent,
-    UserTransactionComponent,
-    EchartsBarComponent,
     GanttChartComponent,
-    ExpansiveListComponent,
+    LastPaymentDirective,
+    OverPaidDirective,
+    SelectAllTextDirective,
+    TeamExpenseItemComponent,
+    TeamExpensesComponent,
+    TransactionDialogComponent,
+    UserTransactionComponent,
   ],
   declarations: [
-    BrMaskDirective,
-    FileUploadDialogComponent,
-    OverPaidDirective,
-    LastPaymentDirective,
-    PdfDialogComponent,
-    ConfirmationDialogComponent,
     BaseDialogComponent,
+    BaseExpenseComponent,
+    BrMaskDirective,
+    ConfirmationDialogComponent,
+    EchartsBarComponent,
+    ExpansiveListComponent,
     FabComponent,
     FabItemComponent,
-    BaseExpenseComponent,
-    SelectAllTextDirective,
-    TextInputDialogComponent,
-    SelectorDialogComponent,
-    TeamExpensesComponent,
-    TeamExpenseItemComponent,
-    UserTransactionComponent,
-    EchartsBarComponent,
+    FileUploadDialogComponent,
     GanttChartComponent,
-    ExpansiveListComponent,
+    LastPaymentDirective,
+    OverPaidDirective,
+    PdfDialogComponent,
+    SelectAllTextDirective,
+    SelectorDialogComponent,
+    TeamExpenseItemComponent,
+    TeamExpensesComponent,
+    TextInputDialogComponent,
+    TransactionDialogComponent,
+    UserTransactionComponent,
   ],
 })
 export class SharedModule {}

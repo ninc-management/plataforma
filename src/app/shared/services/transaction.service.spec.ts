@@ -9,11 +9,16 @@ import { SocketMock } from 'types/socketio-mock';
 import { Socket } from 'ngx-socket-io';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
-import { reviveDates } from 'app/shared/utils';
+import { Fees, reviveDates } from 'app/shared/utils';
+import { Team } from '@models/team';
+import { PlatformConfig } from '@models/platformConfig';
+import { DEFAULT_CONFIG } from './config.service';
 
 describe('TransactionService', () => {
   let service: TransactionService;
   let httpMock: HttpTestingController;
+  let mockedConfigs: PlatformConfig[];
+  let mockedTeams: Team[];
   let mockedTransactions: Transaction[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
@@ -63,6 +68,9 @@ describe('TransactionService', () => {
     service = TestBed.inject(TransactionService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTransactions = [];
+    mockedTeams = [];
+    mockedConfigs = [];
+
     // Ordem de empenho
     let tmpTransaction = new Transaction();
     tmpTransaction._id = '0';
@@ -119,6 +127,27 @@ describe('TransactionService', () => {
     tmpTransaction.paidDate = tmpTransaction.created;
     tmpTransaction.code = '#4';
     mockedTransactions.push(tmpTransaction);
+
+    let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    tmpConfig._id = '0';
+    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
+    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
+    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
+    tmpConfig.oneDriveConfig.isActive = true;
+    tmpConfig.oneDriveConfig.contracts = {
+      oneDriveId: '0',
+      folderId: '1',
+    };
+    mockedConfigs = [tmpConfig];
+
+    const teamReq = httpMock.expectOne('/api/team/all');
+    expect(teamReq.request.method).toBe('POST');
+    teamReq.flush(mockedTeams);
+
+    const configReq = httpMock.expectOne('/api/config/all');
+    expect(configReq.request.method).toBe('POST');
+    configReq.flush(mockedConfigs);
   });
 
   afterEach(() => {

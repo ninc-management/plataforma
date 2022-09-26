@@ -3,11 +3,17 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { reviveDates } from '../utils';
+import { isOfType, reviveDates } from '../utils';
+import { ContractService } from './contract.service';
+import { ProviderService } from './provider.service';
+import { TeamService } from './team.service';
+import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { EditionHistoryItem } from '@models/shared';
-import { Transaction } from '@models/transaction';
+import { Team } from '@models/team';
+import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
+import { User } from '@models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +27,15 @@ export class TransactionService implements OnDestroy {
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
-  constructor(private http: HttpClient, private wsService: WebSocketService, private socket: Socket) {}
+  constructor(
+    private contractService: ContractService,
+    private http: HttpClient,
+    private providerService: ProviderService,
+    private socket: Socket,
+    private teamService: TeamService,
+    private userService: UserService,
+    private wsService: WebSocketService
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -67,5 +81,23 @@ export class TransactionService implements OnDestroy {
         .subscribe((data: any) => this.wsService.handle(data, this.transactions$, 'transactions'));
     }
     return this.transactions$;
+  }
+
+  idToTransaction(id: string | Transaction): Transaction {
+    if (isOfType(Transaction, id)) return id;
+    const tmp = this.transactions$.getValue();
+    return tmp[tmp.findIndex((el) => el._id === id)];
+  }
+
+  populate(transaction: Transaction): void {
+    if (transaction.author) transaction.author = this.userService.idToUser(transaction.author);
+    if (transaction.costCenter) {
+      if (transaction.modelCostCenter === COST_CENTER_TYPES.USER)
+        transaction.costCenter = this.userService.idToUser(transaction.costCenter as User | string);
+      if (transaction.modelCostCenter === COST_CENTER_TYPES.TEAM)
+        transaction.costCenter = this.teamService.idToTeam(transaction.costCenter as Team | string);
+    }
+    if (transaction.provider) transaction.provider = this.providerService.idToProvider(transaction.provider);
+    if (transaction.contract) transaction.contract = this.contractService.idToContract(transaction.contract);
   }
 }
