@@ -50,4 +50,22 @@
     margin-left: 0;
     align-items: center;
   }
+
+  .contact-listing {
+    width: 100%;
+    align-items: center;
+  }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+::ng-deep {
+  nb-tooltip {
+    white-space: pre-wrap;
+    max-width: 800px;
+  }
 }

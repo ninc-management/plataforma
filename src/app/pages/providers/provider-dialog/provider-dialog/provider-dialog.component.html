@@ -4,7 +4,7 @@
     'width.px': windowWidth()
   }"
 >
-  <div class="col-md-8">
+  <div class="col-md-10">
     <nb-card
       [ngStyle]="{
         'max-height.px': windowHeight()
@@ -28,10 +28,16 @@
       </nb-card-header>
       <nb-card-body>
         <ngx-provider-item
+          *ngIf="componentType == dtypes.PROVIDER"
           [clonedProvider]="provider"
           (submit)="dismiss()"
           [isFormDirty]="isFormDirty"
         ></ngx-provider-item>
+        <ngx-contact-item
+          *ngIf="componentType == dtypes.CONTACT"
+          [clonedProvider]="provider"
+          (submit)="dismiss()"
+        ></ngx-contact-item>
       </nb-card-body>
     </nb-card>
   </div>
