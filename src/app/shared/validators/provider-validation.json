@@ -25,7 +25,7 @@
     "minLength": 14,
     "maxLength": 15
   },
-  "description":{
+  "description": {
     "required": true,
     "minLength": 4,
     "maxLength": 500
@@ -60,6 +60,11 @@
       "required": true,
       "minLength": 2,
       "maxLength": 32
+    }
+  },
+  "contact": {
+    "position": {
+      "required": true
     }
   }
 }

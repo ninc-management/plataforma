@@ -143,6 +143,58 @@
                     </div>
                   </div>
                 </div>
+                <div class="row" *ngIf="selectedOption == typeOfPerson.PESSOA_JURIDICA">
+                  <div class="col-md-11">
+                    <div class="form-group-control">
+                      <label class="label mt-3 mb-0">Adicionar contato:</label>
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <button
+                      nbButton
+                      type="button"
+                      fullWidth
+                      status="primary"
+                      size="large"
+                      (click)="openDialog(dTypes.CONTACT)"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <nb-list style="width: 100%">
+                  <nb-list-item *ngFor="let contact of provider.contact; let i = index; trackBy: trackByIndex">
+                    <div class="row contact-listing">
+                      <div class="col-10 col-md-11" style="padding-left: 0">
+                        <input
+                          readonly
+                          nbInput
+                          [(ngModel)]="provider.contact[i].name"
+                          id="input-contact-{{ i }}"
+                          name="contact-{{ i }}"
+                          fullWidth
+                          fieldSize="large"
+                          [nbTooltip]="tooltipText(i)"
+                          [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                          nbTooltipPlacement="top"
+                          nbTooltipStatus="primary"
+                          nbTooltipAdjustment="noop"
+                          [status]="!provider.contact[i].name ? 'danger' : 'basic'"
+                        />
+                      </div>
+                      <div class="col-2 col-md-1" style="text-align: right">
+                        <nb-icon
+                          class="xIcon"
+                          status="basic"
+                          icon="trash-2-outline"
+                          pack="eva"
+                          (click)="provider.contact.splice(i, 1)"
+                          [options]="{ animation: { type: 'shake' } }"
+                        ></nb-icon>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                </nb-list>
                 <div class="form-control-group">
                   <label class="label" for="input-phone">Melhor telefone para contato:</label>
                   <input
@@ -257,6 +309,7 @@
                     </div>
                   </nb-list-item>
                 </nb-list>
+
                 <div class="row">
                   <div class="col-md-11">
                     <div class="form-control-group">
@@ -289,33 +342,36 @@
                       +
                     </button>
                   </div>
-                  <nb-list style="width: 100%">
-                    <nb-list-item *ngFor="let activity of provider.productList; let i = index; trackBy: trackByIndex">
-                      <div class="row irow">
-                        <div class="col-10 col-md-11">
-                          <input
-                            nbInput
-                            [(ngModel)]="provider.productList[i]"
-                            id="input-productListItem-{{ i }}"
-                            name="productListItem-{{ i }}"
-                            placeholder="Produto"
-                            fullWidth
-                            [status]="provider.productList[i].length == 0 ? 'danger' : 'basic'"
-                          />
-                        </div>
-                        <div class="col-2 col-md-1" style="text-align: right">
-                          <nb-icon
-                            class="xIcon"
-                            status="basic"
-                            icon="trash-2-outline"
-                            pack="eva"
-                            (click)="provider.productList.splice(i, 1); isFormDirty.next(true)"
-                            [options]="{ animation: { type: 'shake' } }"
-                          ></nb-icon>
-                        </div>
+                </div>
+                <nb-list style="width: 100%">
+                  <nb-list-item *ngFor="let activity of provider.productList; let i = index; trackBy: trackByIndex">
+                    <div class="row irow">
+                      <div class="col-10 col-md-11">
+                        <input
+                          nbInput
+                          [(ngModel)]="provider.productList[i]"
+                          id="input-productListItem-{{ i }}"
+                          name="productListItem-{{ i }}"
+                          placeholder="Produto"
+                          fullWidth
+                          [status]="provider.productList[i].length == 0 ? 'danger' : 'basic'"
+                        />
                       </div>
-                    </nb-list-item>
-                  </nb-list>
+                      <div class="col-2 col-md-1" style="text-align: right">
+                        <nb-icon
+                          class="xIcon"
+                          status="basic"
+                          icon="trash-2-outline"
+                          pack="eva"
+                          (click)="provider.productList.splice(i, 1); isFormDirty.next(true)"
+                          [options]="{ animation: { type: 'shake' } }"
+                        ></nb-icon>
+                      </div>
+                    </div>
+                  </nb-list-item>
+                </nb-list>
+
+                <div class="row">
                   <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
                     <div class="form-control-group">
                       <label class="label" for="input-description">Comprovantes anexados:</label>

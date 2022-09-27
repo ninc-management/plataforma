@@ -4,6 +4,20 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Base } from './base';
 import { UploadedFileWithDescription } from './shared';
 
+export class Contact {
+  @prop({ required: true })
+  name: string = '';
+
+  @prop({ required: true })
+  email: string = '';
+
+  @prop({ required: true })
+  position: string = '';
+
+  @prop({ required: true })
+  number: string = '';
+}
+
 export class BankAccount {
   @prop({ required: true })
   name: string = '';
@@ -55,6 +69,9 @@ export class Provider extends Base<string> {
 
   @prop({ type: () => BankAccount })
   bankData: BankAccount = new BankAccount();
+
+  @prop({ type: () => [Contact] })
+  contact: Contact[] = [];
 }
 
 export default getModelForClass(Provider);
