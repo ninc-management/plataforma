@@ -312,15 +312,7 @@ export class DataTabComponent implements OnInit {
   }
 
   updateLiquid(): void {
-    this.clonedContract.locals.liquid = this.contractService.toNetValue(
-      this.contractService.subtractComissions(
-        this.stringUtil.removePercentage(this.clonedContract.locals.value, this.clonedContract.ISS),
-        this.clonedContract
-      ),
-      this.options.notaFiscal,
-      this.options.nortanPercentage,
-      this.clonedContract.created
-    );
+    this.clonedContract.locals.liquid = this.contractService.contractNetValue(this.clonedContract);
     this.clonedContract.locals.cashback = this.stringUtil.numberToMoney(
       this.contractService.expensesContributions(this.clonedContract).global.cashback
     );
