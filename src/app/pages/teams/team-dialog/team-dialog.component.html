@@ -20,7 +20,7 @@
         <div class="buttons" [ngStyle]="{ width: clonedTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }">
           <nb-toggle
             *ngIf="clonedTeam._id && componentType === dTypes.TEAM"
-            [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganitazionTeam()"
+            [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganizationTeam()"
             [(ngModel)]="clonedTeam.isOrganizationTeam"
             name="organizationTeam"
             labelPosition="start"
