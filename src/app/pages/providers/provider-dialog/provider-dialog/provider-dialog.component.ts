@@ -8,6 +8,10 @@ import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
 
+export enum DIALOG_TYPES {
+  PROVIDER,
+  CONTACT,
+}
 @Component({
   selector: 'ngx-provider-dialog',
   templateUrl: './provider-dialog.component.html',
@@ -16,6 +20,8 @@ import { Provider } from '@models/provider';
 export class ProviderDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() provider = new Provider();
+  @Input() componentType = DIALOG_TYPES.PROVIDER;
+  dtypes = DIALOG_TYPES;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;

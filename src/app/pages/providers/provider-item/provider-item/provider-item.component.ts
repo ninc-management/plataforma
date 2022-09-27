@@ -1,14 +1,15 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbTrigger } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, skip, skipWhile, take, takeUntil } from 'rxjs';
 
+import { DIALOG_TYPES, ProviderDialogComponent } from '../../provider-dialog/provider-dialog/provider-dialog.component';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { OneDriveDocumentUploader } from 'app/shared/components/onedrive-document-uploader/onedrive-document-uploader.component';
 import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { compareFiles, trackByIndex } from 'app/shared/utils';
+import { compareFiles, isPhone, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
 import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
@@ -42,6 +43,9 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   folderPath: string = '';
   initialFiles: UploadedFileWithDescription[] = [];
   trackByIndex = trackByIndex;
+  isPhone = isPhone;
+  tooltipTriggers = NbTrigger;
+  dTypes = DIALOG_TYPES;
 
   constructor(
     private providerService: ProviderService,
@@ -64,6 +68,10 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       this.editing = true;
       this.provider = cloneDeep(this.clonedProvider);
       this.uploadedFiles = cloneDeep(this.provider.uploadedFiles);
+      this.selectedOption =
+        this.provider.document.length == this.validation.cpf.maxLength
+          ? TypesOfPerson.PESSOA_FISICA
+          : TypesOfPerson.PESSOA_JURIDICA;
     }
     this.providerService.isDataLoaded$
       .pipe(
@@ -85,6 +93,38 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
 
   getFile(file: UploadedFile | UploadedFileWithDescription): UploadedFileWithDescription {
     return file as UploadedFileWithDescription;
+  }
+
+  tooltipText(idx: number): string {
+    return (
+      `CPF/CNPJ: ` +
+      this.clonedProvider.document +
+      `\nCargo: ` +
+      this.clonedProvider.contact[idx].position +
+      `\nEmail: ` +
+      this.clonedProvider.contact[idx].email +
+      `\nTelefone: ` +
+      this.clonedProvider.contact[idx].number
+    );
+  }
+
+  openDialog(type: DIALOG_TYPES): void {
+    this.dialogService
+      .open(ProviderDialogComponent, {
+        context: {
+          title: 'ADICIONAR CONTATO',
+          provider: this.provider,
+          componentType: type,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe(() => {
+        this.isDialogBlocked.next(false);
+      });
   }
 
   updateUploaderOptions(): void {

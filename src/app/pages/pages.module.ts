@@ -56,6 +56,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { PromotionDialogComponent } from './promotions/promotion-dialog/promotion-dialog.component';
 import { PromotionItemComponent } from './promotions/promotion-item/promotion-item.component';
 import { PromotionsComponent } from './promotions/promotions.component';
+import { ContactItemComponent } from './providers/contact-item/contact-item.component';
 import { ProviderDialogComponent } from './providers/provider-dialog/provider-dialog/provider-dialog.component';
 import { ProviderItemComponent } from './providers/provider-item/provider-item/provider-item.component';
 import { ProvidersComponent } from './providers/providers.component';
@@ -133,6 +134,7 @@ import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-tabl
     ProvidersComponent,
     ProviderDialogComponent,
     ProviderItemComponent,
+    ContactItemComponent,
   ],
 })
 export class PagesModule {}
