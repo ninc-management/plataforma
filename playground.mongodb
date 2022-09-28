@@ -1142,8 +1142,22 @@ db.contracts.find().forEach((contract) => {
   }
 });
 
-
 db.providers.find().forEach((provider) => {
   provider.uploadedFiles = [];
   db.providers.replaceOne({ _id: provider._id }, provider);
+});
+
+db.invoices.find().forEach((invoice) => {
+  invoice.providers = [];
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});
+
+db.providers.find().forEach((provider) => {
+  provider.description = '';
+  db.providers.replaceOne({ _id: provider._id }, provider);
+});
+
+db.platformconfigs.find().forEach((config) => {
+  config.invoiceConfig.hasProvider = true;
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

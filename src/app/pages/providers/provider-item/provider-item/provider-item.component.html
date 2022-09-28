@@ -178,7 +178,7 @@
                     #address="ngModel"
                     id="input-address"
                     name="address"
-                    placeholder="Endereço do cliente"
+                    placeholder="Endereço do fornecedor"
                     fullWidth
                     fieldSize="large"
                     [required]="validation.address.required"
@@ -193,6 +193,33 @@
                       O endereço deve conter entre
                       {{ validation.address.minLength }} a
                       {{ validation.address.maxLength }}
+                      caracteres
+                    </p>
+                  </ng-container>
+                </div>
+                <div class="form-control-group">
+                  <label class="label" for="input-description">Descrição:</label>
+                  <textarea
+                    nbInput
+                    [(ngModel)]="provider.description"
+                    #description="ngModel"
+                    id="input-description"
+                    name="description"
+                    placeholder="Descrição do fornecedor"
+                    fullWidth
+                    fieldSize="large"
+                    [required]="validation.description.required"
+                    [minlength]="validation.description.minLength"
+                    [maxlength]="validation.description.maxLength"
+                    [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+                    [attr.aria-invalid]="description.invalid && description.touched ? true : null"
+                  ></textarea>
+                  <ng-container *ngIf="description.invalid && description.touched">
+                    <p class="caption status-danger" *ngIf="description.errors?.required">O endereço é obrigatório!</p>
+                    <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
+                      O endereço deve conter entre
+                      {{ validation.description.minLength }} a
+                      {{ validation.description.maxLength }}
                       caracteres
                     </p>
                   </ng-container>

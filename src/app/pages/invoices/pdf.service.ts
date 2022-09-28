@@ -9,6 +9,7 @@ import { Subject, take } from 'rxjs';
 
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
+import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -16,6 +17,7 @@ import { idToProperty } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { Provider } from '@models/provider';
 import { User } from '@models/user';
 
 pdfMake.fonts = {
@@ -46,7 +48,8 @@ export class PdfService {
     private userService: UserService,
     private contractorService: ContractorService,
     private teamService: TeamService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private providerService: ProviderService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -503,6 +506,59 @@ export class PdfService {
         ],
         style: 'insideText',
       });
+    }
+
+    // Body - Providers
+    if (this.config.invoiceConfig.hasProvider) {
+      pdf.add(pdf.ln(1));
+
+      if (invoice.providers.length > 0) {
+        pdf.add({
+          text: 'Lista de fornecedores desse contrato:',
+          alignment: 'center',
+          style: 'insideText',
+        });
+
+        pdf.add(pdf.ln(1));
+
+        for (const [index, p] of invoice.providers.entries()) {
+          const provider = p ? this.providerService.idToProvider(p) : new Provider();
+          /* eslint-disable indent*/
+          pdf.add({
+            columns: [
+              {
+                width: 70,
+                columns: [
+                  await new Img(
+                    provider.profilePicture == undefined
+                      ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
+                      : provider.profilePicture
+                  )
+                    .width(60)
+                    .height(60)
+                    .build(),
+                  {
+                    svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                    fit: [62, 62],
+                    relativePosition: { x: -61, y: -1 },
+                  },
+                ],
+              },
+              {
+                width: '*',
+                text: provider.fullName + ', ' + provider.description,
+                alignment: 'left',
+                fontSize: 8,
+              },
+            ],
+            pageBreak: index == 5 ? 'after' : 'none',
+            style: 'insideText',
+          });
+          /* eslint-enable indent*/
+
+          pdf.add(pdf.ln(1));
+        }
+      }
     }
 
     // Body - Invoice Info
