@@ -6,7 +6,6 @@ import { Team, TeamConfig, TeamMember } from '@models/team';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { AuthService } from 'app/auth/auth.service';
-import { Socket } from 'ngx-socket-io';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
@@ -14,6 +13,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { take } from 'rxjs/operators';
 import { reviveDates } from '../utils';
 import { Sector } from '@models/shared';
+import { WebSocketService } from './web-socket.service'
 
 describe('TeamService', () => {
   let service: TeamService;
@@ -28,7 +28,7 @@ describe('TeamService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
   });
-  const socketServiceSpy = jasmine.createSpyObj<Socket>('Socket', ['fromEvent']);
+  const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('Socket', ['fromEvent']);
   CommonTestingModule.setUpTestBed();
 
   const baseTest = (name: string, test: (expectedTeams: Team[]) => void) => {
@@ -69,7 +69,7 @@ describe('TeamService', () => {
 
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
-    TestBed.overrideProvider(Socket, { useValue: socketServiceSpy });
+    TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TeamService);
