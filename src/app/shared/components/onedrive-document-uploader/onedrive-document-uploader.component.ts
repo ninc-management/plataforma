@@ -5,7 +5,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 
-import { UploadedFileWithDescription } from '@models/shared';
+import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
 
 @Component({
   selector: 'ngx-onedrive-document-uploader',
@@ -15,7 +15,7 @@ import { UploadedFileWithDescription } from '@models/shared';
 export class OneDriveDocumentUploader implements OnInit, OnDestroy {
   protected destroy$ = new Subject<void>();
   protected newDocument$ = new Subject<void>();
-  uploadedFiles: UploadedFileWithDescription[] = [];
+  uploadedFiles: UploadedFile[] | UploadedFileWithDescription[] = [];
 
   uploaderOptions: NbFileUploaderOptions = {
     multiple: true,

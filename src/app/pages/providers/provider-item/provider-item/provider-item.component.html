@@ -339,7 +339,7 @@
                               <div class="form-control-group">
                                 <textarea
                                   nbInput
-                                  [(ngModel)]="uploadedFiles[i].description"
+                                  [(ngModel)]="getFile(uploadedFiles[i]).description"
                                   id="input-description-{{ i }}"
                                   name="descriptionFile-{{ i }}"
                                   placeholder="Descreva os detalhes do arquivo"
@@ -349,23 +349,23 @@
                                   [minlength]="validation.description.minLength"
                                   [maxlength]="validation.description.maxLength"
                                   [status]="
-                                    uploadedFiles[i].description.length >= validation.description.minLength &&
-                                    uploadedFiles[i].description.length <= validation.description.maxLength
+                                    getFile(uploadedFiles[i]).description.length >= validation.description.minLength &&
+                                    getFile(uploadedFiles[i]).description.length <= validation.description.maxLength
                                       ? 'success'
                                       : 'danger'
                                   "
                                 ></textarea>
                                 <ng-container
-                                  *ngIf="uploadedFiles[i].description.length < validation.description.minLength"
+                                  *ngIf="getFile(uploadedFiles[i]).description.length < validation.description.minLength"
                                 >
-                                  <p class="caption status-danger" *ngIf="!uploadedFiles[i].description.length">
+                                  <p class="caption status-danger" *ngIf="!getFile(uploadedFiles[i]).description.length">
                                     O campo de descrição é obrigatório!
                                   </p>
                                   <p
                                     class="caption status-danger"
                                     *ngIf="
-                                      uploadedFiles[i].description.length < validation.description.minLength ||
-                                      uploadedFiles[i].description.length > validation.description.maxLength
+                                      getFile(uploadedFiles[i]).description.length < validation.description.minLength ||
+                                      getFile(uploadedFiles[i]).description.length > validation.description.maxLength
                                     "
                                   >
                                     O campo de descrição deve conter entre

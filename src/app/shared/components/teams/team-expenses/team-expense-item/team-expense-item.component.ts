@@ -15,7 +15,6 @@ import { TeamService } from 'app/shared/services/team.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { compareFiles, forceValidatorUpdate, formatDate } from 'app/shared/utils';
 
-import { UploadedFileWithDescription } from '@models/shared';
 import { Team, TeamExpense } from '@models/team';
 import { User } from '@models/user';
 
@@ -86,7 +85,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       if (this.expense.provider) this.expense.provider = this.providerService.idToProvider(this.expense.provider);
-      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFileWithDescription[];
+      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
       this.handleTypeChange();
       this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFile[];
     } else {

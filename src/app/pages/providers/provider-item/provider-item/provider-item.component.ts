@@ -11,7 +11,7 @@ import { ProviderService } from 'app/shared/services/provider.service';
 import { compareFiles, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
-import { UploadedFileWithDescription } from '@models/shared';
+import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
 
 import provider_validation from 'app/shared/validators/provider-validation.json';
 
@@ -73,7 +73,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       .subscribe(() => {
         this.isDataLoading = false;
       });
-    this.initialFiles = cloneDeep(this.uploadedFiles);
+    this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
   }
 
   ngAfterViewInit() {
@@ -81,6 +81,10 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       if (this.ngForm.dirty) this.isFormDirty.next(true);
       if (status == 'VALID') this.updateUploaderOptions();
     });
+  }
+
+  getFile(file: UploadedFile | UploadedFileWithDescription): UploadedFileWithDescription {
+    return file as UploadedFileWithDescription;
   }
 
   updateUploaderOptions(): void {
@@ -95,7 +99,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
 
   registerProvider(): void {
     this.submitted = true;
-    this.provider.uploadedFiles = cloneDeep(this.uploadedFiles);
+    this.provider.uploadedFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
     if (this.editing) this.providerService.editProvider(this.provider);
     else this.providerService.saveProvider(this.provider);
     this.isFormDirty.next(false);
