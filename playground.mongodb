@@ -1160,5 +1160,22 @@ db.providers.find().forEach((provider) => {
 
 db.platformconfigs.find().forEach((config) => {
   config.invoiceConfig.hasProvider = true;
+  config.socialConfig.logoDefault = {
+    url: '',
+    name: ''
+  }
+  config.socialConfig.logoWithoutName = {
+    url: '',
+    name: ''
+  }
+  config.socialConfig.logoWhite = {
+    url: '',
+    name: ''
+  }
+  config.socialConfig.logoWhiteWithoutName = {
+    url: '',
+    name: ''
+  }
+
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

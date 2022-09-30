@@ -286,12 +286,7 @@ export class PdfService {
 
     // Header
     const header = {
-      columns: [
-        {
-          svg: this.NINCLogoSvg,
-          width: 200,
-        },
-      ] as any,
+      columns: [await new Img(this.config.socialConfig.logoDefault.url).width(200).build()] as any,
       margin: [5, 20, 5, 5],
     };
 

@@ -133,12 +133,8 @@ $hamburger-layer-border-radius: 4px;
     }
 
     .logo {
-      padding: 0 1.25rem;
-      font-size: 1.75rem;
-      @include nb-ltr(border-left, 1px solid nb-theme(divider-color));
-      @include nb-rtl(border-right, 1px solid nb-theme(divider-color));
-      white-space: nowrap;
-      text-decoration: none;
+      object-fit: contain;
+      height: 2.5rem;
     }
   }
 

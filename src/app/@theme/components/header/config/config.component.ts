@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, skipWhile, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take } from 'rxjs';
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
+import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -12,6 +13,7 @@ import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/s
 
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { UploadedFile } from '@models/shared';
 import { User } from '@models/user';
 
 import config_validation from 'app/shared/validators/config-validation.json';
@@ -36,12 +38,19 @@ enum CONFIG_EXPENSE_TYPES {
   CONTRATO = 'Contrato',
 }
 
+enum LOGO_TYPES {
+  logoDefault = 'logoDefault',
+  logoWithoutName = 'logoWithoutName',
+  logoWhite = 'logoWhite',
+  logoWhiteWithoutName = 'logoWhiteWithoutName',
+}
+
 @Component({
   selector: 'ngx-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.scss'],
 })
-export class ConfigComponent implements OnInit {
+export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren(NgForm) ngForms = {} as QueryList<NgForm>;
   @Input() config: PlatformConfig = new PlatformConfig();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
@@ -55,9 +64,7 @@ export class ConfigComponent implements OnInit {
   users: User[] = [];
   PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
-  EXPENSE_TYPES = EXPENSE_TYPES;
-  configExpenseTypes = CONFIG_EXPENSE_TYPES;
-  KEYS_TO_VERIFY = KEYS_TO_VERIFY;
+
   newLevel: string = '';
   newUnit: string = '';
   validation = config_validation as any;
@@ -69,6 +76,11 @@ export class ConfigComponent implements OnInit {
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   tooltipTriggers = tooltipTriggers;
+
+  EXPENSE_TYPES = EXPENSE_TYPES;
+  configExpenseTypes = CONFIG_EXPENSE_TYPES;
+  KEYS_TO_VERIFY = KEYS_TO_VERIFY;
+  LOGO_TYPES = LOGO_TYPES;
 
   expenseIcon = {
     icon: 'minus',
@@ -82,6 +94,8 @@ export class ConfigComponent implements OnInit {
     icon: 'onedrive',
     pack: 'fac',
   };
+
+  destroy$ = new Subject<void>();
 
   constructor(
     private configService: ConfigService,
@@ -114,6 +128,8 @@ export class ConfigComponent implements OnInit {
       typeItem.subTypes = typeItem.subTypes as SubTypeItem[];
       return typeItem;
     });
+
+    this.verifyEmptyLogos();
   }
 
   ngAfterViewInit() {
@@ -130,6 +146,11 @@ export class ConfigComponent implements OnInit {
         this.isFormDirty.next(true);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openDialog(itemsWithValue: string[], warning: string): void {
@@ -255,5 +276,60 @@ export class ConfigComponent implements OnInit {
           this.isFormDirty.next(true);
         }
       });
+  }
+
+  openUploadDialog(logoType: LOGO_TYPES): void {
+    this.dialogService
+      .open(FileUploadDialogComponent, {
+        context: {
+          title: 'Envio de logo',
+          allowedMimeType: ['image/png', 'image/jpg', 'image/jpeg'],
+          maxFileSize: 0.5,
+          mediaFolderPath: 'logoImages/',
+          name: {
+            fn: (name: string) => {
+              return this.config.socialConfig.companyName.toLowerCase() + '_' + this.translateLogoType(logoType);
+            },
+          },
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((files) => {
+        if (files.length > 0) {
+          const uploadedLogo = new UploadedFile();
+          uploadedLogo.name = files[0].name;
+          uploadedLogo.url = files[0].url;
+          this.clonedConfig.socialConfig[logoType] = uploadedLogo;
+        }
+      });
+  }
+
+  private verifyEmptyLogos(): void {
+    Object.values(LOGO_TYPES).forEach((logoType: LOGO_TYPES) => {
+      if (this.clonedConfig.socialConfig[logoType].url == '') {
+        this.clonedConfig.socialConfig[logoType].name = 'Anexe uma logo';
+        this.clonedConfig.socialConfig[logoType].url =
+          'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999';
+      }
+    });
+  }
+
+  private translateLogoType(type: LOGO_TYPES): string {
+    switch (type) {
+      case LOGO_TYPES.logoDefault:
+        return 'logo_padrao';
+      case LOGO_TYPES.logoWithoutName:
+        return 'logo_padrao_sem_nome';
+      case LOGO_TYPES.logoWhite:
+        return 'logo_tema_escuro';
+      case LOGO_TYPES.logoWhiteWithoutName:
+        return 'logo_tema_escuro_sem_nome';
+
+      default:
+        return 'logo';
+    }
   }
 }

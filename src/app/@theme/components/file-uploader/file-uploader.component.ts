@@ -25,6 +25,7 @@ export class NbFileUploaderComponent implements OnInit, OnDestroy {
 
   @Input()
   options: NbFileUploaderOptions = {
+    defaultInput: false,
     multiple: false,
     directory: false,
     showUploadQueue: true,

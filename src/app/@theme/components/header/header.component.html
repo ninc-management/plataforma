@@ -23,7 +23,7 @@
       [matRippleCentered]="false"
       style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center;"
     >
-      <nb-icon class="logoIcon" [icon]="logoIcon" pack="fac" *ngIf="!isPhone()"></nb-icon>
+      <img class="logo" [src]="config.socialConfig.logoWhite.url" alt="Logo">
      <span *ngIf="config.socialConfig.showCompanyName"> {{ menuTitle }}</span>
     </a>
   </div>
