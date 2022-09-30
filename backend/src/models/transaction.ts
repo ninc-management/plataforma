@@ -44,7 +44,7 @@ export class Transaction extends Base<string> {
   notaFiscal?: string;
 
   @prop({ required: true })
-  nortanPercentage?: string;
+  companyPercentage?: string;
 
   @prop({ required: true })
   created: Date = new Date();
