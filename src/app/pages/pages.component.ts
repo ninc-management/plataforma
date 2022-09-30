@@ -409,7 +409,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
       case DIALOG_TYPES.TRANSACTION: {
         this.dialogService.open(TransactionDialogComponent, {
           context: {
-            title: 'ADICIONAR TRANSAÇÃO',
+            title: 'ADICIONAR MOVIMENTAÇÃO',
           },
           dialogClass: 'my-dialog',
           closeOnBackdropClick: false,

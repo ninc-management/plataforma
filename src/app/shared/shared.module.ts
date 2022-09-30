@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import {
   NbButtonModule,
   NbCardModule,
+  NbCheckboxModule,
   NbDatepickerModule,
   NbIconModule,
   NbInputModule,
   NbListModule,
+  NbRadioModule,
   NbSelectModule,
   NbSpinnerModule,
   NbTooltipModule,
@@ -33,6 +35,7 @@ import { SelectorDialogComponent } from './components/selector-dialog/selector-d
 import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
 import { TransactionDialogComponent } from './components/transactions/transaction-dialog/transaction-dialog.component';
+import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
@@ -51,12 +54,14 @@ echarts.registerLocale('PT-BR', langPTBR);
     FormsModule,
     NbButtonModule,
     NbCardModule,
+    NbCheckboxModule,
     NbCompleterModule,
     NbDatepickerModule,
     NbFileUploaderModule,
     NbIconModule,
     NbInputModule,
     NbListModule,
+    NbRadioModule,
     NbSelectModule,
     NbSmartTableModule,
     NbSpinnerModule,
@@ -79,6 +84,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TeamExpenseItemComponent,
     TeamExpensesComponent,
     TransactionDialogComponent,
+    TransactionItemComponent,
     UserTransactionComponent,
   ],
   declarations: [
@@ -102,6 +108,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TeamExpensesComponent,
     TextInputDialogComponent,
     TransactionDialogComponent,
+    TransactionItemComponent,
     UserTransactionComponent,
     NotIncludedDirective,
   ],
