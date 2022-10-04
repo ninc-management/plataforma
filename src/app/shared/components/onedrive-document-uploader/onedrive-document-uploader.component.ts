@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 
@@ -28,7 +30,7 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
   fileTypesAllowed: string[] = [];
   maxFileSize = 4;
 
-  constructor(protected onedrive: OneDriveService) {}
+  constructor(protected onedrive: OneDriveService, protected dialogService: NbDialogService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -82,8 +84,23 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
     });
   }
 
-  removeFile(index: number): void {
-    //TODO: Remove file on Onedrive
-    this.uploadedFiles.splice(index, 1);
+  removeFile(index: number, path: string): void {
+    this.dialogService
+      .open(ConfirmationDialogComponent, {
+        context: {
+          question: 'Deseja remover o arquivo permanentemente?',
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((response: boolean) => {
+        if (response) {
+          this.onedrive.deleteFiles(path, [this.uploadedFiles[index]]);
+          this.uploadedFiles.splice(index, 1);
+        }
+      });
   }
 }

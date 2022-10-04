@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
 
@@ -121,11 +122,12 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     protected onedrive: OneDriveService,
     protected stringUtil: StringUtilService,
     protected providerService: ProviderService,
+    protected dialogService: NbDialogService,
     public configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService
   ) {
-    super(stringUtil, onedrive, providerService, userService);
+    super(stringUtil, onedrive, providerService, dialogService, userService);
   }
 
   ngOnDestroy(): void {
