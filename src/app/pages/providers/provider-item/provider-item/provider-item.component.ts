@@ -1,16 +1,20 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
-import { cloneDeep } from 'lodash';
-import { BehaviorSubject, skipWhile, Subject, take, takeUntil } from 'rxjs';
+import { cloneDeep, isEqual } from 'lodash';
+import { BehaviorSubject, skip, skipWhile, take, takeUntil } from 'rxjs';
 
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { OneDriveDocumentUploader } from 'app/shared/components/onedrive-document-uploader/onedrive-document-uploader.component';
+import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { trackByIndex } from 'app/shared/utils';
+import { compareFiles, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
+import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
 
 import provider_validation from 'app/shared/validators/provider-validation.json';
+
 enum TypesOfPerson {
   PESSOA_FISICA = 'pessoa física',
   PESSOA_JURIDICA = 'pessoa jurídica',
@@ -21,13 +25,12 @@ enum TypesOfPerson {
   templateUrl: './provider-item.component.html',
   styleUrls: ['./provider-item.component.scss'],
 })
-export class ProviderItemComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ProviderItemComponent extends OneDriveDocumentUploader implements OnInit, OnDestroy, AfterViewInit {
   @Input() clonedProvider = new Provider();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
   @ViewChild('form') ngForm = {} as NgForm;
-  private destroy$ = new Subject<void>();
   provider = new Provider();
   editing = false;
   submitted = false;
@@ -36,18 +39,31 @@ export class ProviderItemComponent implements OnInit, OnDestroy, AfterViewInit {
   isDataLoading = true;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   options = { serviceName: '', productName: '' };
+  folderPath: string = '';
+  initialFiles: UploadedFileWithDescription[] = [];
   trackByIndex = trackByIndex;
 
-  constructor(private providerService: ProviderService, private dialogService: NbDialogService) {}
+  constructor(
+    private providerService: ProviderService,
+    private dialogService: NbDialogService,
+    protected onedrive: OneDriveService
+  ) {
+    super(onedrive);
+  }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    if (!this.submitted && !isEqual(this.initialFiles, this.uploadedFiles)) {
+      this.deleteFiles();
+    }
+    super.ngOnDestroy();
   }
+
   ngOnInit(): void {
+    super.ngOnInit();
     if (this.clonedProvider._id !== undefined) {
       this.editing = true;
       this.provider = cloneDeep(this.clonedProvider);
+      this.uploadedFiles = cloneDeep(this.provider.uploadedFiles);
     }
     this.providerService.isDataLoaded$
       .pipe(
@@ -57,17 +73,33 @@ export class ProviderItemComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(() => {
         this.isDataLoading = false;
       });
+    this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
   }
 
   ngAfterViewInit() {
-    if (this.ngForm)
-      this.ngForm.statusChanges?.subscribe(() => {
-        if (this.ngForm.dirty) this.isFormDirty.next(true);
-      });
+    this.ngForm?.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+      if (status == 'VALID') this.updateUploaderOptions();
+    });
+  }
+
+  getFile(file: UploadedFile | UploadedFileWithDescription): UploadedFileWithDescription {
+    return file as UploadedFileWithDescription;
+  }
+
+  updateUploaderOptions(): void {
+    const mediaFolderPath = this.provider.fullName;
+    const fn = (name: string) => {
+      const extension = name.match('[.].+');
+      return 'documento' + extension;
+    };
+    this.folderPath = mediaFolderPath;
+    super.updateUploaderOptions(mediaFolderPath, fn, OneDriveFolders.PROVIDERS);
   }
 
   registerProvider(): void {
     this.submitted = true;
+    this.provider.uploadedFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
     if (this.editing) this.providerService.editProvider(this.provider);
     else this.providerService.saveProvider(this.provider);
     this.isFormDirty.next(false);
@@ -100,5 +132,10 @@ export class ProviderItemComponent implements OnInit, OnDestroy, AfterViewInit {
           this.providerService.editProvider(this.provider);
         }
       });
+  }
+
+  deleteFiles(): void {
+    const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
+    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
   }
 }
