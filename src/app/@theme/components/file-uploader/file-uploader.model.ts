@@ -23,6 +23,7 @@ export interface NbFileUploaderOptions {
   showUploadQueue?: boolean;
   storageProvider: StorageProvider;
   mediaFolderPath: string;
+  oneDriveFolder?: string;
 
   params?: { [key: string]: string };
   headers?: { [key: string]: string };

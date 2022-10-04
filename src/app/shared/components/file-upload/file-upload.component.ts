@@ -1,6 +1,6 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from '../../../@theme/components';

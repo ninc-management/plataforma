@@ -308,8 +308,12 @@ describe('ContractService', () => {
     tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
     tmpConfig.oneDriveConfig.isActive = true;
     tmpConfig.oneDriveConfig.contracts = {
-      "oneDriveId": '0',
-      "folderId": '1',
+      oneDriveId: '0',
+      folderId: '1',
+    };
+    tmpConfig.oneDriveConfig.providers = {
+      oneDriveId: '0',
+      folderId: '1',
     };
     mockedConfigs = [tmpConfig];
 

@@ -8,7 +8,7 @@ import { ConfigService, EXPENSE_OBJECT_TYPES, EXPENSE_TYPES } from 'app/shared/s
 import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -25,7 +25,7 @@ import {
 import { Contract, ContractExpense, ContractExpenseTeamMember } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
-import { Sector } from '@models/shared';
+import { Sector, UploadedFileWithDescription } from '@models/shared';
 import { ExpenseType } from '@models/team';
 import { User } from '@models/user';
 
@@ -185,7 +185,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
       if (this.expense.provider) this.expense.provider = this.providerService.idToProvider(this.expense.provider);
 
-      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFile[];
+      this.uploadedFiles = cloneDeep(this.expense.uploadedFiles) as UploadedFileWithDescription[];
       if (this.expense.type === EXPENSE_TYPES.APORTE) this.removeContractBalanceMember();
       this.lastType = this.expense.type as EXPENSE_TYPES;
       if (this.expense.splitType === SPLIT_TYPES.INDIVIDUAL) {
@@ -246,7 +246,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         return item + '-' + type + '-' + value + '-' + date + extension;
       };
       this.folderPath = mediaFolderPath;
-      super.updateUploaderOptions(mediaFolderPath, fn);
+      super.updateUploaderOptions(mediaFolderPath, fn, OneDriveFolders.CONTRACTS);
     }
   }
 
@@ -309,7 +309,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   addAndClean(): void {
     this.contract.createdExpenses += 1;
     this.expense.code = '#' + this.contract.createdExpenses.toString();
-    this.newExpense$.next();
+    this.newDocument$.next();
     this.expense.uploadedFiles = cloneDeep(this.uploadedFiles);
     this.contract.expenses.push(cloneDeep(this.expense));
     this.contractService.editContract(this.contract);
