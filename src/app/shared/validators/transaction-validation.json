@@ -19,5 +19,10 @@
     "required": true,
     "minLength": 1,
     "maxLength": 30
+  },
+  "transaction": {
+    "required": false,
+    "minLength": 4,
+    "maxLength": 240
   }
 }
