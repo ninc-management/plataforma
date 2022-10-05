@@ -52,6 +52,9 @@ export class Transaction extends Base<string> {
   @prop({ required: true })
   lastUpdate: Date = new Date();
 
+  @prop()
+  dueDate?: Date;
+
   @prop({ required: true })
   paid: boolean = false;
 
