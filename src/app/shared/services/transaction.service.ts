@@ -14,6 +14,11 @@ import { Team } from '@models/team';
 import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
+export enum TRANSACTION_TYPES {
+  OE = 'Ordem de Empenho',
+  EXPENSE = 'Despesa',
+}
+
 @Injectable({
   providedIn: 'root',
 })

@@ -1,10 +1,14 @@
 @import 'app/@theme/styles/themes';
 
 @include nb-install-component() {
+  .transaction-radio {
+    display: flex;
+    height: 16px;
+  }
 }
 
 ::ng-deep {
-  nb-checkbox label .custom-checkbox{
+  nb-checkbox label .custom-checkbox {
     width: 16px;
     height: 16px;
   }

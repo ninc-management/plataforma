@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
 import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
+import { TRANSACTION_TYPES } from 'app/shared/services/transaction.service';
 import { formatDate, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -13,7 +14,7 @@ import { User } from '@models/user';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
 
-enum TRANSACTION_TYPES {
+enum TRANSACTION_KINDS {
   INTERNAL = 'internal',
   CASH_FLOW = 'cashflow',
 }
@@ -35,6 +36,8 @@ export class TransactionItemComponent implements OnInit {
     type: '',
     relatedWithContract: false,
   };
+  transactionKinds: TRANSACTION_KINDS[] = Object.values(TRANSACTION_KINDS);
+  tTypes = TRANSACTION_TYPES;
   transactionTypes: TRANSACTION_TYPES[] = Object.values(TRANSACTION_TYPES);
 
   contractSearch = '';
@@ -56,7 +59,6 @@ export class TransactionItemComponent implements OnInit {
 
   formatDate = formatDate;
   isPhone = isPhone;
-  tTypes = [''];
 
   uploaderOptions: NbFileUploaderOptions = {
     multiple: true,
