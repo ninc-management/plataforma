@@ -96,16 +96,19 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   }
 
   tooltipText(idx: number): string {
-    return (
-      `CPF/CNPJ: ` +
-      this.clonedProvider.document +
-      `\nCargo: ` +
-      this.clonedProvider.contact[idx].position +
-      `\nEmail: ` +
-      this.clonedProvider.contact[idx].email +
-      `\nTelefone: ` +
-      this.clonedProvider.contact[idx].number
-    );
+    if (this.provider) {
+      return (
+        `CPF/CNPJ: ` +
+        this.provider.document +
+        `\nCargo: ` +
+        this.provider.contacts[idx].position +
+        `\nEmail: ` +
+        this.provider.contacts[idx].email +
+        `\nTelefone: ` +
+        this.provider.contacts[idx].number
+      );
+    }
+    return '';
   }
 
   openDialog(type: DIALOG_TYPES): void {

@@ -20,7 +20,7 @@ export class ContactItemComponent {
   constructor(public providerService: ProviderService) {}
 
   addContact(): void {
-    this.clonedProvider.contact.push(cloneDeep(this.contact));
+    this.clonedProvider.contacts.push(cloneDeep(this.contact));
     this.providerService.editProvider(this.clonedProvider);
   }
 }

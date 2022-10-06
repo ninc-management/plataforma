@@ -18,23 +18,6 @@ export class Contact {
   number: string = '';
 }
 
-export class BankAccount {
-  @prop({ required: true })
-  name: string = '';
-
-  @prop({ required: true })
-  agency: string = '';
-
-  @prop({ required: true })
-  accountNumber: string = '';
-
-  @prop({ required: true })
-  pix: string = '';
-
-  @prop()
-  operation: string = '';
-}
-
 @plugin(mongooseUniqueValidator)
 export class Provider extends Base<string> {
   @prop({ required: true })
@@ -67,11 +50,23 @@ export class Provider extends Base<string> {
   @prop()
   observation: string = '';
 
-  @prop({ type: () => BankAccount })
-  bankData: BankAccount = new BankAccount();
+  @prop()
+  name: string = '';
+
+  @prop()
+  agency: string = '';
+
+  @prop()
+  accountNumber: string = '';
+
+  @prop()
+  pix: string = '';
+
+  @prop()
+  operation: string = '';
 
   @prop({ type: () => [Contact] })
-  contact: Contact[] = [];
+  contacts: Contact[] = [];
 }
 
 export default getModelForClass(Provider);

@@ -35,32 +35,30 @@
     "minLength": 3,
     "maxLength": 300
   },
-  "bankData": {
-    "bankName": {
-      "required": true,
-      "minLength": 3,
-      "maxLength": 30
-    },
-    "agency": {
-      "required": true,
-      "minLength": 3,
-      "maxLength": 15
-    },
-    "accountNumber": {
-      "required": true,
-      "minLength": 3,
-      "maxLength": 20
-    },
-    "operation": {
-      "required": true,
-      "minLength": 2,
-      "maxLength": 5
-    },
-    "pix": {
-      "required": true,
-      "minLength": 2,
-      "maxLength": 32
-    }
+  "bankName": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 30
+  },
+  "agency": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 15
+  },
+  "accountNumber": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 20
+  },
+  "operation": {
+    "required": true,
+    "minLength": 2,
+    "maxLength": 5
+  },
+  "pix": {
+    "required": true,
+    "minLength": 2,
+    "maxLength": 32
   },
   "contact": {
     "position": {

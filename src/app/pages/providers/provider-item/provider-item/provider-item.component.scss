@@ -55,6 +55,12 @@
     width: 100%;
     align-items: center;
   }
+
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 ::ng-deep {

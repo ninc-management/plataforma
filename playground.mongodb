@@ -1145,6 +1145,6 @@ db.contracts.find().forEach((contract) => {
 
 db.providers.find().forEach((provider) => {
   provider.uploadedFiles = [];
-  provider.contact = [];
+  provider.contacts = [];
   db.providers.replaceOne({ _id: provider._id }, provider);
 });
