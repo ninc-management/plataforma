@@ -103,11 +103,9 @@ export class ReceiptItemComponent implements OnInit {
     if (this.receiptIndex !== undefined) {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
       this.options.hasISS = this.receipt.ISS != '0,00';
-      this.updateLiquidValue();
     } else {
       if (this.contract.total && this.contract.receipts.length === +this.contract.total - 1) {
         this.receipt.value = this.notPaid();
-        this.updateLiquidValue();
       } else {
         if (this.contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
@@ -118,6 +116,7 @@ export class ReceiptItemComponent implements OnInit {
         }
       }
     }
+    this.updateLiquidValue();
     this.accessChecker
       .isGranted('df', 'receipt-financial-manager')
       .pipe(take(1))
