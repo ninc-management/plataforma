@@ -74,10 +74,7 @@ export class ProviderService {
     return this.idToProvider(p1)._id == this.idToProvider(p2)._id;
   }
 
-  isProviderInList(
-    provider: string | Provider | undefined,
-    list: (Provider | string | undefined)[] //AER
-  ): boolean {
+  isProviderInList(provider: string | Provider | undefined, list: (Provider | string | undefined)[]): boolean {
     if (provider == undefined) return false;
     return list.some((p: Provider | string | undefined) => this.isEqual(provider, p));
   }

@@ -513,14 +513,6 @@ export class PdfService {
       pdf.add(pdf.ln(1));
 
       if (invoice.providers.length > 0) {
-        pdf.add({
-          text: 'Lista de fornecedores desse contrato:',
-          alignment: 'center',
-          style: 'insideText',
-        });
-
-        pdf.add(pdf.ln(1));
-
         for (const [index, p] of invoice.providers.entries()) {
           const provider = p ? this.providerService.idToProvider(p) : new Provider();
           /* eslint-disable indent*/

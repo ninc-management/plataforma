@@ -774,7 +774,7 @@
                 placeholder="Descrição do fornecedor"
                 fullWidth
                 fieldSize="large"
-                disabled
+                readonly
                 >{{
                   [provider, providerService.idToProvider.bind(providerService), 'description']
                     | transformPipe: idToProperty
