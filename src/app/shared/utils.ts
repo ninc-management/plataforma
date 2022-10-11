@@ -92,7 +92,13 @@ export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: Invoi
 
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
-    if (team && team.overrideSupportPercentages && team.nfPercentage) return team.nfPercentage;
+    if (invoice.type == 'nortan') {
+      if (team && team.overrideSupportPercentages && team.supportOrganizationPercentage)
+        return team.supportOrganizationPercentage;
+    } else {
+      if (team && team.overrideIntermediationPercentages && team.intermediationOrganizationPercentage)
+        return team.intermediationOrganizationPercentage;
+    }
   }
   return invoice.administration == 'nortan'
     ? invoiceConfig.businessFees.support.nfPercentage
@@ -113,7 +119,13 @@ export function nortanPercentage(iDocument: Contract | Invoice, invoiceConfig: I
 
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
-    if (team && team.overrideSupportPercentages && team.organizationPercentage) return team.organizationPercentage;
+    if (invoice.type == 'nortan') {
+      if (team && team.overrideSupportPercentages && team.supportOrganizationPercentage)
+        return team.supportOrganizationPercentage;
+    } else {
+      if (team && team.overrideIntermediationPercentages && team.intermediationOrganizationPercentage)
+        return team.intermediationOrganizationPercentage;
+    }
   }
   return invoice.administration == 'nortan'
     ? invoiceConfig.businessFees.support.organizationPercentage

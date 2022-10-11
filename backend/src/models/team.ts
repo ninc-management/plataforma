@@ -129,11 +129,20 @@ export class Team extends Base<string> {
   @prop({ required: true })
   overrideSupportPercentages: boolean = false;
 
-  @prop()
-  organizationPercentage?: string;
+  @prop({ required: true })
+  overrideIntermediationPercentages: boolean = false;
 
   @prop()
-  nfPercentage?: string;
+  supportOrganizationPercentage?: string;
+
+  @prop()
+  supportNfPercentage?: string;
+
+  @prop()
+  intermediationOrganizationPercentage?: string;
+
+  @prop()
+  intermediationNfPercentage?: string;
 
   locals: TeamLocals = {
     balance: '0,00',
