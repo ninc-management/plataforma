@@ -15,6 +15,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -41,6 +42,7 @@ import {
 } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';
+import { Provider } from '@models/provider';
 import { Sector } from '@models/shared';
 import { Team } from '@models/team';
 import { User } from '@models/user';
@@ -110,6 +112,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     netValue: '0,00',
   };
 
+  provider = new Provider();
+
   config = new InvoiceConfig();
 
   destroy$ = new Subject<void>();
@@ -123,6 +127,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   currentUser: User = new User();
   isInputDisabled$ = new BehaviorSubject<boolean>(true);
   memberChanged$ = new BehaviorSubject<boolean>(true);
+  providerChanged$ = new BehaviorSubject<boolean>(true);
   contractorSearch = '';
   contractorData: Observable<Contractor[]> = of([]);
   userSearch = '';
@@ -131,6 +136,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   authorData: Observable<User[]> = of([]);
   associateSearch = '';
   associateData: Observable<User[]> = of([]);
+  providerSearch = '';
+  providerData: Observable<Provider[]> = of([]);
 
   NORTAN_TEAMS: Team[] = [];
   SECTORS: Sector[] = [];
@@ -152,6 +159,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private brMask: BrMaskDirective,
     private configService: ConfigService,
     private notificationService: NotificationService,
+    public providerService: ProviderService,
     public stringUtil: StringUtilService,
     public userService: UserService,
     public contractorService: ContractorService,
@@ -273,6 +281,14 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.contractorData = this.contractorService.getContractors();
 
     this.associateData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
+
+    this.providerData = combineLatest([this.providerService.getProviders(), this.providerChanged$]).pipe(
+      map(([providers, _]) => {
+        return providers.filter(
+          (provider) => !this.providerService.isProviderInList(provider, this.tempInvoice.providers)
+        );
+      })
+    );
 
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
       map(([users, _]) => {
@@ -439,6 +455,12 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       this.USER_SECTORS = [];
       this.memberChanged$.next(true);
     }
+  }
+
+  addProvider(): void {
+    this.tempInvoice.providers.push(this.provider);
+    this.providerSearch = '';
+    this.providerChanged$.next(true);
   }
 
   /* eslint-disable indent */

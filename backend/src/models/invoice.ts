@@ -3,6 +3,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { StatusHistory } from './baseStatusHistory';
 import { Contractor } from './contractor';
+import { Provider } from './provider';
 import { Sector } from './shared';
 import { Team } from './team';
 import { User } from './user';
@@ -248,6 +249,9 @@ export class Invoice extends StatusHistory {
 
   @prop({ required: true })
   hasPageBreak: InvoicePageBreak = new InvoicePageBreak();
+
+  @prop({ required: true, ref: () => Provider })
+  providers: Ref<Provider>[] = [];
 
   locals: InvoiceLocals = {
     isModel: false,

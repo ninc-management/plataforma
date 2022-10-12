@@ -5,6 +5,11 @@
     "minLength": 3,
     "maxLength": 200
   },
+  "description": {
+    "required": true,
+    "minLength": 3,
+    "maxLength": 200
+  },
   "fullName": {
     "required": true,
     "minLength": 3,

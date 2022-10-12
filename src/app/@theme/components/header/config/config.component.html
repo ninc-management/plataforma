@@ -311,6 +311,16 @@
                   </td>
                 </tr>
                 <tr>
+                  <td class="td-left">Lista de fornecedores</td>
+                  <td>
+                    <nb-toggle
+                      [(ngModel)]="clonedConfig.invoiceConfig.hasProvider"
+                      name="toggle-provider"
+                      labelPosition="start"
+                    ></nb-toggle>
+                  </td>
+                </tr>
+                <tr>
                   <td class="td-left">Etapa preliminar</td>
                   <td>
                     <nb-toggle
