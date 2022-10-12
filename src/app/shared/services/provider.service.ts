@@ -68,4 +68,14 @@ export class ProviderService {
     const tmp = this.providers$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
+
+  isEqual(p1: string | Provider | undefined, p2: string | Provider | undefined): boolean {
+    if (p1 == undefined || p2 == undefined) return false;
+    return this.idToProvider(p1)._id == this.idToProvider(p2)._id;
+  }
+
+  isProviderInList(provider: string | Provider | undefined, list: (Provider | string | undefined)[]): boolean {
+    if (provider == undefined) return false;
+    return list.some((p: Provider | string | undefined) => this.isEqual(provider, p));
+  }
 }

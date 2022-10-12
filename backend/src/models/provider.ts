@@ -27,6 +27,9 @@ export class Provider extends Base<string> {
   document: string = '';
 
   @prop({ required: true })
+  description: string = '';
+
+  @prop({ required: true })
   email: string = '';
 
   @prop({ required: true })

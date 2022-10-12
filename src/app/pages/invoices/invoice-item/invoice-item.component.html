@@ -717,6 +717,83 @@
           </div>
         </nb-list-item>
       </nb-list>
+      <div *ngIf="config.hasProvider" class="row">
+        <div class="col-md-11">
+          <div class="form-group">
+            <label class="label" for="input-provider">Fornecedor:</label>
+            <nb-completer
+              [(ngModel)]="providerSearch"
+              (selected)="provider = $event"
+              inputName="providerListCompleter"
+              #providerList="ngModel"
+              id="input-provider"
+              name="providerList"
+              placeholder="Digite e selecione o nome do fornecedor"
+              textNoResults="
+            Não foi possível achar um fornecedor com o nome digitado
+            "
+              fieldSize="large"
+              nameField="fullName"
+              pictureField="profilePicture"
+              [data$]="providerData"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="providerList.dirty ? (providerList.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="providerList.invalid && providerList.touched ? true : null"
+            ></nb-completer>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button
+            nbButton
+            type="button"
+            fullWidth
+            status="primary"
+            size="large"
+            style="margin-top: 28px"
+            [disabled]="!providerList.value"
+            (click)="addProvider()"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <nb-list *ngIf="config.hasProvider" style="width: 100%; padding: 10px 0">
+        <nb-list-item *ngFor="let provider of tempInvoice.providers; let i = index; trackBy: trackByIndex">
+          <div class="row irow">
+            <div class="col-12 col-md-6">
+              {{
+                [provider, providerService.idToProvider.bind(providerService), 'fullName'] | transformPipe: idToProperty
+              }}
+            </div>
+            <div class="col-10 col-md-5">
+              <textarea
+                nbInput
+                id="input-description"
+                name="description"
+                placeholder="Descrição do fornecedor"
+                fullWidth
+                fieldSize="large"
+                readonly
+                >{{
+                  [provider, providerService.idToProvider.bind(providerService), 'description']
+                    | transformPipe: idToProperty
+                }}</textarea
+              >
+            </div>
+            <div class="col-2 col-md-1" style="text-align: right">
+              <nb-icon
+                class="xIcon"
+                status="basic"
+                icon="trash-2-outline"
+                pack="eva"
+                (click)="tempInvoice.providers.splice(i, 1)"
+                [options]="{ animation: { type: 'shake' } }"
+              ></nb-icon>
+            </div>
+          </div>
+        </nb-list-item>
+      </nb-list>
       <div class="row">
         <div class="col-md-9">
           <div class="form-control-group">
@@ -762,16 +839,16 @@
               Adicionar quebra de página no PDF
             </nb-checkbox>
             <button
-            nbButton
-            type="button"
-            fullWidth
-            status="primary"
-            size="tiny"
-            style="margin-top: 13px"
-            (click)="copyTextInputService()"
-          >
-            Copiar texto do campo serviço
-          </button>
+              nbButton
+              type="button"
+              fullWidth
+              status="primary"
+              size="tiny"
+              style="margin-top: 13px"
+              (click)="copyTextInputService()"
+            >
+              Copiar texto do campo serviço
+            </button>
           </div>
         </div>
       </div>

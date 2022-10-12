@@ -58,6 +58,9 @@ export class InvoiceConfig {
   hasTeam: boolean = true;
 
   @prop({ required: true })
+  hasProvider: boolean = true;
+
+  @prop({ required: true })
   hasPreliminary: boolean = true;
 
   @prop({ required: true })
