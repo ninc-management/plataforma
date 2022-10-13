@@ -5,6 +5,144 @@
         <div class="row">
           <div class="col-auto">
             <label class="label-divider">
+              Paleta de cores
+              <!-- Tooltip text to be defined -->
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip=""
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+          </div>
+          <div class="col">
+            <hr />
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <label class="label">Primária</label>
+            <div class="d-flex">
+              <input
+                class="color-input"
+                [(ngModel)]="clonedConfig.socialConfig.colors.primary"
+                #version="ngModel"
+                id="input-primary-color"
+                name="primary-color"
+                type="color"
+                [style]="{ background: clonedConfig.socialConfig.colors.primary }"
+              />
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.colors.primary"
+                #primaryColorCode="ngModel"
+                id="input-primary-color-code"
+                name="primary-color-code"
+                fieldSize="large"
+              />
+              <button type="button" (click)="getEvaColors()" nbButton status="primary">
+                <nb-icon icon="refresh-outline"></nb-icon>
+              </button>
+            </div>
+          </div>
+          <div class="col">
+            <label class="label">Sucesso</label>
+            <div class="d-flex">
+              <input
+                class="color-input"
+                [(ngModel)]="clonedConfig.socialConfig.colors.success"
+                #successColor="ngModel"
+                id="input-success-color"
+                name="success-color"
+                type="color"
+                [style]="{ background: clonedConfig.socialConfig.colors.success }"
+              />
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.colors.success"
+                #successColorCode="ngModel"
+                id="input-success-color-code"
+                name="success-color-code"
+                fieldSize="large"
+              />
+            </div>
+          </div>
+          <div class="col">
+            <label class="label">Info</label>
+            <div class="d-flex">
+              <input
+                class="color-input"
+                [(ngModel)]="clonedConfig.socialConfig.colors.info"
+                #infoColor="ngModel"
+                id="input-info-color"
+                name="info-color"
+                type="color"
+                [style]="{ background: clonedConfig.socialConfig.colors.info }"
+              />
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.colors.info"
+                #infoColorCode="ngModel"
+                id="input-info-color-code"
+                name="info-color-code"
+                fieldSize="large"
+              />
+            </div>
+          </div>
+
+          <div class="col">
+            <label class="label">Aviso</label>
+            <div class="d-flex">
+              <input
+                class="color-input"
+                [(ngModel)]="clonedConfig.socialConfig.colors.warning"
+                #warningColor="ngModel"
+                id="input-warning-color"
+                name="warning-color"
+                type="color"
+                [style]="{ background: clonedConfig.socialConfig.colors.warning }"
+              />
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.colors.warning"
+                #warningColorCode="ngModel"
+                id="input-warning-color-code"
+                name="warning-color-code"
+                fieldSize="large"
+              />
+            </div>
+          </div>
+
+          <div class="col">
+            <label class="label">Alerta</label>
+            <div class="d-flex">
+              <input
+                class="color-input"
+                [(ngModel)]="clonedConfig.socialConfig.colors.danger"
+                #dangerColor="ngModel"
+                id="input-danger-color"
+                name="danger-color"
+                type="color"
+                [style]="{ background: clonedConfig.socialConfig.colors.danger }"
+              />
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.colors.danger"
+                #dangerColorCode="ngModel"
+                id="input-danger-color-code"
+                name="danger-color-code"
+                fieldSize="large"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-auto">
+            <label class="label-divider">
               Logos da empresa
               <!-- Tooltip text to be defined -->
               <nb-icon

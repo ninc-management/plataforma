@@ -70,7 +70,6 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   validation = config_validation as any;
   errorInPositions = false;
   errorInLevels = false;
-
   forms: NgForm[] = [];
 
   isPhone = isPhone;
@@ -306,6 +305,17 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           this.clonedConfig.socialConfig[logoType] = uploadedLogo;
         }
       });
+  }
+
+  getEvaColors(): void {
+    this.configService.sendEvaColorsRequest(this.clonedConfig.socialConfig.colors.primary).subscribe((colors) => {
+      this.clonedConfig.socialConfig.colors.primary = (colors as any).primary[4];
+      this.clonedConfig.socialConfig.colors.success = (colors as any).success[4];
+      this.clonedConfig.socialConfig.colors.warning = (colors as any).warning[4];
+      this.clonedConfig.socialConfig.colors.info = (colors as any).info[4];
+      this.clonedConfig.socialConfig.colors.danger = (colors as any).danger[4];
+      this.configService.applyCustomColors(this.clonedConfig);
+    });
   }
 
   private verifyEmptyLogos(): void {

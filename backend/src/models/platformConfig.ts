@@ -4,6 +4,23 @@ import { Base } from './base';
 import { UploadedFile } from './shared';
 import { ExpenseType } from './team';
 
+export class Colors {
+  @prop({ required: true })
+  primary!: string;
+
+  @prop({ required: true })
+  success!: string;
+
+  @prop({ required: true })
+  info!: string;
+
+  @prop({ required: true })
+  warning!: string;
+
+  @prop({ required: true })
+  danger!: string;
+}
+
 export class FeesPercentages {
   @prop({ required: true })
   organizationPercentage: string = '0,00';
@@ -131,6 +148,9 @@ export class SocialConfig {
 
   @prop({ required: true })
   logoWhiteWithoutName: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
+  colors: Colors = new Colors();
 }
 
 export class ModulesConfig {

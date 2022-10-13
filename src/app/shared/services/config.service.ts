@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { handle } from '../utils';
 import { WebSocketService } from './web-socket.service';
@@ -300,6 +300,14 @@ export const DEFAULT_CONFIG = {
   },
 };
 
+export interface Colors {
+  primary: string[];
+  success: string[];
+  warning: string[];
+  info: string[];
+  danger: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -361,5 +369,38 @@ export class ConfigService implements OnDestroy {
     else tmpType = this.config$.value[0].expenseConfig.contractExpenseTypes.find((eType) => eType.name === type);
 
     return tmpType ? tmpType.subTypes : [];
+  }
+
+  sendEvaColorsRequest(primaryColor: string): Observable<Colors> {
+    const url = '/api/config/colors';
+    const body = {
+      // slice(1) is necessary to remove the # from HEX
+      // #FFFFF -> FFFFF
+      primaryColorHex: primaryColor.slice(1),
+    };
+
+    return this.http.post<Colors>(url, body).pipe(take(1));
+  }
+
+  applyCustomColors(config: PlatformConfig): void {
+    let bodyStyleAttribute = '';
+
+    if (config.socialConfig.colors.primary) {
+      bodyStyleAttribute += '--color-primary-500: ' + config.socialConfig.colors.primary + ';';
+    }
+    if (config.socialConfig.colors.success) {
+      bodyStyleAttribute += '--color-success-500: ' + config.socialConfig.colors.success + ';';
+    }
+    if (config.socialConfig.colors.info) {
+      bodyStyleAttribute += '--color-info-500: ' + config.socialConfig.colors.info + ';';
+    }
+    if (config.socialConfig.colors.danger) {
+      bodyStyleAttribute += '--color-danger-500: ' + config.socialConfig.colors.danger + ';';
+    }
+    if (config.socialConfig.colors.warning) {
+      bodyStyleAttribute += '--color-warning-500: ' + config.socialConfig.colors.warning + ';';
+    }
+
+    (document.body as any).setAttribute('style', bodyStyleAttribute);
   }
 }

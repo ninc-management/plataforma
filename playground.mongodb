@@ -1176,5 +1176,13 @@ db.platformconfigs.find().forEach((config) => {
     name: ''
   }
 
+    config.socialConfig.colors = {
+    primary: '',
+    success: '',
+    info: '',
+    warning: '',
+    danger: '',
+  }
+
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
