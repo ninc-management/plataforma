@@ -23,7 +23,7 @@
       [matRippleCentered]="false"
       style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center;"
     >
-      <img class="logo" [src]="config.socialConfig.logoWhite.url" alt="Logo">
+      <img class="logo" [src]="config.socialConfig.logoWhite.url || 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'" alt="Logo">
      <span *ngIf="config.socialConfig.showCompanyName"> {{ menuTitle }}</span>
     </a>
   </div>
