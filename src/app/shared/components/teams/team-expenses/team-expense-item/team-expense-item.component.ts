@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { of } from 'rxjs/internal/observable/of';
@@ -55,11 +56,12 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
     protected providerService: ProviderService,
+    protected dialogService: NbDialogService,
     public configService: ConfigService,
     public teamService: TeamService,
     public userService: UserService
   ) {
-    super(stringUtil, onedrive, providerService, userService);
+    super(stringUtil, onedrive, dialogService, providerService, userService);
     this.expense.code = '#0';
   }
 

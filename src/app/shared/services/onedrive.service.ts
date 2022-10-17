@@ -183,7 +183,9 @@ export class OneDriveService implements OnDestroy {
               filesToRemove.forEach((file) => {
                 if (file.name === data.name) {
                   this.http
-                    .delete(environment.onedriveUri.slice(0, -6) + 'items/' + data.id)
+                    .delete(
+                      environment.onedriveUri + this.config.oneDriveConfig.contracts.oneDriveId + '/items/' + data.id
+                    )
                     .pipe(take(1))
                     .subscribe(() => console.log('Arquivo apagado!'));
                   const index = filesToRemove.indexOf(file, 0);
