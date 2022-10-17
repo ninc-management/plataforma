@@ -43,10 +43,12 @@ export class ReceiptItemComponent implements OnInit {
     lastUpdate: this.today,
     description: '',
     value: '',
+    ISS: '0,00',
   };
   options = {
     valueType: '$',
     liquid: '0',
+    hasISS: false,
   };
   contractSearch = '';
   config: PlatformConfig = new PlatformConfig();
@@ -100,11 +102,12 @@ export class ReceiptItemComponent implements OnInit {
     }
     if (this.receiptIndex !== undefined) {
       this.receipt = cloneDeep(this.contract.receipts[this.receiptIndex]);
-      this.toLiquid(this.receipt.value);
+      this.options.hasISS = this.receipt.ISS != '0,00';
+      this.updateLiquidValue();
     } else {
       if (this.contract.total && this.contract.receipts.length === +this.contract.total - 1) {
         this.receipt.value = this.notPaid();
-        this.toLiquid(this.receipt.value);
+        this.updateLiquidValue();
       } else {
         if (this.contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
@@ -205,11 +208,8 @@ export class ReceiptItemComponent implements OnInit {
     return this.notPaid();
   }
 
-  toLiquid(value: string): void {
-    this.options.liquid = this.stringUtil.removePercentage(
-      this.stringUtil.removePercentage(value, this.receipt.notaFiscal),
-      this.receipt.nortanPercentage
-    );
+  updateLiquidValue(): void {
+    this.options.liquid = this.contractService.receiptNetValue(this.receipt);
   }
 
   updatePaidDate(): void {
@@ -236,5 +236,10 @@ export class ReceiptItemComponent implements OnInit {
   onContractSelected(selectedContract: Contract): void {
     this.contract = selectedContract;
     this.fillContractData();
+  }
+
+  handleISSToggle(): void {
+    this.receipt.ISS = '0,00';
+    this.updateLiquidValue();
   }
 }

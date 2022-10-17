@@ -36,10 +36,10 @@
   </div>
   <fieldset [disabled]="!isEditionGranted && !isFinancialManager">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-2">
         <div class="form-control-group">
-          <label class="label" for="input-value">
-            Valor:
+          <label class="label d-flex align-items-end" for="input-value">
+            <span class="mr-2">Valor</span>
             <nb-icon
               status="info"
               icon="info"
@@ -82,7 +82,7 @@
             "
             [disabled]="receipt.paid && receiptIndex !== undefined"
             [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-            (ngModelChange)="toLiquid(receipt.value)"
+            (ngModelChange)="updateLiquidValue()"
           />
           <ng-container *ngIf="value.invalid && (value.dirty || value.touched)">
             <p class="caption status-danger" *ngIf="value.errors?.overpaid">
@@ -103,65 +103,9 @@
           </ng-container>
         </div>
       </div>
-      <div class="col-6 col-md-2">
+      <div class="col-md-3">
         <div class="form-control-group">
-          <label class="label" for="input-nf">NF(%):</label>
-          <input
-            nbInput
-            [(ngModel)]="receipt.notaFiscal"
-            #nf="ngModel"
-            id="input-nf"
-            name="nf"
-            placeholder="Porcentagem"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.nf.required"
-            [status]="nf.dirty ? (nf.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'"
-            [disabled]="receipt.paid && receiptIndex !== undefined"
-            [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-            (ngModelChange)="toLiquid(receipt.value)"
-          />
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-nortan">Empresa(%):</label>
-          <input
-            nbInput
-            [(ngModel)]="receipt.nortanPercentage"
-            #nortan="ngModel"
-            id="input-nortan"
-            name="nortan"
-            placeholder="Porcentagem"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.nortan.required"
-            [status]="
-              nortan.dirty ? (nortan.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'
-            "
-            [disabled]="receipt.paid && receiptIndex !== undefined"
-            [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
-            (ngModelChange)="toLiquid(receipt.value)"
-          />
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-control-group">
-          <label class="label" for="input-liquid">Valor liquído:</label>
+          <label class="label" for="input-liquid">Valor liquído</label>
           <input
             nbInput
             [(ngModel)]="options.liquid"
@@ -193,9 +137,103 @@
           />
         </div>
       </div>
+      <div class="col-6 col-md-2">
+        <div class="form-control-group">
+          <label class="label" for="input-nf">NF (%)</label>
+          <input
+            nbInput
+            [(ngModel)]="receipt.notaFiscal"
+            #nf="ngModel"
+            id="input-nf"
+            name="nf"
+            placeholder="Revisão"
+            fullWidth
+            fieldSize="large"
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: 2
+            }"
+            ngxSelectAllText
+            [required]="validation.nf.required"
+            [status]="nf.dirty ? (nf.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'"
+            [disabled]="receipt.paid && receiptIndex !== undefined"
+            [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+            (ngModelChange)="updateLiquidValue()"
+          />
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
+        <div class="form-control-group">
+          <label class="label" for="input-nortan">Empresa (%)</label>
+          <input
+            nbInput
+            [(ngModel)]="receipt.nortanPercentage"
+            #nortan="ngModel"
+            id="input-nortan"
+            name="nortan"
+            placeholder="Revisão"
+            fullWidth
+            fieldSize="large"
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: 2
+            }"
+            ngxSelectAllText
+            [required]="validation.nortan.required"
+            [status]="
+              nortan.dirty ? (nortan.invalid ? 'danger' : 'success') : receiptIndex === undefined ? 'success' : 'basic'
+            "
+            [disabled]="receipt.paid && receiptIndex !== undefined"
+            [attr.aria-invalid]="nortan.invalid && nortan.touched ? true : null"
+            (ngModelChange)="updateLiquidValue()"
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-control-group">
+          <label class="label d-flex align-items-center" for="input-has-ISS">
+            <span class="mr-2">Houve retenção de ISS? (%)</span>
+            <nb-checkbox
+              status="basic"
+              class="d-flex"
+              [(ngModel)]="options.hasISS"
+              (ngModelChange)="handleISSToggle()"
+              id="input-has-ISS"
+              name="input-has-ISS"
+              #actionChecked="ngModel"
+            ></nb-checkbox>
+          </label>
+          <input
+            nbInput
+            [(ngModel)]="receipt.ISS"
+            #iss="ngModel"
+            id="input-iss"
+            name="iss"
+            placeholder="Alíquota"
+            fullWidth
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: 2
+            }"
+            fieldSize="large"
+            ngxSelectAllText
+            [disabled]="!options.hasISS"
+            (ngModelChange)="updateLiquidValue()"
+            [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-12">
         <div class="form-control-group">
-          <label class="label" for="input-description">Descrição:</label>
+          <label class="label" for="input-description">Descrição</label>
           <textarea
             nbInput
             [(ngModel)]="receipt.description"
@@ -222,9 +260,11 @@
           </ng-container>
         </div>
       </div>
+    </div>
+    <div class="row">
       <div class="col-6 col-md-2">
         <div class="form-control-group">
-          <label class="label" for="input-paidDate">Será pago em:</label>
+          <label class="label" for="input-paidDate">Será pago em</label>
           <input
             nbInput
             [(ngModel)]="receipt.dueDate"
@@ -271,9 +311,9 @@
           </nb-select>
         </div>
       </div>
-      <div class="col-6 col-md-2">
+      <div class="col-12 col-md-2">
         <div class="form-control-group">
-          <label class="label" for="input-paidDate">Data do pagamento:</label>
+          <label class="label" for="input-paidDate">Data do pagamento</label>
           <input
             *ngIf="!receipt.paid; else withdate"
             nbInput
@@ -328,7 +368,7 @@
       </div>
       <div class="col-6 col-md-3">
         <div class="form-control-group">
-          <label class="label" for="input-created">Data de criação:</label>
+          <label class="label" for="input-created">Data de criação</label>
           <input
             nbInput
             [(ngModel)]="receipt.created"
@@ -357,7 +397,7 @@
       </div>
       <div class="col-6 col-md-3">
         <div class="form-control-group">
-          <label class="label" for="input-updated">Última atualização:</label>
+          <label class="label" for="input-updated">Última atualização</label>
           <input
             nbInput
             [ngModel]="[receipt.lastUpdate] | transformPipe: formatDate"
@@ -385,6 +425,7 @@
     </div>
 
     <button
+      class="mt-3"
       nbButton
       fullWidth
       status="primary"
