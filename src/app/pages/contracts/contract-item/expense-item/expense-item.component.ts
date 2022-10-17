@@ -127,7 +127,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     public userService: UserService,
     public teamService: TeamService
   ) {
-    super(stringUtil, onedrive, providerService, dialogService, userService);
+    super(stringUtil, onedrive, dialogService, providerService, userService);
   }
 
   ngOnDestroy(): void {

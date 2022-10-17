@@ -61,7 +61,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     public teamService: TeamService,
     public userService: UserService
   ) {
-    super(stringUtil, onedrive, providerService, dialogService, userService);
+    super(stringUtil, onedrive, dialogService, providerService, userService);
     this.expense.code = '#0';
   }
 
