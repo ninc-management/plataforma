@@ -49,10 +49,10 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
 
   constructor(
     private providerService: ProviderService,
-    private dialogService: NbDialogService,
+    protected dialogService: NbDialogService,
     protected onedrive: OneDriveService
   ) {
-    super(onedrive);
+    super(onedrive, dialogService);
   }
 
   ngOnDestroy(): void {

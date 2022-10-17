@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { NbDialogService } from '@nebular/theme';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { skipWhile, take } from 'rxjs/operators';
 
@@ -43,10 +44,11 @@ export class BaseExpenseComponent extends OneDriveDocumentUploader implements On
   constructor(
     protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
+    protected dialogService: NbDialogService,
     protected providerService: ProviderService,
     public userService: UserService
   ) {
-    super(onedrive);
+    super(onedrive, dialogService);
   }
 
   ngOnDestroy(): void {
