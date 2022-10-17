@@ -161,6 +161,9 @@ export class ContractReceipt {
 
   @prop()
   dueDate?: Date;
+
+  @prop({ required: true })
+  ISS: string = '0,00';
 }
 
 export class DateRange {

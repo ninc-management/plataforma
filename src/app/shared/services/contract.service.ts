@@ -23,7 +23,7 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { ChecklistItemAction, Contract, ContractExpense, ContractLocals } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractExpense, ContractLocals, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
@@ -333,17 +333,12 @@ export class ContractService implements OnDestroy {
   }
 
   paidValue(contract: Contract): string {
-    return this.toNetValue(
-      this.stringUtil.numberToMoney(
-        contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
-          return accumulator;
-        }, 0)
-      ),
-      nfPercentage(contract, this.config.invoiceConfig),
-      nortanPercentage(contract, this.config.invoiceConfig),
-      contract.created
-    );
+    const totalPaidValue = contract.receipts.reduce((total, receipt) => {
+      if (!receipt.paid) return total;
+      return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
+    }, '0,00');
+
+    return totalPaidValue;
   }
 
   notPaidValue(distribution: string, user: User | string | undefined, contract: Contract): string {
@@ -454,12 +449,7 @@ export class ContractService implements OnDestroy {
       contract.locals.value = invoice.value;
       contract.locals.code = invoice.code;
       contract.locals.balance = this.balance(contract);
-      contract.locals.liquid = this.toNetValue(
-        this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
-        nfPercentage(contract, this.config.invoiceConfig),
-        nortanPercentage(contract, this.config.invoiceConfig),
-        contract.created
-      );
+      contract.locals.liquid = this.contractNetValue(contract);
 
       const nf = nfPercentage(contract, this.config.invoiceConfig);
       const nortan = nortanPercentage(contract, this.config.invoiceConfig);
@@ -559,6 +549,33 @@ export class ContractService implements OnDestroy {
         );
       })
     );
+  }
+
+  receiptNetValue(receipt: ContractReceipt): string {
+    if (isBefore(receipt.created, new Date('2022/09/01'))) {
+      return this.oldReceiptNetValue(receipt);
+    }
+
+    let receiptNetValue = receipt.value;
+    receiptNetValue = this.stringUtil.removePercentage(receiptNetValue, receipt.ISS);
+    receiptNetValue = this.toNetValue(receiptNetValue, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+
+    return receiptNetValue;
+  }
+
+  contractNetValue(contract: Contract): string {
+    const contractValueWithoutISS = this.stringUtil.removePercentage(contract.locals.value, contract.ISS);
+
+    return this.toNetValue(
+      this.subtractComissions(contractValueWithoutISS, contract),
+      nfPercentage(contract, this.config.invoiceConfig),
+      nortanPercentage(contract, this.config.invoiceConfig),
+      contract.created
+    );
+  }
+
+  private oldReceiptNetValue(receipt: ContractReceipt): string {
+    return this.toNetValue(receipt.value, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {

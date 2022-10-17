@@ -5,25 +5,25 @@
         <div class="form-control-group">
           <label class="label" for="input-author">Gestor:</label>
           <nb-completer
-              [(ngModel)]="authorSearch"
-              [inputName]="'authorListCompleter'"
-              (selected)="invoice.author = $event; invoice.team[0].user = $event"
-              #authorList="ngModel"
-              id="input-author"
-              name="authorList"
-              nameField="fullName"
-              pictureField="profilePicture"
-              [data$]="authorData"
-              [minSearchLength]="0"
-              [placeholder]="'Digite e selecione o nome do colaborador do orçamento'"
-              [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
-              [fullWidth]="true"
-              [fieldSize]="'large'"
-              [required]="validation.author.required"
-              [status]="authorList.dirty && authorSearch ? (authorList.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="authorList.invalid && authorList.touched ? true : null"
-              [disabled]="isInputDisabled$.value"
-            ></nb-completer>
+            [(ngModel)]="authorSearch"
+            [inputName]="'authorListCompleter'"
+            (selected)="invoice.author = $event; invoice.team[0].user = $event"
+            #authorList="ngModel"
+            id="input-author"
+            name="authorList"
+            nameField="fullName"
+            pictureField="profilePicture"
+            [data$]="authorData"
+            [minSearchLength]="0"
+            [placeholder]="'Digite e selecione o nome do colaborador do orçamento'"
+            [textNoResults]="'Não foi possível achar um colaborador com o nome digitado'"
+            [fullWidth]="true"
+            [fieldSize]="'large'"
+            [required]="validation.author.required"
+            [status]="authorList.dirty && authorSearch ? (authorList.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="authorList.invalid && authorList.touched ? true : null"
+            [disabled]="isInputDisabled$.value"
+          ></nb-completer>
         </div>
       </div>
       <div class="col-3 col-md-2">
@@ -543,7 +543,8 @@
             <div class="col-2">
               Restante:
               {{
-                [clonedContract.locals.liquid, teamTotal.netValue] | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
+                [clonedContract.locals.liquid, teamTotal.netValue]
+                  | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
               }}
             </div>
             <div class="col-3" style="text-align: right">Total:</div>
@@ -578,55 +579,6 @@
           </div>
         </nb-list-item>
       </nb-list>
-      <div class="col-6">
-        <div class="form-control-group">
-          <label class="label" for="input-hasISS">Houve retenção de ISS?:</label>
-          <nb-select
-            [(ngModel)]="options.hasISS"
-            #hasISS="ngModel"
-            id="input-hasISS"
-            name="hasISS"
-            placeholder="hasISS"
-            fullWidth
-            size="large"
-            [required]="validation.hasISS?.required"
-            [status]="hasISS.dirty ? (hasISS.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="hasISS.invalid && hasISS.touched ? true : null"
-            (selectedChange)="clonedContract.ISS = hasISS.value ? iss.value : '0,00'; updateLiquid()"
-            [disabled]="!isEditionGranted"
-          >
-            <nb-option [value]="true">Sim</nb-option>
-            <nb-option [value]="false">Não</nb-option>
-          </nb-select>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-control-group">
-          <label class="label" for="input-iss">Alíquota do ISS:</label>
-          <input
-            nbInput
-            [(ngModel)]="clonedContract.ISS"
-            #iss="ngModel"
-            id="input-iss"
-            name="iss"
-            placeholder="Alíquota"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [disabled]="!hasISS.value"
-            [required]="validation.ISS?.required"
-            [status]="iss.dirty ? (iss.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
-            (ngModelChange)="updateLiquid()"
-          />
-        </div>
-      </div>
       <div class="col-6 col-md-4">
         <div class="form-control-group">
           <label class="label" for="input-balance">Caixa:</label>

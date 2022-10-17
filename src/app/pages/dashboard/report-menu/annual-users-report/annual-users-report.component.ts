@@ -210,18 +210,7 @@ export class AnnualUsersReportComponent implements OnInit {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.locals.liquid = this.contractService.toNetValue(
-              this.contractService.subtractComissions(
-                this.stringUtil.removePercentage(
-                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,
-                  monthContract.contract.ISS
-                ),
-                monthContract.contract
-              ),
-              nfPercentage(monthContract.contract, this.config.invoiceConfig),
-              nortanPercentage(monthContract.contract, this.config.invoiceConfig),
-              monthContract.contract.created
-            );
+            monthContract.contract.locals.liquid = this.contractService.contractNetValue(monthContract.contract);
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
                 data[uId].monthly_data[monthContract.month].opened_contracts_manager += 1;
@@ -377,18 +366,7 @@ export class AnnualUsersReportComponent implements OnInit {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.locals.liquid = this.contractService.toNetValue(
-              this.contractService.subtractComissions(
-                this.stringUtil.removePercentage(
-                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).value,
-                  monthContract.contract.ISS
-                ),
-                monthContract.contract
-              ),
-              nfPercentage(monthContract.contract, this.config.invoiceConfig),
-              nortanPercentage(monthContract.contract, this.config.invoiceConfig),
-              monthContract.contract.created
-            );
+            monthContract.contract.locals.liquid = this.contractService.contractNetValue(monthContract.contract);
             for (const sector of Object.keys(data)) {
               if (
                 this.teamService.isSectorEqual(
