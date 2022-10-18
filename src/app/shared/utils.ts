@@ -93,10 +93,15 @@ export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: Invoi
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (invoice.type == 'nortan') {
-      if (team && team.overrideSupportPercentages && team.supportOrganizationPercentage)
+      if (team && team.overrideSupportPercentages && team.supportOrganizationPercentage && team.supportNfPercentage)
         return team.supportOrganizationPercentage;
     } else {
-      if (team && team.overrideIntermediationPercentages && team.intermediationOrganizationPercentage)
+      if (
+        team &&
+        team.overrideIntermediationPercentages &&
+        team.intermediationOrganizationPercentage &&
+        team.intermediationNfPercentage
+      )
         return team.intermediationOrganizationPercentage;
     }
   }
@@ -120,10 +125,20 @@ export function nortanPercentage(iDocument: Contract | Invoice, invoiceConfig: I
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
     if (invoice.type == 'nortan') {
-      if (team && team.overrideSupportPercentages && team.supportOrganizationPercentage)
+      if (
+        team &&
+        team.overrideSupportPercentages &&
+        team.supportOrganizationPercentage &&
+        team.supportOrganizationPercentage
+      )
         return team.supportOrganizationPercentage;
     } else {
-      if (team && team.overrideIntermediationPercentages && team.intermediationOrganizationPercentage)
+      if (
+        team &&
+        team.overrideIntermediationPercentages &&
+        team.intermediationOrganizationPercentage &&
+        team.intermediationOrganizationPercentage
+      )
         return team.intermediationOrganizationPercentage;
     }
   }
@@ -446,4 +461,12 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
       break;
     }
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function populateList<T, V>(list: T[], revival: Function): V[] {
+  return list.map((e) => {
+    if (e) return revival(e);
+    return e;
+  });
 }

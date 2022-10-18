@@ -108,12 +108,12 @@ export class NbCompleterComponent<T extends object> implements OnInit, ControlVa
   }
 
   display(event: any): string {
-    return typeof event === 'string' ? event : this.getItemValueByField(event);
+    return typeof event === 'string' ? event : this.getItemValueByProperty(event, this.nameProperty);
   }
 
   onModelChange(event: any): void {
     if (typeof event === 'string') this.searchStr = event;
-    else this.searchStr = this.getItemValueByField(event);
+    else this.searchStr = this.getItemValueByProperty(event, this.nameProperty);
     this.searchChange$.next(true);
   }
 
@@ -121,7 +121,7 @@ export class NbCompleterComponent<T extends object> implements OnInit, ControlVa
     if (this.isInitialized) {
       if (event) {
         if (typeof event === 'object') {
-          this.lastSelected = this.getItemValueByField(event);
+          this.lastSelected = this.getItemValueByProperty(event, this.nameProperty);
           this._onChangeCallback(this.searchStr);
           this.selected.emit(event);
         } else if (typeof event === 'string') {
@@ -139,11 +139,9 @@ export class NbCompleterComponent<T extends object> implements OnInit, ControlVa
     }, 500);
   }
 
-  getItemValueByField(item: any): string {
-    const propertiesToAccess = this.nameProperty.split('.');
-    return propertiesToAccess.length > 1
-      ? accessNestedProperty(item, cloneDeep(propertiesToAccess))
-      : item[this.nameProperty];
+  getItemValueByProperty(item: any, property: string): string {
+    const propertiesToAccess = property.split('.');
+    return propertiesToAccess.length > 1 ? accessNestedProperty(item, cloneDeep(propertiesToAccess)) : item[property];
   }
 
   public writeValue(value: any): void {

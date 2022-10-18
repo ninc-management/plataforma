@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { last, skipWhile, take, takeUntil } from 'rxjs/operators';
+import { last, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
@@ -165,6 +165,14 @@ export class UserService implements OnDestroy {
         .subscribe((data: any) => handle(data, this.users$, 'users'));
     }
     return this.users$;
+  }
+
+  getActiveUsers(): Observable<User[]> {
+    return this.getUsers().pipe(
+      map((users) => {
+        return users.filter((user) => user.active);
+      })
+    );
   }
 
   getUsersList(): User[] {

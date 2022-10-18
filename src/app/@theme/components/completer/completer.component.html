@@ -46,12 +46,12 @@
         <nb-user
           class="completer-image"
           [onlyPicture]="true"
-          [name]="[item] | transformPipe: getItemValueByField.bind(this)"
-          [picture]="item[pictureProperty]"
+          [name]="[item, nameProperty] | transformPipe: getItemValueByProperty.bind(this)"
+          [picture]="[item, pictureProperty] | transformPipe: getItemValueByProperty.bind(this)"
         ></nb-user>
       </div>
       <div class="col" style="display: flex; align-items: center">
-        {{ [item] | transformPipe: getItemValueByField.bind(this) }}
+        {{ [item, nameProperty] | transformPipe: getItemValueByProperty.bind(this) }}
       </div>
     </div>
   </nb-option>
