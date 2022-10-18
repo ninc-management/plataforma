@@ -428,10 +428,10 @@
           <hr />
         </div>
         <div class="col-auto">
-          <nb-toggle [(ngModel)]="clonedTeam.overridePercentages" name="toggle-hide" labelPosition="start">Sobrepor</nb-toggle>
+          <nb-toggle [(ngModel)]="clonedTeam.overrideSupportPercentages" name="toggle-hide" labelPosition="start">Sobrepor</nb-toggle>
         </div>
       </div>
-      <ng-container *ngIf="clonedTeam.overridePercentages">
+      <ng-container *ngIf="clonedTeam.overrideSupportPercentages">
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="form-control-group">

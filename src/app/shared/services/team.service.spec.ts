@@ -134,7 +134,7 @@ describe('TeamService', () => {
     mockedTeam.abrev = 'TT';
     mockedTeam.isOrganizationTeam = false;
     mockedTeam.sectors.push(cloneDeep(mockedSector1));
-    mockedTeam.overridePercentages = false;
+    mockedTeam.overrideSupportPercentages = false;
     mockedTeam.organizationPercentage = '0,00';
     mockedTeam.nfPercentage = '0,00';
     mockedTeams.push(cloneDeep(mockedTeam));

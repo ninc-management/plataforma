@@ -92,7 +92,7 @@ export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: Invoi
 
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
-    if (team && team.overridePercentages && team.nfPercentage) return team.nfPercentage;
+    if (team && team.overrideSupportPercentages && team.nfPercentage) return team.nfPercentage;
   }
   return invoice.administration == 'nortan'
     ? invoiceConfig.businessFees.support.nfPercentage
@@ -113,7 +113,7 @@ export function nortanPercentage(iDocument: Contract | Invoice, invoiceConfig: I
 
   if (invoice.nortanTeam) {
     const team = teamService.idToTeam(invoice.nortanTeam);
-    if (team && team.overridePercentages && team.organizationPercentage) return team.organizationPercentage;
+    if (team && team.overrideSupportPercentages && team.organizationPercentage) return team.organizationPercentage;
   }
   return invoice.administration == 'nortan'
     ? invoiceConfig.businessFees.support.organizationPercentage
@@ -433,4 +433,12 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
       break;
     }
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function populateList<T, V>(list: T[], revival: Function): V[] {
+  return list.map((e) => {
+    if (e) return revival(e);
+    return e;
+  });
 }

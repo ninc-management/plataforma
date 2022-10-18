@@ -60,24 +60,22 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   filteredDataIsEmpty$: Observable<boolean> = of(true);
   tooltipTriggers = NbTrigger;
   searchChange$ = new BehaviorSubject<boolean>(true);
-  propertiesToAccess: string[] = [];
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
 
   public ngOnInit(): void {
-    this.propertiesToAccess = this.nameField.split('.');
-
     if (this.data$) {
       this.filteredData$ = combineLatest([this.data$, this.searchChange$]).pipe(
         map(([objs, _]) => {
           if (objs.length == 0) return objs;
           this.searchActive = true;
           const filterValue = this.prepareString(this.searchStr);
+          const propertiesToAccess = this.nameField.split('.');
 
           return objs.filter((obj: any) => {
             const value =
-              this.propertiesToAccess.length > 1
-                ? accessNestedProperty(obj, cloneDeep(this.propertiesToAccess))
+              propertiesToAccess.length > 1
+                ? accessNestedProperty(obj, cloneDeep(propertiesToAccess))
                 : obj[this.nameField];
 
             const result = this.prepareString(value).includes(filterValue);
@@ -98,12 +96,12 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   }
 
   display(event: any): string {
-    return typeof event === 'string' ? event : this.getItemValueByField(event);
+    return typeof event === 'string' ? event : this.getItemValueByField(event, this.nameField);
   }
 
   onModelChange(event: any): void {
     if (typeof event === 'string') this.searchStr = event;
-    else this.searchStr = this.getItemValueByField(event);
+    else this.searchStr = this.getItemValueByField(event, this.nameField);
     this.searchChange$.next(true);
   }
 
@@ -111,7 +109,7 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
     if (this.isInitialized) {
       if (event) {
         if (typeof event === 'object') {
-          this.lastSelected = this.getItemValueByField(event);
+          this.lastSelected = this.getItemValueByField(event, this.nameField);
           this._onChangeCallback(this.searchStr);
           this.selected.emit(event);
         } else if (typeof event === 'string') {
@@ -129,10 +127,9 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
     }, 500);
   }
 
-  getItemValueByField(item: any): string {
-    return this.propertiesToAccess.length > 1
-      ? accessNestedProperty(item, cloneDeep(this.propertiesToAccess))
-      : item[this.nameField];
+  getItemValueByField(item: any, fieldName: string): string {
+    const propertiesToAccess = fieldName.split('.');
+    return propertiesToAccess.length > 1 ? accessNestedProperty(item, cloneDeep(propertiesToAccess)) : item[fieldName];
   }
 
   public writeValue(value: any): void {

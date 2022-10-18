@@ -127,7 +127,7 @@ export class Team extends Base<string> {
   sectors: Sector[] = [];
 
   @prop({ required: true })
-  overridePercentages: boolean = false;
+  overrideSupportPercentages: boolean = false;
 
   @prop()
   organizationPercentage?: string;

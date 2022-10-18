@@ -9,14 +9,14 @@
           display: isPhone() ? 'contents' : 'flex'
         }"
       >
-        <label class="label" for="input-split-type" style="margin-bottom: 0; margin-right: 10px">
+        <label class="label" for="input-transaction-type" style="margin-bottom: 0; margin-right: 10px">
           Tipo da movimentação:
         </label>
         <nb-radio-group
           [(ngModel)]="options.type"
-          #splitType="ngModel"
-          id="input-split-type"
-          name="splitType"
+          (ngModelChange)="handleType()"
+          id="input-transaction-type"
+          name="transactionType"
           required="true"
           [ngStyle]="{
             'height.px': 16,
@@ -30,7 +30,7 @@
       </div>
     </div>
   </div>
-  <ng-container *ngIf="options.type == tTypes.OE">
+  <ng-container *ngIf="options.type == tTypes.RECEIPT">
     <div class="row">
       <div class="col-12">
         <div class="form-control-group">
@@ -41,12 +41,12 @@
               #contractCheckbox="ngModel"
               name="checkbox-contract"
               class="ml-2"
-              [disabled]="hasInputContract"
+              [disabled]="hasInputContract || requiredContract"
             ></nb-checkbox>
           </label>
           <nb-completer
             [(ngModel)]="contractSearch"
-            (selected)="this.contract = $event"
+            (selected)="this.contract = $event; fillContractData()"
             inputName="contractListCompleter"
             #contractList="ngModel"
             id="input-contract"
@@ -57,9 +57,10 @@
           "
             fieldSize="large"
             nameField="locals.code"
-            pictureField="managerPicture"
+            pictureField="locals.managerPicture"
             [disabled]="hasInputContract || !options.relatedWithContract"
-            [data$]="availableContractsData"
+            [required]="options.relatedWithContract"
+            [data$]="availableContractsData$"
             [minSearchLength]="0"
             [fullWidth]="true"
             [status]="
@@ -92,6 +93,7 @@
           <input
             nbInput
             [(ngModel)]="transaction.value"
+            (ngModelChange)="updateLiquidValue()"
             #value="ngModel"
             id="input-value"
             name="value"
@@ -109,7 +111,7 @@
             [required]="validation.value.required"
             [minLength]="validation.value.minLength"
             [maxLength]="validation.value.maxLength"
-            [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'"
+            [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : value.value ? 'success' : 'basic'"
             [disabled]="transaction.paid && transactionIndex !== undefined"
             [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           />
@@ -150,6 +152,7 @@
           <input
             nbInput
             [(ngModel)]="transaction.notaFiscal"
+            (ngModelChange)="updateLiquidValue()"
             #notaFiscal="ngModel"
             id="input-nota-fiscal"
             name="notaFiscal"
@@ -175,7 +178,6 @@
             "
             [disabled]="transaction.paid && transactionIndex !== undefined"
             [attr.aria-invalid]="notaFiscal.invalid && notaFiscal.touched ? true : null"
-            (ngModelChange)="updateLiquidValue(transaction.value)"
           />
         </div>
       </div>
@@ -185,6 +187,7 @@
           <input
             nbInput
             [(ngModel)]="transaction.companyPercentage"
+            (ngModelChange)="updateLiquidValue()"
             #companyPercentage="ngModel"
             id="input-company-percentage"
             name="nortan"
@@ -210,7 +213,6 @@
             "
             [disabled]="transaction.paid && transactionIndex !== undefined"
             [attr.aria-invalid]="companyPercentage.invalid && companyPercentage.touched ? true : null"
-            (ngModelChange)="updateLiquidValue(transaction.value)"
           />
         </div>
       </div>
@@ -427,6 +429,7 @@
             Associado ao contrato
             <nb-checkbox
               [(ngModel)]="options.relatedWithContract"
+              (ngModelChange)="updateTransactionKinds()"
               #contractCheckbox="ngModel"
               name="checkbox-contract"
               class="ml-2"
@@ -446,9 +449,9 @@
           "
             fieldSize="large"
             nameField="locals.code"
-            pictureField="managerPicture"
+            pictureField="locals.managerPicture"
             [disabled]="hasInputContract || !options.relatedWithContract"
-            [data$]="availableContractsData"
+            [data$]="availableContractsData$"
             [minSearchLength]="0"
             [fullWidth]="true"
             [status]="
@@ -468,34 +471,44 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-control-group">
-          <label class="label" for="input-user">Autor</label>
+          <div style="height: 29px; display: flex; align-items: flex-end;">
+            <label class="label" for="input-cost-center" style="margin-right: 10px">Centro de custo</label>
+            <nb-radio-group
+              [(ngModel)]="options.costCenterListType"
+              (ngModelChange)="setCostCenterData()"
+              id="input-cost-center-type"
+              name="costCenterType"
+              required="true"
+              [ngStyle]="{
+                'height.px': 16,
+                display: isPhone() ? 'contents' : 'flex',
+                'align-self': 'center'
+              }"
+            >
+              <nb-radio *ngFor="let type of costCenterTypes" [value]="type" class="transaction-radio">
+                {{ type }}
+              </nb-radio>
+            </nb-radio-group>
+          </div>
           <nb-completer
-            [(ngModel)]="userSearch"
-            (selected)="transaction.author = $event"
-            inputName="userListCompleter"
-            #userList="ngModel"
-            id="input-user"
-            name="userList"
-            placeholder="Digite e selecione o nome do colaborador"
+            [(ngModel)]="costCenterSearch"
+            (selected)="transaction.costCenter = $event"
+            inputName="costCenterCompleter"
+            #costCenterCompleter="ngModel"
+            id="input-cost-center"
+            name="costCenterCompleter"
+            placeholder="Digite e selecione o centro de custo"
             textNoResults="
-            Não foi possível achar um colaborador com o nome digitado
-            "
+          Não foi possível achar um centro de custo
+          "
             fieldSize="large"
-            nameField="fullName"
+            [nameField]="options.costCenterListType == cCTypes.USERS ? 'fullName' : 'name'"
             pictureField="profilePicture"
-            [data$]="userData"
+            [data$]="costCenterData$"
             [minSearchLength]="0"
             [fullWidth]="true"
-            [status]="
-              userList.dirty
-                ? userList.invalid
-                  ? 'danger'
-                  : 'success'
-                : transactionIndex === undefined && userSearch !== ''
-                ? 'success'
-                : 'basic'
-            "
-            [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
+            [status]="costCenterCompleter.dirty ? (costCenterCompleter.invalid ? 'danger' : 'success') : 'basic'"
+            [attr.aria-invalid]="costCenterCompleter.invalid && costCenterCompleter.touched ? true : null"
           ></nb-completer>
         </div>
       </div>
@@ -603,26 +616,34 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-control-group">
-          <label class="label" for="input-cost-center">Centro de custo</label>
+          <label class="label" for="input-user">Autor</label>
           <nb-completer
-            [(ngModel)]="costCenterSearch"
-            (selected)="transaction.costCenter = $event"
-            inputName="costCenterCompleter"
-            #costCenterCompleter="ngModel"
-            id="input-cost-center"
-            name="costCenterCompleter"
-            placeholder="Digite e selecione o centro de custo"
+            [(ngModel)]="userSearch"
+            (selected)="transaction.author = $event"
+            inputName="userListCompleter"
+            #userList="ngModel"
+            id="input-user"
+            name="userList"
+            placeholder="Digite e selecione o nome do colaborador"
             textNoResults="
-          Não foi possível achar um centro de custo
-          "
+            Não foi possível achar um colaborador com o nome digitado
+            "
             fieldSize="large"
             nameField="fullName"
             pictureField="profilePicture"
-            [data$]="costCenterData"
+            [data$]="userData"
             [minSearchLength]="0"
             [fullWidth]="true"
-            [status]="costCenterCompleter.dirty ? (costCenterCompleter.invalid ? 'danger' : 'success') : 'basic'"
-            [attr.aria-invalid]="costCenterCompleter.invalid && costCenterCompleter.touched ? true : null"
+            [status]="
+              userList.dirty
+                ? userList.invalid
+                  ? 'danger'
+                  : 'success'
+                : transactionIndex === undefined && userSearch !== ''
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
           ></nb-completer>
         </div>
       </div>
@@ -631,6 +652,7 @@
           <label class="label" for="input-type">Tipo da movimentação</label>
           <nb-select
             [(ngModel)]="transaction.type"
+            (ngModelChange)="updateExpenseSubTypes()"
             #type="ngModel"
             id="input-type"
             name="type"
@@ -641,8 +663,8 @@
             [status]="type.dirty ? 'success' : 'basic'"
             [attr.aria-invalid]="type.invalid && type.touched ? true : null"
           >
-            <nb-option *ngFor="let type of transactionKinds" [value]="type">
-              {{ type }}
+            <nb-option *ngFor="let type of transactionKinds" [value]="type.name">
+              {{ type.name }}
             </nb-option>
           </nb-select>
         </div>
@@ -662,7 +684,7 @@
             [status]="subTypeInput.dirty ? 'success' : subTypeInput.value !== '' ? 'success' : 'basic'"
             [attr.aria-invalid]="subTypeInput.invalid && subTypeInput.touched ? true : null"
           >
-            <nb-option *ngFor="let type of transactionTypes" [value]="type">
+            <nb-option *ngFor="let type of expenseSubTypes" [value]="type">
               {{ type }}
             </nb-option>
           </nb-select>
@@ -687,7 +709,7 @@
             fieldSize="large"
             nameField="fullName"
             pictureField="profilePicture"
-            [data$]="providerData"
+            [data$]="providerData$"
             [minSearchLength]="0"
             [fullWidth]="true"
             [status]="providerList.dirty ? (providerList.invalid ? 'danger' : 'success') : 'basic'"
