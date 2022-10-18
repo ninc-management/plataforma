@@ -26,19 +26,19 @@ export class Transaction extends Base<string> {
   provider?: Ref<Provider>;
 
   @prop({ required: true })
-  description!: string;
+  description: string = '';
 
   @prop({ required: true })
   nf: boolean = true;
 
   @prop({ required: true })
-  type!: string;
+  type: string = '';
 
   @prop()
   subType: string = '';
 
   @prop({ required: true })
-  value!: string;
+  value: string = '0,00';
 
   @prop({ required: true })
   notaFiscal?: string;
