@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { NB_AUTH_OPTIONS, NbAuthService, NbRegisterComponent } from '@nebular/auth';
 import { Subject } from 'rxjs';
@@ -26,6 +26,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   validation = user_validation as any;
   prospect = new Prospect();
   protected destroy$ = new Subject<void>();
+  companyName: string = '';
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
@@ -33,6 +34,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   constructor(
     private statecityService: StatecityService,
     private authService: AuthService,
+    private route: ActivatedRoute,
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected cd: ChangeDetectorRef,
@@ -44,7 +46,21 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   ngOnInit() {
     this.states = this.statecityService.buildStateList();
     this.authService.submitted$.next(false);
+    this.route.queryParams.subscribe((params) => {
+      console.log(params);
+      // TODO: Atualizar com o modelo da empresa
+      // if (params.companyId) {
+      //   const company = this.companyService.getCompanyById(params.companyId);
+      //   this.companyName = company.name;
+      //   this.prospect.company = company._id;
+      // } else {
+      // this.companyName = 'Conta em fase teste';
+      //   this.prospect.company = 'id de teste';
+      // }
+    });
+  }
 
+  ngAfterViewInit() {
     this.authService
       .msLogin()
       .pipe(takeUntil(this.destroy$))
