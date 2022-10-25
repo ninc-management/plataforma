@@ -125,6 +125,9 @@ export class InvoiceConfig {
   @prop({ required: true })
   hasMaterialList: boolean = true;
 
+  @prop({ required: true })
+  hasMarketingPage: boolean = true;
+
   @prop({ required: true, type: () => [String] })
   units: string[] = [];
 

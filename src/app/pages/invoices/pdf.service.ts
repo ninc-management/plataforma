@@ -1354,6 +1354,51 @@ export class PdfService {
       style: 'insideText',
     });
 
+    if (this.config.invoiceConfig.hasMarketingPage) this.addMarketingPage(pdf, metrics);
+
+    pdf.add({
+      stack: [
+        { text: 'Mais informações:', bold: true, color: '#79BA9E' },
+        {
+          text: author.professionalEmail + ' • ' + author.phone,
+          fontSize: 10,
+          bold: true,
+        },
+        {
+          text: this.config.socialConfig.address,
+          fontSize: 10,
+          bold: true,
+        },
+        {
+          text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
+          fontSize: 10,
+        },
+      ],
+      style: 'insideText',
+      absolutePosition: { x: 250, y: 841.89 - 102 },
+    });
+
+    // QR code
+    if (this.config.socialConfig.qrcodeURL)
+      pdf.add({
+        absolutePosition: { x: 190, y: 841.89 - 100 },
+        qr: this.config.socialConfig.qrcodeURL,
+        fit: '70',
+        foreground: '#052E41',
+      });
+
+    if (preview) {
+      pdf.create().getDataUrl((dataURL: any) => {
+        this.pdfData$.next(dataURL);
+      });
+    } else {
+      if (openPdf) {
+        pdf.create().open();
+      } else pdf.create().download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
+    }
+  }
+
+  private addMarketingPage(pdf: PdfMakeWrapper, metrics: any): void {
     pdf.add({
       columns: [
         {
@@ -1454,6 +1499,7 @@ export class PdfService {
         metric: '',
       },
     ];
+
     allAdsContent.forEach((ad) => {
       pdf.add({
         columns: [
@@ -1481,50 +1527,9 @@ export class PdfService {
     });
 
     pdf.add({
-      stack: [
-        { text: 'Mais informações:', bold: true, color: '#79BA9E' },
-        {
-          text: author.professionalEmail + ' • ' + author.phone,
-          fontSize: 10,
-          bold: true,
-        },
-        {
-          text: this.config.socialConfig.address,
-          fontSize: 10,
-          bold: true,
-        },
-        {
-          text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
-          fontSize: 10,
-        },
-      ],
-      style: 'insideText',
-      absolutePosition: { x: 250, y: 841.89 - 102 },
-    });
-
-    pdf.add({
       svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" id="svg851" version="1.1" viewBox="0 0 77.694969 88.261543" height="88.261543mm" width="77.694969mm"> <defs id="defs845" /> <g transform="translate(7.1704346e-8,-3.3160678e-6)" id="layer1"> <g transform="matrix(0.79657927,0,0,0.79657927,14.123673,-317.86634)" id="g921"> <path id="path913" d="M -6.9679679,508.16648 C -6.8457109,507.74876 1.99182,481.2244 2.13823,481.2244 c 0.0867,0 3.58706,5.12254 7.77868,11.38341 4.19162,6.26089 7.65074,11.35081 7.68695,11.31094 0.0362,-0.0399 4.67002,-13.88373 10.29736,-30.76414 5.62733,-16.88042 10.322,-30.78357 10.43261,-30.89591 0.2784,-0.28273 3.42394,2.14479 6.08283,4.69433 5.13291,4.9218 9.32186,11.28845 11.76718,17.88453 l 0.93825,2.53087 -7.06884,21.14934 -7.142225,21.29613 -25.167022,0.01 c -13.8580102,0.0371 -22.8251741,-0.002 -25.1963802,-0.002 z" style="fill:#78bea0;fill-opacity:0.2;stroke-width:0.26458335" /> <path id="path911" d="m -17.72709,475.84908 v -33.95033 l 7.13658,-21.38451 c 3.92512,-11.76148 7.17725,-21.42518 7.22696,-21.47489 0.0497,-0.0497 7.60761,11.18855 16.79535,24.9739 l 16.70498,25.06428 -5.59461,16.7349 c -3.07704,9.20419 -5.66086,16.73154 -5.74183,16.72744 -0.081,-0.004 -3.51088,-5.06426 -7.62202,-11.24479 -4.11114,-6.18054 -7.5766,-11.23734 -7.70102,-11.23734 -0.12441,0 -3.96403,11.19188 -8.53249,24.87083 l -8.30627,24.89652 h -2.215838 l -2.146122,0.004 z" style="fill:#0f5a5f;fill-opacity:0.2;stroke-width:0.26458335" /> <path id="path909" d="m 58.903158,509.82422 c 0.448762,-0.92673 0.811382,-1.71375 1.682172,-3.47742 1.89309,-3.83422 2.66359,-5.90391 3.84319,-10.32342 1.35084,-5.06109 1.76267,-8.36754 1.7609,-14.13751 -0.002,-5.61475 -0.36511,-8.65206 -1.59995,-13.3728 -2.75522,-10.53309 -7.22283,-18.30827 -14.98066,-26.0715 l -3.555869,-3.46097 1.371233,-3.72031 c 0.77202,-2.17105 1.240485,-3.59095 1.437485,-4.02751 0.197,-0.43656 0.899742,-2.44077 1.244482,-3.42304 0.34474,-0.98226 0.7052,-2.04543 0.80104,-2.04543 0.30793,0 2.970329,2.10761 5.694429,4.49787 6.75064,5.92333 12.88416,14.08222 16.62159,22.11027 1.82954,3.92988 2.62691,6.07236 3.91441,10.51773 2.97549,10.27355 3.47969,21.82965 1.42331,32.62173 -0.58042,3.04611 -2.75577,10.19953 -3.88218,12.76615 l -0.740328,1.54211 h -7.203479 c -4.12747,0 -5.814591,0.0215 -7.831774,0.006 z M 35.58646,432.38326 c -2.62908,-1.37257 -4.93284,-2.32653 -7.9375,-3.28681 -2.32834,-0.74413 -4.43952,-1.43437 -4.69153,-1.53386 -0.252,-0.0995 -2.60541,-3.39558 -5.22979,-7.32464 l -4.77159,-7.14375 1.37383,-0.0816 c 1.66999,-0.0992 7.37488,0.57362 10.80553,1.27433 3.81352,0.77892 10.44451,3.00256 14.35783,4.81476 3.4391,1.5926 10.797005,5.92589 11.381505,6.63018 -1.904307,1.51755 -1.42175,1.0004 -4.42619,3.49763 -5.02272,4.17477 -6.318427,5.43101 -6.617887,5.38511 -0.13646,-0.0209 -2.206918,-1.16774 -4.244208,-2.23136 z m -53.316865,-11.50474 c 0.0045,-2.04289 0.01391,-1.67436 0.0016,-2.41416 0.4137,-0.21353 1.550224,-0.6026 2.702608,-1.05573 -0.751298,2.18451 -0.80546,2.26602 -1.249267,3.54489 l -1.452428,3.82799 z" style="fill:#052d41;fill-opacity:0.2;stroke-width:0.26458335" /> </g> </g> </svg>',
       width: 160,
       absolutePosition: { x: 0, y: 841.89 - 201.5 },
     });
-
-    // QR code
-    if (this.config.socialConfig.qrcodeURL)
-      pdf.add({
-        absolutePosition: { x: 190, y: 841.89 - 100 },
-        qr: this.config.socialConfig.qrcodeURL,
-        fit: '70',
-        foreground: '#052E41',
-      });
-
-    if (preview) {
-      pdf.create().getDataUrl((dataURL: any) => {
-        this.pdfData$.next(dataURL);
-      });
-    } else {
-      if (openPdf) {
-        pdf.create().open();
-      } else pdf.create().download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
-    }
   }
 }
