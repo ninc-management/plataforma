@@ -4,13 +4,17 @@ import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from './contract-dialog/contract-dialog.component';
+import {
+  DateFilterComponent,
+  dateRangeFilter,
+} from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { codeSort, isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, formatDate, isPhone, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
@@ -127,6 +131,17 @@ export class ContractsComponent implements OnInit, OnDestroy {
           if (search && search.includes(cell)) return true;
           return false;
         },
+      },
+      created: {
+        title: 'Data de criação',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
+        valuePrepareFunction: (date: Date) => formatDate(date) as any,
+        filterFunction: (cell: any, search?: string) => dateRangeFilter(cell, search),
       },
     },
   };
