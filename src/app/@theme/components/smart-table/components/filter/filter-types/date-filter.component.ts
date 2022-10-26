@@ -10,14 +10,14 @@ import { reviveDates } from 'app/shared/utils';
 import { DateRange } from '@models/contract';
 
 export function dateRangeFilter(cell: any, search?: string): boolean {
-  if (search) {
+  if (search && search !== 'null') {
     const range = reviveDates(JSON.parse(search));
     if (range.start) {
       if (range.end) return cell >= range.start && cell <= range.end;
       return isSameDay(cell, range.start);
     }
   }
-  return false;
+  return true;
 }
 
 @Component({

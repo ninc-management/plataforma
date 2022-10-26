@@ -6,12 +6,16 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { PdfService } from './pdf.service';
+import {
+  DateFilterComponent,
+  dateRangeFilter,
+} from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
 import { Invoice, InvoiceLocals } from '@models/invoice';
 
@@ -121,6 +125,17 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             list: Object.values(INVOICE_STATOOS).map((status) => ({ value: status, title: status })),
           },
         },
+      },
+      created: {
+        title: 'Data de criação',
+        type: 'string',
+        width: '10%',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
+        valuePrepareFunction: (date: Date) => formatDate(date) as any,
+        filterFunction: (cell: any, search?: string) => dateRangeFilter(cell, search),
       },
     },
   };
