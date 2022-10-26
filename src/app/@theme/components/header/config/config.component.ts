@@ -288,6 +288,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           mediaFolderPath: 'logoImages/',
           name: {
             fn: (name: string) => {
+              //TODO Replace company name with ID
               return this.config.socialConfig.companyName.toLowerCase() + '_' + this.translateLogoType(logoType);
             },
           },
