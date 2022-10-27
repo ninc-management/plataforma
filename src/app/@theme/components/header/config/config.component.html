@@ -1,4 +1,422 @@
 <nb-tabset fullWidth>
+  <nb-tab tabId="general-tab" [tabTitle]="isPhone() ? '' : 'Geral'" tabIcon="settings-2-outline" responsive>
+    <form (ngSubmit)="updateConfig()" #generalConfigForm="ngForm" aria-labelledby="title">
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-auto">
+            <label class="label-divider">
+              Logos da empresa
+              <!-- Tooltip text to be defined -->
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip=""
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+          </div>
+          <div class="col">
+            <hr />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <div class="form-control-group">
+              <label class="label" for="input-logo-default">Arquivo da logo</label>
+              <div class="d-flex">
+                <button
+                  class="mr-2"
+                  nbButton
+                  type="button"
+                  status="primary"
+                  (click)="openUploadDialog(LOGO_TYPES.logoDefault)"
+                >
+                  <nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon>
+                </button>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.socialConfig[LOGO_TYPES.logoDefault].name"
+                  #logoDefault="ngModel"
+                  id="input-logo-default"
+                  name="logo-default"
+                  fullWidth
+                  fieldSize="large"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-control-group">
+              <label class="label" for="input-logo-without-name">Arquivo da logo sem nome</label>
+              <div class="d-flex">
+                <button
+                  class="mr-2"
+                  nbButton
+                  type="button"
+                  status="primary"
+                  (click)="openUploadDialog(LOGO_TYPES.logoWithoutName)"
+                >
+                  <nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon>
+                </button>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.socialConfig[LOGO_TYPES.logoWithoutName].name"
+                  #logoWithoutName="ngModel"
+                  id="input-logo-without-name"
+                  name="logo-without-name"
+                  fullWidth
+                  fieldSize="large"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-control-group">
+              <label class="label" for="input-logo-white">Arquivo da logo tema escuro</label>
+              <div class="d-flex">
+                <button
+                  class="mr-2"
+                  nbButton
+                  type="button"
+                  status="primary"
+                  (click)="openUploadDialog(LOGO_TYPES.logoWhite)"
+                >
+                  <nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon>
+                </button>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.socialConfig[LOGO_TYPES.logoWhite].name"
+                  #logoWhite="ngModel"
+                  id="input-logo-white"
+                  name="logo-white"
+                  fullWidth
+                  fieldSize="large"
+                  readonly
+                />
+              </div>
+            </div>
+            <div class="form-control-group">
+              <label class="label" for="input-logo-white-without-name">Arquivo da logo tema escuro sem nome</label>
+              <div class="d-flex">
+                <button
+                  class="mr-2"
+                  nbButton
+                  type="button"
+                  status="primary"
+                  (click)="openUploadDialog(LOGO_TYPES.logoWhiteWithoutName)"
+                >
+                  <nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon>
+                </button>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.socialConfig[LOGO_TYPES.logoWhiteWithoutName].name"
+                  #logoWhiteWithoutName="ngModel"
+                  id="input-logo-white-without-name"
+                  name="logo-white-without-name"
+                  fullWidth
+                  fieldSize="large"
+                  readonly
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="row mb-1">
+              <div class="col-6 d-flex flex-column align-items-center">
+                <label class="label">Logo</label>
+                <img
+                  [src]="clonedConfig.socialConfig[LOGO_TYPES.logoDefault].url"
+                  class="p-3 logo"
+                  height="164"
+                  alt="Logo da empresa"
+                />
+              </div>
+              <div class="col-6 d-flex flex-column align-items-center">
+                <label class="label">Logo sem nome</label>
+                <img
+                  [src]="clonedConfig.socialConfig[LOGO_TYPES.logoWithoutName].url"
+                  class="p-3 logo"
+                  height="164"
+                  alt="Logo da empresa sem nome"
+                />
+              </div>
+            </div>
+            <div class="row mb-1">
+              <div class="col-6 d-flex flex-column align-items-center">
+                <label class="label">Logo tema escuro</label>
+                <img
+                  [src]="clonedConfig.socialConfig[LOGO_TYPES.logoWhite].url"
+                  class="p-3 logo"
+                  height="164"
+                  alt="Logo da empresa tema escuro"
+                />
+              </div>
+              <div class="col-6 d-flex flex-column align-items-center">
+                <label class="label">Logo tema escuro sem nome</label>
+                <img
+                  [src]="clonedConfig.socialConfig[LOGO_TYPES.logoWhiteWithoutName].url"
+                  class="p-3 logo"
+                  height="164"
+                  alt="Logo da empresa tema escuro sem nome"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Dados da empresa</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md">
+          <div class="form-control-group">
+            <label class="label" for="input-companyName">Nome da empresa</label>
+            <nb-form-field>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.companyName"
+                #companyName="ngModel"
+                id="input-companyName"
+                name="companyName"
+                placeholder="Digite o nome da empresa"
+                fullWidth
+                fieldSize="large"
+                [required]="validation.companyName.required"
+                [status]="companyName.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="companyName.invalid && companyName.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+        <div class="col col-md-auto" style="display: flex; flex-direction: column; justify-content: center">
+          <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
+          <nb-toggle
+            [(ngModel)]="clonedConfig.socialConfig.showCompanyName"
+            [disabled]="!clonedConfig.socialConfig.companyName"
+            id="show-companyName"
+            name="toggle-show-companyName"
+          ></nb-toggle>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-address">Endereço</label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.address"
+              #address="ngModel"
+              id="input-address"
+              name="address"
+              placeholder="Av. Dr. Antônio Gouveia, 549 - Pajuçara, Maceió - AL, 57030-170"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.address.required"
+              [status]="address.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="address.invalid && address.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-document">CNPJ</label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.cnpj"
+              #document="ngModel"
+              id="input-document"
+              name="document"
+              placeholder="00.000.000/0000-00"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{ person: true }"
+              ngxSelectAllText
+              [required]="validation.cnpj.required"
+              [minlength]="validation.document.minLength"
+              [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="document.invalid && document.touched ? true : null"
+            />
+            <ng-container *ngIf="document.errors?.minlength">
+              <p class="caption status-danger">CNPJ deve ter {{ validation.document.minLength - 4 }} números</p>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-qrcode-url">
+              URL do QRCode
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                nbTooltip="Esse é o QRCode que aparece ao fim da visualização do orçamento."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+            <input
+              nbInput
+              [(ngModel)]="clonedConfig.socialConfig.qrcodeURL"
+              #qrcodeURL="ngModel"
+              id="input-qrcode-url"
+              name="qrcodeURL"
+              placeholder="http://www.ninc.digital"
+              fullWidth
+              fieldSize="large"
+              [status]="qrcodeURL.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="qrcodeURL.invalid && qrcodeURL.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Redes sociais</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-youtube-link">Link do YouTube</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.youtubeLink"
+                #youtubeLink="ngModel"
+                id="input-youtube-link"
+                name="youtubeLink"
+                placeholder="https://www.youtube.com/"
+                fullWidth
+                fieldSize="large"
+                [status]="youtubeLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="youtubeLink.invalid && youtubeLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-linkedin-link">Link do LinkedIn</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-linkedin" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.linkedinLink"
+                #linkedinLink="ngModel"
+                id="input-linkedin-link"
+                name="linkedinLink"
+                placeholder="https://www.linkedin.com/"
+                fullWidth
+                fieldSize="large"
+                [status]="linkedinLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="linkedinLink.invalid && linkedinLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-instagram-link">Link do Instagram</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="social-instagram" pack="ion"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.instagramLink"
+                #instagramLink="ngModel"
+                id="input-instagram-link"
+                name="instagramLink"
+                placeholder="https://www.instagram.com"
+                fullWidth
+                fieldSize="large"
+                [status]="instagramLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="instagramLink.invalid && instagramLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-glassfrog-link">Link do GlassFrog</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="glassfrog" pack="fac"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.glassfrogLink"
+                #glassfrogLink="ngModel"
+                id="input-glassfrog-link"
+                name="glassfrogLink"
+                placeholder="https://www.glassfrog.com"
+                fullWidth
+                fieldSize="large"
+                [status]="glassfrogLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="glassfrogLink.invalid && glassfrogLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-gathertown-link">Link do Gather Town</label>
+            <nb-form-field>
+              <nb-icon nbPrefix icon="gtown" pack="fac"></nb-icon>
+              <input
+                nbInput
+                [(ngModel)]="clonedConfig.socialConfig.gathertownLink"
+                #gathertownLink="ngModel"
+                id="input-gathertown-link"
+                name="gathertownLink"
+                placeholder="https://app.gather.town/app"
+                fullWidth
+                fieldSize="large"
+                [status]="gathertownLink.value ? 'success' : 'basic'"
+                [attr.aria-invalid]="gathertownLink.invalid && gathertownLink.touched ? true : null"
+              />
+            </nb-form-field>
+          </div>
+        </div>
+      </div>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="
+          !expenseConfigForm.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !generalConfigForm.valid ||
+          !moduleConfigForm.valid ||
+          !onedriveConfigForm.valid
+        "
+      >
+        Atualizar
+      </button>
+    </form>
+  </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <form (ngSubmit)="updateConfig()" #expenseConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
@@ -264,7 +682,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "
@@ -645,7 +1063,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "
@@ -901,261 +1319,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
-      >
-        Atualizar
-      </button>
-    </form>
-  </nb-tab>
-  <nb-tab tabId="social-tab" [tabTitle]="isPhone() ? '' : 'Social'" tabIcon="link-2-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #socialConfigForm="ngForm" aria-labelledby="title">
-      <div class="row">
-        <div class="col-auto">
-          <label class="label-divider">Dados da empresa</label>
-        </div>
-        <div class="col">
-          <hr />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-md">
-          <div class="form-control-group">
-            <label class="label" for="input-companyName">Nome da empresa</label>
-            <nb-form-field>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.companyName"
-                #companyName="ngModel"
-                id="input-companyName"
-                name="companyName"
-                placeholder="Digite o nome da empresa"
-                fullWidth
-                fieldSize="large"
-                [required]="validation.companyName.required"
-                [status]="companyName.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="companyName.invalid && companyName.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-        <div class="col col-md-auto" style="display: flex; flex-direction: column; justify-content: center">
-          <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
-          <nb-toggle
-            [(ngModel)]="clonedConfig.socialConfig.showCompanyName"
-            [disabled]="!clonedConfig.socialConfig.companyName"
-            id="show-companyName"
-            name="toggle-show-companyName"
-          ></nb-toggle>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-address">Endereço</label>
-            <input
-              nbInput
-              [(ngModel)]="clonedConfig.socialConfig.address"
-              #address="ngModel"
-              id="input-address"
-              name="address"
-              placeholder="Av. Dr. Antônio Gouveia, 549 - Pajuçara, Maceió - AL, 57030-170"
-              fullWidth
-              fieldSize="large"
-              [required]="validation.address.required"
-              [status]="address.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="address.invalid && address.touched ? true : null"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-document">CNPJ</label>
-            <input
-              nbInput
-              [(ngModel)]="clonedConfig.socialConfig.cnpj"
-              #document="ngModel"
-              id="input-document"
-              name="document"
-              placeholder="00.000.000/0000-00"
-              fullWidth
-              fieldSize="large"
-              [brmasker]="{ person: true }"
-              ngxSelectAllText
-              [required]="validation.cnpj.required"
-              [minlength]="validation.document.minLength"
-              [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="document.invalid && document.touched ? true : null"
-            />
-            <ng-container *ngIf="document.errors?.minlength">
-              <p class="caption status-danger">CNPJ deve ter {{ validation.document.minLength - 4 }} números</p>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-qrcode-url">
-              URL do QRCode
-              <nb-icon
-                status="info"
-                icon="info"
-                pack="eva"
-                [options]="{ animation: { type: 'pulse' } }"
-                [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                nbTooltip="Esse é o QRCode que aparece ao fim da visualização do orçamento."
-                nbTooltipPlacement="top"
-                nbTooltipStatus="info"
-              ></nb-icon>
-            </label>
-            <input
-              nbInput
-              [(ngModel)]="clonedConfig.socialConfig.qrcodeURL"
-              #qrcodeURL="ngModel"
-              id="input-qrcode-url"
-              name="qrcodeURL"
-              placeholder="http://www.ninc.digital"
-              fullWidth
-              fieldSize="large"
-              [status]="qrcodeURL.value ? 'success' : 'basic'"
-              [attr.aria-invalid]="qrcodeURL.invalid && qrcodeURL.touched ? true : null"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-auto">
-          <label class="label-divider">Redes sociais</label>
-        </div>
-        <div class="col">
-          <hr />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-youtube-link">Link do YouTube</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.youtubeLink"
-                #youtubeLink="ngModel"
-                id="input-youtube-link"
-                name="youtubeLink"
-                placeholder="https://www.youtube.com/"
-                fullWidth
-                fieldSize="large"
-                [status]="youtubeLink.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="youtubeLink.invalid && youtubeLink.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-linkedin-link">Link do LinkedIn</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="social-linkedin" pack="ion"></nb-icon>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.linkedinLink"
-                #linkedinLink="ngModel"
-                id="input-linkedin-link"
-                name="linkedinLink"
-                placeholder="https://www.linkedin.com/"
-                fullWidth
-                fieldSize="large"
-                [status]="linkedinLink.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="linkedinLink.invalid && linkedinLink.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-instagram-link">Link do Instagram</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="social-instagram" pack="ion"></nb-icon>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.instagramLink"
-                #instagramLink="ngModel"
-                id="input-instagram-link"
-                name="instagramLink"
-                placeholder="https://www.instagram.com"
-                fullWidth
-                fieldSize="large"
-                [status]="instagramLink.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="instagramLink.invalid && instagramLink.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-glassfrog-link">Link do GlassFrog</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="glassfrog" pack="fac"></nb-icon>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.glassfrogLink"
-                #glassfrogLink="ngModel"
-                id="input-glassfrog-link"
-                name="glassfrogLink"
-                placeholder="https://www.glassfrog.com"
-                fullWidth
-                fieldSize="large"
-                [status]="glassfrogLink.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="glassfrogLink.invalid && glassfrogLink.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-control-group">
-            <label class="label" for="input-gathertown-link">Link do Gather Town</label>
-            <nb-form-field>
-              <nb-icon nbPrefix icon="gtown" pack="fac"></nb-icon>
-              <input
-                nbInput
-                [(ngModel)]="clonedConfig.socialConfig.gathertownLink"
-                #gathertownLink="ngModel"
-                id="input-gathertown-link"
-                name="gathertownLink"
-                placeholder="https://app.gather.town/app"
-                fullWidth
-                fieldSize="large"
-                [status]="gathertownLink.value ? 'success' : 'basic'"
-                [attr.aria-invalid]="gathertownLink.invalid && gathertownLink.touched ? true : null"
-              />
-            </nb-form-field>
-          </div>
-        </div>
-      </div>
-      <button
-        nbButton
-        fullWidth
-        status="primary"
-        size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "
@@ -1205,7 +1369,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "
@@ -1229,7 +1393,7 @@
                       #toggleoneDrive="ngModel"
                       name="toggle-onedrive"
                       labelPosition="start"
-                      required =true
+                      required="true"
                     ></nb-toggle>
                   </td>
                 </tr>
@@ -1413,7 +1577,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "
@@ -1660,7 +1824,7 @@
           !expenseConfigForm.valid ||
           !invoiceConfigForm.valid ||
           !profileConfigForm.valid ||
-          !socialConfigForm.valid ||
+          !generalConfigForm.valid ||
           !moduleConfigForm.valid ||
           !onedriveConfigForm.valid
         "

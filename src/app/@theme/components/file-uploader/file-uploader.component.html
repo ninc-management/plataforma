@@ -1,5 +1,9 @@
 <div class="file-uploader">
-  <ng-container *ngIf="!options.directory">
+  <ng-container *ngIf="options.defaultInput">
+    <button nbButton status="primary"><nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon></button>
+  </ng-container>
+
+  <ng-container *ngIf="!options.defaultInput && !options.directory">
     <input
       #inputEl
       type="file"
@@ -10,7 +14,7 @@
     />
   </ng-container>
 
-  <ng-container *ngIf="options.directory">
+  <ng-container *ngIf="!options.defaultInput && options.directory">
     <input
       #inputEl
       type="file"
@@ -39,7 +43,13 @@
     </p>
   </div>
 
-  <button *ngIf="!isFileDrop" nbButton status="primary" class="browse-button" (click)="browse()">
+  <button
+    *ngIf="!options.defaultInput && !isFileDrop"
+    nbButton
+    status="primary"
+    class="browse-button"
+    (click)="browse()"
+  >
     {{ buttonLabel }}
   </button>
 </div>

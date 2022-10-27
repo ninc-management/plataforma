@@ -18,6 +18,7 @@ export enum StorageProvider {
 }
 
 export interface NbFileUploaderOptions {
+  defaultInput?: boolean;
   multiple?: boolean;
   directory?: boolean;
   showUploadQueue?: boolean;
