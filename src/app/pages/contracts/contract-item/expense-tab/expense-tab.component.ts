@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -11,7 +12,7 @@ import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.servi
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -97,7 +98,15 @@ export class ExpenseTabComponent implements OnInit {
       value: {
         title: 'Valor',
         type: 'string',
+        filter: {
+          type: 'slider',
+          config: {
+            minValue: 0,
+            maxValue: 0,
+          },
+        },
         compareFunction: valueSort,
+        filterFunction: (cell: any, search?: string) => sliderRangeFilter(cell, search),
       },
       type: {
         title: 'Categoria',
@@ -276,6 +285,9 @@ export class ExpenseTabComponent implements OnInit {
         return tmp;
       })
     );
+    const expensesValues = greaterAndSmallerValue(this.clonedContract.expenses);
+    this.settings.columns.value.filter.config.minValue = expensesValues.min;
+    this.settings.columns.value.filter.config.maxValue = expensesValues.max;
   }
 
   itemSort(direction: number, a: string, b: string): number {
