@@ -8,13 +8,14 @@ import {
   DateFilterComponent,
   dateRangeFilter,
 } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
+import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { codeSort, formatDate, isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, formatDate, greaterAndSmallerValue, isPhone, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
@@ -108,7 +109,15 @@ export class ContractsComponent implements OnInit, OnDestroy {
         title: 'Valor',
         type: 'string',
         width: '10%',
+        filter: {
+          type: 'slider',
+          config: {
+            minValue: 0,
+            maxValue: 0,
+          },
+        },
         compareFunction: valueSort,
+        filterFunction: (cell: any, search?: string) => sliderRangeFilter(cell, search),
       },
       'locals.interests': {
         title: 'Parcelas',
@@ -217,6 +226,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
           this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
           this.source.load(this.contracts);
           this.config = configs[0];
+          const contractsValues = greaterAndSmallerValue(this.contracts.map((c) => c.invoice));
+          this.settings.columns['locals.value'].filter.config.minValue = contractsValues.min;
+          this.settings.columns['locals.value'].filter.config.maxValue = contractsValues.max;
           this.isDataLoaded = isContractDataLoaded && isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded;
         }
       );

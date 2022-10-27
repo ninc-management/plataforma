@@ -10,12 +10,13 @@ import {
   DateFilterComponent,
   dateRangeFilter,
 } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
+import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
 import { Invoice, InvoiceLocals } from '@models/invoice';
 
@@ -112,7 +113,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Valor',
         type: 'string',
         width: '10%',
+        filter: {
+          type: 'slider',
+          config: {
+            minValue: 0,
+            maxValue: 0,
+          },
+        },
         compareFunction: valueSort,
+        filterFunction: (cell: any, search?: string) => sliderRangeFilter(cell, search),
       },
       status: {
         title: 'Status',
@@ -195,6 +204,9 @@ export class InvoicesComponent implements OnInit, OnDestroy {
           return invoice;
         });
         this.source.load(invoices);
+        const invoicesValues = greaterAndSmallerValue(invoices);
+        this.settings.columns.value.filter.config.minValue = invoicesValues.min;
+        this.settings.columns.value.filter.config.maxValue = invoicesValues.max;
       });
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
