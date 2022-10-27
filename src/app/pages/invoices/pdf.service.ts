@@ -7,6 +7,7 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import { ContentTable, ContextPageSize, TableCell } from 'pdfmake/interfaces';
 import { Subject, take } from 'rxjs';
 
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { ProviderService } from 'app/shared/services/provider.service';
@@ -79,7 +80,8 @@ export class PdfService {
     private contractorService: ContractorService,
     private teamService: TeamService,
     private configService: ConfigService,
-    private providerService: ProviderService
+    private providerService: ProviderService,
+    private companyService: CompanyService
   ) {}
 
   private applyVerticalAlignment(node: ContentTable, rowIndex: number, align: string): void {
@@ -1389,7 +1391,12 @@ export class PdfService {
         pdf.add(pdf.ln(2));
 
         pdf.add({
-          text: [{ text: this.config.socialConfig.companyName, bold: true }],
+          text: [
+            {
+              text: this.config.company ? this.companyService.idToCompany(this.config.company).companyName : '',
+              bold: true,
+            },
+          ],
           style: 'insideText',
         });
 
@@ -1404,23 +1411,27 @@ export class PdfService {
               bold: true,
             },
             {
-              text: this.config.socialConfig.address,
+              text: this.config.company ? this.companyService.idToCompany(this.config.company).address : '',
               fontSize: 10,
               bold: true,
             },
             {
-              text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
+              text:
+                this.config.company && this.companyService.idToCompany(this.config.company).cnpj
+                  ? 'CNPJ: ' + this.companyService.idToCompany(this.config.company).cnpj
+                  : '',
               fontSize: 10,
             },
           ],
           style: 'insideText',
           absolutePosition: { x: 250, y: 841.89 - 102 },
         });
+
         // QR code
-        if (this.config.socialConfig.qrcodeURL)
+        if (this.config.company && this.companyService.idToCompany(this.config.company).qrcodeURL)
           pdf.add({
             absolutePosition: { x: 190, y: 841.89 - 100 },
-            qr: this.config.socialConfig.qrcodeURL,
+            qr: this.companyService.idToCompany(this.config.company).qrcodeURL,
             fit: '70',
             foreground: '#052E41',
           });

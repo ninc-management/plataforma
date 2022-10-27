@@ -10,6 +10,7 @@ import { NotificationApps } from './models/notification';
 // import logger from 'morgan';
 // Import API endpoint routes
 import authRoutes from './routes/auth';
+import companyRoutes from './routes/company';
 import contractRoutes from './routes/contract';
 import contractorRoutes from './routes/contractor';
 import courseRoutes from './routes/course';
@@ -95,6 +96,7 @@ class NortanAPI {
     this.app.use('/api/transaction/internal', internalTransactionRoutes);
     this.app.use('/api/transaction', transactionRoutes);
     this.app.use('/api/provider', providerRoutes);
+    this.app.use('/api/company', companyRoutes);
 
     // For all GET requests, send back index.html
     // so that PathLocationStrategy can be used

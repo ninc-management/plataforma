@@ -17,7 +17,7 @@
             pack="fac"
             style="width: 30px; height: 30px; margin-bottom: 4px; margin-right: 8px"
           ></nb-icon>
-          <span *ngIf="config.socialConfig.showCompanyName">{{ config.socialConfig.companyName }}</span>
+          <span *ngIf="config.company && companyService.idToCompany(config.company).showCompanyName">{{  companyService.idToCompany(config.company).companyName }}</span>
         </span>
       </div>
     </nb-layout-header>

@@ -19,6 +19,7 @@ import {
   COMPONENT_TYPES,
   ConfigDialogComponent,
 } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -71,7 +72,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
-    public stringUtils: StringUtilService
+    public stringUtils: StringUtilService,
+    public companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
@@ -91,7 +93,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.changeTheme();
         this.config = config[0];
         this.configService.applyCustomColors(this.config);
-        this.menuTitle = config[0].socialConfig.companyName;
+        if (config[0].company) this.menuTitle = this.companyService.idToCompany(config[0].company).companyName;
       });
 
     combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
@@ -136,7 +138,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
-          this.menuTitle = event.item.title === 'Início' ? this.config.socialConfig.companyName : event.item.title;
+          if (this.config.company) {
+            this.menuTitle =
+              event.item.title === 'Início'
+                ? this.companyService.idToCompany(this.config.company).companyName
+                : event.item.title;
+          }
         }
       });
 

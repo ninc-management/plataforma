@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
 
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 
 @Component({
@@ -20,14 +21,14 @@ export class FooterComponent implements OnDestroy {
   year = new Date().getFullYear();
   isDataLoaded = false;
 
-  public constructor(private configService: ConfigService) {
+  public constructor(private configService: ConfigService, private companyService: CompanyService) {
     combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
         skipWhile(([configLoaded, _]) => !configLoaded),
         takeUntil(this.destroy$)
       )
       .subscribe(([_, config]) => {
-        this.companyName = config[0].socialConfig.companyName;
+        if (config[0].company) this.companyName = this.companyService.idToCompany(config[0].company).companyName;
       });
   }
 

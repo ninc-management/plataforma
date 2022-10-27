@@ -6,10 +6,11 @@ import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take } 
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
+import { getItemsWithValue, idToProperty, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
 import { ColorShades, PlatformConfig } from '@models/platformConfig';
@@ -78,6 +79,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   forms: NgForm[] = [];
 
   isPhone = isPhone;
+  idToProperty = idToProperty;
   trackByIndex = trackByIndex;
   tooltipTriggers = tooltipTriggers;
 
@@ -106,7 +108,8 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
     private configService: ConfigService,
     private invoiceService: InvoiceService,
     private dialogService: NbDialogService,
-    public userService: UserService
+    public userService: UserService,
+    public companyService: CompanyService
   ) {}
 
   ngOnInit() {
@@ -224,6 +227,11 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
         this.clonedConfig.expenseConfig.adminExpenseTypes
       );
     this.configService.editConfig(this.clonedConfig);
+  }
+
+  disable(): boolean {
+    if (this.clonedConfig.company) return !this.companyService.idToCompany(this.clonedConfig.company).companyName;
+    return false;
   }
 
   deleteUnit(index: number): void {

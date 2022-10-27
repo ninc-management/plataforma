@@ -1,5 +1,6 @@
 import { Subject } from 'rxjs';
 
+import { Company } from '../models/company';
 import { Contract } from '../models/contract';
 import { Contractor } from '../models/contractor';
 import { Course } from '../models/course';
@@ -25,3 +26,4 @@ export const coursesMap: Record<string, Course> = {};
 export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
+export const companyMap: Record<string, Company> = {};
