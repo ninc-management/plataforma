@@ -104,9 +104,10 @@ hr {
 }
 
 .color-input::-webkit-color-swatch-wrapper,
-.color-input::-moz-color-swatch {
+.color-input::-moz-color-swatch-wrapper {
   padding: 0;
 }
+
 .color-input::-webkit-color-swatch,
 .color-input::-moz-color-swatch {
   border: none;
