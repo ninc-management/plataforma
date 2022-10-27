@@ -1,6 +1,7 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
 
 import { Base } from './base';
+import { UploadedFile } from './shared';
 import { ExpenseType } from './team';
 
 export class FeesPercentages {
@@ -118,6 +119,18 @@ export class SocialConfig {
 
   @prop({ required: true })
   qrcodeURL: string = '';
+
+  @prop({ required: true })
+  logoDefault: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
+  logoWithoutName: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
+  logoWhite: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
+  logoWhiteWithoutName: UploadedFile = new UploadedFile();
 }
 
 export class ModulesConfig {

@@ -89,6 +89,10 @@ hr {
   border-top: 1px solid nb-theme(text-hint-color);
 }
 
+.logo {
+  object-fit: contain;
+}
+
 ::ng-deep {
   .tabset .tab a {
     align-items: center;
