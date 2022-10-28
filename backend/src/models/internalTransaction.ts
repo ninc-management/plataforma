@@ -50,4 +50,3 @@ export class InternalTransaction extends Base<string> {
   editionHistory: EditionHistoryItem[] = [];
 }
 
-export default getModelForClass(InternalTransaction);

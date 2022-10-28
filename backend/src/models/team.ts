@@ -1,4 +1,4 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { Provider } from './provider';
@@ -149,5 +149,3 @@ export class Team extends Base<string> {
     leaderName: '',
   };
 }
-
-export default getModelForClass(Team);

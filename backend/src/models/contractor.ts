@@ -84,5 +84,3 @@ export class Contractor extends Base<string> {
   @prop({ required: true, type: () => [ComercialRepresentative] })
   comercialRepresentatives: ComercialRepresentative[] = [];
 }
-
-export default getModelForClass(Contractor);

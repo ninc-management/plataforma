@@ -282,5 +282,3 @@ export class PlatformConfig extends Base<string> {
   @prop({ required: true })
   notificationConfig: NotificationConfig = new NotificationConfig();
 }
-
-export default getModelForClass(PlatformConfig);

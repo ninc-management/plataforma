@@ -2,7 +2,8 @@ import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep, isEqual } from 'lodash';
 
-import TransactionModel, { Transaction } from '../models/transaction';
+import { TransactionModel } from '../models/models';
+import { Transaction } from '../models/transaction';
 
 const router = express.Router();
 let requested = false;

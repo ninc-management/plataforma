@@ -103,5 +103,3 @@ export class User extends Base<string> {
   @prop({ type: () => [Notification] })
   public notifications: Notification[] = [];
 }
-
-export default getModelForClass(User);

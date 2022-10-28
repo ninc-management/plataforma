@@ -1,8 +1,8 @@
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
-import ProspectModel, { Prospect } from '../models/prospect';
-import UserModel from '../models/user';
+import { ProspectModel, UserModel } from '../models/models';
+import { Prospect } from '../models/prospect';
 import { prospectMap } from '../shared/global';
 
 const router = express.Router();

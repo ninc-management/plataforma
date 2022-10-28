@@ -2,7 +2,8 @@ import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
-import TeamModel, { Team } from '../models/team';
+import { TeamModel } from '../models/models';
+import { Team } from '../models/team';
 import { teamMap } from '../shared/global';
 
 const router = express.Router();

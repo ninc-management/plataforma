@@ -2,7 +2,8 @@ import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
-import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
+import { PlatformConfigModel } from '../models/models';
+import { PlatformConfig } from '../models/platformConfig';
 import { configMap } from '../shared/global';
 
 const router = express.Router();
