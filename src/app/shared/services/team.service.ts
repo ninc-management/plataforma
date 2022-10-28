@@ -6,6 +6,7 @@ import { take, takeUntil } from 'rxjs/operators';
 
 import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
+import { TransactionService } from './transaction.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -29,7 +30,8 @@ export class TeamService implements OnDestroy {
     private http: HttpClient,
     private wsService: WebSocketService,
     private userService: UserService,
-    private stringUtil: StringUtilService
+    private stringUtil: StringUtilService,
+    private transactionService: TransactionService
   ) {}
 
   ngOnDestroy(): void {
@@ -124,7 +126,10 @@ export class TeamService implements OnDestroy {
           if (!sector.locals) sector.locals = {} as SectorLocals;
         });
         team.locals.balance = this.stringUtil.numberToMoney(
-          team.transactions.reduce((accumulator, t) => (accumulator += this.stringUtil.moneyToNumber(t.value)), 0)
+          team.transactions.reduce((accumulator, t) => {
+            if (t) accumulator += this.stringUtil.moneyToNumber(this.transactionService.idToTransaction(t).value);
+            return accumulator;
+          }, 0)
         );
         return team;
       });

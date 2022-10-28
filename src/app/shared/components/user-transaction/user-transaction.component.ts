@@ -1,13 +1,12 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 
-import { Team, TeamFinancialTransaction } from '@models/team';
+import { Team } from '@models/team';
 import { User, UserFinancialTransaction } from '@models/user';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
@@ -44,13 +43,14 @@ export class UserTransactionComponent implements OnInit {
   }
 
   registerTransaction(): void {
-    const teamTransaction = new TeamFinancialTransaction();
-    teamTransaction.from = this.currentUser;
-    teamTransaction.to = this.currentDestination;
-    teamTransaction.description = this.transaction.description;
-    teamTransaction.value = this.transaction.value;
-    this.currentDestination.transactions.push(cloneDeep(teamTransaction));
-    this.isFormDirty.next(false);
-    this.teamService.editTeam(this.currentDestination);
+    // TODO: [NWS-1169] Avaliar movimentação usuário para time
+    // const teamTransaction = new TeamFinancialTransaction();
+    // teamTransaction.from = this.currentUser;
+    // teamTransaction.to = this.currentDestination;
+    // teamTransaction.description = this.transaction.description;
+    // teamTransaction.value = this.transaction.value;
+    // this.currentDestination.transactions.push(cloneDeep(teamTransaction));
+    // this.isFormDirty.next(false);
+    // this.teamService.editTeam(this.currentDestination);
   }
 }

@@ -27,7 +27,7 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-transaction-item></ngx-transaction-item>
+        <ngx-transaction-item [team]="team" (submit)="dismiss()"></ngx-transaction-item>
       </nb-card-body>
     </nb-card>
   </div>

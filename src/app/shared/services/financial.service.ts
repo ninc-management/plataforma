@@ -30,11 +30,13 @@ export class FinancialService {
 
         const allTeams = cloneDeep(teams);
 
-        const userTeamTransactionsSum = allTeams
-          .map((team) => team.transactions.filter((transaction) => this.userService.isEqual(transaction.from, uId)))
-          .flat()
-          .reduce((sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)), '0,00');
-        return this.stringUtil.subtractMoney(userTransactionsSum, userTeamTransactionsSum);
+        // TODO: [NWS-1169] Avaliar movimentação usuário para time
+        // const userTeamTransactionsSum = allTeams
+        //   .map((team) => team.transactions.filter((transaction) => this.userService.isEqual(transaction.from, uId)))
+        //   .flat()
+        //   .reduce((sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)), '0,00');
+        // return this.stringUtil.subtractMoney(userTransactionsSum, userTeamTransactionsSum);
+        return userTransactionsSum;
       }, take(1))
     );
   }

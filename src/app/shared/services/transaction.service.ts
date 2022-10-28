@@ -3,20 +3,28 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { handle, isOfType, reviveDates } from '../utils';
-import { ContractService } from './contract.service';
-import { ProviderService } from './provider.service';
-import { TeamService } from './team.service';
-import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
+import { Contract } from '@models/contract';
+import { Provider } from '@models/provider';
 import { EditionHistoryItem } from '@models/shared';
 import { Team } from '@models/team';
-import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
+import { Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 export enum TRANSACTION_TYPES {
   RECEIPT = 'Ordem de Empenho',
   EXPENSE = 'Despesa',
+}
+
+export enum COST_CENTER_TYPES {
+  USER = 'Associados',
+  TEAM = 'Times',
+}
+
+export interface SaveTransactionResponse {
+  message: string;
+  transaction: Transaction;
 }
 
 @Injectable({
@@ -32,25 +40,19 @@ export class TransactionService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private contractService: ContractService,
-    private http: HttpClient,
-    private providerService: ProviderService,
-    private teamService: TeamService,
-    private userService: UserService,
-    private wsService: WebSocketService
-  ) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  saveTransaction(transaction: Transaction): void {
+  saveTransaction(transaction: Transaction): Observable<SaveTransactionResponse> {
     const req = {
       transaction: transaction,
     };
-    this.http.post('/api/transaction/', req).pipe(take(1)).subscribe();
+
+    return this.http.post<SaveTransactionResponse>('/api/transaction/', req).pipe(take(1));
   }
 
   saveManyTransaction(transactions: Transaction[]): void {
@@ -93,15 +95,21 @@ export class TransactionService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
-  populate(transaction: Transaction): void {
-    if (transaction.author) transaction.author = this.userService.idToUser(transaction.author);
+  populate(
+    transaction: Transaction,
+    contractRevival: (...arg: any) => Contract,
+    providerRevival: (...arg: any) => Provider,
+    teamRevival: (...arg: any) => Team,
+    userRevival: (...arg: any) => User
+  ): void {
+    if (transaction.author) transaction.author = userRevival(transaction.author);
     if (transaction.costCenter) {
       if (transaction.modelCostCenter === COST_CENTER_TYPES.USER)
-        transaction.costCenter = this.userService.idToUser(transaction.costCenter as User | string);
+        transaction.costCenter = userRevival(transaction.costCenter as User | string);
       if (transaction.modelCostCenter === COST_CENTER_TYPES.TEAM)
-        transaction.costCenter = this.teamService.idToTeam(transaction.costCenter as Team | string);
+        transaction.costCenter = teamRevival(transaction.costCenter as Team | string);
     }
-    if (transaction.provider) transaction.provider = this.providerService.idToProvider(transaction.provider);
-    if (transaction.contract) transaction.contract = this.contractService.idToContract(transaction.contract);
+    if (transaction.provider) transaction.provider = providerRevival(transaction.provider);
+    if (transaction.contract) transaction.contract = contractRevival(transaction.contract);
   }
 }
