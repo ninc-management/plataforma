@@ -33,7 +33,8 @@
                 id="input-primary-color"
                 name="primary-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.primary }"
+                placeholder="Selecione uma cor"
+                [style]="{ background: clonedConfig.socialConfig.colors.primary || 'black' }"
               />
               <input
                 nbInput
@@ -58,7 +59,7 @@
                 id="input-success-color"
                 name="success-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.success }"
+                [style]="{ background: clonedConfig.socialConfig.colors.success || 'black' }"
               />
               <input
                 nbInput
@@ -80,7 +81,7 @@
                 id="input-info-color"
                 name="info-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.info }"
+                [style]="{ background: clonedConfig.socialConfig.colors.info || 'black' }"
               />
               <input
                 nbInput
@@ -103,7 +104,7 @@
                 id="input-warning-color"
                 name="warning-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.warning }"
+                [style]="{ background: clonedConfig.socialConfig.colors.warning || 'black' }"
               />
               <input
                 nbInput
@@ -126,7 +127,7 @@
                 id="input-danger-color"
                 name="danger-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.danger }"
+                [style]="{ background: clonedConfig.socialConfig.colors.danger || 'black' }"
               />
               <input
                 nbInput
