@@ -107,5 +107,3 @@ export class User extends Base<string> {
   @prop({ required: true, ref: () => Company })
   public company: Ref<Company> = new Company();
 }
-
-export default getModelForClass(User);

@@ -69,4 +69,3 @@ export class Course extends Base<string> {
   participantsQuantity = '';
 }
 
-export default getModelForClass(Course);

@@ -200,5 +200,3 @@ export class PlatformConfig extends Base<string> {
   @prop({ required: true })
   version!: string;
 }
-
-export default getModelForClass(PlatformConfig);

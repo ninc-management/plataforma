@@ -17,5 +17,3 @@ export class Message extends Base<string> {
   @prop({ required: true })
   created!: Date;
 }
-
-export default getModelForClass(Message);

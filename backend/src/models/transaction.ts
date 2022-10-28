@@ -1,4 +1,4 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { Contract } from './contract';
@@ -75,4 +75,3 @@ export class Transaction extends Base<string> {
   editionHistory: EditionHistoryItem[] = [];
 }
 
-export default getModelForClass(Transaction);

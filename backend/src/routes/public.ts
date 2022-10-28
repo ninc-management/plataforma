@@ -1,10 +1,11 @@
 import * as express from 'express';
 import { isEqual } from 'lodash';
 
-import ContractModel, { Contract } from '../models/contract';
-import ContractorModel, { Contractor } from '../models/contractor';
-import TeamModel, { Team } from '../models/team';
-import UserModel, { User } from '../models/user';
+import { Contract } from '../models/contract';
+import { Contractor } from '../models/contractor';
+import { ContractModel, ContractorModel, TeamModel, UserModel } from '../models/models';
+import { Team } from '../models/team';
+import { User } from '../models/user';
 
 const router = express.Router();
 

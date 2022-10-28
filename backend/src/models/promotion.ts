@@ -39,4 +39,3 @@ export class Promotion extends Base<string> {
   rules: PromotionRule[] = [];
 }
 
-export default getModelForClass(Promotion);

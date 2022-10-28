@@ -3,7 +3,8 @@ import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
 import CompanyModel from '../models/company';
-import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
+import { PlatformConfigModel } from '../models/models';
+import { PlatformConfig } from '../models/platformConfig';
 import { configMap } from '../shared/global';
 
 const router = express.Router();
@@ -51,7 +52,7 @@ router.post('/all', async (req, res) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedCompany = await CompanyModel.findByIdAndUpdate(req.body.config.company._id, req.body.config.company, {
+    await CompanyModel.findByIdAndUpdate(req.body.config.company._id, req.body.config.company, {
       upsert: false,
     });
     const savedConfig = await PlatformConfigModel.findByIdAndUpdate(req.body.config._id, req.body.config, {

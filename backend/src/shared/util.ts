@@ -1,9 +1,10 @@
 import { differenceInDays } from 'date-fns';
 
-import ContractModel, { Contract } from '../models/contract';
-import InvoiceModel, { Invoice } from '../models/invoice';
+import { Contract } from '../models/contract';
+import { Invoice } from '../models/invoice';
+import { ContractModel, InvoiceModel, UserModel } from '../models/models';
 import { Notification, NotificationTags } from '../models/notification';
-import UserModel, { User } from '../models/user';
+import { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { updateNotification } from '../routes/notification';
 import { configMap } from './global';

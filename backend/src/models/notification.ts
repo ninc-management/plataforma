@@ -44,4 +44,3 @@ export class Notification extends Base<string> {
   created: Date = new Date();
 }
 
-export default getModelForClass(Notification);

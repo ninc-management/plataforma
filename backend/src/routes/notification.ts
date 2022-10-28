@@ -2,8 +2,8 @@ import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep, isEqual } from 'lodash';
 
+import { UserModel } from '../models/models';
 import { Notification, NotificationApps } from '../models/notification';
-import UserModel from '../models/user';
 import { notification$, usersMap } from '../shared/global';
 import { isNotificationEnabled } from '../shared/util';
 

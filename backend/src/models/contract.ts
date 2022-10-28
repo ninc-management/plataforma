@@ -281,4 +281,3 @@ export class Contract extends StatusHistory {
   };
 }
 
-export default getModelForClass(Contract);

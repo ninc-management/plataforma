@@ -260,5 +260,3 @@ export class Invoice extends StatusHistory {
     role: 'Nenhum',
   };
 }
-
-export default getModelForClass(Invoice);

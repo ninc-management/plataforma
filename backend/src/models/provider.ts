@@ -72,4 +72,3 @@ export class Provider extends Base<string> {
   contacts: Contact[] = [];
 }
 
-export default getModelForClass(Provider);
