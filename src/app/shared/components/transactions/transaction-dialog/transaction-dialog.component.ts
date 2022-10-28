@@ -4,6 +4,7 @@ import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 import { BaseDialogComponent } from '../../base-dialog/base-dialog.component';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
+import { Team } from '@models/team';
 import { Transaction } from '@models/transaction';
 
 @Component({
@@ -14,6 +15,7 @@ import { Transaction } from '@models/transaction';
 export class TransactionDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() transaction = new Transaction();
+  @Input() team?: Team;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;

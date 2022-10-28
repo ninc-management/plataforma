@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Ref } from '@typegoose/typegoose/lib/types';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
 
@@ -8,24 +8,19 @@ import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { TRANSACTION_TYPES } from 'app/shared/services/transaction.service';
-import { UserService } from 'app/shared/services/user.service';
+import { COST_CENTER_TYPES, TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
+import { CLIENT, UserService } from 'app/shared/services/user.service';
 import { codeSort, formatDate, isPhone, nfPercentage, nortanPercentage, populateList } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
 import { UploadedFile } from '@models/shared';
-import { ExpenseType, Team } from '@models/team';
-import { Transaction } from '@models/transaction';
+import { ExpenseType, Team, TeamExpense } from '@models/team';
+import { MODEL_COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
-
-enum COST_CENTER_TYPES {
-  USERS = 'Associados',
-  TEAMS = 'Times',
-}
 
 @Component({
   selector: 'ngx-transaction-item',
@@ -35,6 +30,9 @@ enum COST_CENTER_TYPES {
 export class TransactionItemComponent implements OnInit {
   @Input() contract?: Contract;
   @Input() transactionIndex?: number;
+  @Input() team?: Team;
+  @Output()
+  submit: EventEmitter<void> = new EventEmitter<void>();
 
   validation = transaction_validation as any;
   transaction: Transaction = new Transaction();
@@ -48,7 +46,7 @@ export class TransactionItemComponent implements OnInit {
     liquid: '0,00',
     type: '',
     relatedWithContract: false,
-    costCenterListType: COST_CENTER_TYPES.USERS,
+    costCenterListType: COST_CENTER_TYPES.USER,
   };
   transactionKinds: ExpenseType[] = [];
   tTypes = TRANSACTION_TYPES;
@@ -89,6 +87,7 @@ export class TransactionItemComponent implements OnInit {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private teamService: TeamService,
+    private transactionService: TransactionService,
     private userService: UserService,
     private configService: ConfigService,
     private providerService: ProviderService
@@ -96,6 +95,7 @@ export class TransactionItemComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.contract) this.hasInputContract = this.options.relatedWithContract = true;
+    if (this.team) this.buildTeamTransaction();
     combineLatest([
       this.userService.currentUser$,
       this.contractService.getContracts(),
@@ -135,6 +135,7 @@ export class TransactionItemComponent implements OnInit {
         this.platformConfig = config[0];
         this.teams = teams;
         this.users = users;
+        if (!this.transactionIndex) this.transaction.author = user;
         this.setCostCenterData();
       });
     this.updateTransactionKinds();
@@ -161,7 +162,14 @@ export class TransactionItemComponent implements OnInit {
     console.log('remover arquivo');
   }
 
-  registerTransaction(): void {}
+  registerTransaction(): void {
+    this.transactionService.saveTransaction(this.transaction).subscribe((saveTransactionResponse) => {
+      if (this.team) {
+        this.team.transactions.push(saveTransactionResponse.transaction._id);
+      }
+    });
+    this.submit.emit();
+  }
 
   addAndClean(): void {}
 
@@ -182,6 +190,8 @@ export class TransactionItemComponent implements OnInit {
       case TRANSACTION_TYPES.RECEIPT: {
         this.requiredContract = true;
         this.options.relatedWithContract = true;
+        this.transaction.costCenter = CLIENT;
+        this.transaction.modelCostCenter = COST_CENTER_TYPES.USER;
         break;
       }
 
@@ -198,7 +208,7 @@ export class TransactionItemComponent implements OnInit {
   setCostCenterData(): void {
     if (this.options.relatedWithContract && this.contract) {
       if (this.contract.invoice) {
-        if (this.options.costCenterListType == COST_CENTER_TYPES.TEAMS)
+        if (this.options.costCenterListType == COST_CENTER_TYPES.TEAM)
           setTimeout(() => {
             this.costCenterData$.next(this.teams);
           }, 50);
@@ -211,7 +221,7 @@ export class TransactionItemComponent implements OnInit {
         }
       }
     } else {
-      if (this.options.costCenterListType == COST_CENTER_TYPES.TEAMS) {
+      if (this.options.costCenterListType == COST_CENTER_TYPES.TEAM) {
         setTimeout(() => {
           this.costCenterData$.next(this.teams);
         }, 50);
@@ -222,11 +232,10 @@ export class TransactionItemComponent implements OnInit {
       }
     }
 
-    //se estiver associado ao contrato
-    //  completer recebe membros do time do contrato
-    //se não estiver associado
-    //  se o selector for associados completer mostra todos associados
-    //  se o selector for times completer mostra times
+    this.transaction.modelCostCenter =
+      this.options.costCenterListType == COST_CENTER_TYPES.USER
+        ? MODEL_COST_CENTER_TYPES.USER
+        : MODEL_COST_CENTER_TYPES.TEAM;
   }
 
   updateTransactionKinds(): void {
@@ -241,5 +250,15 @@ export class TransactionItemComponent implements OnInit {
       this.expenseSubTypes = kind.subTypes;
     } else this.expenseSubTypes = [];
     if (!this.expenseSubTypes.includes(this.transaction.subType)) this.transaction.subType = '';
+  }
+
+  private buildTeamTransaction(): void {
+    if (this.team) {
+      this.options.type = TRANSACTION_TYPES.EXPENSE;
+      this.handleType();
+      this.options.costCenterListType = COST_CENTER_TYPES.TEAM;
+      this.transaction.costCenter = this.team;
+      this.costCenterSearch = this.team.name;
+    }
   }
 }

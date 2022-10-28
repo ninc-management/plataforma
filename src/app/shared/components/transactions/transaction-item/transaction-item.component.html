@@ -18,6 +18,7 @@
           id="input-transaction-type"
           name="transactionType"
           required="true"
+          [disabled]="!!this.team"
           [ngStyle]="{
             'height.px': 16,
             display: isPhone() ? 'contents' : 'flex'
@@ -424,7 +425,7 @@
   <ng-container *ngIf="options.type == tTypes.EXPENSE">
     <div class="row">
       <div class="col-12">
-        <div class="form-control-group">
+        <div *ngIf="!this.team" class="form-control-group">
           <label class="label" style="display: flex" for="input-contract-list">
             Associado ao contrato
             <nb-checkbox
@@ -450,7 +451,7 @@
             fieldSize="large"
             nameField="locals.code"
             pictureField="locals.managerPicture"
-            [disabled]="hasInputContract || !options.relatedWithContract"
+            [disabled]="!!this.team || hasInputContract || !options.relatedWithContract"
             [data$]="availableContractsData$"
             [minSearchLength]="0"
             [fullWidth]="true"
@@ -471,11 +472,12 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-control-group">
-          <div style="height: 29px; display: flex; align-items: flex-end;">
+          <div style="height: 29px; display: flex; align-items: flex-end">
             <label class="label" for="input-cost-center" style="margin-right: 10px">Centro de custo</label>
             <nb-radio-group
               [(ngModel)]="options.costCenterListType"
               (ngModelChange)="setCostCenterData()"
+              [disabled]="!!this.team"
               id="input-cost-center-type"
               name="costCenterType"
               required="true"
@@ -493,6 +495,7 @@
           <nb-completer
             [(ngModel)]="costCenterSearch"
             (selected)="transaction.costCenter = $event"
+            [disabled]="!!this.team"
             inputName="costCenterCompleter"
             #costCenterCompleter="ngModel"
             id="input-cost-center"
@@ -502,7 +505,7 @@
           Não foi possível achar um centro de custo
           "
             fieldSize="large"
-            [nameField]="options.costCenterListType == cCTypes.USERS ? 'fullName' : 'name'"
+            [nameField]="options.costCenterListType == cCTypes.USER ? 'fullName' : 'name'"
             pictureField="profilePicture"
             [data$]="costCenterData$"
             [minSearchLength]="0"

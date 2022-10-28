@@ -8,13 +8,13 @@ import { UploadedFile } from './shared/uploadedFiles';
 import { Team } from './team';
 import { User } from './user';
 
-export enum COST_CENTER_TYPES {
+export enum MODEL_COST_CENTER_TYPES {
   USER = 'User',
   TEAM = 'Team',
 }
 
 export class Transaction extends Base<string> {
-  @prop({ required: true, enum: [COST_CENTER_TYPES.USER, COST_CENTER_TYPES.TEAM] })
+  @prop({ required: true, enum: [MODEL_COST_CENTER_TYPES.USER, MODEL_COST_CENTER_TYPES.TEAM] })
   modelCostCenter!: string;
 
   @prop({ required: true, ref: () => User })
@@ -32,7 +32,7 @@ export class Transaction extends Base<string> {
   @prop({ required: true })
   nf: boolean = true;
 
-  @prop({ required: true })
+  @prop()
   type: string = '';
 
   @prop()
@@ -41,10 +41,10 @@ export class Transaction extends Base<string> {
   @prop({ required: true })
   value: string = '0,00';
 
-  @prop({ required: true })
+  @prop()
   notaFiscal?: string;
 
-  @prop({ required: true })
+  @prop()
   companyPercentage?: string;
 
   @prop({ required: true })

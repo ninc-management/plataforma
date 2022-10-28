@@ -11,6 +11,7 @@ const transactionsMap: Record<string, Transaction> = {};
 const mutex = new Mutex();
 
 function addTransaction(transaction: Transaction, res, lastTransaction: Transaction): void {
+  transaction['code'] = '#1';
   const transactionItem = new TransactionModel(transaction);
   mutex.acquire().then((release) => {
     transactionItem
@@ -21,6 +22,7 @@ function addTransaction(transaction: Transaction, res, lastTransaction: Transact
         if (isEqual(transaction, lastTransaction))
           return res.status(201).json({
             message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
+            transaction: savedTransaction,
           });
       })
       .catch((err) => {

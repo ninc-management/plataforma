@@ -2,8 +2,8 @@ import { prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { Provider } from './provider';
-import { Sector } from './shared/sector';
-import { UploadedFile } from './shared/uploadedFiles';
+import { Sector, UploadedFile } from './shared';
+import { Transaction } from './transaction';
 import { User } from './user';
 
 export interface TeamLocals {
@@ -103,9 +103,6 @@ export class Team extends Base<string> {
   @prop({ type: () => [TeamMember] })
   members: TeamMember[] = [];
 
-  @prop({ type: () => [TeamFinancialTransaction] })
-  transactions: TeamFinancialTransaction[] = [];
-
   @prop({ required: true })
   created: Date = new Date();
 
@@ -114,6 +111,9 @@ export class Team extends Base<string> {
 
   @prop({ type: () => [TeamExpense] })
   expenses: TeamExpense[] = [];
+
+  @prop({ ref: () => Transaction })
+  transactions: Ref<Transaction>[] = [];
 
   @prop({ required: true })
   config: TeamConfig = new TeamConfig();

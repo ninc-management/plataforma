@@ -3,13 +3,13 @@ import { NbDialogService } from '@nebular/theme';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
+import { TransactionDialogComponent } from '../../transactions/transaction-dialog/transaction-dialog.component';
 import {
   DateFilterComponent,
   dateRangeFilter,
 } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
-import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -186,12 +186,10 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   openDialog(index?: number): void {
     this.isDialogBlocked.next(true);
     this.dialogService
-      .open(TeamDialogComponent, {
+      .open(TransactionDialogComponent, {
         context: {
           title: index !== undefined ? 'EDITAR MOVIMENTAÇÃO' : 'ADICIONAR MOVIMENTAÇÃO',
-          iTeam: this.clonedTeam,
-          expenseIdx: index,
-          componentType: TEAM_COMPONENT_TYPES.EXPENSE,
+          team: this.clonedTeam,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
