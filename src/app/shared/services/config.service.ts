@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { handle } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
-import { PlatformConfig } from '@models/platformConfig';
+import { ColorShades, PlatformConfig } from '@models/platformConfig';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -15,6 +15,14 @@ export enum EXPENSE_TYPES {
 export enum EXPENSE_OBJECT_TYPES {
   CONTRACT = 'contract',
   TEAM = 'team',
+}
+
+export enum COLOR_TYPES {
+  PRIMARY = 'primary',
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  DANGER = 'danger',
 }
 
 export const DEFAULT_CONFIG = {
@@ -386,21 +394,37 @@ export class ConfigService implements OnDestroy {
     let bodyStyleAttribute = '';
 
     if (config.socialConfig.colors.primary) {
-      bodyStyleAttribute += '--color-primary-500: ' + config.socialConfig.colors.primary + ';';
+      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, config.socialConfig.colors.primary);
     }
     if (config.socialConfig.colors.success) {
-      bodyStyleAttribute += '--color-success-500: ' + config.socialConfig.colors.success + ';';
+      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, config.socialConfig.colors.success);
     }
     if (config.socialConfig.colors.info) {
-      bodyStyleAttribute += '--color-info-500: ' + config.socialConfig.colors.info + ';';
+      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, config.socialConfig.colors.info);
     }
     if (config.socialConfig.colors.danger) {
-      bodyStyleAttribute += '--color-danger-500: ' + config.socialConfig.colors.danger + ';';
+      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, config.socialConfig.colors.danger);
     }
     if (config.socialConfig.colors.warning) {
-      bodyStyleAttribute += '--color-warning-500: ' + config.socialConfig.colors.warning + ';';
+      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, config.socialConfig.colors.warning);
     }
 
     (document.body as any).setAttribute('style', bodyStyleAttribute);
+  }
+
+  private getCSSValuesByColorType(colorType: string, colorShades: ColorShades): string {
+    let cssValuesString = '';
+
+    cssValuesString += '--color-' + colorType + '-100: ' + colorShades.color100 + ';';
+    cssValuesString += '--color-' + colorType + '-200: ' + colorShades.color200 + ';';
+    cssValuesString += '--color-' + colorType + '-300: ' + colorShades.color300 + ';';
+    cssValuesString += '--color-' + colorType + '-400: ' + colorShades.color400 + ';';
+    cssValuesString += '--color-' + colorType + '-500: ' + colorShades.color500 + ';';
+    cssValuesString += '--color-' + colorType + '-600: ' + colorShades.color600 + ';';
+    cssValuesString += '--color-' + colorType + '-700: ' + colorShades.color700 + ';';
+    cssValuesString += '--color-' + colorType + '-800: ' + colorShades.color800 + ';';
+    cssValuesString += '--color-' + colorType + '-900: ' + colorShades.color900 + '; ';
+
+    return cssValuesString;
   }
 }

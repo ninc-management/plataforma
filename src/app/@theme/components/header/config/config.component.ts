@@ -12,7 +12,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
-import { PlatformConfig } from '@models/platformConfig';
+import { ColorShades, PlatformConfig } from '@models/platformConfig';
 import { UploadedFile } from '@models/shared';
 import { User } from '@models/user';
 
@@ -308,14 +308,16 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getEvaColors(): void {
-    this.configService.sendEvaColorsRequest(this.clonedConfig.socialConfig.colors.primary).subscribe((colors) => {
-      this.clonedConfig.socialConfig.colors.primary = (colors as any).primary[4];
-      this.clonedConfig.socialConfig.colors.success = (colors as any).success[4];
-      this.clonedConfig.socialConfig.colors.warning = (colors as any).warning[4];
-      this.clonedConfig.socialConfig.colors.info = (colors as any).info[4];
-      this.clonedConfig.socialConfig.colors.danger = (colors as any).danger[4];
-      this.configService.applyCustomColors(this.clonedConfig);
-    });
+    this.configService
+      .sendEvaColorsRequest(this.clonedConfig.socialConfig.colors.primary.color500)
+      .subscribe((colors) => {
+        this.clonedConfig.socialConfig.colors.primary = this.getColorShadesObject(colors.primary);
+        this.clonedConfig.socialConfig.colors.success = this.getColorShadesObject(colors.success);
+        this.clonedConfig.socialConfig.colors.warning = this.getColorShadesObject(colors.warning);
+        this.clonedConfig.socialConfig.colors.info = this.getColorShadesObject(colors.info);
+        this.clonedConfig.socialConfig.colors.danger = this.getColorShadesObject(colors.danger);
+        this.configService.applyCustomColors(this.clonedConfig);
+      });
   }
 
   private verifyEmptyLogos(): void {
@@ -342,5 +344,21 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       default:
         return 'logo';
     }
+  }
+
+  private getColorShadesObject(colors: string[]): ColorShades {
+    const colorShades = new ColorShades();
+
+    colorShades.color100 = colors[0];
+    colorShades.color200 = colors[1];
+    colorShades.color300 = colors[2];
+    colorShades.color400 = colors[3];
+    colorShades.color500 = colors[4];
+    colorShades.color600 = colors[5];
+    colorShades.color700 = colors[6];
+    colorShades.color800 = colors[7];
+    colorShades.color900 = colors[8];
+
+    return colorShades;
   }
 }

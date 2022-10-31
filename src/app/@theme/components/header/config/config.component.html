@@ -28,17 +28,17 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedConfig.socialConfig.colors.primary"
+                [(ngModel)]="clonedConfig.socialConfig.colors.primary.color500"
                 #version="ngModel"
                 id="input-primary-color"
                 name="primary-color"
                 type="color"
                 placeholder="Selecione uma cor"
-                [style]="{ background: clonedConfig.socialConfig.colors.primary || 'black' }"
+                [style]="{ background: clonedConfig.socialConfig.colors.primary.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedConfig.socialConfig.colors.primary"
+                [(ngModel)]="clonedConfig.socialConfig.colors.primary.color500"
                 #primaryColorCode="ngModel"
                 id="input-primary-color-code"
                 name="primary-color-code"
@@ -54,16 +54,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedConfig.socialConfig.colors.success"
+                [(ngModel)]="clonedConfig.socialConfig.colors.success.color500"
                 #successColor="ngModel"
                 id="input-success-color"
                 name="success-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.success || 'black' }"
+                [style]="{ background: clonedConfig.socialConfig.colors.success.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedConfig.socialConfig.colors.success"
+                [(ngModel)]="clonedConfig.socialConfig.colors.success.color500"
                 #successColorCode="ngModel"
                 id="input-success-color-code"
                 name="success-color-code"
@@ -76,16 +76,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedConfig.socialConfig.colors.info"
+                [(ngModel)]="clonedConfig.socialConfig.colors.info.color500"
                 #infoColor="ngModel"
                 id="input-info-color"
                 name="info-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.info || 'black' }"
+                [style]="{ background: clonedConfig.socialConfig.colors.info.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedConfig.socialConfig.colors.info"
+                [(ngModel)]="clonedConfig.socialConfig.colors.info.color500"
                 #infoColorCode="ngModel"
                 id="input-info-color-code"
                 name="info-color-code"
@@ -99,16 +99,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedConfig.socialConfig.colors.warning"
+                [(ngModel)]="clonedConfig.socialConfig.colors.warning.color500"
                 #warningColor="ngModel"
                 id="input-warning-color"
                 name="warning-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.warning || 'black' }"
+                [style]="{ background: clonedConfig.socialConfig.colors.warning.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedConfig.socialConfig.colors.warning"
+                [(ngModel)]="clonedConfig.socialConfig.colors.warning.color500"
                 #warningColorCode="ngModel"
                 id="input-warning-color-code"
                 name="warning-color-code"
@@ -122,16 +122,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedConfig.socialConfig.colors.danger"
+                [(ngModel)]="clonedConfig.socialConfig.colors.danger.color500"
                 #dangerColor="ngModel"
                 id="input-danger-color"
                 name="danger-color"
                 type="color"
-                [style]="{ background: clonedConfig.socialConfig.colors.danger || 'black' }"
+                [style]="{ background: clonedConfig.socialConfig.colors.danger.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedConfig.socialConfig.colors.danger"
+                [(ngModel)]="clonedConfig.socialConfig.colors.danger.color500"
                 #dangerColorCode="ngModel"
                 id="input-danger-color-code"
                 name="danger-color-code"
@@ -543,14 +543,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+
       >
         Atualizar
       </button>

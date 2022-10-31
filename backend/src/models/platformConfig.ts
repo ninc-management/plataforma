@@ -4,21 +4,50 @@ import { Base } from './base';
 import { UploadedFile } from './shared';
 import { ExpenseType } from './team';
 
+export class ColorShades {
+  @prop({ required: true })
+  color100!: string;
+
+  @prop({ required: true })
+  color200!: string;
+
+  @prop({ required: true })
+  color300!: string;
+
+  @prop({ required: true })
+  color400!: string;
+
+  @prop({ required: true })
+  color500!: string;
+
+  @prop({ required: true })
+  color600!: string;
+
+  @prop({ required: true })
+  color700!: string;
+
+  @prop({ required: true })
+  color800!: string;
+
+  @prop({ required: true })
+  color900!: string;
+}
+
 export class Colors {
   @prop({ required: true })
-  primary!: string;
+  primary: ColorShades = new ColorShades();
 
   @prop({ required: true })
-  success!: string;
+  success: ColorShades = new ColorShades();
 
   @prop({ required: true })
-  info!: string;
+  info: ColorShades = new ColorShades();
 
   @prop({ required: true })
-  warning!: string;
+  warning: ColorShades = new ColorShades();
 
   @prop({ required: true })
-  danger!: string;
+  danger: ColorShades = new ColorShades();
 }
 
 export class FeesPercentages {
