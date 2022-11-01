@@ -391,23 +391,15 @@ export class ConfigService implements OnDestroy {
   }
 
   applyCustomColors(config: PlatformConfig): void {
+    if (!this.hasCustomColor(config)) return;
+
     let bodyStyleAttribute = '';
 
-    if (config.socialConfig.colors.primary) {
-      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, config.socialConfig.colors.primary);
-    }
-    if (config.socialConfig.colors.success) {
-      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, config.socialConfig.colors.success);
-    }
-    if (config.socialConfig.colors.info) {
-      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, config.socialConfig.colors.info);
-    }
-    if (config.socialConfig.colors.danger) {
-      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, config.socialConfig.colors.danger);
-    }
-    if (config.socialConfig.colors.warning) {
-      bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, config.socialConfig.colors.warning);
-    }
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, config.socialConfig.colors.primary);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, config.socialConfig.colors.success);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, config.socialConfig.colors.info);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, config.socialConfig.colors.danger);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, config.socialConfig.colors.warning);
 
     (document.body as any).setAttribute('style', bodyStyleAttribute);
   }
@@ -426,5 +418,20 @@ export class ConfigService implements OnDestroy {
     cssValuesString += '--color-' + colorType + '-900: ' + colorShades.color900 + '; ';
 
     return cssValuesString;
+  }
+
+  //If the primary shades are saved, then all other colors shades are saved too
+  private hasCustomColor(config: PlatformConfig): boolean {
+    return (
+      config.socialConfig.colors.primary.color100 != '' &&
+      config.socialConfig.colors.primary.color200 != '' &&
+      config.socialConfig.colors.primary.color300 != '' &&
+      config.socialConfig.colors.primary.color400 != '' &&
+      config.socialConfig.colors.primary.color500 != '' &&
+      config.socialConfig.colors.primary.color600 != '' &&
+      config.socialConfig.colors.primary.color700 != '' &&
+      config.socialConfig.colors.primary.color800 != '' &&
+      config.socialConfig.colors.primary.color900 != ''
+    );
   }
 }
