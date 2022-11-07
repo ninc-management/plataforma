@@ -127,13 +127,22 @@ export class Team extends Base<string> {
   sectors: Sector[] = [];
 
   @prop({ required: true })
-  overridePercentages: boolean = false;
+  overrideSupportPercentages: boolean = false;
+
+  @prop({ required: true })
+  overrideIntermediationPercentages: boolean = false;
 
   @prop()
-  organizationPercentage?: string;
+  supportOrganizationPercentage?: string;
 
   @prop()
-  nfPercentage?: string;
+  supportNfPercentage?: string;
+
+  @prop()
+  intermediationOrganizationPercentage?: string;
+
+  @prop()
+  intermediationNfPercentage?: string;
 
   locals: TeamLocals = {
     balance: '0,00',

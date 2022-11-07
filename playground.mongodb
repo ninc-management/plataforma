@@ -1008,7 +1008,7 @@ db.platformconfigs.find().forEach((config) => {
 db.teams.find().forEach((team) => {
   team.organizationPercentage = '';
   team.nfPercentage = '';
-  team.overridePercentages = false;
+  team.overrideSupportPercentages = false;
 
   team.members.forEach((member) => {
     member.sectors = [];
@@ -1178,3 +1178,19 @@ db.platformconfigs.find().forEach((config) => {
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.teams.find().forEach((team) => {
+  team.supportOrganizationPercentage = team.organizationPercentage;
+  team.supportNfPercentage = team.nfPercentage;
+  team.intermediationOrganizationPercentage = '';
+  team.intermediationNfPercentage = '';
+  team.overrideSupportPercentages = team.overridePercentages;
+  team.overrideIntermediationPercentages = false;
+  delete team.organizationPercentage;
+  delete team.nfPercentage;
+  delete team.overridePercentages;
+  db.teams.replaceOne({ _id: team._id }, team);
+});
+
+
+overrideSupportPercentagesoverrideSupportPercentages
