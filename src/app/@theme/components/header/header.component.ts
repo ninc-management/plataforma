@@ -90,6 +90,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
+        this.configService.applyCustomColors(this.config);
         this.menuTitle = config[0].socialConfig.companyName;
       });
 

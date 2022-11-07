@@ -93,6 +93,23 @@ hr {
   object-fit: contain;
 }
 
+.color-input {
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+  border-radius: var(--button-rectangle-border-radius);
+  border: 1px solid transparent;
+}
+
+.color-input::-webkit-color-swatch {
+  border: none;
+}
+
+.color-input::-moz-color-swatch {
+  border: none;
+}
+
+
 ::ng-deep {
   .tabset .tab a {
     align-items: center;

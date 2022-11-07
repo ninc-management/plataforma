@@ -1176,6 +1176,26 @@ db.platformconfigs.find().forEach((config) => {
     name: ''
   }
 
+  const emptyColorShades = {
+    color100: '',
+    color200: '',
+    color300: '',
+    color400: '',
+    color500: '',
+    color600: '',
+    color700: '',
+    color800: '',
+    color900: ''
+  }
+
+  config.socialConfig.colors = {
+    primary: emptyColorShades,
+    success: emptyColorShades,
+    info: emptyColorShades,
+    warning: emptyColorShades,
+    danger: emptyColorShades
+  }
+
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
 

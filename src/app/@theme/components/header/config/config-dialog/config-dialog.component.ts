@@ -4,6 +4,7 @@ import { take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ConfigService } from 'app/shared/services/config.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -39,6 +40,7 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
     @Optional() protected derivedRef: NbDialogRef<ConfigDialogComponent>,
     private notificationService: NotificationService,
     private dialogService: NbDialogService,
+    private configService: ConfigService,
     public userService: UserService,
     public stringUtils: StringUtilService
   ) {
@@ -75,6 +77,7 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
         .onClose.pipe(take(1))
         .subscribe((response: boolean) => {
           if (response) {
+            this.configService.applyCustomColors(this.config);
             super.dismiss();
           }
         });

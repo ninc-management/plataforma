@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 import { handle } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
-import { PlatformConfig } from '@models/platformConfig';
+import { ColorShades, PlatformConfig } from '@models/platformConfig';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -15,6 +15,14 @@ export enum EXPENSE_TYPES {
 export enum EXPENSE_OBJECT_TYPES {
   CONTRACT = 'contract',
   TEAM = 'team',
+}
+
+export enum COLOR_TYPES {
+  PRIMARY = 'primary',
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  DANGER = 'danger',
 }
 
 export const DEFAULT_CONFIG = {
@@ -300,6 +308,14 @@ export const DEFAULT_CONFIG = {
   },
 };
 
+export interface Colors {
+  primary: string[];
+  success: string[];
+  warning: string[];
+  info: string[];
+  danger: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -361,5 +377,61 @@ export class ConfigService implements OnDestroy {
     else tmpType = this.config$.value[0].expenseConfig.contractExpenseTypes.find((eType) => eType.name === type);
 
     return tmpType ? tmpType.subTypes : [];
+  }
+
+  sendEvaColorsRequest(primaryColor: string): Observable<Colors> {
+    const url = '/api/config/colors';
+    const body = {
+      // slice(1) is necessary to remove the # from HEX
+      // #FFFFF -> FFFFF
+      primaryColorHex: primaryColor.slice(1),
+    };
+
+    return this.http.post<Colors>(url, body).pipe(take(1));
+  }
+
+  applyCustomColors(config: PlatformConfig): void {
+    if (!this.hasCustomColor(config)) return;
+
+    let bodyStyleAttribute = '';
+
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, config.socialConfig.colors.primary);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, config.socialConfig.colors.success);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, config.socialConfig.colors.info);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, config.socialConfig.colors.danger);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, config.socialConfig.colors.warning);
+
+    (document.body as any).setAttribute('style', bodyStyleAttribute);
+  }
+
+  private getCSSValuesByColorType(colorType: string, colorShades: ColorShades): string {
+    let cssValuesString = '';
+
+    cssValuesString += '--color-' + colorType + '-100: ' + colorShades.color100 + ';';
+    cssValuesString += '--color-' + colorType + '-200: ' + colorShades.color200 + ';';
+    cssValuesString += '--color-' + colorType + '-300: ' + colorShades.color300 + ';';
+    cssValuesString += '--color-' + colorType + '-400: ' + colorShades.color400 + ';';
+    cssValuesString += '--color-' + colorType + '-500: ' + colorShades.color500 + ';';
+    cssValuesString += '--color-' + colorType + '-600: ' + colorShades.color600 + ';';
+    cssValuesString += '--color-' + colorType + '-700: ' + colorShades.color700 + ';';
+    cssValuesString += '--color-' + colorType + '-800: ' + colorShades.color800 + ';';
+    cssValuesString += '--color-' + colorType + '-900: ' + colorShades.color900 + '; ';
+
+    return cssValuesString;
+  }
+
+  //If the primary shades are saved, then all other colors shades are saved too
+  private hasCustomColor(config: PlatformConfig): boolean {
+    return (
+      config.socialConfig.colors.primary.color100 != '' &&
+      config.socialConfig.colors.primary.color200 != '' &&
+      config.socialConfig.colors.primary.color300 != '' &&
+      config.socialConfig.colors.primary.color400 != '' &&
+      config.socialConfig.colors.primary.color500 != '' &&
+      config.socialConfig.colors.primary.color600 != '' &&
+      config.socialConfig.colors.primary.color700 != '' &&
+      config.socialConfig.colors.primary.color800 != '' &&
+      config.socialConfig.colors.primary.color900 != ''
+    );
   }
 }
