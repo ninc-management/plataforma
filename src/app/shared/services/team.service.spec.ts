@@ -135,8 +135,11 @@ describe('TeamService', () => {
     mockedTeam.isOrganizationTeam = false;
     mockedTeam.sectors.push(cloneDeep(mockedSector1));
     mockedTeam.overrideSupportPercentages = false;
-    mockedTeam.organizationPercentage = '0,00';
-    mockedTeam.nfPercentage = '0,00';
+    mockedTeam.overrideIntermediationPercentages = false;
+    mockedTeam.supportOrganizationPercentage = '0,00';
+    mockedTeam.supportNfPercentage = '0,00';
+    mockedTeam.intermediationOrganizationPercentage = '0,00';
+    mockedTeam.intermediationNfPercentage = '0,00'
     mockedTeams.push(cloneDeep(mockedTeam));
 
     mockedTeam._id = '1';

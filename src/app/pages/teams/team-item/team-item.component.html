@@ -370,7 +370,7 @@
                 ></nb-user>
               </div>
               <div class="col-5 col-md-5">
-                <div *ngFor="let sector of member.sectors; trackBy:trackByIndex">
+                <div *ngFor="let sector of member.sectors; trackBy: trackByIndex">
                   {{ [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService) }}
                 </div>
               </div>
@@ -422,7 +422,7 @@
       </div>
       <div class="row">
         <div class="col-auto">
-          <label class="label-divider">Porcentagens da organização e nota fiscal</label>
+          <label class="label-divider">Taxas para Suporte Empresarial</label>
         </div>
         <div class="col">
           <hr />
@@ -435,13 +435,13 @@
         <div class="row">
           <div class="col-12 col-md-6">
             <div class="form-control-group">
-              <label class="label" for="input-org-percentage">Porcentagem da organização:</label>
+              <label class="label" for="input-support-org-percentage">Porcentagem da organização:</label>
               <input
                 nbInput
-                [(ngModel)]="clonedTeam.organizationPercentage"
-                #orgPercentage="ngModel"
-                id="input-org-percentage"
-                name="orgPercentage"
+                [(ngModel)]="clonedTeam.supportOrganizationPercentage"
+                #supportOrgPercentage="ngModel"
+                id="input-support-org-percentage"
+                name="supportOrgPercentage"
                 placeholder="Porcentagem"
                 fullWidth
                 fieldSize="large"
@@ -452,20 +452,20 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="orgPercentage.dirty ? (orgPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                [attr.aria-invalid]="orgPercentage.invalid && orgPercentage.touched ? true : null"
+                [status]="supportOrgPercentage.dirty ? (supportOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="supportOrgPercentage.invalid && supportOrgPercentage.touched ? true : null"
               />
             </div>
           </div>
           <div class="col-12 col-md-6">
             <div class="form-control-group">
-              <label class="label" for="input-nf-percentage">Porcentagem da nota fiscal:</label>
+              <label class="label" for="input-support-nf-percentage">Porcentagem da nota fiscal:</label>
               <input
                 nbInput
-                [(ngModel)]="clonedTeam.nfPercentage"
-                #nfPercentage="ngModel"
-                id="input-nf-percentage"
-                name="nfPercentage"
+                [(ngModel)]="clonedTeam.supportNfPercentage"
+                #supportNfPercentage="ngModel"
+                id="input-support-nf-percentage"
+                name="supportNfPercentage"
                 placeholder="Porcentagem"
                 fullWidth
                 fieldSize="large"
@@ -476,8 +476,77 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="nfPercentage.dirty ? (nfPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                [attr.aria-invalid]="nfPercentage.invalid && nfPercentage.touched ? true : null"
+                [status]="supportNfPercentage.dirty ? (supportNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="supportNfPercentage.invalid && supportNfPercentage.touched ? true : null"
+              />
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div class="row">
+        <div class="col-auto">
+          <label class="label-divider">Taxas para Intermediação de Negócios</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+        <div class="col-auto">
+          <nb-toggle
+            [(ngModel)]="clonedTeam.overrideIntermediationPercentages"
+            name="toggle-hide"
+            labelPosition="start"
+          >
+            Sobrepor
+          </nb-toggle>
+        </div>
+      </div>
+      <ng-container *ngIf="clonedTeam.overrideIntermediationPercentages">
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <div class="form-control-group">
+              <label class="label" for="input-intermediation-org-percentage">Porcentagem da organização</label>
+              <input
+                nbInput
+                [(ngModel)]="clonedTeam.intermediationOrganizationPercentage"
+                #intermediationOrgPercentage="ngModel"
+                id="input-intermediation-org-percentage"
+                name="intermediationOrgPercentage"
+                placeholder="Porcentagem"
+                fullWidth
+                fieldSize="large"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: 2
+                }"
+                ngxSelectAllText
+                [status]="intermediationOrgPercentage.dirty ? (intermediationOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null"
+              />
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="form-group-control">
+              <label class="label" for="input-intermediation-nf-percentage">Porcentagem da nota fiscal</label>
+              <input
+                nbInput
+                [(ngModel)]="clonedTeam.intermediationNfPercentage"
+                #intermediationNfPercentage="ngModel"
+                id="input-nf-percentage"
+                name="intermediationNfPercentage"
+                placeholder="Porcentagem"
+                fullWidth
+                fieldSize="large"
+                [brmasker]="{
+                  money: true,
+                  thousand: '.',
+                  decimalCaracter: ',',
+                  decimal: 2
+                }"
+                ngxSelectAllText
+                [status]="intermediationNfPercentage.dirty ? (intermediationNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
+                [attr.aria-invalid]="intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null"
               />
             </div>
           </div>
