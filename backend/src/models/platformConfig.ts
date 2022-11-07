@@ -4,6 +4,52 @@ import { Base } from './base';
 import { UploadedFile } from './shared';
 import { ExpenseType } from './team';
 
+export class ColorShades {
+  @prop({ required: true })
+  color100!: string;
+
+  @prop({ required: true })
+  color200!: string;
+
+  @prop({ required: true })
+  color300!: string;
+
+  @prop({ required: true })
+  color400!: string;
+
+  @prop({ required: true })
+  color500!: string;
+
+  @prop({ required: true })
+  color600!: string;
+
+  @prop({ required: true })
+  color700!: string;
+
+  @prop({ required: true })
+  color800!: string;
+
+  @prop({ required: true })
+  color900!: string;
+}
+
+export class Colors {
+  @prop({ required: true })
+  primary: ColorShades = new ColorShades();
+
+  @prop({ required: true })
+  success: ColorShades = new ColorShades();
+
+  @prop({ required: true })
+  info: ColorShades = new ColorShades();
+
+  @prop({ required: true })
+  warning: ColorShades = new ColorShades();
+
+  @prop({ required: true })
+  danger: ColorShades = new ColorShades();
+}
+
 export class FeesPercentages {
   @prop({ required: true })
   organizationPercentage: string = '0,00';
@@ -131,6 +177,9 @@ export class SocialConfig {
 
   @prop({ required: true })
   logoWhiteWithoutName: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
+  colors: Colors = new Colors();
 }
 
 export class ModulesConfig {

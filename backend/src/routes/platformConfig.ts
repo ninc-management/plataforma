@@ -8,6 +8,7 @@ import { configMap } from '../shared/global';
 const router = express.Router();
 let requested = false;
 const mutex = new Mutex();
+const https = require('https');
 
 router.post('/', async (req, res, next) => {
   const configs: PlatformConfig[] = await PlatformConfigModel.find({});
@@ -66,6 +67,35 @@ router.post('/update', async (req, res, next) => {
       error: err,
     });
   }
+});
+
+router.post('/colors', async (req, res, next) => {
+  const painterRequestOptions = {
+    hostname: 'app.uibakery.io',
+    path: '/api/painter/support?primary=' + req.body.primaryColorHex,
+  };
+
+  const painterRequest = await https.get(painterRequestOptions, (painterResponse) => {
+    let data = '';
+
+    painterResponse.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    painterResponse.on('end', () => {
+      const colors = JSON.parse(data);
+      return res.status(200).json(colors);
+    });
+  });
+
+  painterRequest.on('error', (err) => {
+    return res.status(500).json({
+      message: 'Erro ao gerar paleta de cores',
+      error: err,
+    });
+  });
+
+  painterRequest.end();
 });
 
 export default router;
