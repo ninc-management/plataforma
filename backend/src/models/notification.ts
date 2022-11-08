@@ -43,4 +43,3 @@ export class Notification extends Base<string> {
   @prop({ required: true })
   created: Date = new Date();
 }
-

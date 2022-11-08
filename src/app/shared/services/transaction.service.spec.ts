@@ -142,14 +142,6 @@ describe('TransactionService', () => {
       folderId: '1',
     };
     mockedConfigs = [tmpConfig];
-
-    const teamReq = httpMock.expectOne('/api/team/all');
-    expect(teamReq.request.method).toBe('POST');
-    teamReq.flush(mockedTeams);
-
-    const configReq = httpMock.expectOne('/api/config/all');
-    expect(configReq.request.method).toBe('POST');
-    configReq.flush(mockedConfigs);
   });
 
   afterEach(() => {
@@ -199,7 +191,7 @@ describe('TransactionService', () => {
             i += 1;
             expect(transactions.length).toBe(4);
             expect(transactions).toEqual(reviveDates(mockedTransactions));
-            service.saveTransaction(tmpTransaction);
+            service.saveTransaction(tmpTransaction).subscribe();
             const req1 = httpMock.expectOne('/api/transaction/');
             expect(req1.request.method).toBe('POST');
             req1.flush(null);

@@ -73,4 +73,3 @@ export class Transaction extends Base<string> {
   @prop({ type: () => [EditionHistoryItem] })
   editionHistory: EditionHistoryItem[] = [];
 }
-

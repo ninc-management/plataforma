@@ -10,7 +10,7 @@ import { AuthService } from 'app/auth/auth.service';
 import { Prospect } from '@models/prospect';
 import { cloneDeep } from 'lodash';
 import { UserService } from './user.service';
-import user, { User } from '@models/user';
+import { User } from '@models/user';
 import { WebSocketService } from './web-socket.service';
 
 describe('ProspectService', () => {

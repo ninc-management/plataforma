@@ -279,4 +279,3 @@ export class Contract extends StatusHistory {
     managerPicture: '',
   };
 }
-

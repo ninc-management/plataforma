@@ -68,4 +68,3 @@ export class Course extends Base<string> {
 
   participantsQuantity = '';
 }
-
