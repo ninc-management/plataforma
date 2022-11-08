@@ -5,4 +5,3 @@ import { User } from './user';
 
 @plugin(mongooseUniqueValidator)
 export class Prospect extends User {}
-

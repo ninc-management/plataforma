@@ -167,7 +167,7 @@ describe('UserService', () => {
             }
             case 2: {
               expect(users[1].name).toEqual('Test works');
-              expect(user).not.toEqual(mockedUsers[1]);
+              expect(user).toEqual(mockedUsers[1]);
               done();
               break;
             }
@@ -233,7 +233,7 @@ describe('UserService', () => {
             }
             case 2: {
               expect(users[1].name).toEqual('Test works');
-              expect(user).not.toEqual(mockedUsers[1]);
+              expect(user).toEqual(mockedUsers[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
                 expect(finalUser).not.toEqual(mockedUsers[1]);
                 expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));

@@ -38,4 +38,3 @@ export class Promotion extends Base<string> {
   @prop({ type: () => [PromotionRule] })
   rules: PromotionRule[] = [];
 }
-

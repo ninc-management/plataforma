@@ -18,7 +18,6 @@ export const externalMockedTeams: Team[] = [
         sectors: ['1'],
       },
     ],
-    transactions: [],
     created: new Date(),
     purpose: 'To test',
     expenses: [],
@@ -36,7 +35,7 @@ export const externalMockedTeams: Team[] = [
     intermediationNfPercentage: '',
     locals: {
       balance: '0,00',
-      leaderName: externalMockedUsers[0].fullName,
+      leaderName: externalMockedUsers[0].name,
     },
   },
   {
@@ -49,7 +48,6 @@ export const externalMockedTeams: Team[] = [
         sectors: [],
       },
     ],
-    transactions: [],
     created: new Date(),
     purpose: 'To test',
     expenses: [],
@@ -67,7 +65,7 @@ export const externalMockedTeams: Team[] = [
     intermediationNfPercentage: '',
     locals: {
       balance: '0,00',
-      leaderName: externalMockedUsers[0].fullName,
+      leaderName: externalMockedUsers[0].name,
     },
   },
 ];

@@ -53,13 +53,13 @@ describe('AuthService', () => {
 
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'user';
+    tmpUser.name = 'user';
     tmpUser.email = 'user@mocked.com';
     tmpUser.phone = '00000000000';
     tmpUser.active = false;
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
-    tmpUser.fullName = 'user2';
+    tmpUser.name = 'user2';
     tmpUser.email = 'user2@mocked.com';
     tmpUser.phone = '00000000000';
     tmpUser.active = true;
@@ -67,13 +67,13 @@ describe('AuthService', () => {
 
     const tmpProspect = new Prospect();
     tmpProspect._id = '0';
-    tmpProspect.fullName = 'prospect';
+    tmpProspect.name = 'prospect';
     tmpProspect.email = 'prospect@mocked.com';
     tmpProspect.phone = '00000000000';
 
     mockedProspects.push(cloneDeep(tmpProspect));
     tmpProspect._id = '1';
-    tmpProspect.fullName = 'prospect2';
+    tmpProspect.name = 'prospect2';
     tmpProspect.email = 'prospect2@mocked.com';
     tmpProspect.phone = '00000000000';
 
@@ -94,7 +94,7 @@ describe('AuthService', () => {
         homeAccountId: mockedUsers[0]._id,
         environment: '',
         tenantId: mockedUsers[0]._id,
-        name: mockedUsers[0].fullName,
+        name: mockedUsers[0].name,
         username: mockedUsers[0].email,
         localAccountId: mockedUsers[0]._id,
       },
@@ -102,7 +102,7 @@ describe('AuthService', () => {
         homeAccountId: mockedUsers[1]._id,
         environment: '',
         tenantId: mockedUsers[1]._id,
-        name: mockedUsers[1].fullName,
+        name: mockedUsers[1].name,
         username: mockedUsers[1].email,
         localAccountId: mockedUsers[1]._id,
       },
@@ -111,7 +111,7 @@ describe('AuthService', () => {
       homeAccountId: mockedUsers[0]._id,
       environment: '',
       tenantId: mockedUsers[0]._id,
-      name: mockedUsers[0].fullName,
+      name: mockedUsers[0].name,
       username: mockedUsers[0].email,
       localAccountId: mockedUsers[0]._id,
     });
@@ -121,7 +121,7 @@ describe('AuthService', () => {
   it('register should work', (done: DoneFn) => {
     const newMockedProspect = new Prospect();
     newMockedProspect._id = '2';
-    newMockedProspect.fullName = 'josé';
+    newMockedProspect.name = 'josé';
     newMockedProspect.email = 'test1@te.st';
     newMockedProspect.phone = '123456';
     let i = 1;

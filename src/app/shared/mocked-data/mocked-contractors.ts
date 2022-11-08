@@ -3,7 +3,7 @@ import { Contractor } from '@models/contractor';
 export const externalMockedContractors: Contractor[] = [
   {
     _id: '0',
-    fullName: 'Test1',
+    name: 'Test1',
     document: '000.000.000-11',
     email: 'test1@te.st',
     address: {
@@ -21,7 +21,7 @@ export const externalMockedContractors: Contractor[] = [
   },
   {
     _id: '1',
-    fullName: 'Test2',
+    name: 'Test2',
     document: '000.000.000-12',
     email: 'test2@te.st',
     address: {

@@ -49,4 +49,3 @@ export class InternalTransaction extends Base<string> {
   @prop({ type: () => [EditionHistoryItem] })
   editionHistory: EditionHistoryItem[] = [];
 }
-

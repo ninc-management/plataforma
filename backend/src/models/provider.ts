@@ -71,4 +71,3 @@ export class Provider extends Base<string> {
   @prop({ type: () => [Contact] })
   contacts: Contact[] = [];
 }
-

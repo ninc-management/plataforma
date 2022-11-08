@@ -172,11 +172,6 @@ describe('UtilsService', () => {
     req = httpMock.expectOne('/api/config/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedConfigs);
-
-    await teamService.isDataLoaded$.pipe(
-      skipWhile((isLoaded) => !isLoaded),
-      take(1)
-    );
   });
 
   afterEach(() => {
@@ -359,7 +354,7 @@ describe('UtilsService', () => {
     expect(valueSort(-1, '21.310,00', '21.310,00')).toBe(0);
   });
 
-  it('idToProperty should work', () => {
+  it('idToProperty should work', (done: DoneFn) => {
     expect(idToProperty(undefined, invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe('');
     expect(idToProperty(mockedInvoices[0]._id, invoiceService.idToInvoice.bind(invoiceService), 'code')).toBe(
       mockedInvoices[0].code
@@ -370,11 +365,6 @@ describe('UtilsService', () => {
     expect(idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
     expect(idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'name')).toBe(mockedUsers[0].name);
     expect(idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'phone')).toBe(mockedUsers[0].phone);
-    expect(idToProperty(undefined, teamService.idToTeam.bind(teamService), 'purpose')).toBe('');
-    expect(idToProperty(mockedTeams[0]._id, teamService.idToTeam.bind(teamService), 'purpose')).toBe(
-      mockedTeams[0].purpose
-    );
-    expect(idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(mockedTeams[0].abrev);
     expect(idToProperty(undefined, contractService.idToContract.bind(contractService), 'locals').name).toBe(undefined);
     expect(
       idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'locals').name
@@ -389,6 +379,21 @@ describe('UtilsService', () => {
     expect(
       idToProperty(mockedContractors[0], contractorService.idToContractor.bind(contractorService), 'document')
     ).toBe(mockedContractors[0].document);
+    teamService.isDataLoaded$
+      .pipe(
+        skipWhile((isLoaded) => !isLoaded),
+        take(1)
+      )
+      .subscribe(() => {
+        expect(idToProperty(undefined, teamService.idToTeam.bind(teamService), 'purpose')).toBe('');
+        expect(idToProperty(mockedTeams[0]._id, teamService.idToTeam.bind(teamService), 'purpose')).toBe(
+          mockedTeams[0].purpose
+        );
+        expect(idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(
+          mockedTeams[0].abrev
+        );
+        done();
+      });
   });
 
   it('elapsedTime should work', () => {
