@@ -1196,6 +1196,8 @@ db.platformconfigs.find().forEach((config) => {
     danger: emptyColorShades
   }
 
+  config.invoiceConfig.hasMarketingPage = false;
+
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
 
