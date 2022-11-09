@@ -136,6 +136,12 @@ export class InvoiceConfig {
 
   @prop({ required: true })
   businessFees: BusinessFees = new BusinessFees();
+
+  @prop({ required: true })
+  importantBlockFontColor: 'black' | 'white' = 'black';
+
+  @prop({ required: true })
+  isImportantBlockFontBold: boolean = false;
 }
 
 export class SocialConfig {

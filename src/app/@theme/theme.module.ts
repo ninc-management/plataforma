@@ -16,6 +16,7 @@ import {
   NbListModule,
   NbMenuModule,
   NbPopoverModule,
+  NbRadioModule,
   NbSearchModule,
   NbSelectModule,
   NbSidebarModule,
@@ -73,6 +74,7 @@ const NB_MODULES = [
   NbToggleModule,
   NbFormFieldModule,
   NbSmartTableModule,
+  NbRadioModule,
 ];
 const COMPONENTS = [
   SwitcherComponent,

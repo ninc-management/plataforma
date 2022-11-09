@@ -538,15 +538,7 @@
           </div>
         </div>
       </div>
-      <button
-        nbButton
-        fullWidth
-        status="primary"
-        size="large"
-
-      >
-        Atualizar
-      </button>
+      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
     </form>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
@@ -1184,6 +1176,53 @@
               </div>
             </nb-list-item>
           </nb-list>
+          <div class="row">
+            <div class="col-12 mt-2">
+              <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">
+                    Fonte e cores
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="Altera somente os textos na seção de Descrição do serviço e Importante"
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label class="label" for="important-block-font-color">Cor da fonte</label>
+              <nb-radio-group
+                class="d-flex"
+                name="important-block-font-color"
+                [(ngModel)]="clonedConfig.invoiceConfig.importantBlockFontColor"
+              >
+                <nb-radio [value]="AVALIABLE_TEXT_COLORS.white">Branco</nb-radio>
+                <nb-radio [value]="AVALIABLE_TEXT_COLORS.black">Preto</nb-radio>
+              </nb-radio-group>
+            </div>
+            <div class="col">
+              <label class="label" for="important-block-font-weight">Peso da fonte</label>
+              <nb-toggle
+                class="d-flex"
+                [(ngModel)]="clonedConfig.invoiceConfig.isImportantBlockFontBold"
+                status="basic"
+                name="important-block-font-weight"
+              >
+                Negrito
+              </nb-toggle>
+            </div>
+          </div>
         </div>
       </div>
       <button

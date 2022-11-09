@@ -45,6 +45,11 @@ enum LOGO_TYPES {
   logoWhiteWithoutName = 'logoWhiteWithoutName',
 }
 
+enum AVALIABLE_TEXT_COLORS {
+  white = 'white',
+  black = 'black',
+}
+
 @Component({
   selector: 'ngx-config',
   templateUrl: './config.component.html',
@@ -80,6 +85,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   configExpenseTypes = CONFIG_EXPENSE_TYPES;
   KEYS_TO_VERIFY = KEYS_TO_VERIFY;
   LOGO_TYPES = LOGO_TYPES;
+  AVALIABLE_TEXT_COLORS = AVALIABLE_TEXT_COLORS;
 
   expenseIcon = {
     icon: 'minus',

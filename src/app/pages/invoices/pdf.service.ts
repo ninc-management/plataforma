@@ -716,12 +716,20 @@ export class PdfService {
                 widths: ['*'],
                 dontBreakRows: true,
                 body: [
-                  [{ text: 'ETAPA PRELIMINAR' }],
+                  [
+                    {
+                      text: 'ETAPA PRELIMINAR',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
+                    },
+                  ],
                   [
                     {
                       text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
                       fontSize: 8,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
@@ -729,17 +737,21 @@ export class PdfService {
                       ul: laep,
                       fontSize: 10,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
                     {
                       text: invoice.dep,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                 ],
               },
-              layout: this.noBorderTable('#BCDCCE'),
+              layout: this.noBorderTable(configColors.primary.color300),
             });
           }
 
@@ -761,12 +773,20 @@ export class PdfService {
                 widths: ['*'],
                 dontBreakRows: true,
                 body: [
-                  [{ text: 'ETAPA EXECUTIVA' }],
+                  [
+                    {
+                      text: 'ETAPA EXECUTIVA',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
+                    },
+                  ],
                   [
                     {
                       text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
                       fontSize: 8,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
@@ -774,17 +794,21 @@ export class PdfService {
                       ul: laee,
                       fontSize: 10,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
                     {
                       text: invoice.dee,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                 ],
               },
-              layout: this.noBorderTable('#BCDCCE'),
+              layout: this.noBorderTable(configColors.primary.color300),
               pageBreak:
                 this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
             });
@@ -813,12 +837,20 @@ export class PdfService {
                 widths: ['*'],
                 dontBreakRows: true,
                 body: [
-                  [{ text: 'ETAPA COMPLEMENTAR' }],
+                  [
+                    {
+                      text: 'ETAPA COMPLEMENTAR',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
+                    },
+                  ],
                   [
                     {
                       text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
                       fontSize: 8,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
@@ -826,17 +858,21 @@ export class PdfService {
                       ul: laec,
                       fontSize: 10,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                   [
                     {
                       text: invoice.dec,
                       alignment: 'justify',
+                      color: this.config.invoiceConfig.importantBlockFontColor,
+                      bold: this.config.invoiceConfig.isImportantBlockFontBold,
                     },
                   ],
                 ],
               },
-              layout: this.noBorderTable('#BCDCCE'),
+              layout: this.noBorderTable(configColors.primary.color300),
               pageBreak:
                 (this.config.invoiceConfig.hasPreliminary || this.config.invoiceConfig.hasExecutive) &&
                 invoice.hasPageBreak.complementaryStage
@@ -1326,11 +1362,13 @@ export class PdfService {
                   {
                     ul: importants,
                     fontSize: 10,
+                    color: this.config.invoiceConfig.importantBlockFontColor,
+                    bold: this.config.invoiceConfig.isImportantBlockFontBold,
                   },
                 ],
               ],
             },
-            layout: this.noBorderTable('#82ADAD'),
+            layout: this.noBorderTable(configColors.primary.color700),
           });
         }
 
