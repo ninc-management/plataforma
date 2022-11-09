@@ -16,6 +16,9 @@ import MockedServerSocket from 'socket.io-mock';
 
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -37,58 +40,15 @@ describe('NotificationService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('test1@te.st');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
     userService = TestBed.inject(UserService);
-    mockedUsers = [];
-    mockedInvoices = [];
-    mockedTeams = [];
 
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test';
-    tmpUser.email = 'test@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    mockedUsers.push(cloneDeep(tmpUser));
-
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'test';
-    tmpTeam.leader = '0';
-    tmpTeam.purpose = 'Be tested';
-    tmpTeam.abrev = 'T';
-    tmpTeam.config.path = `test`;
-    const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = mockedUsers[0]._id;
-    tmpTeamMember.sectors = ['0'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    tmpTeamMember.user = mockedUsers[1]._id;
-    tmpTeamMember.sectors = ['1'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    mockedTeams.push(cloneDeep(tmpTeam));
-
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0]._id;
-    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
-    tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '1.000,00';
-    const tmpInvoiceMember = new InvoiceTeamMember();
-    tmpInvoiceMember.user = mockedUsers[0]._id;
-    tmpInvoiceMember.sector = '0';
-    tmpInvoice.team.push(cloneDeep(tmpInvoiceMember));
-    tmpInvoiceMember.user = mockedUsers[1]._id;
-    tmpInvoiceMember.sector = '1';
-    tmpInvoice.team.push(cloneDeep(tmpInvoiceMember));
-    mockedInvoices.push(cloneDeep(tmpInvoice));
+    mockedUsers = cloneDeep(externalMockedUsers);
+    mockedInvoices = cloneDeep(externalMockedInvoices);
+    mockedTeams = cloneDeep(externalMockedTeams)
 
     userService.getUsers().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/user/all');
