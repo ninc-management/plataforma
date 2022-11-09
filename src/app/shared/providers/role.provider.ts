@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { map, skipWhile, take } from 'rxjs/operators';
 
 import { UserService } from '../services/user.service';
-import { Permissions } from '../utils';
 import { AuthService } from 'app/auth/auth.service';
 
 import { User } from '@models/user';
@@ -20,8 +19,8 @@ export class RoleProvider implements NbRoleProvider {
         skipWhile((user) => user === undefined),
         take(1),
         map((user: User | undefined): string | string[] => {
-          if (user === undefined) return Permissions.ASSOCIADO;
-          return user.position?.length > 0 ? user.position : Permissions.ASSOCIADO;
+          if (user === undefined) return 'Associado';
+          return user.position?.length > 0 ? user.position : 'Associado';
         })
       );
     } else return of([]);
