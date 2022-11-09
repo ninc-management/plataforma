@@ -253,229 +253,270 @@ export class PdfService {
     this.configService
       .getConfig()
       .pipe(take(1))
-      .subscribe((configs) => {
+      .subscribe(async (configs) => {
         if (configs[0]) this.config = configs[0];
-      });
+        const configColors = this.config.socialConfig.colors;
 
-    // Metadata definition
-    pdf.info({
-      title: 'Proposta de Orçamento Nortan Projetos',
-      author: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
-      subject: 'Orçamento ' + invoice.code,
-      keywords: 'orçamento',
-    });
+        // Metadata definition
+        pdf.info({
+          title: 'Proposta de Orçamento Nortan Projetos',
+          author: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
+          subject: 'Orçamento ' + invoice.code,
+          keywords: 'orçamento',
+        });
 
-    // Page settings definition
-    pdf.pageSize('A4');
-    pdf.pageOrientation('portrait');
-    pdf.pageMargins([30, 30, 30, 30]);
+        // Page settings definition
+        pdf.pageSize('A4');
+        pdf.pageOrientation('portrait');
+        pdf.pageMargins([30, 30, 30, 30]);
 
-    // background definition
-    pdf.background(function (currentPage: number, pageSize: ContextPageSize) {
-      return [
-        {
-          canvas: [
+        // background definition
+        pdf.background(function (currentPage: number, pageSize: ContextPageSize) {
+          return [
             {
-              type: 'rect',
-              x: 0,
-              y: 0,
-              w: pageSize.width,
-              h: 20,
-              color: '#79BA9E',
+              canvas: [
+                {
+                  type: 'rect',
+                  x: 0,
+                  y: 0,
+                  w: pageSize.width,
+                  h: 20,
+                  color: configColors.primary.color500,
+                },
+              ],
+              absolutePosition: { x: 0, y: 0 },
             },
-          ],
-          absolutePosition: { x: 0, y: 0 },
-        },
-        {
-          canvas: [
             {
-              type: 'rect',
-              x: 0,
-              y: 0,
-              w: pageSize.width,
-              h: 20,
-              color: '#E0E0E0',
+              canvas: [
+                {
+                  type: 'rect',
+                  x: 0,
+                  y: 0,
+                  w: pageSize.width,
+                  h: 20,
+                  color: configColors.primary.color500,
+                },
+              ],
+              absolutePosition: { x: 0, y: pageSize.height - 20 },
             },
-          ],
-          absolutePosition: { x: 0, y: pageSize.height - 20 },
-        },
-      ];
-    });
+          ];
+        });
 
-    // styles definition
-    pdf.defaultStyle({
-      fontSize: 11,
-      font: 'Sans',
-      color: '#052E41',
-    });
-    pdf.styles({
-      insideText: {
-        margin: [5, 0, 5, 0],
-      },
-    });
-
-    // Header
-    const header = {
-      columns: [
-        await new Img(
-          this.config.socialConfig.logoDefault.url ||
-            'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'
-        )
-          .width(200)
-          .build(),
-      ] as any,
-      margin: [5, 20, 5, 5],
-    };
-
-    if (this.config.invoiceConfig.hasHeader) {
-      header.columns.push([
-        {
-          text: 'proposta de orçamento\n',
-          fontSize: 14,
-          alignment: 'right',
+        // styles definition
+        pdf.defaultStyle({
+          fontSize: 11,
+          font: 'Sans',
           color: '#052E41',
-          bold: true,
-          margin: [0, 5, 0, 0],
-        },
-        {
-          text:
-            (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
-            '\n' +
-            (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
-          fontSize: 12,
-          alignment: 'right',
-          color: '#052E41',
-        },
-      ]);
-    }
+        });
+        pdf.styles({
+          insideText: {
+            margin: [5, 0, 5, 0],
+          },
+        });
 
-    pdf.add(header);
-    pdf.add({
-      canvas: [
-        {
-          type: 'line',
-          x1: 0,
-          y1: 5,
-          x2: 595 - 2 * 30,
-          y2: 5,
-          lineWidth: 1,
-          color: '#79BA9E',
-        },
-      ],
-    });
-
-    // Body - Greetings
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      text: 'Oi ' + invoice.contactName + ', tudo bem?',
-      alignment: 'center',
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    const author = invoice.author ? this.userService.idToUser(invoice.author) : new User();
-
-    /* eslint-disable indent*/
-    pdf.add({
-      text:
-        'Nós da Nortan Engenharia nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
-        author.article +
-        ' associad' +
-        author.article +
-        ' ' +
-        author.fullName +
-        ', ' +
-        (author.expertise
-          ? author.expertise[
-              author.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, invoice.sector))
-            ]?.shortExpertise
-          : '') +
-        ', será ' +
-        (author.article == 'a' ? 'sua' : 'seu') +
-        ' Consulto' +
-        (author.article == 'a' ? 'ra' : 'r') +
-        ' Técnic' +
-        (author.article == 'a' ? 'a' : 'o') +
-        ' Exclusiv' +
-        (author.article == 'a' ? 'a' : 'o') +
-        ' e gesto' +
-        (author.article == 'a' ? 'ra' : 'r') +
-        ' do contrato, te guiando para solução mais eficiente.',
-      alignment: 'center',
-      style: 'insideText',
-    });
-    /* eslint-enable indent*/
-
-    // Body - Author
-    pdf.add(pdf.ln(1));
-
-    /* eslint-disable indent*/
-    pdf.add({
-      columns: [
-        {
-          width: 70,
+        // Header
+        const header = {
           columns: [
             await new Img(
-              author.profilePicture == undefined
-                ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
-                : author.profilePicture
+              this.config.socialConfig.logoDefault.url ||
+                'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'
             )
-              .width(60)
-              .height(60)
+              .width(200)
               .build(),
+          ] as any,
+          margin: [5, 20, 5, 5],
+        };
+
+        if (this.config.invoiceConfig.hasHeader) {
+          header.columns.push([
             {
-              svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-              fit: [62, 62],
-              relativePosition: { x: -61, y: -1 },
+              text: 'Proposta de Orçamento\n',
+              fontSize: 14,
+              alignment: 'right',
+              color: '#052E41',
+              bold: true,
+              margin: [0, 5, 0, 0],
+            },
+            {
+              text:
+                (invoice.subtitle1 == undefined ? '' : invoice.subtitle1.toLowerCase()) +
+                '\n' +
+                (invoice.subtitle2 == undefined ? '' : invoice.subtitle2.toLowerCase()),
+              fontSize: 12,
+              alignment: 'right',
+              color: '#052E41',
+            },
+          ]);
+        }
+
+        pdf.add(header);
+        pdf.add({
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 595 - 2 * 30,
+              y2: 5,
+              lineWidth: 1,
+              color: configColors.primary.color500,
             },
           ],
-        },
-        {
-          width: '*',
+        });
+
+        // Body - Greetings
+        pdf.add(pdf.ln(1));
+
+        pdf.add({
+          text: 'Oi ' + invoice.contactName + ', tudo bem?',
+          alignment: 'center',
+          style: 'insideText',
+        });
+
+        pdf.add(pdf.ln(1));
+
+        const author = invoice.author ? this.userService.idToUser(invoice.author) : new User();
+
+        /* eslint-disable indent*/
+        pdf.add({
           text:
-            this.userService.idToShortName(author) +
+            'Nós da Nortan Engenharia nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
+            author.article +
+            ' associad' +
+            author.article +
+            ' ' +
+            author.fullName +
             ', ' +
             (author.expertise
               ? author.expertise[
                   author.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, invoice.sector))
-                ]?.text
-              : ''),
-          alignment: 'left',
-          fontSize: 8,
-        },
-      ],
-      style: 'insideText',
-    });
-    /* eslint-enable indent*/
+                ]?.shortExpertise
+              : '') +
+            ', será ' +
+            (author.article == 'a' ? 'sua' : 'seu') +
+            ' Consulto' +
+            (author.article == 'a' ? 'ra' : 'r') +
+            ' Técnic' +
+            (author.article == 'a' ? 'a' : 'o') +
+            ' Exclusiv' +
+            (author.article == 'a' ? 'a' : 'o') +
+            ' e gesto' +
+            (author.article == 'a' ? 'ra' : 'r') +
+            ' do contrato, te guiando para solução mais eficiente.',
+          alignment: 'center',
+          style: 'insideText',
+        });
+        /* eslint-enable indent*/
 
-    // Body - Team
-    if (this.config.invoiceConfig.hasTeam) {
-      pdf.add(pdf.ln(1));
+        // Body - Author
+        pdf.add(pdf.ln(1));
 
-      pdf.add({
-        text: 'Conheça também a equipe que vai trabalhar nesse contrato:',
-        alignment: 'center',
-        style: 'insideText',
-      });
+        /* eslint-disable indent*/
+        pdf.add({
+          columns: [
+            {
+              width: 70,
+              columns: [
+                await new Img(
+                  author.profilePicture == undefined
+                    ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
+                    : author.profilePicture
+                )
+                  .width(60)
+                  .height(60)
+                  .build(),
+                {
+                  svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                  fit: [62, 62],
+                  relativePosition: { x: -61, y: -1 },
+                },
+              ],
+            },
+            {
+              width: '*',
+              text:
+                this.userService.idToShortName(author) +
+                ', ' +
+                (author.expertise
+                  ? author.expertise[
+                      author.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, invoice.sector))
+                    ]?.text
+                  : ''),
+              alignment: 'left',
+              fontSize: 8,
+            },
+          ],
+          style: 'insideText',
+        });
+        /* eslint-enable indent*/
+        // Body - Team
+        if (this.config.invoiceConfig.hasTeam) {
+          pdf.add(pdf.ln(1));
 
-      pdf.add(pdf.ln(1));
+          pdf.add({
+            text: 'Conheça também a equipe que vai trabalhar nesse contrato:',
+            alignment: 'center',
+            style: 'insideText',
+          });
 
-      if (invoice.team.length > 1) {
-        const team = invoice.team.slice(1);
-        for (const [index, member] of team.entries()) {
-          const user = member.user ? this.userService.idToUser(member.user) : new User();
-          /* eslint-disable indent*/
+          pdf.add(pdf.ln(1));
+
+          if (invoice.team.length > 1) {
+            const team = invoice.team.slice(1);
+            for (const [index, member] of team.entries()) {
+              const user = member.user ? this.userService.idToUser(member.user) : new User();
+              /* eslint-disable indent*/
+              pdf.add({
+                columns: [
+                  {
+                    width: 70,
+                    columns: [
+                      await new Img(
+                        user.profilePicture == undefined
+                          ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
+                          : user.profilePicture
+                      )
+                        .width(60)
+                        .height(60)
+                        .build(),
+                      {
+                        svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                        fit: [62, 62],
+                        relativePosition: { x: -61, y: -1 },
+                      },
+                    ],
+                  },
+                  {
+                    width: '*',
+                    text:
+                      user.exibitionName +
+                      ', ' +
+                      (user.expertise
+                        ? user.expertise[
+                            user.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, member.sector))
+                          ]?.text
+                        : ''),
+                    alignment: 'left',
+                    fontSize: 8,
+                  },
+                ],
+                pageBreak: index == 5 ? 'after' : 'none',
+                style: 'insideText',
+              });
+              /* eslint-enable indent*/
+
+              pdf.add(pdf.ln(1));
+            }
+          }
+
+          // Body - Teams - Support
           pdf.add({
             columns: [
               {
                 width: 70,
                 columns: [
                   await new Img(
-                    user.profilePicture == undefined
-                      ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
-                      : user.profilePicture
+                    'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
                   )
                     .width(60)
                     .height(60)
@@ -489,635 +530,702 @@ export class PdfService {
               },
               {
                 width: '*',
-                text:
-                  user.exibitionName +
-                  ', ' +
-                  (user.expertise
-                    ? user.expertise[
-                        user.expertise.findIndex((el) => this.teamService.isSectorEqual(el.sector, member.sector))
-                      ]?.text
-                    : ''),
+                text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan Engenharia proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
                 alignment: 'left',
                 fontSize: 8,
               },
             ],
-            pageBreak: index == 5 ? 'after' : 'none',
             style: 'insideText',
           });
-          /* eslint-enable indent*/
-
-          pdf.add(pdf.ln(1));
         }
-      }
 
-      // Body - Teams - Support
-      pdf.add({
-        columns: [
-          {
-            width: 70,
-            columns: [
-              await new Img(
-                'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
-              )
-                .width(60)
-                .height(60)
-                .build(),
-              {
-                svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-                fit: [62, 62],
-                relativePosition: { x: -61, y: -1 },
-              },
-            ],
-          },
-          {
-            width: '*',
-            text: 'Equipe de Suporte.\nNossos Consultores Técnicos não estão sozinhos, a Nortan Engenharia proporciona uma estrutura administrativa em um ambiente colaborativo de profissionais que permite que o consultor foque no que realmente importa, você.',
-            alignment: 'left',
-            fontSize: 8,
-          },
-        ],
-        style: 'insideText',
-      });
-    }
+        // Body - Providers
+        if (this.config.invoiceConfig.hasProvider) {
+          pdf.add(pdf.ln(1));
 
-    // Body - Providers
-    if (this.config.invoiceConfig.hasProvider) {
-      pdf.add(pdf.ln(1));
-
-      if (invoice.providers.length > 0) {
-        for (const [index, p] of invoice.providers.entries()) {
-          const provider = p ? this.providerService.idToProvider(p) : new Provider();
-          /* eslint-disable indent*/
-          pdf.add({
-            columns: [
-              {
-                width: 70,
+          if (invoice.providers.length > 0) {
+            for (const [index, p] of invoice.providers.entries()) {
+              const provider = p ? this.providerService.idToProvider(p) : new Provider();
+              /* eslint-disable indent*/
+              pdf.add({
                 columns: [
-                  await new Img(
-                    provider.profilePicture == undefined
-                      ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
-                      : provider.profilePicture
-                  )
-                    .width(60)
-                    .height(60)
-                    .build(),
                   {
-                    svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
-                    fit: [62, 62],
-                    relativePosition: { x: -61, y: -1 },
+                    width: 70,
+                    columns: [
+                      await new Img(
+                        provider.profilePicture == undefined
+                          ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
+                          : provider.profilePicture
+                      )
+                        .width(60)
+                        .height(60)
+                        .build(),
+                      {
+                        svg: '<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="176mm" height="176mm" viewBox="0 0 176 176" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)" sodipodi:docname="frame.svg"> <defs id="defs2" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="0.5" inkscape:cx="-552.88697" inkscape:cy="349.09231" inkscape:document-units="mm" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1920" inkscape:window-height="1012" inkscape:window-x="-8" inkscape:window-y="37" inkscape:window-maximized="1" /> <metadata id="metadata5"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-121)"> <g id="g864" transform="translate(-28.877305,79.67757)"> <path inkscape:connector-curvature="0" id="rect821" d="M 28.877305,41.185902 V 217.32243 H 205.01436 V 41.185902 Z m 87.690775,2.344557 a 85.345885,85.345885 0 0 1 85.34569,85.345691 85.345885,85.345885 0 0 1 -85.34569,85.3457 85.345885,85.345885 0 0 1 -85.346214,-85.3457 85.345885,85.345885 0 0 1 85.346214,-85.345691 z" style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> <circle r="85.345886" cy="129.25417" cx="116.94583" id="path823" style="fill:none;fill-opacity:1;stroke:#bfbfbf;stroke-width:3.16537809;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" /> </g> </g> </svg>',
+                        fit: [62, 62],
+                        relativePosition: { x: -61, y: -1 },
+                      },
+                    ],
+                  },
+                  {
+                    width: '*',
+                    text: provider.fullName + ', ' + provider.description,
+                    alignment: 'left',
+                    fontSize: 8,
                   },
                 ],
-              },
-              {
-                width: '*',
-                text: provider.fullName + ', ' + provider.description,
-                alignment: 'left',
-                fontSize: 8,
-              },
-            ],
-            pageBreak: index == 5 ? 'after' : 'none',
-            style: 'insideText',
-          });
-          /* eslint-enable indent*/
+                pageBreak: index == 5 ? 'after' : 'none',
+                style: 'insideText',
+              });
+              /* eslint-enable indent*/
 
-          pdf.add(pdf.ln(1));
+              pdf.add(pdf.ln(1));
+            }
+          }
         }
-      }
-    }
 
-    // Body - Invoice Info
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      text:
-        'Nesse arquivo voc' +
-        (invoice.contactPlural ? 'ês' : 'ê') +
-        ' encontrar' +
-        (invoice.contactPlural ? 'ão' : 'á') +
-        ' a descrição do serviço com as etapas do ' +
-        invoice.invoiceType +
-        ', os prazos, os valores e tudo o que foi pedido por voc' +
-        (invoice.contactPlural ? 'ês' : 'ê') +
-        ' no nosso primeiro contato.',
-      alignment: 'center',
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      canvas: [
-        {
-          type: 'line',
-          x1: 0,
-          y1: 5,
-          x2: 595 - 2 * 30,
-          y2: 5,
-          lineWidth: 1,
-          color: '#79BA9E',
-        },
-      ],
-    });
-
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      columns: [
-        {
-          text: 'Contratante:',
-          bold: true,
-        },
-        {
-          text: invoice.code.slice(0, -3),
-          color: '#79BA9E',
-          bold: true,
-          alignment: 'right',
-        },
-      ],
-      style: 'insideText',
-      pageBreak: invoice.hasPageBreak.contractor ? 'before' : '',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    /* eslint-disable indent*/
-    pdf.add({
-      text: idToProperty(
-        invoice.contractor,
-        this.contractorService.idToContractor.bind(this.contractorService),
-        'fullName'
-      ),
-      style: 'insideText',
-    });
-    /* eslint-enable indent*/
-
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      text: 'Assunto:',
-      bold: true,
-      style: 'insideText',
-      pageBreak: invoice.hasPageBreak.subject ? 'before' : '',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    const subject = [];
-    if (invoice.subject != undefined) {
-      for (let t of invoice.subject.split('*')) {
-        const bold = t.charAt(0) == '!';
-        if (bold) t = t.slice(1);
-        subject.push({
-          text: t,
-          bold: bold,
-        });
-      }
-    }
-    pdf.add({
-      text: subject,
-      style: 'insideText',
-      alignment: 'justify',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    // Body - Invoice Info Early Stage - Page 2
-    if (
-      this.config.invoiceConfig.hasPreliminary ||
-      this.config.invoiceConfig.hasExecutive ||
-      this.config.invoiceConfig.hasComplementary
-    ) {
-      pdf.add({
-        text: 'Descrição do serviço:',
-        bold: true,
-        style: 'insideText',
-        pageBreak:
-          invoice.hasPageBreak.preliminaryStage ||
-          (!this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage) ||
-          (!this.config.invoiceConfig.hasPreliminary &&
-            !this.config.invoiceConfig.hasExecutive &&
-            invoice.hasPageBreak.complementaryStage)
-            ? 'before'
-            : '', // ver se usa o preliminary ou os outros
-      });
-      if (this.config.invoiceConfig.hasPreliminary) {
+        // Body - Invoice Info
         pdf.add(pdf.ln(1));
 
-        const leapLength = invoice.laep ? invoice.laep.length : 0;
-        /* eslint-disable indent*/
-        const laep = invoice.laep
-          ? invoice.laep.map((activity, index) => {
-              return activity.isVisible ? activity.text + (index == leapLength - 1 ? '.' : ';') : '';
-            })
-          : [];
-        /* eslint-enable indent*/
         pdf.add({
+          text:
+            'Nesse arquivo voc' +
+            (invoice.contactPlural ? 'ês' : 'ê') +
+            ' encontrar' +
+            (invoice.contactPlural ? 'ão' : 'á') +
+            ' a descrição do serviço com as etapas do ' +
+            invoice.invoiceType +
+            ', os prazos, os valores e tudo o que foi pedido por voc' +
+            (invoice.contactPlural ? 'ês' : 'ê') +
+            ' no nosso primeiro contato.',
+          alignment: 'center',
           style: 'insideText',
-          table: {
-            widths: ['*'],
-            dontBreakRows: true,
-            body: [
-              [{ text: 'ETAPA PRELIMINAR' }],
-              [
-                {
-                  text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
-                  fontSize: 8,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  ul: laep,
-                  fontSize: 10,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  text: invoice.dep,
-                  alignment: 'justify',
-                },
-              ],
-            ],
-          },
-          layout: this.noBorderTable('#BCDCCE'),
         });
-      }
 
-      // Body - Invoice Info Mid Stage - Page 2
-      if (this.config.invoiceConfig.hasExecutive) {
         pdf.add(pdf.ln(1));
 
-        const laeeLength = invoice.laee ? invoice.laee.length : 0;
-        /* eslint-disable indent*/
-        const laee = invoice.laee
-          ? invoice.laee.map((activity, index) => {
-              return activity.isVisible ? activity.text + (index == laeeLength - 1 ? '.' : ';') : '';
-            })
-          : [];
-        /* eslint-enable indent*/
         pdf.add({
-          style: 'insideText',
-          table: {
-            widths: ['*'],
-            dontBreakRows: true,
-            body: [
-              [{ text: 'ETAPA EXECUTIVA' }],
-              [
-                {
-                  text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
-                  fontSize: 8,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  ul: laee,
-                  fontSize: 10,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  text: invoice.dee,
-                  alignment: 'justify',
-                },
-              ],
-            ],
-          },
-          layout: this.noBorderTable('#BCDCCE'),
-          pageBreak: this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
-        });
-      }
-
-      // Body - Invoice Info Final Stage - Page 2
-      if (
-        this.config.invoiceConfig.hasComplementary &&
-        ((invoice.peec && invoice.peec?.length > 0) ||
-          (invoice.laec && invoice.laec.length > 0) ||
-          (invoice.dec && invoice.dec?.length > 0))
-      ) {
-        pdf.add(pdf.ln(1));
-
-        const laecLength = invoice.laec ? invoice.laec.length : 0;
-        /* eslint-disable indent*/
-        const laec = invoice.laec
-          ? invoice.laec.map((activity, index) => {
-              return activity.isVisible ? activity.text + (index == laecLength - 1 ? '.' : ';') : '';
-            })
-          : [];
-        /* eslint-enable indent*/
-        pdf.add({
-          style: 'insideText',
-          table: {
-            widths: ['*'],
-            dontBreakRows: true,
-            body: [
-              [{ text: 'ETAPA COMPLEMENTAR' }],
-              [
-                {
-                  text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
-                  fontSize: 8,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  ul: laec,
-                  fontSize: 10,
-                  alignment: 'justify',
-                },
-              ],
-              [
-                {
-                  text: invoice.dec,
-                  alignment: 'justify',
-                },
-              ],
-            ],
-          },
-          layout: this.noBorderTable('#BCDCCE'),
-          pageBreak:
-            (this.config.invoiceConfig.hasPreliminary || this.config.invoiceConfig.hasExecutive) &&
-            invoice.hasPageBreak.complementaryStage
-              ? 'before'
-              : '',
-        });
-      }
-    }
-
-    // Body - Invoice Values - Page 2
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      canvas: [
-        {
-          type: 'line',
-          x1: 0,
-          y1: 5,
-          x2: 595 - 2 * 30,
-          y2: 5,
-          lineWidth: 1,
-          color: '#79BA9E',
-        },
-      ],
-    });
-
-    pdf.add(pdf.ln(1));
-
-    pdf.add({
-      text: 'Valores:',
-      bold: true,
-      style: 'insideText',
-      pageBreak: invoice.hasPageBreak.valuesTable ? 'before' : '',
-    });
-
-    pdf.add(pdf.ln(1));
-
-    let extensoValue = extenso(invoice.value, { mode: 'currency' });
-    if (extensoValue.split(' ')[0] == 'mil') extensoValue = 'um ' + extensoValue;
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: ['*'],
-        dontBreakRows: true,
-        body: [
-          [
+          canvas: [
             {
-              text: [
-                {
-                  text: 'Após ler as etapas de execução proposta, conheça os produtos e nossa proposta de valor.',
-                  bold: true,
-                },
-              ],
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 595 - 2 * 30,
+              y2: 5,
+              lineWidth: 1,
+              color: configColors.primary.color500,
             },
           ],
-        ],
-      },
-      layout: this.noBorderTable('#BFBFBF'),
-    });
-
-    const productHeader = () => {
-      if (invoice.productListType == '1')
-        return [
-          {
-            text: invoice.invoiceType.toUpperCase(),
-            bold: true,
-            alignment: 'center',
-            border: [false, true, true, true],
-          },
-          {
-            text: 'VALOR',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ];
-      return [
-        {
-          text: invoice.invoiceType.toUpperCase(),
-          bold: true,
-          alignment: 'center',
-          border: [false, true, true, true],
-        },
-        {
-          text: 'QUANTIDADE',
-          bold: true,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'UNIDADE',
-          bold: true,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'VALOR UNITÁRIO',
-          bold: true,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'TOTAL',
-          bold: true,
-          alignment: 'center',
-          border: [true, true, false, true],
-        },
-      ];
-    };
-
-    const products = invoice.products.map((product) => {
-      const name: any[] = [
-        {
-          text: product.name,
-          bold: true,
-        },
-      ];
-      if (product.subproducts.length > 0)
-        name.push({
-          stack: product.subproducts.map((subproduct) => subproduct),
-          alignment: 'left',
-          fontSize: 9,
         });
-      if (invoice.productListType == '1')
-        return [
-          {
-            stack: name,
-            alignment: 'left',
-            border: [false, true, true, true],
-          },
-          {
-            text: 'R$ ' + product.value,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ];
-      return [
-        {
-          stack: name,
-          alignment: 'left',
-          border: [false, true, true, true],
-        },
-        {
-          text: product.amount,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: product.unit,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'R$ ' + product.value,
-          alignment: 'center',
-          border: [true, true, true, true],
-        },
-        {
-          text: 'R$ ' + product.total,
-          alignment: 'center',
-          border: [true, true, false, true],
-        },
-      ];
-    });
-    // if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
-    const footer = () => {
-      const result: any[] = [];
-      if (invoice.discount && invoice.discount != '0,00') {
-        const discount: any[] = [
-          {
-            text: 'DESCONTO',
-            alignment: 'right',
-            border: [false, true, true, true],
-            colSpan: invoice.productListType == '1' ? 1 : 3,
-            bold: true,
-          },
-          {
-            text: 'R$ ' + invoice.discount,
-            alignment: 'center',
-            border: [true, true, false, true],
-            bold: true,
-          },
-        ];
-        if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}, {}]);
-        result.push(discount);
-      }
-      const total = this.stringUtil.numberToMoney(
-        invoice.products.reduce(
-          (accumulator: number, product: any) =>
-            accumulator + this.stringUtil.moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
-          0
-        ) - this.stringUtil.moneyToNumber(invoice.discount)
-      );
-      const extensoTotal = extenso(total, { mode: 'currency' });
-      const productTotal: any[] = [
-        {
-          text: [
+
+        pdf.add(pdf.ln(1));
+
+        pdf.add({
+          columns: [
             {
-              text: 'TOTAL:',
+              text: 'Contratante',
+              bold: true,
             },
-            '  (' + extensoTotal + ')',
+            {
+              text: invoice.code.slice(0, -3),
+              color: configColors.primary.color500,
+              bold: true,
+              alignment: 'right',
+            },
           ],
-          alignment: 'right',
-          border: [false, true, true, true],
-          colSpan: invoice.productListType == '1' ? 1 : 3,
+          style: 'insideText',
+          pageBreak: invoice.hasPageBreak.contractor ? 'before' : '',
+        });
+
+        pdf.add(pdf.ln(1));
+
+        /* eslint-disable indent*/
+        pdf.add({
+          text: idToProperty(
+            invoice.contractor,
+            this.contractorService.idToContractor.bind(this.contractorService),
+            'fullName'
+          ),
+          style: 'insideText',
+        });
+        /* eslint-enable indent*/
+
+        pdf.add(pdf.ln(1));
+
+        pdf.add({
+          text: 'Assunto',
           bold: true,
-        },
-        {
-          text: 'R$ ' + total,
-          alignment: 'center',
-          border: [true, true, false, true],
+          style: 'insideText',
+          pageBreak: invoice.hasPageBreak.subject ? 'before' : '',
+        });
+
+        pdf.add(pdf.ln(1));
+
+        const subject = [];
+        if (invoice.subject != undefined) {
+          for (let t of invoice.subject.split('*')) {
+            const bold = t.charAt(0) == '!';
+            if (bold) t = t.slice(1);
+            subject.push({
+              text: t,
+              bold: bold,
+            });
+          }
+        }
+        pdf.add({
+          text: subject,
+          style: 'insideText',
+          alignment: 'justify',
+        });
+
+        pdf.add(pdf.ln(1));
+
+        // Body - Invoice Info Early Stage - Page 2
+        if (
+          this.config.invoiceConfig.hasPreliminary ||
+          this.config.invoiceConfig.hasExecutive ||
+          this.config.invoiceConfig.hasComplementary
+        ) {
+          pdf.add({
+            text: 'Descrição do serviço',
+            bold: true,
+            style: 'insideText',
+            pageBreak:
+              invoice.hasPageBreak.preliminaryStage ||
+              (!this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage) ||
+              (!this.config.invoiceConfig.hasPreliminary &&
+                !this.config.invoiceConfig.hasExecutive &&
+                invoice.hasPageBreak.complementaryStage)
+                ? 'before'
+                : '', // ver se usa o preliminary ou os outros
+          });
+          if (this.config.invoiceConfig.hasPreliminary) {
+            pdf.add(pdf.ln(1));
+
+            const leapLength = invoice.laep ? invoice.laep.length : 0;
+            /* eslint-disable indent*/
+            const laep = invoice.laep
+              ? invoice.laep.map((activity, index) => {
+                  return activity.isVisible ? activity.text + (index == leapLength - 1 ? '.' : ';') : '';
+                })
+              : [];
+            /* eslint-enable indent*/
+            pdf.add({
+              style: 'insideText',
+              table: {
+                widths: ['*'],
+                dontBreakRows: true,
+                body: [
+                  [{ text: 'ETAPA PRELIMINAR' }],
+                  [
+                    {
+                      text: invoice.peep ? (invoice.peep.length > 0 ? '(' + invoice.peep + ')' : '') : '',
+                      fontSize: 8,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      ul: laep,
+                      fontSize: 10,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      text: invoice.dep,
+                      alignment: 'justify',
+                    },
+                  ],
+                ],
+              },
+              layout: this.noBorderTable('#BCDCCE'),
+            });
+          }
+
+          // Body - Invoice Info Mid Stage - Page 2
+          if (this.config.invoiceConfig.hasExecutive) {
+            pdf.add(pdf.ln(1));
+
+            const laeeLength = invoice.laee ? invoice.laee.length : 0;
+            /* eslint-disable indent*/
+            const laee = invoice.laee
+              ? invoice.laee.map((activity, index) => {
+                  return activity.isVisible ? activity.text + (index == laeeLength - 1 ? '.' : ';') : '';
+                })
+              : [];
+            /* eslint-enable indent*/
+            pdf.add({
+              style: 'insideText',
+              table: {
+                widths: ['*'],
+                dontBreakRows: true,
+                body: [
+                  [{ text: 'ETAPA EXECUTIVA' }],
+                  [
+                    {
+                      text: invoice.peee ? (invoice.peee?.length > 0 ? '(' + invoice.peee + ')' : '') : '',
+                      fontSize: 8,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      ul: laee,
+                      fontSize: 10,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      text: invoice.dee,
+                      alignment: 'justify',
+                    },
+                  ],
+                ],
+              },
+              layout: this.noBorderTable('#BCDCCE'),
+              pageBreak:
+                this.config.invoiceConfig.hasPreliminary && invoice.hasPageBreak.executiveStage ? 'before' : '',
+            });
+          }
+
+          // Body - Invoice Info Final Stage - Page 2
+          if (
+            this.config.invoiceConfig.hasComplementary &&
+            ((invoice.peec && invoice.peec?.length > 0) ||
+              (invoice.laec && invoice.laec.length > 0) ||
+              (invoice.dec && invoice.dec?.length > 0))
+          ) {
+            pdf.add(pdf.ln(1));
+
+            const laecLength = invoice.laec ? invoice.laec.length : 0;
+            /* eslint-disable indent*/
+            const laec = invoice.laec
+              ? invoice.laec.map((activity, index) => {
+                  return activity.isVisible ? activity.text + (index == laecLength - 1 ? '.' : ';') : '';
+                })
+              : [];
+            /* eslint-enable indent*/
+            pdf.add({
+              style: 'insideText',
+              table: {
+                widths: ['*'],
+                dontBreakRows: true,
+                body: [
+                  [{ text: 'ETAPA COMPLEMENTAR' }],
+                  [
+                    {
+                      text: invoice.peec ? (invoice.peec?.length > 0 ? '(' + invoice.peec + ')' : '') : '',
+                      fontSize: 8,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      ul: laec,
+                      fontSize: 10,
+                      alignment: 'justify',
+                    },
+                  ],
+                  [
+                    {
+                      text: invoice.dec,
+                      alignment: 'justify',
+                    },
+                  ],
+                ],
+              },
+              layout: this.noBorderTable('#BCDCCE'),
+              pageBreak:
+                (this.config.invoiceConfig.hasPreliminary || this.config.invoiceConfig.hasExecutive) &&
+                invoice.hasPageBreak.complementaryStage
+                  ? 'before'
+                  : '',
+            });
+          }
+        }
+
+        // Body - Invoice Values - Page 2
+        pdf.add(pdf.ln(1));
+
+        pdf.add({
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 5,
+              x2: 595 - 2 * 30,
+              y2: 5,
+              lineWidth: 1,
+              color: configColors.primary.color500,
+            },
+          ],
+        });
+
+        pdf.add(pdf.ln(1));
+
+        pdf.add({
+          text: 'Valores',
           bold: true,
-        },
-      ];
-      if (invoice.productListType == '2') productTotal.splice(1, 0, ...[{}, {}, {}]);
-      result.push(productTotal);
-      return result;
-    };
+          style: 'insideText',
+          pageBreak: invoice.hasPageBreak.valuesTable ? 'before' : '',
+        });
 
-    pdf.add({
-      style: 'insideText',
-      table: {
-        widths: invoice.productListType == '1' ? ['*', 80] : ['*', 'auto', 'auto', 'auto', 80],
-        dontBreakRows: true,
-        body: [productHeader(), ...products, ...footer()],
-      },
-      layout: this.noSideBorderTable('#BFBFBF', '#476471'),
-    });
+        pdf.add(pdf.ln(1));
 
-    pdf.add(pdf.ln(1));
-
-    if (this.config.invoiceConfig.hasStageName) {
-      pdf.add({
-        text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
-        bold: true,
-        style: 'insideText',
-        pageBreak: invoice.hasPageBreak.stagesTable ? 'before' : '',
-      });
-
-      pdf.add(pdf.ln(1));
-
-      const stages = invoice.stages.map((stage) => {
-        return [
-          {
-            text: stage.name,
-            alignment: 'center',
-            border: [false, true, true, true],
+        let extensoValue = extenso(invoice.value, { mode: 'currency' });
+        if (extensoValue.split(' ')[0] == 'mil') extensoValue = 'um ' + extensoValue;
+        pdf.add({
+          style: 'insideText',
+          table: {
+            widths: ['*'],
+            dontBreakRows: true,
+            body: [
+              [
+                {
+                  text: [
+                    {
+                      text: 'Após ler as etapas de execução proposta, conheça os produtos e nossa proposta de valor.',
+                      bold: true,
+                    },
+                  ],
+                },
+              ],
+            ],
           },
-          {
-            text: this.stringUtil.toPercentage(stage.value, invoice.value),
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'R$ ' + stage.value,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ];
-      });
-      const total = this.stringUtil.numberToMoney(
-        invoice.stages.reduce(
-          (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
-          0
-        )
-      );
-      pdf.add({
-        style: 'insideText',
-        table: {
-          widths: ['*', '*', '*'],
-          dontBreakRows: true,
-          body: [
-            [
+          layout: this.noBorderTable('#BFBFBF'),
+        });
+
+        const productHeader = () => {
+          if (invoice.productListType == '1')
+            return [
               {
-                text: 'ETAPAS',
+                text: invoice.invoiceType.toUpperCase(),
                 bold: true,
                 alignment: 'center',
                 border: [false, true, true, true],
               },
               {
-                text: 'PORCENTAGEM',
+                text: 'VALOR',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ];
+          return [
+            {
+              text: invoice.invoiceType.toUpperCase(),
+              bold: true,
+              alignment: 'center',
+              border: [false, true, true, true],
+            },
+            {
+              text: 'QUANTIDADE',
+              bold: true,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: 'UNIDADE',
+              bold: true,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: 'VALOR UNITÁRIO',
+              bold: true,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: 'TOTAL',
+              bold: true,
+              alignment: 'center',
+              border: [true, true, false, true],
+            },
+          ];
+        };
+
+        const products = invoice.products.map((product) => {
+          const name: any[] = [
+            {
+              text: product.name,
+              bold: true,
+            },
+          ];
+          if (product.subproducts.length > 0)
+            name.push({
+              stack: product.subproducts.map((subproduct) => subproduct),
+              alignment: 'left',
+              fontSize: 9,
+            });
+          if (invoice.productListType == '1')
+            return [
+              {
+                stack: name,
+                alignment: 'left',
+                border: [false, true, true, true],
+              },
+              {
+                text: 'R$ ' + product.value,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ];
+          return [
+            {
+              stack: name,
+              alignment: 'left',
+              border: [false, true, true, true],
+            },
+            {
+              text: product.amount,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: product.unit,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: 'R$ ' + product.value,
+              alignment: 'center',
+              border: [true, true, true, true],
+            },
+            {
+              text: 'R$ ' + product.total,
+              alignment: 'center',
+              border: [true, true, false, true],
+            },
+          ];
+        });
+        // if (invoice.discount) products.push('Desconto: R$ ' + invoice.discount);
+        const footer = () => {
+          const result: any[] = [];
+          if (invoice.discount && invoice.discount != '0,00') {
+            const discount: any[] = [
+              {
+                text: 'DESCONTO',
+                alignment: 'right',
+                border: [false, true, true, true],
+                colSpan: invoice.productListType == '1' ? 1 : 3,
+                bold: true,
+              },
+              {
+                text: 'R$ ' + invoice.discount,
+                alignment: 'center',
+                border: [true, true, false, true],
+                bold: true,
+              },
+            ];
+            if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}, {}]);
+            result.push(discount);
+          }
+          const total = this.stringUtil.numberToMoney(
+            invoice.products.reduce(
+              (accumulator: number, product: any) =>
+                accumulator +
+                this.stringUtil.moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
+              0
+            ) - this.stringUtil.moneyToNumber(invoice.discount)
+          );
+          const extensoTotal = extenso(total, { mode: 'currency' });
+          const productTotal: any[] = [
+            {
+              text: [
+                {
+                  text: 'TOTAL:',
+                },
+                '  (' + extensoTotal + ')',
+              ],
+              alignment: 'right',
+              border: [false, true, true, true],
+              colSpan: invoice.productListType == '1' ? 1 : 3,
+              bold: true,
+            },
+            {
+              text: 'R$ ' + total,
+              alignment: 'center',
+              border: [true, true, false, true],
+              bold: true,
+            },
+          ];
+          if (invoice.productListType == '2') productTotal.splice(1, 0, ...[{}, {}, {}]);
+          result.push(productTotal);
+          return result;
+        };
+
+        pdf.add({
+          style: 'insideText',
+          table: {
+            widths: invoice.productListType == '1' ? ['*', 80] : ['*', 'auto', 'auto', 'auto', 80],
+            dontBreakRows: true,
+            body: [productHeader(), ...products, ...footer()],
+          },
+          layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+        });
+
+        pdf.add(pdf.ln(1));
+
+        if (this.config.invoiceConfig.hasStageName) {
+          pdf.add({
+            text: 'Parcelamento de honorários pelas etapas do ' + invoice.invoiceType + ':',
+            bold: true,
+            style: 'insideText',
+            pageBreak: invoice.hasPageBreak.stagesTable ? 'before' : '',
+          });
+
+          pdf.add(pdf.ln(1));
+
+          const stages = invoice.stages.map((stage) => {
+            return [
+              {
+                text: stage.name,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: this.stringUtil.toPercentage(stage.value, invoice.value),
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'R$ ' + stage.value,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ];
+          });
+          const total = this.stringUtil.numberToMoney(
+            invoice.stages.reduce(
+              (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
+              0
+            )
+          );
+          pdf.add({
+            style: 'insideText',
+            table: {
+              widths: ['*', '*', '*'],
+              dontBreakRows: true,
+              body: [
+                [
+                  {
+                    text: 'ETAPAS',
+                    bold: true,
+                    alignment: 'center',
+                    border: [false, true, true, true],
+                  },
+                  {
+                    text: 'PORCENTAGEM',
+                    bold: true,
+                    alignment: 'center',
+                    border: [true, true, true, true],
+                  },
+                  {
+                    text: 'VALOR',
+                    bold: true,
+                    alignment: 'center',
+                    border: [true, true, false, true],
+                  },
+                ],
+                ...stages,
+                [
+                  {
+                    text: 'TOTAL',
+                    bold: true,
+                    alignment: 'center',
+                    border: [false, true, true, true],
+                  },
+                  {
+                    text: this.stringUtil.toPercentage(total, invoice.value),
+                    bold: true,
+                    alignment: 'center',
+                    border: [true, true, true, true],
+                  },
+                  {
+                    text: 'R$ ' + total,
+                    bold: true,
+                    alignment: 'center',
+                    border: [true, true, false, true],
+                  },
+                ],
+              ],
+            },
+            layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+          });
+        }
+
+        if (this.config.invoiceConfig.hasMaterialList && invoice.materials.length > 0) {
+          const materials = invoice.materials.map((material) => {
+            if (invoice.materialListType == '1')
+              return [
+                {
+                  text: material.name,
+                  bold: false,
+                  alignment: 'center',
+                  border: [false, true, true, true],
+                },
+                {
+                  text: material.amount,
+                  bold: false,
+                  alignment: 'center',
+                  border: [true, true, false, true],
+                },
+              ];
+            return [
+              {
+                text: material.name,
+                bold: false,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: material.amount,
+                bold: false,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: material.value,
+                bold: false,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'R$ ' + material.total,
+                bold: false,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ];
+          });
+          const header = () => {
+            if (invoice.materialListType == '1')
+              return [
+                {
+                  text: 'MATERIAL',
+                  bold: true,
+                  alignment: 'center',
+                  border: [false, true, true, true],
+                },
+                {
+                  text: 'QUANTIDADE',
+                  bold: true,
+                  alignment: 'center',
+                  border: [true, true, false, true],
+                },
+              ];
+            return [
+              {
+                text: 'MATERIAL',
+                bold: true,
+                alignment: 'center',
+                border: [false, true, true, true],
+              },
+              {
+                text: 'QUANTIDADE',
                 bold: true,
                 alignment: 'center',
                 border: [true, true, true, true],
@@ -1126,19 +1234,38 @@ export class PdfService {
                 text: 'VALOR',
                 bold: true,
                 alignment: 'center',
-                border: [true, true, false, true],
+                border: [true, true, true, true],
               },
-            ],
-            ...stages,
-            [
               {
                 text: 'TOTAL',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, false, true],
+              },
+            ];
+          };
+          const total = this.stringUtil.numberToMoney(
+            invoice.materials.reduce(
+              (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
+              0
+            )
+          );
+          if (invoice.materialListType == '2')
+            materials.push([
+              {
+                text: '',
                 bold: true,
                 alignment: 'center',
                 border: [false, true, true, true],
               },
               {
-                text: this.stringUtil.toPercentage(total, invoice.value),
+                text: '',
+                bold: true,
+                alignment: 'center',
+                border: [true, true, true, true],
+              },
+              {
+                text: 'TOTAL',
                 bold: true,
                 alignment: 'center',
                 border: [true, true, true, true],
@@ -1149,253 +1276,127 @@ export class PdfService {
                 alignment: 'center',
                 border: [true, true, false, true],
               },
-            ],
-          ],
-        },
-        layout: this.noSideBorderTable('#BFBFBF', '#476471'),
-      });
-    }
+            ]);
+          // Body - Materials List - Page 3
+          pdf.add(pdf.ln(1));
 
-    if (this.config.invoiceConfig.hasMaterialList && invoice.materials.length > 0) {
-      const materials = invoice.materials.map((material) => {
-        if (invoice.materialListType == '1')
-          return [
-            {
-              text: material.name,
-              bold: false,
-              alignment: 'center',
-              border: [false, true, true, true],
+          pdf.add({
+            text: 'Lista de materias:',
+            bold: true,
+            style: 'insideText',
+            pageBreak: invoice.hasPageBreak.materialTable ? 'before' : '',
+          });
+
+          pdf.add(pdf.ln(1));
+
+          pdf.add({
+            style: 'insideText',
+            table: {
+              widths: invoice.materialListType == '1' ? ['*', '*'] : ['*', '*', '*', '*'],
+              dontBreakRows: true,
+              body: [header(), ...materials],
             },
-            {
-              text: material.amount,
-              bold: false,
-              alignment: 'center',
-              border: [true, true, false, true],
+            layout: this.noSideBorderTable('#BFBFBF', '#476471'),
+          });
+        }
+
+        if (this.config.invoiceConfig.hasImportants) {
+          // Body - Importante Notes - Page 3
+          pdf.add(pdf.ln(1));
+
+          pdf.add({
+            text: 'Importante',
+            bold: true,
+            style: 'insideText',
+            pageBreak: invoice.hasPageBreak.importants ? 'before' : '',
+          });
+
+          pdf.add(pdf.ln(1));
+
+          const importants = invoice.importants.map((important, index) => {
+            return important.isVisible ? important.text + (index == invoice.importants.length - 1 ? '.' : ';') : '';
+          });
+          pdf.add({
+            style: 'insideText',
+            table: {
+              widths: ['*'],
+              dontBreakRows: true,
+              body: [
+                [
+                  {
+                    ul: importants,
+                    fontSize: 10,
+                  },
+                ],
+              ],
             },
-          ];
-        return [
-          {
-            text: material.name,
-            bold: false,
-            alignment: 'center',
-            border: [false, true, true, true],
-          },
-          {
-            text: material.amount,
-            bold: false,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: material.value,
-            bold: false,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'R$ ' + material.total,
-            bold: false,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ];
-      });
-      const header = () => {
-        if (invoice.materialListType == '1')
-          return [
+            layout: this.noBorderTable('#82ADAD'),
+          });
+        }
+
+        pdf.add(pdf.ln(2));
+
+        pdf.add({
+          text: 'Estamos disponíveis para negociação a qualquer momento, afim de que possamos fechar negócio e empreender juntos.',
+          style: 'insideText',
+        });
+
+        pdf.add(pdf.ln(2));
+
+        pdf.add({
+          text: 'Maceió/Alagoas, ' + this.today + '.',
+          style: 'insideText',
+        });
+
+        pdf.add(pdf.ln(2));
+
+        pdf.add({
+          text: [{ text: this.config.socialConfig.companyName, bold: true }],
+          style: 'insideText',
+        });
+
+        if (this.config.invoiceConfig.hasMarketingPage) this.addMarketingPage(pdf, metrics);
+
+        pdf.add({
+          stack: [
+            { text: 'Mais informações:', bold: true, color: '#79BA9E' },
             {
-              text: 'MATERIAL',
+              text: author.professionalEmail + ' • ' + author.phone,
+              fontSize: 10,
               bold: true,
-              alignment: 'center',
-              border: [false, true, true, true],
             },
             {
-              text: 'QUANTIDADE',
+              text: this.config.socialConfig.address,
+              fontSize: 10,
               bold: true,
-              alignment: 'center',
-              border: [true, true, false, true],
             },
-          ];
-        return [
-          {
-            text: 'MATERIAL',
-            bold: true,
-            alignment: 'center',
-            border: [false, true, true, true],
-          },
-          {
-            text: 'QUANTIDADE',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'VALOR',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'TOTAL',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ];
-      };
-      const total = this.stringUtil.numberToMoney(
-        invoice.materials.reduce(
-          (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
-          0
-        )
-      );
-      if (invoice.materialListType == '2')
-        materials.push([
-          {
-            text: '',
-            bold: true,
-            alignment: 'center',
-            border: [false, true, true, true],
-          },
-          {
-            text: '',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'TOTAL',
-            bold: true,
-            alignment: 'center',
-            border: [true, true, true, true],
-          },
-          {
-            text: 'R$ ' + total,
-            bold: true,
-            alignment: 'center',
-            border: [true, true, false, true],
-          },
-        ]);
-      // Body - Materials List - Page 3
-      pdf.add(pdf.ln(1));
-
-      pdf.add({
-        text: 'Lista de materias:',
-        bold: true,
-        style: 'insideText',
-        pageBreak: invoice.hasPageBreak.materialTable ? 'before' : '',
-      });
-
-      pdf.add(pdf.ln(1));
-
-      pdf.add({
-        style: 'insideText',
-        table: {
-          widths: invoice.materialListType == '1' ? ['*', '*'] : ['*', '*', '*', '*'],
-          dontBreakRows: true,
-          body: [header(), ...materials],
-        },
-        layout: this.noSideBorderTable('#BFBFBF', '#476471'),
-      });
-    }
-
-    if (this.config.invoiceConfig.hasImportants) {
-      // Body - Importante Notes - Page 3
-      pdf.add(pdf.ln(1));
-
-      pdf.add({
-        text: 'Importante:',
-        bold: true,
-        style: 'insideText',
-        pageBreak: invoice.hasPageBreak.importants ? 'before' : '',
-      });
-
-      pdf.add(pdf.ln(1));
-
-      const importants = invoice.importants.map((important, index) => {
-        return important.isVisible ? important.text + (index == invoice.importants.length - 1 ? '.' : ';') : '';
-      });
-      pdf.add({
-        style: 'insideText',
-        table: {
-          widths: ['*'],
-          dontBreakRows: true,
-          body: [
-            [
-              {
-                ul: importants,
-                fontSize: 10,
-              },
-            ],
+            {
+              text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
+              fontSize: 10,
+            },
           ],
-        },
-        layout: this.noBorderTable('#82ADAD'),
+          style: 'insideText',
+          absolutePosition: { x: 250, y: 841.89 - 102 },
+        });
+        // QR code
+        if (this.config.socialConfig.qrcodeURL)
+          pdf.add({
+            absolutePosition: { x: 190, y: 841.89 - 100 },
+            qr: this.config.socialConfig.qrcodeURL,
+            fit: '70',
+            foreground: '#052E41',
+          });
+
+        if (preview) {
+          pdf.create().getDataUrl((dataURL: any) => {
+            this.pdfData$.next(dataURL);
+          });
+        } else {
+          if (openPdf) {
+            pdf.create().open();
+          } else pdf.create().download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
+        }
       });
-    }
-
-    pdf.add(pdf.ln(2));
-
-    pdf.add({
-      text: 'Estamos disponíveis para negociação a qualquer momento, afim de que possamos fechar negócio e empreender juntos.',
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(2));
-
-    pdf.add({
-      text: 'Maceió/Alagoas, ' + this.today + '.',
-      style: 'insideText',
-    });
-
-    pdf.add(pdf.ln(2));
-
-    pdf.add({
-      text: [{ text: 'Nortan Engenharia', bold: true }, ', Solução Integrada em Projetos.'],
-      style: 'insideText',
-    });
-
-    if (this.config.invoiceConfig.hasMarketingPage) this.addMarketingPage(pdf, metrics);
-
-    pdf.add({
-      stack: [
-        { text: 'Mais informações:', bold: true, color: '#79BA9E' },
-        {
-          text: author.professionalEmail + ' • ' + author.phone,
-          fontSize: 10,
-          bold: true,
-        },
-        {
-          text: this.config.socialConfig.address,
-          fontSize: 10,
-          bold: true,
-        },
-        {
-          text: this.config.socialConfig.cnpj ? 'CNPJ: ' + this.config.socialConfig.cnpj : '',
-          fontSize: 10,
-        },
-      ],
-      style: 'insideText',
-      absolutePosition: { x: 250, y: 841.89 - 102 },
-    });
-
-    // QR code
-    if (this.config.socialConfig.qrcodeURL)
-      pdf.add({
-        absolutePosition: { x: 190, y: 841.89 - 100 },
-        qr: this.config.socialConfig.qrcodeURL,
-        fit: '70',
-        foreground: '#052E41',
-      });
-
-    if (preview) {
-      pdf.create().getDataUrl((dataURL: any) => {
-        this.pdfData$.next(dataURL);
-      });
-    } else {
-      if (openPdf) {
-        pdf.create().open();
-      } else pdf.create().download(invoice.code.replace(/\//g, '_').slice(0, -3) + '.pdf');
-    }
   }
 
   private addMarketingPage(pdf: PdfMakeWrapper, metrics: any): void {
