@@ -16,6 +16,7 @@ import MockedServerSocket from 'socket.io-mock';
 
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -37,25 +38,15 @@ describe('NotificationService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('test1@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser1@mocked.com');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
     userService = TestBed.inject(UserService);
-    mockedUsers = [];
+
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
     mockedTeams = [];
-
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test';
-    tmpUser.email = 'test@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    mockedUsers.push(cloneDeep(tmpUser));
 
     const tmpTeam = new Team();
     tmpTeam._id = '0';

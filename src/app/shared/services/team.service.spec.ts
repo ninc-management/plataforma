@@ -4,7 +4,6 @@ import { TeamService } from './team.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { Team, TeamConfig, TeamMember } from '@models/team';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '@models/user';
 import { AuthService } from 'app/auth/auth.service';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
@@ -14,6 +13,8 @@ import { take } from 'rxjs/operators';
 import { reviveDates } from '../utils';
 import { Sector } from '@models/shared';
 import { WebSocketService } from './web-socket.service'
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { User } from '@models/user';
 
 describe('TeamService', () => {
   let service: TeamService;
@@ -75,30 +76,9 @@ describe('TeamService', () => {
     service = TestBed.inject(TeamService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    mockedUsers = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedTeams = [];
     mockedSectors = [];
-
-    let mockedUser = new User();
-    mockedUser._id = '0';
-    mockedUser.fullName = 'Test1';
-    mockedUser.email = 'test1@te.st';
-    mockedUser.phone = '123456';
-    mockedUsers.push(cloneDeep(mockedUser));
-
-    mockedUser = new User();
-    mockedUser._id = '1';
-    mockedUser.fullName = 'Test2';
-    mockedUser.email = 'test2@te.st';
-    mockedUser.phone = '123456';
-    mockedUsers.push(cloneDeep(mockedUser));
-
-    mockedUser = new User();
-    mockedUser._id = '2';
-    mockedUser.fullName = 'Test3';
-    mockedUser.email = 'test3@te.st';
-    mockedUser.phone = '123456';
-    mockedUsers.push(cloneDeep(mockedUser));
 
     const mockedSector1 = new Sector();
     mockedSector1._id = '0';

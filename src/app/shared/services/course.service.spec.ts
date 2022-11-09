@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { reviveDates } from '../utils';
 import { CourseService } from './course.service';
 import { WebSocketService } from './web-socket.service';
@@ -71,15 +72,10 @@ describe('CourseService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(CourseService);
-    mockedUsers = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedParticipants = [];
     mockedCourses = [];
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
+
     let tmpParticipant = new CourseParticipant();
     tmpParticipant._id = '0';
     tmpParticipant.name = 'testUser';

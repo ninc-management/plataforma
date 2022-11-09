@@ -1,17 +1,18 @@
-import { discardPeriodicTasks, fakeAsync, flush, flushMicrotasks, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { UserService, CONTRACT_BALANCE } from './user.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { last, take, publish, mergeMap } from 'rxjs/operators';
+import { last, take, mergeMap } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { User } from '@models/user';
 import { cloneDeep } from 'lodash';
-import { ConnectableObservable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AuthService } from 'app/auth/auth.service';
 import { SocketMock } from 'app/../types/socketio-mock';
 import { WebSocketService } from './web-socket.service';
 import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 
 describe('UserService', () => {
   let service: UserService;
@@ -33,7 +34,7 @@ describe('UserService', () => {
         .pipe(take(2), last())
         .subscribe((users) => {
           const expectedUsers = reviveDates(mockedUsers);
-          expect(users.length).toBe(2);
+          expect(users.length).toBe(3);
           expect(users).toEqual(expectedUsers);
           test(expectedUsers, done);
         });
@@ -52,19 +53,7 @@ describe('UserService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
-    mockedUsers = [];
-    const tmp = new User();
-    tmp._id = '0';
-    tmp.fullName = 'Test1';
-    tmp.email = 'test1@te.st';
-    tmp.phone = '123456';
-    mockedUsers.push(cloneDeep(tmp));
-    tmp._id = '1';
-    tmp.fullName = 'Test2';
-    tmp.email = 'test2@te.st';
-    tmp.phone = '123456';
-    tmp.profilePicture = 'test.png';
-    mockedUsers.push(cloneDeep(tmp));
+    mockedUsers = cloneDeep(externalMockedUsers);
   });
 
   afterEach(() => {
@@ -77,17 +66,13 @@ describe('UserService', () => {
 
   it('refreshCurrentUser should work', (done: DoneFn) => {
     const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
+    const test2 = service.currentUser$.pipe(take(2), last());
     // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      () => {},
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
+    test1.subscribe((user) => {
+      expect(user).toEqual(new User());
+    });
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -103,14 +88,14 @@ describe('UserService', () => {
 
   baseTest('getUser should work', (expectedUsers: User[], done: DoneFn) => {
     service
-      .getUser('test1@te.st')
+      .getUser('mockedUser1@mocked.com')
       .pipe(
         take(2),
         last(),
         mergeMap((user) => {
           expect(user).toBeTruthy();
           expect(user).toEqual(reviveDates(mockedUsers[0]));
-          return service.getUser('test3@te.st').pipe(take(2), last());
+          return service.getUser('inexistentMockedUser@mocked.com').pipe(take(2), last());
         })
       )
       .subscribe((user) => {
@@ -150,19 +135,15 @@ describe('UserService', () => {
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
     const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
+    const test2 = service.currentUser$.pipe(take(2), last());
 
     // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      () => {},
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
+    test1.subscribe((user) => {
+      expect(user).toEqual(new User());
+    });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -185,7 +166,7 @@ describe('UserService', () => {
             }
             case 2: {
               expect(users[1].fullName).toEqual('Test works');
-              expect(user).not.toEqual(mockedUsers[1]);
+              expect(user).toEqual(mockedUsers[1]);
               done();
               break;
             }
@@ -222,19 +203,15 @@ describe('UserService', () => {
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
     const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
+    const test2 = service.currentUser$.pipe(take(2), last());
 
     // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      () => {},
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
+    test1.subscribe((user) => {
+      expect(user).toEqual(new User());
+    });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -255,8 +232,8 @@ describe('UserService', () => {
             }
             case 2: {
               expect(users[1].fullName).toEqual('Test works');
-              expect(user).not.toEqual(mockedUsers[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
+                expect(finalUser).not.toEqual(mockedUsers[1]);
                 expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));
                 done();
               });
@@ -295,19 +272,15 @@ describe('UserService', () => {
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
     const test1 = service.currentUser$.pipe(take(1));
-    const test2 = service.currentUser$.pipe(take(2), last(), publish());
+    const test2 = service.currentUser$.pipe(take(2), last());
 
     // No current user
-    test1.subscribe(
-      (user) => {
-        expect(user).toEqual(new User());
-      },
-      () => {},
-      (test2 as ConnectableObservable<User>).connect.bind(test2)
-    );
+    test1.subscribe((user) => {
+      expect(user).toEqual(new User());
+    });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('test2@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));

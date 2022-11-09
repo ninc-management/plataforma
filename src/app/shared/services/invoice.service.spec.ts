@@ -15,6 +15,7 @@ import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -69,25 +70,14 @@ describe('InvoiceService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('test1@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser1@mocked.com');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
     httpMock = TestBed.inject(HttpTestingController);
-    mockedUsers = [];
+
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic1@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
-    tmpUser.email = 'test2@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic2@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
+
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
@@ -299,9 +289,9 @@ describe('InvoiceService', () => {
 
   baseTest('idToProfilePicture should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToProfilePicture(undefined)).toEqual('');
-    expect(service.idToProfilePicture('0')).toEqual('pic1@pic.com');
+    expect(service.idToProfilePicture('0')).toEqual('pic0@pic.com');
     expect(service.idToProfilePicture(mockedInvoices[0])).toEqual((expectedInvoices[0].author as User).profilePicture!);
-    expect(service.idToProfilePicture('1')).toEqual('pic2@pic.com');
+    expect(service.idToProfilePicture('1')).toEqual('pic1@pic.com');
     expect(service.idToProfilePicture(mockedInvoices[1])).toEqual((expectedInvoices[1].author as User).profilePicture!);
   });
 

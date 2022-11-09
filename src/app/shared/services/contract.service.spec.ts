@@ -26,6 +26,7 @@ import { Invoice } from '@models/invoice';
 import { Team, TeamMember } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -86,29 +87,19 @@ describe('ContractService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('test1@te.st');
+    authServiceSpy.userEmail.and.returnValue('mockedUser1@mocked.com');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
     configService = TestBed.inject(ConfigService);
     httpMock = TestBed.inject(HttpTestingController);
+
     mockedTeams = [];
-    mockedUsers = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
     mockedContracts = [];
     mockedChecklistItem = [];
     mockedConfigs = [];
 
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
-    tmpUser.email = 'test2@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
     const tmpTeam = new Team();
     tmpTeam._id = '0';
     tmpTeam.name = 'test';

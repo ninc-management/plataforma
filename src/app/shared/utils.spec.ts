@@ -40,6 +40,7 @@ import {
 } from './utils';
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './services/web-socket.service';
+import { externalMockedUsers } from './mocked-data/mocked-users';
 
 interface MockedUser {
   _id: string;
@@ -125,20 +126,12 @@ describe('UtilsService', () => {
     users$.next([{ _id: '0', name: 'Test', remove: 'test' }]);
     spyOn(console, 'log');
 
-    mockedUsers = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
     mockedTeams = [];
     mockedContracts = [];
     mockedContractors = [];
     mockedConfigs = [];
-
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic1@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
 
     const tmpTeam = new Team();
     tmpTeam._id = '0';

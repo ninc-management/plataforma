@@ -14,6 +14,7 @@ import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
 import { parseISO } from 'date-fns';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 
 describe('ContractorService', () => {
   let service: ContractorService;
@@ -71,14 +72,10 @@ describe('ContractorService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractorService);
     httpMock = TestBed.inject(HttpTestingController);
-    mockedUsers = [];
+
+    mockedUsers = cloneDeep(externalMockedUsers);
     mockedContractors = [];
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    mockedUsers.push(cloneDeep(tmpUser));
+
     const tmpContractor = new Contractor();
     tmpContractor._id = '0';
     tmpContractor.address = {
