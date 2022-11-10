@@ -17,17 +17,17 @@ import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { AuthService } from 'app/auth/auth.service';
-import { Fees, reviveDates } from 'app/shared/utils';
+import { reviveDates } from 'app/shared/utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { CONTRACT_BALANCE } from './user.service';
-import { DEFAULT_CONFIG } from './config.service';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
-import { Team, TeamMember } from '@models/team';
+import { Team } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -99,7 +99,7 @@ describe('ContractService', () => {
     mockedInvoices = [];
     mockedContracts = [];
     mockedChecklistItem = [];
-    mockedConfigs = [];
+    mockedConfigs = cloneDeep(externalMockedConfigs);
 
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
@@ -276,23 +276,6 @@ describe('ContractService', () => {
     tmpContract.checklist.push(cloneDeep(mockedChecklistItem[1]));
 
     mockedContracts.push(tmpContract);
-
-    let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
-    tmpConfig._id = '0';
-    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
-    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
-    tmpConfig.oneDriveConfig.isActive = true;
-    tmpConfig.oneDriveConfig.contracts = {
-      oneDriveId: '0',
-      folderId: '1',
-    };
-    tmpConfig.oneDriveConfig.providers = {
-      oneDriveId: '0',
-      folderId: '1',
-    };
-    mockedConfigs = [tmpConfig];
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');

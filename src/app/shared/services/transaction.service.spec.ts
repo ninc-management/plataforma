@@ -16,6 +16,7 @@ import { PlatformConfig } from '@models/platformConfig';
 import { DEFAULT_CONFIG } from './config.service';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -72,9 +73,10 @@ describe('TransactionService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TransactionService);
     httpMock = TestBed.inject(HttpTestingController);
+
     mockedTransactions = [];
     mockedTeams = cloneDeep(externalMockedTeams);
-    mockedConfigs = [];
+    mockedConfigs = cloneDeep(externalMockedConfigs);
 
     // Ordem de empenho
     let tmpTransaction = new Transaction();

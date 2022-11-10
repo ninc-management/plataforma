@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { MetricsService } from './metrics.service';
 import { DEFAULT_CONFIG } from './config.service';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
 
 describe('MetricsService', () => {
   let service: MetricsService;
@@ -21,7 +22,7 @@ describe('MetricsService', () => {
     const configReq = httpMock.expectOne('/api/config/all');
     const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';
-    const mockedConfigs = [tmpConfig];
+    const mockedConfigs = cloneDeep(externalMockedConfigs);
     expect(configReq.request.method).toBe('POST');
     configReq.flush(mockedConfigs);
   });

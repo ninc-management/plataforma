@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash';
 import { OneDriveService } from './onedrive.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { DEFAULT_CONFIG } from './config.service';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
 
 describe('OnedriveService', () => {
   let service: OneDriveService;
@@ -21,7 +22,7 @@ describe('OnedriveService', () => {
     const configReq = httpMock.expectOne('/api/config/all');
     const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';
-    const mockedConfigs = [tmpConfig];
+    const mockedConfigs = cloneDeep(externalMockedConfigs);
     expect(configReq.request.method).toBe('POST');
     configReq.flush(mockedConfigs);
   });
