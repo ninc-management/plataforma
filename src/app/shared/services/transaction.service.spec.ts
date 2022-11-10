@@ -15,13 +15,16 @@ import { Team } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
 import { DEFAULT_CONFIG } from './config.service';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
 
 describe('TransactionService', () => {
   let service: TransactionService;
   let httpMock: HttpTestingController;
+
   let mockedConfigs: PlatformConfig[];
   let mockedTeams: Team[];
   let mockedTransactions: Transaction[];
+
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
@@ -70,7 +73,7 @@ describe('TransactionService', () => {
     service = TestBed.inject(TransactionService);
     httpMock = TestBed.inject(HttpTestingController);
     mockedTransactions = [];
-    mockedTeams = [];
+    mockedTeams = cloneDeep(externalMockedTeams);
     mockedConfigs = [];
 
     // Ordem de empenho

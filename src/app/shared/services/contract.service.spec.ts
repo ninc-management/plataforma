@@ -27,6 +27,7 @@ import { Team, TeamMember } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -93,28 +94,13 @@ describe('ContractService', () => {
     configService = TestBed.inject(ConfigService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    mockedTeams = [];
+    mockedTeams = cloneDeep(externalMockedTeams);
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
     mockedContracts = [];
     mockedChecklistItem = [];
     mockedConfigs = [];
 
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'test';
-    tmpTeam.leader = '0';
-    tmpTeam.purpose = 'Be tested';
-    tmpTeam.abrev = 'T';
-    tmpTeam.config.path = `test`;
-    const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = '0';
-    tmpTeamMember.sectors = ['0'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    tmpTeamMember.user = '1';
-    tmpTeamMember.sectors = ['1'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    mockedTeams.push(cloneDeep(tmpTeam));
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
     tmpInvoice.author = mockedUsers[0];
@@ -379,7 +365,7 @@ describe('ContractService', () => {
               mockedConfigs[0].oneDriveConfig.contracts.oneDriveId +
               '!' +
               mockedConfigs[0].oneDriveConfig.contracts.folderId +
-              ':/test/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR';
+              ':/testPath/01-Em Andamento/ORC-000_ANO-NOME DO CONTRATO-GESTOR';
 
             const req2 = httpMock.expectOne(queryModelFolderURI);
             expect(req2.request.method).toBe('GET');
