@@ -3,9 +3,11 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { handle } from '../utils';
+import { CompanyService } from './company.service';
 import { WebSocketService } from './web-socket.service';
 
-import { ColorShades, PlatformConfig } from '@models/platformConfig';
+import { ColorShades, Company } from '@models/company';
+import { PlatformConfig } from '@models/platformConfig';
 
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
@@ -329,7 +331,7 @@ export class ConfigService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(private http: HttpClient, private wsService: WebSocketService) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService, private companyService: CompanyService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -391,15 +393,17 @@ export class ConfigService implements OnDestroy {
   }
 
   applyCustomColors(config: PlatformConfig): void {
-    if (!this.hasCustomColor(config)) return;
+    if (!config.company) return;
+    const company = this.companyService.idToCompany(config.company);
+    if (!this.hasCustomColor(company)) return;
 
     let bodyStyleAttribute = '';
 
-    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, config.socialConfig.colors.primary);
-    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, config.socialConfig.colors.success);
-    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, config.socialConfig.colors.info);
-    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, config.socialConfig.colors.danger);
-    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, config.socialConfig.colors.warning);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.PRIMARY, company.colors.primary);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.SUCCESS, company.colors.success);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.INFO, company.colors.info);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.DANGER, company.colors.danger);
+    bodyStyleAttribute += this.getCSSValuesByColorType(COLOR_TYPES.WARNING, company.colors.warning);
 
     (document.body as any).setAttribute('style', bodyStyleAttribute);
   }
@@ -421,17 +425,17 @@ export class ConfigService implements OnDestroy {
   }
 
   //If the primary shades are saved, then all other colors shades are saved too
-  private hasCustomColor(config: PlatformConfig): boolean {
+  private hasCustomColor(company: Company): boolean {
     return (
-      config.socialConfig.colors.primary.color100 != '' &&
-      config.socialConfig.colors.primary.color200 != '' &&
-      config.socialConfig.colors.primary.color300 != '' &&
-      config.socialConfig.colors.primary.color400 != '' &&
-      config.socialConfig.colors.primary.color500 != '' &&
-      config.socialConfig.colors.primary.color600 != '' &&
-      config.socialConfig.colors.primary.color700 != '' &&
-      config.socialConfig.colors.primary.color800 != '' &&
-      config.socialConfig.colors.primary.color900 != ''
+      company.colors.primary.color100 != '' &&
+      company.colors.primary.color200 != '' &&
+      company.colors.primary.color300 != '' &&
+      company.colors.primary.color400 != '' &&
+      company.colors.primary.color500 != '' &&
+      company.colors.primary.color600 != '' &&
+      company.colors.primary.color700 != '' &&
+      company.colors.primary.color800 != '' &&
+      company.colors.primary.color900 != ''
     );
   }
 }

@@ -25,8 +25,10 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, trackByIndex } from 'app/shared/utils';
 
+import { Company } from '@models/company';
 import { Notification, NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
+import { UploadedFile } from '@models/shared';
 import { User } from '@models/user';
 
 interface NbMenuItem {
@@ -53,6 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentNotificationsQtd = 0;
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
+  company: Company = new Company();
+  logoWhite: UploadedFile = new UploadedFile();
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
@@ -79,21 +83,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const multipleBellRing = new Audio('/assets/audios/multipleBellRing.mp3');
     const singleBellRing = new Audio('/assets/audios/singleBellRing.mp3');
-
-    combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
+    combineLatest([
+      this.userService.currentUser$,
+      this.configService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
+      this.configService.getConfig(),
+      this.companyService.getCompanies(),
+    ])
       .pipe(
-        skipWhile(([, configLoaded, _]) => !configLoaded),
+        skipWhile(([, configLoaded, configCompanyLoaded, ,]) => !(configLoaded && configCompanyLoaded)),
         takeUntil(this.destroy$),
         filter(([currentUser, ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, , config]) => {
+      .subscribe(([currentUser, , , config]) => {
         this.user = currentUser;
         this.user.notifications.sort(sortNotifications);
         this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
         this.configService.applyCustomColors(this.config);
-        if (config[0].company) this.menuTitle = this.companyService.idToCompany(config[0].company).companyName;
+        if (config[0].company) {
+          this.company = this.companyService.idToCompany(config[0].company);
+          this.menuTitle = this.company.companyName;
+          if (this.company.logoWhite) this.logoWhite = this.company.logoWhite;
+        }
       });
 
     combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
@@ -138,12 +151,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
-          if (this.config.company) {
-            this.menuTitle =
-              event.item.title === 'Início'
-                ? this.companyService.idToCompany(this.config.company).companyName
-                : event.item.title;
-          }
+          this.menuTitle = event.item.title === 'Início' ? this.company.companyName : event.item.title;
         }
       });
 

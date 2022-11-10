@@ -23,6 +23,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { Permissions } from 'app/shared/utils';
 
+import { Company } from '@models/company';
 import { Team } from '@models/team';
 
 enum DIALOG_TYPES {
@@ -48,6 +49,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
   social: NbMenuItem[] = [];
   nortanTeam!: Team;
   idleTimer?: number;
+  company: Company = new Company();
 
   constructor(
     private router: Router,
@@ -125,77 +127,84 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     });
 
     combineLatest([
+      this.configService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
       this.configService.getConfig(),
       this.teamService.getTeams(),
+      this.companyService.getCompanies(),
       this.accessChecker.isGranted(Permissions.ELO_PRINCIPAL, 'view-users'),
     ])
       .pipe(
         takeUntil(this.destroy$),
-        skipWhile(([configs, teams, _]) => configs.length == 0 && teams.length == 0)
+        skipWhile(
+          ([configsLoaded, teamsLoaded, companiesLoaded, , , ,]) => !(configsLoaded && teamsLoaded && companiesLoaded)
+        )
       )
-      .subscribe(([configs, teams, isGranted]) => {
-        if (configs[0]) {
+      .subscribe(([_, , , configs, teams, , isGranted]) => {
+        if (configs[0].company) {
           this.social = [];
-          if (configs[0].company && this.companyService.idToCompany(configs[0].company).glassfrogLink) {
+          this.company = this.companyService.idToCompany(configs[0].company);
+          if (this.company.glassfrogLink) {
             this.social.push({
               title: 'GlassFrog',
               icon: {
                 icon: 'glassfrog',
                 pack: 'fac',
               },
-              url: this.companyService.idToCompany(configs[0].company).glassfrogLink,
+              url: this.company.glassfrogLink,
               target: '_blank,',
               pathMatch: 'full',
               selected: false,
             });
           }
-          if (configs[0].company && this.companyService.idToCompany(configs[0].company).gathertownLink) {
+          if (this.company.gathertownLink) {
             this.social.push({
               title: 'Gather Town',
               icon: {
                 icon: 'gtown',
                 pack: 'fac',
               },
-              url: this.companyService.idToCompany(configs[0].company).gathertownLink,
+              url: this.company.gathertownLink,
               target: '_blank,',
               pathMatch: 'full',
               selected: false,
             });
           }
-          if (configs[0].company && this.companyService.idToCompany(configs[0].company).youtubeLink) {
+          if (this.company.youtubeLink) {
             this.social.push({
               title: 'YouTube',
               icon: {
                 icon: 'social-youtube',
                 pack: 'ion',
               },
-              url: this.companyService.idToCompany(configs[0].company).youtubeLink,
+              url: this.company.youtubeLink,
               target: '_blank,',
               pathMatch: 'full',
               selected: false,
             });
           }
-          if (configs[0].company && this.companyService.idToCompany(configs[0].company).linkedinLink) {
+          if (this.company.linkedinLink) {
             this.social.push({
               title: 'LinkedIn',
               icon: {
                 icon: 'social-linkedin',
                 pack: 'ion',
               },
-              url: this.companyService.idToCompany(configs[0].company).linkedinLink,
+              url: this.company.linkedinLink,
               target: '_blank,',
               pathMatch: 'full',
               selected: false,
             });
           }
-          if (configs[0].company && this.companyService.idToCompany(configs[0].company).instagramLink) {
+          if (this.company.instagramLink) {
             this.social.push({
               title: 'Instagram',
               icon: {
                 icon: 'social-instagram',
                 pack: 'ion',
               },
-              url: this.companyService.idToCompany(configs[0].company).instagramLink,
+              url: this.company.instagramLink,
               target: '_blank,',
               pathMatch: 'full',
               selected: false,

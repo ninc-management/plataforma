@@ -22,12 +22,17 @@ export class FooterComponent implements OnDestroy {
   isDataLoaded = false;
 
   public constructor(private configService: ConfigService, private companyService: CompanyService) {
-    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+    combineLatest([
+      this.configService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
+      this.configService.getConfig(),
+      this.companyService.getCompanies(),
+    ])
       .pipe(
-        skipWhile(([configLoaded, _]) => !configLoaded),
+        skipWhile(([configLoaded, configCompanyLoaded, ,]) => !(configLoaded && configCompanyLoaded)),
         takeUntil(this.destroy$)
       )
-      .subscribe(([_, config]) => {
+      .subscribe(([, , config]) => {
         if (config[0].company) this.companyName = this.companyService.idToCompany(config[0].company).companyName;
       });
   }

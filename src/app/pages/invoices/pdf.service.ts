@@ -316,18 +316,19 @@ export class PdfService {
           },
         });
 
-        // Header
-        const header = {
-          columns: [
-            await new Img(
-              this.config.socialConfig.logoDefault.url ||
-                'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'
-            )
-              .width(200)
-              .build(),
-          ] as any,
-          margin: [5, 20, 5, 5],
-        };
+    // Header
+    const header = {
+      columns: [
+        await new Img(
+          idToProperty(this.config.company, this.companyService.idToCompany.bind(this.companyService), 'logoDefault')
+            .url ||
+            'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'
+        )
+          .width(200)
+          .build(),
+      ] as any,
+      margin: [5, 20, 5, 5],
+    };
 
         if (this.config.invoiceConfig.hasHeader) {
           header.columns.push([
