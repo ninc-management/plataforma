@@ -42,6 +42,7 @@ import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './services/web-socket.service';
 import { externalMockedUsers } from './mocked-data/mocked-users';
 import { externalMockedTeams } from './mocked-data/mocked-teams';
+import { externalMockedConfigs } from './mocked-data/mocked-config';
 
 interface MockedUser {
   _id: string;
@@ -132,7 +133,7 @@ describe('UtilsService', () => {
     mockedTeams = cloneDeep(externalMockedTeams);
     mockedContracts = [];
     mockedContractors = [];
-    mockedConfigs = [];
+    mockedConfigs = cloneDeep(externalMockedConfigs)
 
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
@@ -169,13 +170,6 @@ describe('UtilsService', () => {
     tmpContractor.fullName = 'Test1';
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
-
-    const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
-    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
-    mockedConfigs.push(tmpConfig);
 
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
