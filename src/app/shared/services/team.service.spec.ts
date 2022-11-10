@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { TeamService } from './team.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { Team, TeamConfig, TeamMember } from '@models/team';
+import { Team, TeamMember } from '@models/team';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { AuthService } from 'app/auth/auth.service';
 import { cloneDeep } from 'lodash';
@@ -15,6 +15,8 @@ import { Sector } from '@models/shared';
 import { WebSocketService } from './web-socket.service'
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { User } from '@models/user';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedSectors } from '../mocked-data/mocked-sectors';
 
 describe('TeamService', () => {
   let service: TeamService;
@@ -77,63 +79,8 @@ describe('TeamService', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedTeams = [];
-    mockedSectors = [];
-
-    const mockedSector1 = new Sector();
-    mockedSector1._id = '0';
-    mockedSector1.name = 'Test Sector 1';
-    mockedSector1.abrev = 'TS1';
-
-    const mockedSector2 = new Sector();
-    mockedSector2._id = '1';
-    mockedSector2.name = 'Test Sector 2';
-    mockedSector2.abrev = 'TS2';
-
-    mockedSectors = [mockedSector1, mockedSector2];
-
-    const mockedTeam = new Team();
-    mockedTeam._id = '0';
-    mockedTeam.name = 'teamTest';
-    mockedTeam.leader = mockedUsers[0];
-    mockedTeam.members = [
-      {
-        user: mockedUsers[0],
-        sectors: [],
-      },
-      {
-        user: mockedUsers[1],
-        sectors: [],
-      },
-    ] as TeamMember[];
-    mockedTeam.transactions = [];
-    mockedTeam.created = new Date();
-    mockedTeam.purpose = 'created for testing team service methods';
-    mockedTeam.expenses = [];
-    mockedTeam.config = new TeamConfig();
-    mockedTeam.abrev = 'TT';
-    mockedTeam.isOrganizationTeam = false;
-    mockedTeam.sectors.push(cloneDeep(mockedSector1));
-    mockedTeam.overrideSupportPercentages = false;
-    mockedTeam.overrideIntermediationPercentages = false;
-    mockedTeam.supportOrganizationPercentage = '0,00';
-    mockedTeam.supportNfPercentage = '0,00';
-    mockedTeam.intermediationOrganizationPercentage = '0,00';
-    mockedTeam.intermediationNfPercentage = '0,00'
-    mockedTeams.push(cloneDeep(mockedTeam));
-
-    mockedTeam._id = '1';
-    mockedTeam.name = 'Test Team 2';
-    mockedTeam.abrev = 'TT2';
-    mockedTeam.isOrganizationTeam = true;
-    mockedTeam.sectors = [cloneDeep(mockedSector2)];
-    mockedTeam.members = [
-      {
-        user: mockedUsers[2],
-        sectors: [],
-      },
-    ];
-    mockedTeams.push(cloneDeep(mockedTeam));
+    mockedTeams = cloneDeep(externalMockedTeams);
+    mockedSectors = cloneDeep(externalMockedSectors)
 
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -220,12 +167,12 @@ describe('TeamService', () => {
 
   baseTest('idToComposedName should work', (expectedTeams: Team[]) => {
     expect(service.idToComposedName(undefined)).toBe('');
-    expect(service.idToComposedName('0')).toBe('TT - teamTest');
+    expect(service.idToComposedName('0')).toBe('EMT1 - Test Team 0');
   });
 
   baseTest('idToSectorComposedName should work', (expectedTeams: Team[]) => {
     expect(service.idToSectorComposedName(undefined)).toBe('');
-    expect(service.idToSectorComposedName('0')).toBe('TS1 - Test Sector 1');
+    expect(service.idToSectorComposedName('0')).toBe('TS0 - Test Sector 0');
   });
 
   baseTest('idToTeam should work', (expectedTeams: Team[]) => {

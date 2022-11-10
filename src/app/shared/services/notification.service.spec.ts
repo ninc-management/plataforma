@@ -17,6 +17,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -46,23 +47,7 @@ describe('NotificationService', () => {
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
-    mockedTeams = [];
-
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'test';
-    tmpTeam.leader = '0';
-    tmpTeam.purpose = 'Be tested';
-    tmpTeam.abrev = 'T';
-    tmpTeam.config.path = `test`;
-    const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = mockedUsers[0]._id;
-    tmpTeamMember.sectors = ['0'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    tmpTeamMember.user = mockedUsers[1]._id;
-    tmpTeamMember.sectors = ['1'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    mockedTeams.push(cloneDeep(tmpTeam));
+    mockedTeams = cloneDeep(externalMockedTeams)
 
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
