@@ -9,9 +9,9 @@ import MockedServerSocket from 'socket.io-mock';
 import { ConfigService } from './config.service';
 import { AuthService } from 'app/auth/auth.service';
 
-import { ExpenseType } from '@models/team';
 import { cloneDeep } from 'lodash';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
 
 describe('ConfigService', () => {
   let service: ConfigService;
@@ -69,17 +69,7 @@ describe('ConfigService', () => {
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(ConfigService);
 
-    mockedConfigs = [];
-    let mockedConfig = new PlatformConfig();
-    let mockedExpenseType = new ExpenseType();
-
-    mockedConfig._id = '0';
-    mockedExpenseType.name = 'mockedExpenseType1';
-    mockedExpenseType.subTypes.push('mockedExpenseSubType1');
-    mockedExpenseType.subTypes.push('mockedExpenseSubType2');
-    mockedConfig.expenseConfig.adminExpenseTypes.push(cloneDeep(mockedExpenseType));
-    mockedConfig.expenseConfig.contractExpenseTypes.push(cloneDeep(mockedExpenseType));
-    mockedConfigs.push(cloneDeep(mockedConfig));
+    mockedConfigs = cloneDeep(externalMockedConfigs);
   });
 
   afterEach(() => {
@@ -215,9 +205,17 @@ describe('ConfigService', () => {
   baseTest('getConfig should work', (expectedConfigs: PlatformConfig[]) => {});
 
   baseTest('expenseSubTypes should work', (expectedConfigs: PlatformConfig[]) => {
-    expect(service.expenseSubTypes(expectedConfigs[0].expenseConfig.adminExpenseTypes[0].name)).toEqual([
-      'mockedExpenseSubType1',
-      'mockedExpenseSubType2',
+    expect(service.expenseSubTypes(expectedConfigs[0].expenseConfig.adminExpenseTypes[1].name)).toEqual([
+      'Aluguel',
+      'Anuidade em Conselhos',
+      'Divisão de Lucro',
+      'Energia',
+      'Equipamentos',
+      'Internet',
+      'Folha de Pagamento',
+      'Transporte - Colaborador Interno',
+      'Veículos',
+      'Outros',
     ]);
 
     mockedConfigs[0].expenseConfig.adminExpenseTypes[0].subTypes = [];
