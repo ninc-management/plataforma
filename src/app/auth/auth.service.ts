@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, take, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -76,29 +76,20 @@ export class AuthService {
     const body = {
       email: email,
     };
-    return this.http.post('/api/auth/isRegistered', body).pipe(
-      take(1),
-      map((res) => (res as any).isRegistered)
-    );
+    return this.http.post<boolean>('/api/auth/isRegistered', body).pipe(take(1));
   }
 
   isUserProspect(email: string): Observable<boolean> {
     const body = {
       email: email,
     };
-    return this.http.post('/api/auth/isProspect', body).pipe(
-      take(1),
-      map((res) => (res as any).isRegistered)
-    );
+    return this.http.post<boolean>('/api/auth/isProspect', body).pipe(take(1));
   }
 
   isUserActive(email: string): Observable<boolean> {
     const body = {
       email: email,
     };
-    return this.http.post('api/auth/isActive', body).pipe(
-      take(1),
-      map((res) => (res as any).isActive)
-    );
+    return this.http.post<boolean>('api/auth/isActive', body).pipe(take(1));
   }
 }

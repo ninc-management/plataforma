@@ -33,25 +33,19 @@ router.post('/register', (req, res, next) => {
 
 router.post('/isRegistered', (req, res, next) => {
   UserModel.findOne({ email: req.body.email }).then((user) => {
-    res.status(200).json({
-      isRegistered: !!user,
-    });
+    res.status(200).json(!!user);
   });
 });
 
 router.post('/isProspect', (req, res, next) => {
   ProspectModel.findOne({ email: req.body.email }).then((prospect) => {
-    res.status(200).json({
-      isRegistered: !!prospect,
-    });
+    res.status(200).json(!!prospect);
   });
 });
 
 router.post('/isActive', (req, res, next) => {
   UserModel.findOne({ email: req.body.email }).then((user) => {
-    res.status(200).json({
-      isActive: user ? user.active : false,
-    });
+    res.status(200).json(user ? user.active : false);
   });
 });
 
