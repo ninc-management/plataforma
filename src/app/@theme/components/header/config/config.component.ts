@@ -292,11 +292,6 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  checkLogo(logoType: LOGO_TYPES): UploadedFile {
-    if (this.company[logoType]) return this.company[logoType];
-    return new UploadedFile();
-  }
-
   openUploadDialog(logoType: LOGO_TYPES): void {
     this.dialogService
       .open(FileUploadDialogComponent, {
@@ -330,7 +325,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           const uploadedLogo = new UploadedFile();
           uploadedLogo.name = files[0].name;
           uploadedLogo.url = files[0].url;
-          this.company[logoType] = uploadedLogo;
+          this.clonedCompany[logoType] = uploadedLogo;
         }
       });
   }
@@ -348,9 +343,9 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private verifyEmptyLogos(): void {
     Object.values(LOGO_TYPES).forEach((logoType: LOGO_TYPES) => {
-      if (this.company[logoType] && this.company[logoType].url == '') {
-        this.company[logoType].name = 'Anexe uma logo';
-        this.company[logoType].url =
+      if (this.clonedCompany[logoType] && this.clonedCompany[logoType].url == '') {
+        this.clonedCompany[logoType].name = 'Anexe uma logo';
+        this.clonedCompany[logoType].url =
           'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999';
       }
     });

@@ -95,7 +95,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         filter(([currentUser, ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, , , config]) => {
+      .subscribe(([currentUser, , , config,]) => {
         this.user = currentUser;
         this.user.notifications.sort(sortNotifications);
         this.currentNotificationsQtd = currentUser.notifications.length;

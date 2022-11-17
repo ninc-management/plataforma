@@ -141,7 +141,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
           ([configsLoaded, teamsLoaded, companiesLoaded, , , ,]) => !(configsLoaded && teamsLoaded && companiesLoaded)
         )
       )
-      .subscribe(([_, , , configs, teams, , isGranted]) => {
+      .subscribe(([, , , configs, teams, , isGranted]) => {
         if (configs[0].company) {
           this.social = [];
           this.company = this.companyService.idToCompany(configs[0].company);

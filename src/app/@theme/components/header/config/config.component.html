@@ -177,7 +177,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="checkLogo(LOGO_TYPES.logoDefault).name"
+                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoDefault].name"
                   #logoDefault="ngModel"
                   id="input-logo-default"
                   name="logo-default"
@@ -201,7 +201,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="checkLogo(LOGO_TYPES.logoWithoutName).name"
+                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWithoutName].name"
                   #logoWithoutName="ngModel"
                   id="input-logo-without-name"
                   name="logo-without-name"
@@ -225,7 +225,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="checkLogo(LOGO_TYPES.logoWhite).name"
+                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWhite].name"
                   #logoWhite="ngModel"
                   id="input-logo-white"
                   name="logo-white"
@@ -249,7 +249,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="checkLogo(LOGO_TYPES.logoWhiteWithoutName).name"
+                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWhiteWithoutName].name"
                   #logoWhiteWithoutName="ngModel"
                   id="input-logo-white-without-name"
                   name="logo-white-without-name"
@@ -265,7 +265,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo</label>
                 <img
-                  [src]="checkLogo(LOGO_TYPES.logoDefault).url"
+                  [src]="clonedCompany[LOGO_TYPES.logoDefault].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa"
@@ -274,7 +274,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo sem nome</label>
                 <img
-                  [src]="checkLogo(LOGO_TYPES.logoWithoutName).url"
+                  [src]="clonedCompany[LOGO_TYPES.logoWithoutName].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa sem nome"
@@ -285,7 +285,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo tema escuro</label>
                 <img
-                  [src]="checkLogo(LOGO_TYPES.logoWhite).url"
+                  [src]="clonedCompany[LOGO_TYPES.logoWhite].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa tema escuro"
@@ -294,7 +294,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo tema escuro sem nome</label>
                 <img
-                  [src]="checkLogo(LOGO_TYPES.logoWhiteWithoutName).url"
+                  [src]="clonedCompany[LOGO_TYPES.logoWhiteWithoutName].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa tema escuro sem nome"
