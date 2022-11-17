@@ -12,9 +12,9 @@ import { Contractor } from '@models/contractor';
 import { SocketMock } from 'types/socketio-mock';
 import { cloneDeep } from 'lodash';
 import { take } from 'rxjs/operators';
-import { parseISO } from 'date-fns';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedContractors } from '../mocked-data/mocked-contractors';
 
 describe('ContractorService', () => {
   let service: ContractorService;
@@ -74,39 +74,7 @@ describe('ContractorService', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedContractors = [];
-
-    const tmpContractor = new Contractor();
-    tmpContractor._id = '0';
-    tmpContractor.address = {
-      zipCode: '',
-      streetAddress: 'rua teste1',
-      houseNumber: '',
-      district: '',
-      complement: '',
-      city: '',
-      state: '',
-    };
-    tmpContractor.document = '000.000.000-11';
-    tmpContractor.email = 'test1@te.st';
-    tmpContractor.fullName = 'Test1';
-    tmpContractor.phone = '(00) 0000-0000';
-    mockedContractors.push(cloneDeep(tmpContractor));
-    tmpContractor._id = '1';
-    tmpContractor.address = {
-      zipCode: '',
-      streetAddress: 'rua teste2',
-      houseNumber: '',
-      district: '',
-      complement: '',
-      city: '',
-      state: '',
-    };
-    tmpContractor.document = '000.000.000-12';
-    tmpContractor.email = 'test2@te.st';
-    tmpContractor.fullName = 'Test2';
-    tmpContractor.phone = '(00) 0000-0000';
-    mockedContractors.push(cloneDeep(tmpContractor));
+    mockedContractors = cloneDeep(externalMockedContractors)
   });
 
   afterEach(() => {
