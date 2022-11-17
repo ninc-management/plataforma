@@ -1214,5 +1214,10 @@ db.teams.find().forEach((team) => {
   db.teams.replaceOne({ _id: team._id }, team);
 });
 
+db.platformconfigs.find().forEach((config) => {
+  config.invoiceConfig.importantBlockFontColor = 'white';
+  config.invoiceConfig.isImportantBlockFontBold = false;
 
-overrideSupportPercentagesoverrideSupportPercentages
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
+
