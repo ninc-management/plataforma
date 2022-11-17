@@ -67,8 +67,8 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   contractExpenseTypes: TypeItem[] = [];
   invoices: Invoice[] = [];
   users: User[] = [];
-  PERMISSIONS = ['Administrador', 'Membro', 'Financeiro'];
-  PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado'];
+  PERMISSIONS = ['Administrador', 'Membro', 'Financeiro', 'AER Natan®'];
+  PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado', 'Assessor Executivo Remoto'];
 
   newLevel: string = '';
   newUnit: string = '';

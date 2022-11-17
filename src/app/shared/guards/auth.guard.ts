@@ -148,6 +148,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
               obj[position.roleTypeName] = {
                 parent: 'Diretor Financeiro',
               };
+            } else if (position.permission == 'AER Natan®') {
+              obj[position.roleTypeName] = {
+                parent: 'Assessor Executivo Remoto',
+              };
             }
           });
         }
