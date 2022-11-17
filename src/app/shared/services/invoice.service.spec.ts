@@ -16,6 +16,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -76,44 +77,8 @@ describe('InvoiceService', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedInvoices = [];
+    mockedInvoices = cloneDeep(externalMockedInvoices)
 
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
-    tmpInvoice.code = 'test';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.trello = true;
-    tmpInvoice.team.push({
-      user: '1',
-      sector: 'Trocar',
-      distribution: '50,00',
-      locals: {
-        grossValue: '',
-        netValue: '',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
-    tmpInvoice = new Invoice();
-    tmpInvoice._id = '1';
-    tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
-    tmpInvoice.code = 'test1';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.trello = false;
-    tmpInvoice.team.push({
-      user: '0',
-      sector: 'test',
-      distribution: '50,00',
-      locals: {
-        grossValue: '',
-        netValue: '',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -305,8 +270,8 @@ describe('InvoiceService', () => {
   baseTest('isInvoiceMember should work', (expectedInvoices: Invoice[]) => {
     expect(service.isInvoiceMember('1', '0')).toBe(true);
     expect(service.isInvoiceMember(expectedInvoices[0], '1')).toBe(true);
-    expect(service.isInvoiceMember('1', mockedUsers[1])).toBe(false);
-    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])).toBe(false);
+    expect(service.isInvoiceMember('1', mockedUsers[2])).toBe(false);
+    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[3])).toBe(false);
   });
 
   baseTest('role should work', (expectedInvoices: Invoice[]) => {
@@ -318,7 +283,7 @@ describe('InvoiceService', () => {
   });
 
   baseTest('teamMembers should work', (expectedInvoices: Invoice[]) => {
-    expect(service.teamMembers(mockedInvoices[0])).toEqual(reviveDates(mockedUsers.splice(1, 1)));
-    expect(service.teamMembers(mockedInvoices[1])).toEqual(reviveDates(mockedUsers.splice(0, 1)));
+    expect(service.teamMembers(mockedInvoices[0])).toEqual(reviveDates(mockedUsers.slice(0, 2)));
+    expect(service.teamMembers(mockedInvoices[1])).toEqual(reviveDates(mockedUsers.slice(0, 2).reverse()));
   });
 });
