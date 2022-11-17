@@ -12,6 +12,8 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { groupByDateTimeSerie, isPhone } from 'app/shared/utils';
 
+import { Contractor } from '@models/contractor';
+import { Invoice } from '@models/invoice';
 import { Team } from '@models/team';
 
 enum TAB_TITLES {

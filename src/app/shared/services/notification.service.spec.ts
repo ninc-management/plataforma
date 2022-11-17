@@ -18,6 +18,7 @@ import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -46,25 +47,8 @@ describe('NotificationService', () => {
     userService = TestBed.inject(UserService);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedInvoices = [];
+    mockedInvoices = cloneDeep(externalMockedInvoices);
     mockedTeams = cloneDeep(externalMockedTeams)
-
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0]._id;
-    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
-    tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '1.000,00';
-    const tmpInvoiceMember = new InvoiceTeamMember();
-    tmpInvoiceMember.user = mockedUsers[0]._id;
-    tmpInvoiceMember.sector = '0';
-    tmpInvoice.team.push(cloneDeep(tmpInvoiceMember));
-    tmpInvoiceMember.user = mockedUsers[1]._id;
-    tmpInvoiceMember.sector = '1';
-    tmpInvoice.team.push(cloneDeep(tmpInvoiceMember));
-    mockedInvoices.push(cloneDeep(tmpInvoice));
 
     userService.getUsers().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/user/all');

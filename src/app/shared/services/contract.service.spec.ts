@@ -28,6 +28,7 @@ import { WebSocketService } from './web-socket.service';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -96,68 +97,11 @@ describe('ContractService', () => {
 
     mockedTeams = cloneDeep(externalMockedTeams);
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedInvoices = [];
+    mockedInvoices = cloneDeep(externalMockedInvoices);
     mockedContracts = [];
     mockedChecklistItem = [];
     mockedConfigs = cloneDeep(externalMockedConfigs);
 
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
-    tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '1.000,00';
-    tmpInvoice.trello = true;
-    tmpInvoice.team.push({
-      user: '0',
-      sector: '0',
-      distribution: '60,00',
-      locals: {
-        grossValue: '480,00',
-        netValue: '480,00',
-      },
-    });
-    tmpInvoice.team.push({
-      user: '1',
-      sector: '1',
-      distribution: '40,00',
-      locals: {
-        grossValue: '320,00',
-        netValue: '320,00',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
-    tmpInvoice = new Invoice();
-    tmpInvoice._id = '1';
-    tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.nortanTeam = '0';
-    tmpInvoice.sector = '1';
-    tmpInvoice.code = 'ORC-2/2021-NRT/DEC-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '2.000,00';
-    tmpInvoice.administration = 'pessoal';
-    tmpInvoice.trello = false;
-    tmpInvoice.team.push({
-      user: '1',
-      sector: '0',
-      distribution: '60,00',
-      locals: {
-        grossValue: '1.176,00',
-        netValue: '976,08',
-      },
-    });
-    tmpInvoice.team.push({
-      user: '0',
-      sector: '1',
-      distribution: '40,00',
-      locals: {
-        grossValue: '784,00',
-        netValue: '650,72',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
     let tmpContract = new Contract();
     tmpContract._id = '0';
     tmpContract.created = new Date('2021/09/14');
