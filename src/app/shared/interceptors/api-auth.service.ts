@@ -11,10 +11,11 @@ export class ApiAuthService implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const urlCheck = request.url.split('/').filter((el) => el.length > 0);
-    if (urlCheck.length > 0 && urlCheck[0] == 'api')
+    if (urlCheck.length > 0 && urlCheck[0] == 'api' && urlCheck[1] != 'auth')
       request = request.clone({
         headers: request.headers.set('Authorization', environment.apiToken),
       });
+
     return next.handle(request);
   }
 }
