@@ -1,14 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ContractService, CONTRACT_STATOOS, SPLIT_TYPES } from './contract.service';
+import { ContractService, CONTRACT_STATOOS } from './contract.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import {
   Contract,
-  ContractReceipt,
-  ContractExpense,
-  ContractPayment,
   ContractChecklistItem,
-  ChecklistItemAction,
 } from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Subject, take } from 'rxjs';
@@ -18,8 +14,7 @@ import MockedServerSocket from 'socket.io-mock';
 import { cloneDeep } from 'lodash';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
-import { ConfigService, EXPENSE_TYPES } from './config.service';
-import { CONTRACT_BALANCE } from './user.service';
+import { ConfigService } from './config.service';
 import { User } from '@models/user';
 import { Invoice } from '@models/invoice';
 import { Team } from '@models/team';
@@ -29,6 +24,8 @@ import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
+import { externalMockedContracts } from '../mocked-data/mocked-contracts';
+import { externalMockedChecklistItems } from '../mocked-data/mocked-checklist-items';
 
 describe('ContractService', () => {
   let service: ContractService;
@@ -98,128 +95,9 @@ describe('ContractService', () => {
     mockedTeams = cloneDeep(externalMockedTeams);
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
-    mockedContracts = [];
-    mockedChecklistItem = [];
+    mockedContracts = cloneDeep(externalMockedContracts);
+    mockedChecklistItem = cloneDeep(externalMockedChecklistItems);
     mockedConfigs = cloneDeep(externalMockedConfigs);
-
-    let tmpContract = new Contract();
-    tmpContract._id = '0';
-    tmpContract.created = new Date('2021/09/14');
-    tmpContract.invoice = mockedInvoices[0];
-    tmpContract.locals.liquid = '574,60';
-    tmpContract.locals.balance = '800,00';
-    tmpContract.locals.notPaid = '718,25';
-    tmpContract.locals.value = '1.000,00';
-    let tmpExpense = new ContractExpense();
-    tmpExpense.author = mockedUsers[0];
-    tmpExpense.source = mockedUsers[0];
-    tmpExpense.description = 'test';
-    tmpExpense.nf = false;
-    tmpExpense.type = EXPENSE_TYPES.APORTE;
-    tmpExpense.splitType = SPLIT_TYPES.INDIVIDUAL;
-    tmpExpense.value = '1.000,00';
-    tmpExpense.paid = true;
-    tmpExpense.code = '#0';
-    tmpExpense.paidDate = new Date();
-    tmpExpense.team.push({
-      user: mockedUsers[0],
-      value: '1.000,00',
-      percentage: '100,00',
-      sector: 'Trocar',
-    });
-    tmpContract.expenses.push(tmpExpense);
-    tmpExpense = new ContractExpense();
-    tmpExpense.author = mockedUsers[1];
-    tmpExpense.source = CONTRACT_BALANCE;
-    tmpExpense.description = 'test';
-    tmpExpense.nf = false;
-    tmpExpense.type = EXPENSE_TYPES.COMISSAO;
-    tmpExpense.splitType = SPLIT_TYPES.PROPORCIONAL;
-    tmpExpense.value = '200,00';
-    tmpExpense.paid = true;
-    tmpExpense.code = '#0';
-    tmpExpense.paidDate = new Date();
-    tmpExpense.team.push({
-      user: mockedUsers[0],
-      value: '120,00',
-      percentage: '60,00',
-      sector: 'Trocar',
-    });
-    tmpExpense.team.push({
-      user: mockedUsers[1],
-      value: '80,00',
-      percentage: '40,00',
-      sector: 'Trocar',
-    });
-    tmpContract.expenses.push(tmpExpense);
-    tmpContract.expenses.push(new ContractExpense());
-
-    let tmpChecklistItem = new ContractChecklistItem();
-    let tmpChecklistItemAction = new ChecklistItemAction();
-    tmpChecklistItemAction.name = 'testAction1';
-    tmpChecklistItem.actionList.push(tmpChecklistItemAction);
-    mockedChecklistItem.push(tmpChecklistItem);
-
-    tmpChecklistItem = new ContractChecklistItem();
-    tmpChecklistItemAction = new ChecklistItemAction();
-    tmpChecklistItemAction.name = 'testAction2';
-    tmpChecklistItem.actionList.push(tmpChecklistItemAction);
-    mockedChecklistItem.push(tmpChecklistItem);
-
-    tmpContract.checklist.push(cloneDeep(mockedChecklistItem[0]));
-
-    mockedContracts.push(tmpContract);
-    tmpContract = new Contract();
-    tmpContract._id = '1';
-    tmpContract.created = new Date('2021/09/14');
-    tmpContract.ISS = '2,00';
-    tmpContract.locals.liquid = '1.607,20';
-    tmpContract.locals.balance = '0,00';
-    tmpContract.locals.notPaid = '820,00';
-    tmpContract.locals.value = '2.000,00';
-    tmpContract.invoice = mockedInvoices[1];
-    let tmpReceipt = new ContractReceipt();
-    tmpReceipt.value = '1.000,00';
-    tmpReceipt.notaFiscal = '0,00';
-    tmpReceipt.nortanPercentage = '18,00';
-    tmpReceipt.description = 'Teste';
-    tmpReceipt.paid = true;
-    tmpReceipt.paidDate = new Date();
-    tmpContract.receipts.push(tmpReceipt);
-    let tmpPayment = new ContractPayment();
-    tmpPayment.service = 'test';
-    tmpPayment.value = '410,00';
-    tmpPayment.paid = true;
-    tmpPayment.paidDate = new Date();
-    tmpPayment.team.push({
-      user: mockedUsers[0],
-      sector: 'Trocar',
-      value: '410,00',
-      percentage: '100,00',
-    });
-    tmpContract.payments.push(tmpPayment);
-    tmpPayment = new ContractPayment();
-    tmpPayment.service = 'test';
-    tmpPayment.value = '410,00';
-    tmpPayment.paid = true;
-    tmpPayment.paidDate = new Date();
-    tmpPayment.team.push({
-      user: mockedUsers[0],
-      sector: 'Trocar',
-      value: '205,00',
-      percentage: '50,00',
-    });
-    tmpPayment.team.push({
-      user: mockedUsers[1],
-      sector: 'Trocar',
-      value: '205,00',
-      percentage: '50,00',
-    });
-    tmpContract.payments.push(tmpPayment);
-    tmpContract.payments.push(new ContractPayment());
-    tmpContract.checklist.push(cloneDeep(mockedChecklistItem[1]));
-
-    mockedContracts.push(tmpContract);
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');

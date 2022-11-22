@@ -45,6 +45,7 @@ import { externalMockedTeams } from './mocked-data/mocked-teams';
 import { externalMockedConfigs } from './mocked-data/mocked-config';
 import { externalMockedInvoices } from './mocked-data/mocked-invoices';
 import { externalMockedContractors } from './mocked-data/mocked-contractors';
+import { externalMockedContracts } from './mocked-data/mocked-contracts';
 
 interface MockedUser {
   _id: string;
@@ -133,18 +134,9 @@ describe('UtilsService', () => {
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
     mockedTeams = cloneDeep(externalMockedTeams);
-    mockedContracts = [];
+    mockedContracts = cloneDeep(externalMockedContracts);;
     mockedContractors = cloneDeep(externalMockedContractors);
     mockedConfigs = cloneDeep(externalMockedConfigs)
-
-    let tmpContract = new Contract();
-    tmpContract._id = '0';
-    tmpContract.invoice = mockedInvoices[0];
-    tmpContract.locals.liquid = '676,00';
-    tmpContract.locals.balance = '800,00';
-    tmpContract.locals.notPaid = '845,00';
-    tmpContract.locals.value = '1.000,00';
-    mockedContracts.push(cloneDeep(tmpContract));
 
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
