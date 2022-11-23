@@ -17,6 +17,7 @@ import {
 } from 'app/pages/promotions/promotion-item/promotion-item.component';
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedPromotions } from '../mocked-data/mocked-promotions';
 
 describe('PromotionService', () => {
   let service: PromotionService;
@@ -73,24 +74,7 @@ describe('PromotionService', () => {
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(PromotionService);
 
-    mockedPromotions = [];
-
-    const tmpPromotion = new Promotion();
-    tmpPromotion._id = '0';
-    tmpPromotion.name = 'Test';
-    tmpPromotion.cashback = '15';
-    tmpPromotion.status = PROMOTION_STATOOS.EM_ANDAMENTO;
-    tmpPromotion.start = new Date();
-    tmpPromotion.end = new Date();
-    tmpPromotion.rules = [
-      {
-        container: RULE_OBJECTS.CONTRATOS,
-        operator: RULE_OPERATORS.MAIOR_IGUAL,
-        value: '1000',
-      },
-    ];
-
-    mockedPromotions.push(cloneDeep(tmpPromotion));
+    mockedPromotions = cloneDeep(externalMockedPromotions);
   });
 
   afterEach(() => {
