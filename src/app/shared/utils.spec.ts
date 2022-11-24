@@ -43,6 +43,8 @@ import { WebSocketService } from './services/web-socket.service';
 import { externalMockedUsers } from './mocked-data/mocked-users';
 import { externalMockedTeams } from './mocked-data/mocked-teams';
 import { externalMockedConfigs } from './mocked-data/mocked-config';
+import { externalMockedInvoices } from './mocked-data/mocked-invoices';
+import { externalMockedContractors } from './mocked-data/mocked-contractors';
 
 interface MockedUser {
   _id: string;
@@ -129,21 +131,11 @@ describe('UtilsService', () => {
     spyOn(console, 'log');
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedInvoices = [];
+    mockedInvoices = cloneDeep(externalMockedInvoices);
     mockedTeams = cloneDeep(externalMockedTeams);
     mockedContracts = [];
-    mockedContractors = [];
+    mockedContractors = cloneDeep(externalMockedContractors);
     mockedConfigs = cloneDeep(externalMockedConfigs)
-
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
-    tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '1.000,00';
-    mockedInvoices.push(cloneDeep(tmpInvoice));
 
     let tmpContract = new Contract();
     tmpContract._id = '0';
@@ -153,23 +145,6 @@ describe('UtilsService', () => {
     tmpContract.locals.notPaid = '845,00';
     tmpContract.locals.value = '1.000,00';
     mockedContracts.push(cloneDeep(tmpContract));
-
-    const tmpContractor = new Contractor();
-    tmpContractor._id = '0';
-    tmpContractor.address = {
-      zipCode: '',
-      streetAddress: 'rua teste1',
-      houseNumber: '',
-      district: '',
-      complement: '',
-      city: '',
-      state: '',
-    };
-    tmpContractor.document = '000.000.000-11';
-    tmpContractor.email = 'test1@te.st';
-    tmpContractor.fullName = 'Test1';
-    tmpContractor.phone = '(00) 0000-0000';
-    mockedContractors.push(cloneDeep(tmpContractor));
 
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
