@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Ref } from '@typegoose/typegoose/lib/types';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
 
 import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
@@ -16,7 +15,7 @@ import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
 import { UploadedFile } from '@models/shared';
-import { ExpenseType, Team, TeamExpense } from '@models/team';
+import { ExpenseType, Team } from '@models/team';
 import { MODEL_COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
@@ -127,10 +126,10 @@ export class TransactionItemComponent implements OnInit {
         this.availableContracts = this.availableContracts
           .map((contract) => this.contractService.fillContract(contract))
           .sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
-        this.userSearch = user.fullName;
+        this.userSearch = user.name;
         this.userData =
           user.AER.length > 0
-            ? of(populateList<Ref<User | string>, User>(user.AER, this.userService.idToUser.bind(this.userService)))
+            ? of(populateList(user.AER, this.userService.idToUser.bind(this.userService)))
             : of([user]);
         this.platformConfig = config[0];
         this.teams = teams;
@@ -163,11 +162,11 @@ export class TransactionItemComponent implements OnInit {
   }
 
   registerTransaction(): void {
-    this.transactionService.saveTransaction(this.transaction).subscribe((saveTransactionResponse) => {
-      if (this.team) {
-        this.team.transactions.push(saveTransactionResponse.transaction._id);
-      }
-    });
+    if (this.team) {
+      this.transaction.costCenter = (this.transaction.costCenter as User | Team)._id;
+      this.team.expenses.push(this.transaction);
+      this.teamService.editTeam(this.team, true);
+    }
     this.submit.emit();
   }
 

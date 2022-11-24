@@ -36,50 +36,6 @@ export class TeamFinancialTransaction {
   value!: string;
 }
 
-export class TeamExpense {
-  @prop({ required: true, ref: () => User })
-  author!: Ref<User>;
-
-  @prop({ required: true, ref: () => User })
-  source!: Ref<User>;
-
-  @prop({ required: true, ref: () => Provider })
-  provider?: Ref<Provider>;
-
-  @prop({ required: true })
-  description!: string;
-
-  @prop({ required: true })
-  nf: boolean = true;
-
-  @prop({ required: true })
-  type!: string;
-
-  @prop()
-  subType: string = '';
-
-  @prop({ required: true })
-  value!: string;
-
-  @prop({ required: true })
-  created: Date = new Date();
-
-  @prop({ required: true })
-  lastUpdate: Date = new Date();
-
-  @prop({ required: true })
-  paid: boolean = false;
-
-  @prop({ required: true })
-  code!: string;
-
-  @prop()
-  paidDate?: Date;
-
-  @prop({ type: () => [UploadedFile] })
-  uploadedFiles: UploadedFile[] = [];
-}
-
 export class ExpenseType {
   @prop({ required: true })
   name!: string;
@@ -109,11 +65,8 @@ export class Team extends Base<string> {
   @prop({ required: true })
   purpose!: string;
 
-  @prop({ type: () => [TeamExpense] })
-  expenses: TeamExpense[] = [];
-
   @prop({ ref: () => Transaction })
-  transactions: Ref<Transaction>[] = [];
+  expenses: Ref<Transaction>[] = [];
 
   @prop({ required: true })
   config: TeamConfig = new TeamConfig();

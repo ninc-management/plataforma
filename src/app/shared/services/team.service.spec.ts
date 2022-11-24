@@ -126,7 +126,7 @@ describe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    mockedTeam.transactions = [];
+    mockedTeam.expenses = [];
     mockedTeam.created = new Date();
     mockedTeam.purpose = 'created for testing team service methods';
     mockedTeam.expenses = [];
@@ -183,7 +183,7 @@ describe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    newMockedTeam.transactions = [];
+    newMockedTeam.expenses = [];
     newMockedTeam.purpose = 'created for testing team service methods';
     let i = 1;
     const data = {

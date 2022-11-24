@@ -4,7 +4,9 @@ import { cloneDeep } from 'lodash';
 
 import { TeamModel } from '../models/models';
 import { Team } from '../models/team';
+import { Transaction } from '../models/transaction';
 import { teamMap } from '../shared/global';
+import { addTransaction } from './transaction';
 
 const router = express.Router();
 let requested = false;
@@ -34,13 +36,10 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   await mutex.acquire().then(async (release) => {
-    if (req.body.creatingExpense) {
-      const newExpense = req.body.team.expenses.pop();
-      await TeamModel.findOne({ _id: req.body.team._id }).then((team) => {
-        newExpense.code = '#' + team.expenses.length.toString();
-        team.expenses.push(newExpense);
-        req.body.team.expenses = cloneDeep(team.expenses);
-      });
+    if (req.body.creatingTransaction) {
+      let newTransaction = req.body.team.expenses.pop();
+      newTransaction = await addTransaction(newTransaction, null, newTransaction);
+      req.body.team.expenses.push((newTransaction as Transaction)._id);
     }
 
     try {

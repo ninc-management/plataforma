@@ -21,10 +21,10 @@
     </div>
   </nb-tab>
   <nb-tab
-    *ngIf="nortanTeam"
-    [tabTitle]="isPhone() ? '' : nortanTeam.name"
+    *ngIf="organizationTeam"
+    [tabTitle]="isPhone() ? '' : organizationTeam.name"
     [tabIcon]="nortanIcon"
-    [tabId]="nortanTeam ? nortanTeam._id : ''"
+    [tabId]="organizationTeam ? organizationTeam._id : ''"
     responsive
   >
     <nb-card fullWidth class="noOverflow">

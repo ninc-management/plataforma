@@ -6,14 +6,15 @@ import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { TransactionDialogComponent } from '../../transactions/transaction-dialog/transaction-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
-import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { formatDate, idToProperty, isPhone, populateList, valueSort } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
-import { Team, TeamExpense } from '@models/team';
+import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -24,7 +25,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Input() iTeam: string = '';
   destroy$ = new Subject<void>();
-  expenses: TeamExpense[] = [];
+  expenses: Transaction[] = [];
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
   team: Team = new Team();
@@ -34,7 +35,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   formatDate = formatDate;
   idToProperty = idToProperty;
 
-  get filtredExpenses(): TeamExpense[] {
+  get filtredExpenses(): Transaction[] {
     if (this.searchQuery !== '')
       return this.expenses.filter((expense) => {
         return (
@@ -42,11 +43,11 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
-          (expense.source &&
-            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
+          (expense.costCenter &&
+            idToProperty(expense, this.transactionService.populateCostCenter.bind(this.transactionService), 'name')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
           formatDate(expense.created).includes(this.searchQuery.toLowerCase())
@@ -86,7 +87,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
         width: '5%',
         compareFunction: this.itemSort,
       },
-      source: {
+      costCenter: {
         title: 'Fonte',
         type: 'string',
       },
@@ -142,6 +143,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     private dialogService: NbDialogService,
     private teamService: TeamService,
     private configService: ConfigService,
+    private transactionService: TransactionService,
     public userService: UserService
   ) {}
 
@@ -155,23 +157,35 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     combineLatest([
       this.teamService.getTeams(),
       this.configService.getConfig(),
+      this.transactionService.getTransactions(),
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
     ])
       .pipe(
-        skipWhile(([, , isTeamLoaded, isConfigLoaded]) => !isTeamLoaded && !isConfigLoaded),
+        skipWhile(
+          ([, , , isTeamLoaded, isConfigLoaded, isTransactionLoaded]) =>
+            !isTeamLoaded || !isConfigLoaded || !isTransactionLoaded
+        ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([teams, configs, ,]) => {
+      .subscribe(([teams, configs, , , ,]) => {
         this.platformConfig = configs[0];
         this.reloadTableSettings();
         const tmp = teams.find((team) => team._id === this.iTeam);
         this.team = tmp ? tmp : new Team();
-        this.expenses = cloneDeep(this.team.expenses);
+        this.expenses = populateList(
+          this.team.expenses,
+          this.transactionService.idToTransaction.bind(this.transactionService)
+        );
         this.source.load(
-          this.expenses.map((expense: any) => {
-            const tmp = cloneDeep(expense);
-            tmp.source = this.userService.idToShortName(tmp.source);
+          this.expenses.map((expense) => {
+            const tmp = cloneDeep(expense) as any;
+            tmp.costCenter = this.transactionService.populateCostCenter(
+              tmp,
+              this.teamService.idToTeam.bind(this.teamService),
+              this.userService.idToUser.bind(this.userService)
+            ).name;
             tmp.created = formatDate(tmp.created);
             return tmp;
           })
