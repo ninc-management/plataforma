@@ -131,7 +131,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   }
 
   updateUploaderOptions(): void {
-    const mediaFolderPath = this.provider.fullName;
+    const mediaFolderPath = this.provider.name;
     const fn = (name: string) => {
       const extension = name.match('[.].+');
       return 'documento' + extension;

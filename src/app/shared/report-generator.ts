@@ -102,7 +102,7 @@ export function generateUsersReport(
   csv += '\r\n';
 
   for (const key of Object.keys(data)) {
-    csv += (groupBy == GROUPING_TYPES.USER ? idToProperty(key, userRevival, 'fullName') : sectorRevival(key)) + ';';
+    csv += (groupBy == GROUPING_TYPES.USER ? idToProperty(key, userRevival, 'name') : sectorRevival(key)) + ';';
     data[key].monthly_data.forEach((individualData: any) => {
       csv += individualData.received + ';';
       csv += individualData.expenses + ';';

@@ -16,7 +16,7 @@ router.post('/user/all', async (req, res) => {
     users
       .filter((user) => user.active)
       .map((user) => ({
-        fullName: user.fullName,
+        name: user.name,
         profilePicture: user.profilePicture,
         exibitionName: user.exibitionName,
         teamsAsMember: teams

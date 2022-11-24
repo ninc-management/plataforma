@@ -260,7 +260,7 @@ export class PdfService {
         // Metadata definition
         pdf.info({
           title: 'Proposta de Orçamento Nortan Projetos',
-          author: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
+          author: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'name'),
           subject: 'Orçamento ' + invoice.code,
           keywords: 'orçamento',
         });
@@ -385,7 +385,7 @@ export class PdfService {
             ' associad' +
             author.article +
             ' ' +
-            author.fullName +
+            author.name +
             ', ' +
             (author.expertise
               ? author.expertise[
@@ -569,7 +569,7 @@ export class PdfService {
                   },
                   {
                     width: '*',
-                    text: provider.fullName + ', ' + provider.description,
+                    text: provider.name + ', ' + provider.description,
                     alignment: 'left',
                     fontSize: 8,
                   },
@@ -644,7 +644,7 @@ export class PdfService {
           text: idToProperty(
             invoice.contractor,
             this.contractorService.idToContractor.bind(this.contractorService),
-            'fullName'
+            'name'
           ),
           style: 'insideText',
         });

@@ -81,21 +81,21 @@ describe('TeamService', () => {
 
     let mockedUser = new User();
     mockedUser._id = '0';
-    mockedUser.fullName = 'Test1';
+    mockedUser.name = 'Test1';
     mockedUser.email = 'test1@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));
 
     mockedUser = new User();
     mockedUser._id = '1';
-    mockedUser.fullName = 'Test2';
+    mockedUser.name = 'Test2';
     mockedUser.email = 'test2@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));
 
     mockedUser = new User();
     mockedUser._id = '2';
-    mockedUser.fullName = 'Test3';
+    mockedUser.name = 'Test3';
     mockedUser.email = 'test3@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));

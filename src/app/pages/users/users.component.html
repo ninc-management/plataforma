@@ -40,7 +40,7 @@
                 <a (click)="userDialog({ data: user })">
                   <div class="row">
                     <div class="col-12" style="margin-bottom: 10px">
-                      <nb-user size="giant" [name]="user.fullName" [title]="user.document"></nb-user>
+                      <nb-user size="giant" [name]="user.name" [title]="user.document"></nb-user>
                     </div>
                     <div class="col-12">
                       <p>
@@ -99,7 +99,7 @@
                 <a (click)="userDialog({ data: prospect })">
                   <div class="row">
                     <div class="col-12" style="margin-bottom: 10px">
-                      <nb-user size="giant" [name]="prospect.fullName" [title]="prospect.document"></nb-user>
+                      <nb-user size="giant" [name]="prospect.name" [title]="prospect.document"></nb-user>
                     </div>
                     <div class="col-12">
                       <p>

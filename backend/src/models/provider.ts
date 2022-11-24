@@ -21,7 +21,7 @@ export class Contact {
 @plugin(mongooseUniqueValidator)
 export class Provider extends Base<string> {
   @prop({ required: true })
-  fullName: string = '';
+  name: string = '';
 
   @prop({ required: true, unique: true })
   document: string = '';
@@ -54,7 +54,7 @@ export class Provider extends Base<string> {
   observation: string = '';
 
   @prop()
-  name: string = '';
+  bankName: string = '';
 
   @prop()
   agency: string = '';

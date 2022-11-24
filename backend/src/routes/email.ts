@@ -29,7 +29,7 @@ router.post('/', (req, res, next) => {
     html:
       '<h3>🎉 Novo consultor cadastrado na lista de espera 🎉</h3><br>' +
       '<ul><li>Nome: ' +
-      user.fullName +
+      user.name +
       '</li>' +
       '<li>Email: ' +
       user.email +

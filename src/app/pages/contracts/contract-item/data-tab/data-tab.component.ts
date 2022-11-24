@@ -123,7 +123,7 @@ export class DataTabComponent implements OnInit {
                 this.authorSearch = idToProperty(
                   this.invoice.author,
                   this.userService.idToUser.bind(this.userService),
-                  'fullName'
+                  'name'
                 );
               } else {
                 this.authorData = of(
@@ -141,7 +141,7 @@ export class DataTabComponent implements OnInit {
               this.authorSearch = idToProperty(
                 this.invoice.author,
                 this.userService.idToUser.bind(this.userService),
-                'fullName'
+                'name'
               );
             }
           });

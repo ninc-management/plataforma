@@ -35,7 +35,7 @@ export class ProspectService {
         .post('/api/user/allProspects', {})
         .pipe(take(1))
         .subscribe((prospects: any) => {
-          this.prospects$.next((prospects as Prospect[]).sort((a, b) => nameSort(1, a.fullName, b.fullName)));
+          this.prospects$.next((prospects as Prospect[]).sort((a, b) => nameSort(1, a.name, b.name)));
           this._isDataLoaded$.next(true);
         });
       this.wsService

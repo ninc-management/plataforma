@@ -26,7 +26,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
       return this.teams.filter((team) => {
         return (
           team.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'fullName')
+          idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'name')
             .toLowerCase()
             .includes(this.searchQuery.toLowerCase()) ||
           team.abrev.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -103,11 +103,7 @@ export class TeamsComponent implements OnInit, OnDestroy {
       )
       .subscribe(([teams, , ,]) => {
         this.teams = teams.map((team) => {
-          team.locals.leaderName = idToProperty(
-            team.leader,
-            this.userService.idToUser.bind(this.userService),
-            'fullName'
-          );
+          team.locals.leaderName = idToProperty(team.leader, this.userService.idToUser.bind(this.userService), 'name');
           return team;
         });
         this.source.load(this.teams);

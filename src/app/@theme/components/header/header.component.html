@@ -78,7 +78,7 @@
           >
             <nb-user
               [name]="
-                [notification.from, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
+                [notification.from, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty
               "
               [title]="notification.title"
               [picture]="
@@ -107,7 +107,7 @@
       <nb-user
         [nbContextMenu]="userMenu"
         [onlyPicture]="userPictureOnly"
-        [name]="user.exibitionName ? user.exibitionName : user.fullName"
+        [name]="user.exibitionName ? user.exibitionName : user.name"
         [picture]="user.profilePicture ? user.profilePicture : ''"
       ></nb-user>
     </nb-action>

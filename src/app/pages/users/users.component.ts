@@ -38,14 +38,14 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.users.filter((user) => {
         return (
-          user.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           user.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           user.phone.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.users.sort((a, b) => {
-      return nameSort(1, a.fullName, b.fullName);
+      return nameSort(1, a.name, b.name);
     });
   }
 
@@ -53,12 +53,12 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.prospects.filter((prospect) => {
         return (
-          prospect.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          prospect.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           prospect.phone.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           prospect.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.prospects.sort((a, b) => nameSort(1, a.fullName, b.fullName));
+    return this.prospects.sort((a, b) => nameSort(1, a.name, b.name));
   }
 
   settings = {
@@ -80,7 +80,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       delete: false,
     },
     columns: {
-      fullName: {
+      name: {
         title: 'Associado',
         type: 'string',
       },
@@ -139,7 +139,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      fullName: {
+      name: {
         title: 'Prospecto',
         type: 'string',
       },
@@ -221,7 +221,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.dialogService
       .open(ConfirmationDialogComponent, {
         context: {
-          question: 'Realmente deseja aprovar ' + prospect.fullName + '?',
+          question: 'Realmente deseja aprovar ' + prospect.name + '?',
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

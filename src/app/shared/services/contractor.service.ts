@@ -51,7 +51,7 @@ export class ContractorService implements OnDestroy {
         .subscribe((contractors: any) => {
           this.contractors$.next(
             (contractors as Contractor[]).sort((a, b) => {
-              return nameSort(1, a.fullName, b.fullName);
+              return nameSort(1, a.name, b.name);
             })
           );
           this._isDataLoaded$.next(true);

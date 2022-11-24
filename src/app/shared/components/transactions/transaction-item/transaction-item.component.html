@@ -505,7 +505,7 @@
           Não foi possível achar um centro de custo
           "
             fieldSize="large"
-            [nameField]="options.costCenterListType == cCTypes.USER ? 'fullName' : 'name'"
+            [nameField]="options.costCenterListType == cCTypes.USER ? 'name' : 'name'"
             pictureField="profilePicture"
             [data$]="costCenterData$"
             [minSearchLength]="0"
@@ -632,7 +632,7 @@
             Não foi possível achar um colaborador com o nome digitado
             "
             fieldSize="large"
-            nameField="fullName"
+            nameField="name"
             pictureField="profilePicture"
             [data$]="userData"
             [minSearchLength]="0"
@@ -710,7 +710,7 @@
         Não foi possível achar um fornecedor com o nome digitado
         "
             fieldSize="large"
-            nameField="fullName"
+            nameField="name"
             pictureField="profilePicture"
             [data$]="providerData$"
             [minSearchLength]="0"

@@ -48,12 +48,12 @@ describe('NotificationService', () => {
 
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test';
+    tmpUser.name = 'Test';
     tmpUser.email = 'test@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     mockedUsers.push(cloneDeep(tmpUser));
 

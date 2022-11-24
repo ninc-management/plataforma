@@ -12,7 +12,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { codeSort, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
-import { Contract, ContractLocals } from '@models/contract';
+import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
@@ -150,9 +150,9 @@ export class OngoingContractsReportComponent implements OnInit {
             idToProperty(
               invoice.contractor,
               this.contractorService.idToContractor.bind(this.contractorService),
-              'fullName'
+              'name'
             ) + ';';
-          csv += invoice.name + ';';
+          csv += invoice.description + ';';
           csv += invoice.value + ';';
           csv += this.contractService.getComissionsSum(contract) + ';';
           csv +=
@@ -171,7 +171,7 @@ export class OngoingContractsReportComponent implements OnInit {
           csv += this.contractService.balance(contract) + ';';
           csv += invoice.team
             .map((member) => {
-              idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'fullName');
+              idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'name');
             })
             .join(', ');
           csv += '\r\n';

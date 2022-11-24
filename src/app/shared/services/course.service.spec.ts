@@ -76,7 +76,7 @@ describe('CourseService', () => {
     mockedCourses = [];
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));

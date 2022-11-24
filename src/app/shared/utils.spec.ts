@@ -134,7 +134,7 @@ describe('UtilsService', () => {
 
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
     tmpUser.profilePicture = 'pic1@pic.com';
@@ -188,7 +188,7 @@ describe('UtilsService', () => {
     };
     tmpContractor.document = '000.000.000-11';
     tmpContractor.email = 'test1@te.st';
-    tmpContractor.fullName = 'Test1';
+    tmpContractor.name = 'Test1';
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
 
@@ -415,8 +415,8 @@ describe('UtilsService', () => {
       mockedUsers[0]
     );
     expect(idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
-    expect(idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'fullName')).toBe(
-      mockedUsers[0].fullName
+    expect(idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'name')).toBe(
+      mockedUsers[0].name
     );
     expect(idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'phone')).toBe(mockedUsers[0].phone);
     expect(idToProperty(undefined, teamService.idToTeam.bind(teamService), 'purpose')).toBe('');
@@ -431,10 +431,10 @@ describe('UtilsService', () => {
     expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'locals').value).toBe(
       mockedContracts[0].locals.value
     );
-    expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'fullName')).toBe('');
+    expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'name')).toBe('');
     expect(
-      idToProperty(mockedContractors[0]._id, contractorService.idToContractor.bind(contractorService), 'fullName')
-    ).toBe(mockedContractors[0].fullName);
+      idToProperty(mockedContractors[0]._id, contractorService.idToContractor.bind(contractorService), 'name')
+    ).toBe(mockedContractors[0].name);
     expect(
       idToProperty(mockedContractors[0], contractorService.idToContractor.bind(contractorService), 'document')
     ).toBe(mockedContractors[0].document);

@@ -75,7 +75,7 @@ describe('ContractorService', () => {
     mockedContractors = [];
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
@@ -92,7 +92,7 @@ describe('ContractorService', () => {
     };
     tmpContractor.document = '000.000.000-11';
     tmpContractor.email = 'test1@te.st';
-    tmpContractor.fullName = 'Test1';
+    tmpContractor.name = 'Test1';
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
     tmpContractor._id = '1';
@@ -107,7 +107,7 @@ describe('ContractorService', () => {
     };
     tmpContractor.document = '000.000.000-12';
     tmpContractor.email = 'test2@te.st';
-    tmpContractor.fullName = 'Test2';
+    tmpContractor.name = 'Test2';
     tmpContractor.phone = '(00) 0000-0000';
     mockedContractors.push(cloneDeep(tmpContractor));
   });
@@ -134,7 +134,7 @@ describe('ContractorService', () => {
     };
     tmpContractor.document = '000.000.000-13';
     tmpContractor.email = 'test3@te.st';
-    tmpContractor.fullName = 'Test3';
+    tmpContractor.name = 'Test3';
     tmpContractor.phone = '(00) 0000-0000';
     let i = 1;
     const data = {
