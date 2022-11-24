@@ -24,5 +24,10 @@
     "required": false,
     "minLength": 4,
     "maxLength": 240
+  },
+  "editionHistory":{
+    "required": true,
+    "minLength": 4,
+    "maxLength": 500
   }
 }

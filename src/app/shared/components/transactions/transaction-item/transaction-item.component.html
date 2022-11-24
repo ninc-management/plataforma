@@ -925,8 +925,15 @@
       'col-6': transactionIndex === undefined
     }"
   >
-    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid" (click)="registerTransaction()">
-      {{ transactionIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="!form.valid"
+      (click)="transactionIndex ? editTransaction() : registerTransaction()"
+    >
+      {{ transactionIndex ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
   <div class="col-6" *ngIf="transactionIndex === undefined">

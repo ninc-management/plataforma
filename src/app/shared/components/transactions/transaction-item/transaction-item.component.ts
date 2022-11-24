@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NbDialogService } from '@nebular/theme';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
 
+import { EditionDialogComponent } from '../../edition-dialog/edition-dialog.component';
 import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
@@ -89,7 +91,8 @@ export class TransactionItemComponent implements OnInit {
     private transactionService: TransactionService,
     private userService: UserService,
     private configService: ConfigService,
-    private providerService: ProviderService
+    private providerService: ProviderService,
+    private dialogService: NbDialogService
   ) {}
 
   ngOnInit(): void {
@@ -168,6 +171,30 @@ export class TransactionItemComponent implements OnInit {
       this.teamService.editTeam(this.team, true);
     }
     this.submit.emit();
+  }
+
+  editTransaction(): void {
+    this.dialogService
+      .open(EditionDialogComponent, {
+        context: {
+          transaction: this.transaction,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((response: boolean) => {
+        if (response) {
+          this.transactionService.saveTransaction(this.transaction).subscribe((saveTransactionResponse) => {
+            if (this.team) {
+              this.team.transactions.push(saveTransactionResponse.transaction._id);
+            }
+          });
+          this.submit.emit();
+        }
+      });
   }
 
   addAndClean(): void {}
