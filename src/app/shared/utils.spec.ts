@@ -41,6 +41,7 @@ import {
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './services/web-socket.service';
 import { externalMockedUsers } from './mocked-data/mocked-users';
+import { externalMockedTeams } from './mocked-data/mocked-teams';
 
 interface MockedUser {
   _id: string;
@@ -128,26 +129,10 @@ describe('UtilsService', () => {
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = [];
-    mockedTeams = [];
+    mockedTeams = cloneDeep(externalMockedTeams);
     mockedContracts = [];
     mockedContractors = [];
     mockedConfigs = [];
-
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'test';
-    tmpTeam.leader = '0';
-    tmpTeam.purpose = 'Be tested';
-    tmpTeam.abrev = 'T';
-    tmpTeam.config.path = `test`;
-    const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = mockedUsers[0];
-    tmpTeamMember.sectors = ['0'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    tmpTeamMember.user = '1';
-    tmpTeamMember.sectors = ['1'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    mockedTeams.push(cloneDeep(tmpTeam));
 
     let tmpInvoice = new Invoice();
     tmpInvoice._id = '0';
