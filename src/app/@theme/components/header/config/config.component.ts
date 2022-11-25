@@ -63,7 +63,6 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   clonedConfig: PlatformConfig = new PlatformConfig();
   clonedCompany: Company = new Company();
-  company: Company = new Company();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
   newRole = { roleTypeName: '', permission: '' };
@@ -117,8 +116,8 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
-    if (this.clonedConfig.company) this.company = this.companyService.idToCompany(this.clonedConfig.company);
-    this.clonedCompany = cloneDeep(this.company);
+    if (this.clonedConfig.company)
+      this.clonedCompany = cloneDeep(this.companyService.idToCompany(this.clonedConfig.company));
     this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
