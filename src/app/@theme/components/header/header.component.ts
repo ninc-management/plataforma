@@ -10,7 +10,6 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 import { environment } from 'app/../environments/environment';
-import { isBefore } from 'date-fns';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -85,17 +84,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const singleBellRing = new Audio('/assets/audios/singleBellRing.mp3');
     combineLatest([
       this.userService.currentUser$,
-      this.configService.isDataLoaded$,
-      this.companyService.isDataLoaded$,
       this.configService.getConfig(),
       this.companyService.getCompanies(),
+      this.configService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
     ])
       .pipe(
-        skipWhile(([, configLoaded, configCompanyLoaded, ,]) => !(configLoaded && configCompanyLoaded)),
+        skipWhile(([, , , configLoaded, configCompanyLoaded]) => !(configLoaded && configCompanyLoaded)),
         takeUntil(this.destroy$),
-        filter(([currentUser, ,]) => currentUser._id !== undefined)
+        filter(([currentUser, , , ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, , , config]) => {
+      .subscribe(([currentUser, config, , ,]) => {
         this.user = currentUser;
         this.user.notifications.sort(sortNotifications);
         this.currentNotificationsQtd = currentUser.notifications.length;
