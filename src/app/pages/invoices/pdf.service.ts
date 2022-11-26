@@ -325,7 +325,7 @@ export class PdfService {
         const header = {
           columns: [
             await new Img(
-              this.configCompany['logoDefault'].url ||
+              this.configCompany.logoDefault.url ||
                 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999'
             )
               .width(200)

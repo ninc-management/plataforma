@@ -28,17 +28,17 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedCompany.colors.primary.color500"
+                [(ngModel)]="configCompany.colors.primary.color500"
                 #version="ngModel"
                 id="input-primary-color"
                 name="primary-color"
                 type="color"
                 placeholder="Selecione uma cor"
-                [style]="{ background: clonedCompany.colors.primary.color500 || 'black' }"
+                [style]="{ background: configCompany.colors.primary.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.colors.primary.color500"
+                [(ngModel)]="configCompany.colors.primary.color500"
                 #primaryColorCode="ngModel"
                 id="input-primary-color-code"
                 name="primary-color-code"
@@ -54,16 +54,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedCompany.colors.success.color500"
+                [(ngModel)]="configCompany.colors.success.color500"
                 #successColor="ngModel"
                 id="input-success-color"
                 name="success-color"
                 type="color"
-                [style]="{ background: clonedCompany.colors.success.color500 || 'black' }"
+                [style]="{ background: configCompany.colors.success.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.colors.success.color500"
+                [(ngModel)]="configCompany.colors.success.color500"
                 #successColorCode="ngModel"
                 id="input-success-color-code"
                 name="success-color-code"
@@ -76,16 +76,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedCompany.colors.info.color500"
+                [(ngModel)]="configCompany.colors.info.color500"
                 #infoColor="ngModel"
                 id="input-info-color"
                 name="info-color"
                 type="color"
-                [style]="{ background: clonedCompany.colors.info.color500 || 'black' }"
+                [style]="{ background: configCompany.colors.info.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.colors.info.color500"
+                [(ngModel)]="configCompany.colors.info.color500"
                 #infoColorCode="ngModel"
                 id="input-info-color-code"
                 name="info-color-code"
@@ -99,16 +99,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedCompany.colors.warning.color500"
+                [(ngModel)]="configCompany.colors.warning.color500"
                 #warningColor="ngModel"
                 id="input-warning-color"
                 name="warning-color"
                 type="color"
-                [style]="{ background: clonedCompany.colors.warning.color500 || 'black' }"
+                [style]="{ background: configCompany.colors.warning.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.colors.warning.color500"
+                [(ngModel)]="configCompany.colors.warning.color500"
                 #warningColorCode="ngModel"
                 id="input-warning-color-code"
                 name="warning-color-code"
@@ -122,16 +122,16 @@
             <div class="d-flex">
               <input
                 class="color-input"
-                [(ngModel)]="clonedCompany.colors.danger.color500"
+                [(ngModel)]="configCompany.colors.danger.color500"
                 #dangerColor="ngModel"
                 id="input-danger-color"
                 name="danger-color"
                 type="color"
-                [style]="{ background: clonedCompany.colors.danger.color500 || 'black' }"
+                [style]="{ background: configCompany.colors.danger.color500 || 'black' }"
               />
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.colors.danger.color500"
+                [(ngModel)]="configCompany.colors.danger.color500"
                 #dangerColorCode="ngModel"
                 id="input-danger-color-code"
                 name="danger-color-code"
@@ -177,7 +177,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoDefault].name"
+                  [(ngModel)]="configCompany[LOGO_TYPES.logoDefault].name"
                   #logoDefault="ngModel"
                   id="input-logo-default"
                   name="logo-default"
@@ -201,7 +201,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWithoutName].name"
+                  [(ngModel)]="configCompany[LOGO_TYPES.logoWithoutName].name"
                   #logoWithoutName="ngModel"
                   id="input-logo-without-name"
                   name="logo-without-name"
@@ -225,7 +225,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWhite].name"
+                  [(ngModel)]="configCompany[LOGO_TYPES.logoWhite].name"
                   #logoWhite="ngModel"
                   id="input-logo-white"
                   name="logo-white"
@@ -249,7 +249,7 @@
                 </button>
                 <input
                   nbInput
-                  [(ngModel)]="clonedCompany[LOGO_TYPES.logoWhiteWithoutName].name"
+                  [(ngModel)]="configCompany[LOGO_TYPES.logoWhiteWithoutName].name"
                   #logoWhiteWithoutName="ngModel"
                   id="input-logo-white-without-name"
                   name="logo-white-without-name"
@@ -265,7 +265,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo</label>
                 <img
-                  [src]="clonedCompany[LOGO_TYPES.logoDefault].url"
+                  [src]="configCompany[LOGO_TYPES.logoDefault].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa"
@@ -274,7 +274,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo sem nome</label>
                 <img
-                  [src]="clonedCompany[LOGO_TYPES.logoWithoutName].url"
+                  [src]="configCompany[LOGO_TYPES.logoWithoutName].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa sem nome"
@@ -285,7 +285,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo tema escuro</label>
                 <img
-                  [src]="clonedCompany[LOGO_TYPES.logoWhite].url"
+                  [src]="configCompany[LOGO_TYPES.logoWhite].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa tema escuro"
@@ -294,7 +294,7 @@
               <div class="col-6 d-flex flex-column align-items-center">
                 <label class="label">Logo tema escuro sem nome</label>
                 <img
-                  [src]="clonedCompany[LOGO_TYPES.logoWhiteWithoutName].url"
+                  [src]="configCompany[LOGO_TYPES.logoWhiteWithoutName].url"
                   class="p-3 logo"
                   height="164"
                   alt="Logo da empresa tema escuro sem nome"
@@ -319,7 +319,7 @@
             <nb-form-field>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.companyName"
+                [(ngModel)]="configCompany.companyName"
                 #companyName="ngModel"
                 id="input-companyName"
                 name="companyName"
@@ -336,8 +336,8 @@
         <div class="col col-md-auto" style="display: flex; flex-direction: column; justify-content: center">
           <label class="label" for="show-companyName">Mostrar no cabeçalho?</label>
           <nb-toggle
-            [(ngModel)]="clonedCompany.showCompanyName"
-            [disabled]="!clonedCompany.companyName"
+            [(ngModel)]="configCompany.showCompanyName"
+            [disabled]="!configCompany.companyName"
             id="show-companyName"
             name="toggle-show-companyName"
           ></nb-toggle>
@@ -349,7 +349,7 @@
             <label class="label" for="input-address">Endereço</label>
             <input
               nbInput
-              [(ngModel)]="clonedCompany.address"
+              [(ngModel)]="configCompany.address"
               #address="ngModel"
               id="input-address"
               name="address"
@@ -369,7 +369,7 @@
             <label class="label" for="input-document">CNPJ</label>
             <input
               nbInput
-              [(ngModel)]="clonedCompany.cnpj"
+              [(ngModel)]="configCompany.cnpj"
               #document="ngModel"
               id="input-document"
               name="document"
@@ -407,7 +407,7 @@
             </label>
             <input
               nbInput
-              [(ngModel)]="clonedCompany.qrcodeURL"
+              [(ngModel)]="configCompany.qrcodeURL"
               #qrcodeURL="ngModel"
               id="input-qrcode-url"
               name="qrcodeURL"
@@ -436,7 +436,7 @@
               <nb-icon nbPrefix icon="social-youtube" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.youtubeLink"
+                [(ngModel)]="configCompany.youtubeLink"
                 #youtubeLink="ngModel"
                 id="input-youtube-link"
                 name="youtubeLink"
@@ -458,7 +458,7 @@
               <nb-icon nbPrefix icon="social-linkedin" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.linkedinLink"
+                [(ngModel)]="configCompany.linkedinLink"
                 #linkedinLink="ngModel"
                 id="input-linkedin-link"
                 name="linkedinLink"
@@ -480,7 +480,7 @@
               <nb-icon nbPrefix icon="social-instagram" pack="ion"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.instagramLink"
+                [(ngModel)]="configCompany.instagramLink"
                 #instagramLink="ngModel"
                 id="input-instagram-link"
                 name="instagramLink"
@@ -502,7 +502,7 @@
               <nb-icon nbPrefix icon="glassfrog" pack="fac"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.glassfrogLink"
+                [(ngModel)]="configCompany.glassfrogLink"
                 #glassfrogLink="ngModel"
                 id="input-glassfrog-link"
                 name="glassfrogLink"
@@ -524,7 +524,7 @@
               <nb-icon nbPrefix icon="gtown" pack="fac"></nb-icon>
               <input
                 nbInput
-                [(ngModel)]="clonedCompany.gathertownLink"
+                [(ngModel)]="configCompany.gathertownLink"
                 #gathertownLink="ngModel"
                 id="input-gathertown-link"
                 name="gathertownLink"

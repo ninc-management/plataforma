@@ -62,7 +62,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() config: PlatformConfig = new PlatformConfig();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   clonedConfig: PlatformConfig = new PlatformConfig();
-  clonedCompany: Company = new Company();
+  configCompany: Company = new Company();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
   newRole = { roleTypeName: '', permission: '' };
@@ -117,7 +117,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
     if (this.clonedConfig.company)
-      this.clonedCompany = cloneDeep(this.companyService.idToCompany(this.clonedConfig.company));
+      this.configCompany = cloneDeep(this.companyService.idToCompany(this.clonedConfig.company));
     this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
@@ -230,7 +230,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       this.clonedConfig.expenseConfig.contractExpenseTypes = cloneDeep(
         this.clonedConfig.expenseConfig.adminExpenseTypes
       );
-    this.companyService.editCompany(this.clonedCompany);
+    this.companyService.editCompany(this.configCompany);
     this.configService.editConfig(this.clonedConfig);
   }
 
@@ -302,15 +302,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           name: {
             fn: (name: string) => {
               //TODO Replace company name with ID
-              return (
-                idToProperty(
-                  this.config.company,
-                  this.companyService.idToCompany.bind(this.companyService),
-                  'companyName'
-                ).toLowerCase() +
-                '_' +
-                this.translateLogoType(logoType)
-              );
+              return this.configCompany.companyName.toLowerCase() + '_' + this.translateLogoType(logoType);
             },
           },
         },
@@ -324,27 +316,27 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           const uploadedLogo = new UploadedFile();
           uploadedLogo.name = files[0].name;
           uploadedLogo.url = files[0].url;
-          this.clonedCompany[logoType] = uploadedLogo;
+          this.configCompany[logoType] = uploadedLogo;
         }
       });
   }
 
   getEvaColors(): void {
-    this.configService.sendEvaColorsRequest(this.clonedCompany.colors.primary.color500).subscribe((colors) => {
-      this.clonedCompany.colors.primary = this.getColorShadesObject(colors.primary);
-      this.clonedCompany.colors.success = this.getColorShadesObject(colors.success);
-      this.clonedCompany.colors.warning = this.getColorShadesObject(colors.warning);
-      this.clonedCompany.colors.info = this.getColorShadesObject(colors.info);
-      this.clonedCompany.colors.danger = this.getColorShadesObject(colors.danger);
+    this.configService.sendEvaColorsRequest(this.configCompany.colors.primary.color500).subscribe((colors) => {
+      this.configCompany.colors.primary = this.getColorShadesObject(colors.primary);
+      this.configCompany.colors.success = this.getColorShadesObject(colors.success);
+      this.configCompany.colors.warning = this.getColorShadesObject(colors.warning);
+      this.configCompany.colors.info = this.getColorShadesObject(colors.info);
+      this.configCompany.colors.danger = this.getColorShadesObject(colors.danger);
       this.configService.applyCustomColors(this.clonedConfig);
     });
   }
 
   private verifyEmptyLogos(): void {
     Object.values(LOGO_TYPES).forEach((logoType: LOGO_TYPES) => {
-      if (this.clonedCompany[logoType] && this.clonedCompany[logoType].url == '') {
-        this.clonedCompany[logoType].name = 'Anexe uma logo';
-        this.clonedCompany[logoType].url =
+      if (this.configCompany[logoType] && this.configCompany[logoType].url == '') {
+        this.configCompany[logoType].name = 'Anexe uma logo';
+        this.configCompany[logoType].url =
           'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999';
       }
     });

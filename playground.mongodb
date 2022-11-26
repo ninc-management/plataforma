@@ -1214,7 +1214,6 @@ db.teams.find().forEach((team) => {
   db.teams.replaceOne({ _id: team._id }, team);
 });
 
-<<<<<<< HEAD
 db.platformconfigs.find().forEach((config) => {
   config.invoiceConfig.importantBlockFontColor = 'white';
   config.invoiceConfig.isImportantBlockFontBold = false;
@@ -1222,11 +1221,9 @@ db.platformconfigs.find().forEach((config) => {
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
 
-=======
 db.platformconfigs.find().forEach(async (config) => {
   const savedCompany = await db.companies.insertOne(config.socialConfig);
   config.company  = savedCompany.insertedId;
   delete config.socialConfig;
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
->>>>>>> 14f319b4 (Create model for Enterprise)
