@@ -1,11 +1,8 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
-
-import { EditionHistoryItem } from '@models/shared';
-import { Transaction } from '@models/transaction';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
 @Component({
@@ -14,8 +11,7 @@ import transaction_validation from 'app/shared/validators/transaction-validation
   styleUrls: ['./edition-dialog.component.scss'],
 })
 export class EditionDialogComponent extends BaseDialogComponent implements OnInit {
-  @Input() transaction = new Transaction();
-  latestEdition = new EditionHistoryItem();
+  newComment = '';
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
@@ -33,8 +29,6 @@ export class EditionDialogComponent extends BaseDialogComponent implements OnIni
   }
 
   saveComment(): void {
-    this.latestEdition.author = this.transaction.author;
-    this.transaction.editionHistory.push(this.latestEdition);
-    this.derivedRef.close(true);
+    this.derivedRef.close(this.newComment);
   }
 }

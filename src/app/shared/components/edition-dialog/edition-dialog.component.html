@@ -17,7 +17,7 @@
         <div class="form-control-group">
           <textarea
             nbInput
-            [(ngModel)]="latestEdition.comment"
+            [(ngModel)]="newComment"
             #editionHistory="ngModel"
             id="input-edition"
             name="edition"
@@ -43,7 +43,7 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <button nbButton fullWidth status="primary" size="large" [disabled]="!latestEdition.comment" (click)="saveComment()">
+            <button nbButton fullWidth status="primary" size="large" [disabled]="!newComment" (click)="saveComment()">
               Salvar
             </button>
           </div>

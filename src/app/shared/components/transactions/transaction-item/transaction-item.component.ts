@@ -16,7 +16,7 @@ import { codeSort, formatDate, isPhone, nfPercentage, nortanPercentage, populate
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
-import { UploadedFile } from '@models/shared';
+import { EditionHistoryItem, UploadedFile } from '@models/shared';
 import { ExpenseType, Team } from '@models/team';
 import { MODEL_COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
@@ -36,6 +36,7 @@ export class TransactionItemComponent implements OnInit {
   submit: EventEmitter<void> = new EventEmitter<void>();
 
   validation = transaction_validation as any;
+  user = new User();
   transaction: Transaction = new Transaction();
   platformConfig: PlatformConfig = new PlatformConfig();
   availableContracts: Contract[] = [];
@@ -119,6 +120,7 @@ export class TransactionItemComponent implements OnInit {
         take(1)
       )
       .subscribe(([user, contracts, , teams, config, users, , , ,]) => {
+        this.user = user;
         this.availableContracts = contracts.filter(
           (contract) =>
             contract.invoice &&
@@ -176,24 +178,21 @@ export class TransactionItemComponent implements OnInit {
   editTransaction(): void {
     this.dialogService
       .open(EditionDialogComponent, {
-        context: {
-          transaction: this.transaction,
-        },
+        context: {},
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
         closeOnEsc: false,
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe((response: boolean) => {
-        if (response) {
-          this.transactionService.saveTransaction(this.transaction).subscribe((saveTransactionResponse) => {
-            if (this.team) {
-              this.team.transactions.push(saveTransactionResponse.transaction._id);
-            }
-          });
-          this.submit.emit();
+      .subscribe((comment) => {
+        if (comment) {
+          const editionHistoryItem = new EditionHistoryItem();
+          editionHistoryItem.author = this.user;
+          editionHistoryItem.comment = comment;
+          this.transactionService.editTransaction(this.transaction, editionHistoryItem);
         }
+        this.submit.emit();
       });
   }
 
