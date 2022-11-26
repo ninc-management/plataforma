@@ -76,14 +76,14 @@ describe('ProspectService', () => {
 
     const tmpProspect = new Prospect();
     tmpProspect._id = '0';
-    tmpProspect.fullName = 'ProspectTest1';
+    tmpProspect.name = 'ProspectTest1';
     tmpProspect.email = 'test1@te.st';
     tmpProspect.phone = '123456';
 
     mockedProspects.push(cloneDeep(tmpProspect));
 
     tmpProspect._id = '1';
-    tmpProspect.fullName = 'ProspectTest2';
+    tmpProspect.name = 'ProspectTest2';
     tmpProspect.email = 'test2@te.st';
     tmpProspect.phone = '1234567';
 
@@ -91,7 +91,7 @@ describe('ProspectService', () => {
 
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'UserTest';
+    tmpUser.name = 'UserTest';
     tmpUser.email = 'uTest1@te.st';
     tmpUser.phone = '12345678';
 

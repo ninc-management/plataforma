@@ -50,7 +50,7 @@ export class ProviderService {
         .subscribe((providers: any) => {
           this.providers$.next(
             (providers as Provider[]).sort((a, b) => {
-              return nameSort(1, a.fullName, b.fullName);
+              return nameSort(1, a.name, b.name);
             })
           );
           this._isDataLoaded$.next(true);

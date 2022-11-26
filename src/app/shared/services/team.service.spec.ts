@@ -63,6 +63,10 @@ describe('TeamService', () => {
       expect(req.request.method).toBe('POST');
       setTimeout(() => {
         req.flush(mockedTeams);
+
+        const transactionReq = httpMock.expectOne('/api/transaction/all');
+        expect(transactionReq.request.method).toBe('POST');
+        transactionReq.flush([]);
       }, 50);
     });
   };
@@ -81,21 +85,21 @@ describe('TeamService', () => {
 
     let mockedUser = new User();
     mockedUser._id = '0';
-    mockedUser.fullName = 'Test1';
+    mockedUser.name = 'Test1';
     mockedUser.email = 'test1@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));
 
     mockedUser = new User();
     mockedUser._id = '1';
-    mockedUser.fullName = 'Test2';
+    mockedUser.name = 'Test2';
     mockedUser.email = 'test2@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));
 
     mockedUser = new User();
     mockedUser._id = '2';
-    mockedUser.fullName = 'Test3';
+    mockedUser.name = 'Test3';
     mockedUser.email = 'test3@te.st';
     mockedUser.phone = '123456';
     mockedUsers.push(cloneDeep(mockedUser));
@@ -126,7 +130,7 @@ describe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    mockedTeam.transactions = [];
+    mockedTeam.expenses = [];
     mockedTeam.created = new Date();
     mockedTeam.purpose = 'created for testing team service methods';
     mockedTeam.expenses = [];
@@ -183,7 +187,7 @@ describe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    newMockedTeam.transactions = [];
+    newMockedTeam.expenses = [];
     newMockedTeam.purpose = 'created for testing team service methods';
     let i = 1;
     const data = {
@@ -233,6 +237,10 @@ describe('TeamService', () => {
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
       req.flush(mockedTeams);
+
+      const transactionReq = httpMock.expectOne('/api/transaction/all');
+      expect(transactionReq.request.method).toBe('POST');
+      transactionReq.flush([]);
     }, 50);
   });
 

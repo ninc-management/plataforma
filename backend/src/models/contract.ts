@@ -10,10 +10,10 @@ import { User } from './user';
 export interface ContractLocals {
   balance: string;
   value: string;
-  fullName: string;
+  name: string;
   code: string;
   contractor: string;
-  name: string;
+  description: string;
   interests: string;
   role: string;
   notPaid: string;
@@ -267,10 +267,10 @@ export class Contract extends StatusHistory {
   locals: ContractLocals = {
     balance: '',
     value: '',
-    fullName: '',
+    name: '',
     code: '',
     contractor: '',
-    name: '',
+    description: '',
     interests: '',
     role: '',
     notPaid: '',

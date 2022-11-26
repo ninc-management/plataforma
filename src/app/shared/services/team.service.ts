@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, lastValueFrom, Observable, Subject } from 'rxjs';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { StringUtilService } from './string-util.service';
@@ -46,10 +46,10 @@ export class TeamService implements OnDestroy {
     this.http.post('/api/team/', req).pipe(take(1)).subscribe();
   }
 
-  editTeam(team: Team, creatingExpense = false): void {
+  editTeam(team: Team, creatingTransaction = false): void {
     const req = {
       team: team,
-      creatingExpense: creatingExpense,
+      creatingTransaction: creatingTransaction,
     };
     this.http.post('/api/team/update', req).pipe(take(1)).subscribe();
   }
@@ -60,16 +60,16 @@ export class TeamService implements OnDestroy {
       this.http
         .post('/api/team/all', {})
         .pipe(take(1))
-        .subscribe((teams: any) => {
-          const teamsFromDatabase = reviveDates(teams);
-          this.keepUpdatingBalance();
-          this.teams$.next(teamsFromDatabase as Team[]);
+        .subscribe(async (teams: any) => {
+          let teamsFromDatabase = reviveDates(teams);
+          teamsFromDatabase = await this.updateBalance(teamsFromDatabase);
+          this.teams$.next(teamsFromDatabase);
           this._isDataLoaded$.next(true);
         });
       this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => handle(data, this.teams$, 'teams'));
+        .subscribe((data: any) => handle(data, this.teams$, 'teams', this.updateBalance.bind(this.transactionService)));
     }
     return this.teams$;
   }
@@ -118,22 +118,29 @@ export class TeamService implements OnDestroy {
     });
   }
 
-  keepUpdatingBalance(): void {
-    this.teams$.pipe(takeUntil(this.destroy$)).subscribe((teams) => {
-      teams.map((team) => {
-        if (!team.locals) team.locals = {} as TeamLocals;
-        team.sectors.forEach((sector) => {
-          if (!sector.locals) sector.locals = {} as SectorLocals;
-        });
-        team.locals.balance = this.stringUtil.numberToMoney(
-          team.transactions.reduce((accumulator, t) => {
-            if (t) accumulator += this.stringUtil.moneyToNumber(this.transactionService.idToTransaction(t).value);
-            return accumulator;
-          }, 0)
-        );
-        return team;
-      });
-    });
+  async updateBalance(teams: Team[]): Promise<Team[]> {
+    return lastValueFrom(
+      combineLatest([this.transactionService.getTransactions(), this.transactionService.isDataLoaded$]).pipe(
+        skipWhile(([_, isTransactionLoaded]) => !isTransactionLoaded),
+        take(1),
+        map(() => {
+          return teams.map((team) => {
+            if (!team.locals) team.locals = {} as TeamLocals;
+            team.sectors.forEach((sector) => {
+              if (!sector.locals) sector.locals = {} as SectorLocals;
+            });
+            team.locals.balance = this.stringUtil.numberToMoney(
+              team.expenses.reduce((accumulator, expense) => {
+                if (expense)
+                  accumulator += this.stringUtil.moneyToNumber(this.transactionService.idToTransaction(expense).value);
+                return accumulator;
+              }, 0)
+            );
+            return team;
+          });
+        })
+      )
+    );
   }
 
   teamsList(): Team[] {

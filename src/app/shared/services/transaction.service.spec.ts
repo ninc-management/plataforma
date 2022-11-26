@@ -191,7 +191,7 @@ describe('TransactionService', () => {
             i += 1;
             expect(transactions.length).toBe(4);
             expect(transactions).toEqual(reviveDates(mockedTransactions));
-            service.saveTransaction(tmpTransaction).subscribe();
+            service.saveTransaction(tmpTransaction);
             const req1 = httpMock.expectOne('/api/transaction/');
             expect(req1.request.method).toBe('POST');
             req1.flush(null);

@@ -165,7 +165,7 @@ export class ReceiptItemComponent implements OnInit {
           title: 'Nova ordem de empenho ' + this.contract.locals.code,
           tag: NotificationTags.RECEIPT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
-            manager.fullName
+            manager.name
           } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.contract.locals.code}.`,
         });
       }

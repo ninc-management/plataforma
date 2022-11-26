@@ -10,29 +10,38 @@ let requested = false;
 const transactionsMap: Record<string, Transaction> = {};
 const mutex = new Mutex();
 
-function addTransaction(transaction: Transaction, res, lastTransaction: Transaction): void {
-  transaction['code'] = '#1';
+export async function addTransaction(
+  transaction: Transaction,
+  res,
+  lastTransaction: Transaction
+): Promise<Transaction> {
+  const count = await TransactionModel.estimatedDocumentCount();
+  transaction['code'] = '#' + (count + 1).toString();
   const transactionItem = new TransactionModel(transaction);
-  mutex.acquire().then((release) => {
-    transactionItem
+  let ret = transaction;
+  await mutex.acquire().then(async (release) => {
+    await transactionItem
       .save()
       .then((savedTransaction) => {
         if (requested) transactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
         release();
-        if (isEqual(transaction, lastTransaction))
-          return res.status(201).json({
+        if (isEqual(transaction, lastTransaction) && res)
+          res.status(201).json({
             message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
             transaction: savedTransaction,
           });
+        ret = savedTransaction;
       })
       .catch((err) => {
         release();
-        return res.status(500).json({
-          message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
-          error: err,
-        });
+        if (res)
+          res.status(500).json({
+            message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
+            error: err,
+          });
       });
   });
+  return ret;
 }
 
 router.post('/', (req, res, next) => {
@@ -41,8 +50,8 @@ router.post('/', (req, res, next) => {
 
 router.post('/many', (req, res, next) => {
   const transactions = req.body.transactions as Transaction[];
-  transactions.forEach((transaction) => {
-    addTransaction(transaction, res, transactions[transactions.length - 1]);
+  transactions.forEach(async (transaction) => {
+    await addTransaction(transaction, res, transactions[transactions.length - 1]);
   });
 });
 

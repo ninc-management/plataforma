@@ -37,10 +37,10 @@ export class ContractsComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
         return (
-          contract.locals.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.locals.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.locals.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          contract.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contract.locals.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.locals.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contract.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
@@ -66,7 +66,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      'locals.fullName': {
+      'locals.name': {
         title: 'Autor',
         type: 'string',
       },
@@ -80,7 +80,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
         title: 'Cliente',
         type: 'string',
       },
-      'locals.name': {
+      'locals.description': {
         title: 'Empreendimento',
         type: 'string',
       },

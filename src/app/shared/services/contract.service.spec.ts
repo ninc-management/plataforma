@@ -100,12 +100,12 @@ describe('ContractService', () => {
 
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
+    tmpUser.name = 'Test2';
     tmpUser.email = 'test2@te.st';
     tmpUser.phone = '123456';
     mockedUsers.push(cloneDeep(tmpUser));
@@ -325,6 +325,10 @@ describe('ContractService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush(mockedTeams);
+
+    const transactionReq = httpMock.expectOne('/api/transaction/all');
+    expect(transactionReq.request.method).toBe('POST');
+    transactionReq.flush([]);
 
     const configReq = httpMock.expectOne('/api/config/all');
     expect(configReq.request.method).toBe('POST');

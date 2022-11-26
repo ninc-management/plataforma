@@ -35,11 +35,11 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
         return (
-          invoice.locals.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractor.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
@@ -70,7 +70,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      'locals.fullName': {
+      'locals.name': {
         title: 'Autor',
         type: 'string',
       },
@@ -84,7 +84,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         title: 'Cliente',
         type: 'string',
       },
-      name: {
+      description: {
         title: 'Empreendimento',
         type: 'string',
       },
@@ -185,19 +185,17 @@ export class InvoicesComponent implements OnInit, OnDestroy {
     ])
       .pipe(
         takeUntil(this.destroy$),
-        filter(
-          ([invoices, contractors, teams, user]) => invoices.length > 0 && contractors.length > 0 && teams.length > 0
-        )
+        filter(([invoices, contractors, teams]) => invoices.length > 0 && contractors.length > 0 && teams.length > 0)
       )
-      .subscribe(([invoices, contractors, teams, user]) => {
+      .subscribe(([invoices, , , user]) => {
         this.invoices = invoices.map((invoice: Invoice) => {
           invoice.locals = {} as InvoiceLocals;
-          if (invoice.author) invoice.locals.fullName = this.userService.idToShortName(invoice.author);
+          if (invoice.author) invoice.locals.name = this.userService.idToShortName(invoice.author);
           if (invoice.contractor)
             invoice.locals.contractorName = idToProperty(
               invoice.contractor,
               this.contractorService.idToContractor.bind(this.contractorService),
-              'fullName'
+              'name'
             );
 
           invoice.locals.role = this.invoiceService.role(invoice, user);

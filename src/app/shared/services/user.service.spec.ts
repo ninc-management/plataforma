@@ -55,12 +55,12 @@ describe('UserService', () => {
     mockedUsers = [];
     const tmp = new User();
     tmp._id = '0';
-    tmp.fullName = 'Test1';
+    tmp.name = 'Test1';
     tmp.email = 'test1@te.st';
     tmp.phone = '123456';
     mockedUsers.push(cloneDeep(tmp));
     tmp._id = '1';
-    tmp.fullName = 'Test2';
+    tmp.name = 'Test2';
     tmp.email = 'test2@te.st';
     tmp.phone = '123456';
     tmp.profilePicture = 'test.png';
@@ -140,12 +140,12 @@ describe('UserService', () => {
         _id: '1',
       },
       updateDescription: {
-        updatedFields: { fullName: 'Test works' },
+        updatedFields: { name: 'Test works' },
         removedFields: [] as any[],
       },
     };
     const editedUser = cloneDeep(mockedUsers[1]);
-    editedUser.fullName = 'Test works';
+    editedUser.name = 'Test works';
     let i = 1;
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
@@ -184,7 +184,7 @@ describe('UserService', () => {
               break;
             }
             case 2: {
-              expect(users[1].fullName).toEqual('Test works');
+              expect(users[1].name).toEqual('Test works');
               expect(user).not.toEqual(mockedUsers[1]);
               done();
               break;
@@ -212,12 +212,12 @@ describe('UserService', () => {
         _id: '1',
       },
       updateDescription: {
-        updatedFields: { fullName: 'Test works' },
+        updatedFields: { name: 'Test works' },
         removedFields: [] as any[],
       },
     };
     const editedUser = cloneDeep(mockedUsers[1]);
-    editedUser.fullName = 'Test works';
+    editedUser.name = 'Test works';
     let i = 1;
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
@@ -254,7 +254,7 @@ describe('UserService', () => {
               break;
             }
             case 2: {
-              expect(users[1].fullName).toEqual('Test works');
+              expect(users[1].name).toEqual('Test works');
               expect(user).not.toEqual(mockedUsers[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
                 expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));
@@ -285,12 +285,12 @@ describe('UserService', () => {
         _id: '1',
       },
       updateDescription: {
-        updatedFields: { fullName: 'Test works' },
+        updatedFields: { name: 'Test works' },
         removedFields: [] as any[],
       },
     };
     const editedUser = cloneDeep(mockedUsers[1]);
-    editedUser.fullName = 'Test works';
+    editedUser.name = 'Test works';
     let i = 1;
     socket.socketClient.on('dbchange', (data: any) => socket$.next(data));
 
@@ -333,7 +333,7 @@ describe('UserService', () => {
               break;
             }
             case 2: {
-              expect(users[1].fullName).toEqual(editedUser.fullName);
+              expect(users[1].name).toEqual(editedUser.name);
               expect(user).not.toEqual(users[1]);
               service.currentUser$.pipe(take(1)).subscribe((finalUser) => {
                 expect(reviveDates(finalUser)).toEqual(reviveDates(editedUser));
@@ -356,8 +356,8 @@ describe('UserService', () => {
 
   baseTest('idToShortName should work', (expectedUsers: User[], done: DoneFn) => {
     expect(expectedUsers).toEqual(reviveDates(mockedUsers));
-    expect(service.idToShortName('0')).toBe(mockedUsers[0].fullName);
-    expect(service.idToShortName(mockedUsers[0])).toBe(mockedUsers[0].fullName);
+    expect(service.idToShortName('0')).toBe(mockedUsers[0].name);
+    expect(service.idToShortName(mockedUsers[0])).toBe(mockedUsers[0].name);
     expect(service.idToShortName('000000000000000000000000')).toBe('Caixa do contrato');
     done();
   });

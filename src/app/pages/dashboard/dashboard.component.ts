@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
-import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
@@ -46,10 +46,11 @@ export class DashboardComponent {
   taxesBalance$: Observable<number> = of(0);
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   teams: Team[] = [];
-  nortanTeam!: Team;
+  organizationTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
   isParettoRankLoaded = false;
+  isOrganizationTeamReady = false;
 
   isPhone = isPhone;
 
@@ -60,41 +61,33 @@ export class DashboardComponent {
     private dialogService: NbDialogService,
     private teamService: TeamService
   ) {
-    this.teamService
-      .getTeams()
-      .pipe(
-        skipWhile((teams) => teams.length == 0),
-        take(1)
-      )
-      .subscribe((teams) => {
-        const nortanTeam = teams.find((team) => team.isOrganizationTeam);
-        if (nortanTeam !== undefined) {
-          this.nortanTeam = nortanTeam;
-          this.expenses$ = metricsService
-            .teamExpenses(nortanTeam._id, this.start, this.end)
-            .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
-          this.open$ = metricsService
-            .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
-            .pipe(map((metricInfo) => metricInfo.count));
-          this.toReceive$ = metricsService
-            .countContracts(CONTRACT_STATOOS.A_RECEBER)
-            .pipe(map((metricInfo) => metricInfo.count));
-          this.contractsBalance$ = this.metricsService
-            .nortanValue(this.start, this.end)
-            .pipe(map((metricInfo) => metricInfo.global));
-          this.taxesBalance$ = this.metricsService
-            .nortanValue(this.start, this.end, 'taxes')
-            .pipe(map((metricInfo) => metricInfo.global));
-        }
-      });
     this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.teamService
-        .getTeams()
+      combineLatest([this.teamService.getTeams(), this.teamService.isDataLoaded$])
         .pipe(
-          skipWhile((teams) => teams.length == 0),
-          takeWhile((teams) => teams.length > 0)
+          skipWhile(([_, isTeamLoaded]) => !isTeamLoaded),
+          takeUntil(this.destroy$)
         )
-        .subscribe(() => {
+        .subscribe(([teams, _]) => {
+          const organizationTeam = teams.find((team) => team.isOrganizationTeam);
+          if (organizationTeam && !this.isOrganizationTeamReady) {
+            this.isOrganizationTeamReady = true;
+            this.organizationTeam = organizationTeam;
+            this.expenses$ = metricsService
+              .teamExpenses(organizationTeam._id, this.start, this.end)
+              .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
+            this.open$ = metricsService
+              .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
+              .pipe(map((metricInfo) => metricInfo.count));
+            this.toReceive$ = metricsService
+              .countContracts(CONTRACT_STATOOS.A_RECEBER)
+              .pipe(map((metricInfo) => metricInfo.count));
+            this.contractsBalance$ = this.metricsService
+              .nortanValue(this.start, this.end)
+              .pipe(map((metricInfo) => metricInfo.global));
+            this.taxesBalance$ = this.metricsService
+              .nortanValue(this.start, this.end, 'taxes')
+              .pipe(map((metricInfo) => metricInfo.global));
+          }
           this.teams = this.teamService.userToTeams(user).filter((team) => !team.isOrganizationTeam);
         });
       this.timeSeries$ = combineLatest([
@@ -166,7 +159,7 @@ export class DashboardComponent {
     this.dialogService.open(TeamDialogComponent, {
       context: {
         title: 'GASTOS DA EMPRESA',
-        iTeam: this.nortanTeam,
+        iTeam: this.organizationTeam,
         componentType: TEAM_COMPONENT_TYPES.EXPENSES,
       },
       dialogClass: 'my-dialog',
@@ -183,8 +176,8 @@ export class DashboardComponent {
         this.currentTeam = new Team();
         break;
       }
-      case this.nortanTeam.name.toLowerCase(): {
-        this.activeTab = this.nortanTeam.name;
+      case this.organizationTeam.name.toLowerCase(): {
+        this.activeTab = this.organizationTeam.name;
         this.currentTeam = this.teamService.idToTeam(event.tabId);
         break;
       }

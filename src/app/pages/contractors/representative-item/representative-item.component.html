@@ -3,26 +3,26 @@
     <label class="label" for="input-name">Nome completo</label>
     <input
       nbInput
-      [(ngModel)]="clonedRepresentative.fullName"
-      #fullName="ngModel"
+      [(ngModel)]="clonedRepresentative.name"
+      #name="ngModel"
       id="input-name"
-      name="fullName"
+      name="name"
       placeholder="Nome completo"
       autofocus
       fullWidth
       fieldSize="large"
-      [required]="validation.fullName.required"
-      [minlength]="validation.fullName.minLength"
-      [maxlength]="validation.fullName.maxLength"
-      [status]="fullName.dirty ? (fullName.invalid ? 'danger' : 'success') : 'basic'"
-      [attr.aria-invalid]="fullName.invalid && fullName.touched ? true : null"
+      [required]="validation.name.required"
+      [minlength]="validation.name.minLength"
+      [maxlength]="validation.name.maxLength"
+      [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="name.invalid && name.touched ? true : null"
     />
-    <ng-container *ngIf="fullName.invalid && fullName.touched">
-      <p class="caption status-danger" *ngIf="fullName.errors?.required">O nome é obrigatório!</p>
-      <p class="caption status-danger" *ngIf="fullName.errors?.minlength || fullName.errors?.maxlength">
+    <ng-container *ngIf="name.invalid && name.touched">
+      <p class="caption status-danger" *ngIf="name.errors?.required">O nome é obrigatório!</p>
+      <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
         O nome deve conter entre
-        {{ validation.fullName.minLength }} a
-        {{ validation.fullName.maxLength }}
+        {{ validation.name.minLength }} a
+        {{ validation.name.maxLength }}
         caracteres
       </p>
     </ng-container>

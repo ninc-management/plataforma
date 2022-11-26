@@ -77,13 +77,13 @@ describe('InvoiceService', () => {
     mockedInvoices = [];
     const tmpUser = new User();
     tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
+    tmpUser.name = 'Test1';
     tmpUser.email = 'test1@te.st';
     tmpUser.phone = '123456';
     tmpUser.profilePicture = 'pic1@pic.com';
     mockedUsers.push(cloneDeep(tmpUser));
     tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
+    tmpUser.name = 'Test2';
     tmpUser.email = 'test2@te.st';
     tmpUser.phone = '123456';
     tmpUser.profilePicture = 'pic2@pic.com';

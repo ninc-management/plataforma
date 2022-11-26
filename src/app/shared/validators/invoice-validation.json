@@ -21,7 +21,7 @@
     "minLength": 3,
     "maxLength": 200
   },
-  "name": {
+  "description": {
     "required": true,
     "minLength": 3,
     "maxLength": 200

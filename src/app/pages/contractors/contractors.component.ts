@@ -24,7 +24,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '')
       return this.contractors.filter((contractor) => {
         return (
-          contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          contractor.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contractor.address.streetAddress.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           contractor.address.city.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -34,7 +34,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         );
       });
     return this.contractors.sort((a, b) => {
-      return nameSort(1, a.fullName, b.fullName);
+      return nameSort(1, a.name, b.name);
     });
   }
   settings = {
@@ -61,7 +61,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
       delete: false,
     },
     columns: {
-      fullName: {
+      name: {
         title: 'Autor',
         type: 'string',
       },

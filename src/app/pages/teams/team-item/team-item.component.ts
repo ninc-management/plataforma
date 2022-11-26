@@ -47,7 +47,7 @@ export class TeamItemComponent implements OnInit, OnDestroy {
       this.leaderSearch = idToProperty(
         this.clonedTeam.leader,
         this.userService.idToUser.bind(this.userService),
-        'fullName'
+        'name'
       );
     }
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(

@@ -197,6 +197,25 @@ function convertOldContractExpenseTypes(expense) {
   }
 }
 
+function teamExpense2Transaction(teamExpense, teamId, codeNumber) {
+  var transaction = {}
+  transaction.modelCostCenter = "Times";
+  transaction.author = teamExpense.author;
+  transaction.costCenter = teamId;
+  transaction.description = teamExpense.description;
+  transaction.nf = teamExpense.nf;
+  transaction.type = teamExpense.type;
+  transaction.subType = teamExpense.subType;
+  transaction.value = teamExpense.value;
+  transaction.created = teamExpense.created;
+  transaction.lastUpdate = teamExpense.lastUpdate;
+  transaction.paid = teamExpense.paid;
+  transaction.code = "#" + codeNumber.toString();
+  transaction.paidDate = teamExpense.paidDate;
+  transaction.uploadedFiles = teamExpense.uploadedFiles;
+  return transaction;
+}
+
 // Add active field to Users
 db.users.find().forEach((u) => {
   u.active = true;
@@ -1208,6 +1227,13 @@ db.teams.find().forEach((team) => {
   team.intermediationNfPercentage = '';
   team.overrideSupportPercentages = team.overridePercentages;
   team.overrideIntermediationPercentages = false;
+  var i = db.transactions.estimatedDocumentCount();
+  team.expenses.map((teamExpense)=>{
+    i++;
+    const transaction = teamExpense2Transaction(teamExpense, team._id, i);
+    const result = db.transactions.insertOne(transaction);
+    return result.insertedId._id;
+  });
   delete team.organizationPercentage;
   delete team.nfPercentage;
   delete team.overridePercentages;
@@ -1221,3 +1247,48 @@ db.platformconfigs.find().forEach((config) => {
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
 
+/**
+ * Start of fullName migration
+ */
+
+db.contractors.find().forEach((contractor) => {
+  contractor.name = contractor.fullName;
+  delete contractor.fullName;
+  if(!contractor.comercialRepresentatives) contractor.comercialRepresentatives = [];
+  contractor.comercialRepresentatives.forEach((representative)=>{
+      representative.name = representative.fullName;
+      delete representative.fullName;
+  });
+  if(!contractor.legalRepresentatives) contractor.legalRepresentatives = [];
+  contractor.legalRepresentatives.forEach((representative)=>{
+      representative.name = representative.fullName;
+      delete representative.fullName;
+  });
+  db.contractors.replaceOne({ _id: contractor._id }, contractor);
+});
+
+db.invoices.find().forEach((invoice) => {
+  invoice.description = invoice.name;
+  delete invoice.name;
+
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});
+
+db.providers.find().forEach((provider) => {
+  provider.bankName = provider.name;
+  provider.name = provider.fullName;
+  delete provider.fullName;
+
+  db.providers.replaceOne({ _id: provider._id }, provider);
+});
+
+db.users.find().forEach((user) => {
+  user.name = user.fullName;
+  delete user.fullName;
+
+  db.users.replaceOne({ _id: user._id }, user);
+});
+
+/**
+ * End of fullName migration
+ */

@@ -13,7 +13,6 @@ import { Team } from '@models/team';
 export enum TEAM_COMPONENT_TYPES {
   TEAM,
   EXPENSES,
-  EXPENSE,
   TRANSFER,
 }
 

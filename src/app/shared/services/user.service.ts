@@ -17,7 +17,7 @@ const supportProfilePicture =
   'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a';
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
-  fullName: 'Caixa do contrato',
+  name: 'Caixa do contrato',
   email: '',
   professionalEmail: '',
   phone: '',
@@ -39,7 +39,7 @@ export const CONTRACT_BALANCE = {
 
 export const CLIENT = {
   _id: '000000000000000000000001',
-  fullName: 'Cliente',
+  name: 'Cliente',
   email: '',
   professionalEmail: '',
   phone: '',
@@ -59,10 +59,10 @@ export const CLIENT = {
   profilePicture: supportProfilePicture,
 } as User;
 
-// NINC: change fullName for each new client
+// NINC: change name for each new client
 export const NORTAN = {
   _id: '000000000000000000000002',
-  fullName: 'Nortan',
+  name: 'Nortan',
   email: '',
   professionalEmail: '',
   phone: '',
@@ -151,7 +151,7 @@ export class UserService implements OnDestroy {
           const tmp = reviveDates(users);
           this.users$.next(
             (tmp as User[]).sort((a, b) => {
-              return nameSort(1, a.fullName, b.fullName);
+              return nameSort(1, a.name, b.name);
             })
           );
           this._isDataLoaded$.next(true);
@@ -196,7 +196,7 @@ export class UserService implements OnDestroy {
   idToShortName(id: string | User): string {
     const exibitionName = this.idToUser(id).exibitionName;
     if (exibitionName) return exibitionName;
-    return this.idToUser(id).fullName;
+    return this.idToUser(id).name;
   }
 
   idToUser(id: string | User): User {

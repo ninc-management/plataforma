@@ -228,7 +228,7 @@ export class PaymentItemComponent implements OnInit {
           title: 'Nova pagamento ' + this.contract.locals.code,
           tag: NotificationTags.PAYMENT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
-            manager.fullName
+            manager.name
           } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.locals.code}.`,
         });
       }

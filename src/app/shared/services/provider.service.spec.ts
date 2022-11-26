@@ -72,14 +72,14 @@ describe('ProviderService', () => {
     tmpProvider.address = 'rua teste1';
     tmpProvider.document = '000.000.000-11';
     tmpProvider.email = 'test1@te.st';
-    tmpProvider.fullName = 'Test1';
+    tmpProvider.name = 'Test1';
     tmpProvider.phone = '(00) 0000-0000';
     mockedProviders.push(cloneDeep(tmpProvider));
     tmpProvider._id = '1';
     tmpProvider.address = 'rua teste2';
     tmpProvider.document = '000.000.000-12';
     tmpProvider.email = 'test2@te.st';
-    tmpProvider.fullName = 'Test2';
+    tmpProvider.name = 'Test2';
     tmpProvider.phone = '(00) 0000-0000';
     mockedProviders.push(cloneDeep(tmpProvider));
   });
@@ -98,7 +98,7 @@ describe('ProviderService', () => {
     tmpProvider.address = 'rua teste3';
     tmpProvider.document = '000.000.000-13';
     tmpProvider.email = 'test3@te.st';
-    tmpProvider.fullName = 'Test3';
+    tmpProvider.name = 'Test3';
     tmpProvider.phone = '(00) 0000-0000';
     let i = 1;
     const data = {

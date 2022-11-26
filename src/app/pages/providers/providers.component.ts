@@ -23,14 +23,14 @@ export class ProvidersComponent implements OnInit {
     if (this.searchQuery !== '')
       return this.providers.filter((providers) => {
         return (
-          providers.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          providers.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           providers.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           providers.address.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           providers.email.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
       });
     return this.providers.sort((a, b) => {
-      return nameSort(1, a.fullName, b.fullName);
+      return nameSort(1, a.name, b.name);
     });
   }
   settings = {
@@ -57,7 +57,7 @@ export class ProvidersComponent implements OnInit {
       delete: false,
     },
     columns: {
-      fullName: {
+      name: {
         title: 'Fornecedor',
         type: 'string',
       },

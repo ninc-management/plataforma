@@ -108,7 +108,7 @@ export class BalanceTabComponent implements OnInit {
         }
         return sum;
       },
-      [CONTRACT_BALANCE.fullName, CLIENT.fullName]
+      [CONTRACT_BALANCE.name, CLIENT.name]
         .concat(
           this.invoice.team
             .map((member) => {

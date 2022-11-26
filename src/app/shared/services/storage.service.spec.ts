@@ -32,6 +32,9 @@ describe('StorageService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const tansactionReq = httpMock.expectOne('/api/transaction/all');
+    expect(tansactionReq.request.method).toBe('POST');
+    tansactionReq.flush([]);
     const configReq = httpMock.expectOne('/api/config/all');
 
     expect(configReq.request.method).toBe('POST');
