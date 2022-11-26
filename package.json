@@ -16,7 +16,7 @@
   "scripts": {
     "ng": "ng",
     "conventional-changelog": "conventional-changelog",
-    "start": "node server.js",
+    "start": "node --optimize_for_size --max_old_space_size=920 server.js",
     "start:dev": "tsc --build backend/tsconfig.json --watch & nodemon ./server.js",
     "start:proxy": "ng serve --configuration dev --proxy-config proxy-config.json --disable-host-check",
     "build": "tsc --build backend/tsconfig.json && ng build --configuration production --aot",
