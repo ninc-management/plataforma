@@ -15,7 +15,7 @@ import { TeamService } from './services/team.service';
 import { ContractService } from './services/contract.service';
 import { ContractorService } from './services/contractor.service';
 import { ConfigService } from './services/config.service';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, skipWhile, take } from 'rxjs';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { Contractor } from '@models/contractor';
 import {
@@ -112,7 +112,7 @@ describe('UtilsService', () => {
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     invoiceService = TestBed.inject(InvoiceService);
     userService = TestBed.inject(UserService);
     teamService = TestBed.inject(TeamService);
@@ -204,6 +204,10 @@ describe('UtilsService', () => {
     expect(req.request.method).toBe('POST');
     req.flush(mockedTeams);
 
+    req = httpMock.expectOne('/api/transaction/all');
+    expect(req.request.method).toBe('POST');
+    req.flush([]);
+
     userService.getUsers().pipe(take(1)).subscribe();
     req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -228,6 +232,12 @@ describe('UtilsService', () => {
     req = httpMock.expectOne('/api/config/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedConfigs);
+
+    await teamService.isDataLoaded$.pipe(skipWhile((isLoaded) => !isLoaded), take(1));
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('assingOrIncrement should work', () => {
