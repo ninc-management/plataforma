@@ -197,6 +197,25 @@ function convertOldContractExpenseTypes(expense) {
   }
 }
 
+function teamExpense2Transaction(teamExpense, teamId, codeNumber) {
+  var transaction = {}
+  transaction.modelCostCenter = "Times";
+  transaction.author = teamExpense.author;
+  transaction.costCenter = teamId;
+  transaction.description = teamExpense.description;
+  transaction.nf = teamExpense.nf;
+  transaction.type = teamExpense.type;
+  transaction.subType = teamExpense.subType;
+  transaction.value = teamExpense.value;
+  transaction.created = teamExpense.created;
+  transaction.lastUpdate = teamExpense.lastUpdate;
+  transaction.paid = teamExpense.paid;
+  transaction.code = "#" + codeNumber.toString();
+  transaction.paidDate = teamExpense.paidDate;
+  transaction.uploadedFiles = teamExpense.uploadedFiles;
+  return transaction;
+}
+
 // Add active field to Users
 db.users.find().forEach((u) => {
   u.active = true;

@@ -19,6 +19,9 @@ describe('OnedriveService', () => {
     const teamReq = httpMock.expectOne('/api/team/all');
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush([]);
+    const transactionReq = httpMock.expectOne('/api/transaction/all');
+    expect(transactionReq.request.method).toBe('POST');
+    transactionReq.flush([]);
     const configReq = httpMock.expectOne('/api/config/all');
     const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';

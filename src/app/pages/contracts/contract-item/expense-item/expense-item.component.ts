@@ -220,11 +220,9 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         sector: member.sector,
       }));
 
-    this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.fullName : '';
-    this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.fullName : '';
-    this.providerSearch = this.expense.provider
-      ? this.providerService.idToProvider(this.expense.provider)?.fullName
-      : '';
+    this.userSearch = this.expense.author ? this.userService.idToUser(this.expense.author)?.name : '';
+    this.sourceSearch = this.expense.source ? this.userService.idToUser(this.expense.source)?.name : '';
+    this.providerSearch = this.expense.provider ? this.providerService.idToProvider(this.expense.provider)?.name : '';
 
     if (this.expense.team.length > 0 && this.expense.team[0].user) {
       if (this.splitSelectedMember._id == undefined)
@@ -299,7 +297,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
         title: 'Nova ordem de despesa ' + this.contract.locals.code,
         tag: NotificationTags.EXPENSE_ORDER_CREATED,
         message: `${expenseAuthor.article.toUpperCase()} ${
-          expenseAuthor.fullName
+          expenseAuthor.name
         } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.locals.code}.`,
       });
     }
@@ -411,7 +409,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   fixComissionSource(): void {
     if (this.expense.type === EXPENSE_TYPES.COMISSAO) {
       this.expense.source = CONTRACT_BALANCE;
-      this.sourceSearch = CONTRACT_BALANCE.fullName;
+      this.sourceSearch = CONTRACT_BALANCE.name;
     }
   }
 

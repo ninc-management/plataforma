@@ -196,10 +196,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       this.contractorSearch = idToProperty(
         this.tempInvoice.contractor,
         this.contractorService.idToContractor.bind(this.contractorService),
-        'fullName'
+        'name'
       );
       this.associateSearch = this.tempInvoice.prospectedBy
-        ? idToProperty(this.tempInvoice.prospectedBy, this.userService.idToUser.bind(this.userService), 'fullName')
+        ? idToProperty(this.tempInvoice.prospectedBy, this.userService.idToUser.bind(this.userService), 'name')
         : '';
       this.revision = +this.tempInvoice.code?.slice(this.tempInvoice.code.length - 2);
       this.oldStatus = this.tempInvoice.status as INVOICE_STATOOS;
@@ -309,7 +309,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
               this.authorSearch = idToProperty(
                 this.tempInvoice.author,
                 this.userService.idToUser.bind(this.userService),
-                'fullName'
+                'name'
               );
             } else {
               this.authorData = of(
@@ -327,7 +327,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.authorSearch = idToProperty(
               this.tempInvoice.author,
               this.userService.idToUser.bind(this.userService),
-              'fullName'
+              'name'
             );
           }
         });
@@ -389,7 +389,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tempInvoice.locals.contractorName = idToProperty(
           this.tempInvoice.contractor,
           this.contractorService.idToContractor.bind(this.contractorService),
-          'fullName'
+          'name'
         );
 
         this.iInvoice = cloneDeep(this.tempInvoice);
@@ -833,7 +833,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
               ' d' +
               author.article +
               ' ' +
-              (author.exibitionName ? author.exibitionName : author.fullName) +
+              (author.exibitionName ? author.exibitionName : author.name) +
               ' foi fechado!',
           });
         }

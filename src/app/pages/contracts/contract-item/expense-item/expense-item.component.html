@@ -51,7 +51,7 @@
               Não foi possível achar um colaborador com o nome digitado
               "
             fieldSize="large"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="userData"
             [minSearchLength]="0"
@@ -195,7 +195,7 @@
           Não foi possível achar um colaborador com o nome digitado
           "
             fieldSize="large"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="sourceData"
             [minSearchLength]="0"
@@ -300,7 +300,7 @@
           Não foi possível achar um fornecedor com o nome digitado
           "
             fieldSize="large"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="providerData"
             [minSearchLength]="0"
@@ -367,7 +367,7 @@
             [attr.aria-invalid]="selectedMember.invalid && selectedMember.touched ? true : null"
           >
             <nb-option *ngFor="let user of teamUsers" [value]="user">
-              {{ user.fullName }}
+              {{ user.name }}
             </nb-option>
           </nb-select>
         </div>

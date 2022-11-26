@@ -115,7 +115,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       (this.managementAssignee = idToProperty(
         this.invoice.author,
         this.userService.idToUser.bind(this.userService),
-        'fullName'
+        'name'
       )),
         (this.deadline = this.contractService.deadline(this.clonedContract));
       this.avaliableContracts$ = this.contractService.getContracts();
@@ -383,7 +383,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         start: item.range.start,
         end: item.range.end,
         progressPercentage: this.isItemOverdue(item) ? 100 : this.percentualItemProgress(item),
-        owner: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+        owner: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'name'),
         image: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
         isFinished: this.hasItemFinished(item) ? 1 : 0,
         isAction: 0,
@@ -401,7 +401,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
           start: action.range.start,
           end: action.range.end,
           progressPercentage: this.percentualActionProgress(action),
-          owner: idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'fullName'),
+          owner: idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'name'),
           image: idToProperty(action.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
           isFinished: action.isFinished ? 1 : 0,
           isAction: 1,
@@ -427,7 +427,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   private searchUsersToNotify(users: User[], mentionedUsers: string[]): User[] {
     return users.filter((user) => {
       const index = mentionedUsers.findIndex((mentionedUser) => {
-        return mentionedUser == (user.exibitionName ? user.exibitionName : user.fullName);
+        return mentionedUser == (user.exibitionName ? user.exibitionName : user.name);
       });
 
       if (index != -1) {

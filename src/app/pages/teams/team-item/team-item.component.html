@@ -97,7 +97,7 @@
           Não foi possível achar um associado com o nome digitado
           "
               fieldSize="large"
-              nameProperty="fullName"
+              nameProperty="name"
               pictureProperty="profilePicture"
               [data$]="availableLeaders"
               [minSearchLength]="0"
@@ -291,7 +291,7 @@
                 #memberList="ngModel"
                 id="input-member"
                 name="memberList"
-                nameProperty="fullName"
+                nameProperty="name"
                 pictureProperty="profilePicture"
                 [data$]="availableUsers"
                 [minSearchLength]="0"
@@ -361,7 +361,7 @@
                 <nb-user
                   size="giant"
                   [name]="
-                    [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
+                    [member.user, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty
                   "
                   [picture]="
                     [member.user, userService.idToUser.bind(userService), 'profilePicture']

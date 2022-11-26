@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { addMonths, subDays, subMonths, subYears } from 'date-fns';
 import { cloneDeep, range } from 'lodash';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, skipWhile, take } from 'rxjs';
 
 import { externalMockedConfigs } from './mocked-data/mocked-config';
 import { externalMockedContractors } from './mocked-data/mocked-contractors';
@@ -45,7 +45,7 @@ import { Contract, ContractReceipt } from '@models/contract';
 import { Contractor } from '@models/contractor';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
-import { Team, TeamMember } from '@models/team';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 interface MockedUser {
@@ -119,7 +119,7 @@ describe('UtilsService', () => {
 
   CommonTestingModule.setUpTestBed(TestComponent);
 
-  beforeEach(() => {
+  beforeEach(async () => {
     invoiceService = TestBed.inject(InvoiceService);
     userService = TestBed.inject(UserService);
     teamService = TestBed.inject(TeamService);
@@ -143,6 +143,10 @@ describe('UtilsService', () => {
     let req = httpMock.expectOne('/api/team/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedTeams);
+
+    req = httpMock.expectOne('/api/transaction/all');
+    expect(req.request.method).toBe('POST');
+    req.flush([]);
 
     userService.getUsers().pipe(take(1)).subscribe();
     req = httpMock.expectOne('/api/user/all');
@@ -168,6 +172,15 @@ describe('UtilsService', () => {
     req = httpMock.expectOne('/api/config/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedConfigs);
+
+    await teamService.isDataLoaded$.pipe(
+      skipWhile((isLoaded) => !isLoaded),
+      take(1)
+    );
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('assingOrIncrement should work', () => {
@@ -355,9 +368,7 @@ describe('UtilsService', () => {
       mockedUsers[0]
     );
     expect(idToProperty(undefined, userService.idToUser.bind(userService), 'profilePicture')).toBe('');
-    expect(idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'fullName')).toBe(
-      mockedUsers[0].fullName
-    );
+    expect(idToProperty(mockedUsers[0]._id, userService.idToUser.bind(userService), 'name')).toBe(mockedUsers[0].name);
     expect(idToProperty(mockedUsers[0], userService.idToUser.bind(userService), 'phone')).toBe(mockedUsers[0].phone);
     expect(idToProperty(undefined, teamService.idToTeam.bind(teamService), 'purpose')).toBe('');
     expect(idToProperty(mockedTeams[0]._id, teamService.idToTeam.bind(teamService), 'purpose')).toBe(
@@ -371,10 +382,10 @@ describe('UtilsService', () => {
     expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'locals').value).toBe(
       mockedContracts[0].locals.value
     );
-    expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'fullName')).toBe('');
+    expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'name')).toBe('');
     expect(
-      idToProperty(mockedContractors[0]._id, contractorService.idToContractor.bind(contractorService), 'fullName')
-    ).toBe(mockedContractors[0].fullName);
+      idToProperty(mockedContractors[0]._id, contractorService.idToContractor.bind(contractorService), 'name')
+    ).toBe(mockedContractors[0].name);
     expect(
       idToProperty(mockedContractors[0], contractorService.idToContractor.bind(contractorService), 'document')
     ).toBe(mockedContractors[0].document);

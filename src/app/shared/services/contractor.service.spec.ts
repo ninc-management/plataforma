@@ -99,7 +99,7 @@ describe('ContractorService', () => {
     };
     tmpContractor.document = '000.000.000-13';
     tmpContractor.email = 'test3@te.st';
-    tmpContractor.fullName = 'Test3';
+    tmpContractor.name = 'Test3';
     tmpContractor.phone = '(00) 0000-0000';
     let i = 1;
     const data = {

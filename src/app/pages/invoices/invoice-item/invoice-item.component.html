@@ -12,7 +12,7 @@
               #authorList="ngModel"
               id="input-author"
               name="authorList"
-              nameProperty="fullName"
+              nameProperty="name"
               pictureProperty="profilePicture"
               [data$]="authorData"
               [minSearchLength]="0"
@@ -190,13 +190,13 @@
                 tempInvoice.contractorFullName = idToProperty(
                   tempInvoice.contractor,
                   contractorService.idToContractor.bind(contractorService),
-                  'fullName'
+                  'name'
                 )
               "
               #contractor="ngModel"
               id="input-contractor"
               name="contractor"
-              nameProperty="fullName"
+              nameProperty="name"
               [data$]="contractorData"
               [minSearchLength]="0"
               [placeholder]="'Digite e selecione o nome do cliente do orçamento'"
@@ -248,7 +248,7 @@
           #associateList="ngModel"
           id="input-associate"
           name="associate-list"
-          nameProperty="fullName"
+          nameProperty="name"
           pictureProperty="profilePicture"
           [data$]="associateData"
           [minSearchLength]="0"
@@ -262,29 +262,29 @@
       </div>
 
       <div class="form-control-group">
-        <label class="label" for="input-name">Empreendimento:</label>
+        <label class="label" for="input-description">Empreendimento:</label>
         <input
           nbInput
-          [(ngModel)]="tempInvoice.name"
-          #name="ngModel"
-          id="input-name"
-          name="name"
+          [(ngModel)]="tempInvoice.description"
+          #description="ngModel"
+          id="input-description"
+          name="description"
           placeholder="Nome do empreendimento"
           fullWidth
           fieldSize="large"
-          [required]="validation.name.required"
-          [minlength]="validation.name.minLength"
-          [maxlength]="validation.name.maxLength"
-          [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
-          [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+          [required]="validation.description.required"
+          [minlength]="validation.description.minLength"
+          [maxlength]="validation.description.maxLength"
+          [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="description.invalid && description.touched ? true : null"
           [disabled]="false"
         />
-        <ng-container *ngIf="name.invalid && name.touched">
-          <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
-          <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+        <ng-container *ngIf="description.invalid && description.touched">
+          <p class="caption status-danger" *ngIf="description.errors?.required">O nome do empreendimento é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
             O nome do empreendimento deve conter entre
-            {{ validation.name.minLength }} a
-            {{ validation.name.maxLength }}
+            {{ validation.description.minLength }} a
+            {{ validation.description.maxLength }}
             caracteres
           </p>
         </ng-container>
@@ -636,7 +636,7 @@
               #userList="ngModel"
               id="input-user"
               name="userList"
-              nameProperty="fullName"
+              nameProperty="name"
               pictureProperty="profilePicture"
               [data$]="availableUsers"
               [minSearchLength]="0"
@@ -688,7 +688,7 @@
         <nb-list-item *ngFor="let member of tempInvoice.team; let i = index; trackBy: trackByIndex">
           <div class="row irow">
             <div class="col-12 col-md-6">
-              {{ [member.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty }}
+              {{ [member.user, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty }}
             </div>
             <div class="col-10 col-md-5">
               <nb-select
@@ -733,7 +733,7 @@
             Não foi possível achar um fornecedor com o nome digitado
             "
               fieldSize="large"
-              nameProperty="fullName"
+              nameProperty="name"
               pictureProperty="profilePicture"
               [data$]="providerData"
               [minSearchLength]="0"
@@ -763,7 +763,7 @@
           <div class="row irow">
             <div class="col-12 col-md-6">
               {{
-                [provider, providerService.idToProvider.bind(providerService), 'fullName'] | transformPipe: idToProperty
+                [provider, providerService.idToProvider.bind(providerService), 'name'] | transformPipe: idToProperty
               }}
             </div>
             <div class="col-10 col-md-5">

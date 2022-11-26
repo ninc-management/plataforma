@@ -429,14 +429,14 @@ export class ContractService implements OnDestroy {
       if (invoice.author) {
         const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
         if (managerPicture) contract.locals.managerPicture = managerPicture;
-        contract.locals.fullName = this.userService.idToShortName(invoice.author);
+        contract.locals.name = this.userService.idToShortName(invoice.author);
       }
 
       if (invoice.contractor) {
         contract.locals.contractor = idToProperty(
           invoice.contractor,
           this.contractorService.idToContractor.bind(this.contractorService),
-          'fullName'
+          'name'
         );
       }
 
@@ -445,7 +445,7 @@ export class ContractService implements OnDestroy {
         contract.locals.role = this.invoiceService.role(invoice, user);
       });
 
-      contract.locals.name = invoice.name;
+      contract.locals.description = invoice.description;
       contract.locals.value = invoice.value;
       contract.locals.code = invoice.code;
       contract.locals.balance = this.balance(contract);

@@ -323,7 +323,7 @@
             #userList="ngModel"
             id="input-user"
             name="userList"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="availableUsers"
             [minSearchLength]="0"
@@ -413,7 +413,7 @@
       <nb-list-item *ngFor="let userPayment of payment.team; let i = index; trackBy: trackByIndex">
         <div class="row paymentRow">
           <div class="col-12 col-md-4">
-            {{ [userPayment.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty }}
+            {{ [userPayment.user, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty }}
             <ng-container>
               <p class="caption status-danger" *ngIf="memberValue.errors?.overpaid && memberValue.invalid">
                 O valor pago é superior ao saldo a receber no contrato (R$ {{ userNotPaidValue(payment.team[i]) }})!

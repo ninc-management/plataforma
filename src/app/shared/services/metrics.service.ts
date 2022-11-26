@@ -11,6 +11,7 @@ import {
   isWithinInterval,
   nfPercentage,
   nortanPercentage,
+  populateList,
   valueSort,
 } from '../utils';
 import { ConfigService } from './config.service';
@@ -19,6 +20,7 @@ import { ContractorService } from './contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from './invoice.service';
 import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
+import { TransactionService } from './transaction.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 
 import { Contract, ContractLocals } from '@models/contract';
@@ -132,7 +134,8 @@ export class MetricsService implements OnDestroy {
     private stringUtil: StringUtilService,
     private teamService: TeamService,
     private contractorService: ContractorService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private transactionService: TransactionService
   ) {
     this.teamService
       .getTeams()
@@ -423,7 +426,7 @@ export class MetricsService implements OnDestroy {
                       const author = idToProperty(
                         member.user,
                         this.userService.idToUser.bind(this.userService),
-                        'fullName'
+                        'name'
                       );
 
                       const value = this.stringUtil.moneyToNumber(member.value);
@@ -441,7 +444,7 @@ export class MetricsService implements OnDestroy {
           return received;
         }, {});
         const complete = users.reduce((userList: any, user) => {
-          userList[user.fullName] = 0;
+          userList[user.name] = 0;
           return userList;
         }, {});
         return mergeWith({}, partial, complete, add);
@@ -654,23 +657,28 @@ export class MetricsService implements OnDestroy {
   }
 
   teamExpenses(tId: string, start: Date, end: Date): Observable<MetricInfo> {
-    return combineLatest([this.teamService.getTeams(), this.teamService.isDataLoaded$]).pipe(
-      skipWhile(([, isTeamsDataLoaded]) => !isTeamsDataLoaded),
+    return combineLatest([
+      this.teamService.getTeams(),
+      this.transactionService.getTransactions(),
+      this.teamService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isTeamsDataLoaded, isTransactionDataLoaded]) => !isTeamsDataLoaded || !isTransactionDataLoaded),
       map(() => {
-        return this.teamService
-          .idToTeam(tId)
-          .expenses.filter((expense) => expense.paid)
-          .reduce(
-            (acc, expense) => {
-              const paidDate = expense.paidDate;
-              if (paidDate && isWithinInterval(paidDate, start, end)) {
-                acc.count += 1;
-                acc.value += this.stringUtil.moneyToNumber(expense.value);
-              }
-              return acc;
-            },
-            { count: 0, value: 0 }
-          );
+        return populateList(
+          this.teamService.idToTeam(tId).expenses,
+          this.transactionService.idToTransaction.bind(this.transactionService)
+        ).reduce(
+          (acc, expense) => {
+            const paidDate = expense.paidDate;
+            if (paidDate && isWithinInterval(paidDate, start, end)) {
+              acc.count += 1;
+              acc.value += this.stringUtil.moneyToNumber(expense.value);
+            }
+            return acc;
+          },
+          { count: 0, value: 0 }
+        );
       })
     );
   }
@@ -984,7 +992,7 @@ export class MetricsService implements OnDestroy {
       if (contract.invoice) {
         const invoice = this.invoiceService.idToInvoice(contract.invoice);
         if (invoice.contractor) {
-          const contractorName = this.contractorService.idToContractor(invoice.contractor).fullName;
+          const contractorName = this.contractorService.idToContractor(invoice.contractor).name;
 
           if (!valueByContractor[contractorName]) {
             valueByContractor[contractorName] = { value: '0,00', percentage: '0,00%' };

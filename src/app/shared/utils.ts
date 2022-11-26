@@ -418,13 +418,18 @@ export function sortNotifications(notificationA: Notification, notificationB: No
   return isBefore(createdA, createdB) ? 1 : -1;
 }
 
-export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]>, coll: string): void {
+export async function handle<T extends IdWise>(
+  data: any,
+  oArray$: BehaviorSubject<T[]>,
+  coll: string,
+  cbk?: (oArray: T[]) => Promise<T[]>
+): Promise<void> {
   if (data == new Object()) return;
   if (data.ns.coll != coll) return;
   data = reviveDates(data);
   switch (data.operationType) {
     case 'update': {
-      const tmpArray = oArray$.getValue();
+      let tmpArray = oArray$.getValue();
       const idx = tmpArray.findIndex((el: T) => el._id === data.documentKey._id);
       if (data.updateDescription.updatedFields) {
         const fieldAndIndex = Object.keys(data.updateDescription.updatedFields)[0].split('.');
@@ -435,6 +440,7 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
       }
       if (data.updateDescription.removedFields.length > 0)
         for (const f of data.updateDescription.removedFields) delete (tmpArray[idx] as any)[f];
+      if (cbk) tmpArray = await cbk(tmpArray);
       oArray$.next(tmpArray);
       break;
     }
@@ -463,10 +469,7 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function populateList<T, V>(list: T[], revival: Function): V[] {
-  return list.map((e) => {
-    if (e) return revival(e);
-    return e;
-  });
+export function populateList<T, V>(list: T[], revival: (e: NonNullable<T>) => V): V[] {
+  const filtered_list = list.filter((e): e is NonNullable<T> => e !== undefined);
+  return filtered_list.map((e) => revival(e));
 }

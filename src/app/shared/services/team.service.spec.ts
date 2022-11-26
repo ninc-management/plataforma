@@ -67,6 +67,10 @@ describe('TeamService', () => {
       expect(req.request.method).toBe('POST');
       setTimeout(() => {
         req.flush(mockedTeams);
+
+        const transactionReq = httpMock.expectOne('/api/transaction/all');
+        expect(transactionReq.request.method).toBe('POST');
+        transactionReq.flush([]);
       }, 50);
     });
   };
@@ -111,7 +115,7 @@ describe('TeamService', () => {
         sectors: [],
       },
     ] as TeamMember[];
-    newMockedTeam.transactions = [];
+    newMockedTeam.expenses = [];
     newMockedTeam.purpose = 'created for testing team service methods';
     let i = 1;
     const data = {
@@ -161,6 +165,10 @@ describe('TeamService', () => {
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
       req.flush(mockedTeams);
+
+      const transactionReq = httpMock.expectOne('/api/transaction/all');
+      expect(transactionReq.request.method).toBe('POST');
+      transactionReq.flush([]);
     }, 50);
   });
 

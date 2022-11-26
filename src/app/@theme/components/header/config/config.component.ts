@@ -283,7 +283,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
         );
         if (usersWithValue.length != 0) {
           this.openDialog(
-            usersWithValue.map((user) => user.fullName),
+            usersWithValue.map((user) => user.name),
             'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
               (key == 'position' ? 'papel:' : 'cargo:')
           );

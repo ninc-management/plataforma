@@ -65,7 +65,7 @@ export class OneDriveService implements OnDestroy {
       '_' +
       numberSlices[1] +
       '-' +
-      invoice['name']?.replace(/\//g, '-') +
+      invoice['description']?.replace(/\//g, '-') +
       '-' +
       authorName
     );

@@ -105,6 +105,10 @@ describe('ContractService', () => {
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush(mockedTeams);
 
+    const transactionReq = httpMock.expectOne('/api/transaction/all');
+    expect(transactionReq.request.method).toBe('POST');
+    transactionReq.flush([]);
+
     const configReq = httpMock.expectOne('/api/config/all');
     expect(configReq.request.method).toBe('POST');
     configReq.flush(mockedConfigs);

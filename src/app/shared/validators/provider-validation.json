@@ -10,7 +10,7 @@
     "minLength": 3,
     "maxLength": 200
   },
-  "fullName": {
+  "name": {
     "required": true,
     "minLength": 3,
     "maxLength": 200

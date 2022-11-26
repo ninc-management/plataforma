@@ -11,7 +11,7 @@
             #authorList="ngModel"
             id="input-author"
             name="authorList"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="authorData"
             [minSearchLength]="0"
@@ -181,26 +181,26 @@
     </div>
 
     <div class="form-control-group">
-      <label class="label" for="input-name">Empreendimento:</label>
+      <label class="label" for="input-description">Empreendimento:</label>
       <input
         nbInput
-        [(ngModel)]="clonedContract.locals.name"
-        #name="ngModel"
-        id="input-name"
-        name="name"
+        [(ngModel)]="clonedContract.locals.description"
+        #description="ngModel"
+        id="input-description"
+        name="description"
         placeholder="Nome do empreendimento"
         fullWidth
         fieldSize="large"
-        [required]="validation.name.required"
-        [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
-        [attr.aria-invalid]="name.invalid && name.touched ? true : null"
+        [required]="validation.description.required"
+        [status]="description.dirty ? (description.invalid ? 'danger' : 'success') : 'basic'"
+        [attr.aria-invalid]="description.invalid && description.touched ? true : null"
         [readonly]="true"
       />
-      <ng-container *ngIf="name.invalid && name.touched">
-        <p class="caption status-danger" *ngIf="name.errors?.required">O nome do empreendimento é obrigatório!</p>
-        <p class="caption status-danger" *ngIf="name.errors?.minlength || name.errors?.maxlength">
+      <ng-container *ngIf="description.invalid && description.touched">
+        <p class="caption status-danger" *ngIf="description.errors?.required">O nome do empreendimento é obrigatório!</p>
+        <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
           O nome do empreendimento deve conter entre
-          {{ validation.name.minLength }} a {{ validation.name.maxLength }} caracteres
+          {{ validation.description.minLength }} a {{ validation.description.maxLength }} caracteres
         </p>
       </ng-container>
     </div>
@@ -327,7 +327,7 @@
             #userList="ngModel"
             id="input-user"
             name="userList"
-            nameProperty="fullName"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="availableUsers"
             [minSearchLength]="0"

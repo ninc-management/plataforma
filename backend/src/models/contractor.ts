@@ -28,7 +28,7 @@ export class Address {
 
 export class ComercialRepresentative {
   @prop({ required: true })
-  fullName: string = '';
+  name: string = '';
 
   @prop({ required: true })
   email: string = '';
@@ -61,7 +61,7 @@ export class LegalRepresentative extends ComercialRepresentative {
 @plugin(mongooseUniqueValidator)
 export class Contractor extends Base<string> {
   @prop({ required: true })
-  fullName: string = '';
+  name: string = '';
 
   @prop({ required: true, unique: true })
   document: string = '';

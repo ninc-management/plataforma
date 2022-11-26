@@ -11,7 +11,7 @@ import { User } from './user';
 export interface InvoiceLocals {
   isModel: boolean;
   contractorName: string;
-  fullName: string;
+  name: string;
   role: string;
 }
 
@@ -158,7 +158,7 @@ export class Invoice extends StatusHistory {
   contractor!: Ref<Contractor>;
 
   @prop({ required: true })
-  name!: string;
+  description!: string;
 
   @prop({ required: true })
   value!: string;
@@ -256,7 +256,7 @@ export class Invoice extends StatusHistory {
   locals: InvoiceLocals = {
     isModel: false,
     contractorName: '',
-    fullName: '',
+    name: '',
     role: 'Nenhum',
   };
 }

@@ -47,12 +47,12 @@ export class TransactionService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  saveTransaction(transaction: Transaction): Observable<SaveTransactionResponse> {
+  saveTransaction(transaction: Transaction): void {
     const req = {
       transaction: transaction,
     };
 
-    return this.http.post<SaveTransactionResponse>('/api/transaction/', req).pipe(take(1));
+    this.http.post<SaveTransactionResponse>('/api/transaction/', req).pipe(take(1)).subscribe();
   }
 
   saveManyTransaction(transactions: Transaction[]): void {
@@ -95,6 +95,22 @@ export class TransactionService implements OnDestroy {
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
 
+  populateCostCenter(
+    transaction: Transaction,
+    teamRevival: (...arg: any) => Team,
+    userRevival: (...arg: any) => User
+  ): User | Team {
+    let costCenter: User | Team = new User();
+    if (transaction.costCenter) {
+      if (transaction.modelCostCenter === COST_CENTER_TYPES.USER)
+        costCenter = userRevival(transaction.costCenter as User | string);
+      if (transaction.modelCostCenter === COST_CENTER_TYPES.TEAM)
+        costCenter = teamRevival(transaction.costCenter as Team | string);
+      transaction.costCenter = costCenter;
+    }
+    return costCenter;
+  }
+
   populate(
     transaction: Transaction,
     contractRevival: (...arg: any) => Contract,
@@ -103,12 +119,7 @@ export class TransactionService implements OnDestroy {
     userRevival: (...arg: any) => User
   ): void {
     if (transaction.author) transaction.author = userRevival(transaction.author);
-    if (transaction.costCenter) {
-      if (transaction.modelCostCenter === COST_CENTER_TYPES.USER)
-        transaction.costCenter = userRevival(transaction.costCenter as User | string);
-      if (transaction.modelCostCenter === COST_CENTER_TYPES.TEAM)
-        transaction.costCenter = teamRevival(transaction.costCenter as Team | string);
-    }
+    this.populateCostCenter(transaction, teamRevival, userRevival);
     if (transaction.provider) transaction.provider = providerRevival(transaction.provider);
     if (transaction.contract) transaction.contract = contractRevival(transaction.contract);
   }

@@ -93,7 +93,7 @@
                 id="new-action-assignee"
                 name="new-action-assignee"
                 inputName="actionAssignee"
-                nameProperty="fullName"
+                nameProperty="name"
                 [data$]="avaliableAssignees$"
                 [placeholder]="'Digite o nome do responsável pela ação'"
                 [fullWidth]="true"
@@ -161,7 +161,7 @@
                   <input
                     nbInput
                     [ngModel]="
-                      [actionList[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                      [actionList[i].assignee, this.userService.idToUser.bind(userService), 'name']
                         | transformPipe: idToProperty
                     "
                     #actionAssignee="ngModel"

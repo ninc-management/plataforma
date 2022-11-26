@@ -48,11 +48,11 @@ export class ExpenseTabComponent implements OnInit {
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           (expense.author &&
-            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
           (expense.source &&
-            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'fullName')
+            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'name')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
           formatDate(expense.created).includes(this.searchQuery.toLowerCase())

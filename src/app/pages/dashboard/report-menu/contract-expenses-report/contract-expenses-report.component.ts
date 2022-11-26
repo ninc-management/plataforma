@@ -36,7 +36,7 @@ export class ContractExpensesReportComponent implements OnInit {
       delete: false,
     },
     columns: {
-      'locals.fullName': {
+      'locals.name': {
         title: 'Autor',
         type: 'string',
       },
@@ -50,7 +50,7 @@ export class ContractExpensesReportComponent implements OnInit {
         title: 'Cliente',
         type: 'string',
       },
-      'locals.name': {
+      'locals.description': {
         title: 'Empreendimento',
         type: 'string',
       },

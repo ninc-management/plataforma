@@ -13,5 +13,5 @@ export class EditionHistoryItem {
   comment!: string;
 
   @prop({ required: true })
-  date: Date = new Date();
+  created: Date = new Date();
 }

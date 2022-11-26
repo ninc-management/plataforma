@@ -32,7 +32,6 @@ import { FileUploadDialogComponent } from './components/file-upload/file-upload.
 import { OneDriveDocumentUploader } from './components/onedrive-document-uploader/onedrive-document-uploader.component';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
-import { TeamExpenseItemComponent } from './components/teams/team-expenses/team-expense-item/team-expense-item.component';
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
 import { TransactionDialogComponent } from './components/transactions/transaction-dialog/transaction-dialog.component';
 import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
@@ -81,7 +80,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     OverPaidDirective,
     SelectAllTextDirective,
     NotIncludedDirective,
-    TeamExpenseItemComponent,
     TeamExpensesComponent,
     TransactionDialogComponent,
     TransactionItemComponent,
@@ -104,7 +102,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     PdfDialogComponent,
     SelectAllTextDirective,
     SelectorDialogComponent,
-    TeamExpenseItemComponent,
     TeamExpensesComponent,
     TextInputDialogComponent,
     TransactionDialogComponent,

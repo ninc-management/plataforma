@@ -15,9 +15,9 @@ import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
 
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Invoice } from '@models/invoice';
 import { Notification } from '@models/notification';
-import { Team, TeamMember } from '@models/team';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 describe('NotificationService', () => {

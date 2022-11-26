@@ -11,7 +11,7 @@
           name="name"
           fullWidth
           fieldSize="large"
-          [required]="validation.fullName.required"
+          [required]="validation.name.required"
           [status]="name.dirty ? (name.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="name.invalid && name.touched ? true : null"
         />

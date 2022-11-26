@@ -78,7 +78,6 @@ describe('InvoiceService', () => {
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
-
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');

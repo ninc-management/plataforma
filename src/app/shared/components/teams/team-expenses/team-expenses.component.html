@@ -39,7 +39,7 @@
                 <nb-user
                   [onlyPicture]="true"
                   [name]="
-                    [expense.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
+                    [expense.author, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty
                   "
                   [picture]="
                     [expense.author, userService.idToUser.bind(userService), 'profilePicture']

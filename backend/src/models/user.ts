@@ -45,7 +45,7 @@ export class UserFinancialTransaction {
 @plugin(mongooseUniqueValidator)
 export class User extends Base<string> {
   @prop({ required: true })
-  public fullName: string = '';
+  public name: string = '';
 
   @prop()
   public exibitionName?: string;
