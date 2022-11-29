@@ -79,10 +79,11 @@ class NortanAPI {
 
     // API Public Routes
     this.app.use('/api/public', publicRoutes);
+    // API Authentication Routes
+    this.app.use('/api/auth', authRoutes);
     // API tooken validation
     this.app.use(isUserAuthenticated);
     // API endpoint routes
-    this.app.use('/api/auth', authRoutes);
     this.app.use('/api/sendmail', emailRoutes);
     this.app.use('/api/user', userRoutes);
     this.app.use('/api/contractor', contractorRoutes);
