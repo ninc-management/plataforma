@@ -70,7 +70,7 @@ describe('InvoiceService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('mockedUser1@mocked.com');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
     httpMock = TestBed.inject(HttpTestingController);
