@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { NbIconLibraries } from '@nebular/theme';
 import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
 
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 
 import { PlatformConfig } from '@models/platformConfig';
@@ -14,7 +15,11 @@ import { PlatformConfig } from '@models/platformConfig';
 export class NgxPublicComponent implements OnDestroy {
   private destroy$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
-  constructor(private iconsLibrary: NbIconLibraries, private configService: ConfigService) {
+  constructor(
+    private iconsLibrary: NbIconLibraries,
+    private configService: ConfigService,
+    public companyService: CompanyService
+  ) {
     combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
       .pipe(
         skipWhile(([configLoaded, _]) => !configLoaded),

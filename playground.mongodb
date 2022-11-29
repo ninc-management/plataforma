@@ -1221,3 +1221,9 @@ db.platformconfigs.find().forEach((config) => {
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
 
+db.platformconfigs.find().forEach(async (config) => {
+  const savedCompany = await db.companies.insertOne(config.socialConfig);
+  config.company  = savedCompany.insertedId;
+  delete config.socialConfig;
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});

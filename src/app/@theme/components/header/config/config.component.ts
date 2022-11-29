@@ -6,13 +6,15 @@ import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take } 
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { getItemsWithValue, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
+import { getItemsWithValue, idToProperty, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
+import { ColorShades, Company } from '@models/company';
 import { Invoice } from '@models/invoice';
-import { ColorShades, PlatformConfig } from '@models/platformConfig';
+import { PlatformConfig } from '@models/platformConfig';
 import { UploadedFile } from '@models/shared';
 import { User } from '@models/user';
 
@@ -60,6 +62,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() config: PlatformConfig = new PlatformConfig();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   clonedConfig: PlatformConfig = new PlatformConfig();
+  configCompany: Company = new Company();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
   newRole = { roleTypeName: '', permission: '' };
@@ -78,6 +81,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   forms: NgForm[] = [];
 
   isPhone = isPhone;
+  idToProperty = idToProperty;
   trackByIndex = trackByIndex;
   tooltipTriggers = tooltipTriggers;
 
@@ -106,11 +110,14 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
     private configService: ConfigService,
     private invoiceService: InvoiceService,
     private dialogService: NbDialogService,
-    public userService: UserService
+    public userService: UserService,
+    public companyService: CompanyService
   ) {}
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
+    if (this.clonedConfig.company)
+      this.configCompany = cloneDeep(this.companyService.idToCompany(this.clonedConfig.company));
     this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
@@ -223,6 +230,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       this.clonedConfig.expenseConfig.contractExpenseTypes = cloneDeep(
         this.clonedConfig.expenseConfig.adminExpenseTypes
       );
+    this.companyService.editCompany(this.configCompany);
     this.configService.editConfig(this.clonedConfig);
   }
 
@@ -294,7 +302,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           name: {
             fn: (name: string) => {
               //TODO Replace company name with ID
-              return this.config.socialConfig.companyName.toLowerCase() + '_' + this.translateLogoType(logoType);
+              return this.configCompany.companyName.toLowerCase() + '_' + this.translateLogoType(logoType);
             },
           },
         },
@@ -308,29 +316,27 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
           const uploadedLogo = new UploadedFile();
           uploadedLogo.name = files[0].name;
           uploadedLogo.url = files[0].url;
-          this.clonedConfig.socialConfig[logoType] = uploadedLogo;
+          this.configCompany[logoType] = uploadedLogo;
         }
       });
   }
 
   getEvaColors(): void {
-    this.configService
-      .sendEvaColorsRequest(this.clonedConfig.socialConfig.colors.primary.color500)
-      .subscribe((colors) => {
-        this.clonedConfig.socialConfig.colors.primary = this.getColorShadesObject(colors.primary);
-        this.clonedConfig.socialConfig.colors.success = this.getColorShadesObject(colors.success);
-        this.clonedConfig.socialConfig.colors.warning = this.getColorShadesObject(colors.warning);
-        this.clonedConfig.socialConfig.colors.info = this.getColorShadesObject(colors.info);
-        this.clonedConfig.socialConfig.colors.danger = this.getColorShadesObject(colors.danger);
-        this.configService.applyCustomColors(this.clonedConfig);
-      });
+    this.configService.sendEvaColorsRequest(this.configCompany.colors.primary.color500).subscribe((colors) => {
+      this.configCompany.colors.primary = this.getColorShadesObject(colors.primary);
+      this.configCompany.colors.success = this.getColorShadesObject(colors.success);
+      this.configCompany.colors.warning = this.getColorShadesObject(colors.warning);
+      this.configCompany.colors.info = this.getColorShadesObject(colors.info);
+      this.configCompany.colors.danger = this.getColorShadesObject(colors.danger);
+      this.configService.applyCustomColors(this.clonedConfig);
+    });
   }
 
   private verifyEmptyLogos(): void {
     Object.values(LOGO_TYPES).forEach((logoType: LOGO_TYPES) => {
-      if (this.clonedConfig.socialConfig[logoType].url == '') {
-        this.clonedConfig.socialConfig[logoType].name = 'Anexe uma logo';
-        this.clonedConfig.socialConfig[logoType].url =
+      if (this.configCompany[logoType] && this.configCompany[logoType].url == '') {
+        this.configCompany[logoType].name = 'Anexe uma logo';
+        this.configCompany[logoType].url =
           'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/logoImages%2Flogo.png?alt=media&token=9ea298d9-0be5-4197-a40d-12d425c98999';
       }
     });

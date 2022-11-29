@@ -10,7 +10,6 @@ import {
   NbThemeService,
 } from '@nebular/theme';
 import { environment } from 'app/../environments/environment';
-import { isBefore } from 'date-fns';
 import { combineLatest, Subject } from 'rxjs';
 import { filter, map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -19,13 +18,16 @@ import {
   COMPONENT_TYPES,
   ConfigDialogComponent,
 } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, trackByIndex } from 'app/shared/utils';
 
+import { Company } from '@models/company';
 import { Notification, NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
+import { UploadedFile } from '@models/shared';
 import { User } from '@models/user';
 
 interface NbMenuItem {
@@ -52,6 +54,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   currentNotificationsQtd = 0;
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
+  company: Company = new Company();
+  logoWhite: UploadedFile = new UploadedFile();
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
@@ -71,27 +75,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
-    public stringUtils: StringUtilService
+    public stringUtils: StringUtilService,
+    public companyService: CompanyService
   ) {}
 
   ngOnInit(): void {
     const multipleBellRing = new Audio('/assets/audios/multipleBellRing.mp3');
     const singleBellRing = new Audio('/assets/audios/singleBellRing.mp3');
-
-    combineLatest([this.userService.currentUser$, this.configService.isDataLoaded$, this.configService.getConfig()])
+    combineLatest([
+      this.userService.currentUser$,
+      this.configService.getConfig(),
+      this.companyService.getCompanies(),
+      this.configService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
+    ])
       .pipe(
-        skipWhile(([, configLoaded, _]) => !configLoaded),
+        skipWhile(([, , , configLoaded, configCompanyLoaded]) => !(configLoaded && configCompanyLoaded)),
         takeUntil(this.destroy$),
-        filter(([currentUser, ,]) => currentUser._id !== undefined)
+        filter(([currentUser, , , ,]) => currentUser._id !== undefined)
       )
-      .subscribe(([currentUser, , config]) => {
+      .subscribe(([currentUser, config, , ,]) => {
         this.user = currentUser;
         this.user.notifications.sort(sortNotifications);
         this.currentNotificationsQtd = currentUser.notifications.length;
         this.changeTheme();
         this.config = config[0];
         this.configService.applyCustomColors(this.config);
-        this.menuTitle = config[0].socialConfig.companyName;
+        if (config[0].company) {
+          this.company = this.companyService.idToCompany(config[0].company);
+          this.menuTitle = this.company.companyName;
+          if (this.company.logoWhite) this.logoWhite = this.company.logoWhite;
+        }
       });
 
     combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
@@ -136,7 +150,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((event: { tag: string; item: any }) => {
         if (document.documentElement.clientWidth <= sm && event.tag === 'main') {
-          this.menuTitle = event.item.title === 'Início' ? this.config.socialConfig.companyName : event.item.title;
+          this.menuTitle = event.item.title === 'Início' ? this.company.companyName : event.item.title;
         }
       });
 
