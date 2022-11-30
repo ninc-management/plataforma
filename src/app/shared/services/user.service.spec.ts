@@ -72,7 +72,7 @@ describe('UserService', () => {
       expect(user).toEqual(new User());
     });
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[1].email);
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -88,7 +88,7 @@ describe('UserService', () => {
 
   baseTest('getUser should work', (expectedUsers: User[], done: DoneFn) => {
     service
-      .getUser('mockedUser1@mocked.com')
+      .getUser(externalMockedUsers[0].email)
       .pipe(
         take(2),
         last(),
@@ -143,7 +143,7 @@ describe('UserService', () => {
     });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[1].email);
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -211,7 +211,7 @@ describe('UserService', () => {
     });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[1].email);
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
@@ -280,7 +280,7 @@ describe('UserService', () => {
     });
 
     // Set current user
-    authServiceSpy.userEmail.and.returnValue('mockedUser2@mocked.com');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[1].email);
     service.refreshCurrentUser();
     test2.subscribe((user) => {
       expect(user).toEqual(reviveDates(mockedUsers[1]));
