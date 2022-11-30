@@ -233,7 +233,7 @@ describe('AuthService', () => {
     const req1 = httpMock.expectOne('api/auth/isActive');
     expect(req1.request.method).toBe('POST');
     setTimeout(() => {
-      req1.flush(!!mockedUsers.find((user) => user.email == 'user@mocked.com' && user.active));
+      req1.flush(!!mockedUsers.find((user) => user.email == mockedUsers[0].email && user.active));
     }, 50);
 
     service.isUserActive(mockedUsers[1].email).subscribe((response) => {
@@ -244,7 +244,7 @@ describe('AuthService', () => {
     const req2 = httpMock.expectOne('api/auth/isActive');
     expect(req2.request.method).toBe('POST');
     setTimeout(() => {
-      req2.flush(!!mockedUsers.find((user) => user.email == mockedUsers[0].email && user.active));
+      req2.flush(!!mockedUsers.find((user) => user.email == mockedUsers[1].email && user.active));
     }, 50);
   });
 });
