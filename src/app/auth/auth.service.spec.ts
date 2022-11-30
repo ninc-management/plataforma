@@ -13,11 +13,13 @@ import { Subject } from 'rxjs';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { ProspectService } from 'app/shared/services/prospect.service';
 import { Prospect } from '@models/prospect';
+import { User } from '@models/user';
 
 describe('AuthService', () => {
   let httpMock: HttpTestingController;
   let prospectService: ProspectService;
   let service: AuthService;
+  let mockedUsers: User[];
   let mockedProspects: Prospect[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
@@ -45,19 +47,34 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
     prospectService = TestBed.inject(ProspectService);
 
-   mockedProspects = [];
+    mockedUsers = [];
+    mockedProspects = [];
+
+    const tmpUser = new User();
+    tmpUser._id = '0';
+    tmpUser.fullName = 'user';
+    tmpUser.email = 'user@mocked.com';
+    tmpUser.phone = '00000000000';
+    tmpUser.active = false;
+    mockedUsers.push(cloneDeep(tmpUser));
+    tmpUser._id = '1';
+    tmpUser.fullName = 'user2';
+    tmpUser.email = 'user2@mocked.com';
+    tmpUser.phone = '00000000000';
+    tmpUser.active = true;
+    mockedUsers.push(cloneDeep(tmpUser));
 
     let tmpProspect = new Prospect();
     tmpProspect._id = '0';
-    tmpProspect.fullName = 'maria';
-    tmpProspect.email = 'test1@te.st';
-    tmpProspect.phone = '123456';
+    tmpProspect.fullName = 'prospect';
+    tmpProspect.email = 'prospect@mocked.com';
+    tmpProspect.phone = '00000000000';
 
     mockedProspects.push(cloneDeep(tmpProspect));
     tmpProspect._id = '1';
-    tmpProspect.fullName = 'daniel';
-    tmpProspect.email = 'test2@te.st';
-    tmpProspect.phone = '1234567';
+    tmpProspect.fullName = 'prospect2';
+    tmpProspect.email = 'prospect2@mocked.com';
+    tmpProspect.phone = '00000000000';
 
     mockedProspects.push(cloneDeep(tmpProspect));
   });
@@ -73,28 +90,31 @@ describe('AuthService', () => {
   it('userEmail should work', () => {
     instanceSpy.getAllAccounts.and.returnValue([
       {
-        homeAccountId: '0',
+        homeAccountId: mockedUsers[0]._id,
         environment: '',
-        tenantId: 'teste',
-        username: 'user',
-        localAccountId: 'teste',
+        tenantId: mockedUsers[0]._id,
+        name: mockedUsers[0].fullName,
+        username: mockedUsers[0].email,
+        localAccountId: mockedUsers[0]._id,
       },
       {
-        homeAccountId: '1',
+        homeAccountId: mockedUsers[1]._id,
         environment: '',
-        tenantId: 'teste01',
-        username: 'user01',
-        localAccountId: 'teste01',
+        tenantId: mockedUsers[1]._id,
+        name: mockedUsers[1].fullName,
+        username: mockedUsers[1].email,
+        localAccountId: mockedUsers[1]._id,
       },
     ]);
     instanceSpy.getActiveAccount.and.returnValue({
-      homeAccountId: '0',
+      homeAccountId: mockedUsers[0]._id,
       environment: '',
-      tenantId: 'teste',
-      username: 'user',
-      localAccountId: 'teste',
+      tenantId: mockedUsers[0]._id,
+      name: mockedUsers[0].fullName,
+      username: mockedUsers[0].email,
+      localAccountId: mockedUsers[0]._id,
     });
-    expect(service.userEmail()).toBe('user');
+    expect(service.userEmail()).toBe(mockedUsers[0].email);
   });
 
   it('register should work', (done: DoneFn) => {
@@ -155,38 +175,76 @@ describe('AuthService', () => {
   });
 
   it('isUserRegistred should work', (done: DoneFn) => {
-    service.isUserRegistred('elygledsonjs@gmail.com').subscribe((flag) => {
-      expect(flag).toBe(false);
-      done();
+    service.isUserRegistred('fakeUser@mocked.com').subscribe((response) => {
+      expect(response).toBe(false);
     });
     const req = httpMock.expectOne('/api/auth/isRegistered');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(false);
+      req.flush(!!mockedUsers.find((user: User) => user.email == 'fakeUser@mocked.com'));
+    }, 50);
+    service.isUserRegistred(mockedUsers[0].email).subscribe((response) => {
+      expect(response).toBe(true);
+      done();
+    });
+    const req1 = httpMock.expectOne('/api/auth/isRegistered');
+    expect(req1.request.method).toBe('POST');
+    setTimeout(() => {
+      req1.flush(!!mockedUsers.find((user: User) => user.email == mockedUsers[0].email));
     }, 50);
   });
 
   it('isUserProspect should work', (done: DoneFn) => {
-    service.isUserProspect('elygledsonjs@gmail.com').subscribe((isProspect) => {
+    service.isUserProspect('fakeProspect@mocked.com').subscribe((isProspect) => {
       expect(isProspect).toBe(false);
-      done();
     });
     const req = httpMock.expectOne('/api/auth/isProspect');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(false);
+      req.flush(!!(mockedProspects.find((prospect: Prospect) => prospect.email == 'fakeProspect@mocked.com')));
     }, 50);
+
+    service.isUserProspect(mockedProspects[0].email).subscribe((isProspect) => {
+      expect(isProspect).toBe(true);
+      done();
+    });
+
+     const req1 = httpMock.expectOne('/api/auth/isProspect');
+     expect(req1.request.method).toBe('POST');
+     setTimeout(() => {
+       req1.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == mockedProspects[0].email));
+     }, 50);
   });
 
   it('isUserActive should work', (done: DoneFn) => {
-    service.isUserActive('elygledsonjs@gmail.com').subscribe((isActive) => {
-      expect(isActive).toBe(false);
-      done();
+    service.isUserActive('fakeUser@mocked.com').subscribe((response) => {
+      expect(response).toBe(false);
     });
     const req = httpMock.expectOne('api/auth/isActive');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(false);
+      req.flush(!!mockedUsers.find((user) => user.email == 'fakeUser@mocked.com' && user.active));
+    }, 50);
+
+    service.isUserActive(mockedUsers[0].email).subscribe((response) => {
+      expect(response).toBe(false);
+    });
+
+    const req1 = httpMock.expectOne('api/auth/isActive');
+    expect(req1.request.method).toBe('POST');
+    setTimeout(() => {
+      req1.flush(!!mockedUsers.find((user) => user.email == 'user@mocked.com' && user.active));
+    }, 50);
+
+    service.isUserActive(mockedUsers[1].email).subscribe((response) => {
+      expect(response).toBe(true);
+      done();
+    });
+
+    const req2 = httpMock.expectOne('api/auth/isActive');
+    expect(req2.request.method).toBe('POST');
+    setTimeout(() => {
+      req2.flush(!!mockedUsers.find((user) => user.email == mockedUsers[0].email && user.active));
     }, 50);
   });
 });
