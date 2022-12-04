@@ -6,7 +6,7 @@ import { Subject, take } from 'rxjs';
 import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
 
-import { ConfigService } from './config.service';
+import { ConfigService, DEFAULT_CONFIG } from './config.service';
 import { AuthService } from 'app/auth/auth.service';
 
 import { cloneDeep } from 'lodash';
@@ -205,18 +205,9 @@ describe('ConfigService', () => {
   baseTest('getConfig should work', (expectedConfigs: PlatformConfig[]) => {});
 
   baseTest('expenseSubTypes should work', (expectedConfigs: PlatformConfig[]) => {
-    expect(service.expenseSubTypes(expectedConfigs[0].expenseConfig.adminExpenseTypes[1].name)).toEqual([
-      'Aluguel',
-      'Anuidade em Conselhos',
-      'Divisão de Lucro',
-      'Energia',
-      'Equipamentos',
-      'Internet',
-      'Folha de Pagamento',
-      'Transporte - Colaborador Interno',
-      'Veículos',
-      'Outros',
-    ]);
+    expect(service.expenseSubTypes(expectedConfigs[0].expenseConfig.adminExpenseTypes[1].name)).toEqual(
+      DEFAULT_CONFIG.expenseConfig.adminExpenseTypes[1].subTypes
+    );
 
     mockedConfigs[0].expenseConfig.adminExpenseTypes[0].subTypes = [];
     expect(service.expenseSubTypes(mockedConfigs[0].expenseConfig.adminExpenseTypes[0].name)).toEqual([]);
