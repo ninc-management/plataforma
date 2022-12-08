@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { handle } from '../utils';
+import { Fees, handle } from '../utils';
 import { CompanyService } from './company.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -260,14 +260,17 @@ export const DEFAULT_CONFIG = {
     hasStageName: true,
     hasImportants: true,
     hasMaterialList: true,
+    hasProvider: true,
+    hasMarketingPage: true,
+    units: [],
     businessFees: {
       support: {
-        organizationPercentage: '0,00',
-        nfPercentage: '0,00',
+        organizationPercentage: Fees.NORTAN_SUPPORT,
+        nfPercentage: Fees.NF_SUPPORT,
       },
       intermediation: {
-        nfPercentage: '0,00',
-        organizationPercentage: '0,00',
+        nfPercentage: Fees.NF_INTERMEDIATION,
+        organizationPercentage: Fees.NORTAN_INTERMEDIATION,
       },
     },
     codeAbbreviation: 'NINC',
@@ -293,20 +296,20 @@ export const DEFAULT_CONFIG = {
     hasSector: true,
     hasExpertiseBySector: true,
   },
-  socialConfig: {
-    youtubeLink: '',
-    linkedinLink: '',
-    instagramLink: '',
-    glassfrogLink: '',
-    gathertownLink: '',
-    companyName: 'NINC',
-  },
   modulesConfig: {
     hasPromotion: true,
     hasCourse: true,
   },
   oneDriveConfig: {
-    isActive: false,
+    isActive: true,
+    contracts: {
+      oneDriveId: '0',
+      folderId: '1',
+    },
+    providers: {
+      oneDriveId: '0',
+      folderId: '1',
+    },
   },
 };
 

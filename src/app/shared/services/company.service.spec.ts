@@ -9,9 +9,9 @@ import MockedServerSocket from 'socket.io-mock';
 
 import { CompanyService } from './company.service';
 import { WebSocketService } from './web-socket.service';
-import { UploadedFile } from '@models/shared';
 import { cloneDeep } from 'lodash';
 import { reviveDates } from '../utils';
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 
 describe('CompanyService', () => {
   let service: CompanyService;
@@ -68,56 +68,7 @@ describe('CompanyService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(CompanyService);
-    mockedCompanies = [];
-    let tmpCompany = new Company();
-    tmpCompany._id = '0';
-    tmpCompany.address = 'rua teste 0';
-    tmpCompany.cnpj = '03.778.130/0001-48';
-    tmpCompany.companyName = 'Teste';
-    tmpCompany.youtubeLink = 'youtubeTeste';
-    tmpCompany.glassfrogLink = 'glassTeste';
-    tmpCompany.gathertownLink = 'gathertownTeste';
-    tmpCompany.instagramLink = 'instagramTeste';
-    tmpCompany.linkedinLink = 'linkedinLinkTeste';
-    tmpCompany.logoDefault = new UploadedFile();
-    tmpCompany.logoDefault.name = 'logoTeste';
-    tmpCompany.logoDefault.url = 'logoDefaultURl';
-    tmpCompany.logoWhite = new UploadedFile();
-    tmpCompany.logoWhite.name = 'logoWhite';
-    tmpCompany.logoWhite.url = 'logoWhiteURL';
-    tmpCompany.logoWhiteWithoutName = new UploadedFile();
-    tmpCompany.logoWhiteWithoutName.name = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWhiteWithoutName.url = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWithoutName = new UploadedFile();
-    tmpCompany.logoWithoutName.name = 'logoWithoutName';
-    tmpCompany.logoWithoutName.url = 'logoWithoutName';
-    tmpCompany.qrcodeURL = 'qrcodeURL';
-    mockedCompanies.push(cloneDeep(tmpCompany));
-    tmpCompany = new Company();
-    tmpCompany._id = '1';
-    tmpCompany.address = 'rua teste 1';
-    tmpCompany.cnpj = '03.778.130/0001-48';
-    tmpCompany.companyName = 'Teste';
-    tmpCompany.youtubeLink = 'youtubeTeste';
-    tmpCompany.glassfrogLink = 'glassTeste';
-    tmpCompany.gathertownLink = 'gathertownTeste';
-    tmpCompany.instagramLink = 'instagramTeste';
-    tmpCompany.linkedinLink = 'linkedinLinkTeste';
-    tmpCompany.logoDefault = new UploadedFile();
-    tmpCompany.logoDefault.name = 'logoTeste';
-    tmpCompany.logoDefault.url = 'logoDefaultURl';
-    tmpCompany.logoWhite = new UploadedFile();
-    tmpCompany.logoWhite.name = 'logoWhite';
-    tmpCompany.logoWhite.url = 'logoWhiteURL';
-    tmpCompany.logoWhiteWithoutName = new UploadedFile();
-    tmpCompany.logoWhiteWithoutName.name = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWhiteWithoutName.url = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWithoutName = new UploadedFile();
-    tmpCompany.logoWithoutName.name = 'logoWithoutName';
-    tmpCompany.logoWithoutName.url = 'logoWithoutName';
-    tmpCompany.qrcodeURL = 'qrcodeURL';
-    mockedCompanies.push(cloneDeep(tmpCompany));
-    mockedCompanies = reviveDates(mockedCompanies);
+    mockedCompanies = cloneDeep(externalMockedCompanies);
   });
 
   it('should be created', () => {
@@ -125,29 +76,11 @@ describe('CompanyService', () => {
   });
 
   it('saveCompany should work', (done: DoneFn) => {
-    const tmpCompany = new Company();
+    const tmpCompany = mockedCompanies[0];
     tmpCompany._id = '2';
-    tmpCompany.address = 'rua teste 2';
-    tmpCompany.cnpj = '03.778.130/0001-48';
-    tmpCompany.companyName = 'Teste';
-    tmpCompany.youtubeLink = 'youtubeTeste';
-    tmpCompany.glassfrogLink = 'glassTeste';
-    tmpCompany.gathertownLink = 'gathertownTeste';
-    tmpCompany.instagramLink = 'instagramTeste';
-    tmpCompany.linkedinLink = 'linkedinLinkTeste';
-    tmpCompany.logoDefault = new UploadedFile();
-    tmpCompany.logoDefault.name = 'logoTeste';
-    tmpCompany.logoDefault.url = 'logoDefaultURl';
-    tmpCompany.logoWhite = new UploadedFile();
-    tmpCompany.logoWhite.name = 'logoWhite';
-    tmpCompany.logoWhite.url = 'logoWhiteURL';
-    tmpCompany.logoWhiteWithoutName = new UploadedFile();
-    tmpCompany.logoWhiteWithoutName.name = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWhiteWithoutName.url = 'logoWhiteWithoutNameURL';
-    tmpCompany.logoWithoutName = new UploadedFile();
-    tmpCompany.logoWithoutName.name = 'logoWithoutName';
-    tmpCompany.logoWithoutName.url = 'logoWithoutName';
-    tmpCompany.qrcodeURL = 'qrcodeURL';
+    tmpCompany.address = 'rua teste 3';
+    tmpCompany.cnpj = '03.778.130/0001-50';
+    tmpCompany.companyName = 'Teste 3';
 
     let i = 1;
     const data = {

@@ -10,8 +10,9 @@ import { AuthService } from 'app/auth/auth.service';
 import { Prospect } from '@models/prospect';
 import { cloneDeep } from 'lodash';
 import { UserService } from './user.service';
-import user, { User } from '@models/user';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { User } from '@models/user';
 
 describe('ProspectService', () => {
   let service: ProspectService;
@@ -72,7 +73,7 @@ describe('ProspectService', () => {
     userService = TestBed.inject(UserService);
 
     mockedProspects = [];
-    mockedUsers = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
 
     const tmpProspect = new Prospect();
     tmpProspect._id = '0';
@@ -88,14 +89,6 @@ describe('ProspectService', () => {
     tmpProspect.phone = '1234567';
 
     mockedProspects.push(cloneDeep(tmpProspect));
-
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'UserTest';
-    tmpUser.email = 'uTest1@te.st';
-    tmpUser.phone = '12345678';
-
-    mockedUsers.push(cloneDeep(tmpUser));
 
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');

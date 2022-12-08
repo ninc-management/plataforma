@@ -15,6 +15,8 @@ import { CONTRACT_BALANCE } from './user.service';
 import MockedServerSocket from 'socket.io-mock';
 import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -69,61 +71,14 @@ describe('InvoiceService', () => {
   beforeEach(() => {
     TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(WebSocketService, { useValue: socketServiceSpy });
-    authServiceSpy.userEmail.and.returnValue('test1@te.st');
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
     httpMock = TestBed.inject(HttpTestingController);
-    mockedUsers = [];
-    mockedInvoices = [];
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic1@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
-    tmpUser._id = '1';
-    tmpUser.fullName = 'Test2';
-    tmpUser.email = 'test2@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic2@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
-    tmpInvoice.code = 'test';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.trello = true;
-    tmpInvoice.team.push({
-      user: '1',
-      sector: 'Trocar',
-      distribution: '50,00',
-      locals: {
-        grossValue: '',
-        netValue: '',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
-    tmpInvoice = new Invoice();
-    tmpInvoice._id = '1';
-    tmpInvoice.author = mockedUsers[1];
-    tmpInvoice.nortanTeam = 'Trocar';
-    tmpInvoice.sector = 'Trocar';
-    tmpInvoice.code = 'test1';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.trello = false;
-    tmpInvoice.team.push({
-      user: '0',
-      sector: 'test',
-      distribution: '50,00',
-      locals: {
-        grossValue: '',
-        netValue: '',
-      },
-    });
-    mockedInvoices.push(cloneDeep(tmpInvoice));
+
+    mockedUsers = cloneDeep(externalMockedUsers);
+    mockedInvoices = cloneDeep(externalMockedInvoices)
+
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
@@ -299,9 +254,9 @@ describe('InvoiceService', () => {
 
   baseTest('idToProfilePicture should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToProfilePicture(undefined)).toEqual('');
-    expect(service.idToProfilePicture('0')).toEqual('pic1@pic.com');
+    expect(service.idToProfilePicture('0')).toEqual(externalMockedUsers[0].profilePicture!);
     expect(service.idToProfilePicture(mockedInvoices[0])).toEqual((expectedInvoices[0].author as User).profilePicture!);
-    expect(service.idToProfilePicture('1')).toEqual('pic2@pic.com');
+    expect(service.idToProfilePicture('1')).toEqual(externalMockedUsers[1].profilePicture!);
     expect(service.idToProfilePicture(mockedInvoices[1])).toEqual((expectedInvoices[1].author as User).profilePicture!);
   });
 
@@ -315,8 +270,8 @@ describe('InvoiceService', () => {
   baseTest('isInvoiceMember should work', (expectedInvoices: Invoice[]) => {
     expect(service.isInvoiceMember('1', '0')).toBe(true);
     expect(service.isInvoiceMember(expectedInvoices[0], '1')).toBe(true);
-    expect(service.isInvoiceMember('1', mockedUsers[1])).toBe(false);
-    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[0])).toBe(false);
+    expect(service.isInvoiceMember('1', mockedUsers[2])).toBe(false);
+    expect(service.isInvoiceMember(expectedInvoices[0], mockedUsers[3])).toBe(false);
   });
 
   baseTest('role should work', (expectedInvoices: Invoice[]) => {
@@ -328,7 +283,7 @@ describe('InvoiceService', () => {
   });
 
   baseTest('teamMembers should work', (expectedInvoices: Invoice[]) => {
-    expect(service.teamMembers(mockedInvoices[0])).toEqual(reviveDates(mockedUsers.splice(1, 1)));
-    expect(service.teamMembers(mockedInvoices[1])).toEqual(reviveDates(mockedUsers.splice(0, 1)));
+    expect(service.teamMembers(mockedInvoices[0])).toEqual(reviveDates(mockedUsers.slice(0, 2)));
+    expect(service.teamMembers(mockedInvoices[1])).toEqual(reviveDates(mockedUsers.slice(0, 2).reverse()));
   });
 });

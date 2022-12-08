@@ -40,6 +40,12 @@ import {
 } from './utils';
 import { PlatformConfig } from '@models/platformConfig';
 import { WebSocketService } from './services/web-socket.service';
+import { externalMockedUsers } from './mocked-data/mocked-users';
+import { externalMockedTeams } from './mocked-data/mocked-teams';
+import { externalMockedConfigs } from './mocked-data/mocked-config';
+import { externalMockedInvoices } from './mocked-data/mocked-invoices';
+import { externalMockedContractors } from './mocked-data/mocked-contractors';
+import { externalMockedContracts } from './mocked-data/mocked-contracts';
 
 interface MockedUser {
   _id: string;
@@ -125,79 +131,12 @@ describe('UtilsService', () => {
     users$.next([{ _id: '0', name: 'Test', remove: 'test' }]);
     spyOn(console, 'log');
 
-    mockedUsers = [];
-    mockedInvoices = [];
-    mockedTeams = [];
-    mockedContracts = [];
-    mockedContractors = [];
-    mockedConfigs = [];
-
-    const tmpUser = new User();
-    tmpUser._id = '0';
-    tmpUser.fullName = 'Test1';
-    tmpUser.email = 'test1@te.st';
-    tmpUser.phone = '123456';
-    tmpUser.profilePicture = 'pic1@pic.com';
-    mockedUsers.push(cloneDeep(tmpUser));
-
-    const tmpTeam = new Team();
-    tmpTeam._id = '0';
-    tmpTeam.name = 'test';
-    tmpTeam.leader = '0';
-    tmpTeam.purpose = 'Be tested';
-    tmpTeam.abrev = 'T';
-    tmpTeam.config.path = `test`;
-    const tmpTeamMember = new TeamMember();
-    tmpTeamMember.user = mockedUsers[0];
-    tmpTeamMember.sectors = ['0'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    tmpTeamMember.user = '1';
-    tmpTeamMember.sectors = ['1'];
-    tmpTeam.members.push(cloneDeep(tmpTeamMember));
-    mockedTeams.push(cloneDeep(tmpTeam));
-
-    let tmpInvoice = new Invoice();
-    tmpInvoice._id = '0';
-    tmpInvoice.author = mockedUsers[0];
-    tmpInvoice.nortanTeam = '6201b405329f446f16e1b404';
-    tmpInvoice.sector = '0';
-    tmpInvoice.code = 'ORC-84/2021-NRT/DAD-00';
-    tmpInvoice.contractor = '0';
-    tmpInvoice.value = '1.000,00';
-    mockedInvoices.push(cloneDeep(tmpInvoice));
-
-    let tmpContract = new Contract();
-    tmpContract._id = '0';
-    tmpContract.invoice = mockedInvoices[0];
-    tmpContract.locals.liquid = '676,00';
-    tmpContract.locals.balance = '800,00';
-    tmpContract.locals.notPaid = '845,00';
-    tmpContract.locals.value = '1.000,00';
-    mockedContracts.push(cloneDeep(tmpContract));
-
-    const tmpContractor = new Contractor();
-    tmpContractor._id = '0';
-    tmpContractor.address = {
-      zipCode: '',
-      streetAddress: 'rua teste1',
-      houseNumber: '',
-      district: '',
-      complement: '',
-      city: '',
-      state: '',
-    };
-    tmpContractor.document = '000.000.000-11';
-    tmpContractor.email = 'test1@te.st';
-    tmpContractor.fullName = 'Test1';
-    tmpContractor.phone = '(00) 0000-0000';
-    mockedContractors.push(cloneDeep(tmpContractor));
-
-    const tmpConfig = new PlatformConfig();
-    tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;
-    tmpConfig.invoiceConfig.businessFees.intermediation.nfPercentage = Fees.NF_INTERMEDIATION;
-    tmpConfig.invoiceConfig.businessFees.intermediation.organizationPercentage = Fees.NORTAN_INTERMEDIATION;
-    mockedConfigs.push(tmpConfig);
+    mockedUsers = cloneDeep(externalMockedUsers);
+    mockedInvoices = cloneDeep(externalMockedInvoices);
+    mockedTeams = cloneDeep(externalMockedTeams);
+    mockedContracts = cloneDeep(externalMockedContracts);;
+    mockedContractors = cloneDeep(externalMockedContractors);
+    mockedConfigs = cloneDeep(externalMockedConfigs)
 
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
