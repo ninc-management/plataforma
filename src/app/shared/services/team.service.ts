@@ -69,7 +69,7 @@ export class TeamService implements OnDestroy {
       this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => handle(data, this.teams$, 'teams', this.updateBalance.bind(this.transactionService)));
+        .subscribe((data: any) => handle(data, this.teams$, 'teams', this.updateBalance.bind(this)));
     }
     return this.teams$;
   }

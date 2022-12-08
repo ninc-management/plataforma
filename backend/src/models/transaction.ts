@@ -7,13 +7,13 @@ import { EditionHistoryItem, UploadedFile } from './shared';
 import { Team } from './team';
 import { User } from './user';
 
-export enum MODEL_COST_CENTER_TYPES {
-  USER = 'User',
-  TEAM = 'Team',
+export enum COST_CENTER_TYPES {
+  USER = 'Associados',
+  TEAM = 'Times',
 }
 
 export class Transaction extends Base<string> {
-  @prop({ required: true, enum: [MODEL_COST_CENTER_TYPES.USER, MODEL_COST_CENTER_TYPES.TEAM] })
+  @prop({ required: true, enum: [COST_CENTER_TYPES.USER, COST_CENTER_TYPES.TEAM] })
   modelCostCenter!: string;
 
   @prop({ required: true, ref: () => User })

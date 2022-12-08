@@ -1,24 +1,33 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
+import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
 
-import { EditionDialogComponent } from '../../edition-dialog/edition-dialog.component';
+import { INPUT_TYPES, TextInputDialogComponent } from '../../text-input-dialog/text-input-dialog.component';
 import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { COST_CENTER_TYPES, TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
+import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
 import { CLIENT, UserService } from 'app/shared/services/user.service';
-import { codeSort, formatDate, isPhone, nfPercentage, nortanPercentage, populateList } from 'app/shared/utils';
+import {
+  codeSort,
+  formatDate,
+  idToProperty,
+  isPhone,
+  nfPercentage,
+  nortanPercentage,
+  populateList,
+} from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
 import { EditionHistoryItem, UploadedFile } from '@models/shared';
 import { ExpenseType, Team } from '@models/team';
-import { MODEL_COST_CENTER_TYPES, Transaction } from '@models/transaction';
+import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
@@ -30,13 +39,15 @@ import transaction_validation from 'app/shared/validators/transaction-validation
 })
 export class TransactionItemComponent implements OnInit {
   @Input() contract?: Contract;
-  @Input() transactionIndex?: number;
+  @Input() iTransaction = new Transaction();
   @Input() team?: Team;
+  @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output()
   submit: EventEmitter<void> = new EventEmitter<void>();
 
   validation = transaction_validation as any;
-  user = new User();
+  user: User = new User();
+  clonedTeam: Team = new Team();
   transaction: Transaction = new Transaction();
   platformConfig: PlatformConfig = new PlatformConfig();
   availableContracts: Contract[] = [];
@@ -48,7 +59,6 @@ export class TransactionItemComponent implements OnInit {
     liquid: '0,00',
     type: '',
     relatedWithContract: false,
-    costCenterListType: COST_CENTER_TYPES.USER,
   };
   transactionKinds: ExpenseType[] = [];
   tTypes = TRANSACTION_TYPES;
@@ -106,20 +116,22 @@ export class TransactionItemComponent implements OnInit {
       this.teamService.getTeams(),
       this.configService.getConfig(),
       this.userService.getActiveUsers(),
+      this.providerService.getProviders(),
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,
       this.userService.isDataLoaded$,
+      this.providerService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
-          ([, , , , , , contractsLoaded, invoicesLoaded, teamsLoaded, configLoaded, usersLoaded]) =>
-            !contractsLoaded || !invoicesLoaded || !teamsLoaded || !configLoaded || !usersLoaded
+          ([, , , , , , , contractsLoaded, invoicesLoaded, teamsLoaded, configLoaded, usersLoaded, providerLoaded]) =>
+            !contractsLoaded || !invoicesLoaded || !teamsLoaded || !configLoaded || !usersLoaded || !providerLoaded
         ),
         take(1)
       )
-      .subscribe(([user, contracts, , teams, config, users, , , ,]) => {
+      .subscribe(([user, contracts, , teams, config, users, , , , , , ,]) => {
         this.user = user;
         this.availableContracts = contracts.filter(
           (contract) =>
@@ -139,10 +151,20 @@ export class TransactionItemComponent implements OnInit {
         this.platformConfig = config[0];
         this.teams = teams;
         this.users = users;
-        if (!this.transactionIndex) this.transaction.author = user;
+        if (this.iTransaction._id) {
+          this.transaction = cloneDeep(this.iTransaction);
+          this.providerSearch = idToProperty(
+            this.transaction.provider,
+            this.providerService.idToProvider.bind(this.providerService),
+            'name'
+          );
+        } else {
+          this.transaction.author = user;
+          if (!this.transaction.modelCostCenter) this.transaction.modelCostCenter = COST_CENTER_TYPES.USER;
+        }
         this.setCostCenterData();
+        this.updateTransactionKinds();
       });
-    this.updateTransactionKinds();
     this.providerData$ = this.providerService.getProviders();
   }
 
@@ -167,18 +189,26 @@ export class TransactionItemComponent implements OnInit {
   }
 
   registerTransaction(): void {
-    if (this.team) {
+    if (this.clonedTeam) {
       this.transaction.costCenter = (this.transaction.costCenter as User | Team)._id;
-      this.team.expenses.push(this.transaction);
-      this.teamService.editTeam(this.team, true);
+      this.clonedTeam.expenses.push(this.transaction);
+      this.teamService.editTeam(this.clonedTeam, true);
     }
     this.submit.emit();
   }
 
   editTransaction(): void {
+    this.isDialogBlocked.next(true);
+
     this.dialogService
-      .open(EditionDialogComponent, {
-        context: {},
+      .open(TextInputDialogComponent, {
+        context: {
+          title: 'MOTIVO DA EDIÇÃO',
+          placeholder: 'Motivo',
+          inputType: INPUT_TYPES.textArea,
+          buttonMessage: 'ADICIONAR COMENTÁRIO',
+          closeOnEsc: false,
+        },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
         closeOnEsc: false,
@@ -191,12 +221,17 @@ export class TransactionItemComponent implements OnInit {
           editionHistoryItem.author = this.user;
           editionHistoryItem.comment = comment;
           this.transactionService.editTransaction(this.transaction, editionHistoryItem);
+          this.submit.emit();
         }
-        this.submit.emit();
       });
   }
 
   addAndClean(): void {}
+
+  updatePaidDate(): void {
+    if (!this.transaction.paid) this.transaction.paidDate = undefined;
+    else this.transaction.paidDate = new Date();
+  }
 
   urlReceiver(event: any): void {}
 
@@ -233,7 +268,7 @@ export class TransactionItemComponent implements OnInit {
   setCostCenterData(): void {
     if (this.options.relatedWithContract && this.contract) {
       if (this.contract.invoice) {
-        if (this.options.costCenterListType == COST_CENTER_TYPES.TEAM)
+        if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM)
           setTimeout(() => {
             this.costCenterData$.next(this.teams);
           }, 50);
@@ -246,7 +281,7 @@ export class TransactionItemComponent implements OnInit {
         }
       }
     } else {
-      if (this.options.costCenterListType == COST_CENTER_TYPES.TEAM) {
+      if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
         setTimeout(() => {
           this.costCenterData$.next(this.teams);
         }, 50);
@@ -256,11 +291,6 @@ export class TransactionItemComponent implements OnInit {
         }, 50);
       }
     }
-
-    this.transaction.modelCostCenter =
-      this.options.costCenterListType == COST_CENTER_TYPES.USER
-        ? MODEL_COST_CENTER_TYPES.USER
-        : MODEL_COST_CENTER_TYPES.TEAM;
   }
 
   updateTransactionKinds(): void {
@@ -279,11 +309,12 @@ export class TransactionItemComponent implements OnInit {
 
   private buildTeamTransaction(): void {
     if (this.team) {
+      this.clonedTeam = cloneDeep(this.team);
       this.options.type = TRANSACTION_TYPES.EXPENSE;
       this.handleType();
-      this.options.costCenterListType = COST_CENTER_TYPES.TEAM;
-      this.transaction.costCenter = this.team;
-      this.costCenterSearch = this.team.name;
+      this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
+      this.transaction.costCenter = this.clonedTeam;
+      this.costCenterSearch = this.clonedTeam.name;
     }
   }
 }

@@ -9,17 +9,12 @@ import { Contract } from '@models/contract';
 import { Provider } from '@models/provider';
 import { EditionHistoryItem } from '@models/shared';
 import { Team } from '@models/team';
-import { Transaction } from '@models/transaction';
+import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 export enum TRANSACTION_TYPES {
   RECEIPT = 'Ordem de Empenho',
   EXPENSE = 'Despesa',
-}
-
-export enum COST_CENTER_TYPES {
-  USER = 'Associados',
-  TEAM = 'Times',
 }
 
 export interface SaveTransactionResponse {

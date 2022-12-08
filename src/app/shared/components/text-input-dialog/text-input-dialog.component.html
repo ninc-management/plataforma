@@ -5,9 +5,43 @@
 >
   <nb-card-header>{{ title }}</nb-card-header>
   <nb-card-body>
-    <input #name nbInput fullWidth [placeholder]="placeholder" />
+    <div [ngSwitch]="inputType">
+      <div *ngSwitchCase="INPUT_TYPES.input">
+        <input
+          nbInput
+          [(ngModel)]="value"
+          #inputRef="ngModel"
+          fullWidth
+          [placeholder]="placeholder"
+          [required]="true"
+          [status]="inputRef.dirty ? (inputRef.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="inputRef.invalid && inputRef.touched ? true : null"
+        />
+         <ng-container *ngIf="inputRef.invalid && inputRef.touched">
+          <p class="caption status-danger" *ngIf="inputRef.errors?.required">O campo é obrigatório!</p>
+        </ng-container>
+      </div>
+      <div *ngSwitchCase="INPUT_TYPES.textArea">
+        <textarea
+          nbInput
+          [(ngModel)]="value"
+          #inputRef="ngModel"
+          [placeholder]="placeholder"
+          fullWidth
+          fieldSize="large"
+          [required]="true"
+          [status]="inputRef.dirty ? (inputRef.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="inputRef.invalid && inputRef.touched ? true : null"
+        ></textarea>
+        <ng-container *ngIf="inputRef.invalid && inputRef.touched">
+          <p class="caption status-danger" *ngIf="inputRef.errors?.required">O campo é obrigatório!</p>
+        </ng-container>
+      </div>
+    </div>
   </nb-card-body>
   <nb-card-footer>
-    <button nbButton fullWidth status="primary" (click)="dismiss(name.value)">Adicionar</button>
+    <button nbButton fullWidth status="primary" [disabled]="!value" (click)="dismiss(value)">
+      {{ buttonMessage }}
+    </button>
   </nb-card-footer>
 </nb-card>
