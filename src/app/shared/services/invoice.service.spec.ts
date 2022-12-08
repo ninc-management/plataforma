@@ -254,9 +254,9 @@ describe('InvoiceService', () => {
 
   baseTest('idToProfilePicture should work', (expectedInvoices: Invoice[]) => {
     expect(service.idToProfilePicture(undefined)).toEqual('');
-    expect(service.idToProfilePicture('0')).toEqual(externalMockedUsers[0].profilePicture);
+    expect(service.idToProfilePicture('0')).toEqual(externalMockedUsers[0].profilePicture!);
     expect(service.idToProfilePicture(mockedInvoices[0])).toEqual((expectedInvoices[0].author as User).profilePicture!);
-    expect(service.idToProfilePicture('1')).toEqual(externalMockedUsers[1].profilePicture);
+    expect(service.idToProfilePicture('1')).toEqual(externalMockedUsers[1].profilePicture!);
     expect(service.idToProfilePicture(mockedInvoices[1])).toEqual((expectedInvoices[1].author as User).profilePicture!);
   });
 

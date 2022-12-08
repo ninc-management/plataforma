@@ -9,18 +9,6 @@ import { WebSocketService } from './web-socket.service';
 import { ColorShades, Company } from '@models/company';
 import { PlatformConfig } from '@models/platformConfig';
 
-const emptyColorShades = {
-  color100: '',
-  color200: '',
-  color300: '',
-  color400: '',
-  color500: '',
-  color600: '',
-  color700: '',
-  color800: '',
-  color900: '',
-};
-
 export enum EXPENSE_TYPES {
   APORTE = 'Aporte',
   COMISSAO = 'Comissão',
@@ -307,41 +295,6 @@ export const DEFAULT_CONFIG = {
     hasTeam: true,
     hasSector: true,
     hasExpertiseBySector: true,
-  },
-  socialConfig: {
-    showCompanyName: true,
-    address: '',
-    cnpj: '',
-    youtubeLink: '',
-    linkedinLink: '',
-    instagramLink: '',
-    glassfrogLink: '',
-    gathertownLink: '',
-    companyName: 'NINC',
-    logoDefault: {
-      url: '',
-      name: '',
-    },
-    logoWithoutName: {
-      url: '',
-      name: '',
-    },
-    logoWhite: {
-      url: '',
-      name: '',
-    },
-    logoWhiteWithoutName: {
-      url: '',
-      name: '',
-    },
-    colors: {
-      primary: emptyColorShades,
-      success: emptyColorShades,
-      info: emptyColorShades,
-      warning: emptyColorShades,
-      danger: emptyColorShades,
-    },
-    qrcodeURL: '',
   },
   modulesConfig: {
     hasPromotion: true,
