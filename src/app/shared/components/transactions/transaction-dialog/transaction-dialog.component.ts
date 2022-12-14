@@ -36,7 +36,7 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
   openDialog(): void {
     this.dialogService.open(TextInputDialogComponent, {
       context: {
-        title: 'Histórico de alterações',
+        title: 'HISTÓRICO DE ALTERAÇÕES',
         inputType: INPUT_TYPES.textList,
         textList: this.transaction.editionHistory,
         buttonProperties: {
