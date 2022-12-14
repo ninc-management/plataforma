@@ -11,6 +11,7 @@ import { Promotion } from '../models/promotion';
 import { Prospect } from '../models/prospect';
 import { Provider } from '../models/provider';
 import { Team } from '../models/team';
+import { Transaction } from '../models/transaction';
 import { User } from '../models/user';
 
 export const usersMap: Record<string, User> = {};
@@ -25,3 +26,4 @@ export const coursesMap: Record<string, Course> = {};
 export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
+export const transactionsMap: Record<string, Transaction> = {};

@@ -1,0 +1,35 @@
+<nb-list class="row">
+  <nb-list-item
+    *ngFor="let text of textList; let i = index; trackBy: trackByIndex"
+    [ngClass]="{
+      'comment-current-user':
+        typeOfTextList === TEXT_LIST.MESSAGE && ([text.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService))
+    }"
+  >
+    <nb-user
+      class="comment-author"
+      size="large"
+      [picture]="
+        [text.author, this.userService.idToUser.bind(userService), 'profilePicture'] | transformPipe: idToProperty
+      "
+      onlyPicture
+      shape="rectangle"
+    ></nb-user>
+    <div class="comment-wrapper">
+      <div class="comment-header">
+        <span>
+          <b>
+            {{ [text.author, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty }}
+          </b>
+        </span>
+        <span class="label comment-created">
+          {{ [text.created] | transformPipe: formatDate }}
+        </span>
+      </div>
+      <div [ngSwitch]="typeOfTextList">
+        <pre *ngSwitchCase="TEXT_LIST.MESSAGE" [innerHTML]="getContentFromText(text)"></pre>
+        <p *ngSwitchCase="TEXT_LIST.EDITION_HISTORY_ITEM">{{ getContentFromText(text) }}</p>
+      </div>
+    </div>
+  </nb-list-item>
+</nb-list>

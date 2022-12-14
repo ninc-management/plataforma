@@ -4,10 +4,10 @@ import { cloneDeep, isEqual } from 'lodash';
 
 import { TransactionModel } from '../models/models';
 import { Transaction } from '../models/transaction';
+import { transactionsMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
-const transactionsMap: Record<string, Transaction> = {};
 const mutex = new Mutex();
 
 export async function addTransaction(

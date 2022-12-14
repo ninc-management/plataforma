@@ -306,7 +306,7 @@ describe('TransactionService', () => {
     tmpTransaction.value = '2.000,00';
 
     let i = 1;
-    const editionHistoryItem = { author: '0', comment: 'test', date: new Date() };
+    const editionHistoryItem = { author: '0', comment: 'test', created: new Date() };
     const data = {
       ns: {
         coll: 'transactions',

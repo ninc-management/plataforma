@@ -206,8 +206,12 @@ export class TransactionItemComponent implements OnInit {
           title: 'MOTIVO DA EDIÇÃO',
           placeholder: 'Motivo',
           inputType: INPUT_TYPES.textArea,
-          buttonMessage: 'ADICIONAR COMENTÁRIO',
-          closeOnEsc: false,
+          buttonProperties: {
+            closeOnEsc: false,
+            displayCloseButton: false,
+            displayButtonMessage: true,
+            bottomButtonMessage: 'ADICIONAR COMENTÁRIO',
+          },
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -215,11 +219,11 @@ export class TransactionItemComponent implements OnInit {
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe((comment) => {
-        if (comment) {
+      .subscribe((response) => {
+        if (response) {
           const editionHistoryItem = new EditionHistoryItem();
           editionHistoryItem.author = this.user;
-          editionHistoryItem.comment = comment;
+          editionHistoryItem.comment = response;
           this.transactionService.editTransaction(this.transaction, editionHistoryItem);
           this.submit.emit();
         }
@@ -313,7 +317,8 @@ export class TransactionItemComponent implements OnInit {
       this.options.type = TRANSACTION_TYPES.EXPENSE;
       this.handleType();
       this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
-      this.transaction.costCenter = this.clonedTeam;
+      if (this.iTransaction._id) this.iTransaction.costCenter = this.clonedTeam;
+      else this.transaction.costCenter = this.clonedTeam;
       this.costCenterSearch = this.clonedTeam.name;
     }
   }
