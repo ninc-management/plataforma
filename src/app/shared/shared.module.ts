@@ -83,6 +83,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TransactionDialogComponent,
     TransactionItemComponent,
     UserTransactionComponent,
+    TextListComponent,
   ],
   declarations: [
     BaseDialogComponent,

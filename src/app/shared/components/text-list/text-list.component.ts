@@ -8,9 +8,9 @@ import { Message } from '@models/message';
 import { EditionHistoryItem } from '@models/shared';
 import { User } from '@models/user';
 
-enum TEXT_LIST {
+export enum TEXT_LIST {
   MESSAGE = 'message',
-  EDITION_HISTORY_ITEM = 'EditionHistoryItem',
+  EDITION_HISTORY_ITEM = 'edition-history-item',
 }
 
 @Component({
@@ -20,9 +20,8 @@ enum TEXT_LIST {
 })
 export class TextListComponent implements OnInit {
   @Input() textList: (Message | EditionHistoryItem)[] = [];
+  @Input() typeOfTextList: TEXT_LIST = TEXT_LIST.MESSAGE;
   TEXT_LIST = TEXT_LIST;
-  typeOfTextList: TEXT_LIST = TEXT_LIST.MESSAGE;
-
   currentUser: User = new User();
 
   isPhone = isPhone;
@@ -34,8 +33,6 @@ export class TextListComponent implements OnInit {
   constructor(public userService: UserService) {}
 
   ngOnInit(): void {
-    if (this.textList && this.textList.length)
-      if (isOfType(EditionHistoryItem, this.textList[0])) this.typeOfTextList = TEXT_LIST.EDITION_HISTORY_ITEM;
     this.userService.currentUser$.pipe(take(1)).subscribe((currentUser) => {
       this.currentUser = currentUser;
     });

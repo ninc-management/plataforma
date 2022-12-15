@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { TEXT_LIST } from '../text-list/text-list.component';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Message } from '@models/message';
@@ -30,6 +31,7 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
     bottomButtonMessage: 'ADICIONAR',
   };
   INPUT_TYPES = INPUT_TYPES;
+  TEXT_LIST = TEXT_LIST;
 
   response = '';
 

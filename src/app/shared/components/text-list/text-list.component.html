@@ -26,10 +26,7 @@
           {{ [text.created] | transformPipe: formatDate }}
         </span>
       </div>
-      <div [ngSwitch]="typeOfTextList">
-        <pre *ngSwitchCase="TEXT_LIST.MESSAGE" [innerHTML]="getContentFromText(text)"></pre>
-        <p *ngSwitchCase="TEXT_LIST.EDITION_HISTORY_ITEM">{{ getContentFromText(text) }}</p>
-      </div>
+        <pre  [innerHTML]="getContentFromText(text)"></pre>
     </div>
   </nb-list-item>
 </nb-list>
