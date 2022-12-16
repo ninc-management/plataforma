@@ -19,28 +19,26 @@ export async function addTransaction(
   transaction['code'] = '#' + (count + 1).toString();
   const transactionItem = new TransactionModel(transaction);
   let ret = transaction;
-  await mutex.acquire().then(async (release) => {
-    await transactionItem
-      .save()
-      .then((savedTransaction) => {
-        if (requested) transactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
-        release();
-        if (isEqual(transaction, lastTransaction) && res)
-          res.status(201).json({
-            message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
-            transaction: savedTransaction,
-          });
-        ret = savedTransaction;
-      })
-      .catch((err) => {
-        release();
-        if (res)
-          res.status(500).json({
-            message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
-            error: err,
-          });
+  const release = await mutex.acquire();
+  try {
+    const savedTransaction = await transactionItem.save();
+    if (requested) transactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
+    release();
+    if (isEqual(transaction, lastTransaction) && res)
+      res.status(201).json({
+        message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
+        transaction: savedTransaction,
       });
-  });
+    ret = savedTransaction;
+  } catch (err) {
+    release();
+    if (res)
+      res.status(500).json({
+        message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
+        error: err,
+      });
+  }
+
   return ret;
 }
 

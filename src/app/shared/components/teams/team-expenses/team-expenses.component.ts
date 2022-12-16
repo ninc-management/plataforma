@@ -42,24 +42,30 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   idToProperty = idToProperty;
 
   get filtredExpenses(): Transaction[] {
+    //TODO: NINC-2106
     if (this.searchQuery !== '')
-      return this.clonedTeam.expenses.filter((expense) => {
-        return (
-          expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          (expense.author &&
-            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
-          (expense.costCenter &&
-            idToProperty(expense, this.transactionService.populateCostCenter.bind(this.transactionService), 'name')
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
-          formatDate(expense.created).includes(this.searchQuery.toLowerCase())
-        );
-      });
-    return this.clonedTeam.expenses;
+      return this.clonedTeam.expenses
+        .filter((expense): expense is NonNullable<Transaction | string | undefined> => expense !== undefined)
+        .map((expense) => this.transactionService.idToTransaction(expense))
+        .filter((expense) => {
+          return (
+            expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            (expense.author &&
+              idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
+                .toLowerCase()
+                .includes(this.searchQuery.toLowerCase())) ||
+            (expense.costCenter &&
+              idToProperty(expense, this.transactionService.populateCostCenter.bind(this.transactionService), 'name')
+                .toLowerCase()
+                .includes(this.searchQuery.toLowerCase())) ||
+            formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+          );
+        }) as Transaction[];
+    return this.clonedTeam.expenses
+      .filter((expense): expense is NonNullable<Transaction | string | undefined> => expense !== undefined)
+      .map((expense) => this.transactionService.idToTransaction(expense));
   }
 
   settings = {
@@ -180,18 +186,20 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       this.teamService.getTeams(),
       this.configService.getConfig(),
       this.transactionService.getTransactions(),
+      this.userService.getUsers(),
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,
       this.transactionService.isDataLoaded$,
+      this.userService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
-          ([, , , isTeamLoaded, isConfigLoaded, isTransactionLoaded]) =>
-            !isTeamLoaded || !isConfigLoaded || !isTransactionLoaded
+          ([, , , , isTeamLoaded, isConfigLoaded, isTransactionLoaded, isUserLoaded]) =>
+            !isTeamLoaded || !isConfigLoaded || !isTransactionLoaded || !isUserLoaded
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([teams, configs, , , ,]) => {
+      .subscribe(([teams, configs, , , , , ,]) => {
         this.platformConfig = configs[0];
         this.loadTableExpenses();
         this.reloadTableSettings();
@@ -208,7 +216,8 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
               tmp,
               this.teamService.idToTeam.bind(this.teamService),
               this.userService.idToUser.bind(this.userService)
-            ).name;
+            );
+            tmp.costCenter = tmp.costCenter.name;
             tmp.created = formatDate(tmp.created);
             return tmp;
           })
@@ -216,12 +225,13 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       });
   }
 
-  openDialog(index?: number): void {
+  openDialog(event: { data?: Transaction }): void {
     this.isDialogBlocked.next(true);
     this.dialogService
       .open(TransactionDialogComponent, {
         context: {
-          title: index !== undefined ? 'EDITAR MOVIMENTAÇÃO' : 'ADICIONAR MOVIMENTAÇÃO',
+          title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
+          transaction: event.data ? event.data : new Transaction(),
           team: this.clonedTeam,
         },
         dialogClass: 'my-dialog',
@@ -236,8 +246,9 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   }
 
   expenseIndex(code: string): number {
-    //TODO: concertar referencia do objeto de Transaction
-    return this.clonedTeam.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedTeam.expenses
+      .filter((expense): expense is NonNullable<Transaction | string | undefined> => expense !== undefined)
+      .findIndex((expense) => this.transactionService.idToTransaction(expense).code == code);
   }
 
   itemSort(direction: number, a: string, b: string): number {
