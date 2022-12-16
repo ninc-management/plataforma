@@ -24,19 +24,19 @@ export class FinancialService {
 
     return this.teamService.getTeams().pipe(
       map((teams) => {
-        const userTransactionsSum = this.userService
-          .idToUser(uId)
-          .transactions.reduce((sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)), '0,00');
-
-        const allTeams = cloneDeep(teams);
-
         // TODO: [NWS-1169] Avaliar movimentação usuário para time
+        // const userTransactionsSum = this.userService
+        //   .idToUser(uId)
+        //   .transactions.reduce((sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)), '0,00');
+
+        // const allTeams = cloneDeep(teams);
+
         // const userTeamTransactionsSum = allTeams
         //   .map((team) => team.transactions.filter((transaction) => this.userService.isEqual(transaction.from, uId)))
         //   .flat()
         //   .reduce((sum, transaction) => (sum = this.stringUtil.sumMoney(sum, transaction.value)), '0,00');
         // return this.stringUtil.subtractMoney(userTransactionsSum, userTeamTransactionsSum);
-        return userTransactionsSum;
+        return '0,00';
       }, take(1))
     );
   }
