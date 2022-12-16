@@ -35,30 +35,29 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  await mutex.acquire().then(async (release) => {
-    if (req.body.creatingTransaction) {
-      let newTransaction = req.body.team.expenses.pop();
-      newTransaction = await addTransaction(newTransaction, null, newTransaction);
-      req.body.team.expenses.push((newTransaction as Transaction)._id);
-    }
+  const release = await mutex.acquire();
+  if (req.body.creatingTransaction) {
+    let newTransaction = req.body.team.expenses.pop();
+    newTransaction = await addTransaction(newTransaction, null, newTransaction);
+    req.body.team.expenses.push((newTransaction as Transaction)._id);
+  }
 
-    try {
-      const savedTeam = await TeamModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
-      if (requested) {
-        teamMap[req.body.team._id] = cloneDeep(savedTeam.toJSON());
-      }
-      release();
-      return res.status(200).json({
-        message: 'Time Atualizado!',
-      });
-    } catch (err) {
-      release();
-      return res.status(500).json({
-        message: 'Erro ao atualizar time!',
-        error: err,
-      });
+  try {
+    const savedTeam = await TeamModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
+    if (requested) {
+      teamMap[req.body.team._id] = cloneDeep(savedTeam.toJSON());
     }
-  });
+    release();
+    return res.status(200).json({
+      message: 'Time Atualizado!',
+    });
+  } catch (err) {
+    release();
+    return res.status(500).json({
+      message: 'Erro ao atualizar time!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {

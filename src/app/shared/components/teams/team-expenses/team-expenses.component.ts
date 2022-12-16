@@ -158,18 +158,20 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       this.teamService.getTeams(),
       this.configService.getConfig(),
       this.transactionService.getTransactions(),
+      this.userService.getUsers(),
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,
       this.transactionService.isDataLoaded$,
+      this.userService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
-          ([, , , isTeamLoaded, isConfigLoaded, isTransactionLoaded]) =>
-            !isTeamLoaded || !isConfigLoaded || !isTransactionLoaded
+          ([, , , , isTeamLoaded, isConfigLoaded, isTransactionLoaded, isUserLoaded]) =>
+            !isTeamLoaded || !isConfigLoaded || !isTransactionLoaded || !isUserLoaded
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([teams, configs, , , ,]) => {
+      .subscribe(([teams, configs, , , , , ,]) => {
         this.platformConfig = configs[0];
         this.reloadTableSettings();
         const tmp = teams.find((team) => team._id === this.iTeam);
@@ -185,7 +187,8 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
               tmp,
               this.teamService.idToTeam.bind(this.teamService),
               this.userService.idToUser.bind(this.userService)
-            ).name;
+            );
+            tmp.costCenter = tmp.costCenter.name;
             tmp.created = formatDate(tmp.created);
             return tmp;
           })
@@ -193,12 +196,13 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       });
   }
 
-  openDialog(index?: number): void {
+  openDialog(event: { data?: Transaction }): void {
     this.isDialogBlocked.next(true);
     this.dialogService
       .open(TransactionDialogComponent, {
         context: {
-          title: index !== undefined ? 'EDITAR MOVIMENTAÇÃO' : 'ADICIONAR MOVIMENTAÇÃO',
+          title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
+          transaction: event.data ? event.data : new Transaction(),
           team: this.team,
         },
         dialogClass: 'my-dialog',

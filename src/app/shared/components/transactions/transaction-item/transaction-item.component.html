@@ -69,7 +69,7 @@
                 ? contractList.invalid
                   ? 'danger'
                   : 'success'
-                : transactionIndex === undefined && contractSearch !== ''
+                : iTransaction._id === undefined && contractSearch !== ''
                 ? 'success'
                 : 'basic'
             "
@@ -113,7 +113,7 @@
             [minLength]="validation.value.minLength"
             [maxLength]="validation.value.maxLength"
             [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : value.value ? 'success' : 'basic'"
-            [disabled]="transaction.paid && transactionIndex !== undefined"
+            [disabled]="transaction.paid && iTransaction._id !== undefined"
             [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           />
           <ng-container>
@@ -177,7 +177,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [disabled]="transaction.paid && transactionIndex !== undefined"
+            [disabled]="transaction.paid && iTransaction._id !== undefined"
             [attr.aria-invalid]="notaFiscal.invalid && notaFiscal.touched ? true : null"
           />
         </div>
@@ -212,7 +212,7 @@
                 ? 'success'
                 : 'basic'
             "
-            [disabled]="transaction.paid && transactionIndex !== undefined"
+            [disabled]="transaction.paid && iTransaction._id !== undefined"
             [attr.aria-invalid]="companyPercentage.invalid && companyPercentage.touched ? true : null"
           />
         </div>
@@ -296,7 +296,7 @@
                   : dueDate.value
                   ? 'success'
                   : 'basic'
-                : transactionIndex !== undefined
+                : iTransaction._id !== undefined
                 ? 'success'
                 : 'basic'
             "
@@ -329,7 +329,7 @@
         <div class="form-control-group">
           <label class="label" for="input-paid-date">Data do pagamento</label>
           <input
-            *ngIf="!transaction.paid; else withdate"
+            *ngIf="!transaction.paid; else withDateReceipt"
             nbInput
             [(ngModel)]="transaction.paidDate"
             #paidDate="ngModel"
@@ -344,7 +344,7 @@
             [status]="paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : 'basic'"
             [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
-          <ng-template #withdate>
+          <ng-template #withDateReceipt>
             <input
               nbInput
               [(ngModel)]="transaction.paidDate"
@@ -460,7 +460,7 @@
                 ? contractList.invalid
                   ? 'danger'
                   : 'success'
-                : transactionIndex === undefined && contractSearch !== ''
+                : iTransaction._id === undefined && contractSearch !== ''
                 ? 'success'
                 : 'basic'
             "
@@ -475,7 +475,7 @@
           <div style="height: 29px; display: flex; align-items: flex-end">
             <label class="label" for="input-cost-center" style="margin-right: 10px">Centro de custo</label>
             <nb-radio-group
-              [(ngModel)]="options.costCenterListType"
+              [(ngModel)]="transaction.modelCostCenter"
               (ngModelChange)="setCostCenterData()"
               [disabled]="!!this.team"
               id="input-cost-center-type"
@@ -505,7 +505,7 @@
           Não foi possível achar um centro de custo
           "
             fieldSize="large"
-            [nameField]="options.costCenterListType == cCTypes.USER ? 'name' : 'name'"
+            [nameField]="transaction.modelCostCenter == cCTypes.USER ? 'name' : 'name'"
             pictureField="profilePicture"
             [data$]="costCenterData$"
             [minSearchLength]="0"
@@ -550,7 +550,7 @@
             [minLength]="validation.value.minLength"
             [maxLength]="validation.value.maxLength"
             [status]="value.dirty ? (value.invalid ? 'danger' : 'success') : 'basic'"
-            [disabled]="transaction.paid && transactionIndex !== undefined"
+            [disabled]="transaction.paid && iTransaction._id !== undefined"
             [attr.aria-invalid]="value.invalid && value.touched ? true : null"
           />
           <ng-container>
@@ -607,7 +607,7 @@
             fullWidth
             size="large"
             [required]="validation.nf.required"
-            [status]="nf.dirty ? 'success' : transactionIndex === undefined ? 'success' : 'basic'"
+            [status]="nf.dirty ? 'success' : iTransaction._id === undefined ? 'success' : 'basic'"
             [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
           >
             <nb-option [value]="false">NÃO</nb-option>
@@ -642,7 +642,7 @@
                 ? userList.invalid
                   ? 'danger'
                   : 'success'
-                : transactionIndex === undefined && userSearch !== ''
+                : iTransaction._id === undefined && userSearch !== ''
                 ? 'success'
                 : 'basic'
             "
@@ -766,6 +766,7 @@
             placeholder="Movimentação paga?"
             fullWidth
             size="large"
+            (ngModelChange)="updatePaidDate()"
             [required]="validation.paidCheck.required"
             [status]="isPaidInput.dirty ? 'success' : transaction.paid != undefined ? 'success' : 'basic'"
             [attr.aria-invalid]="isPaidInput.invalid && isPaidInput.touched ? true : null"
@@ -779,7 +780,7 @@
         <div class="form-control-group">
           <label class="label" for="input-paid-date">Data do pagamento</label>
           <input
-            *ngIf="!transaction.paid; else withdate"
+            *ngIf="!transaction.paid; else withDateExpense"
             nbInput
             [(ngModel)]="transaction.paidDate"
             #paidDate="ngModel"
@@ -791,10 +792,12 @@
             [required]="validation.paidDate.required"
             [readonly]="true"
             [disabled]="!transaction.paid"
-            [status]="paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : 'basic'"
+            [status]="paidDate.dirty ? (paidDate.invalid ? 'danger' : 'success') : (transaction.paidDate !== undefined
+                ? 'success'
+                : 'basic')"
             [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
           />
-          <ng-template #withdate>
+          <ng-template #withDateExpense>
             <input
               nbInput
               [(ngModel)]="transaction.paidDate"
@@ -921,15 +924,22 @@
 <div class="row">
   <div
     [ngClass]="{
-      'col-12': transactionIndex !== undefined,
-      'col-6': transactionIndex === undefined
+      'col-12': iTransaction._id !== undefined,
+      'col-6': iTransaction._id === undefined
     }"
   >
-    <button nbButton fullWidth status="primary" size="large" [disabled]="!form.valid" (click)="registerTransaction()">
-      {{ transactionIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
+    <button
+      nbButton
+      fullWidth
+      status="primary"
+      size="large"
+      [disabled]="iTransaction._id || !form.valid"
+      (click)="iTransaction._id ? editTransaction() : registerTransaction()"
+    >
+      {{ iTransaction._id ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
-  <div class="col-6" *ngIf="transactionIndex === undefined">
+  <div class="col-6" *ngIf="iTransaction._id === undefined">
     <button nbButton fullWidth status="success" size="large" [disabled]="!form.valid" (click)="addAndClean()">
       Adicionar Outro
     </button>
