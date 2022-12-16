@@ -15,6 +15,7 @@ import { formatDate, idToProperty, isPhone, populateList, valueSort } from 'app/
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
 import { Transaction } from '@models/transaction';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -90,6 +91,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       costCenter: {
         title: 'Fonte',
         type: 'string',
+        valuePrepareFunction: (value: User | Team) => value.name,
       },
       description: {
         title: 'Descrição',
@@ -114,6 +116,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       created: {
         title: 'Data',
         type: 'string',
+        valuePrepareFunction: (value: Date) => formatDate(value),
       },
       paid: {
         title: 'Pago?',
@@ -188,8 +191,6 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
               this.teamService.idToTeam.bind(this.teamService),
               this.userService.idToUser.bind(this.userService)
             );
-            tmp.costCenter = tmp.costCenter.name;
-            tmp.created = formatDate(tmp.created);
             return tmp;
           })
         );

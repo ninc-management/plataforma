@@ -108,7 +108,7 @@ export class TransactionItemComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.contract) this.hasInputContract = this.options.relatedWithContract = true;
-    if (this.team) this.buildTeamTransaction();
+    if (this.team) this.configureTeamTransaction();
     combineLatest([
       this.userService.currentUser$,
       this.contractService.getContracts(),
@@ -311,14 +311,15 @@ export class TransactionItemComponent implements OnInit {
     if (!this.expenseSubTypes.includes(this.transaction.subType)) this.transaction.subType = '';
   }
 
-  private buildTeamTransaction(): void {
+  private configureTeamTransaction(): void {
     if (this.team) {
       this.clonedTeam = cloneDeep(this.team);
       this.options.type = TRANSACTION_TYPES.EXPENSE;
       this.handleType();
-      this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
-      if (this.iTransaction._id) this.iTransaction.costCenter = this.clonedTeam;
-      else this.transaction.costCenter = this.clonedTeam;
+      if (!this.iTransaction._id) {
+        this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
+        this.transaction.costCenter = this.clonedTeam;
+      }
       this.costCenterSearch = this.clonedTeam.name;
     }
   }

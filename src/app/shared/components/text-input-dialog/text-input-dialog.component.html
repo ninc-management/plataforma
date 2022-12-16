@@ -53,7 +53,10 @@
         </ng-container>
       </div>
       <div *ngSwitchCase="INPUT_TYPES.textList">
-        <ngx-text-list [textList]="textList" [typeOfTextList]="TEXT_LIST.EDITION_HISTORY_ITEM"></ngx-text-list>
+        <ngx-text-list *ngIf="textList.length > 0 else noChanges"  [textList]="textList" [typeOfTextList]="TEXT_LIST.EDITION_HISTORY_ITEM"></ngx-text-list>
+        <ng-template #noChanges>
+          <p>Sem alterações</p>
+        </ng-template>
       </div>
     </div>
   </nb-card-body>
