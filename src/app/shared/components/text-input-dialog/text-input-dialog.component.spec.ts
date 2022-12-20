@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CommonTestingModule } from 'app/../common-testing.module';
+
 import { TextInputDialogComponent } from './text-input-dialog.component';
 
 describe('ConfirmationDialogComponent', () => {

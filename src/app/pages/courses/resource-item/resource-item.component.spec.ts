@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'common-testing.module';
+
 import { ResourceItemComponent } from './resource-item.component';
 
 describe('ResourceItemComponent', () => {

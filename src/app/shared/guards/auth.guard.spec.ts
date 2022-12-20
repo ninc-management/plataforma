@@ -1,18 +1,19 @@
-import { TestBed } from '@angular/core/testing';
-
-import { AuthGuard } from './auth.guard';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import { Observable, of, take } from 'rxjs';
-import { ConfigService, DEFAULT_CONFIG } from '../services/config.service';
-import { PlatformConfig, ProfileConfig } from '@models/platformConfig';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { ExpenseType } from '@models/team';
-import { cloneDeep } from 'lodash';
-import { NbAccessChecker, NbAclService } from '@nebular/security';
-import { NbAuthService } from '@nebular/auth';
+import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
 import { IPublicClientApplication } from '@azure/msal-browser';
+import { NbAuthService } from '@nebular/auth';
+import { NbAccessChecker, NbAclService } from '@nebular/security';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
+import { Observable, of, take } from 'rxjs';
+
+import { ConfigService, DEFAULT_CONFIG } from '../services/config.service';
+import { AuthGuard } from './auth.guard';
+
+import { PlatformConfig, ProfileConfig } from '@models/platformConfig';
+import { ExpenseType } from '@models/team';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -46,7 +47,7 @@ describe('AuthGuard', () => {
     httpMock = TestBed.inject(HttpTestingController);
     configService = TestBed.inject(ConfigService);
     mockedConfigs = [];
-    let mockedConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    const mockedConfig = cloneDeep(DEFAULT_CONFIG) as any;
     mockedConfig._id = '0';
     mockedConfig.profileConfig.levels.push('teste');
     mockedConfig.profileConfig.positions = [
@@ -118,7 +119,7 @@ describe('AuthGuard', () => {
   });
 
   it('loadList should work', (done: DoneFn) => {
-    let accessControl = {
+    const accessControl = {
       teste: { parent: 'Diretor de T.I' },
       teste2: { parent: 'Associado' },
       teste3: { parent: 'Diretor Financeiro' },

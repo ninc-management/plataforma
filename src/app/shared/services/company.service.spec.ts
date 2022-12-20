@@ -1,17 +1,18 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Company } from '@models/company';
-import { AuthService } from 'app/auth/auth.service';
 import { CommonTestingModule } from 'common-testing.module';
+import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
 
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
+import { reviveDates } from '../utils';
 import { CompanyService } from './company.service';
 import { WebSocketService } from './web-socket.service';
-import { cloneDeep } from 'lodash';
-import { reviveDates } from '../utils';
-import { externalMockedCompanies } from '../mocked-data/mocked-companies';
+import { AuthService } from 'app/auth/auth.service';
+
+import { Company } from '@models/company';
 
 describe('CompanyService', () => {
   let service: CompanyService;

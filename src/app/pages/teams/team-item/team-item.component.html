@@ -428,7 +428,9 @@
           <hr />
         </div>
         <div class="col-auto">
-          <nb-toggle [(ngModel)]="clonedTeam.overrideSupportPercentages" name="toggle-hide" labelPosition="start">Sobrepor</nb-toggle>
+          <nb-toggle [(ngModel)]="clonedTeam.overrideSupportPercentages" name="toggle-hide" labelPosition="start">
+            Sobrepor
+          </nb-toggle>
         </div>
       </div>
       <ng-container *ngIf="clonedTeam.overrideSupportPercentages">
@@ -521,8 +523,16 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="intermediationOrgPercentage.dirty ? (intermediationOrgPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                [attr.aria-invalid]="intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null"
+                [status]="
+                  intermediationOrgPercentage.dirty
+                    ? intermediationOrgPercentage.invalid
+                      ? 'danger'
+                      : 'success'
+                    : 'basic'
+                "
+                [attr.aria-invalid]="
+                  intermediationOrgPercentage.invalid && intermediationOrgPercentage.touched ? true : null
+                "
               />
             </div>
           </div>
@@ -545,8 +555,16 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="intermediationNfPercentage.dirty ? (intermediationNfPercentage.invalid ? 'danger' : 'success') : 'basic'"
-                [attr.aria-invalid]="intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null"
+                [status]="
+                  intermediationNfPercentage.dirty
+                    ? intermediationNfPercentage.invalid
+                      ? 'danger'
+                      : 'success'
+                    : 'basic'
+                "
+                [attr.aria-invalid]="
+                  intermediationNfPercentage.invalid && intermediationNfPercentage.touched ? true : null
+                "
               />
             </div>
           </div>

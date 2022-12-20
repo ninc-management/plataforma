@@ -205,7 +205,8 @@
                           class="caption status-danger"
                           *ngIf="document.errors?.minlength || document.errors?.maxlength"
                         >
-                          O CPF/CNPJ deve ter {{validation.document.minLength - 3}} ou {{validation.document.maxLength - 4}} números
+                          O CPF/CNPJ deve ter {{ validation.document.minLength - 3 }} ou
+                          {{ validation.document.maxLength - 4 }} números
                         </p>
                       </ng-container>
                     </div>
@@ -454,11 +455,9 @@
                     >
                       <div class="row irow">
                         <div class="col">
-                          <div *ngFor="let sector of team.members[0].sectors; trackBy:trackByIndex">
+                          <div *ngFor="let sector of team.members[0].sectors; trackBy: trackByIndex">
                             {{ team.name }} -
-                            {{
-                              [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService)
-                            }}
+                            {{ [sector] | transformPipe: teamService.idToSectorComposedName.bind(teamService) }}
                           </div>
                         </div>
                       </div>

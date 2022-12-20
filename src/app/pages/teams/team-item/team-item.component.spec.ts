@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { TeamItemComponent } from './team-item.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('TeamItemComponent', () => {
   let component: TeamItemComponent;

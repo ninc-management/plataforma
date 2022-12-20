@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlatformConfig } from '@models/platformConfig';
-import { CommonTestingModule } from 'common-testing.module';
 import { NbIconLibraries } from '@nebular/theme';
+import { CommonTestingModule } from 'common-testing.module';
 
 import { ConfigComponent } from './config.component';
+
+import { PlatformConfig } from '@models/platformConfig';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;

@@ -1,20 +1,20 @@
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-
-import { ContractorService } from './contractor.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
+
+import { externalMockedContractors } from '../mocked-data/mocked-contractors';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { ContractorService } from './contractor.service';
+import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
-import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '@models/user';
-import { Subject } from 'rxjs';
-import MockedServerSocket from 'socket.io-mock';
 import { Contractor } from '@models/contractor';
-import { SocketMock } from 'types/socketio-mock';
-import { cloneDeep } from 'lodash';
-import { take } from 'rxjs/operators';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { externalMockedContractors } from '../mocked-data/mocked-contractors';
+import { User } from '@models/user';
 
 describe('ContractorService', () => {
   let service: ContractorService;
@@ -74,7 +74,7 @@ describe('ContractorService', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedContractors = cloneDeep(externalMockedContractors)
+    mockedContractors = cloneDeep(externalMockedContractors);
   });
 
   afterEach(() => {

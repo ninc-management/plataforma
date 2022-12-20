@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { StatecityService } from './statecity.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('StatecityService', () => {
   let service: StatecityService;

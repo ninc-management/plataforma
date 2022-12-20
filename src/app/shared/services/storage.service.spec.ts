@@ -1,12 +1,12 @@
-import { TestBed } from '@angular/core/testing';
-import { StorageProvider } from 'app/@theme/components';
-import { CommonTestingModule } from 'app/../common-testing.module';
 import { HttpTestingController } from '@angular/common/http/testing';
-
-import { StorageService } from './storage.service';
-import { DEFAULT_CONFIG } from './config.service';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 import { combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
+
+import { DEFAULT_CONFIG } from './config.service';
+import { StorageService } from './storage.service';
+import { StorageProvider } from 'app/@theme/components';
 
 describe('StorageService', () => {
   let service: StorageService;

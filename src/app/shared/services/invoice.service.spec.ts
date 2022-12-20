@@ -1,22 +1,22 @@
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-
-import { InvoiceService } from './invoice.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
+
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { InvoiceService } from './invoice.service';
+import { CONTRACT_BALANCE } from './user.service';
+import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+import { reviveDates } from 'app/shared/utils';
+
 import { Invoice } from '@models/invoice';
 import { User } from '@models/user';
-import { HttpTestingController } from '@angular/common/http/testing';
-import { Subject } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
-import { AuthService } from 'app/auth/auth.service';
-
-import { cloneDeep } from 'lodash';
-import { take } from 'rxjs/operators';
-import { CONTRACT_BALANCE } from './user.service';
-import MockedServerSocket from 'socket.io-mock';
-import { reviveDates } from 'app/shared/utils';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
@@ -77,7 +77,7 @@ describe('InvoiceService', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
-    mockedInvoices = cloneDeep(externalMockedInvoices)
+    mockedInvoices = cloneDeep(externalMockedInvoices);
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');

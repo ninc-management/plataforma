@@ -7,7 +7,7 @@ describe('RemainingItemsComponent', () => {
   let component: RemainingItemsComponent;
   let fixture: ComponentFixture<RemainingItemsComponent>;
 
- CommonTestingModule.setUpTestBed(RemainingItemsComponent);
+  CommonTestingModule.setUpTestBed(RemainingItemsComponent);
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RemainingItemsComponent);

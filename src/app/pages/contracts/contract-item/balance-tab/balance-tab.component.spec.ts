@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NbIconLibraries } from '@nebular/theme';
 import { CommonTestingModule } from 'common-testing.module';
 
 import { BalanceTabComponent } from './balance-tab.component';
-import { NbIconLibraries } from '@nebular/theme';
 
 describe('BalanceTabComponent', () => {
   let component: BalanceTabComponent;

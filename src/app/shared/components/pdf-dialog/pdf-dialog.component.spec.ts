@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { PdfDialogComponent } from './pdf-dialog.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('PdfDialogComponent', () => {
   let component: PdfDialogComponent;

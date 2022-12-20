@@ -1,17 +1,18 @@
-import { TestBed } from '@angular/core/testing';
-
-import { AuthService } from './auth.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { IPublicClientApplication } from '@azure/msal-browser';
-import { MsalService } from '@azure/msal-angular';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { take } from 'rxjs/operators';
+import { TestBed } from '@angular/core/testing';
+import { MsalService } from '@azure/msal-angular';
+import { IPublicClientApplication } from '@azure/msal-browser';
+import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
-import { Subject } from 'rxjs';
-import { WebSocketService } from 'app/shared/services/web-socket.service';
+
+import { AuthService } from './auth.service';
 import { ProspectService } from 'app/shared/services/prospect.service';
+import { WebSocketService } from 'app/shared/services/web-socket.service';
+
 import { Prospect } from '@models/prospect';
 import { User } from '@models/user';
 
@@ -64,7 +65,7 @@ describe('AuthService', () => {
     tmpUser.active = true;
     mockedUsers.push(cloneDeep(tmpUser));
 
-    let tmpProspect = new Prospect();
+    const tmpProspect = new Prospect();
     tmpProspect._id = '0';
     tmpProspect.fullName = 'prospect';
     tmpProspect.email = 'prospect@mocked.com';
@@ -201,7 +202,7 @@ describe('AuthService', () => {
     const req = httpMock.expectOne('/api/auth/isProspect');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(!!(mockedProspects.find((prospect: Prospect) => prospect.email == 'fakeProspect@mocked.com')));
+      req.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == 'fakeProspect@mocked.com'));
     }, 50);
 
     service.isUserProspect(mockedProspects[0].email).subscribe((isProspect) => {
@@ -209,11 +210,11 @@ describe('AuthService', () => {
       done();
     });
 
-     const req1 = httpMock.expectOne('/api/auth/isProspect');
-     expect(req1.request.method).toBe('POST');
-     setTimeout(() => {
-       req1.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == mockedProspects[0].email));
-     }, 50);
+    const req1 = httpMock.expectOne('/api/auth/isProspect');
+    expect(req1.request.method).toBe('POST');
+    setTimeout(() => {
+      req1.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == mockedProspects[0].email));
+    }, 50);
   });
 
   it('isUserActive should work', (done: DoneFn) => {

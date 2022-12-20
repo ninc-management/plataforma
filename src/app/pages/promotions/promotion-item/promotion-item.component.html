@@ -257,6 +257,13 @@
   <nb-smart-table #smartTable *ngIf="!isPhone(); else phone" [settings]="settings" [source]="source"></nb-smart-table>
   <ng-template #phone></ng-template>
 </form>
-<button (click)="registerPromotion()" nbButton fullWidth status="primary" size="large" [disabled]="form.invalid || !form.dirty">
+<button
+  (click)="registerPromotion()"
+  nbButton
+  fullWidth
+  status="primary"
+  size="large"
+  [disabled]="form.invalid || !form.dirty"
+>
   {{ editing ? 'Atualizar' : 'Cadastrar' }}
 </button>

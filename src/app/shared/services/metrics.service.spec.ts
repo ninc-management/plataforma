@@ -1,11 +1,11 @@
-import { TestBed } from '@angular/core/testing';
-
 import { HttpTestingController } from '@angular/common/http/testing';
-import { cloneDeep } from 'lodash';
+import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { MetricsService } from './metrics.service';
-import { DEFAULT_CONFIG } from './config.service';
+import { cloneDeep } from 'lodash';
+
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
+import { DEFAULT_CONFIG } from './config.service';
+import { MetricsService } from './metrics.service';
 
 describe('MetricsService', () => {
   let service: MetricsService;

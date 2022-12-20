@@ -114,30 +114,30 @@
       <div class="col-6 col-md-3">
         <div class="form-control-group">
           <label class="label" for="input-predicatedDate">Data prevista do pagamento:</label>
-           <input
-              nbInput
-              [(ngModel)]="payment.predictedDate"
-              #predictedDate="ngModel"
-              id="input-predictedDate"
-              name="predictedDate"
-              placeholder="Escolha uma data"
-              fullWidth
-              fieldSize="large"
-              [nbDatepicker]="pDatepicker"
-              [required]="validation.predictedDate.required"
-              [readonly]="true"
-              [status]="
-                predictedDate.dirty
-                  ? predictedDate.invalid
-                    ? 'danger'
-                    : 'success'
-                  : paymentIndex === undefined
-                  ? 'success'
-                  : 'basic'
-              "
-              [attr.aria-invalid]="predictedDate.invalid && predictedDate.touched ? true : null"
-            />
-            <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
+          <input
+            nbInput
+            [(ngModel)]="payment.predictedDate"
+            #predictedDate="ngModel"
+            id="input-predictedDate"
+            name="predictedDate"
+            placeholder="Escolha uma data"
+            fullWidth
+            fieldSize="large"
+            [nbDatepicker]="pDatepicker"
+            [required]="validation.predictedDate.required"
+            [readonly]="true"
+            [status]="
+              predictedDate.dirty
+                ? predictedDate.invalid
+                  ? 'danger'
+                  : 'success'
+                : paymentIndex === undefined
+                ? 'success'
+                : 'basic'
+            "
+            [attr.aria-invalid]="predictedDate.invalid && predictedDate.touched ? true : null"
+          />
+          <nb-datepicker #pDatepicker [max]="today"></nb-datepicker>
         </div>
       </div>
       <div class="col-6 col-md-2">

@@ -12,11 +12,13 @@
             </div>
             <div class="col-md-2">
               <nb-icon icon="calendar" pack="fa" status="warning"></nb-icon>
-              <span style="vertical-align: 0.1em">{{ [payment.predictedDate] | transformPipe: formatDate}}</span>
+              <span style="vertical-align: 0.1em">{{ [payment.predictedDate] | transformPipe: formatDate }}</span>
             </div>
             <div class="col-md-2">
               <nb-icon icon="calendar-check" pack="fa" status="success"></nb-icon>
-              <span style="vertical-align: 0.1em">{{ payment.paidDate ? ( [payment.paidDate] | transformPipe: formatDate ): "Não pago"}}</span>
+              <span style="vertical-align: 0.1em">
+                {{ payment.paidDate ? ([payment.paidDate] | transformPipe: formatDate) : 'Não pago' }}
+              </span>
             </div>
           </a>
         </div>
@@ -43,13 +45,6 @@
     </div>
   </nb-list-item>
 </nb-list>
-<button
-  nbButton
-  fullWidth
-  status="primary"
-  size="large"
-  [disabled]="!isEditionGranted"
-  (click)="openDialog()"
->
+<button nbButton fullWidth status="primary" size="large" [disabled]="!isEditionGranted" (click)="openDialog()">
   Nova Ordem de Pagamento
 </button>

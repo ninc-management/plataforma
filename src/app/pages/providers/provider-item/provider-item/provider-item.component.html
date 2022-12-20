@@ -268,7 +268,10 @@
                   ></textarea>
                   <ng-container *ngIf="description.invalid && description.touched">
                     <p class="caption status-danger" *ngIf="description.errors?.required">A descrição é obrigatória!</p>
-                    <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
+                    <p
+                      class="caption status-danger"
+                      *ngIf="description.errors?.minlength || description.errors?.maxlength"
+                    >
                       A descrição deve conter entre
                       {{ validation.description.minLength }} a
                       {{ validation.description.maxLength }}

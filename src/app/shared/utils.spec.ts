@@ -1,23 +1,25 @@
-import { TestBed } from '@angular/core/testing';
-
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { subMonths, addMonths, subYears, subDays } from 'date-fns';
-import { cloneDeep, range } from 'lodash';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
-import { User } from '@models/user';
-import { Contract, ContractReceipt } from '@models/contract';
-import { Invoice } from '@models/invoice';
-import { Team, TeamMember } from '@models/team';
-import { TimeSeriesItem } from './services/metrics.service';
-import { InvoiceService } from './services/invoice.service';
-import { UserService } from './services/user.service';
-import { TeamService } from './services/team.service';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { addMonths, subDays, subMonths, subYears } from 'date-fns';
+import { cloneDeep, range } from 'lodash';
+import { BehaviorSubject, take } from 'rxjs';
+
+import { externalMockedConfigs } from './mocked-data/mocked-config';
+import { externalMockedContractors } from './mocked-data/mocked-contractors';
+import { externalMockedContracts } from './mocked-data/mocked-contracts';
+import { externalMockedInvoices } from './mocked-data/mocked-invoices';
+import { externalMockedTeams } from './mocked-data/mocked-teams';
+import { externalMockedUsers } from './mocked-data/mocked-users';
+import { ConfigService } from './services/config.service';
 import { ContractService } from './services/contract.service';
 import { ContractorService } from './services/contractor.service';
-import { ConfigService } from './services/config.service';
-import { BehaviorSubject, take } from 'rxjs';
-import { HttpTestingController } from '@angular/common/http/testing';
-import { Contractor } from '@models/contractor';
+import { InvoiceService } from './services/invoice.service';
+import { TimeSeriesItem } from './services/metrics.service';
+import { TeamService } from './services/team.service';
+import { UserService } from './services/user.service';
+import { WebSocketService } from './services/web-socket.service';
 import {
   assingOrIncrement,
   elapsedTime,
@@ -38,14 +40,13 @@ import {
   trackByIndex,
   valueSort,
 } from './utils';
+
+import { Contract, ContractReceipt } from '@models/contract';
+import { Contractor } from '@models/contractor';
+import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
-import { WebSocketService } from './services/web-socket.service';
-import { externalMockedUsers } from './mocked-data/mocked-users';
-import { externalMockedTeams } from './mocked-data/mocked-teams';
-import { externalMockedConfigs } from './mocked-data/mocked-config';
-import { externalMockedInvoices } from './mocked-data/mocked-invoices';
-import { externalMockedContractors } from './mocked-data/mocked-contractors';
-import { externalMockedContracts } from './mocked-data/mocked-contracts';
+import { Team, TeamMember } from '@models/team';
+import { User } from '@models/user';
 
 interface MockedUser {
   _id: string;
@@ -134,9 +135,9 @@ describe('UtilsService', () => {
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
     mockedTeams = cloneDeep(externalMockedTeams);
-    mockedContracts = cloneDeep(externalMockedContracts);;
+    mockedContracts = cloneDeep(externalMockedContracts);
     mockedContractors = cloneDeep(externalMockedContractors);
-    mockedConfigs = cloneDeep(externalMockedConfigs)
+    mockedConfigs = cloneDeep(externalMockedConfigs);
 
     teamService.getTeams().pipe(take(1)).subscribe();
     let req = httpMock.expectOne('/api/team/all');
@@ -170,7 +171,7 @@ describe('UtilsService', () => {
   });
 
   it('assingOrIncrement should work', () => {
-    let test: {
+    const test: {
       sum?: number;
     } = {};
     expect(test.sum).toBe(undefined);
@@ -261,7 +262,7 @@ describe('UtilsService', () => {
   });
 
   it('isOfType should work', () => {
-    let test: TestComponent | User = new User();
+    const test: TestComponent | User = new User();
     expect(isOfType<User>(User, test)).toBe(true);
     expect(isOfType(TestComponent, test)).toBe(false);
   });
@@ -364,9 +365,9 @@ describe('UtilsService', () => {
     );
     expect(idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(mockedTeams[0].abrev);
     expect(idToProperty(undefined, contractService.idToContract.bind(contractService), 'locals').name).toBe(undefined);
-    expect(idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'locals').name).toBe(
-      mockedContracts[0].locals.name
-    );
+    expect(
+      idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'locals').name
+    ).toBe(mockedContracts[0].locals.name);
     expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'locals').value).toBe(
       mockedContracts[0].locals.value
     );

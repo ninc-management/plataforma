@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { EchartsBarComponent } from './echarts-bar.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('EchartsBarComponent', () => {
   let component: EchartsBarComponent;

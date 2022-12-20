@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NbIconLibraries } from '@nebular/theme';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { ContractItemComponent } from './contract-item.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { NbIconLibraries } from '@nebular/theme';
 
 describe('ContractItemComponent', () => {
   let component: ContractItemComponent;

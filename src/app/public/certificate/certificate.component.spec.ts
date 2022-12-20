@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CommonTestingModule } from 'app/../common-testing.module';
+
 import { NgxCertificateComponent } from './certificate.component';
 
 describe('NgxCertificateComponent', () => {

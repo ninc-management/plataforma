@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { FabComponent } from './fab.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('FabComponent', () => {
   let component: FabComponent;

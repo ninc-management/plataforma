@@ -253,7 +253,10 @@
             </div>
           </div>
           <nb-list class="row overflow-hidden py-3">
-            <nb-list-item class="pt-3 px-0 d-flex flex-column" *ngFor="let item of clonedContract.checklist; let i = index">
+            <nb-list-item
+              class="pt-3 px-0 d-flex flex-column"
+              *ngFor="let item of clonedContract.checklist; let i = index"
+            >
               <div class="row w-100">
                 <div class="col-3">
                   <input
@@ -341,7 +344,8 @@
                   <nb-progress-bar
                     [status]="[clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
                     [class]="
-                      'progress-border ' + ([clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))
+                      'progress-border ' +
+                      ([clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))
                     "
                     [size]="'tiny'"
                     [displayValue]="true"
@@ -446,7 +450,12 @@
             (click)="registerNewComment()"
             [disabled]="!commentInput.value"
           >
-            <nb-icon style="width: 20px; height: 20px" [status]="commentInput.value ? 'control' : 'basic'" icon="paper-plane-outline" pack="eva"></nb-icon>
+            <nb-icon
+              style="width: 20px; height: 20px"
+              [status]="commentInput.value ? 'control' : 'basic'"
+              icon="paper-plane-outline"
+              pack="eva"
+            ></nb-icon>
           </button>
         </div>
       </div>

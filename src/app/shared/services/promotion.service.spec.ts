@@ -1,23 +1,24 @@
-import { TestBed } from '@angular/core/testing';
-import { PromotionService } from './promotion.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { Promotion } from '@models/promotion';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { Subject } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
-import { AuthService } from 'app/auth/auth.service';
-import MockedServerSocket from 'socket.io-mock';
-
-import { take } from 'rxjs/operators';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
+import { Subject } from 'rxjs';
+import { take } from 'rxjs/operators';
+import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
+
+import { externalMockedPromotions } from '../mocked-data/mocked-promotions';
+import { PromotionService } from './promotion.service';
+import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
 import {
   PROMOTION_STATOOS,
   RULE_OBJECTS,
   RULE_OPERATORS,
 } from 'app/pages/promotions/promotion-item/promotion-item.component';
 import { reviveDates } from 'app/shared/utils';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedPromotions } from '../mocked-data/mocked-promotions';
+
+import { Promotion } from '@models/promotion';
 
 describe('PromotionService', () => {
   let service: PromotionService;

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'common-testing.module';
+
 import { ContactItemComponent } from './contact-item.component';
 
 describe('ContactItemComponent', () => {

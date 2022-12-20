@@ -1,24 +1,24 @@
+import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-
-import { NotificationBody, NotificationService } from './notification.service';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { User } from '@models/user';
-import { Notification } from '@models/notification';
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
-import { Team, TeamMember } from '@models/team';
 import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
-import { UserService } from './user.service';
-import { AuthService } from 'app/auth/auth.service';
-import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
-import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
 
-import { reviveDates } from 'app/shared/utils';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { NotificationBody, NotificationService } from './notification.service';
+import { UserService } from './user.service';
+import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+import { reviveDates } from 'app/shared/utils';
+
+import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Notification } from '@models/notification';
+import { Team, TeamMember } from '@models/team';
+import { User } from '@models/user';
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -48,10 +48,10 @@ describe('NotificationService', () => {
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
-    mockedTeams = cloneDeep(externalMockedTeams)
+    mockedTeams = cloneDeep(externalMockedTeams);
 
     userService.getUsers().pipe(take(1)).subscribe();
-    let req = httpMock.expectOne('/api/user/all');
+    const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedUsers);
   });

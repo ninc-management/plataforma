@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { OneDriveDocumentUploader } from './onedrive-document-uploader.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('OneDriveDocumentUploader', () => {
   let component: OneDriveDocumentUploader;

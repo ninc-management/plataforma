@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NbIconLibraries } from '@nebular/theme';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { ContractDialogComponent } from './contract-dialog.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { NbIconLibraries } from '@nebular/theme';
 
 describe('ContractDialogComponent', () => {
   let iconsLibrary: NbIconLibraries;

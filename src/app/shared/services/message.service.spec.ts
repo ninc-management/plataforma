@@ -1,17 +1,17 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
-import { Message } from '@models/message';
+import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
 
 import { MessageService } from './message.service';
-
-import { AuthService } from 'app/auth/auth.service';
-import { cloneDeep } from 'lodash';
-import { reviveDates } from 'app/shared/utils';
 import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+import { reviveDates } from 'app/shared/utils';
+
+import { Message } from '@models/message';
 
 describe('MessageService', () => {
   let service: MessageService;

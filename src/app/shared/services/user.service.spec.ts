@@ -1,18 +1,19 @@
-import { TestBed } from '@angular/core/testing';
-
-import { UserService, CONTRACT_BALANCE } from './user.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { last, take, mergeMap } from 'rxjs/operators';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { User } from '@models/user';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { SocketMock } from 'app/../types/socketio-mock';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { AuthService } from 'app/auth/auth.service';
-import { SocketMock } from 'app/../types/socketio-mock';
-import { WebSocketService } from './web-socket.service';
+import { last, mergeMap, take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
-import { reviveDates } from 'app/shared/utils';
+
 import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { CONTRACT_BALANCE, UserService } from './user.service';
+import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+import { reviveDates } from 'app/shared/utils';
+
+import { User } from '@models/user';
 
 describe('UserService', () => {
   let service: UserService;

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { RedirectGuard } from './redirect.guard';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 describe('RedirectGuard', () => {
   let guard: RedirectGuard;

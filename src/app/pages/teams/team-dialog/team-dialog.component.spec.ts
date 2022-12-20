@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { TeamDialogComponent } from './team-dialog.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('TeamDialogComponent', () => {
   let component: TeamDialogComponent;

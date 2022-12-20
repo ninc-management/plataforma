@@ -684,7 +684,9 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="!form.valid || !expense.source || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted"
+      [disabled]="
+        !form.valid || !expense.source || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted
+      "
       (click)="registerExpense()"
     >
       {{ expenseIndex !== undefined ? 'Atualizar' : 'Adicionar' }}
@@ -696,7 +698,9 @@
       fullWidth
       status="success"
       size="large"
-      [disabled]="!form.valid || !expense.source || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted"
+      [disabled]="
+        !form.valid || !expense.source || (expense.nf && uploadedFiles.length == 0) || !is100 || !isEditionGranted
+      "
       (click)="addAndClean()"
     >
       Adicionar Outro

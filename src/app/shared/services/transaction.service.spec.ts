@@ -1,22 +1,21 @@
-import { TestBed } from '@angular/core/testing';
-
-import { TransactionService } from './transaction.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
-import { Transaction } from '@models/transaction';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
+import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
-import MockedServerSocket from 'socket.io-mock';
-import { cloneDeep } from 'lodash';
-
-import { Fees, reviveDates } from 'app/shared/utils';
-import { Team } from '@models/team';
-import { PlatformConfig } from '@models/platformConfig';
-import { DEFAULT_CONFIG } from './config.service';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { DEFAULT_CONFIG } from './config.service';
+import { TransactionService } from './transaction.service';
+import { WebSocketService } from './web-socket.service';
+import { Fees, reviveDates } from 'app/shared/utils';
+
+import { PlatformConfig } from '@models/platformConfig';
+import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -135,7 +134,7 @@ describe('TransactionService', () => {
     tmpTransaction.code = '#4';
     mockedTransactions.push(tmpTransaction);
 
-    let tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
+    const tmpConfig = cloneDeep(DEFAULT_CONFIG) as any;
     tmpConfig._id = '0';
     tmpConfig.invoiceConfig.businessFees.support.nfPercentage = Fees.NF_SUPPORT;
     tmpConfig.invoiceConfig.businessFees.support.organizationPercentage = Fees.NORTAN_SUPPORT;

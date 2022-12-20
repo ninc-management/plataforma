@@ -4,20 +4,16 @@
       <div class="logo-container" style="margin-top: -7px">
         <span
           class="logo"
-          style="
-            height: 42px;
-            display: flex;
-            border-radius: 0.17rem;
-            align-items: center;
-            font-size: 30px;
-          "
+          style="height: 42px; display: flex; border-radius: 0.17rem; align-items: center; font-size: 30px"
         >
           <nb-icon
             icon="logo"
             pack="fac"
             style="width: 30px; height: 30px; margin-bottom: 4px; margin-right: 8px"
           ></nb-icon>
-          <span *ngIf="config.company && companyService.idToCompany(config.company).showCompanyName">{{  companyService.idToCompany(config.company).companyName }}</span>
+          <span *ngIf="config.company && companyService.idToCompany(config.company).showCompanyName">
+            {{ companyService.idToCompany(config.company).companyName }}
+          </span>
         </span>
       </div>
     </nb-layout-header>

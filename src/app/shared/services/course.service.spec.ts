@@ -1,20 +1,21 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Course, CourseParticipant } from '@models/course';
-import { User } from '@models/user';
-import { AuthService } from 'app/auth/auth.service';
 import { CommonTestingModule } from 'common-testing.module';
 import { cloneDeep } from 'lodash';
-
 import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
+
 import { externalMockedCourseParticipants, externalMockedCourses } from '../mocked-data/mocked-courses';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { reviveDates } from '../utils';
 import { CourseService } from './course.service';
 import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+
+import { Course, CourseParticipant } from '@models/course';
+import { User } from '@models/user';
 
 describe('CourseService', () => {
   let service: CourseService;

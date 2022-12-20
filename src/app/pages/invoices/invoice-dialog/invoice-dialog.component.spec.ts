@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NbIconLibraries } from '@nebular/theme';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { InvoiceDialogComponent } from './invoice-dialog.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { NbIconLibraries } from '@nebular/theme';
 
 describe('InvoiceDialogComponent', () => {
   let component: InvoiceDialogComponent;

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { PromotionDialogComponent } from './promotion-dialog.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('PromotionDialogComponent', () => {
   let component: PromotionDialogComponent;

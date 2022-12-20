@@ -1,31 +1,28 @@
-import { TestBed } from '@angular/core/testing';
-
-import { ContractService, CONTRACT_STATOOS } from './contract.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import {
-  Contract,
-  ContractChecklistItem,
-} from '@models/contract';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
+import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
-import MockedServerSocket from 'socket.io-mock';
-import { cloneDeep } from 'lodash';
+import { externalMockedChecklistItems } from '../mocked-data/mocked-checklist-items';
+import { externalMockedConfigs } from '../mocked-data/mocked-config';
+import { externalMockedContracts } from '../mocked-data/mocked-contracts';
+import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { ConfigService } from './config.service';
+import { CONTRACT_STATOOS, ContractService } from './contract.service';
+import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
-import { ConfigService } from './config.service';
-import { User } from '@models/user';
+
+import { Contract, ContractChecklistItem } from '@models/contract';
 import { Invoice } from '@models/invoice';
-import { Team } from '@models/team';
 import { PlatformConfig } from '@models/platformConfig';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { externalMockedTeams } from '../mocked-data/mocked-teams';
-import { externalMockedConfigs } from '../mocked-data/mocked-config';
-import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
-import { externalMockedContracts } from '../mocked-data/mocked-contracts';
-import { externalMockedChecklistItems } from '../mocked-data/mocked-checklist-items';
+import { Team } from '@models/team';
+import { User } from '@models/user';
 
 describe('ContractService', () => {
   let service: ContractService;

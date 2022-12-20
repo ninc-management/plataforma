@@ -43,10 +43,7 @@
           <h2 style="margin-top: 15px">{{ toReceive$ | async }}</h2>
           <p>Contratos a Receber</p>
         </div>
-        <a
-          style="text-decoration: none; display: contents; cursor: pointer"
-          (click)="openDialog()"
-        >
+        <a style="text-decoration: none; display: contents; cursor: pointer" (click)="openDialog()">
           <div class="col-12 col-md-2" style="text-align: center">
             <h2 style="margin-top: 15px; display: flex; align-items: flex-start; justify-content: center">
               R$ {{ expenses$ | async }}

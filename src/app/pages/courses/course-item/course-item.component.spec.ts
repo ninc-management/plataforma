@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { CourseItemComponent } from './course-item.component';
-import { CommonTestingModule } from 'app/../common-testing.module';
 
 describe('CourseItemComponent', () => {
   let component: CourseItemComponent;

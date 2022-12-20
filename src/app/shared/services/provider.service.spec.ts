@@ -1,7 +1,5 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Provider } from '@models/provider';
-import { AuthService } from 'app/auth/auth.service';
 import { CommonTestingModule } from 'common-testing.module';
 import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
@@ -10,6 +8,9 @@ import { SocketMock } from 'types/socketio-mock';
 
 import { ProviderService } from './provider.service';
 import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+
+import { Provider } from '@models/provider';
 
 describe('ProviderService', () => {
   let service: ProviderService;

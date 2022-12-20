@@ -1,22 +1,23 @@
-import { TestBed } from '@angular/core/testing';
-
-import { TeamService } from './team.service';
-import { CommonTestingModule } from 'app/../common-testing.module';
-import { Team, TeamMember } from '@models/team';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { AuthService } from 'app/auth/auth.service';
+import { TestBed } from '@angular/core/testing';
+import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
-import MockedServerSocket from 'socket.io-mock';
 import { take } from 'rxjs/operators';
-import { reviveDates } from '../utils';
-import { Sector } from '@models/shared';
-import { WebSocketService } from './web-socket.service'
-import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { User } from '@models/user';
-import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
+
 import { externalMockedSectors } from '../mocked-data/mocked-sectors';
+import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedUsers } from '../mocked-data/mocked-users';
+import { reviveDates } from '../utils';
+import { TeamService } from './team.service';
+import { WebSocketService } from './web-socket.service';
+import { AuthService } from 'app/auth/auth.service';
+
+import { Sector } from '@models/shared';
+import { Team, TeamMember } from '@models/team';
+import { User } from '@models/user';
 
 describe('TeamService', () => {
   let service: TeamService;
@@ -80,7 +81,7 @@ describe('TeamService', () => {
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedTeams = cloneDeep(externalMockedTeams);
-    mockedSectors = cloneDeep(externalMockedSectors)
+    mockedSectors = cloneDeep(externalMockedSectors);
 
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');

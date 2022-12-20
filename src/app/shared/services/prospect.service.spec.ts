@@ -1,17 +1,18 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'common-testing.module';
+import { cloneDeep } from 'lodash';
 import { Subject, take } from 'rxjs';
-import { SocketMock } from 'types/socketio-mock';
 import MockedServerSocket from 'socket.io-mock';
+import { SocketMock } from 'types/socketio-mock';
+
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ProspectService } from './prospect.service';
+import { UserService } from './user.service';
+import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
 import { Prospect } from '@models/prospect';
-import { cloneDeep } from 'lodash';
-import { UserService } from './user.service';
-import { WebSocketService } from './web-socket.service';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { User } from '@models/user';
 
 describe('ProspectService', () => {

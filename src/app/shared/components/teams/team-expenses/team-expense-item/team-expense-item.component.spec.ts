@@ -1,11 +1,13 @@
+import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TeamExpenseItemComponent } from './team-expense-item.component';
 import { CommonTestingModule } from 'app/../common-testing.module';
+import { cloneDeep } from 'lodash';
+
+import { TeamExpenseItemComponent } from './team-expense-item.component';
 import { ConfigService } from 'app/shared/services/config.service';
+
 import { PlatformConfig } from '@models/platformConfig';
 import { ExpenseType } from '@models/team';
-import { cloneDeep } from 'lodash';
-import { HttpTestingController } from '@angular/common/http/testing';
 
 describe('TeamExpenseItemComponent', () => {
   let component: TeamExpenseItemComponent;
@@ -16,9 +18,9 @@ describe('TeamExpenseItemComponent', () => {
   CommonTestingModule.setUpTestBed(TeamExpenseItemComponent);
 
   beforeEach(() => {
-    let mockedConfigs: PlatformConfig[] = [];
-    let mockedConfig = new PlatformConfig();
-    let mockedExpenseType = new ExpenseType();
+    const mockedConfigs: PlatformConfig[] = [];
+    const mockedConfig = new PlatformConfig();
+    const mockedExpenseType = new ExpenseType();
 
     mockedConfig._id = '0';
     mockedExpenseType.name = 'mockedExpenseType1';
