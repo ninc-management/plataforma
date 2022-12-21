@@ -137,7 +137,6 @@ export class ExpenseTabComponent implements OnInit {
       created: {
         title: 'Criação',
         type: 'string',
-        width: '10%',
         filter: {
           type: 'date',
           component: DateFilterComponent,
@@ -167,6 +166,10 @@ export class ExpenseTabComponent implements OnInit {
       paidDate: {
         title: 'Pagamento',
         type: 'string',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
       },
     },
   };
