@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { DateFilterComponent } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -136,6 +137,11 @@ export class ExpenseTabComponent implements OnInit {
       created: {
         title: 'Criação',
         type: 'string',
+        width: '10%',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
       },
       paid: {
         title: 'Pago?',
