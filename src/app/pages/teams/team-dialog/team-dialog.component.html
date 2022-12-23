@@ -57,7 +57,7 @@
         <ngx-team-expenses
           *ngIf="componentType === dTypes.EXPENSES"
           [isDialogBlocked]="isBlocked"
-          [iTeam]="iTeam._id"
+          [clonedTeam]="clonedTeam"
           (submit)="dismiss()"
         ></ngx-team-expenses>
         <ngx-user-transaction
