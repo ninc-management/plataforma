@@ -1,0 +1,137 @@
+db.contractors.find().forEach((contractor) => {
+  const newAddress = {
+    zipCode: '',
+    streetAddress: contractor.address,
+    number: '',
+    district: '',
+    complement: '',
+    city: '',
+    state: '',
+  };
+  contractor.address = newAddress;
+  contractor.corporateName = '';
+  if (!contractor.phone) contractor.phone = '(82) 0000-0000';
+  contractor.legalRepresentatives = [];
+  contractor.comercialRepresentatives = [];
+  db.contractors.replaceOne({ _id: contractor._id }, contractor);
+});
+
+db.contracts.find().forEach((contract) => {
+  contract.managementStatus = contract.managementStatus ? contract.managementStatus : '';
+  contract.managementNotes = contract.managementNotes ? contract.managementNotes : '';
+  contract.ISS = contract.ISS ? contract.ISS : '0,00';
+  if(contract.status == 'Finalizado')
+    contract.status = 'Entregue';
+  contract.receipts.forEach((receipt) => (receipt.ISS = contract.ISS));
+  db.contracts.replaceOne({ _id: contract._id }, contract);
+});
+
+db.invoices.find().forEach((invoice) => {
+  invoice.providers = [];
+
+  if (!invoice.discount) invoice.discount = '0,00';
+  invoice.materialListType = invoice.materialListType ? invoice.materialListType : '1';
+  invoice.productListType = invoice.productListType ? invoice.productListType : '2';
+  invoice.invoiceType = invoice.invoiceType ? invoice.invoiceType : 'projeto';
+
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});
+
+db.platformconfigs.find().forEach((config) => {
+  config.version = '1.6.0';
+  config.invoiceConfig.hasProvider = true;
+  config.invoiceConfig.importantBlockFontColor = 'white';
+  config.invoiceConfig.isImportantBlockFontBold = false;
+  config.socialConfig.logoDefault = {
+    url: '',
+    name: '',
+  };
+  config.socialConfig.logoWithoutName = {
+    url: '',
+    name: '',
+  };
+  config.socialConfig.logoWhite = {
+    url: '',
+    name: '',
+  };
+  config.socialConfig.logoWhiteWithoutName = {
+    url: '',
+    name: '',
+  };
+
+  const emptyColorShades = {
+    color100: '',
+    color200: '',
+    color300: '',
+    color400: '',
+    color500: '',
+    color600: '',
+    color700: '',
+    color800: '',
+    color900: '',
+  };
+
+  config.socialConfig.colors = {
+    primary: emptyColorShades,
+    success: emptyColorShades,
+    info: emptyColorShades,
+    warning: emptyColorShades,
+    danger: emptyColorShades,
+  };
+
+  config.oneDriveConfig = {
+    isActive:  config.oneDriveConfig.isActive,
+    contracts: {
+      oneDriveId: config.oneDriveConfig.oneDriveId,
+      folderId: config.oneDriveConfig.folderId ,
+    },
+    providers: {
+      oneDriveId: '',
+      folderId: '',
+    },
+  };
+  delete config.oneDriveConfig.oneDriveId;
+  delete config.oneDriveConfig.folderId;
+
+  config.invoiceConfig.hasMarketingPage = false;
+
+  delete config.invoiceConfig.nfPercentage;
+  delete config.invoiceConfig.organizationPercentage;
+
+  const savedCompany = db.companies.insertOne(config.socialConfig);
+  config.company = savedCompany.insertedId;
+  delete config.socialConfig;
+
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
+
+db.providers.find().forEach((provider) => {
+  const bankAccount = {
+    name: '',
+    agency: '',
+    accountNumber: '',
+    pix: '',
+    operation: '',
+  };
+  provider.description = '';
+  provider.serviceList = [];
+  provider.productList = [];
+  provider.uploadedFiles = [];
+  provider.contacts = [];
+  provider.observation = '';
+  provider.bankData = bankAccount;
+  db.providers.replaceOne({ _id: provider._id }, provider);
+});
+
+db.teams.find().forEach((team) => {
+  team.supportOrganizationPercentage = team.organizationPercentage;
+  team.supportNfPercentage = team.nfPercentage;
+  team.intermediationOrganizationPercentage = '';
+  team.intermediationNfPercentage = '';
+  team.overrideSupportPercentages = team.overridePercentages;
+  team.overrideIntermediationPercentages = false;
+  delete team.organizationPercentage;
+  delete team.nfPercentage;
+  delete team.overridePercentages;
+  db.teams.replaceOne({ _id: team._id }, team);
+});

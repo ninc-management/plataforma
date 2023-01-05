@@ -585,9 +585,6 @@ db.contracts.find().forEach((contract) => {
     });
 
   contract.checklist = [];
-  contract.managementStatus = contract.managementStatus ? contract.managementStatus : '';
-  contract.managementNotes = contract.managementNotes ? contract.managementNotes : '';
-  contract.ISS = contract.ISS ? contract.ISS : '0,00';
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
 
@@ -608,32 +605,6 @@ db.invoices.find().forEach((invoice) => {
     contractor: false,
     subject: false,
   };
-
-  if (invoice.importants)
-    invoice.importants = invoice.importants.map((i) => {
-      return { text: i, isVisible: true };
-    });
-  else invoice.importants = [];
-  if (invoice.laep)
-    invoice.laep = invoice.laep.map((p) => {
-      return { text: p, isVisible: true };
-    });
-  else invoice.laep = [];
-  if (invoice.laee)
-    invoice.laee = invoice.laee.map((e) => {
-      return { text: e, isVisible: true };
-    });
-  else invoice.laee = [];
-  if (invoice.laec)
-    invoice.laec = invoice.laec.map((c) => {
-      return { text: c, isVisible: true };
-    });
-  else invoice.laec = [];
-
-  if (!invoice.discount) invoice.discount = '0,00';
-  invoice.materialListType = invoice.materialListType ? invoice.materialListType : '1';
-  invoice.productListType = invoice.productListType ? invoice.productListType : '2';
-  invoice.invoiceType = invoice.invoiceType ? invoice.invoiceType : 'projeto';
 
   if (invoice.team)
     invoice.team.forEach((member) => {
@@ -996,11 +967,11 @@ db.platformconfigs.find().forEach((config) => {
     },
   };
 
-  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
-  config.socialConfig.showCompanyName = true;
-  config.socialConfig.address = '';
-  config.socialConfig.cnpj = '';
-  config.socialConfig.qrcodeURL = '';
+   config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
+   config.socialConfig.showCompanyName = true;
+   config.socialConfig.address = ''
+   config.socialConfig.cnpj = ''
+   config.socialConfig.qrcodeURL = ''
 
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
@@ -1008,16 +979,16 @@ db.platformconfigs.find().forEach((config) => {
 db.teams.find().forEach((team) => {
   team.organizationPercentage = '';
   team.nfPercentage = '';
-  team.overrideSupportPercentages = false;
+  team.overridePercentages = false;
 
   team.members.forEach((member) => {
-    member.sectors = [];
-    if (member.sector) member.sectors.push(member.sector);
-    delete member.sector;
-  });
+    member.sectors = []
+    if(member.sector) member.sectors.push(member.sector)
+    delete member.sector
+  })
 
   db.teams.replaceOne({ _id: team._id }, team);
-});
+})
 
 db.contracts.find().forEach((contract) => {
   contract.payments.forEach((payment) => {
@@ -1029,201 +1000,48 @@ db.contracts.find().forEach((contract) => {
 
 db.invoices.find().forEach((invoice) => {
   invoice.importants = invoice.importants.map((i) => {
-    return { text: i, isVisible: true };
+    return {text: i, isVisible: true};
   });
   invoice.laep = invoice.laep.map((p) => {
-    return { text: p, isVisible: true };
+    return {text: p, isVisible: true};
   });
   invoice.laee = invoice.laee.map((e) => {
-    return { text: e, isVisible: true };
+    return {text: e, isVisible: true};
   });
   invoice.laec = invoice.laec.map((c) => {
-    return { text: c, isVisible: true };
+    return {text: c, isVisible: true};
   });
 
-  if (!invoice.discount) invoice.discount = '0,00';
+  if(!invoice.discount) invoice.discount = '0,00'
 
   db.invoices.replaceOne({ _id: invoice._id }, invoice);
 });
 
-db.contractors.find().forEach((contractor) => {
-  if(!contractor.phone) contractor.phone = "(82) 0000-0000";
-
-  contractor.legalRepresentatives = []
-  contractor.comercialRepresentatives = []
-
-  const newAddress = {
-    zipCode: '',
-    streetAddress: contractor.address,
-    number:'',
-    district: '',
-    complement: '',
-    city: '',
-    state:'',
-  }
-
-  contractor.address = newAddress;
-  c.corporateName = '';
-
-  db.contractors.replaceOne({ _id: contractor._id }, contractor);
-});
-
 db.platformconfigs.find().forEach((config) => {
-  config.invoiceConfig.units = ['m²', 'km', 'ha', 'dia', 'unidade'];
+  let intermediationNfPercentage = '0,00';
+  let intermediationOrganizationPercentage = '0,00';
 
-  let intermediationNfPercentage = '0,00'
-  let intermediationOrganizationPercentage = '0,00'
+  let supportNfPercentage = '0,00';
+  let supportOrganizationPercentage = '0,00';
 
-  let supportNfPercentage = '0,00'
-  let supportOrganizationPercentage = '0,00'
-
-  if(config.invoiceConfig.nfPercentage){
-    supportNfPercentage = config.invoiceConfig.nfPercentage
+  if (config.invoiceConfig.nfPercentage) {
+    supportNfPercentage = config.invoiceConfig.nfPercentage;
   }
 
-  if(config.invoiceConfig.organizationPercentage){
-    supportOrganizationPercentage = config.invoiceConfig.organizationPercentage
+  if (config.invoiceConfig.organizationPercentage) {
+    supportOrganizationPercentage = config.invoiceConfig.organizationPercentage;
   }
 
   config.invoiceConfig.businessFees = {
-    "intermediation": {
-      "nfPercentage": intermediationNfPercentage,
-      "organizationPercentage": intermediationOrganizationPercentage,
+    intermediation: {
+      nfPercentage: intermediationNfPercentage,
+      organizationPercentage: intermediationOrganizationPercentage,
     },
-    "support": {
-      "nfPercentage": supportNfPercentage,
-      "organizationPercentage": supportOrganizationPercentage,
-    }
+    support: {
+      nfPercentage: supportNfPercentage,
+      organizationPercentage: supportOrganizationPercentage,
+    },
   };
-
-  delete config.invoiceConfig.nfPercentage;
-  delete config.invoiceConfig.organizationPercentage;
-
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.providers.find().forEach((provider) => {
-  const bankAccount = {
-    name: '',
-    agency:'',
-    accountNumber:'',
-    pix: '',
-    operation: ''
-  }
-  provider.serviceList = [];
-  provider.productList = [];
-  provider.observation = '';
-  provider.bankData = bankAccount;
-  db.providers.replaceOne({ _id: provider._id }, provider);
-});
-
-db.platformconfigs.find().forEach((config) => {
-  const contractIsActive = config.oneDriveConfig.contracts.isActive;
-  const contractOneDriveId = config.oneDriveConfig.contracts.oneDriveId;
-  const contractFolderId = config.oneDriveConfig.contracts.folderId;
-  config.oneDriveConfig = {
-  "isActive": contractIsActive,
-  "contracts": {
-    "oneDriveId": contractOneDriveId,
-    "folderId": contractFolderId,
-  },
-  "providers": {
-    "oneDriveId": '',
-    "folderId": ''
-  }
-  }
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.contracts.find().forEach((contract) => {
-  if(contract.status == 'Finalizado') contract.status = 'Entregue'
-  contract.receipts.forEach((receipt) => receipt.ISS = contract.ISS);
-  db.contracts.replaceOne({ _id: contract._id }, contract);
-});
-
-db.providers.find().forEach((provider) => {
-  provider.uploadedFiles = [];
-  provider.contacts = [];
-  db.providers.replaceOne({ _id: provider._id }, provider);
-});
-
-db.invoices.find().forEach((invoice) => {
-  invoice.providers = [];
-  db.invoices.replaceOne({ _id: invoice._id }, invoice);
-});
-
-db.providers.find().forEach((provider) => {
-  provider.description = '';
-  db.providers.replaceOne({ _id: provider._id }, provider);
-});
-
-db.platformconfigs.find().forEach((config) => {
-  config.invoiceConfig.hasProvider = true;
-  config.socialConfig.logoDefault = {
-    url: '',
-    name: ''
-  }
-  config.socialConfig.logoWithoutName = {
-    url: '',
-    name: ''
-  }
-  config.socialConfig.logoWhite = {
-    url: '',
-    name: ''
-  }
-  config.socialConfig.logoWhiteWithoutName = {
-    url: '',
-    name: ''
-  }
-
-  const emptyColorShades = {
-    color100: '',
-    color200: '',
-    color300: '',
-    color400: '',
-    color500: '',
-    color600: '',
-    color700: '',
-    color800: '',
-    color900: ''
-  }
-
-  config.socialConfig.colors = {
-    primary: emptyColorShades,
-    success: emptyColorShades,
-    info: emptyColorShades,
-    warning: emptyColorShades,
-    danger: emptyColorShades
-  }
-
-  config.invoiceConfig.hasMarketingPage = false;
-
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.teams.find().forEach((team) => {
-  team.supportOrganizationPercentage = team.organizationPercentage;
-  team.supportNfPercentage = team.nfPercentage;
-  team.intermediationOrganizationPercentage = '';
-  team.intermediationNfPercentage = '';
-  team.overrideSupportPercentages = team.overridePercentages;
-  team.overrideIntermediationPercentages = false;
-  delete team.organizationPercentage;
-  delete team.nfPercentage;
-  delete team.overridePercentages;
-  db.teams.replaceOne({ _id: team._id }, team);
-});
-
-db.platformconfigs.find().forEach((config) => {
-  config.invoiceConfig.importantBlockFontColor = 'white';
-  config.invoiceConfig.isImportantBlockFontBold = false;
-
-  db.platformconfigs.replaceOne({ _id: config._id }, config);
-});
-
-db.platformconfigs.find().forEach(async (config) => {
-  const savedCompany = await db.companies.insertOne(config.socialConfig);
-  config.company  = savedCompany.insertedId;
-  delete config.socialConfig;
+  config.invoiceConfig.units = ['m²','km','ha','dia','unidade'];
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });

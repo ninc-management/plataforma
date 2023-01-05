@@ -188,6 +188,9 @@ export class PlatformConfig extends Base<string> {
 
   @prop({ required: true, ref: () => Company })
   company!: Ref<Company>;
+
+  @prop({ required: true })
+  version!: string;
 }
 
 export default getModelForClass(PlatformConfig);
