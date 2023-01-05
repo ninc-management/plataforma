@@ -353,7 +353,7 @@ export class ContractService implements OnDestroy {
   }
 
   toNetValue(grossValue: string, NF: string, nortanPercentage: string, createdDate: Date): string {
-    if (isBefore(createdDate, new Date('2022/03/20')))
+    if (isBefore(createdDate, new Date('2022/08/15')))
       return this.stringUtil.removePercentage(this.stringUtil.removePercentage(grossValue, NF), nortanPercentage);
     return this.stringUtil.subtractMoney(
       this.stringUtil.subtractMoney(grossValue, this.stringUtil.applyPercentage(grossValue, NF)),
