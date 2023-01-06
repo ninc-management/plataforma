@@ -3,33 +3,48 @@
     'width.px': dialogWidth()
   }"
 >
-  <nb-card-header>{{ title }}</nb-card-header>
+  <nb-card-header>
+    {{ title }}
+    <div *ngIf="dialogProperties.displayCloseButton" classs="buttons">
+      <button
+        nbButton
+        ghost
+        nbTooltip="Fechar"
+        [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+        nbTooltipPlacement="bottom"
+        nbTooltipStatus="info"
+        (click)="dismiss()"
+      >
+        <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+      </button>
+    </div>
+  </nb-card-header>
   <nb-card-body>
     <div [ngSwitch]="inputType">
       <div *ngSwitchCase="INPUT_TYPES.input">
         <input
           nbInput
-          [(ngModel)]="value"
+          [(ngModel)]="response"
           #inputRef="ngModel"
           fullWidth
           [placeholder]="placeholder"
-          [required]="true"
+          required="true"
           [status]="inputRef.dirty ? (inputRef.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="inputRef.invalid && inputRef.touched ? true : null"
         />
-         <ng-container *ngIf="inputRef.invalid && inputRef.touched">
+        <ng-container *ngIf="inputRef.invalid && inputRef.touched">
           <p class="caption status-danger" *ngIf="inputRef.errors?.required">O campo é obrigatório!</p>
         </ng-container>
       </div>
       <div *ngSwitchCase="INPUT_TYPES.textArea">
         <textarea
           nbInput
-          [(ngModel)]="value"
+          [(ngModel)]="response"
           #inputRef="ngModel"
           [placeholder]="placeholder"
           fullWidth
           fieldSize="large"
-          [required]="true"
+          required="true"
           [status]="inputRef.dirty ? (inputRef.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="inputRef.invalid && inputRef.touched ? true : null"
         ></textarea>
@@ -37,11 +52,17 @@
           <p class="caption status-danger" *ngIf="inputRef.errors?.required">O campo é obrigatório!</p>
         </ng-container>
       </div>
+      <div *ngSwitchCase="INPUT_TYPES.textList">
+        <ngx-text-list *ngIf="textList.length > 0 else noChanges"  [textList]="textList" [typeOfTextList]="TEXT_LIST.EDITION_HISTORY_ITEM"></ngx-text-list>
+        <ng-template #noChanges>
+          <p>Sem alterações</p>
+        </ng-template>
+      </div>
     </div>
   </nb-card-body>
-  <nb-card-footer>
-    <button nbButton fullWidth status="primary" [disabled]="!value" (click)="dismiss(value)">
-      {{ buttonMessage }}
+  <nb-card-footer *ngIf="dialogProperties.displayButtonMessage">
+    <button nbButton fullWidth status="primary" [disabled]="!response" (click)="addResponse(response)">
+      {{ dialogProperties.bottomButtonMessage }}
     </button>
   </nb-card-footer>
 </nb-card>

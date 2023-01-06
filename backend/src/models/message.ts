@@ -15,5 +15,5 @@ export class Message extends Base<string> {
   body: string = '';
 
   @prop({ required: true })
-  created!: Date;
+  created: Date = new Date();
 }

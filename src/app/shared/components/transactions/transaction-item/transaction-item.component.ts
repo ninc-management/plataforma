@@ -108,7 +108,7 @@ export class TransactionItemComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.contract) this.hasInputContract = this.options.relatedWithContract = true;
-    if (this.team) this.buildTeamTransaction();
+    if (this.team) this.configureTeamTransaction();
     combineLatest([
       this.userService.currentUser$,
       this.contractService.getContracts(),
@@ -206,8 +206,12 @@ export class TransactionItemComponent implements OnInit {
           title: 'MOTIVO DA EDIÇÃO',
           placeholder: 'Motivo',
           inputType: INPUT_TYPES.textArea,
-          buttonMessage: 'ADICIONAR COMENTÁRIO',
-          closeOnEsc: false,
+          dialogProperties: {
+            closeOnEsc: false,
+            displayCloseButton: false,
+            displayButtonMessage: true,
+            bottomButtonMessage: 'ADICIONAR COMENTÁRIO',
+          },
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -215,11 +219,11 @@ export class TransactionItemComponent implements OnInit {
         autoFocus: false,
       })
       .onClose.pipe(take(1))
-      .subscribe((comment) => {
-        if (comment) {
+      .subscribe((response) => {
+        if (response) {
           const editionHistoryItem = new EditionHistoryItem();
           editionHistoryItem.author = this.user;
-          editionHistoryItem.comment = comment;
+          editionHistoryItem.comment = response;
           this.transactionService.editTransaction(this.transaction, editionHistoryItem);
           this.submit.emit();
         }
@@ -307,13 +311,15 @@ export class TransactionItemComponent implements OnInit {
     if (!this.expenseSubTypes.includes(this.transaction.subType)) this.transaction.subType = '';
   }
 
-  private buildTeamTransaction(): void {
+  private configureTeamTransaction(): void {
     if (this.team) {
       this.clonedTeam = cloneDeep(this.team);
       this.options.type = TRANSACTION_TYPES.EXPENSE;
       this.handleType();
-      this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
-      this.transaction.costCenter = this.clonedTeam;
+      if (!this.iTransaction._id) {
+        this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
+        this.transaction.costCenter = this.clonedTeam;
+      }
       this.costCenterSearch = this.clonedTeam.name;
     }
   }
