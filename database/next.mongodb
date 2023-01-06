@@ -9,6 +9,7 @@ db.companies.find().forEach((company) => {
 db.users.find().forEach((user) => {
   const company = db.companies.findOne();
   user.company = company;
+  delete user.transactions;
   db.users.replaceOne({ _id: user._id }, user);
 });
 

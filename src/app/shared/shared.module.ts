@@ -36,7 +36,6 @@ import { TeamExpensesComponent } from './components/teams/team-expenses/team-exp
 import { TextListComponent } from './components/text-list/text-list.component';
 import { TransactionDialogComponent } from './components/transactions/transaction-dialog/transaction-dialog.component';
 import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
-import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
 import { NotIncludedDirective } from './directives/not-included.directive';
@@ -84,7 +83,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     TeamExpensesComponent,
     TransactionDialogComponent,
     TransactionItemComponent,
-    UserTransactionComponent,
     TextListComponent,
   ],
   declarations: [
@@ -108,7 +106,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     TextInputDialogComponent,
     TransactionDialogComponent,
     TransactionItemComponent,
-    UserTransactionComponent,
     NotIncludedDirective,
     TextListComponent,
   ],

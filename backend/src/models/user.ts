@@ -19,29 +19,6 @@ export class UserExpertise {
   public shortExpertise!: string;
 }
 
-export class UserFinancialTransaction {
-  @prop({ required: true, enum: ['User', 'Contract'] })
-  modelFrom!: string;
-
-  @prop({ required: true, enum: ['User', 'Team'] })
-  modelTo!: string;
-
-  @prop({ required: true, refPath: 'modelFrom' })
-  from!: Ref<User | Contract>;
-
-  @prop({ required: true, refPath: 'modelTo' })
-  to!: Ref<User | Team>;
-
-  @prop({ required: true })
-  date: Date = new Date();
-
-  @prop({ required: true })
-  description!: string;
-
-  @prop({ required: true })
-  value!: string;
-}
-
 @plugin(mongooseUniqueValidator)
 export class User extends Base<string> {
   @prop({ required: true })
@@ -94,9 +71,6 @@ export class User extends Base<string> {
 
   @prop()
   public theme: string = 'default';
-
-  @prop({ type: () => [UserFinancialTransaction] })
-  public transactions: UserFinancialTransaction[] = [];
 
   @prop({ required: true })
   public active: boolean = true;
