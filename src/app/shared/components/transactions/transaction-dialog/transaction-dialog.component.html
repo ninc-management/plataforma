@@ -13,15 +13,15 @@
       <nb-card-header>
         {{ title }}
         <div class="buttons">
-           <button
-           *ngIf="transaction._id"
+          <button
+            *ngIf="transaction._id"
             nbButton
             ghost
             nbTooltip="Histórico de alterações"
             [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
-            (click)="dismiss()"
+            (click)="openDialog()"
           >
             <nb-icon icon="clock-outline" pack="eva"></nb-icon>
           </button>
@@ -39,10 +39,12 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-transaction-item [team]="team"
-        [iTransaction]="transaction"
-        [isDialogBlocked]="isBlocked"
-         (submit)="dismiss()"></ngx-transaction-item>
+        <ngx-transaction-item
+          [team]="team"
+          [iTransaction]="transaction"
+          [isDialogBlocked]="isBlocked"
+          (submit)="dismiss()"
+        ></ngx-transaction-item>
       </nb-card-body>
     </nb-card>
   </div>

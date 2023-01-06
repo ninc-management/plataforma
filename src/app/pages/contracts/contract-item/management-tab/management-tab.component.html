@@ -379,41 +379,7 @@
           <hr />
         </div>
       </div>
-      <nb-list class="row">
-        <nb-list-item
-          *ngFor="let comment of availableMessages; let i = index; trackBy: trackByIndex"
-          [ngClass]="{
-            'comment-current-user':
-              [comment.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService)
-          }"
-        >
-          <nb-user
-            class="comment-author"
-            size="large"
-            [picture]="
-              [comment.author, this.userService.idToUser.bind(userService), 'profilePicture']
-                | transformPipe: idToProperty
-            "
-            onlyPicture
-            shape="rectangle"
-          ></nb-user>
-          <div class="comment-wrapper">
-            <div class="comment-header">
-              <span>
-                <b>
-                  {{
-                    [comment.author, userService.idToUser.bind(userService), 'name'] | transformPipe: idToProperty
-                  }}
-                </b>
-              </span>
-              <span class="label comment-created">
-                {{ [comment.created] | transformPipe: formatDate }}
-              </span>
-            </div>
-            <pre [innerHTML]="comment.body"></pre>
-          </div>
-        </nb-list-item>
-      </nb-list>
+      <ngx-text-list [textList]="availableMessages"></ngx-text-list>
       <div class="row" style="margin-top: 1rem">
         <div class="col-11">
           <div class="d-flex justify-content-between">

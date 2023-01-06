@@ -2,10 +2,16 @@ import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { TEXT_LIST } from '../text-list/text-list.component';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
+
+import { Message } from '@models/message';
+import { EditionHistoryItem } from '@models/shared/editionHistoryItem';
 
 export enum INPUT_TYPES {
   input = 'input',
   textArea = 'text-area',
+  textList = 'text-list',
 }
 
 @Component({
@@ -17,11 +23,20 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   @Input() title = '';
   @Input() placeholder = '';
   @Input() inputType: INPUT_TYPES = INPUT_TYPES.input;
-  @Input() buttonMessage = 'ADICIONAR';
-  @Input() closeOnEsc = true;
+  @Input() textList: (Message | EditionHistoryItem)[] = [];
+  @Input() dialogProperties = {
+    closeOnEsc: true,
+    displayCloseButton: false,
+    displayButtonMessage: true,
+    bottomButtonMessage: 'ADICIONAR',
+  };
   INPUT_TYPES = INPUT_TYPES;
+  TEXT_LIST = TEXT_LIST;
 
-  value = '';
+  response = '';
+
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -32,10 +47,10 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.isBlocked.next(!this.closeOnEsc);
+    this.isBlocked.next(!this.dialogProperties.closeOnEsc);
   }
 
-  dismiss(response: string): void {
+  addResponse(response: string): void {
     this.derivedRef.close(response);
   }
 

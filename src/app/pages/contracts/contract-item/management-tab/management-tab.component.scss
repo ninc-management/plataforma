@@ -35,57 +35,6 @@
     }
   }
 
-  pre {
-    display: block;
-    white-space: break-spaces;
-    margin: 0.25rem 0;
-    font-family: var(--font-family-primary);
-    color: var(--text-basic-color);
-    text-align: left;
-  }
-
-  .comment-wrapper {
-    display: flex;
-    flex-flow: column;
-  }
-
-  .comment-header {
-    display: flex;
-    align-items: baseline;
-  }
-
-  .comment-created {
-    margin: 0 0 0 0.5rem;
-  }
-
-  .comment-author {
-    align-self: flex-start;
-  }
-
-  .comment-current-user {
-    flex-direction: row-reverse;
-
-    pre {
-      margin: 0.25rem 0.5rem;
-    }
-
-    span {
-      margin: 0 0.5rem;
-    }
-
-    .comment-created {
-      margin: 0 0.5rem 0 0;
-    }
-
-    .comment-header {
-      justify-content: end;
-    }
-
-    .comment-wrapper {
-      align-items: flex-end;
-    }
-  }
-
   .emptyChecklistAlert {
     display: flex;
     justify-content: center;

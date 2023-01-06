@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
@@ -91,7 +91,8 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     private stringUtils: StringUtilService,
     private messageService: MessageService,
     private dialogService: NbDialogService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private detector: ChangeDetectorRef
   ) {}
 
   ngOnDestroy(): void {
@@ -128,12 +129,13 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         .getMessages()
         .pipe(takeUntil(this.destroy$))
         .subscribe((messages) => {
-          this.availableMessages = [];
+          this.availableMessages.splice(0, this.availableMessages.length);
           messages
             .filter((mFiltered) => this.contractService.isEqual(mFiltered.contract, this.clonedContract))
             .forEach((message) => {
               this.availableMessages.push(message);
             });
+          this.detector.markForCheck();
         });
       this.contractService
         .checkEditPermission(this.invoice)

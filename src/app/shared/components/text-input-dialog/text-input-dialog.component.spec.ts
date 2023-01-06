@@ -3,7 +3,7 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { TextInputDialogComponent } from './text-input-dialog.component';
 
-describe('ConfirmationDialogComponent', () => {
+describe('TextInputDialogComponent', () => {
   let component: TextInputDialogComponent;
   let fixture: ComponentFixture<TextInputDialogComponent>;
 

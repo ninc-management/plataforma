@@ -102,8 +102,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       costCenter: {
         title: 'Fonte',
         type: 'string',
-        valuePrepareFunction: (source: User | string | undefined) =>
-          source ? this.userService.idToShortName(source) : '',
+        valuePrepareFunction: (value: User | Team) => value.name,
       },
       description: {
         title: 'Descrição',
@@ -217,8 +216,6 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
               this.teamService.idToTeam.bind(this.teamService),
               this.userService.idToUser.bind(this.userService)
             );
-            tmp.costCenter = tmp.costCenter.name;
-            tmp.created = formatDate(tmp.created);
             return tmp;
           })
         );

@@ -33,6 +33,7 @@ import { OneDriveDocumentUploader } from './components/onedrive-document-uploade
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
+import { TextListComponent } from './components/text-list/text-list.component';
 import { TransactionDialogComponent } from './components/transactions/transaction-dialog/transaction-dialog.component';
 import { TransactionItemComponent } from './components/transactions/transaction-item/transaction-item.component';
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
@@ -84,6 +85,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TransactionDialogComponent,
     TransactionItemComponent,
     UserTransactionComponent,
+    TextListComponent,
   ],
   declarations: [
     BaseDialogComponent,
@@ -108,6 +110,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TransactionItemComponent,
     UserTransactionComponent,
     NotIncludedDirective,
+    TextListComponent,
   ],
 })
 export class SharedModule {}
