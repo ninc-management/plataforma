@@ -39,7 +39,7 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
         title: 'HISTÓRICO DE ALTERAÇÕES',
         inputType: INPUT_TYPES.textList,
         textList: this.transaction.editionHistory,
-        buttonProperties: {
+        dialogProperties: {
           displayCloseButton: true,
           displayButtonMessage: false,
           closeOnEsc: true,

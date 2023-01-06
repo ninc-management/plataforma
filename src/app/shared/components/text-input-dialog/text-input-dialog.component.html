@@ -5,7 +5,7 @@
 >
   <nb-card-header>
     {{ title }}
-    <div *ngIf="buttonProperties.displayCloseButton" classs="buttons">
+    <div *ngIf="dialogProperties.displayCloseButton" classs="buttons">
       <button
         nbButton
         ghost
@@ -60,9 +60,9 @@
       </div>
     </div>
   </nb-card-body>
-  <nb-card-footer *ngIf="buttonProperties.displayButtonMessage">
+  <nb-card-footer *ngIf="dialogProperties.displayButtonMessage">
     <button nbButton fullWidth status="primary" [disabled]="!response" (click)="addResponse(response)">
-      {{ buttonProperties.bottomButtonMessage }}
+      {{ dialogProperties.bottomButtonMessage }}
     </button>
   </nb-card-footer>
 </nb-card>

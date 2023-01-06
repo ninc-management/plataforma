@@ -24,7 +24,7 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   @Input() placeholder = '';
   @Input() inputType: INPUT_TYPES = INPUT_TYPES.input;
   @Input() textList: (Message | EditionHistoryItem)[] = [];
-  @Input() buttonProperties = {
+  @Input() dialogProperties = {
     closeOnEsc: true,
     displayCloseButton: false,
     displayButtonMessage: true,
@@ -47,7 +47,7 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.isBlocked.next(!this.buttonProperties.closeOnEsc);
+    this.isBlocked.next(!this.dialogProperties.closeOnEsc);
   }
 
   addResponse(response: string): void {

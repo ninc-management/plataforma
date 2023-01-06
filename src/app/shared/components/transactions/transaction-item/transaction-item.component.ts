@@ -206,7 +206,7 @@ export class TransactionItemComponent implements OnInit {
           title: 'MOTIVO DA EDIÇÃO',
           placeholder: 'Motivo',
           inputType: INPUT_TYPES.textArea,
-          buttonProperties: {
+          dialogProperties: {
             closeOnEsc: false,
             displayCloseButton: false,
             displayButtonMessage: true,
