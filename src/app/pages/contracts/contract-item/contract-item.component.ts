@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -6,11 +6,19 @@ import { isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 
+enum TABS {
+  DATA = 'Dados',
+  MANAGEMENT = 'Gestão',
+  BALANCE = 'Balanço',
+  RECEIPTS = 'Ordens de empenho',
+  PAYMENTS = 'Ordens de pagamento',
+  EXPENSES = 'Despesas',
+}
+
 @Component({
   selector: 'ngx-contract-item',
   templateUrl: './contract-item.component.html',
   styleUrls: ['./contract-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -18,8 +26,10 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
 
+  TABS = TABS;
+  tabActive = TABS.DATA;
+
   clonedContract: Contract = new Contract();
-  recalculateEvent$ = new Subject<void>();
 
   isPhone = isPhone;
 
@@ -59,7 +69,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
   }
 
-  recalculateValues() {
-    this.recalculateEvent$.next();
+  getActiveTab(e: any) {
+    this.tabActive = e.tabTitle;
   }
 }
