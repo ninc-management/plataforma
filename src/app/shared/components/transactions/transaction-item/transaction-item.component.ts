@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
 
@@ -33,6 +33,14 @@ import { User } from '@models/user';
 
 import transaction_validation from 'app/shared/validators/transaction-validation.json';
 
+export enum STATUS_RULES {
+  FIRST_RULE = 'FIRST-RULE',
+  SECOND_RULE = 'SECOND-RULE',
+  THIRD_RULE = 'THIRD-RULE',
+  FOURTH_RULE = 'FOURTH-RULE',
+  FIFTH_RULE = 'FIFTH-RULE',
+}
+
 @Component({
   selector: 'ngx-transaction-item',
   templateUrl: './transaction-item.component.html',
@@ -46,6 +54,7 @@ export class TransactionItemComponent implements OnInit {
   @Output()
   submit: EventEmitter<void> = new EventEmitter<void>();
 
+  STATUS_RULES = STATUS_RULES;
   validation = transaction_validation as any;
   user: User = new User();
   clonedTeam: Team = new Team();
@@ -322,6 +331,50 @@ export class TransactionItemComponent implements OnInit {
         this.transaction.costCenter = this.clonedTeam;
       }
       this.costCenterSearch = this.clonedTeam.name;
+    }
+  }
+
+  setStatus(form: any, rule: string, property?: keyof Transaction, secondCondition: boolean = true): NbComponentStatus {
+    switch (rule) {
+      case STATUS_RULES.FIRST_RULE:
+        return form.dirty ? (form.invalid ? 'danger' : 'success') : 'basic';
+      case STATUS_RULES.SECOND_RULE:
+        if (property)
+          return form.dirty
+            ? form.invalid
+              ? 'danger'
+              : 'success'
+            : this.transaction[property] !== undefined
+            ? 'success'
+            : 'basic';
+        return 'basic';
+      case STATUS_RULES.THIRD_RULE:
+        if (property)
+          return form.dirty
+            ? form.invalid
+              ? 'danger'
+              : form.value
+              ? 'success'
+              : 'basic'
+            : this.transaction[property] !== undefined
+            ? 'success'
+            : 'basic';
+        return 'basic';
+      case STATUS_RULES.FOURTH_RULE:
+        if (property)
+          return form.dirty
+            ? form.invalid
+              ? 'danger'
+              : 'success'
+            : this.transaction[property] === undefined && secondCondition
+            ? 'success'
+            : 'basic';
+        return 'basic';
+      case STATUS_RULES.FIFTH_RULE:
+        if (property) return form.dirty ? 'success' : this.transaction[property] === undefined ? 'success' : 'basic';
+        return 'basic';
+      default:
+        return 'basic';
     }
   }
 }
