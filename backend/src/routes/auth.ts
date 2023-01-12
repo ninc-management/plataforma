@@ -16,7 +16,11 @@ router.post('/register', (req, res, next) => {
         .save()
         .then((prospect) => {
           prospectMap[prospect._id] = cloneDeep(prospect.toJSON());
-          res.redirect(307, '/api/sendmail');
+          if (process.env.GITPOD_WORKSPACE_URL)
+            res.status(201).json({
+              message: 'Prospecto cadastrado!',
+            });
+          else res.redirect(307, '/api/sendmail');
         })
         .catch((err) => {
           console.log('Erro de cadastro:', err);
