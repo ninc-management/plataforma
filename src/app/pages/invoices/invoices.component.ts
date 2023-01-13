@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { combineLatest, Subject } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 import { PdfService } from './pdf.service';
@@ -168,28 +168,22 @@ export class InvoicesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     combineLatest([
+      this.userService.currentUser$,
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors(),
+      this.teamService.getTeams(),
       this.invoiceService.isDataLoaded$,
       this.contractorService.isDataLoaded$,
       this.teamService.isDataLoaded$,
     ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([reqInvoice, reqContractor, reqTeam]) => {
-        this.isDataLoaded = reqInvoice && reqContractor && reqTeam;
-      });
-
-    combineLatest([
-      this.invoiceService.getInvoices(),
-      this.contractorService.getContractors(),
-      this.teamService.getTeams(),
-      this.userService.currentUser$,
-    ])
       .pipe(
-        takeUntil(this.destroy$),
-        filter(
-          ([invoices, contractors, teams, user]) => invoices.length > 0 && contractors.length > 0 && teams.length > 0
-        )
+        skipWhile(
+          ([, , , , isInvoiceDataLoaded, isContractorDataLoaded, isTeamDataLoaded]) =>
+            !(isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded)
+        ),
+        takeUntil(this.destroy$)
       )
-      .subscribe(([invoices, contractors, teams, user]) => {
+      .subscribe(([user, invoices, , , isInvoiceDataLoaded, isContractorDataLoaded, isTeamDataLoaded]) => {
         this.invoices = invoices.map((invoice: Invoice) => {
           invoice.locals = {} as InvoiceLocals;
           if (invoice.author) invoice.locals.fullName = this.userService.idToShortName(invoice.author);
@@ -207,6 +201,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         const invoicesValues = greaterAndSmallerValue(invoices);
         this.settings.columns.value.filter.config.minValue = invoicesValues.min;
         this.settings.columns.value.filter.config.maxValue = invoicesValues.max;
+        this.isDataLoaded = isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded;
       });
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
