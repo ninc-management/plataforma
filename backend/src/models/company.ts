@@ -93,6 +93,9 @@ export class Company extends Base<string> {
   logoWhiteWithoutName: UploadedFile = new UploadedFile();
 
   @prop({ required: true })
+  logoSupport: UploadedFile = new UploadedFile();
+
+  @prop({ required: true })
   colors: Colors = new Colors();
 }
 

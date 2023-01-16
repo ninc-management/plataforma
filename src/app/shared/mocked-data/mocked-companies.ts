@@ -40,6 +40,10 @@ export const externalMockedCompanies: Company[] = [
       url: '',
       name: '',
     },
+    logoSupport: {
+      url: '',
+      name: '',
+    },
     colors: {
       primary: emptyColorShades,
       success: emptyColorShades,
@@ -73,6 +77,10 @@ export const externalMockedCompanies: Company[] = [
       name: '',
     },
     logoWhiteWithoutName: {
+      url: '',
+      name: '',
+    },
+    logoSupport: {
       url: '',
       name: '',
     },

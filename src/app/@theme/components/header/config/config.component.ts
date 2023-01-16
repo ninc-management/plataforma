@@ -45,6 +45,7 @@ enum LOGO_TYPES {
   logoWithoutName = 'logoWithoutName',
   logoWhite = 'logoWhite',
   logoWhiteWithoutName = 'logoWhiteWithoutName',
+  logoSupport = 'logoSupport',
 }
 
 enum AVALIABLE_TEXT_COLORS {
@@ -352,7 +353,8 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
         return 'logo_tema_escuro';
       case LOGO_TYPES.logoWhiteWithoutName:
         return 'logo_tema_escuro_sem_nome';
-
+      case LOGO_TYPES.logoSupport:
+        return 'logo_suporte';
       default:
         return 'logo';
     }
