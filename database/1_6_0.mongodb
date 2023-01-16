@@ -135,3 +135,12 @@ db.teams.find().forEach((team) => {
   delete team.overridePercentages;
   db.teams.replaceOne({ _id: team._id }, team);
 });
+
+
+db.companies.find().forEach((company) => {
+  company.logoSupport = {
+    url: '',
+    name: '',
+  };
+  db.companies.replaceOne({ _id: company._id }, company);
+});
