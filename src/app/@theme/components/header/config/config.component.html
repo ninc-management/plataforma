@@ -1223,6 +1223,70 @@
               </nb-toggle>
             </div>
           </div>
+          <div class="row">
+            <div class="col-12 mt-2">
+              <div class="row">
+                <div class="col-auto">
+                  <label class="label-divider">
+                    Logo de suporte
+                    <nb-icon
+                      status="info"
+                      icon="info"
+                      pack="eva"
+                      [options]="{ animation: { type: 'pulse' } }"
+                      nbTooltip="A imagem deve ter no máximo um tamanho de 200 X 200"
+                      nbTooltipPlacement="top"
+                      nbTooltipStatus="info"
+                    ></nb-icon>
+                  </label>
+                </div>
+                <div class="col">
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-6">
+              <div class="form-control-group">
+                <label class="label" for="input-logo-support">Arquivo da logo do suporte</label>
+                <div class="d-flex">
+                  <button
+                    class="mr-2"
+                    nbButton
+                    type="button"
+                    status="primary"
+                    (click)="openUploadDialog(LOGO_TYPES.logoSupport)"
+                  >
+                    <nb-icon nbPrefix icon="attach-2-outline" pack="eva"></nb-icon>
+                  </button>
+                  <input
+                    nbInput
+                    [(ngModel)]="configCompany[LOGO_TYPES.logoSupport].name"
+                    #supportLogo="ngModel"
+                    id="input-logo-support"
+                    name="logo-support"
+                    fullWidth
+                    fieldSize="large"
+                    readonly
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="row mb-1">
+                <div class="col-6 d-flex flex-column align-items-center">
+                  <label class="label">Logo do suporte</label>
+                  <img
+                    [src]="configCompany[LOGO_TYPES.logoSupport].url"
+                    class="p-3 logo"
+                    height="164"
+                    alt="Logo do suporte do orçamento"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <button
