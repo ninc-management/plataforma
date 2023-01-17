@@ -1,18 +1,23 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
+import {
+  DateFilterComponent,
+  dateRangeFilter,
+} from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
+import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
 import { Team, TeamExpense } from '@models/team';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-team-expenses',
@@ -20,14 +25,13 @@ import { Team, TeamExpense } from '@models/team';
   styleUrls: ['./team-expenses.component.scss'],
 })
 export class TeamExpensesComponent implements OnInit, OnDestroy {
+  @Input() clonedTeam: Team = new Team();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Input() iTeam: string = '';
   destroy$ = new Subject<void>();
-  expenses: TeamExpense[] = [];
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
-  team: Team = new Team();
   platformConfig: PlatformConfig = new PlatformConfig();
+  isDataLoaded = false;
 
   isPhone = isPhone;
   formatDate = formatDate;
@@ -35,7 +39,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   get filtredExpenses(): TeamExpense[] {
     if (this.searchQuery !== '')
-      return this.expenses.filter((expense) => {
+      return this.clonedTeam.expenses.filter((expense) => {
         return (
           expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -51,7 +55,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
           formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.expenses;
+    return this.clonedTeam.expenses;
   }
 
   settings = {
@@ -88,6 +92,8 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       source: {
         title: 'Fonte',
         type: 'string',
+        valuePrepareFunction: (source: User | string | undefined) =>
+          source ? this.userService.idToShortName(source) : '',
       },
       description: {
         title: 'Descrição',
@@ -96,7 +102,15 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       value: {
         title: 'Valor',
         type: 'string',
+        filter: {
+          type: 'slider',
+          config: {
+            minValue: 0,
+            maxValue: 0,
+          },
+        },
         compareFunction: valueSort,
+        filterFunction: (cell: any, search?: string) => sliderRangeFilter(cell, search),
       },
       type: {
         title: 'Categoria',
@@ -112,6 +126,12 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       created: {
         title: 'Data',
         type: 'string',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
+        valuePrepareFunction: (date: Date) => formatDate(date) as any,
+        filterFunction: (cell: any, search?: string) => dateRangeFilter(cell, search),
       },
       paid: {
         title: 'Pago?',
@@ -151,30 +171,15 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   //INVARIANT: The settings object must be filled before the ngAfterViewInit cycle
   ngOnInit(): void {
-    combineLatest([
-      this.teamService.getTeams(),
-      this.configService.getConfig(),
-      this.teamService.isDataLoaded$,
-      this.configService.isDataLoaded$,
-    ])
+    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
-        skipWhile(([, , isTeamLoaded, isConfigLoaded]) => !isTeamLoaded && !isConfigLoaded),
+        skipWhile(([, isConfigLoaded]) => !isConfigLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([teams, configs, ,]) => {
+      .subscribe(([configs]) => {
         this.platformConfig = configs[0];
+        this.loadTableExpenses();
         this.reloadTableSettings();
-        const tmp = teams.find((team) => team._id === this.iTeam);
-        this.team = tmp ? tmp : new Team();
-        this.expenses = cloneDeep(this.team.expenses);
-        this.source.load(
-          this.expenses.map((expense: any) => {
-            const tmp = cloneDeep(expense);
-            tmp.source = this.userService.idToShortName(tmp.source);
-            tmp.created = formatDate(tmp.created);
-            return tmp;
-          })
-        );
       });
   }
 
@@ -184,7 +189,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       .open(TeamDialogComponent, {
         context: {
           title: index !== undefined ? 'EDITAR MOVIMENTAÇÃO' : 'ADICIONAR MOVIMENTAÇÃO',
-          iTeam: this.team,
+          iTeam: this.clonedTeam,
           expenseIdx: index,
           componentType: TEAM_COMPONENT_TYPES.EXPENSE,
         },
@@ -200,7 +205,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   }
 
   expenseIndex(code: string): number {
-    return this.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedTeam.expenses.findIndex((expense) => expense.code == code);
   }
 
   itemSort(direction: number, a: string, b: string): number {
@@ -214,6 +219,13 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
       return direction;
     }
     return 0;
+  }
+
+  loadTableExpenses(): void {
+    this.source.load(this.clonedTeam.expenses);
+    const expensesValues = greaterAndSmallerValue(this.clonedTeam.expenses);
+    this.settings.columns.value.filter.config.minValue = expensesValues.min;
+    this.settings.columns.value.filter.config.maxValue = expensesValues.max;
   }
 
   reloadTableSettings(): void {
