@@ -425,9 +425,7 @@ export class PdfService {
               width: 70,
               columns: [
                 await new Img(
-                  author.profilePicture == undefined
-                    ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
-                    : author.profilePicture
+                  author.profilePicture == undefined ? this.configCompany.logoSupport.url : author.profilePicture
                 )
                   .width(60)
                   .height(60)
@@ -554,7 +552,7 @@ export class PdfService {
                     columns: [
                       await new Img(
                         provider.profilePicture == undefined
-                          ? 'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2Fsupport_ninc.png?alt=media&token=45e1494a-95e4-40bb-ae37-7f391f7d7c79'
+                          ? this.configCompany.logoSupport.url
                           : provider.profilePicture
                       )
                         .width(60)
