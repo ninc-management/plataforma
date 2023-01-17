@@ -387,7 +387,9 @@ export class PdfService {
         /* eslint-disable indent*/
         pdf.add({
           text:
-            'Nós da Nortan Engenharia nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
+            'Nós da ' +
+            this.configCompany.companyName +
+            ' nos importamos com a individualidade de cada cliente e os ajudamos entendendo as suas necessidades entregando soluções personalizadas. Por isso, ' +
             author.article +
             ' associad' +
             author.article +
