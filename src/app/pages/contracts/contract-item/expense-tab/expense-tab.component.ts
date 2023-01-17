@@ -4,6 +4,10 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import {
+  DateFilterComponent,
+  dateRangeFilter,
+} from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -17,6 +21,7 @@ import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } 
 import { Contract, ContractExpense } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-expense-tab',
@@ -90,6 +95,8 @@ export class ExpenseTabComponent implements OnInit {
       source: {
         title: 'Fonte',
         type: 'string',
+        valuePrepareFunction: (source: User | string | undefined) =>
+          source ? this.userService.idToShortName(source) : '',
       },
       description: {
         title: 'Descrição',
@@ -136,6 +143,12 @@ export class ExpenseTabComponent implements OnInit {
       created: {
         title: 'Criação',
         type: 'string',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
+        valuePrepareFunction: (date: Date) => formatDate(date) as any,
+        filterFunction: (cell: any, search?: string) => dateRangeFilter(cell, search),
       },
       paid: {
         title: 'Pago?',
@@ -161,6 +174,12 @@ export class ExpenseTabComponent implements OnInit {
       paidDate: {
         title: 'Pagamento',
         type: 'string',
+        filter: {
+          type: 'date',
+          component: DateFilterComponent,
+        },
+        valuePrepareFunction: (date: Date) => formatDate(date) as any,
+        filterFunction: (cell: any, search?: string) => dateRangeFilter(cell, search),
       },
     },
   };
@@ -276,15 +295,7 @@ export class ExpenseTabComponent implements OnInit {
   loadTableExpenses(): void {
     this.settings.actions.add = this.isEditionGranted;
     this.settings.actions.delete = this.isEditionGranted;
-    this.source.load(
-      this.clonedContract.expenses.map((expense: any) => {
-        const tmp = cloneDeep(expense);
-        tmp.source = tmp.source ? this.userService.idToShortName(tmp.source) : '';
-        tmp.created = formatDate(tmp.created);
-        tmp.paidDate = tmp.paid ? formatDate(tmp.paidDate) : '';
-        return tmp;
-      })
-    );
+    this.source.load(this.clonedContract.expenses);
     const expensesValues = greaterAndSmallerValue(this.clonedContract.expenses);
     this.settings.columns.value.filter.config.minValue = expensesValues.min;
     this.settings.columns.value.filter.config.maxValue = expensesValues.max;
