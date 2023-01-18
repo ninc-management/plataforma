@@ -201,7 +201,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         const invoicesValues = greaterAndSmallerValue(invoices);
         this.settings.columns.value.filter.config.minValue = invoicesValues.min;
         this.settings.columns.value.filter.config.maxValue = invoicesValues.max;
-        this.isDataLoaded = isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded;
+        this.isDataLoaded = true;
       });
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },

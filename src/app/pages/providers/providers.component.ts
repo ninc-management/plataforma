@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
 
 import { ProviderDialogComponent } from './provider-dialog/provider-dialog/provider-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
@@ -82,15 +82,15 @@ export class ProvidersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.providerService.isDataLoaded$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((reqProvider) => (this.isDataLoaded = reqProvider));
-    this.providerService
-      .getProviders()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((providers: any[]) => {
+    combineLatest([this.providerService.getProviders(), this.providerService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isProviderDataLoaded]) => !isProviderDataLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([providers]) => {
         this.providers = providers;
         this.source.load(this.providers);
+        this.isDataLoaded = true;
       });
   }
 
