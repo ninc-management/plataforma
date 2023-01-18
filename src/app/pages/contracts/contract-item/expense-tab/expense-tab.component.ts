@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
@@ -32,7 +32,6 @@ export class ExpenseTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() expensesChanged = new EventEmitter<void>();
 
   types = COMPONENT_TYPES;
   isEditionGranted = false;
@@ -238,7 +237,6 @@ export class ExpenseTabComponent implements OnInit {
       .onClose.pipe(take(1))
       .subscribe(() => {
         this.loadTableExpenses();
-        this.expensesChanged.emit();
         this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
         this.isDialogBlocked.next(false);
       });
@@ -263,7 +261,6 @@ export class ExpenseTabComponent implements OnInit {
         if (response) {
           this.clonedContract.expenses.splice(index, 1);
           this.loadTableExpenses();
-          this.expensesChanged.emit();
         }
         this.updateContract();
         this.isDialogBlocked.next(false);

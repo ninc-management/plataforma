@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { BehaviorSubject, take } from 'rxjs';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
@@ -21,7 +21,6 @@ export class PaymentTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() paymentsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
   formatDate = formatDate;
@@ -61,7 +60,6 @@ export class PaymentTabComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        this.paymentsChanged.emit();
         this.isDialogBlocked.next(false);
       });
   }
@@ -84,7 +82,6 @@ export class PaymentTabComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.clonedContract.payments.splice(index, 1);
-          this.paymentsChanged.emit();
           this.updateContract();
         }
         this.isDialogBlocked.next(false);

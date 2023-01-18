@@ -21,7 +21,6 @@ export class ReceiptTabComponent implements OnInit {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() receiptsChanged = new EventEmitter<void>();
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
 
@@ -62,7 +61,6 @@ export class ReceiptTabComponent implements OnInit {
       })
       .onClose.pipe(take(1))
       .subscribe(() => {
-        this.receiptsChanged.emit();
         this.isDialogBlocked.next(false);
         this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
       });
@@ -86,7 +84,6 @@ export class ReceiptTabComponent implements OnInit {
       .subscribe((response) => {
         if (response) {
           this.clonedContract.receipts.splice(index, 1);
-          this.receiptsChanged.emit();
           this.clonedContract.locals.balance = this.contractService.balance(this.clonedContract);
           this.updateContract();
         }

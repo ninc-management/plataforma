@@ -1,44 +1,45 @@
-<nb-tabset fullWidth>
+<nb-tabset fullWidth (changeTab)="getActiveTab($event)">
   <nb-tab [tabTitle]="isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
     <ngx-data-tab
+      *ngIf="tabActive === TABS.DATA"
       [contract]="contract"
       [clonedContract]="clonedContract"
-      [recalculateEvent]="recalculateEvent$"
       [isFormDirty]="isFormDirty"
     ></ngx-data-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
     <ngx-management-tab
+      *ngIf="tabActive === TABS.MANAGEMENT"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
       [isFormDirty]="isFormDirty"
     ></ngx-management-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
-    <ngx-balance-tab [clonedContract]="clonedContract" [recalculateEvent$]="recalculateEvent$"></ngx-balance-tab>
+    <ngx-balance-tab *ngIf="tabActive === TABS.BALANCE" [clonedContract]="clonedContract"></ngx-balance-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
+      *ngIf="tabActive === TABS.RECEIPTS"
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (receiptsChanged)="recalculateValues()"
     ></ngx-receipt-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
     <ngx-payment-tab
+      *ngIf="tabActive === TABS.PAYMENTS"
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (paymentsChanged)="recalculateValues()"
     ></ngx-payment-tab>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
     <ngx-expense-tab
+      *ngIf="tabActive === TABS.EXPENSES"
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      (expensesChanged)="recalculateValues()"
     ></ngx-expense-tab>
   </nb-tab>
 </nb-tabset>

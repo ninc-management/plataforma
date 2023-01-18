@@ -29,7 +29,6 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
-  @Input() recalculateEvent = new Subject<void>();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
@@ -84,6 +83,24 @@ export class DataTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initializeData();
+    this.updateLiquid();
+    this.updateTeamTotal();
+    this.applyDistribution();
+  }
+
+  ngAfterViewInit() {
+    this.ngForm.statusChanges?.subscribe(() => {
+      if (this.ngForm.dirty) this.isFormDirty.next(true);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  initializeData(): void {
     combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
         skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
@@ -93,9 +110,6 @@ export class DataTabComponent implements OnInit {
         this.options.nortanPercentage = nortanPercentage(this.contract, configs[0].invoiceConfig);
         this.options.notaFiscal = nfPercentage(this.contract, configs[0].invoiceConfig);
       });
-
-    this.options.interest = this.contract.receipts.length;
-    this.options.paid = this.contractService.paidValue(this.contract);
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.availableUsers = combineLatest([this.userService.getUsers(), this.memberChanged$]).pipe(
@@ -103,10 +117,8 @@ export class DataTabComponent implements OnInit {
         return users.filter((user) => !this.userService.isUserInTeam(user, this.invoice.team) && user.active);
       })
     );
-    this.recalculateEvent.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.options.interest = this.contract.receipts.length;
-      this.options.paid = this.contractService.paidValue(this.contract);
-    });
+    this.options.interest = this.contract.receipts.length;
+    this.options.paid = this.contractService.paidValue(this.contract);
     this.contractService
       .checkEditPermission(this.invoice)
       .pipe(take(1))
@@ -159,21 +171,9 @@ export class DataTabComponent implements OnInit {
       this.clonedContract.ISS = '0,00';
       this.options.hasISS = false;
     }
-    this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
-    this.updateLiquid();
-    this.updateTeamTotal();
-    this.applyDistribution();
-  }
-
-  ngAfterViewInit() {
-    this.ngForm.statusChanges?.subscribe(() => {
-      if (this.ngForm.dirty) this.isFormDirty.next(true);
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.invoice.team.forEach(
+      (teamMember) => (teamMember.locals = !teamMember.locals ? ({} as InvoiceTeamMemberLocals) : teamMember.locals)
+    );
   }
 
   tooltipText(): string {

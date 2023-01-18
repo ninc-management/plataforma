@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { combineLatest, map, skipWhile, Subject, take, takeUntil } from 'rxjs';
+import { combineLatest, skipWhile, Subject, take } from 'rxjs';
 
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
@@ -24,7 +24,6 @@ interface ExpenseSourceSum {
 })
 export class BalanceTabComponent implements OnInit {
   @Input() clonedContract: Contract = new Contract();
-  @Input() recalculateEvent$ = new Subject<void>();
   private destroy$ = new Subject<void>();
 
   comissionSum = '';
@@ -85,15 +84,13 @@ export class BalanceTabComponent implements OnInit {
         this.options.notaFiscal = nfPercentage(this.clonedContract, this.config.invoiceConfig);
         this.options.nortanPercentage = nortanPercentage(this.clonedContract, this.config.invoiceConfig);
       });
-
-    this.recalculateEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.calculatePaidValue();
-      this.calculateBalance();
-    });
-
+    this.calculatePaidValue();
+    this.calculateBalance();
     this.contractId = this.clonedContract._id;
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
-    this.invoice.team.forEach((teamMember) => (teamMember.locals = {} as InvoiceTeamMemberLocals));
+    this.invoice.team.forEach(
+      (teamMember) => (teamMember.locals = !teamMember.locals ? ({} as InvoiceTeamMemberLocals) : teamMember.locals)
+    );
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.options.interest = this.clonedContract.receipts.length;
   }
