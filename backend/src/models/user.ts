@@ -2,6 +2,7 @@ import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { Base } from './base';
+import { Company } from './company';
 import { Contract } from './contract';
 import { Notification } from './notification';
 import { Sector } from './shared';
@@ -102,6 +103,11 @@ export class User extends Base<string> {
 
   @prop({ type: () => [Notification] })
   public notifications: Notification[] = [];
+  // TODO : resolver problema de inicialização e substituir a propriedade
+  // @prop({ required: true, ref: () => Company })
+  // public company: Ref<Company> = new Company();
+  @prop({ required: true })
+  public company: string = '';
 }
 
 export default getModelForClass(User);

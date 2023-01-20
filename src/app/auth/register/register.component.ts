@@ -3,9 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { NB_AUTH_OPTIONS, NbAuthService, NbRegisterComponent } from '@nebular/auth';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
+import { CompanyService } from 'app/shared/services/company.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
@@ -27,6 +28,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   prospect = new Prospect();
   protected destroy$ = new Subject<void>();
   companyName: string = '';
+  companyId: string = '635c66ce53ede7bbfa237278';
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
@@ -35,6 +37,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
     private statecityService: StatecityService,
     private authService: AuthService,
     private route: ActivatedRoute,
+    private companyService: CompanyService,
     protected service: NbAuthService,
     @Inject(NB_AUTH_OPTIONS) protected options = {},
     protected cd: ChangeDetectorRef,
@@ -46,18 +49,23 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   ngOnInit() {
     this.states = this.statecityService.buildStateList();
     this.authService.submitted$.next(false);
-    this.route.queryParams.subscribe((params) => {
-      console.log(params);
-      // TODO: Atualizar com o modelo da empresa
-      // if (params.companyId) {
-      //   const company = this.companyService.getCompanyById(params.companyId);
-      //   this.companyName = company.name;
-      //   this.prospect.company = company._id;
-      // } else {
-      // this.companyName = 'Conta em fase teste';
-      //   this.prospect.company = 'id de teste';
-      // }
-    });
+    this.companyService
+      .getCompanies()
+      .pipe(take(2))
+      .subscribe(() => {
+        this.route.queryParams.subscribe((params) => {
+          if (params.companyId) {
+            const company = this.companyService.idToCompany(params.companyId);
+            if (company) {
+              this.companyName = company.companyName;
+            } else this.companyName = 'Versão de teste';
+            this.prospect.company = company._id;
+          } else {
+            this.companyName = 'Versão de teste';
+            this.prospect.company = '000000000000000000000000';
+          }
+        });
+      });
   }
 
   ngAfterViewInit() {

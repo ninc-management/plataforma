@@ -17,6 +17,7 @@ const supportProfilePicture =
   'https://firebasestorage.googleapis.com/v0/b/plataforma-nortan.appspot.com/o/profileImages%2F5f1877da7ba3173ce285d916?alt=media&token=c026b3e7-3762-4b8b-a2ed-ade02fce5a0a';
 export const CONTRACT_BALANCE = {
   _id: '000000000000000000000000',
+  company: '000000000000000000000000',
   fullName: 'Caixa do contrato',
   email: '',
   professionalEmail: '',
@@ -39,6 +40,7 @@ export const CONTRACT_BALANCE = {
 
 export const CLIENT = {
   _id: '000000000000000000000001',
+  company: '000000000000000000000000',
   fullName: 'Cliente',
   email: '',
   professionalEmail: '',
@@ -62,6 +64,7 @@ export const CLIENT = {
 // NINC: change fullName for each new client
 export const NORTAN = {
   _id: '000000000000000000000002',
+  company: '000000000000000000000000',
   fullName: 'Nortan',
   email: '',
   professionalEmail: '',
