@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { CourseDialogComponent, DIALOG_TYPES } from './course-dialog/course-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
@@ -98,18 +98,18 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.courseService.isDataLoaded$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((reqTeam) => (this.isDataLoaded = reqTeam));
-    this.courseService
-      .getCourses()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((courses: Course[]) => {
+    combineLatest([this.courseService.getCourses(), this.courseService.isDataLoaded$])
+      .pipe(
+        skipWhile(([, isCourseDataLoaded]) => !isCourseDataLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([courses]) => {
         this.courses = courses.map((course: Course) => {
           course.participantsQuantity = course.participants.length.toString();
           return course;
         });
         this.source.load(this.courses);
+        this.isDataLoaded = true;
       });
   }
 
