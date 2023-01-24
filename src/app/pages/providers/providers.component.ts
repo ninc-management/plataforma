@@ -87,7 +87,7 @@ export class ProvidersComponent implements OnInit {
         skipWhile(([, isProviderDataLoaded]) => !isProviderDataLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([providers]) => {
+      .subscribe(([providers, _]) => {
         this.providers = providers;
         this.source.load(this.providers);
         this.isDataLoaded = true;
