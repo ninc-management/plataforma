@@ -19,7 +19,7 @@ import { formatDate, idToProperty, shouldNotifyManager, trackByIndex } from 'app
 import { Contract, ContractPayment, ContractUserPayment } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { User } from '@models/user';
 
 import contract_validation from 'app/shared/validators/payment-validation.json';

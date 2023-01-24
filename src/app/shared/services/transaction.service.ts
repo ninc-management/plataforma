@@ -9,7 +9,7 @@ import { TeamService } from './team.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
-import { EditionHistoryItem } from '@models/shared';
+import { EditionHistoryItem } from '@models/shared/editionHistoryItem';
 import { Team } from '@models/team';
 import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';

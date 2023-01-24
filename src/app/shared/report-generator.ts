@@ -8,7 +8,7 @@ import {
 } from 'app/pages/dashboard/report-menu/annual-users-report/annual-users-report.component';
 
 import { Contract, ContractExpense } from '@models/contract';
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { User } from '@models/user';
 
 interface ExpensesData {

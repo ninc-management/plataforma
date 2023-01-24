@@ -5,7 +5,7 @@ import { Base } from './base';
 import { Company } from './company';
 import { Contract } from './contract';
 import { Notification } from './notification';
-import { Sector } from './shared';
+import { Sector } from './shared/sector';
 import { Team } from './team';
 
 export class UserExpertise {
@@ -103,11 +103,9 @@ export class User extends Base<string> {
 
   @prop({ type: () => [Notification] })
   public notifications: Notification[] = [];
-  // TODO : resolver problema de inicialização e substituir a propriedade
-  // @prop({ required: true, ref: () => Company })
-  // public company: Ref<Company> = new Company();
-  @prop({ required: true })
-  public company: string = '';
+
+  @prop({ required: true, ref: () => Company })
+  public company: Ref<Company> = new Company();
 }
 
 export default getModelForClass(User);

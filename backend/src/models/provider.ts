@@ -2,7 +2,7 @@ import { getModelForClass, plugin, prop } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { Base } from './base';
-import { UploadedFileWithDescription } from './shared';
+import { UploadedFileWithDescription } from './shared/uploadedFiles';
 
 export class Contact {
   @prop({ required: true })

@@ -7,7 +7,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 
-import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
+import { UploadedFile, UploadedFileWithDescription } from '@models/shared/uploadedFiles';
 
 @Component({
   selector: 'ngx-onedrive-document-uploader',

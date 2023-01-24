@@ -15,7 +15,7 @@ import { TeamService } from './team.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
 

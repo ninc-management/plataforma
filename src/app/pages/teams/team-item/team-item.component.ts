@@ -8,7 +8,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { idToProperty, trackByIndex } from 'app/shared/utils';
 
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { Team, TeamMember } from '@models/team';
 import { User } from '@models/user';
 

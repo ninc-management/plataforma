@@ -15,7 +15,7 @@ import { getItemsWithValue, idToProperty, isPhone, tooltipTriggers, trackByIndex
 import { ColorShades, Company } from '@models/company';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
-import { UploadedFile } from '@models/shared';
+import { UploadedFile } from '@models/shared/uploadedFiles';
 import { User } from '@models/user';
 
 import config_validation from 'app/shared/validators/config-validation.json';

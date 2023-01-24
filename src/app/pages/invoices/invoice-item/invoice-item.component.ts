@@ -43,7 +43,7 @@ import {
 import { NotificationTags } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { Team } from '@models/team';
 import { User } from '@models/user';
 

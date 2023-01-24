@@ -2,7 +2,8 @@ import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
 
 import { Base } from './base';
 import { Provider } from './provider';
-import { Sector, UploadedFile } from './shared';
+import { Sector } from './shared/sector';
+import { UploadedFile } from './shared/uploadedFiles';
 import { User } from './user';
 
 export interface TeamLocals {

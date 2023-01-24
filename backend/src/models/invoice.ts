@@ -4,7 +4,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { StatusHistory } from './baseStatusHistory';
 import { Contractor } from './contractor';
 import { Provider } from './provider';
-import { Sector } from './shared';
+import { Sector } from './shared/sector';
 import { Team } from './team';
 import { User } from './user';
 

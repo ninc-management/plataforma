@@ -15,7 +15,7 @@ import { formatDate, idToProperty, isPhone, nfPercentage, nortanPercentage, trac
 
 import { Contract } from '@models/contract';
 import { Invoice, InvoiceTeamMember, InvoiceTeamMemberLocals } from '@models/invoice';
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { User } from '@models/user';
 
 import * as contract_validation from 'app/shared/validators/contract-validation.json';

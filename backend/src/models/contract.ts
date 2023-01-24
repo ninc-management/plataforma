@@ -4,7 +4,8 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { StatusHistory } from './baseStatusHistory';
 import { Invoice } from './invoice';
 import { Provider } from './provider';
-import { Sector, UploadedFile } from './shared';
+import { Sector } from './shared/sector';
+import { UploadedFile } from './shared/uploadedFiles';
 import { User } from './user';
 
 export interface ContractLocals {
