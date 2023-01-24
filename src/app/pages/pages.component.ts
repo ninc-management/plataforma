@@ -145,6 +145,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         if (configs[0].company) {
           this.social = [];
           this.company = this.companyService.idToCompany(configs[0].company);
+          document.title = this.company.companyName;
           if (this.company.glassfrogLink) {
             this.social.push({
               title: 'GlassFrog',
