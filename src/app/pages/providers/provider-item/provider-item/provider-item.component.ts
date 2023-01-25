@@ -12,7 +12,7 @@ import { ProviderService } from 'app/shared/services/provider.service';
 import { compareFiles, isPhone, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
-import { UploadedFile, UploadedFileWithDescription } from '@models/shared';
+import { UploadedFile, UploadedFileWithDescription } from '@models/shared/uploadedFiles';
 
 import provider_validation from 'app/shared/validators/provider-validation.json';
 

@@ -3,7 +3,8 @@ import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
 import { Base } from './base';
 import { Contract } from './contract';
 import { Provider } from './provider';
-import { EditionHistoryItem, UploadedFile } from './shared';
+import { EditionHistoryItem } from './shared/editionHistoryItem';
+import { UploadedFile } from './shared/uploadedFiles';
 import { Team } from './team';
 import { User } from './user';
 

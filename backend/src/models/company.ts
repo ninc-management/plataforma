@@ -1,7 +1,7 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
 
 import { Base } from './base';
-import { UploadedFile } from './shared';
+import { UploadedFile } from './shared/uploadedFiles';
 
 export class ColorShades {
   @prop({ required: true })

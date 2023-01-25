@@ -6,7 +6,7 @@ import { handle, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { InternalTransaction } from '@models/internalTransaction';
-import { EditionHistoryItem } from '@models/shared';
+import { EditionHistoryItem } from '@models/shared/editionHistoryItem';
 
 @Injectable({
   providedIn: 'root',

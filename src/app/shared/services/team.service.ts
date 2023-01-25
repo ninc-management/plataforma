@@ -9,7 +9,7 @@ import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
-import { Sector, SectorLocals } from '@models/shared';
+import { Sector, SectorLocals } from '@models/shared/sector';
 import { Team, TeamLocals } from '@models/team';
 import { User } from '@models/user';
 

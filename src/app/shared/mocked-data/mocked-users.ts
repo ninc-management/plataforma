@@ -3,6 +3,7 @@ import { User } from '@models/user';
 export const externalMockedUsers: User[] = [
   {
     _id: '0',
+    company: '000000000000000000000000',
     fullName: 'MockedUser1',
     professionalEmail: 'mockedUser1@mocked.com',
     article: 'o',
@@ -24,6 +25,7 @@ export const externalMockedUsers: User[] = [
   },
   {
     _id: '1',
+    company: '000000000000000000000000',
     fullName: 'MockedUser2',
     professionalEmail: 'mockedUser2@mocked.com',
     article: 'o',
@@ -45,6 +47,7 @@ export const externalMockedUsers: User[] = [
   },
   {
     _id: '2',
+    company: '000000000000000000000000',
     fullName: 'MockedUser3',
     professionalEmail: 'mockedUser3@mocked.com',
     article: 'o',

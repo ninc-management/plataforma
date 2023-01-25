@@ -24,16 +24,11 @@ import { UserService } from 'app/shared/services/user.service';
 import { chunkify, idToProperty, NOT, Permissions, trackByIndex } from 'app/shared/utils';
 
 import { ProfileConfig } from '@models/platformConfig';
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 import { Team } from '@models/team';
 import { User } from '@models/user';
 
 import user_validation from 'app/shared/validators/user-validation.json';
-
-interface article {
-  a: string;
-  o: string;
-}
 
 @Component({
   selector: 'ngx-profile',

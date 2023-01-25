@@ -27,7 +27,7 @@ import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, tra
 import { Company } from '@models/company';
 import { Notification, NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
-import { UploadedFile } from '@models/shared';
+import { UploadedFile } from '@models/shared/uploadedFiles';
 import { User } from '@models/user';
 
 interface NbMenuItem {

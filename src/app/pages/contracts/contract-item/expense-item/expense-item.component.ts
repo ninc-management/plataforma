@@ -26,7 +26,8 @@ import {
 import { Contract, ContractExpense, ContractExpenseTeamMember } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
-import { Sector, UploadedFileWithDescription } from '@models/shared';
+import { Sector } from '@models/shared/sector';
+import { UploadedFileWithDescription } from '@models/shared/uploadedFiles';
 import { ExpenseType } from '@models/team';
 import { User } from '@models/user';
 

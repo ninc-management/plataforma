@@ -1,4 +1,4 @@
-import { Sector } from '@models/shared';
+import { Sector } from '@models/shared/sector';
 
 export const externalMockedSectors: Sector[] = [
   {
