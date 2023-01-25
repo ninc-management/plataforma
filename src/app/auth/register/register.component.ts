@@ -28,7 +28,6 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   prospect = new Prospect();
   protected destroy$ = new Subject<void>();
   companyName: string = '';
-  companyId: string = '635c66ce53ede7bbfa237278';
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
