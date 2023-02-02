@@ -1,3 +1,4 @@
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import { differenceInDays } from 'date-fns';
 
 import ContractModel, { Contract } from '../models/contract';
@@ -108,6 +109,12 @@ export async function isNotificationEnabled(notificationTag: string, platform: s
     }
   }
   return false;
+}
+
+export function getModelForDb<T>(connection: any, model: ModelType<T>): ModelType<T> {
+  const DbModel = connection.model(model.modelName, model.schema) as ModelType<T>;
+
+  return DbModel;
 }
 
 export default {
