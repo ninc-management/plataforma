@@ -1,6 +1,7 @@
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import { differenceInDays } from 'date-fns';
 
+import { Company } from '../models/company';
 import ContractModel, { Contract } from '../models/contract';
 import InvoiceModel, { Invoice } from '../models/invoice';
 import { Notification, NotificationTags } from '../models/notification';
@@ -115,6 +116,10 @@ export function getModelForDb<T>(connection: any, model: ModelType<T>): ModelTyp
   const DbModel = connection.model(model.modelName, model.schema) as ModelType<T>;
 
   return DbModel;
+}
+
+export function __uri(company: Company): string {
+  return `mongodb+srv://${process.env.MONGODB_DB_USER}:${process.env.MONGODB_DB_PASSWD}${company.uri}`;
 }
 
 export default {
