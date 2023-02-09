@@ -54,6 +54,7 @@ export class NgxLoginComponent extends NbLoginComponent {
           delete this.showMessages.success;
           this.showMessages.success = true;
           this.myMessages = ['Acesso liberado para a plataforma.'];
+          this.authService.isLoggedIn$.next(true);
           combineLatest([
             this.authService.isUserRegistred((result.payload as any).account.username),
             this.authService.isUserProspect((result.payload as any).account.username),
@@ -62,6 +63,7 @@ export class NgxLoginComponent extends NbLoginComponent {
             if (isRegistered != undefined && isProspect != undefined && isActive != undefined) {
               if (isRegistered) {
                 if (isActive) {
+                  this.authService.idToCompany((result.payload as any).account.username);
                   super.login();
                 } else {
                   this.setupError('Este usuário está desativado! Por favor, entre em contato com seu líder de equipe.');

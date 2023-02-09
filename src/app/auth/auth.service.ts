@@ -10,8 +10,10 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 })
 export class AuthService {
   submitted$ = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
   private destroy$ = new Subject<void>();
+  companyId = '';
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -91,5 +93,17 @@ export class AuthService {
       email: email,
     };
     return this.http.post<boolean>('api/auth/isActive', body).pipe(take(1));
+  }
+
+  idToCompany(email: string) {
+    const body = {
+      email: email,
+    };
+    this.http
+      .post<string>('api/auth/id', body)
+      .pipe(take(1))
+      .subscribe((id) => {
+        this.companyId = id;
+      });
   }
 }
