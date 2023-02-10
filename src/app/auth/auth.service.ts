@@ -10,7 +10,6 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 })
 export class AuthService {
   submitted$ = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
   private destroy$ = new Subject<void>();
   companyId = '';

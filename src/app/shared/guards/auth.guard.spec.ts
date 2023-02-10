@@ -11,9 +11,9 @@ import { Observable, of, take } from 'rxjs';
 
 import { ConfigService, DEFAULT_CONFIG } from '../services/config.service';
 import { AuthGuard } from './auth.guard';
+import { AuthService } from 'app/auth/auth.service';
 
-import { PlatformConfig, ProfileConfig } from '@models/platformConfig';
-import { ExpenseType } from '@models/team';
+import { PlatformConfig } from '@models/platformConfig';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -23,10 +23,11 @@ describe('AuthGuard', () => {
   let mockedConfigs: PlatformConfig[];
   const next = new ActivatedRouteSnapshot();
   const childRoute = new ActivatedRouteSnapshot();
-  const authServiceSpy = jasmine.createSpyObj<NbAuthService>('NbAuthService', ['isAuthenticated']);
+  const nbAuthServiceSpy = jasmine.createSpyObj<NbAuthService>('NbAuthService', ['isAuthenticated']);
   const nbAclServiceSpy = jasmine.createSpyObj<NbAclService>('NbAclService', ['setAccessControl']);
   const nbAccessCheckerSpy = jasmine.createSpyObj<NbAccessChecker>('NbAccessChecker', ['isGranted']);
   const instanceSpy = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', ['getAllAccounts']);
+  const authServiceSpy = jasmine.createSpyObj('AuthService', ['companyId']);
   const msAuthServiceSpy = jasmine.createSpyObj<MsalService>('MsalService', [], {
     instance: instanceSpy,
   });
@@ -37,7 +38,8 @@ describe('AuthGuard', () => {
   CommonTestingModule.setUpTestBed();
 
   beforeEach(() => {
-    TestBed.overrideProvider(NbAuthService, { useValue: authServiceSpy });
+    TestBed.overrideProvider(NbAuthService, { useValue: nbAuthServiceSpy });
+    TestBed.overrideProvider(AuthService, { useValue: authServiceSpy });
     TestBed.overrideProvider(NbAclService, { useValue: nbAclServiceSpy });
     TestBed.overrideProvider(MsalService, { useValue: msAuthServiceSpy });
     TestBed.overrideProvider(NbAccessChecker, { useValue: nbAccessCheckerSpy });
@@ -67,9 +69,10 @@ describe('AuthGuard', () => {
   });
 
   it('should be not athenticated and redirected to auth/login', (done: DoneFn) => {
-    authServiceSpy.isAuthenticated.and.returnValue(of(false));
+    nbAuthServiceSpy.isAuthenticated.and.returnValue(of(false));
     instanceSpy.getAllAccounts.and.returnValue([]);
     spyOn(router, 'navigate');
+    authServiceSpy.companyId.and.returnValue('');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(false, 'user is authenticated');
       expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
@@ -78,7 +81,7 @@ describe('AuthGuard', () => {
   });
 
   it('should be athenticated and not redirected to auth/login', (done: DoneFn) => {
-    authServiceSpy.isAuthenticated.and.returnValue(of(true));
+    nbAuthServiceSpy.isAuthenticated.and.returnValue(of(true));
     instanceSpy.getAllAccounts.and.returnValue([
       {
         homeAccountId: 'test',
@@ -89,6 +92,7 @@ describe('AuthGuard', () => {
       },
     ]);
     spyOn(router, 'navigate');
+    authServiceSpy.companyId.and.returnValue('000000000000000000000000');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(true, 'user is not authenticated');
       expect(router.navigate).not.toHaveBeenCalled();

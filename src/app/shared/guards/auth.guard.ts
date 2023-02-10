@@ -14,6 +14,7 @@ import { Observable } from 'rxjs';
 import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 
 import { ConfigService } from '../services/config.service';
+import { AuthService } from 'app/auth/auth.service';
 // TODO: Remove this part
 const accessControl = {
   Parceiro: {
@@ -90,12 +91,13 @@ const accessControl = {
 })
 export class AuthGuard implements CanActivate, CanActivateChild {
   constructor(
-    private authService: NbAuthService,
+    private nbAuthService: NbAuthService,
     private router: Router,
     private msAuthService: MsalService,
     private accessChecker: NbAccessChecker,
     private aclService: NbAclService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private authService: AuthService
   ) {}
 
   canActivate(
@@ -103,9 +105,13 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     // canActive can return Observable<boolean>, which is exactly what isAuthenticated returns
-    return this.authService.isAuthenticated().pipe(
+    return this.nbAuthService.isAuthenticated().pipe(
       tap((authenticated) => {
-        if (!authenticated || this.msAuthService.instance.getAllAccounts().length === 0) {
+        if (
+          !authenticated ||
+          this.msAuthService.instance.getAllAccounts().length === 0 ||
+          !this.authService.companyId
+        ) {
           this.router.navigate(['auth/login']);
         }
       })

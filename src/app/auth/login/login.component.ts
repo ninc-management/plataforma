@@ -54,7 +54,6 @@ export class NgxLoginComponent extends NbLoginComponent {
           delete this.showMessages.success;
           this.showMessages.success = true;
           this.myMessages = ['Acesso liberado para a plataforma.'];
-          this.authService.isLoggedIn$.next(true);
           combineLatest([
             this.authService.isUserRegistred((result.payload as any).account.username),
             this.authService.isUserProspect((result.payload as any).account.username),
