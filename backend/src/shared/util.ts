@@ -118,7 +118,7 @@ export function getModelForDb<T>(connection: any, model: ModelType<T>): ModelTyp
   return DbModel;
 }
 
-export function __uri(company: Company): string {
+export function uri(company: Company): string {
   return `mongodb+srv://${process.env.MONGODB_DB_USER}:${process.env.MONGODB_DB_PASSWD}${company.uri}`;
 }
 
