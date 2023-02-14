@@ -27,3 +27,4 @@ export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
 export const companyMap: Record<string, Company> = {};
+export const conns: Record<string, any> = {};
