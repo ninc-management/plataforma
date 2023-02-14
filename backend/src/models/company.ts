@@ -69,6 +69,9 @@ export class Company extends Base<string> {
   companyName: string = '';
 
   @prop({ required: true })
+  uri: string = '';
+
+  @prop({ required: true })
   showCompanyName: boolean = true;
 
   @prop({ required: true })
