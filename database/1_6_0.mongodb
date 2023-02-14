@@ -142,6 +142,7 @@ db.companies.find().forEach((company) => {
     url: '',
     name: '',
   };
+  company.uri = '';
   db.companies.replaceOne({ _id: company._id }, company);
 });
 
