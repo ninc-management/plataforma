@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { filter, take, takeUntil } from 'rxjs/operators';
 
 @Injectable({
@@ -10,9 +10,17 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 })
 export class AuthService {
   submitted$ = new BehaviorSubject<boolean>(false);
+  _isCompanyLoaded$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
   private destroy$ = new Subject<void>();
   companyId = '';
+
+  get isCompanyLoaded$(): Observable<boolean> {
+    if (!this._isCompanyLoaded$.value) {
+      this.getCompany();
+    }
+    return this._isCompanyLoaded$;
+  }
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -64,6 +72,8 @@ export class AuthService {
   }
 
   msLogout(): void {
+    this.companyId = '';
+    this._isCompanyLoaded$.next(false);
     this.msAuthService.logoutPopup({
       ...this.msalGuardConfig.authRequest,
     } as PopupRequest);
@@ -94,15 +104,19 @@ export class AuthService {
     return this.http.post<boolean>('api/auth/isActive', body).pipe(take(1));
   }
 
-  idToCompany(email: string) {
-    const body = {
-      email: email,
-    };
-    this.http
-      .post<string>('api/auth/id', body)
-      .pipe(take(1))
-      .subscribe((id) => {
-        this.companyId = id;
-      });
+  getCompany(): void {
+    const email = this.userEmail();
+    if (email) {
+      const body = {
+        email: email,
+      };
+      this.http
+        .post<string>('api/auth/id', body)
+        .pipe(take(1))
+        .subscribe((id) => {
+          this.companyId = id;
+          this._isCompanyLoaded$.next(true);
+        });
+    }
   }
 }

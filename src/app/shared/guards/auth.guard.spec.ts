@@ -7,13 +7,15 @@ import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker, NbAclService } from '@nebular/security';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Observable, of, take } from 'rxjs';
+import { Observable, of, Subject, take } from 'rxjs';
 
+import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ConfigService, DEFAULT_CONFIG } from '../services/config.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from 'app/auth/auth.service';
 
 import { PlatformConfig } from '@models/platformConfig';
+import { User } from '@models/user';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
@@ -21,15 +23,20 @@ describe('AuthGuard', () => {
   let httpMock: HttpTestingController;
   let configService: ConfigService;
   let mockedConfigs: PlatformConfig[];
+  let mockedUsers: User[];
+  let authService: AuthService;
   const next = new ActivatedRouteSnapshot();
   const childRoute = new ActivatedRouteSnapshot();
   const nbAuthServiceSpy = jasmine.createSpyObj<NbAuthService>('NbAuthService', ['isAuthenticated']);
   const nbAclServiceSpy = jasmine.createSpyObj<NbAclService>('NbAclService', ['setAccessControl']);
   const nbAccessCheckerSpy = jasmine.createSpyObj<NbAccessChecker>('NbAccessChecker', ['isGranted']);
   const instanceSpy = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', ['getAllAccounts']);
-  const authServiceSpy = jasmine.createSpyObj('AuthService', ['companyId']);
   const msAuthServiceSpy = jasmine.createSpyObj<MsalService>('MsalService', [], {
     instance: instanceSpy,
+  });
+
+  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
+    onUserChange$: new Subject<void>(),
   });
 
   CommonTestingModule.setUpTestBed();
@@ -48,7 +55,9 @@ describe('AuthGuard', () => {
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     httpMock = TestBed.inject(HttpTestingController);
     configService = TestBed.inject(ConfigService);
+    authService = TestBed.inject(AuthService);
     mockedConfigs = [];
+    mockedUsers = cloneDeep(externalMockedUsers);
     const mockedConfig = cloneDeep(DEFAULT_CONFIG) as any;
     mockedConfig._id = '0';
     mockedConfig.profileConfig.levels.push('teste');
@@ -72,16 +81,17 @@ describe('AuthGuard', () => {
     nbAuthServiceSpy.isAuthenticated.and.returnValue(of(false));
     instanceSpy.getAllAccounts.and.returnValue([]);
     spyOn(router, 'navigate');
-    authServiceSpy.companyId.and.returnValue('');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
-      expect(result).toBe(false, 'user is authenticated');
+      expect(result).toBe(false, 'user is not authenticated');
       expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
       done();
     });
   });
 
-  it('should be athenticated and not redirected to auth/login', (done: DoneFn) => {
+  fit('should be athenticated and not redirected to auth/login', (done: DoneFn) => {
     nbAuthServiceSpy.isAuthenticated.and.returnValue(of(true));
+    authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
+    authService.getCompany();
     instanceSpy.getAllAccounts.and.returnValue([
       {
         homeAccountId: 'test',
@@ -91,13 +101,19 @@ describe('AuthGuard', () => {
         localAccountId: 'test',
       },
     ]);
+
     spyOn(router, 'navigate');
-    authServiceSpy.companyId.and.returnValue('000000000000000000000000');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
-      expect(result).toBe(true, 'user is not authenticated');
+      expect(result).toBe(true, 'user is authenticated');
       expect(router.navigate).not.toHaveBeenCalled();
       done();
     });
+
+    const req1 = httpMock.expectOne('/api/auth/id');
+    expect(req1.request.method).toBe('POST');
+    setTimeout(() => {
+      req1.flush(mockedUsers[0].company ? mockedUsers[0].company : '');
+    }, 50);
   });
 
   it('should allow navigate to childRoute', (done: DoneFn) => {

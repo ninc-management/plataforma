@@ -10,8 +10,8 @@ import {
 import { MsalService } from '@azure/msal-angular';
 import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker, NbAclService } from '@nebular/security';
-import { Observable } from 'rxjs';
-import { map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { concatMap, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 
 import { ConfigService } from '../services/config.service';
 import { AuthService } from 'app/auth/auth.service';
@@ -106,13 +106,16 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     // canActive can return Observable<boolean>, which is exactly what isAuthenticated returns
     return this.nbAuthService.isAuthenticated().pipe(
-      tap((authenticated) => {
-        if (
-          !authenticated ||
-          this.msAuthService.instance.getAllAccounts().length === 0 ||
-          !this.authService.companyId
-        ) {
+      take(1),
+      concatMap((isAuthenticated) => {
+        if (!isAuthenticated || this.msAuthService.instance.getAllAccounts().length === 0) {
           this.router.navigate(['auth/login']);
+          return of(false);
+        } else {
+          return this.authService.isCompanyLoaded$.pipe(
+            take(1),
+            skipWhile((isCompanyLoaded) => !isCompanyLoaded)
+          );
         }
       })
     );

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { EventMessage, EventType } from '@azure/msal-browser';
 import { NB_AUTH_OPTIONS, NbAuthService, NbLoginComponent } from '@nebular/auth';
 import { combineLatest, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
 
@@ -62,7 +62,7 @@ export class NgxLoginComponent extends NbLoginComponent {
             if (isRegistered != undefined && isProspect != undefined && isActive != undefined) {
               if (isRegistered) {
                 if (isActive) {
-                  this.authService.idToCompany((result.payload as any).account.username);
+                  this.authService.isCompanyLoaded$.pipe(take(1));
                   super.login();
                 } else {
                   this.setupError('Este usuário está desativado! Por favor, entre em contato com seu líder de equipe.');
