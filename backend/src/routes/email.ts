@@ -1,7 +1,7 @@
 import * as express from 'express';
 import nodemailer from 'nodemailer';
 
-import { Sector } from '../models/shared';
+import { Sector } from '../models/shared/sector';
 import { User } from '../models/user';
 
 const router = express.Router();
