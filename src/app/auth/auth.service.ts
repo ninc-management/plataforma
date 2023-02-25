@@ -106,9 +106,7 @@ export class AuthService {
 
   getCompany(): void {
     const email = this.userEmail();
-    if (!email) {
-      return;
-    }
+    if (!email) return;
 
     const body = { email };
     this.http
