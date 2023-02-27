@@ -3,7 +3,7 @@
   "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
   "editor.codeLens": false,
   "editor.cursorBlinking": "solid",
-  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "editor.cursorStyle": "line",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.fontFamily": "Cascadia Code PL",

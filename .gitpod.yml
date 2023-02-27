@@ -18,7 +18,6 @@ vscode:
     - eamodio.gitlens
     - esbenp.prettier-vscode
     - TabNine.tabnine-vscode
-    - coenraads.bracket-pair-colorizer
     - johnpapa.angular2
     - aaron-bond.better-comments
     - pkief.material-icon-theme
