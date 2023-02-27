@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { getMonth, getYear } from 'date-fns';
+import { endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
-import { combineLatest, map, Observable, skipWhile, take } from 'rxjs';
+import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
 
 import { generateUsersReport } from 'app/shared/report-generator';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
-import { nfPercentage, nortanPercentage } from 'app/shared/utils';
 
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
@@ -20,6 +20,7 @@ import { User } from '@models/user';
 export enum GROUPING_TYPES {
   USER = 'Usuário',
   SECTOR = 'Setor',
+  CONTRACT = 'Contrato',
 }
 
 enum REPORT_TYPES {
@@ -73,12 +74,13 @@ const defaultMonthlyData = Array(12).fill({
   styleUrls: ['./annual-users-report.component.scss'],
 })
 export class AnnualUsersReportComponent implements OnInit {
-  selectedReportType = '';
-  selectedGroupingType = '';
+  selectedReportType = REPORT_TYPES.GERAL;
+  selectedGroupingType = GROUPING_TYPES.USER;
   selectedYear!: number;
   groupingTypes = GROUPING_TYPES;
-  avaliableYears = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
-  avaliableReportTypes = Object.values(REPORT_TYPES);
+  availableYears = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
+  availableReportTypes = Object.values(REPORT_TYPES);
+  availableGroupingTypes = Object.values(GROUPING_TYPES);
 
   users: User[] = [];
   config: PlatformConfig = new PlatformConfig();
@@ -88,6 +90,7 @@ export class AnnualUsersReportComponent implements OnInit {
     private teamService: TeamService,
     private invoiceService: InvoiceService,
     private contractService: ContractService,
+    private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private configService: ConfigService
   ) {}
@@ -484,22 +487,88 @@ export class AnnualUsersReportComponent implements OnInit {
     );
   }
 
-  downloadReport(): void {
-    (this.selectedGroupingType == GROUPING_TYPES.USER
-      ? this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-      : this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-    )
-      .pipe(take(1))
-      .subscribe((data) => {
-        const csv = generateUsersReport(
-          data,
-          this.selectedGroupingType as GROUPING_TYPES,
-          this.userService.idToUser.bind(this.userService),
-          this.teamService.idToSectorComposedName.bind(this.teamService)
-        );
-        const blob = new Blob([csv], { type: 'text/csv' });
-        saveAs(blob, 'relatorio geral.csv');
+  async contractsYearReview(year: number): Promise<string> {
+    const tmp = [];
+    for (let i = 0; i < 12; i++) {
+      const start = startOfMonth(new Date(year, i));
+      const end = endOfMonth(new Date(year, i));
+      tmp.push({
+        Recebido: this.stringUtil.numberToMoney(
+          await firstValueFrom(
+            this.metricsService.nortanValue(start, end, 'oe').pipe(map((metricInfo) => metricInfo.global))
+          )
+        ),
+        Repassado: this.stringUtil.numberToMoney(
+          await firstValueFrom(
+            this.metricsService.receivedValueNortan(start, end).pipe(map((metricInfo) => metricInfo.global))
+          )
+        ),
+        'Taxa Nortan': this.stringUtil.numberToMoney(
+          await firstValueFrom(this.metricsService.nortanValue(start, end).pipe(map((metricInfo) => metricInfo.global)))
+        ),
+        Impostos: this.stringUtil.numberToMoney(
+          await firstValueFrom(
+            this.metricsService.nortanValue(start, end, 'taxes').pipe(map((metricInfo) => metricInfo.global))
+          )
+        ),
       });
+    }
+
+    // CSV
+    const header = [
+      '',
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ];
+    const rows = ['Recebido', 'Repassado', 'Taxa Nortan', 'Impostos'];
+    let csv = header.join(';');
+    csv += '\r\n';
+
+    for (const rowName of rows) {
+      csv += rowName;
+      tmp.forEach((monthData: any) => {
+        csv += ';' + monthData[rowName];
+      });
+      csv += '\r\n';
+    }
+
+    return csv;
+  }
+
+  downloadReport(): void {
+    if (this.selectedGroupingType == GROUPING_TYPES.CONTRACT) {
+      from(this.contractsYearReview(this.selectedYear)).subscribe((csv: string) => {
+        const blob = new Blob([csv], { type: 'text/csv' });
+        saveAs(blob, `Relatorio Taxas ${this.selectedYear}.csv`);
+      });
+    } else {
+      (this.selectedGroupingType == GROUPING_TYPES.SECTOR
+        ? this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+        : this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+      )
+        .pipe(take(1))
+        .subscribe((data: Record<string, ReportValue>) => {
+          const csv = generateUsersReport(
+            data,
+            this.selectedGroupingType as GROUPING_TYPES,
+            this.userService.idToUser.bind(this.userService),
+            this.teamService.idToSectorComposedName.bind(this.teamService)
+          );
+
+          const blob = new Blob([csv], { type: 'text/csv' });
+          saveAs(blob, `Relatorio ${this.selectedReportType} ${this.selectedYear}.csv`);
+        });
+    }
   }
 
   shouldDisableDownloadButton(): boolean {
