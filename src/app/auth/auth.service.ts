@@ -3,15 +3,24 @@ import { Inject, Injectable } from '@angular/core';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
 import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { filter, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private _isCompanyLoaded$ = new BehaviorSubject<boolean>(false);
+  private destroy$ = new Subject<void>();
   submitted$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
-  private destroy$ = new Subject<void>();
+  companyId = '';
+
+  get isCompanyLoaded$(): Observable<boolean> {
+    if (!this._isCompanyLoaded$.value) {
+      this.getCompany();
+    }
+    return this._isCompanyLoaded$.asObservable();
+  }
 
   constructor(
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
@@ -63,6 +72,8 @@ export class AuthService {
   }
 
   msLogout(): void {
+    this.companyId = '';
+    this._isCompanyLoaded$.next(false);
     this.msAuthService.logoutPopup({
       ...this.msalGuardConfig.authRequest,
     } as PopupRequest);
@@ -90,6 +101,23 @@ export class AuthService {
     const body = {
       email: email,
     };
-    return this.http.post<boolean>('api/auth/isActive', body).pipe(take(1));
+    return this.http.post<boolean>('/api/auth/isActive', body).pipe(take(1));
+  }
+
+  getCompany(): void {
+    const email = this.userEmail();
+    if (!email) return;
+
+    const body = { email };
+    this.http
+      .post<string>('/api/auth/id', body)
+      .pipe(
+        skipWhile((companyId) => !companyId),
+        take(1)
+      )
+      .subscribe((companyId) => {
+        this.companyId = companyId;
+        this._isCompanyLoaded$.next(true);
+      });
   }
 }
