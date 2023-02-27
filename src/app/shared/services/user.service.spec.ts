@@ -35,7 +35,7 @@ describe('UserService', () => {
         .pipe(take(2), last())
         .subscribe((users) => {
           const expectedUsers = reviveDates(mockedUsers);
-          expect(users.length).toBe(3);
+          expect(users.length).toBe(4);
           expect(users).toEqual(expectedUsers);
           test(expectedUsers, done);
         });

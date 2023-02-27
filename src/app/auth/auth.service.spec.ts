@@ -1,7 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MsalService } from '@azure/msal-angular';
-import { IPublicClientApplication } from '@azure/msal-browser';
+import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { Ref } from '@typegoose/typegoose';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
@@ -25,6 +25,7 @@ describe('AuthService', () => {
   let service: AuthService;
   let mockedUsers: User[];
   let mockedProspects: Prospect[];
+  let account: AccountInfo;
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const instanceSpy = jasmine.createSpyObj<IPublicClientApplication>('IPublicClientApplication', [
@@ -47,6 +48,14 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
     prospectService = TestBed.inject(ProspectService);
     mockedUsers = cloneDeep(externalMockedUsers);
+    account = {
+      homeAccountId: mockedUsers[0]._id,
+      environment: '',
+      tenantId: mockedUsers[0]._id,
+      name: mockedUsers[0].fullName,
+      username: mockedUsers[0].email,
+      localAccountId: mockedUsers[0]._id,
+    };
     mockedProspects = [];
     const tmpProspect = new Prospect();
     tmpProspect._id = '0';
@@ -173,51 +182,47 @@ describe('AuthService', () => {
     expect(req1.request.method).toBe('POST');
     setTimeout(() => {
       req1.flush(!!mockedUsers.find((user: User) => user.email == mockedUsers[0].email));
-    }, 50);
+    }, 100);
   });
 
   it('isUserProspect should work', (done: DoneFn) => {
-    service.isUserProspect('fakeProspect@mocked.com').subscribe((isProspect) => {
+    service.isUserProspect(mockedUsers[0].email).subscribe((isProspect) => {
       expect(isProspect).toBe(false);
     });
     const req = httpMock.expectOne('/api/auth/isProspect');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == 'fakeProspect@mocked.com'));
+      req.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == mockedUsers[0].email));
     }, 50);
-
     service.isUserProspect(mockedProspects[0].email).subscribe((isProspect) => {
       expect(isProspect).toBe(true);
       done();
     });
-
     const req1 = httpMock.expectOne('/api/auth/isProspect');
     expect(req1.request.method).toBe('POST');
     setTimeout(() => {
       req1.flush(!!mockedProspects.find((prospect: Prospect) => prospect.email == mockedProspects[0].email));
-    }, 50);
+    }, 100);
   });
 
   it('isUserActive should work', (done: DoneFn) => {
-    service.isUserActive('fakeUser@mocked.com').subscribe((response) => {
+    service.isUserActive(mockedUsers[3].email).subscribe((response) => {
       expect(response).toBe(false);
     });
     const req = httpMock.expectOne('/api/auth/isActive');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(!!mockedUsers.find((user) => user.email == 'fakeUser@mocked.com' && user.active));
+      req.flush(!!mockedUsers.find((user) => user.email == mockedUsers[3].email && user.active));
     }, 50);
-
     service.isUserActive(mockedUsers[0].email).subscribe((response) => {
       expect(response).toBe(true);
       done();
     });
-
     const req2 = httpMock.expectOne('/api/auth/isActive');
     expect(req2.request.method).toBe('POST');
     setTimeout(() => {
       req2.flush(!!mockedUsers.find((user) => user.email == mockedUsers[0].email && user.active));
-    }, 50);
+    }, 100);
   });
 
   it('getCompany should work', (done: DoneFn) => {
@@ -229,41 +234,15 @@ describe('AuthService', () => {
       expect(isCompanyLoaded).toBe(false);
       expect(service.companyId as Ref<Company>).toBe('');
     });
-
     // Set active account
-    instanceSpy.getAllAccounts.and.returnValue([
-      {
-        homeAccountId: mockedUsers[0]._id,
-        environment: '',
-        tenantId: mockedUsers[0]._id,
-        name: mockedUsers[0].fullName,
-        username: mockedUsers[0].email,
-        localAccountId: mockedUsers[0]._id,
-      },
-      {
-        homeAccountId: mockedUsers[1]._id,
-        environment: '',
-        tenantId: mockedUsers[1]._id,
-        name: mockedUsers[1].fullName,
-        username: mockedUsers[1].email,
-        localAccountId: mockedUsers[1]._id,
-      },
-    ]);
-    instanceSpy.getActiveAccount.and.returnValue({
-      homeAccountId: mockedUsers[0]._id,
-      environment: '',
-      tenantId: mockedUsers[0]._id,
-      name: mockedUsers[0].fullName,
-      username: mockedUsers[0].email,
-      localAccountId: mockedUsers[0]._id,
-    });
+    instanceSpy.getAllAccounts.and.returnValue([account]);
+    instanceSpy.getActiveAccount.and.returnValue(account);
     service.getCompany();
     test2.subscribe((isCompanyLoaded) => {
       expect(isCompanyLoaded).toBe(true);
       expect(service.companyId as Ref<Company>).toBe(mockedUsers[0].company);
       done();
     });
-
     const req = httpMock.expectOne('/api/auth/id');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
