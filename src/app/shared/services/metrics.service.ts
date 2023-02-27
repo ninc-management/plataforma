@@ -605,7 +605,7 @@ export class MetricsService implements OnDestroy {
   nortanValue(
     start: Date,
     end: Date,
-    type: 'nortan' | 'taxes' = 'nortan',
+    type: 'nortan' | 'taxes' | 'oe' = 'nortan',
     uId?: string
   ): Observable<UserAndGlobalMetric> {
     return combineLatest([
@@ -626,10 +626,12 @@ export class MetricsService implements OnDestroy {
                     const paidDate = receipt.paidDate;
                     if (paidDate && isWithinInterval(paidDate, start, end)) {
                       const value = this.stringUtil.moneyToNumber(
-                        this.stringUtil.applyPercentage(
-                          receipt.value,
-                          type == 'nortan' ? receipt.nortanPercentage : receipt.notaFiscal
-                        )
+                        type != 'oe'
+                          ? this.stringUtil.applyPercentage(
+                              receipt.value,
+                              type == 'nortan' ? receipt.nortanPercentage : receipt.notaFiscal
+                            )
+                          : receipt.value
                       );
                       if (uId && contract.invoice && this.invoiceService.isInvoiceAuthor(contract.invoice, uId))
                         paid.user += value;
