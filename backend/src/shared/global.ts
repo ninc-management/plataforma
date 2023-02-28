@@ -28,4 +28,4 @@ export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
 export const companyMap: Record<string, Company> = {};
-export const connectionPool = new Map<string, mongoose.Connection>();
+export const connectionPool: Record<string, mongoose.Connection> = {};
