@@ -57,16 +57,7 @@ export interface ReportValue {
   overview: Overview;
 }
 
-const defaultMonthlyData = Array(12).fill({
-  received: '0,00',
-  expenses: '0,00',
-  sent_invoices_manager: 0,
-  sent_invoices_team: 0,
-  opened_contracts_manager: 0,
-  opened_contracts_team: 0,
-  concluded_contracts_manager: 0,
-  concluded_contracts_team: 0,
-});
+const defaultMonthlyData = new Array(12);
 
 @Component({
   selector: 'ngx-annual-users-report',
@@ -74,6 +65,7 @@ const defaultMonthlyData = Array(12).fill({
   styleUrls: ['./annual-users-report.component.scss'],
 })
 export class AnnualUsersReportComponent implements OnInit {
+  isGenerating = false;
   selectedReportType = REPORT_TYPES.GERAL;
   selectedGroupingType = GROUPING_TYPES.USER;
   selectedYear!: number;
@@ -93,7 +85,22 @@ export class AnnualUsersReportComponent implements OnInit {
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
     private configService: ConfigService
-  ) {}
+  ) {
+    for (
+      let i = 0;
+      i < defaultMonthlyData.length;
+      defaultMonthlyData[i++] = {
+        received: '0,00',
+        expenses: '0,00',
+        sent_invoices_manager: 0,
+        sent_invoices_team: 0,
+        opened_contracts_manager: 0,
+        opened_contracts_team: 0,
+        concluded_contracts_manager: 0,
+        concluded_contracts_team: 0,
+      }
+    );
+  }
 
   ngOnInit(): void {
     combineLatest([
@@ -204,11 +211,15 @@ export class AnnualUsersReportComponent implements OnInit {
                   let typeFilter = true;
                   if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
                   if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
-                  return getYear(contract.created) == year && typeFilter;
+                  return typeFilter;
                 }
                 return false;
               })
-              .map((contract) => ({ contract: contract, month: getMonth(contract.created) })),
+              .map((contract) => ({
+                contract: contract,
+                month: getMonth(contract.created),
+                year: getYear(contract.created),
+              })),
             '1'
           )
         ).forEach((monthContracts) => {
@@ -216,17 +227,39 @@ export class AnnualUsersReportComponent implements OnInit {
             monthContract.contract.locals.liquid = this.contractService.contractNetValue(monthContract.contract);
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
-                data[uId].monthly_data[monthContract.month].opened_contracts_manager += 1;
-                data[uId].overview.opened_contracts_manager += 1;
-                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[uId].monthly_data[monthContract.month].concluded_contracts_manager += 1;
+                if (monthContract.year == year) {
+                  data[uId].monthly_data[monthContract.month].opened_contracts_manager += 1;
+                  data[uId].overview.opened_contracts_manager += 1;
+                }
+                if (
+                  monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].status ==
+                    CONTRACT_STATOOS.CONCLUIDO &&
+                  getYear(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  ) == year
+                ) {
+                  const month = getMonth(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  );
+                  data[uId].monthly_data[month].concluded_contracts_manager += 1;
                   data[uId].overview.concluded_contracts_manager += 1;
                 }
               } else if (this.invoiceService.isInvoiceMember(monthContract.contract.invoice as Invoice | string, uId)) {
-                data[uId].monthly_data[monthContract.month].opened_contracts_team += 1;
-                data[uId].overview.opened_contracts_team += 1;
-                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[uId].monthly_data[monthContract.month].concluded_contracts_team += 1;
+                if (monthContract.year == year) {
+                  data[uId].monthly_data[monthContract.month].opened_contracts_team += 1;
+                  data[uId].overview.opened_contracts_team += 1;
+                }
+                if (
+                  monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].status ==
+                    CONTRACT_STATOOS.CONCLUIDO &&
+                  getYear(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  ) == year
+                ) {
+                  const month = getMonth(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  );
+                  data[uId].monthly_data[month].concluded_contracts_team += 1;
                   data[uId].overview.concluded_contracts_team += 1;
                 }
               }
@@ -323,6 +356,7 @@ export class AnnualUsersReportComponent implements OnInit {
     ]).pipe(
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       map(([contracts, invoices, ,]) => {
+        contracts = contracts.map((contract) => this.contractService.fillContract(contract));
         Object.values(
           groupBy(
             invoices
@@ -360,11 +394,15 @@ export class AnnualUsersReportComponent implements OnInit {
                   let typeFilter = true;
                   if (type === REPORT_TYPES.NORTAN && invoice.administration != 'nortan') typeFilter = false;
                   if (type === REPORT_TYPES.PESSOAL && invoice.administration == 'nortan') typeFilter = false;
-                  return getYear(contract.created) == year && typeFilter;
+                  return typeFilter;
                 }
                 return false;
               })
-              .map((contract) => ({ contract: contract, month: getMonth(contract.created) })),
+              .map((contract) => ({
+                contract: contract,
+                month: getMonth(contract.created),
+                year: getYear(contract.created),
+              })),
             '1'
           )
         ).forEach((monthContracts) => {
@@ -377,10 +415,21 @@ export class AnnualUsersReportComponent implements OnInit {
                   sector
                 )
               ) {
-                data[sector].monthly_data[monthContract.month].opened_contracts_manager += 1;
-                data[sector].overview.opened_contracts_manager += 1;
-                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[sector].monthly_data[monthContract.month].concluded_contracts_manager += 1;
+                if (monthContract.year == year) {
+                  data[sector].monthly_data[monthContract.month].opened_contracts_manager += 1;
+                  data[sector].overview.opened_contracts_manager += 1;
+                }
+                if (
+                  monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].status ==
+                    CONTRACT_STATOOS.CONCLUIDO &&
+                  getYear(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  ) == year
+                ) {
+                  const month = getMonth(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  );
+                  data[sector].monthly_data[month].concluded_contracts_manager += 1;
                   data[sector].overview.concluded_contracts_manager += 1;
                 }
               } else if (
@@ -388,10 +437,21 @@ export class AnnualUsersReportComponent implements OnInit {
                   .idToInvoice(monthContract.contract.invoice as Invoice | string)
                   .team.filter((member) => this.teamService.isSectorEqual(member.sector, sector)).length > 0
               ) {
-                data[sector].monthly_data[monthContract.month].opened_contracts_team += 1;
-                data[sector].overview.opened_contracts_team += 1;
-                if (monthContract.contract.status == CONTRACT_STATOOS.CONCLUIDO) {
-                  data[sector].monthly_data[monthContract.month].concluded_contracts_team += 1;
+                if (monthContract.year == year) {
+                  data[sector].monthly_data[monthContract.month].opened_contracts_team += 1;
+                  data[sector].overview.opened_contracts_team += 1;
+                }
+                if (
+                  monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].status ==
+                    CONTRACT_STATOOS.CONCLUIDO &&
+                  getYear(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  ) == year
+                ) {
+                  const month = getMonth(
+                    monthContract.contract.statusHistory[monthContract.contract.statusHistory.length - 1].start
+                  );
+                  data[sector].monthly_data[month].concluded_contracts_team += 1;
                   data[sector].overview.concluded_contracts_team += 1;
                 }
               }
@@ -546,32 +606,39 @@ export class AnnualUsersReportComponent implements OnInit {
   }
 
   downloadReport(): void {
-    if (this.selectedGroupingType == GROUPING_TYPES.CONTRACT) {
-      from(this.contractsYearReview(this.selectedYear)).subscribe((csv: string) => {
-        const blob = new Blob([csv], { type: 'text/csv' });
-        saveAs(blob, `Relatorio Taxas ${this.selectedYear}.csv`);
-      });
-    } else {
-      (this.selectedGroupingType == GROUPING_TYPES.SECTOR
-        ? this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-        : this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-      )
-        .pipe(take(1))
-        .subscribe((data: Record<string, ReportValue>) => {
-          const csv = generateUsersReport(
-            data,
-            this.selectedGroupingType as GROUPING_TYPES,
-            this.userService.idToUser.bind(this.userService),
-            this.teamService.idToSectorComposedName.bind(this.teamService)
-          );
-
+    this.isGenerating = true;
+    setTimeout(() => {
+      if (this.selectedGroupingType == GROUPING_TYPES.CONTRACT) {
+        from(this.contractsYearReview(this.selectedYear)).subscribe((csv: string) => {
           const blob = new Blob([csv], { type: 'text/csv' });
-          saveAs(blob, `Relatorio ${this.selectedReportType} ${this.selectedYear}.csv`);
+          saveAs(blob, `Relatorio Taxas ${this.selectedYear}.csv`);
+          this.isGenerating = false;
         });
-    }
+      } else {
+        (this.selectedGroupingType == GROUPING_TYPES.SECTOR
+          ? this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+          : this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+        )
+          .pipe(take(1))
+          .subscribe((data: Record<string, ReportValue>) => {
+            const csv = generateUsersReport(
+              data,
+              this.selectedGroupingType as GROUPING_TYPES,
+              this.userService.idToUser.bind(this.userService),
+              this.teamService.idToSectorComposedName.bind(this.teamService)
+            );
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            saveAs(blob, `Relatorio ${this.selectedReportType} ${this.selectedYear}.csv`);
+            this.isGenerating = false;
+          });
+      }
+    }, 200);
   }
 
   shouldDisableDownloadButton(): boolean {
-    return !this.selectedGroupingType || !this.selectedReportType || this.selectedYear == undefined;
+    return (
+      !this.selectedGroupingType || !this.selectedReportType || this.selectedYear == undefined || this.isGenerating
+    );
   }
 }
