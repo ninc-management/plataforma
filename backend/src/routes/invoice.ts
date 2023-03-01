@@ -1,12 +1,9 @@
 import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
-import { Model } from 'mongoose';
 
-import CompanyModel, { Company } from '../models/company';
 import InvoiceModel, { Invoice } from '../models/invoice';
-import { connectionPool, invoicesMap } from '../shared/global';
-import { createConnection, getModelForDb } from '../shared/util';
+import { invoicesMap } from '../shared/global';
 
 const router = express.Router();
 let requested = false;
@@ -61,10 +58,8 @@ router.post('/update', async (req, res, next) => {
 
 router.post('/all', async (req, res) => {
   if (!requested) {
-    const companyId = req.headers.companyid as string;
-    const invoiceModel = await getInvoiceModelForCompany(companyId);
-    const invoices = await getAllInvoices(invoiceModel);
-    invoices.forEach((invoice) => (invoicesMap[invoice._id] = cloneDeep(invoice)));
+    const invoices: Invoice[] = await InvoiceModel.find({});
+    invoices.map((invoice) => (invoicesMap[invoice._id] = cloneDeep(invoice)));
     requested = true;
   }
   return res.status(200).json(Array.from(Object.values(invoicesMap)));
@@ -80,19 +75,6 @@ async function currentYearInvoices(): Promise<number> {
   const endDate = new Date(new Date().getFullYear().toString() + '/12/31');
   const filteredInvoices: Invoice[] = await InvoiceModel.find({ created: { $gt: startDate, $lt: endDate } });
   return Array.from(Object.values(filteredInvoices)).length;
-}
-
-async function getInvoiceModelForCompany(companyId: string) {
-  let connection = connectionPool.get(companyId);
-  if (!connection) {
-    const company: Company = await CompanyModel.findById(companyId);
-    connection = createConnection(company);
-  }
-  return getModelForDb(connection, InvoiceModel);
-}
-
-async function getAllInvoices(invoiceModel: Model<Invoice>) {
-  return await invoiceModel.find({});
 }
 
 export default router;
