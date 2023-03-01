@@ -2,10 +2,7 @@ import { ElementRef } from '@angular/core';
 
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { codeSort, formatDate, idToProperty } from './utils';
-import {
-  GROUPING_TYPES,
-  ReportValue,
-} from 'app/pages/dashboard/report-menu/annual-users-report/annual-users-report.component';
+import { GROUPING_TYPES, ReportValue } from 'app/pages/dashboard/report-menu/annual-report/annual-report.component';
 
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared/sector';
