@@ -1,3 +1,4 @@
+import { mongoose } from '@typegoose/typegoose';
 import { Subject } from 'rxjs';
 
 import { Company } from '../models/company';
@@ -27,4 +28,4 @@ export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
 export const companyMap: Record<string, Company> = {};
-export const conns: Record<string, any> = {};
+export const connectionPool: Record<string, mongoose.Connection> = {};
