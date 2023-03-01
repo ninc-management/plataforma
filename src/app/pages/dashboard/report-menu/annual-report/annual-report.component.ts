@@ -60,11 +60,11 @@ export interface ReportValue {
 const defaultMonthlyData = new Array(12);
 
 @Component({
-  selector: 'ngx-annual-users-report',
-  templateUrl: './annual-users-report.component.html',
-  styleUrls: ['./annual-users-report.component.scss'],
+  selector: 'ngx-annual-report',
+  templateUrl: './annual-report.component.html',
+  styleUrls: ['./annual-report.component.scss'],
 })
-export class AnnualUsersReportComponent implements OnInit {
+export class AnnualReportComponent implements OnInit {
   isGenerating = false;
   selectedReportType = REPORT_TYPES.GERAL;
   selectedGroupingType = GROUPING_TYPES.USER;
