@@ -1,5 +1,4 @@
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
 
 import InvoiceModel, { Invoice } from '../models/invoice';
