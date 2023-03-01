@@ -1,14 +1,15 @@
+import { mongoose } from '@typegoose/typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import { differenceInDays } from 'date-fns';
 
-import { Company } from '../models/company';
+import CompanyModel, { Company } from '../models/company';
 import ContractModel, { Contract } from '../models/contract';
 import InvoiceModel, { Invoice } from '../models/invoice';
 import { Notification, NotificationTags } from '../models/notification';
 import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { updateNotification } from '../routes/notification';
-import { configMap } from './global';
+import { configMap, connectionPool } from './global';
 
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
@@ -112,16 +113,28 @@ export async function isNotificationEnabled(notificationTag: string, platform: s
   return false;
 }
 
-export function getModelForDb<T>(connection: any, model: ModelType<T>): ModelType<T> {
+export async function getModelForCompany<T>(companyId: string, model: ModelType<T>): Promise<ModelType<T>> {
+  const company: Company = await CompanyModel.findById(companyId);
+  const connection = createConnection(company);
+  return getModelForDb(connection, model);
+}
+
+export function createConnection(company: Company): mongoose.Connection {
+  let connection = connectionPool[company._id];
+  if (!connection) {
+    connection = mongoose.createConnection(
+      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWD}@${company.uri}?retryWrites=true&w=majority`
+    );
+    connectionPool[company._id] = connection;
+  }
+  return connection;
+}
+
+export function getModelForDb<T>(connection: mongoose.Connection, model: ModelType<T>): ModelType<T> {
   const DbModel = connection.model(model.modelName, model.schema) as ModelType<T>;
 
   return DbModel;
 }
-
-export function uri(company: Company): string {
-  return `mongodb+srv://${process.env.MONGODB_DB_USER}:${process.env.MONGODB_DB_PASSWD}${company.uri}`;
-}
-
 export default {
   mongoObjectId: createId,
   normalizePort: port,
