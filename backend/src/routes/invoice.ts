@@ -1,43 +1,37 @@
-import { Mutex } from 'async-mutex';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
 import InvoiceModel, { Invoice } from '../models/invoice';
-import { invoicesMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const mutex = new Mutex();
 
 router.post('/', async (req, res, next) => {
-  const invoice = new InvoiceModel(req.body.invoice);
-  mutex.acquire().then(async (release) => {
-    let count = await currentYearInvoices();
+  try {
+    const companyId = req.headers.companyid as string;
+    const invoiceCompanyModel = await getModelForCompany(companyId, InvoiceModel);
+    const invoice = new invoiceCompanyModel(req.body.invoice);
+    let count = await currentYearInvoices(invoiceCompanyModel);
     count += 1;
     invoice.code = invoice.code.replace(/-(\d+)\//g, '-' + count.toString() + '/');
-    invoice
-      .save()
-      .then((savedInvoice) => {
-        if (requested) invoicesMap[savedInvoice._id] = cloneDeep(savedInvoice.toJSON());
-        release();
-        res.status(201).json({
-          message: 'Orçamento cadastrado!',
-          invoice: savedInvoice,
-        });
-      })
-      .catch((err) => {
-        release();
-        res.status(500).json({
-          message: 'Erro ao cadastrar orçamento!',
-          error: err,
-        });
-      });
-  });
+    const savedInvoice = await invoice.save();
+    res.status(201).json({
+      message: 'Orçamento cadastrado!',
+      invoice: savedInvoice,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erro ao cadastrar orçamento!',
+      error: err,
+    });
+  }
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const invoice = await InvoiceModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const invoiceCompanyModel = await getModelForCompany(companyId, InvoiceModel);
+    const invoice = await invoiceCompanyModel.findOneAndUpdate(
       { _id: req.body.invoice._id, __v: req.body.invoice.__v },
       req.body.invoice,
       { upsert: false }
@@ -46,11 +40,6 @@ router.post('/update', async (req, res, next) => {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
       });
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        invoicesMap[req.body.invoice._id] = cloneDeep(invoice.toJSON());
-      });
-    }
     return res.status(200).json({
       message: 'Orçamento Atualizado!',
     });
@@ -63,23 +52,30 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const invoices: Invoice[] = await InvoiceModel.find({});
-    invoices.map((invoice) => (invoicesMap[invoice._id] = cloneDeep(invoice)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const invoiceCompanyModel = await getModelForCompany(companyId, InvoiceModel);
+    const invoices = await invoiceCompanyModel.find({});
+    return res.status(200).json(invoices);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar orçamentos!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(invoicesMap)));
 });
 
 router.post('/currentYearInvoices', async (req, res) => {
-  const accumulated = await currentYearInvoices();
+  const companyId = req.headers.companyid as string;
+  const invoiceCompanyModel = await getModelForCompany(companyId, InvoiceModel);
+  const accumulated = await currentYearInvoices(invoiceCompanyModel);
   return res.json({ accumulated: accumulated });
 });
 
-async function currentYearInvoices(): Promise<number> {
+async function currentYearInvoices(invoiceCompanyModel: ModelType<Invoice>): Promise<number> {
   const startDate = new Date(new Date().getFullYear().toString() + '/01/01');
   const endDate = new Date(new Date().getFullYear().toString() + '/12/31');
-  const filteredInvoices: Invoice[] = await InvoiceModel.find({ created: { $gt: startDate, $lt: endDate } });
+  const filteredInvoices: Invoice[] = await invoiceCompanyModel.find({ created: { $gt: startDate, $lt: endDate } });
   return Array.from(Object.values(filteredInvoices)).length;
 }
 
