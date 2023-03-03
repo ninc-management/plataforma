@@ -1,73 +1,64 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
 import TeamModel, { Team } from '../models/team';
-import { teamMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const mutex = new Mutex();
 
-router.post('/', (req, res, next) => {
-  const team = new TeamModel(req.body.team);
-  mutex.acquire().then((release) => {
-    team
-      .save()
-      .then((savedTeam) => {
-        if (requested) teamMap[savedTeam._id] = cloneDeep(savedTeam.toJSON());
-        release();
-        return res.status(201).json({
-          message: 'Time cadastrado!',
-        });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao cadastrar time!',
-          error: err,
-        });
-      });
-  });
+router.post('/', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const teamCompanyModel = await getModelForCompany(companyId, TeamModel);
+    const team = new teamCompanyModel(req.body.team);
+    await team.save();
+    return res.status(201).json({
+      message: 'Time cadastrado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao cadastrar time!',
+      error: err,
+    });
+  }
 });
 
 router.post('/update', async (req, res, next) => {
-  await mutex.acquire().then(async (release) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const teamCompanyModel = await getModelForCompany(companyId, TeamModel);
     if (req.body.creatingExpense) {
       const newExpense = req.body.team.expenses.pop();
-      await TeamModel.findOne({ _id: req.body.team._id }).then((team) => {
+      await teamCompanyModel.findOne({ _id: req.body.team._id }).then((team) => {
         newExpense.code = '#' + team.expenses.length.toString();
         team.expenses.push(newExpense);
         req.body.team.expenses = cloneDeep(team.expenses);
       });
     }
-
-    try {
-      const savedTeam = await TeamModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
-      if (requested) {
-        teamMap[req.body.team._id] = cloneDeep(savedTeam.toJSON());
-      }
-      release();
-      return res.status(200).json({
-        message: 'Time Atualizado!',
-      });
-    } catch (err) {
-      release();
-      return res.status(500).json({
-        message: 'Erro ao atualizar time!',
-        error: err,
-      });
-    }
-  });
+    await teamCompanyModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
+    return res.status(200).json({
+      message: 'Time Atualizado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao atualizar time!',
+      error: err,
+    });
+  }
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const teams: Team[] = await TeamModel.find({});
-    teams.map((team) => (teamMap[team._id] = cloneDeep(team)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const teamCompanyModel = await getModelForCompany(companyId, TeamModel);
+    const teams: Team[] = await teamCompanyModel.find({});
+    return res.status(200).json(teams);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar times!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(teamMap)));
 });
 
 export default router;

@@ -8,7 +8,6 @@ import { Notification } from '../models/notification';
 import { PlatformConfig } from '../models/platformConfig';
 import { Prospect } from '../models/prospect';
 import { Provider } from '../models/provider';
-import { Team } from '../models/team';
 import { User } from '../models/user';
 
 export const usersMap: Record<string, User> = {};
