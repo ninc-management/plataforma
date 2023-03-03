@@ -3,7 +3,6 @@ import { Subject } from 'rxjs';
 
 import { Company } from '../models/company';
 import { Contract } from '../models/contract';
-import { Contractor } from '../models/contractor';
 import { Course } from '../models/course';
 import { Message } from '../models/message';
 import { Notification } from '../models/notification';
@@ -22,7 +21,6 @@ export const teamMap: Record<string, Team> = {};
 export const promotionsMap: Record<string, Promotion> = {};
 export const configMap: Record<string, PlatformConfig> = {};
 export const coursesMap: Record<string, Course> = {};
-export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
 export const companyMap: Record<string, Company> = {};
