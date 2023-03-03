@@ -12,7 +12,7 @@ async function addTransaction(
   transaction: Transaction,
   res,
   lastTransaction: Transaction
-): Promise<any> {
+): Promise<void> {
   try {
     const transactionItem = new transactionCompanyModel(transaction);
     await transactionItem.save();
