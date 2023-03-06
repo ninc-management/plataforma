@@ -83,7 +83,7 @@ export class User extends Base<string> {
   @prop({ required: true })
   public level: string = 'Associada Trainee';
 
-  @prop({ unique: true })
+  @prop({ unique: true, required: true })
   public document!: string;
 
   @prop({ type: () => [UserExpertise] })

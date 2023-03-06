@@ -1,4 +1,8 @@
-<h1 id="title" class="title">Pré-Cadastro <br /> {{ companyName }}</h1>
+<h1 id="title" class="title">
+  Pré-Cadastro
+  <br />
+  {{ companyName }}
+</h1>
 
 <nb-alert *ngIf="showMessages.error && myErrors?.length" outline="danger" role="alert">
   <p class="alert-title"><b>Oh não!</b></p>
@@ -87,31 +91,65 @@
     </div>
   </div>
 
-  <div class="form-control-group">
-    <label class="label" for="input-phone">Telefone para contato:</label>
-    <input
-      nbInput
-      [(ngModel)]="prospect.phone"
-      #phone="ngModel"
-      id="input-phone"
-      name="phone"
-      placeholder="Telefone com DDD"
-      fullWidth
-      fieldSize="large"
-      [brmasker]="{ phone: true }"
-      ngxSelectAllText
-      [required]="validation.phone.required"
-      [minlength]="validation.phone.minLength"
-      [maxlength]="validation.phone.maxLength"
-      [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
-      [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
-    />
-    <ng-container *ngIf="phone.invalid && phone.touched">
-      <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
-      <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
-        O telefone deve conter entre {{ validation.phone.minLength - 4 }} a {{ validation.phone.maxLength - 4 }} números
-      </p>
-    </ng-container>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-phone">Telefone para contato:</label>
+        <input
+          nbInput
+          [(ngModel)]="prospect.phone"
+          #phone="ngModel"
+          id="input-phone"
+          name="phone"
+          placeholder="Telefone com DDD"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{ phone: true }"
+          ngxSelectAllText
+          [required]="validation.phone.required"
+          [minlength]="validation.phone.minLength"
+          [maxlength]="validation.phone.maxLength"
+          [status]="phone.dirty ? (phone.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="phone.invalid && phone.touched ? true : null"
+        />
+        <ng-container *ngIf="phone.invalid && phone.touched">
+          <p class="caption status-danger" *ngIf="phone.errors?.required">O telefone é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="phone.errors?.minlength || phone.errors?.maxlength">
+            O telefone deve conter entre {{ validation.phone.minLength - 4 }} a
+            {{ validation.phone.maxLength - 4 }} números
+          </p>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="form-control-group">
+        <label class="label" for="input-document">CPF/CNPJ:</label>
+        <input
+          nbInput
+          [(ngModel)]="prospect.document"
+          #document="ngModel"
+          id="input-document"
+          name="document"
+          placeholder="CPF/CNPJ"
+          fullWidth
+          fieldSize="large"
+          [brmasker]="{ person: true }"
+          ngxSelectAllText
+          [required]="validation.document.required"
+          [minlength]="validation.document.minLength"
+          [maxlength]="validation.document.maxLength"
+          [status]="document.dirty ? (document.invalid ? 'danger' : 'success') : 'basic'"
+          [attr.aria-invalid]="document.invalid && document.touched ? true : null"
+        />
+        <ng-container *ngIf="document.invalid && document.touched">
+          <p class="caption status-danger" *ngIf="document.errors?.required">O CPF/CNPJ é obrigatório!</p>
+          <p class="caption status-danger" *ngIf="document.errors?.minlength || document.errors?.maxlength">
+            O CPF/CNPJ deve ter {{ validation.document.minLength - 3 }} ou
+            {{ validation.document.maxLength - 4 }} números
+          </p>
+        </ng-container>
+      </div>
+    </div>
   </div>
 
   <div class="row">
