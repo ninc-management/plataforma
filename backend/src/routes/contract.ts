@@ -1,42 +1,33 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
 import ContractModel, { Contract } from '../models/contract';
 import MessageModel, { Message } from '../models/message';
-import { contractsMap, messagesMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-let requestedMessage = false;
 
-const mutex = new Mutex();
-
-router.post('/', (req, res, next) => {
-  const contract = new ContractModel(req.body.contract);
-  mutex.acquire().then((release) => {
-    contract
-      .save()
-      .then((savedContract) => {
-        if (requested) contractsMap[savedContract._id] = cloneDeep(savedContract.toJSON());
-        release();
-        return res.status(201).json({
-          message: 'Contrato cadastrado!',
-        });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao cadastrar contrato!',
-          error: err,
-        });
-      });
-  });
+router.post('/', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const contractCompanyModel = await getModelForCompany(companyId, ContractModel);
+    const contract = new contractCompanyModel(req.body.contract);
+    await contract.save();
+    return res.status(201).json({
+      message: 'Contrato cadastrado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao cadastrar contrato!',
+      error: err,
+    });
+  }
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const contract = await ContractModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const contractCompanyModel = await getModelForCompany(companyId, ContractModel);
+    const contract = await contractCompanyModel.findOneAndUpdate(
       { _id: req.body.contract._id, __v: req.body.contract.__v },
       req.body.contract,
       { upsert: false }
@@ -44,11 +35,6 @@ router.post('/update', async (req, res, next) => {
     if (!contract) {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
-      });
-    }
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        contractsMap[req.body.contract._id] = cloneDeep(contract.toJSON());
       });
     }
     return res.status(200).json({
@@ -63,43 +49,48 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const contracts: Contract[] = await ContractModel.find({});
-    contracts.map((contract) => (contractsMap[contract._id] = cloneDeep(contract)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const contractCompanyModel = await getModelForCompany(companyId, ContractModel);
+    const contracts: Contract[] = await contractCompanyModel.find({});
+    return res.status(200).json(contracts);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar contratos!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(contractsMap)));
 });
 
-router.post('/createMessage', (req, res, next) => {
-  const message = new MessageModel(req.body.message);
-  mutex.acquire().then((release) => {
-    message
-      .save()
-      .then((savedMessage) => {
-        if (requested) messagesMap[savedMessage._id] = cloneDeep(savedMessage.toJSON());
-        release();
-        return res.status(201).json({
-          message: 'Comentário cadastrado!',
-        });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao cadastrar comentário!',
-          error: err,
-        });
-      });
-  });
+router.post('/createMessage', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const messageCompanyModel = await getModelForCompany(companyId, MessageModel);
+    const message = new messageCompanyModel(req.body.message);
+    await message.save();
+    return res.status(201).json({
+      message: 'Comentário cadastrado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao cadastrar comentário!',
+      error: err,
+    });
+  }
 });
 
 router.post('/allMessages', async (req, res) => {
-  if (!requestedMessage) {
-    const messages: Message[] = await MessageModel.find({});
-    messages.map((message) => (messagesMap[message._id] = cloneDeep(message)));
-    requestedMessage = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const messageCompanyModel = await getModelForCompany(companyId, MessageModel);
+    const messages: Message[] = await messageCompanyModel.find({});
+    return res.status(200).json(messages);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar comentários',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(messagesMap)));
 });
 
 export default router;
