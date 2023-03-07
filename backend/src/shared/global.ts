@@ -18,7 +18,6 @@ export const teamMap: Record<string, Team> = {};
 export const promotionsMap: Record<string, Promotion> = {};
 export const configMap: Record<string, PlatformConfig> = {};
 export const coursesMap: Record<string, Course> = {};
-export const contractorsMap: Record<string, Contractor> = {};
 export const notification$ = new Subject<Notification>();
 export const providersMap: Record<string, Provider> = {};
 export const companyMap: Record<string, Company> = {};

@@ -1,39 +1,32 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
 import ContractorModel, { Contractor } from '../models/contractor';
-import { contractorsMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const mutex = new Mutex();
 
-router.post('/', (req, res, next) => {
-  const contractor = new ContractorModel(req.body.contractor);
-  mutex.acquire().then((release) => {
-    contractor
-      .save()
-      .then((savedContractor) => {
-        if (requested) contractorsMap[savedContractor._id] = cloneDeep(savedContractor.toJSON());
-        release();
-        res.status(201).json({
-          message: 'Cliente cadastrado!',
-        });
-      })
-      .catch((err) => {
-        release();
-        res.status(500).json({
-          message: 'Erro ao cadastrar cliente!',
-          error: err,
-        });
-      });
-  });
+router.post('/', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const contractorCompanyModel = await getModelForCompany(companyId, ContractorModel);
+    const contractor = new contractorCompanyModel(req.body.contractor);
+    await contractor.save();
+    res.status(201).json({
+      message: 'Cliente cadastrado!',
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erro ao cadastrar cliente!',
+      error: err,
+    });
+  }
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedContractor = await ContractorModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const contractorCompanyModel = await getModelForCompany(companyId, ContractorModel);
+    const savedContractor = await contractorCompanyModel.findOneAndUpdate(
       { _id: req.body.contractor._id, __v: req.body.contractor.__v },
       req.body.contractor,
       { upsert: false }
@@ -42,12 +35,6 @@ router.post('/update', async (req, res, next) => {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, reabra o documento e tente novamente.',
       });
-
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        contractorsMap[req.body.contractor._id] = cloneDeep(savedContractor.toJSON());
-      });
-    }
     return res.status(200).json({
       message: 'Cliente Atualizado!',
     });
@@ -60,12 +47,17 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const contractors: Contractor[] = await ContractorModel.find({});
-    contractors.map((contractor) => (contractorsMap[contractor._id] = cloneDeep(contractor)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const contractorCompanyModel = await getModelForCompany(companyId, ContractorModel);
+    const contractors: Contractor[] = await contractorCompanyModel.find({});
+    return res.status(200).json(contractors);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar clientes!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(contractorsMap)));
 });
 
 export default router;
