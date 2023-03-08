@@ -2,15 +2,26 @@ import { ElementRef } from '@angular/core';
 
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { codeSort, formatDate, idToProperty } from './utils';
-import { GROUPING_TYPES, ReportValue } from 'app/pages/dashboard/report-menu/annual-report/annual-report.component';
+import {
+  GROUPING_TYPES,
+  ReportValue,
+  TeamData,
+} from 'app/pages/dashboard/report-menu/annual-report/annual-report.component';
 
 import { Contract, ContractExpense } from '@models/contract';
 import { Sector } from '@models/shared/sector';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 interface ExpensesData {
   expenses: ContractExpense[];
   subTotal: string;
+}
+
+interface Metrics {
+  name: string;
+  property: keyof TeamData;
+  description: string;
 }
 
 export function generateExpensesReport(contract: Contract): string {
@@ -116,6 +127,146 @@ export function generateUsersReport(
     csv += data[key].overview.opened_contracts_team.toString() + ';';
     csv += data[key].overview.concluded_contracts_manager.toString() + ';';
     csv += data[key].overview.concluded_contracts_team.toString();
+    csv += '\r\n';
+  }
+  return csv;
+}
+
+export function generateTeamsReport(
+  data: Record<string, TeamData[]>,
+  teamRevival: (id: string | Team) => Team
+): string {
+  const header = [
+    'ID',
+    'Metrica',
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+    'Descrição',
+  ];
+  const metrics: Metrics[] = [
+    {
+      name: 'R$ Suporte Empresarial',
+      property: 'support_organization',
+      description: 'Soma do valor BRUTO das OEs dos contratos do time nessa modalidade no mês',
+    },
+    {
+      name: 'R$ Intermediação de Negócios',
+      property: 'support_personal',
+      description: 'Soma do valor BRUTO das OEs dos contratos do time nessa modalidade no mês',
+    },
+    {
+      name: 'R$ Total Bruto',
+      property: 'oe_gross',
+      description: 'Soma através da plataforma de todas as OEs Valor bruto no mês',
+    },
+    { name: 'R$ Imposto Recolhido', property: 'oe_nf', description: 'Soma do valor dos impostos das OEs no mês' },
+    {
+      name: 'R$ Taxa Empresarial',
+      property: 'oe_organization',
+      description: 'Soma do valor da taxa empresarial das OEs no mês',
+    },
+    { name: 'R$ Total Liquido', property: 'oe_net', description: 'Soma do valor liquido das OEs no mês' },
+    {
+      name: 'Ordens de Pagamento',
+      property: 'op',
+      description: 'Soma do valor total das Ordens de pagamento PAGAS no mês',
+    },
+    {
+      name: 'Despesas',
+      property: 'expenses',
+      description: 'Despesas PAGAS no mês, soma de todos os contratos do time',
+    },
+    { name: 'Total de Despesas', property: 'expenses_total', description: 'Soma do item 7 + item 8' },
+    { name: 'Balanço Liquido do time', property: 'net_balance', description: 'Diferença do item 6 - item 9' },
+    {
+      name: 'R$ Orçamentos Enviados',
+      property: 'sent_invoices_value',
+      description: 'Soma dos valores dos orçamentos enviados no mês',
+    },
+    {
+      name: 'R$ Orçamentos Fechados',
+      property: 'concluded_invoices_value',
+      description: 'Soma dos valores dos orçamentos fechados no mês',
+    },
+    {
+      name: 'Nº Orçamentos Enviados',
+      property: 'sent_invoices',
+      description: 'Soma da quantidade de orçamentos enviados no mês',
+    },
+    {
+      name: 'Nº Orçamentos Fechados',
+      property: 'concluded_invoices',
+      description: 'Soma da quantidade de orçamentos fechados no mês',
+    },
+    {
+      name: 'Média Tempo de Conversão',
+      property: 'convertion_time',
+      description:
+        'MÉDIA da Diferença da data de envio do orçamento e da data que o orçamento foi fechado, considerando todos os contrato FECHADOS deste mês. Pego Os orçamentos fechados, faço a diferença da data de envio (pode ter sido dois meses atrás) e da data que ele foi fechado (mês vigente), e faço uma média disso. Teremos o Tempo de Conversão médio do time naquele mês',
+    },
+    {
+      name: 'Caixa do Time',
+      property: 'balance',
+      description: 'No momento, soma do caixa dos contratos no dia que o relatório foi gerado',
+    },
+    {
+      name: 'R$ Saldo dos Contratos',
+      property: 'not_paid',
+      description: 'Soma da diferença do valor bruto dos contrato e dar OEs PAGAS',
+    },
+    {
+      name: 'Nº Contratos em andamento',
+      property: 'ongoing_contracts',
+      description: 'Contratos em andamento no dia da exportação',
+    },
+    {
+      name: 'R$ OE em aberto',
+      property: 'ongoing_oe_value',
+      description: 'Soma do R$ das OEs "a receber" no dia da exportação',
+    },
+    {
+      name: 'Nº OE em aberto',
+      property: 'ongoing_oe',
+      description: 'Soma da quantidade de OEs "a receber" no dia da exportação',
+    },
+    {
+      name: 'R$ Orçamentos em Análise',
+      property: 'ongoing_invoice_value',
+      description: 'Soma dos valores de orçamento em análise no dia da exportação',
+    },
+    {
+      name: 'Nº Orçamentos em Análise',
+      property: 'ongoing_invoice',
+      description: 'Soma da quantidade de orçamentos em análise no dia da exportação',
+    },
+  ];
+  let csv = '';
+
+  for (const key of Object.keys(data)) {
+    csv += idToProperty(key, teamRevival, 'abrev') + ';' + idToProperty(key, teamRevival, 'name') + ';';
+    csv += formatDate(new Date()) + ';;;;;;;;;;;;\r\n';
+    csv += header.join(';');
+    csv += '\r\n';
+    const teamData = data[key];
+    for (let i = 0; i < metrics.length; i++) {
+      csv += (i + 1).toString() + ';';
+      csv += metrics[i].name + ';';
+      for (let j = 0; j < data[key].length; j++) {
+        csv += teamData[j][metrics[i].property] + ';';
+      }
+      csv += metrics[i].description + ';';
+      csv += '\r\n';
+    }
     csv += '\r\n';
   }
   return csv;

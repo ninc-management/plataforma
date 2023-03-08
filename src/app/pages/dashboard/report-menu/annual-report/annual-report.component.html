@@ -23,7 +23,7 @@
         [required]="true"
         [status]="reportTypeSelector.dirty ? (reportTypeSelector.invalid ? 'danger' : 'success') : 'basic'"
         [attr.aria-invalid]="reportTypeSelector.invalid && reportTypeSelector.touched ? true : null"
-        [disabled]="selectedGroupingType == groupingTypes.CONTRACT"
+        [disabled]="[groupingTypes.CONTRACT, groupingTypes.TEAMS].includes(selectedGroupingType)"
       >
         <nb-option *ngFor="let reportType of availableReportTypes" [value]="reportType">{{ reportType }}</nb-option>
       </nb-select>
