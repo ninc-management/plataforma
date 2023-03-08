@@ -4,7 +4,7 @@ import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
 
-import { generateUsersReport } from 'app/shared/report-generator';
+import { generateTeamsReport, generateUsersReport } from 'app/shared/report-generator';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
@@ -15,12 +15,14 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.
 
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 export enum GROUPING_TYPES {
   USER = 'Usuário',
   SECTOR = 'Setor',
   CONTRACT = 'Contrato',
+  TEAMS = 'Time',
 }
 
 enum REPORT_TYPES {
@@ -57,7 +59,33 @@ export interface ReportValue {
   overview: Overview;
 }
 
-const defaultMonthlyData = new Array(12);
+export interface TeamData {
+  support_organization: string;
+  support_personal: string;
+  oe_gross: string;
+  oe_net: string;
+  oe_nf: string;
+  oe_organization: string;
+  op: string;
+  expenses: string;
+  expenses_total: string;
+  net_balance: string;
+  sent_invoices: number;
+  sent_invoices_value: string;
+  concluded_invoices: number;
+  concluded_invoices_value: string;
+  convertion_time: number;
+  balance: string;
+  not_paid: string;
+  ongoing_contracts: number;
+  ongoing_oe: number;
+  ongoing_oe_value: string;
+  ongoing_invoice: number;
+  ongoing_invoice_value: string;
+}
+
+const defaultMonthlyData = new Array<IndividualData>(12);
+const defaultTeamMonthlyData = new Array<TeamData>(12);
 
 @Component({
   selector: 'ngx-annual-report',
@@ -75,6 +103,7 @@ export class AnnualReportComponent implements OnInit {
   availableGroupingTypes = Object.values(GROUPING_TYPES);
 
   users: User[] = [];
+  teams: Team[] = [];
   config: PlatformConfig = new PlatformConfig();
 
   constructor(
@@ -86,10 +115,8 @@ export class AnnualReportComponent implements OnInit {
     private stringUtil: StringUtilService,
     private configService: ConfigService
   ) {
-    for (
-      let i = 0;
-      i < defaultMonthlyData.length;
-      defaultMonthlyData[i++] = {
+    for (let i = 0; i < defaultMonthlyData.length; i++) {
+      defaultMonthlyData[i] = {
         received: '0,00',
         expenses: '0,00',
         sent_invoices_manager: 0,
@@ -98,23 +125,53 @@ export class AnnualReportComponent implements OnInit {
         opened_contracts_team: 0,
         concluded_contracts_manager: 0,
         concluded_contracts_team: 0,
-      }
-    );
+      };
+      defaultTeamMonthlyData[i] = {
+        support_organization: '0,00',
+        support_personal: '0,00',
+        oe_gross: '0,00',
+        oe_net: '0,00',
+        oe_nf: '0,00',
+        oe_organization: '0,00',
+        op: '0,00',
+        expenses: '0,00',
+        expenses_total: '0,00',
+        net_balance: '0,00',
+        sent_invoices: 0,
+        sent_invoices_value: '0,00',
+        concluded_invoices: 0,
+        concluded_invoices_value: '0,00',
+        convertion_time: 0,
+        balance: '0,00',
+        not_paid: '0,00',
+        ongoing_contracts: 0,
+        ongoing_oe: 0,
+        ongoing_oe_value: '0,00',
+        ongoing_invoice: 0,
+        ongoing_invoice_value: '0,00',
+      };
+    }
   }
 
   ngOnInit(): void {
     combineLatest([
       this.userService.getUsers(),
       this.configService.getConfig(),
+      this.teamService.getTeams(),
       this.userService.isDataLoaded$,
       this.configService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
     ])
       .pipe(
-        skipWhile(([, , isUserDataLoaded, isConfigDataLoaded]) => !(isUserDataLoaded && isConfigDataLoaded)),
+        skipWhile(
+          ([, , isUserDataLoaded, isConfigDataLoaded, isTeamDataLoaded]) =>
+            !(isUserDataLoaded && isConfigDataLoaded && isTeamDataLoaded)
+        ),
         take(1)
       )
-      .subscribe(([users, config, ,]) => {
+      .subscribe(([users, config, teams, , ,]) => {
         this.users = users;
+        this.teams = teams;
         this.config = config[0];
       });
   }
@@ -160,6 +217,16 @@ export class AnnualReportComponent implements OnInit {
           concluded_contracts_team: 0,
         },
       };
+    });
+
+    return cloneDeep(data);
+  }
+
+  createTeamReportObject(): Record<string, TeamData[]> {
+    const data: Record<string, TeamData[]> = {};
+
+    this.teams.forEach((team) => {
+      data[team._id] = cloneDeep(defaultTeamMonthlyData);
     });
 
     return cloneDeep(data);
@@ -224,7 +291,6 @@ export class AnnualReportComponent implements OnInit {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.locals.liquid = this.contractService.contractNetValue(monthContract.contract);
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
                 if (monthContract.year == year) {
@@ -274,7 +340,6 @@ export class AnnualReportComponent implements OnInit {
               ).forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
-                    monthExpense.expense.paid &&
                     monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
                     monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
                     !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
@@ -407,7 +472,6 @@ export class AnnualReportComponent implements OnInit {
           )
         ).forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
-            monthContract.contract.locals.liquid = this.contractService.contractNetValue(monthContract.contract);
             for (const sector of Object.keys(data)) {
               if (
                 this.teamService.isSectorEqual(
@@ -466,7 +530,6 @@ export class AnnualReportComponent implements OnInit {
               ).forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
-                    monthExpense.expense.paid &&
                     monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
                     monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
                     !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
@@ -547,6 +610,232 @@ export class AnnualReportComponent implements OnInit {
     );
   }
 
+  computeReportDataByTeam(year: number): Observable<Record<string, TeamData[]>> {
+    const data = this.createTeamReportObject();
+
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      map(([contracts, invoices, ,]) => {
+        contracts = contracts.map((contract) => this.contractService.fillContract(contract));
+        Object.values(
+          groupBy(
+            invoices
+              .filter((invoice) => {
+                return invoice.status != INVOICE_STATOOS.INVALIDADO;
+              })
+              .map((invoice) => ({ invoice: invoice, month: getMonth(invoice.created) })),
+            '1'
+          )
+        ).forEach((monthInvoices) => {
+          monthInvoices.forEach((monthInvoice) => {
+            for (const team of Object.keys(data)) {
+              if (
+                this.teamService.isTeamEqual(monthInvoice.invoice.nortanTeam, team) &&
+                getYear(monthInvoice.invoice.created) == year
+              ) {
+                data[team][monthInvoice.month].sent_invoices += 1;
+                data[team][monthInvoice.month].sent_invoices_value = this.stringUtil.sumMoney(
+                  data[team][monthInvoice.month].sent_invoices_value,
+                  monthInvoice.invoice.value
+                );
+                if (
+                  monthInvoice.invoice.status == INVOICE_STATOOS.FECHADO &&
+                  getYear(monthInvoice.invoice.created) == year
+                ) {
+                  data[team][monthInvoice.month].concluded_invoices += 1;
+                  data[team][monthInvoice.month].concluded_invoices_value = this.stringUtil.sumMoney(
+                    data[team][monthInvoice.month].concluded_invoices_value,
+                    monthInvoice.invoice.value
+                  );
+                }
+                if (
+                  monthInvoice.invoice.status == INVOICE_STATOOS.EM_ANALISE &&
+                  getYear(monthInvoice.invoice.created) <= year
+                ) {
+                  //TODO: count invoices by status history
+                  let month = monthInvoice.month;
+                  if (getYear(monthInvoice.invoice.created) < year) month = 0;
+                  data[team][month].ongoing_invoice += 1;
+                  data[team][month].ongoing_invoice_value = this.stringUtil.sumMoney(
+                    data[team][month].ongoing_invoice_value,
+                    monthInvoice.invoice.value
+                  );
+                }
+              }
+            }
+          });
+        });
+        Object.values(
+          groupBy(
+            contracts.map((contract) => ({
+              contract: contract,
+              month: getMonth(contract.created),
+              year: getYear(contract.created),
+            })),
+            '1'
+          )
+        ).forEach((monthContracts) => {
+          monthContracts.forEach((monthContract) => {
+            for (const team of Object.keys(data)) {
+              if (
+                this.teamService.isTeamEqual(
+                  this.invoiceService.idToInvoice(monthContract.contract.invoice as Invoice | string).nortanTeam,
+                  team
+                )
+              ) {
+                if (
+                  monthContract.year <= year &&
+                  [CONTRACT_STATOOS.A_RECEBER, CONTRACT_STATOOS.EM_ANDAMENTO].includes(
+                    monthContract.contract.status as CONTRACT_STATOOS
+                  )
+                ) {
+                  //TODO: count invoices by status history
+                  let month = monthContract.month;
+                  if (getYear(monthContract.contract.created) < year) month = 0;
+                  data[team][month].ongoing_contracts += 1;
+                }
+                // Sum expenses in related months
+                Object.values(
+                  groupBy(
+                    monthContract.contract.expenses
+                      .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
+                      .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                    '1'
+                  )
+                ).forEach((monthExpenses) => {
+                  monthExpenses.forEach((monthExpense) => {
+                    if (
+                      monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
+                      monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
+                      !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                    ) {
+                      data[team][monthExpense.month].expenses = this.stringUtil.sumMoney(
+                        data[team][monthExpense.month].expenses,
+                        monthExpense.expense.value
+                      );
+                    }
+                  });
+                });
+                // Sum payments in related months
+                Object.values(
+                  groupBy(
+                    monthContract.contract.payments
+                      .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
+                      .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
+                    '1'
+                  )
+                ).forEach((monthPayments) => {
+                  monthPayments.forEach((monthPayment) => {
+                    data[team][monthPayment.month].op = this.stringUtil.sumMoney(
+                      data[team][monthPayment.month].op,
+                      monthPayment.payment.value
+                    );
+                  });
+                });
+                // Sum receipts in related months
+                Object.values(
+                  groupBy(
+                    monthContract.contract.receipts.map((receipt) => ({
+                      receipt: receipt,
+                      month: getMonth(receipt.paidDate as Date),
+                    })),
+                    '1'
+                  )
+                ).forEach((monthReceipts) => {
+                  monthReceipts.forEach((monthReceipt) => {
+                    if (
+                      monthReceipt.receipt.paid &&
+                      monthReceipt.receipt.paidDate &&
+                      getYear(monthReceipt.receipt.paidDate) == year
+                    ) {
+                      data[team][monthReceipt.month].oe_gross = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_gross,
+                        monthReceipt.receipt.value
+                      );
+                      data[team][monthReceipt.month].oe_net = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_net,
+                        this.contractService.receiptNetValue(monthReceipt.receipt)
+                      );
+                      data[team][monthReceipt.month].oe_organization = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_organization,
+                        this.stringUtil.applyPercentage(
+                          monthReceipt.receipt.value,
+                          monthReceipt.receipt.nortanPercentage
+                        )
+                      );
+                      data[team][monthReceipt.month].oe_nf = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_nf,
+                        this.stringUtil.applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.notaFiscal)
+                      );
+                      if (
+                        monthContract.contract.invoice &&
+                        this.invoiceService.idToInvoice(monthContract.contract.invoice).administration == 'nortan'
+                      ) {
+                        data[team][monthReceipt.month].support_organization = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].support_organization,
+                          monthReceipt.receipt.value
+                        );
+                      } else {
+                        data[team][monthReceipt.month].support_personal = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].support_personal,
+                          monthReceipt.receipt.value
+                        );
+                      }
+                    } else {
+                      if (!monthReceipt.receipt.paid && getYear(monthReceipt.receipt.created) <= year) {
+                        //TODO: count invoices by status history
+                        let month = monthContract.month;
+                        if (getYear(monthContract.contract.created) < year) month = 0;
+                        data[team][month].ongoing_oe += 1;
+                        data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
+                          data[team][month].ongoing_oe_value,
+                          monthReceipt.receipt.value
+                        );
+                      }
+                    }
+                  });
+                });
+                // To receive value
+                // if (monthContract.contract.invoice) {
+                //   const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
+                //   invoice.team.forEach((member) => {
+                //     if (this.teamService.isSectorEqual(member.team, team)) {
+                //       const toReceive = this.stringUtil.sumMoney(
+                //         this.contractService.notPaidValue(member.distribution, member.user, monthContract.contract),
+                //         this.stringUtil.numberToMoney(
+                //           this.contractService.expensesContributions(monthContract.contract, member.user).user.cashback
+                //         )
+                //       );
+                //       data[team].overview.to_receive = this.stringUtil.sumMoney(
+                //         data[team].overview.to_receive,
+                //         toReceive
+                //       );
+                //     }
+                //   });
+                // }
+              }
+            }
+          });
+        });
+        for (const team of Object.keys(data)) {
+          for (let i = 0; i < data[team].length; i++) {
+            data[team][i].expenses_total = this.stringUtil.sumMoney(data[team][i].op, data[team][i].expenses);
+            data[team][i].net_balance = this.stringUtil.subtractMoney(
+              data[team][i].oe_net,
+              data[team][i].expenses_total
+            );
+          }
+        }
+        return data;
+      })
+    );
+  }
+
   async contractsYearReview(year: number): Promise<string> {
     const tmp = [];
     for (let i = 0; i < 12; i++) {
@@ -608,30 +897,46 @@ export class AnnualReportComponent implements OnInit {
   downloadReport(): void {
     this.isGenerating = true;
     setTimeout(() => {
-      if (this.selectedGroupingType == GROUPING_TYPES.CONTRACT) {
-        from(this.contractsYearReview(this.selectedYear)).subscribe((csv: string) => {
-          const blob = new Blob([csv], { type: 'text/csv' });
-          saveAs(blob, `Relatorio Taxas ${this.selectedYear}.csv`);
-          this.isGenerating = false;
-        });
-      } else {
-        (this.selectedGroupingType == GROUPING_TYPES.SECTOR
-          ? this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-          : this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
-        )
-          .pipe(take(1))
-          .subscribe((data: Record<string, ReportValue>) => {
-            const csv = generateUsersReport(
-              data,
-              this.selectedGroupingType as GROUPING_TYPES,
-              this.userService.idToUser.bind(this.userService),
-              this.teamService.idToSectorComposedName.bind(this.teamService)
-            );
-
+      switch (this.selectedGroupingType) {
+        case GROUPING_TYPES.CONTRACT: {
+          from(this.contractsYearReview(this.selectedYear)).subscribe((csv: string) => {
             const blob = new Blob([csv], { type: 'text/csv' });
-            saveAs(blob, `Relatorio ${this.selectedReportType} ${this.selectedYear}.csv`);
+            saveAs(blob, `Relatorio Taxas ${this.selectedYear}.csv`);
             this.isGenerating = false;
           });
+          break;
+        }
+        case GROUPING_TYPES.TEAMS: {
+          this.computeReportDataByTeam(this.selectedYear)
+            .pipe(take(1))
+            .subscribe((data: Record<string, TeamData[]>) => {
+              const csv = generateTeamsReport(data, this.teamService.idToTeam.bind(this.teamService));
+
+              const blob = new Blob([csv], { type: 'text/csv' });
+              saveAs(blob, `Relatorio de Metricas ${this.selectedYear}.csv`);
+              this.isGenerating = false;
+            });
+          break;
+        }
+        default: {
+          (this.selectedGroupingType == GROUPING_TYPES.SECTOR
+            ? this.computeReportDataBySector(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+            : this.computeReportData(this.selectedReportType as REPORT_TYPES, this.selectedYear)
+          )
+            .pipe(take(1))
+            .subscribe((data: Record<string, ReportValue>) => {
+              const csv = generateUsersReport(
+                data,
+                this.selectedGroupingType as GROUPING_TYPES,
+                this.userService.idToUser.bind(this.userService),
+                this.teamService.idToSectorComposedName.bind(this.teamService)
+              );
+
+              const blob = new Blob([csv], { type: 'text/csv' });
+              saveAs(blob, `Relatorio ${this.selectedReportType} ${this.selectedYear}.csv`);
+              this.isGenerating = false;
+            });
+        }
       }
     }, 200);
   }
