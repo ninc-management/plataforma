@@ -29,11 +29,12 @@ router.post('/update', async (req, res, next) => {
     const teamCompanyModel = await getModelForCompany(companyId, TeamModel);
     if (req.body.creatingExpense) {
       const newExpense = req.body.team.expenses.pop();
-      await teamCompanyModel.findOne({ _id: req.body.team._id }).then((team) => {
+      const team = await teamCompanyModel.findById(req.body.team._id);
+      if (team) {
         newExpense.code = '#' + team.expenses.length.toString();
         team.expenses.push(newExpense);
         req.body.team.expenses = cloneDeep(team.expenses);
-      });
+      }
     }
     await teamCompanyModel.findByIdAndUpdate(req.body.team._id, req.body.team, { upsert: false });
     return res.status(200).json({
