@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { getYear } from 'date-fns';
 import saveAs from 'file-saver';
 import { combineLatest, skipWhile, take } from 'rxjs';
 
+import { EXCLUDED_TYPOLOGIES } from 'app/shared/report-generator';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -12,7 +12,7 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { codeSort, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
-import { Contract, ContractLocals } from '@models/contract';
+import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
@@ -62,6 +62,11 @@ export class OngoingContractsReportComponent implements OnInit {
   }
 
   getReportReceivedValue(contract: Contract): string {
+    if (
+      this.invoiceService.idToInvoice(contract.invoice as Invoice | string).type.toLowerCase() ==
+      EXCLUDED_TYPOLOGIES.BALANCE
+    )
+      return '0,00';
     return this.contractService.toNetValue(
       this.stringUtil.numberToMoney(
         contract.receipts.reduce((accumulator: number, recipt: any) => {
@@ -76,19 +81,17 @@ export class OngoingContractsReportComponent implements OnInit {
   }
 
   getReportExpensesValue(contract: Contract): string {
-    const filteredExpenses = contract.expenses.filter((expense) => {
-      return expense.paid && expense.paidDate && getYear(expense.paidDate) == 2021;
-    });
-
-    let totalExpenseValue = '0,00';
-    filteredExpenses.map((expense) => {
-      totalExpenseValue = this.stringUtil.sumMoney(totalExpenseValue, expense.value);
-    });
-
-    return totalExpenseValue;
+    return contract.expenses
+      .filter((expense) => expense.paid && expense.paidDate)
+      .reduce((totalExpenseValue, expense) => this.stringUtil.sumMoney(totalExpenseValue, expense.value), '0,00');
   }
 
   getReportContractNotPaid(contract: Contract, invoice: Invoice): string {
+    if (
+      this.invoiceService.idToInvoice(contract.invoice as Invoice | string).type.toLowerCase() ==
+      EXCLUDED_TYPOLOGIES.BALANCE
+    )
+      return '0,00';
     const paidValue = this.contractService.toNetValue(
       this.stringUtil.numberToMoney(
         contract.receipts.reduce((accumulator: number, recipt: any) => {

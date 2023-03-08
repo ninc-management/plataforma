@@ -13,6 +13,14 @@ import { Sector } from '@models/shared/sector';
 import { Team } from '@models/team';
 import { User } from '@models/user';
 
+export enum EXCLUDED_TYPOLOGIES {
+  BALANCE = 'caixa',
+}
+
+export enum EXCLUDED_EXPENSE_TYPES {
+  TRANSFER = 'Transferência',
+}
+
 interface ExpensesData {
   expenses: ContractExpense[];
   subTotal: string;
@@ -274,14 +282,16 @@ export function generateTeamsReport(
 
 function mapExpensesByCategory(contract: Contract): Record<string, ExpensesData> {
   contract.expenses.sort((a, b) => codeSort(1, a.code, b.code));
-  return contract.expenses.reduce((mappedExpenses: Record<string, ExpensesData>, expense) => {
-    if (!mappedExpenses[expense.type]) {
-      mappedExpenses[expense.type] = { expenses: [], subTotal: '0' };
-      mappedExpenses[expense.type].expenses = [];
-    }
-    mappedExpenses[expense.type].expenses.push(expense);
-    return mappedExpenses;
-  }, {});
+  return contract.expenses
+    .filter((expense) => expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER)
+    .reduce((mappedExpenses: Record<string, ExpensesData>, expense) => {
+      if (!mappedExpenses[expense.type]) {
+        mappedExpenses[expense.type] = { expenses: [], subTotal: '0' };
+        mappedExpenses[expense.type].expenses = [];
+      }
+      mappedExpenses[expense.type].expenses.push(expense);
+      return mappedExpenses;
+    }, {});
 }
 
 function getExpensesTotalValue(mappedExpenses: Record<string, ExpensesData>): string {
