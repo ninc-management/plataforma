@@ -4,7 +4,12 @@ import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
 
-import { generateTeamsReport, generateUsersReport } from 'app/shared/report-generator';
+import {
+  EXCLUDED_EXPENSE_TYPES,
+  EXCLUDED_TYPOLOGIES,
+  generateTeamsReport,
+  generateUsersReport,
+} from 'app/shared/report-generator';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
@@ -333,7 +338,13 @@ export class AnnualReportComponent implements OnInit {
               Object.values(
                 groupBy(
                   monthContract.contract.expenses
-                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
+                    .filter(
+                      (expense) =>
+                        expense.paid &&
+                        expense.paidDate &&
+                        getYear(expense.paidDate) == year &&
+                        expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                    )
                     .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                   '1'
                 )
@@ -523,7 +534,13 @@ export class AnnualReportComponent implements OnInit {
               Object.values(
                 groupBy(
                   monthContract.contract.expenses
-                    .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
+                    .filter(
+                      (expense) =>
+                        expense.paid &&
+                        expense.paidDate &&
+                        getYear(expense.paidDate) == year &&
+                        expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                    )
                     .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                   '1'
                 )
@@ -703,7 +720,13 @@ export class AnnualReportComponent implements OnInit {
                 Object.values(
                   groupBy(
                     monthContract.contract.expenses
-                      .filter((expense) => expense.paid && expense.paidDate && getYear(expense.paidDate) == year)
+                      .filter(
+                        (expense) =>
+                          expense.paid &&
+                          expense.paidDate &&
+                          getYear(expense.paidDate) == year &&
+                          expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                      )
                       .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                     '1'
                   )
@@ -738,68 +761,74 @@ export class AnnualReportComponent implements OnInit {
                   });
                 });
                 // Sum receipts in related months
-                Object.values(
-                  groupBy(
-                    monthContract.contract.receipts.map((receipt) => ({
-                      receipt: receipt,
-                      month: getMonth(receipt.paidDate as Date),
-                    })),
-                    '1'
-                  )
-                ).forEach((monthReceipts) => {
-                  monthReceipts.forEach((monthReceipt) => {
-                    if (
-                      monthReceipt.receipt.paid &&
-                      monthReceipt.receipt.paidDate &&
-                      getYear(monthReceipt.receipt.paidDate) == year
-                    ) {
-                      data[team][monthReceipt.month].oe_gross = this.stringUtil.sumMoney(
-                        data[team][monthReceipt.month].oe_gross,
-                        monthReceipt.receipt.value
-                      );
-                      data[team][monthReceipt.month].oe_net = this.stringUtil.sumMoney(
-                        data[team][monthReceipt.month].oe_net,
-                        this.contractService.receiptNetValue(monthReceipt.receipt)
-                      );
-                      data[team][monthReceipt.month].oe_organization = this.stringUtil.sumMoney(
-                        data[team][monthReceipt.month].oe_organization,
-                        this.stringUtil.applyPercentage(
-                          monthReceipt.receipt.value,
-                          monthReceipt.receipt.nortanPercentage
-                        )
-                      );
-                      data[team][monthReceipt.month].oe_nf = this.stringUtil.sumMoney(
-                        data[team][monthReceipt.month].oe_nf,
-                        this.stringUtil.applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.notaFiscal)
-                      );
+                if (
+                  this.invoiceService
+                    .idToInvoice(monthContract.contract.invoice as Invoice | string)
+                    .type.toLowerCase() != EXCLUDED_TYPOLOGIES.BALANCE
+                ) {
+                  Object.values(
+                    groupBy(
+                      monthContract.contract.receipts.map((receipt) => ({
+                        receipt: receipt,
+                        month: getMonth(receipt.paidDate as Date),
+                      })),
+                      '1'
+                    )
+                  ).forEach((monthReceipts) => {
+                    monthReceipts.forEach((monthReceipt) => {
                       if (
-                        monthContract.contract.invoice &&
-                        this.invoiceService.idToInvoice(monthContract.contract.invoice).administration == 'nortan'
+                        monthReceipt.receipt.paid &&
+                        monthReceipt.receipt.paidDate &&
+                        getYear(monthReceipt.receipt.paidDate) == year
                       ) {
-                        data[team][monthReceipt.month].support_organization = this.stringUtil.sumMoney(
-                          data[team][monthReceipt.month].support_organization,
+                        data[team][monthReceipt.month].oe_gross = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].oe_gross,
                           monthReceipt.receipt.value
                         );
+                        data[team][monthReceipt.month].oe_net = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].oe_net,
+                          this.contractService.receiptNetValue(monthReceipt.receipt)
+                        );
+                        data[team][monthReceipt.month].oe_organization = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].oe_organization,
+                          this.stringUtil.applyPercentage(
+                            monthReceipt.receipt.value,
+                            monthReceipt.receipt.nortanPercentage
+                          )
+                        );
+                        data[team][monthReceipt.month].oe_nf = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].oe_nf,
+                          this.stringUtil.applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.notaFiscal)
+                        );
+                        if (
+                          monthContract.contract.invoice &&
+                          this.invoiceService.idToInvoice(monthContract.contract.invoice).administration == 'nortan'
+                        ) {
+                          data[team][monthReceipt.month].support_organization = this.stringUtil.sumMoney(
+                            data[team][monthReceipt.month].support_organization,
+                            monthReceipt.receipt.value
+                          );
+                        } else {
+                          data[team][monthReceipt.month].support_personal = this.stringUtil.sumMoney(
+                            data[team][monthReceipt.month].support_personal,
+                            monthReceipt.receipt.value
+                          );
+                        }
                       } else {
-                        data[team][monthReceipt.month].support_personal = this.stringUtil.sumMoney(
-                          data[team][monthReceipt.month].support_personal,
-                          monthReceipt.receipt.value
-                        );
+                        if (!monthReceipt.receipt.paid && getYear(monthReceipt.receipt.created) <= year) {
+                          //TODO: count invoices by status history
+                          let month = monthContract.month;
+                          if (getYear(monthContract.contract.created) < year) month = 0;
+                          data[team][month].ongoing_oe += 1;
+                          data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
+                            data[team][month].ongoing_oe_value,
+                            monthReceipt.receipt.value
+                          );
+                        }
                       }
-                    } else {
-                      if (!monthReceipt.receipt.paid && getYear(monthReceipt.receipt.created) <= year) {
-                        //TODO: count invoices by status history
-                        let month = monthContract.month;
-                        if (getYear(monthContract.contract.created) < year) month = 0;
-                        data[team][month].ongoing_oe += 1;
-                        data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
-                          data[team][month].ongoing_oe_value,
-                          monthReceipt.receipt.value
-                        );
-                      }
-                    }
+                    });
                   });
-                });
+                }
                 // To receive value
                 // if (monthContract.contract.invoice) {
                 //   const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
