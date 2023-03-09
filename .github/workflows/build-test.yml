@@ -1,0 +1,40 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Development
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main, demo, production]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    name: 🏗️ Build and Test
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: production
+      - name: 🧩 Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: 🌐 Install dependencies
+        run: npm i
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: 🏗️ Build and test project
+        run: npm run lint:ci && npm run test
+

@@ -3,13 +3,13 @@
 name: Production
 
 # Controls when the action will run.
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [production]
+# on:
+#   # Triggers the workflow on push or pull request events but only for the main branch
+#   push:
+#     branches: [production]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -27,10 +27,10 @@ jobs:
         with:
           fetch-depth: 0
           ref: production
-      - name: 🧩 Use Node.js 12.x
+      - name: 🧩 Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
-          node-version: '12.x'
+          node-version: '16.x'
       - name: 🌐 Install dependencies
         run: npm i
         env:
@@ -48,8 +48,8 @@ jobs:
           ONEDRIVE_NORTAN_ID: ${{ secrets.ONEDRIVE_NORTAN_ID }}
           ONEDRIVE_ADM_ID: ${{ secrets.ONEDRIVE_ADM_ID }}
           API_TOKEN: ${{secrets.API_TOKEN}}
-      - name: 🧹 Clean source files and uninstall dev packages
-        run: rm -rf src/app src/assets backend/src && npm prune --production
+      - name: 🧹 Clean source files
+        run: rm -rf src/app src/assets backend/src
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.1.0
         with:
