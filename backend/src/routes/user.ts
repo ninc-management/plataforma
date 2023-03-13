@@ -1,7 +1,9 @@
 import * as express from 'express';
 
 import ProspectModel, { Prospect } from '../models/prospect';
+import ProspectRefModel from '../models/prospectRef';
 import UserModel, { User } from '../models/user';
+import UserRefModel, { UserRef } from '../models/userRef';
 import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
@@ -71,10 +73,22 @@ router.delete('/approveProspect', async (req, res, next) => {
   try {
     const companyId = req.headers.companyid as string;
     const userCompanyModel = await getModelForCompany(companyId, UserModel);
-    const prospectCompanyModel = await getModelForCompany(companyId, ProspectModel);
-    const newUser = new userCompanyModel(req.body.prospect);
-    await newUser.save();
-    await prospectCompanyModel.findByIdAndDelete(req.body.prospect._id);
+
+    const newUserRef: UserRef = {
+      _id: req.body.prospect._id,
+      email: req.body.prospect.email,
+      company: req.body.prospect.company,
+      active: req.body.prospect.active,
+    };
+    const userRef = new UserRefModel(newUserRef);
+    await userRef.save();
+
+    const newUser: User = req.body.prospect;
+    newUser._id = newUser._id;
+    const user = new userCompanyModel(newUser);
+    await user.save();
+
+    await ProspectRefModel.findByIdAndDelete(req.body.prospect._id);
     return res.status(201).json({
       message: 'Prospecto aprovado com sucesso!',
     });
