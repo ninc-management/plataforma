@@ -538,7 +538,22 @@
           </div>
         </div>
       </div>
-      <button nbButton fullWidth status="primary" size="large">Atualizar</button>
+      <button
+        nbButton
+        fullWidth
+        status="primary"
+        size="large"
+        [disabled]="
+          !expenseConfigForm.valid ||
+          !invoiceConfigForm.valid ||
+          !profileConfigForm.valid ||
+          !generalConfigForm.valid ||
+          !moduleConfigForm.valid ||
+          !onedriveConfigForm.valid
+        "
+      >
+        Atualizar
+      </button>
     </form>
   </nb-tab>
   <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
