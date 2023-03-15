@@ -1,39 +1,32 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
 import CourseModel, { Course } from '../models/course';
-import { coursesMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const mutex = new Mutex();
 
-router.post('/', (req, res, next) => {
-  const course = new CourseModel(req.body.course);
-  mutex.acquire().then((release) => {
-    course
-      .save()
-      .then((savedCourse) => {
-        if (requested) coursesMap[savedCourse._id] = cloneDeep(savedCourse.toJSON());
-        release();
-        return res.status(201).json({
-          message: 'Curso cadastrado!',
-        });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao cadastrar curso!',
-          error: err,
-        });
-      });
-  });
+router.post('/', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const courseCompanyModel = await getModelForCompany(companyId, CourseModel);
+    const course = new courseCompanyModel(req.body.course);
+    await course.save();
+    return res.status(201).json({
+      message: 'Curso cadastrado!',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao cadastrar curso!',
+      error: err,
+    });
+  }
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const course = await CourseModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const courseCompanyModel = await getModelForCompany(companyId, CourseModel);
+    const course = await courseCompanyModel.findOneAndUpdate(
       { _id: req.body.course._id, __v: req.body.course.__v },
       req.body.course,
       {
@@ -43,11 +36,6 @@ router.post('/update', async (req, res, next) => {
     if (!course) {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
-      });
-    }
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        coursesMap[req.body.course._id] = cloneDeep(course.toJSON());
       });
     }
     return res.status(200).json({
@@ -61,19 +49,18 @@ router.post('/update', async (req, res, next) => {
   }
 });
 
-router.post('/count', (req, res) => {
-  res.json({
-    size: Array.from(Object.values(coursesMap)).length,
-  });
-});
-
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const courses: Course[] = await CourseModel.find({});
-    courses.map((course) => (coursesMap[course._id] = cloneDeep(course)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const courseCompanyModel = await getModelForCompany(companyId, CourseModel);
+    const courses: Course[] = await courseCompanyModel.find({});
+    return res.status(200).json(courses);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar cursos!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(coursesMap)));
 });
 
 export default router;
