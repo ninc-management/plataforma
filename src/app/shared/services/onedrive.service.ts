@@ -16,6 +16,7 @@ import { PlatformConfig } from '@models/platformConfig';
 export enum OneDriveFolders {
   CONTRACTS = 'contracts',
   PROVIDERS = 'providers',
+  TEAMS = 'teams',
 }
 
 @Injectable({
@@ -173,7 +174,13 @@ export class OneDriveService implements OnDestroy {
     return of('').pipe(take(1));
   }
 
-  deleteFiles(path: string, filesToRemove: UploadedFile[]): void {
+  deleteFiles(path: string, filesToRemove: UploadedFile[], oneDriveFolder: OneDriveFolders): void {
+    const onedriveId = {
+      [OneDriveFolders.PROVIDERS]: this.config.oneDriveConfig.providers.oneDriveId,
+      [OneDriveFolders.TEAMS]: this.config.oneDriveConfig.teams.oneDriveId,
+      [OneDriveFolders.CONTRACTS]: this.config.oneDriveConfig.contracts.oneDriveId,
+    };
+
     if (this.config.oneDriveConfig.isActive) {
       this.http
         .get(this.oneDriveURI() + path + ':/children')
@@ -184,9 +191,7 @@ export class OneDriveService implements OnDestroy {
               filesToRemove.forEach((file) => {
                 if (file.name === data.name) {
                   this.http
-                    .delete(
-                      environment.onedriveUri + this.config.oneDriveConfig.contracts.oneDriveId + '/items/' + data.id
-                    )
+                    .delete(environment.onedriveUri + onedriveId[oneDriveFolder] + '/items/' + data.id)
                     .pipe(take(1))
                     .subscribe(() => console.log('Arquivo apagado!'));
                   const index = filesToRemove.indexOf(file, 0);

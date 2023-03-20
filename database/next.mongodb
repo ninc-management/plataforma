@@ -11,3 +11,11 @@ db.users.find().forEach((user) => {
   user.company = company;
   db.users.replaceOne({ _id: user._id }, user);
 });
+
+db.platformconfigs.find().forEach((config) => {
+  config.oneDriveConfig.teams = {
+    oneDriveId: '',
+    folderId: '',
+  };
+  db.platformconfigs.replaceOne({ _id: config._id }, config);
+});
