@@ -169,6 +169,7 @@ export function isValidDate(
 }
 
 export function formatDate(date: Date, divider = '/'): string {
+  if (!date) return '';
   return format(date, 'dd' + divider + 'MM' + divider + 'yyyy');
 }
 
