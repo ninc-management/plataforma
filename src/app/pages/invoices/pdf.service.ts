@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import extenso from 'extenso';
+import { Img, PdfMakeWrapper } from 'pdfmake-wrapper';
 import pdfMake from 'pdfmake/build/pdfmake';
 import { ContentTable, ContextPageSize, TableCell } from 'pdfmake/interfaces';
-import { Img, PdfMakeWrapper } from 'pdfmake-wrapper';
 import { Subject, take } from 'rxjs';
 
 import { CompanyService } from 'app/shared/services/company.service';
