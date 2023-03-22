@@ -552,13 +552,22 @@ export class ContractService implements OnDestroy {
   }
 
   receiptNetValue(receipt: ContractReceipt): string {
-    if (isBefore(receipt.created, new Date('2022/09/01'))) {
+    if (isBefore(receipt.created, new Date('2023/04/05'))) {
       return this.oldReceiptNetValue(receipt);
     }
 
-    let receiptNetValue = receipt.value;
-    receiptNetValue = this.stringUtil.removePercentage(receiptNetValue, receipt.ISS);
-    receiptNetValue = this.toNetValue(receiptNetValue, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+    const receiptGrossValue = receipt.value;
+    let receiptNetValue = this.toNetValue(
+      receiptGrossValue,
+      this.stringUtil.subtractMoney(receipt.notaFiscal, receipt.ISS),
+      receipt.nortanPercentage,
+      receipt.created
+    );
+
+    receiptNetValue = this.stringUtil.subtractMoney(
+      receiptNetValue,
+      this.stringUtil.applyPercentage(receiptGrossValue, receipt.ISS)
+    );
 
     return receiptNetValue;
   }
@@ -575,7 +584,14 @@ export class ContractService implements OnDestroy {
   }
 
   private oldReceiptNetValue(receipt: ContractReceipt): string {
-    return this.toNetValue(receipt.value, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+    if (isBefore(receipt.created, new Date('2022/09/01'))) {
+      return this.toNetValue(receipt.value, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+    }
+
+    let receiptNetValue = receipt.value;
+    receiptNetValue = this.stringUtil.removePercentage(receiptNetValue, receipt.ISS);
+    receiptNetValue = this.toNetValue(receiptNetValue, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+    return receiptNetValue;
   }
 
   private isUserAnAER(user: User, invoice: Invoice): boolean {

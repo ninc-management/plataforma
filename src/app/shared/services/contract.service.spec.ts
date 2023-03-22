@@ -60,7 +60,7 @@ describe('ContractService', () => {
             case 2: {
               i += 1;
               const expectedContracts = reviveDates(mockedContracts);
-              expect(contracts.length).toBe(2);
+              expect(contracts.length).toBe(3);
               expect(contracts).toEqual(expectedContracts);
               test(expectedContracts);
               done();
@@ -153,7 +153,7 @@ describe('ContractService', () => {
           }
           case 2: {
             i += 1;
-            expect(contracts.length).toBe(2);
+            expect(contracts.length).toBe(3);
             expect(contracts).toEqual(reviveDates(mockedContracts));
             service.saveContract(mockedInvoices[2]);
             const req1 = httpMock.expectOne('/api/contract/');
@@ -196,7 +196,7 @@ describe('ContractService', () => {
             break;
           }
           case 3: {
-            expect(contracts.length).toBe(3);
+            expect(contracts.length).toBe(4);
             mockedContracts.push(tmpContract);
             expect(contracts).toEqual(reviveDates(mockedContracts));
             done();
@@ -246,7 +246,7 @@ describe('ContractService', () => {
           }
           case 2: {
             i += 1;
-            expect(contracts.length).toBe(2);
+            expect(contracts.length).toBe(3);
             expect(contracts).toEqual(reviveDates(mockedContracts));
             service.editContract(tmpContract);
             const req1 = httpMock.expectOne('/api/contract/update');
@@ -256,7 +256,7 @@ describe('ContractService', () => {
             break;
           }
           case 3: {
-            expect(contracts.length).toBe(2);
+            expect(contracts.length).toBe(3);
             expect(contracts[1].status).toBe(CONTRACT_STATOOS.A_RECEBER);
             done();
             break;
@@ -436,5 +436,11 @@ describe('ContractService', () => {
   baseTest('allActions should work', (expectedContracts: Contract[]) => {
     const allMockedActions = mockedChecklistItem[0].actionList.concat(mockedChecklistItem[1].actionList);
     expect(service.allActions()).toEqual(JSON.parse(JSON.stringify(allMockedActions)));
+  });
+
+  it('receiptNetValue should work', () => {
+    expect(service.receiptNetValue(mockedContracts[2].receipts[0])).toEqual('791,30');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[1])).toEqual('1.527,91');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[2])).toEqual('2.925,89');
   });
 });

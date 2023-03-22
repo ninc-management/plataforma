@@ -48,7 +48,7 @@ describe('InvoiceService', () => {
             }
             case 2: {
               const expectedInvoices = reviveDates(mockedInvoices);
-              expect(invoices.length).toBe(2);
+              expect(invoices.length).toBe(3);
               expect(invoices).toEqual(expectedInvoices);
               test(expectedInvoices);
               done();
@@ -123,7 +123,7 @@ describe('InvoiceService', () => {
           }
           case 2: {
             i += 1;
-            expect(invoices.length).toBe(2);
+            expect(invoices.length).toBe(3);
             expect(invoices).toEqual(reviveDates(mockedInvoices));
             service.saveInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/');
@@ -133,7 +133,7 @@ describe('InvoiceService', () => {
             break;
           }
           case 3: {
-            expect(invoices.length).toBe(3);
+            expect(invoices.length).toBe(4);
             mockedInvoices.push(tmpInvoice);
             expect(invoices).toEqual(reviveDates(mockedInvoices));
             done();
@@ -183,7 +183,7 @@ describe('InvoiceService', () => {
           }
           case 2: {
             i += 1;
-            expect(invoices.length).toBe(2);
+            expect(invoices.length).toBe(3);
             expect(invoices).toEqual(reviveDates(mockedInvoices));
             service.editInvoice(tmpInvoice);
             const req1 = httpMock.expectOne('/api/invoice/update');
@@ -193,7 +193,7 @@ describe('InvoiceService', () => {
             break;
           }
           case 3: {
-            expect(invoices.length).toBe(2);
+            expect(invoices.length).toBe(3);
             expect(invoices[1].trello).toBe(undefined);
             expect(invoices[1].nortanTeam).toBe('Trocar');
             done();
