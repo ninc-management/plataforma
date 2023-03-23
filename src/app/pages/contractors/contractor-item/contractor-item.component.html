@@ -57,7 +57,7 @@
         fullWidth
         size="large"
         [(ngModel)]="selectedOption"
-        (ngModelChange)="hasPersonTypeChanged = true"
+        (selectedChange)="changeValues($event)"
         name="ng-model-group"
       >
         <nb-option [value]="typesOfPerson.PESSOA_FISICA">Pessoa física</nb-option>
@@ -78,14 +78,19 @@
           fieldSize="large"
           [brmasker]="{ person: true }"
           ngxSelectAllText
+          (ngModelChange)="checkValidation($event,typesOfPerson.PESSOA_FISICA)"
           [required]="validation.cpf.required"
           [minlength]="validation.cpf.minLength"
           [maxlength]="validation.cpf.maxLength"
-          [status]="cpf.dirty || hasPersonTypeChanged ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="cpf.dirty || personType.hasChanged ? (cpf.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="cpf.invalid && cpf.touched ? true : null"
-          (blur)="hasPersonTypeChanged = false"
+          (blur)="personType.hasChanged= false"
         />
-        <ng-container *ngIf="cpf.invalid && cpf.touched">
+        <ng-container *ngIf="cpf.invalid && cpf.touched || document.cpf">
+          <div *ngIf="document.cpf">
+            <p class="caption status-danger">{{ document.error }}</p>
+            <p>{{ foundContractor?.fullName }}</p>
+          </div>
           <p class="caption status-danger" *ngIf="cpf.errors?.required">O CPF é obrigatório!</p>
           <p class="caption status-danger" *ngIf="cpf.errors?.minlength || cpf.errors?.maxlength">
             O CPF deve ter {{ validation.cpf.minLength - 3 }} números
@@ -105,14 +110,19 @@
           fieldSize="large"
           [brmasker]="{ person: true }"
           ngxSelectAllText
+          (ngModelChange)="checkValidation($event,typesOfPerson.PESSOA_JURIDICA)"
           [required]="validation.cnpj.required"
           [minlength]="validation.cnpj.minLength"
           [maxlength]="validation.cnpj.maxLength"
-          [status]="cnpj.dirty || hasPersonTypeChanged ? (cnpj.invalid ? 'danger' : 'success') : 'basic'"
+          [status]="cnpj.dirty || personType.hasChanged ? (cnpj.invalid ? 'danger' : 'success') : 'basic'"
           [attr.aria-invalid]="cnpj.invalid && cnpj.touched ? true : null"
-          (blur)="hasPersonTypeChanged = false"
+          (blur)="personType.hasChanged = false"
         />
-        <ng-container *ngIf="cnpj.invalid && cnpj.touched">
+        <ng-container *ngIf="cnpj.invalid && cnpj.touched || document.cnpj">
+          <div *ngIf="document.cnpj">
+            <p class="caption status-danger">{{ document.error }}</p>
+            <p>{{ foundContractor?.fullName }}</p>
+          </div>
           <p class="caption status-danger" *ngIf="cnpj.errors?.required">O CNPJ é obrigatório!</p>
           <p class="caption status-danger" *ngIf="cnpj.errors?.minlength || cnpj.errors?.maxLength">
             O CNPJ deve ter {{ validation.cnpj.minLength - 4 }} números
@@ -460,7 +470,7 @@
     fullWidth
     status="primary"
     size="large"
-    [disabled]="submitted || !form.valid || !form.dirty || isNotEdited()"
+    [disabled]="submitted || !form.valid || !form.dirty || document.isValid || isNotEdited()"
     [class.btn-pulse]="submitted"
   >
     {{ editing ? 'ATUALIZAR' : 'CADASTRAR' }}

@@ -119,6 +119,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
       context: {
         title: event.data ? 'EDIÇÃO DE CLIENTE' : 'CADASTRO DE CLIENTE',
         contractor: event.data ? event.data : new Contractor(),
+        contractors: this.contractors,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,

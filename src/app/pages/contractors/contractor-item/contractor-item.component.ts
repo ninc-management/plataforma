@@ -33,19 +33,29 @@ export class ContractorItemComponent implements OnInit {
   @Input() iContractor = new Contractor();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() contractors?: Contractor[];
   @Output() submit = new EventEmitter<void>();
   @ViewChild('form') ngForm = {} as NgForm;
 
   contractor = new Contractor();
   editing = false;
   submitted = false;
+  document = {
+    cpf: false,
+    cnpj: false,
+    error: '',
+    get isValid() {
+      return this.cpf || this.cnpj;
+    },
+  };
+  foundContractor?: Contractor;
   validation = contractor_validation as any;
   typesOfPerson = TypesOfPerson;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   cities: string[] = [];
   states: string[] = [];
   representativeTypes = RepresentativeTypes;
-  hasPersonTypeChanged = false;
+  personType = { hasChanged: false, type: this.typesOfPerson.PESSOA_FISICA };
 
   trackByIndex = trackByIndex;
 
@@ -136,6 +146,39 @@ export class ContractorItemComponent implements OnInit {
 
         this.isDialogBlocked.next(false);
       });
+  }
+
+  changeValues(option: string): void {
+    if (option === this.personType.type) return;
+    this.contractor.document = '';
+    this.personType.hasChanged = true;
+    this.personType.type = this.selectedOption;
+    this.document.error = '';
+    this.foundContractor = undefined;
+  }
+
+  checkValidation(document: string, type: TypesOfPerson): void {
+    this.document.cpf = false;
+    this.document.cnpj = false;
+    this.document.error = '';
+    switch (type) {
+      case TypesOfPerson.PESSOA_FISICA:
+        if (this.validation.cpf.maxLength === document.length) {
+          this.foundContractor = this.contractors?.find((contractor) => contractor.document === document);
+          this.document.cpf = !!this.foundContractor;
+          this.document.error = 'O usuário abaixo já está cadastrado com este cpf!';
+        }
+        break;
+      case TypesOfPerson.PESSOA_JURIDICA:
+        if (this.validation.cnpj.maxLength === document.length) {
+          this.foundContractor = this.contractors?.find((contractor) => contractor.document === document);
+          this.document.cnpj = !!this.foundContractor;
+          this.document.error = 'O usuário abaixo já está cadastrado com este cnpj!';
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   isNotEdited(): boolean {
