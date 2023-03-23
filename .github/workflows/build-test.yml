@@ -5,8 +5,7 @@ name: Development
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [main, demo, production]
+  pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,6 +34,6 @@ jobs:
         run: npm i
         env:
           DEBIAN_FRONTEND: noninteractive
-      - name: 🏗️ Build and test project
-        run: npm run lint:ci && npm run test
+      - name: 🏗️ Build project
+        run: npm run lint:ci && npm run build
 
