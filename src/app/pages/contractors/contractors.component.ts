@@ -73,6 +73,17 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         title: 'Email',
         type: 'string',
       },
+      corporateName: {
+        title: 'Razão Social',
+        type: 'string',
+      },
+      legalRepresentatives: {
+        title: 'Representante legal',
+        type: 'string',
+        valuePrepareFunction: (legalRepresentatives: any[]) => {
+          return legalRepresentatives.map((legalRrepresentative: any) => legalRrepresentative.fullName);
+        },
+      },
     },
   };
 
