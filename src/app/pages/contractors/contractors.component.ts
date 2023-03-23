@@ -78,7 +78,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
         type: 'string',
       },
       legalRepresentatives: {
-        title: 'Representante legal',
+        title: 'Representante Legal',
         type: 'string',
         valuePrepareFunction: (legalRepresentatives: any[]) => {
           return legalRepresentatives.map((legalRrepresentative: any) => legalRrepresentative.fullName);
