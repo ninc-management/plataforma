@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { ContractorDialogComponent } from './contractor-dialog/contractor-dialog.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
@@ -62,7 +62,7 @@ export class ContractorsComponent implements OnInit, OnDestroy {
     },
     columns: {
       fullName: {
-        title: 'Autor',
+        title: 'Nome',
         type: 'string',
       },
       document: {
@@ -86,13 +86,13 @@ export class ContractorsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.contractorService.isDataLoaded$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((reqContractor) => (this.isDataLoaded = reqContractor));
-    this.contractorService
-      .getContractors()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((contractors: any[]) => {
+    combineLatest([this.contractorService.getContractors(), this.contractorService.isDataLoaded$])
+      .pipe(
+        skipWhile(([_, isContractorDataLoaded]) => !isContractorDataLoaded),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([contractors, _]) => {
+        this.isDataLoaded = true;
         this.contractors = contractors;
         this.source.load(this.contractors);
       });
