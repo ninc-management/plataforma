@@ -1,51 +1,53 @@
-import { Mutex } from 'async-mutex';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import * as express from 'express';
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 import TransactionModel, { Transaction } from '../models/transaction';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const transactionsMap: Record<string, Transaction> = {};
-const mutex = new Mutex();
 
-function addTransaction(transaction: Transaction, res, lastTransaction: Transaction): void {
-  const transactionItem = new TransactionModel(transaction);
-  mutex.acquire().then((release) => {
-    transactionItem
-      .save()
-      .then((savedTransaction) => {
-        if (requested) transactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
-        release();
-        if (isEqual(transaction, lastTransaction))
-          return res.status(201).json({
-            message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
-          });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
-          error: err,
-        });
+async function addTransaction(
+  transactionCompanyModel: ModelType<Transaction>,
+  transaction: Transaction,
+  res,
+  lastTransaction: Transaction
+): Promise<void> {
+  try {
+    const transactionItem = new transactionCompanyModel(transaction);
+    await transactionItem.save();
+    if (isEqual(transaction, lastTransaction))
+      return res.status(201).json({
+        message: res.req.url === '/' ? 'Transação cadastrada!' : 'Transações cadastradas!',
       });
-  });
+  } catch (err) {
+    return res.status(500).json({
+      message: res.req.url === '/' ? 'Erro ao cadastrar transação!' : 'Erro ao cadastrar transações!',
+      error: err,
+    });
+  }
 }
 
-router.post('/', (req, res, next) => {
-  addTransaction(req.body.transaction, res, req.body.transaction);
+router.post('/', async (req, res, next) => {
+  const companyId = req.headers.companyid as string;
+  const transactionCompanyModel = await getModelForCompany(companyId, TransactionModel);
+  addTransaction(transactionCompanyModel, req.body.transaction, res, req.body.transaction);
 });
 
-router.post('/many', (req, res, next) => {
+router.post('/many', async (req, res, next) => {
+  const companyId = req.headers.companyid as string;
+  const transactionCompanyModel = await getModelForCompany(companyId, TransactionModel);
   const transactions = req.body.transactions as Transaction[];
   transactions.forEach((transaction) => {
-    addTransaction(transaction, res, transactions[transactions.length - 1]);
+    addTransaction(transactionCompanyModel, transaction, res, transactions[transactions.length - 1]);
   });
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const transaction = await TransactionModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const transactionCompanyModel = await getModelForCompany(companyId, TransactionModel);
+    const transaction = await transactionCompanyModel.findOneAndUpdate(
       { _id: req.body.transaction._id, __v: req.body.transaction.__v },
       req.body.transaction,
       { upsert: false }
@@ -53,11 +55,6 @@ router.post('/update', async (req, res, next) => {
     if (!transaction) {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
-      });
-    }
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        transactionsMap[req.body.transaction._id] = cloneDeep(transaction.toJSON());
       });
     }
     return res.status(200).json({
@@ -72,12 +69,17 @@ router.post('/update', async (req, res, next) => {
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const transactions: Transaction[] = await TransactionModel.find({});
-    transactions.map((transaction) => (transactionsMap[transaction._id] = cloneDeep(transaction)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const transactionCompanyModel = await getModelForCompany(companyId, TransactionModel);
+    const transactions: Transaction[] = await transactionCompanyModel.find({});
+    return res.status(200).json(transactions);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao buscar Transações!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(transactionsMap)));
 });
 
 export default router;
