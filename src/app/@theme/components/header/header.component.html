@@ -86,7 +86,7 @@
             nbTooltip="Marcar todos como lida"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
-            (click)="notificationService.markAllasRead(user); popover.hide()"
+            (click)="notificationService.setAllNotificationsRead(user); popover.hide()"
           >
             <nb-icon icon="done-all-outline"></nb-icon>
           </button>

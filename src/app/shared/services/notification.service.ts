@@ -79,7 +79,7 @@ export class NotificationService implements OnDestroy {
     }
   }
 
-  markAllasRead(user: User) {
+  setAllNotificationsRead(user: User) {
     const req = {
       user: user,
     };
