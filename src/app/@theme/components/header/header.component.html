@@ -78,7 +78,19 @@
     ></nb-action>
     <ng-template #notificationBox>
       <nb-card class="nb-card-notification">
-        <nb-card-header style="text-align: left">Notificações</nb-card-header>
+        <nb-card-header class="text-left">Notificações
+          <button
+            class="float-right"
+            nbButton
+            ghost
+            nbTooltip="Marcar todos como lida"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            (click)="notificationService.markAllasRead(user); popover.hide()"
+          >
+            <nb-icon icon="done-all-outline"></nb-icon>
+          </button>
+        </nb-card-header>
         <div class="notification-list">
           <nb-list-item
             style="display: block"
@@ -97,7 +109,7 @@
             ></nb-user>
             <div class="notification">
               <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
-              <span style="float: right">
+              <span class="float-right">
                 {{ [notification.created] | transformPipe: elapsedTime.bind(this) }}
               </span>
             </div>

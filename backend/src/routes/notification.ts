@@ -105,4 +105,35 @@ router.post('/read', (req, res, next) => {
   });
 });
 
+/**
+ * Make a request to delete all notifications
+ * Notification:
+ * @param {string} to
+ * @param {string} from
+ * @param {string} title
+ * @param {string} message
+ * @param {string} tag
+ * @return {void}
+ */
+router.post('/readAll', (req, res, next) => {
+  mutex.acquire().then((release) => {
+    UserModel.findByIdAndUpdate(
+      { _id: req.body.user._id },
+      { $set: { notifications: [] } },
+      { safe: true, multi: false, upsert: false },
+      (err, savedUser) => {
+        if (err) {
+          return res.status(500).json({
+            message: 'Falha ao ler notificações!',
+            error: err,
+          });
+        }
+        if (Object.keys(usersMap).length > 0) usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());
+        return res.status(200).json({ message: 'Notificações marcadas como lidas!' });
+      }
+    );
+    release();
+  });
+});
+
 export default router;

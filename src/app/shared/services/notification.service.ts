@@ -79,6 +79,13 @@ export class NotificationService implements OnDestroy {
     }
   }
 
+  markAllasRead(user: User) {
+    const req = {
+      user: user,
+    };
+    this.http.post('/api/notify/readAll', req).pipe(take(1)).subscribe();
+  }
+
   notifyFinancial(notificationBody: NotificationBody): void {
     combineLatest([
       this.userService.getUsers(),
