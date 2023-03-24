@@ -1,6 +1,6 @@
 <form (ngSubmit)="registerContractor()" #form="ngForm" aria-labelledby="title">
   <div class="form-control-group">
-    <label class="label" for="input-name">Nome completo:</label>
+    <label class="label" for="input-name">{{selectedOption == typesOfPerson.PESSOA_JURIDICA ? 'Nome fantasia:' : 'Nome completo:'}}</label>
     <input
       nbInput
       [(ngModel)]="contractor.fullName"
