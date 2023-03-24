@@ -98,12 +98,13 @@ export class OneDriveService implements OnDestroy {
             '/items/' +
             this.config.oneDriveConfig.contracts.oneDriveId.toUpperCase() +
             '!' +
-            this.config.oneDriveConfig.providers.folderId +
+            this.config.oneDriveConfig.contracts.folderId +
             ':/';
         }
         break;
       }
     }
+    console.log(URI, this.config.oneDriveConfig);
     return URI;
   }
 
