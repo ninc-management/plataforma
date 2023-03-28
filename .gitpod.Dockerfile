@@ -25,7 +25,7 @@ RUN cd /usr/bin && \
     sudo chmod +x codecov && \
     cd -
 
-ENV NODE_VERSION=12.22.9
+ENV NODE_VERSION=18.12.1
 ENV TRIGGER_REBUILD=1
 RUN curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | PROFILE=/dev/null bash \
     && bash -c ". .nvm/nvm.sh \
