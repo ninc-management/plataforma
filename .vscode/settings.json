@@ -1,6 +1,6 @@
 {
   "editor.autoIndent": "full",
-  "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
+  "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint", "source.removeUnusedImports"],
   "editor.codeLens": false,
   "editor.cursorBlinking": "solid",
   "editor.cursorSmoothCaretAnimation": "on",
