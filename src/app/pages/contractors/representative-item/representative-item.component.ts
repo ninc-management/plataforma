@@ -76,7 +76,7 @@ export class RepresentativeItemComponent implements OnInit, AfterViewInit {
     return isEqual(this.representative, this.clonedRepresentative);
   }
 
-  private applyChanges<T>(representative: T, newRepresentative: T) {
+  private applyChanges<T extends object>(representative: T, newRepresentative: T) {
     Object.keys(newRepresentative).forEach((key) => {
       representative[key as keyof T] = newRepresentative[key as keyof T];
     });

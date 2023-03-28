@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ import { DefaultFilter } from './default-filter';
 })
 export class CheckboxFilterComponent extends DefaultFilter implements OnInit, OnDestroy {
   filterActive: boolean = false;
-  inputControl = new FormControl();
+  inputControl = new UntypedFormControl();
   constructor() {
     super();
   }

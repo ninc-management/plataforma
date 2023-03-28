@@ -183,7 +183,7 @@ export class ChecklistItemAction {
   range!: DateRange;
 
   @prop({ required: true, ref: () => User })
-  assignee: Ref<User>;
+  assignee?: Ref<User>;
 
   @prop({ required: true })
   isFinished: boolean = false;
@@ -211,7 +211,7 @@ export class ContractChecklistItem {
   status!: string;
 
   @prop({ required: true })
-  description: string = '';
+  description?: string = '';
 
   @prop({ type: () => [ChecklistItemAction] })
   actionList: ChecklistItemAction[] = [];

@@ -16,9 +16,9 @@ export class NgxCertificateComponent implements OnInit {
   private destroy$ = new Subject<void>();
   courseID!: string;
   participantID!: string;
-  course!: Course;
+  course = new Course();
   courseStartDate!: string;
-  participant!: CourseParticipant;
+  participant = new CourseParticipant();
   today!: string;
   now!: string;
 
@@ -29,6 +29,10 @@ export class NgxCertificateComponent implements OnInit {
         this.participantID = params['participantID'];
       }
     });
+    const todayDate = new Date();
+    this.today = todayDate.toLocaleDateString('pt-br');
+    this.now = todayDate.toLocaleTimeString('pt-br');
+    this.course.speaker = new CourseParticipant();
   }
 
   ngOnDestroy(): void {
@@ -51,8 +55,5 @@ export class NgxCertificateComponent implements OnInit {
           }
         }
       });
-    const todayDate = new Date();
-    this.today = todayDate.toLocaleDateString('pt-br');
-    this.now = todayDate.toLocaleTimeString('pt-br');
   }
 }
