@@ -1,8 +1,6 @@
 # NINC - Gestão Moderna para Escritórios [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />](https://eva.design) [![GitHub](https://img.shields.io/github/license/ninc-management/plataforma.svg)](https://raw.githubusercontent.com/ninc-management/plataforma/main/LICENSE) [![Codecov](https://img.shields.io/codecov/c/github/ninc-management/plataforma/main.svg)](https://codecov.io/gh/ninc-management/plataforma/branch/main) [![Deployed with FTP Deploy Action](https://img.shields.io/badge/Deployed%20With-FTP%20DEPLOY%20ACTION-blue)](https://github.com/SamKirkland/FTP-Deploy-Action)
 
-![DEV](https://github.com/ninc-management/plataforma/workflows/Development/badge.svg)
-![DEMO](https://github.com/ninc-management/plataforma/workflows/Demo/badge.svg)
-![PROD](https://github.com/ninc-management/plataforma/workflows/Production/badge.svg)
+![Lint & Build](https://github.com/ninc-management/plataforma/actions/workflows/build-test.yml/badge.svg)
 
 ## How to Serve Locally
 
