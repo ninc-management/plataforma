@@ -1,5 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { isSameDay } from 'date-fns';
 import { isEqual } from 'lodash';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -33,7 +33,7 @@ export function dateRangeFilter(cell: any, search?: string): boolean {
   `,
 })
 export class DateFilterComponent extends DefaultFilter implements OnInit, OnChanges {
-  inputControl = new FormControl();
+  inputControl = new UntypedFormControl();
 
   constructor() {
     super();

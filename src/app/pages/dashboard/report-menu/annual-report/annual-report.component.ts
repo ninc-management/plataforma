@@ -18,6 +18,7 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
 
+import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
@@ -249,7 +250,7 @@ export class AnnualReportComponent implements OnInit {
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       map(([contracts, invoices, ,]) => {
         contracts = contracts.map((contract) => this.contractService.fillContract(contract));
-        Object.values(
+        const invoicesByMonth = Object.values(
           groupBy(
             invoices
               .filter((invoice) => {
@@ -261,7 +262,8 @@ export class AnnualReportComponent implements OnInit {
               .map((invoice) => ({ id: invoice._id, month: getMonth(invoice.created) })),
             '1'
           )
-        ).forEach((monthInvoices) => {
+        ) as { id: string; month: number }[][];
+        invoicesByMonth.forEach((monthInvoices) => {
           monthInvoices.forEach((monthInvoice) => {
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthInvoice.id, uId)) {
@@ -274,7 +276,7 @@ export class AnnualReportComponent implements OnInit {
             }
           });
         });
-        Object.values(
+        const contractsByYear = Object.values(
           groupBy(
             contracts
               .filter((contract) => {
@@ -294,7 +296,8 @@ export class AnnualReportComponent implements OnInit {
               })),
             '1'
           )
-        ).forEach((monthContracts) => {
+        ) as { contract: Contract; month: number; year: number }[][];
+        contractsByYear.forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
             for (const uId of Object.keys(data)) {
               if (this.invoiceService.isInvoiceAuthor(monthContract.contract.invoice as Invoice | string, uId)) {
@@ -335,7 +338,7 @@ export class AnnualReportComponent implements OnInit {
                 }
               }
               // Sum expenses in related months
-              Object.values(
+              const expensesByMonth = Object.values(
                 groupBy(
                   monthContract.contract.expenses
                     .filter(
@@ -348,7 +351,8 @@ export class AnnualReportComponent implements OnInit {
                     .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                   '1'
                 )
-              ).forEach((monthExpenses) => {
+              ) as { expense: ContractExpense; month: number }[][];
+              expensesByMonth.forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
                     monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
@@ -374,14 +378,15 @@ export class AnnualReportComponent implements OnInit {
                 });
               });
               // Sum payments in related months
-              Object.values(
+              const paymentsByMonth = Object.values(
                 groupBy(
                   monthContract.contract.payments
                     .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
                     .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
                   '1'
                 )
-              ).forEach((monthPayments) => {
+              ) as { payment: ContractPayment; month: number }[][];
+              paymentsByMonth.forEach((monthPayments) => {
                 monthPayments.forEach((monthPayment) => {
                   const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
                     if (this.userService.isEqual(payment.user, uId)) {
@@ -433,7 +438,7 @@ export class AnnualReportComponent implements OnInit {
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       map(([contracts, invoices, ,]) => {
         contracts = contracts.map((contract) => this.contractService.fillContract(contract));
-        Object.values(
+        const invoicesByMonth = Object.values(
           groupBy(
             invoices
               .filter((invoice) => {
@@ -445,7 +450,8 @@ export class AnnualReportComponent implements OnInit {
               .map((invoice) => ({ invoice: invoice, month: getMonth(invoice.created) })),
             '1'
           )
-        ).forEach((monthInvoices) => {
+        ) as { invoice: Invoice; month: number }[][];
+        invoicesByMonth.forEach((monthInvoices) => {
           monthInvoices.forEach((monthInvoice) => {
             for (const sector of Object.keys(data)) {
               if (this.teamService.isSectorEqual(monthInvoice.invoice.sector, sector)) {
@@ -461,7 +467,7 @@ export class AnnualReportComponent implements OnInit {
             }
           });
         });
-        Object.values(
+        const contractsByYear = Object.values(
           groupBy(
             contracts
               .filter((contract) => {
@@ -481,7 +487,8 @@ export class AnnualReportComponent implements OnInit {
               })),
             '1'
           )
-        ).forEach((monthContracts) => {
+        ) as { contract: Contract; month: number; year: number }[][];
+        contractsByYear.forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
             for (const sector of Object.keys(data)) {
               if (
@@ -531,7 +538,7 @@ export class AnnualReportComponent implements OnInit {
                 }
               }
               // Sum expenses in related months
-              Object.values(
+              const expensesByMonth = Object.values(
                 groupBy(
                   monthContract.contract.expenses
                     .filter(
@@ -544,7 +551,8 @@ export class AnnualReportComponent implements OnInit {
                     .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                   '1'
                 )
-              ).forEach((monthExpenses) => {
+              ) as { expense: ContractExpense; month: number }[][];
+              expensesByMonth.forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
                     monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
@@ -573,14 +581,15 @@ export class AnnualReportComponent implements OnInit {
                 });
               });
               // Sum payments in related months
-              Object.values(
+              const paymentsByMonth = Object.values(
                 groupBy(
                   monthContract.contract.payments
                     .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
                     .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
                   '1'
                 )
-              ).forEach((monthPayments) => {
+              ) as { payment: ContractPayment; month: number }[][];
+              paymentsByMonth.forEach((monthPayments) => {
                 monthPayments.forEach((monthPayment) => {
                   const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
                     if (this.teamService.isSectorEqual(payment.sector, sector)) {
@@ -639,7 +648,7 @@ export class AnnualReportComponent implements OnInit {
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       map(([contracts, invoices, ,]) => {
         contracts = contracts.map((contract) => this.contractService.fillContract(contract));
-        Object.values(
+        const invoicesByMonth = Object.values(
           groupBy(
             invoices
               .filter((invoice) => {
@@ -648,7 +657,8 @@ export class AnnualReportComponent implements OnInit {
               .map((invoice) => ({ invoice: invoice, month: getMonth(invoice.created) })),
             '1'
           )
-        ).forEach((monthInvoices) => {
+        ) as { invoice: Invoice; month: number }[][];
+        invoicesByMonth.forEach((monthInvoices) => {
           monthInvoices.forEach((monthInvoice) => {
             for (const team of Object.keys(data)) {
               if (
@@ -687,7 +697,7 @@ export class AnnualReportComponent implements OnInit {
             }
           });
         });
-        Object.values(
+        const contractsByYear = Object.values(
           groupBy(
             contracts.map((contract) => ({
               contract: contract,
@@ -696,7 +706,8 @@ export class AnnualReportComponent implements OnInit {
             })),
             '1'
           )
-        ).forEach((monthContracts) => {
+        ) as { contract: Contract; month: number; year: number }[][];
+        contractsByYear.forEach((monthContracts) => {
           monthContracts.forEach((monthContract) => {
             for (const team of Object.keys(data)) {
               if (
@@ -717,7 +728,7 @@ export class AnnualReportComponent implements OnInit {
                   data[team][month].ongoing_contracts += 1;
                 }
                 // Sum expenses in related months
-                Object.values(
+                const expensesByMonth = Object.values(
                   groupBy(
                     monthContract.contract.expenses
                       .filter(
@@ -730,7 +741,8 @@ export class AnnualReportComponent implements OnInit {
                       .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
                     '1'
                   )
-                ).forEach((monthExpenses) => {
+                ) as { expense: ContractExpense; month: number }[][];
+                expensesByMonth.forEach((monthExpenses) => {
                   monthExpenses.forEach((monthExpense) => {
                     if (
                       monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
@@ -745,14 +757,15 @@ export class AnnualReportComponent implements OnInit {
                   });
                 });
                 // Sum payments in related months
-                Object.values(
+                const paymentsByMonth = Object.values(
                   groupBy(
                     monthContract.contract.payments
                       .filter((payment) => payment.paid && payment.paidDate && getYear(payment.paidDate) == year)
                       .map((payment) => ({ payment: payment, month: getMonth(payment.paidDate as Date) })),
                     '1'
                   )
-                ).forEach((monthPayments) => {
+                ) as { payment: ContractPayment; month: number }[][];
+                paymentsByMonth.forEach((monthPayments) => {
                   monthPayments.forEach((monthPayment) => {
                     data[team][monthPayment.month].op = this.stringUtil.sumMoney(
                       data[team][monthPayment.month].op,
@@ -766,7 +779,7 @@ export class AnnualReportComponent implements OnInit {
                     .idToInvoice(monthContract.contract.invoice as Invoice | string)
                     .type.toLowerCase() != EXCLUDED_TYPOLOGIES.BALANCE
                 ) {
-                  Object.values(
+                  const receiptsByMonth = Object.values(
                     groupBy(
                       monthContract.contract.receipts.map((receipt) => ({
                         receipt: receipt,
@@ -774,7 +787,8 @@ export class AnnualReportComponent implements OnInit {
                       })),
                       '1'
                     )
-                  ).forEach((monthReceipts) => {
+                  ) as { receipt: ContractReceipt; month: number }[][];
+                  receiptsByMonth.forEach((monthReceipts) => {
                     monthReceipts.forEach((monthReceipt) => {
                       if (
                         monthReceipt.receipt.paid &&

@@ -255,7 +255,7 @@ export function trackByIndex<T>(index: number, obj: T): number {
   return index;
 }
 
-export function isOfType<T>(constructor: { new (): T }, unknownObj: any): unknownObj is T {
+export function isOfType<T extends object>(constructor: { new (): T }, unknownObj: any): unknownObj is T {
   const genericObject = new constructor();
   const genericObjectKeys = Object.keys(genericObject).filter((key) => key != 'locals');
   const unknownObjKeys = Object.keys(unknownObj).filter((key) => key != 'locals');

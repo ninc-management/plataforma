@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "plataforma-nortan": {
+    "ninc-management": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -98,18 +98,18 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "plataforma-nortan:build"
+            "browserTarget": "ninc-management:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "plataforma-nortan:build:dev"
+              "browserTarget": "ninc-management:build:dev"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-builders/custom-webpack:extract-i18n",
           "options": {
-            "browserTarget": "plataforma-nortan:build"
+            "browserTarget": "ninc-management:build"
           }
         },
         "test": {
@@ -142,7 +142,6 @@
       }
     },
   },
-  "defaultProject": "plataforma-nortan",
   "schematics": {
     "@schematics/angular:component": {
       "style": "scss"

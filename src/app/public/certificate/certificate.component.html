@@ -3,8 +3,8 @@
 </header>
 <main class="w-100">
   <h2 class="main-text">
-    Certificamos que {{ participant?.name }} {{ participant?.isSpeaker ? 'ministrou' : 'concluiu' }} com sucesso o curso
-    {{ course?.name }} com duração de {{ course?.courseHours }} horas.
+    Certificamos que {{ participant.name }} {{ participant.isSpeaker ? 'ministrou' : 'concluiu' }} com sucesso o curso
+    {{ course.name }} com duração de {{ course.courseHours }} horas.
   </h2>
   <section>
     <h3 class="section-label">Inscrito</h3>
@@ -12,13 +12,13 @@
       <div>
         <label>Nome</label>
         <p>
-          {{ participant?.name }}
+          {{ participant.name }}
         </p>
       </div>
       <div class="info-right">
         <label>Email</label>
         <p>
-          {{ participant?.email }}
+          {{ participant.email }}
         </p>
       </div>
     </div>
@@ -30,7 +30,7 @@
       <div>
         <label>Ministrante do curso</label>
         <p>
-          {{ course?.speaker?.name }}
+          {{ course.speaker.name }}
         </p>
       </div>
       <div class="info-right">
@@ -45,12 +45,12 @@
       <div>
         <label>Local do curso</label>
         <p>
-          {{ course?.place }}
+          {{ course.place }}
         </p>
       </div>
       <div class="info-right">
         <label>Carga horária do curso</label>
-        <p>{{ course?.courseHours }} horas</p>
+        <p>{{ course.courseHours }} horas</p>
       </div>
     </div>
   </section>

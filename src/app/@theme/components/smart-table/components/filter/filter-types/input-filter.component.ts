@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { NbPopoverDirective } from '@nebular/theme';
 import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
 
@@ -41,7 +41,7 @@ import { DefaultFilter } from './default-filter';
   `,
 })
 export class InputFilterComponent extends DefaultFilter implements OnInit {
-  inputControl = new FormControl();
+  inputControl = new UntypedFormControl();
   inputType = 'input';
   @ViewChild(NbPopoverDirective) popover!: NbPopoverDirective;
   constructor() {
