@@ -5,6 +5,8 @@ name: Development
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main,demo, production]
   pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
@@ -22,10 +24,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: 🚚 Get latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: production
       - name: 🧩 Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
