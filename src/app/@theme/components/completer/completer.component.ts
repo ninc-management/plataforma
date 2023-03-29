@@ -29,8 +29,9 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
 export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   @Input() data$!: Observable<any>;
   @Input() inputName = '';
-  @Input() nameField = '';
-  @Input() pictureField = '';
+  @Input() nameProperty = '';
+  @Input() searchableProperties: string[] = [];
+  @Input() pictureProperty = '';
   @Input() minSearchLength = MIN_SEARCH_LENGTH;
   @Input() maxChars = MAX_CHARS;
   @Input() placeholder = '';
@@ -65,7 +66,7 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   private _onChangeCallback: (_: any) => void = noop;
 
   public ngOnInit(): void {
-    this.propertiesToAccess = this.nameField.split('.');
+    this.propertiesToAccess = this.nameProperty.split('.');
 
     if (this.data$) {
       this.filteredData$ = combineLatest([this.data$, this.searchChange$]).pipe(
@@ -78,7 +79,7 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
             const value =
               this.propertiesToAccess.length > 1
                 ? accessNestedProperty(obj, cloneDeep(this.propertiesToAccess))
-                : obj[this.nameField];
+                : obj[this.nameProperty];
 
             const result = this.prepareString(value).includes(filterValue);
             this.searchActive = false;
@@ -132,7 +133,7 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   getItemValueByField(item: any): string {
     return this.propertiesToAccess.length > 1
       ? accessNestedProperty(item, cloneDeep(this.propertiesToAccess))
-      : item[this.nameField];
+      : item[this.nameProperty];
   }
 
   public writeValue(value: any): void {
