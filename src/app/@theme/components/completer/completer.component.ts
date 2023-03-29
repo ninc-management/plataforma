@@ -61,12 +61,11 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   filteredDataIsEmpty$: Observable<boolean> = of(true);
   tooltipTriggers = NbTrigger;
   searchChange$ = new BehaviorSubject<boolean>(true);
-  propertiesToAccess: string[] = [];
   private _onTouchedCallback: () => void = noop;
   private _onChangeCallback: (_: any) => void = noop;
 
   public ngOnInit(): void {
-    this.propertiesToAccess = this.nameProperty.split('.');
+    if (this.searchableProperties.length == 0) this.searchableProperties.push(this.nameProperty);
 
     if (this.data$) {
       this.filteredData$ = combineLatest([this.data$, this.searchChange$]).pipe(
@@ -76,14 +75,18 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
           const filterValue = this.prepareString(this.searchStr);
 
           return objs.filter((obj: any) => {
-            const value =
-              this.propertiesToAccess.length > 1
-                ? accessNestedProperty(obj, cloneDeep(this.propertiesToAccess))
-                : obj[this.nameProperty];
+            const result = this.searchableProperties.map((property) => {
+              const propertiesToAccess = property.split('.');
+              const value =
+                propertiesToAccess.length > 1
+                  ? accessNestedProperty(obj, cloneDeep(propertiesToAccess))
+                  : obj[property];
 
-            const result = this.prepareString(value).includes(filterValue);
+              return this.prepareString(value).includes(filterValue);
+            });
+
             this.searchActive = false;
-            return result;
+            return result.some((e) => e);
           });
         })
       );
@@ -131,8 +134,9 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
   }
 
   getItemValueByField(item: any): string {
-    return this.propertiesToAccess.length > 1
-      ? accessNestedProperty(item, cloneDeep(this.propertiesToAccess))
+    const propertiesToAccess = this.nameProperty.split('.');
+    return propertiesToAccess.length > 1
+      ? accessNestedProperty(item, cloneDeep(propertiesToAccess))
       : item[this.nameProperty];
   }
 
