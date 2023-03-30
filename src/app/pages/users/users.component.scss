@@ -14,6 +14,10 @@
   font-display: block;
 }
 
+@include nb-install-component() {
+  --tabset-content-padding: 1rem 0;
+}
+
 ::ng-deep {
   .icon-file-csv {
     font-family: 'icons' !important;
