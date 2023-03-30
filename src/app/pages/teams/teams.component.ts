@@ -10,6 +10,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { idToProperty, isPhone, nameSort, NOT } from 'app/shared/utils';
 
 import { Team } from '@models/team';
+import { Sector } from '@models/shared/sector';
 
 @Component({
   selector: 'ngx-teams',
@@ -68,6 +69,9 @@ export class TeamsComponent implements OnInit, OnDestroy {
         type: 'string',
         valuePrepareFunction: (array: any[]) => {
           return array.map((sector: any) => this.teamService.idToSector(sector).abrev).join(', ');
+        },
+        filterFunction: (sectors: Sector[], search: string) => {
+          return sectors.some((sector) => sector.abrev.includes(search));
         },
       },
       'locals.leaderName': {
