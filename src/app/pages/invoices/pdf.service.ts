@@ -1492,37 +1492,6 @@ export class PdfService {
         metric: [{ text: metrics.openedContracts, fontSize: 18 }, '\nContratos em Andamento'],
       },
       {
-        svg: this.NCTLogoSvg,
-        text: [
-          { text: 'Projeto, planejamento, CONSTRUÇÃO. Você sonha e a gente realiza!', bold: true },
-          ' Trabalhamos por uma obra eficiente. Nossa equipe multidisciplinar garante isso, temos o time certo para construir o seu sonho.',
-        ],
-        metric: '',
-      },
-      {
-        svg: this.NIPLogoSvg,
-        text: [
-          'Da fundação à Coberta.',
-          {
-            text: ' Fazemos impermeabilização de grandes obras,',
-            bold: true,
-          },
-          ' onde trabalhamos nas maiores construtoras de Alagoas. Impermeabilização de Lajes, reservatórios confinados, estacionamentos, piscinas, calhas, estamos à disposição.',
-        ],
-        metric: [{ text: metrics.clients, fontSize: 18 }, '\nN° de clientes'],
-      },
-      {
-        svg: this.NITLogoSvg,
-        text: [
-          {
-            text: 'Subestações de média tensão e Energia solar são a nossa especialidade.',
-            bold: true,
-          },
-          ' Ajudamos empreendimentos residenciais e comerciais a terem um acesso fácil à energia, não se preocupe com a burocracia, nosso serviço só acaba com a obra aprovada e energizada',
-        ],
-        metric: '',
-      },
-      {
         svg: this.NATANLogoSvg,
         text: [
           {
