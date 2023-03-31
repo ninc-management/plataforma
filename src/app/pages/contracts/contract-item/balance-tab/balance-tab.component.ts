@@ -84,13 +84,13 @@ export class BalanceTabComponent implements OnInit {
         this.options.notaFiscal = nfPercentage(this.clonedContract, this.config.invoiceConfig);
         this.options.nortanPercentage = nortanPercentage(this.clonedContract, this.config.invoiceConfig);
       });
-    this.calculatePaidValue();
-    this.calculateBalance();
-    this.contractId = this.clonedContract._id;
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.invoice.team.forEach(
       (teamMember) => (teamMember.locals = !teamMember.locals ? ({} as InvoiceTeamMemberLocals) : teamMember.locals)
     );
+    this.calculatePaidValue();
+    this.calculateBalance();
+    this.contractId = this.clonedContract._id;
     this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.options.interest = this.clonedContract.receipts.length;
   }
