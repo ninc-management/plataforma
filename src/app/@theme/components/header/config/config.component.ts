@@ -166,6 +166,10 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
+  get allFormsValid(): boolean {
+    return this.forms.some((form) => !form.valid);
+  }
+
   openDialog(itemsWithValue: string[], warning: string): void {
     this.dialogService.open(RemainingItemsComponent, {
       context: {
