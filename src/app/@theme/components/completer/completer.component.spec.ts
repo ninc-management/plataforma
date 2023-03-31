@@ -4,13 +4,13 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 import { NbCompleterComponent } from './completer.component';
 
 describe('NbCompleterComponent', () => {
-  let component: NbCompleterComponent;
-  let fixture: ComponentFixture<NbCompleterComponent>;
+  let component: NbCompleterComponent<{ name: string }[]>;
+  let fixture: ComponentFixture<NbCompleterComponent<{ name: string }[]>>;
 
   CommonTestingModule.setUpTestBed(NbCompleterComponent);
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NbCompleterComponent);
+    fixture = TestBed.createComponent(NbCompleterComponent<{ name: string }[]>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

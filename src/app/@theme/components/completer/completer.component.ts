@@ -26,8 +26,8 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
   styleUrls: ['./completer.component.scss'],
   providers: [COMPLETER_CONTROL_VALUE_ACCESSOR],
 })
-export class NbCompleterComponent implements OnInit, ControlValueAccessor {
-  @Input() data$!: Observable<any>;
+export class NbCompleterComponent<T extends object> implements OnInit, ControlValueAccessor {
+  @Input() data$!: Observable<T[]>;
   @Input() inputName = '';
   @Input() nameProperty = '';
   @Input() searchableProperties: string[] = [];
@@ -81,6 +81,12 @@ export class NbCompleterComponent implements OnInit, ControlValueAccessor {
                 propertiesToAccess.length > 1
                   ? accessNestedProperty(obj, cloneDeep(propertiesToAccess))
                   : obj[property];
+
+              if (value === undefined)
+                console.error(
+                  `A propriedade "${property}" não é propriedade do objeto. As propriedades são:`,
+                  Object.keys(obj)
+                );
 
               return this.prepareString(value).includes(filterValue);
             });
