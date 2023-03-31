@@ -9,8 +9,8 @@ import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { idToProperty, isPhone, nameSort, NOT } from 'app/shared/utils';
 
-import { Team } from '@models/team';
 import { Sector } from '@models/shared/sector';
+import { Team } from '@models/team';
 
 @Component({
   selector: 'ngx-teams',

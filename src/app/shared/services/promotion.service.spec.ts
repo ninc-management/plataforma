@@ -32,7 +32,7 @@ describe('PromotionService', () => {
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
   CommonTestingModule.setUpTestBed();
 
-  const baseTest = (name: string, test: (expectedPromotions: Promotion[], done: DoneFn) => void) => {
+  const baseTest = (name: string, test: (expectedPromotions: Promotion[]) => void) => {
     it(name, (done: DoneFn) => {
       let i = 1;
       service
@@ -49,7 +49,7 @@ describe('PromotionService', () => {
               const expectedPromotions = reviveDates(mockedPromotions);
               expect(promotions.length).toBe(1);
               expect(promotions).toEqual(expectedPromotions);
-              test(expectedPromotions, done);
+              test(expectedPromotions);
               done();
               break;
             }
@@ -217,11 +217,10 @@ describe('PromotionService', () => {
     }, 50);
   });
 
-  baseTest('getPromotions should work', (expectedPromotions: Promotion[], done: DoneFn) => done());
+  baseTest('getPromotions should work', (expectedPromotions: Promotion[]) => {});
 
-  baseTest('idToPromotion should work', (expectedPromotions: Promotion[], done: DoneFn) => {
+  baseTest('idToPromotion should work', (expectedPromotions: Promotion[]) => {
     expect(service.idToPromotion('0')).toEqual(expectedPromotions[0]);
     expect(service.idToPromotion(expectedPromotions[0])).toEqual(expectedPromotions[0]);
-    done();
   });
 });
