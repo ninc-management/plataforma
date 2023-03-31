@@ -1701,7 +1701,7 @@
           </div>
           <div class="row">
             <div class="col-auto">
-              <label class="label-divider">Pasta compartilhada fornecedores</label>
+              <label class="label-divider">Pasta compartilhada para os anexos de transações de fornecedores</label>
             </div>
             <div class="col">
               <hr />
@@ -1729,7 +1729,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.oneDriveId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providerTransactions.oneDriveId"
                   #oneDriveIdOfProviders="ngModel"
                   id="input-onedrive-id"
                   name="oneDriveIdOfProviders"
@@ -1766,7 +1766,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.folderId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providerTransactions.folderId"
                   #folderIdOfProviders="ngModel"
                   id="input-folder-id"
                   name="folderIdOfProviders"
@@ -1783,7 +1783,7 @@
           </div>
            <div class="row">
             <div class="col-auto">
-              <label class="label-divider">Pasta compartilhada dos times</label>
+              <label class="label-divider">Pasta compartilhada para os anexos de transações de times</label>
             </div>
             <div class="col">
               <hr />
@@ -1811,7 +1811,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.teams.oneDriveId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.teamTransactions.oneDriveId"
                   #oneDriveIdOfTeams="ngModel"
                   id="input-onedrive-id"
                   name="oneDriveIdOfTeams"
@@ -1848,7 +1848,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.teams.folderId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.teamTransactions.folderId"
                   #folderIdOfTeams="ngModel"
                   id="input-folder-id"
                   name="folderIdOfTeams"

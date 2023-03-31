@@ -13,9 +13,15 @@ db.users.find().forEach((user) => {
 });
 
 db.platformconfigs.find().forEach((config) => {
-  config.oneDriveConfig.teams = {
+  config.oneDriveConfig.teamTransactions = {
     oneDriveId: '',
     folderId: '',
   };
+  config.oneDriveConfig.providerTransactions = {
+    oneDriveId: '',
+    folderId: '',
+  };
+  delete config.oneDriveConfig.teams;
+  delete config.oneDriveConfig.providers;
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
