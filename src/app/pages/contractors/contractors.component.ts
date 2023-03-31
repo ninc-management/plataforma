@@ -8,7 +8,7 @@ import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-sour
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { nameSort } from 'app/shared/utils';
 
-import { Contractor } from '@models/contractor';
+import { Contractor, LegalRepresentative } from '@models/contractor';
 
 @Component({
   selector: 'ngx-contractors',
@@ -72,6 +72,22 @@ export class ContractorsComponent implements OnInit, OnDestroy {
       email: {
         title: 'Email',
         type: 'string',
+      },
+      corporateName: {
+        title: 'Razão Social',
+        type: 'string',
+      },
+      legalRepresentatives: {
+        title: 'Representante Legal',
+        type: 'string',
+        valuePrepareFunction: (legalRepresentatives: LegalRepresentative[]) => {
+          return legalRepresentatives.map((legalRrepresentative) => legalRrepresentative.fullName);
+        },
+        filterFunction: (legalRepresentatives: LegalRepresentative[], search: string) => {
+          return legalRepresentatives.some((legalRepresentative) =>
+            legalRepresentative.fullName.toLowerCase().includes(search.toLowerCase())
+          );
+        },
       },
     },
   };
