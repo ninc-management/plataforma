@@ -543,14 +543,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
@@ -817,14 +810,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
@@ -1309,14 +1295,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
@@ -1565,14 +1544,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
@@ -1615,14 +1587,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
@@ -1823,21 +1788,14 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
     </form>
   </nb-tab>
   <nb-tab tabId="notification-tab" [tabTitle]="isPhone() ? '' : 'Notificação'" tabIcon="bell-outline" responsive>
-    <form (ngSubmit)="updateConfig()" #form="ngForm" aria-labelledby="title">
+    <form (ngSubmit)="updateConfig()" #notificationConfigForm="ngForm" aria-labelledby="title">
       <div class="row">
         <div class="col-12 col-lg-auto" style="margin-bottom: 11px; height: auto">
           <div class="form-control-group">
@@ -2070,14 +2028,7 @@
         fullWidth
         status="primary"
         size="large"
-        [disabled]="
-          !expenseConfigForm.valid ||
-          !invoiceConfigForm.valid ||
-          !profileConfigForm.valid ||
-          !generalConfigForm.valid ||
-          !moduleConfigForm.valid ||
-          !onedriveConfigForm.valid
-        "
+        [disabled]="allFormsValid"
       >
         Atualizar
       </button>
