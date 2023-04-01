@@ -34,19 +34,17 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
+  const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
   try {
-    const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
     if (requested) {
       await mutex.runExclusive(async () => {
         usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());
       });
     }
-    return res.status(200).json({
-      message: 'Associado Atualizado!',
-    });
+    return res.status(200).json({ message: req.body.successMessage || 'Associado Cadastrado!' });
   } catch (err) {
     return res.status(500).json({
-      message: 'Erro ao atualizar associado!',
+      message: req.body.errorMessage || 'Erro ao atualizar associado!',
       error: err,
     });
   }

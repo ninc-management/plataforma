@@ -171,10 +171,14 @@ export class UserService implements OnDestroy {
     return this.users$.getValue();
   }
 
-  updateUser(user: User, callback?: () => void, isCurrentUser = false): void {
-    const body = {
-      user: user,
-    };
+  updateUser(
+    user: User,
+    callback?: () => void,
+    isCurrentUser = false,
+    successMessage?: string,
+    errorMessage?: string
+  ): void {
+    const body = { user, successMessage, errorMessage };
     this.http
       .post('/api/user/update', body)
       .pipe(take(1))

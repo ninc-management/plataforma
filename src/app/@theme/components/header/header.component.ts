@@ -211,6 +211,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  setAllNotificationsRead(): void {
+    this.user.notifications = [];
+    this.userService.updateUser(
+      this.user,
+      undefined,
+      true,
+      'Notificações marcadas como lidas!',
+      'Falha ao marcar notificações como lidas!'
+    );
+    this.popover.hide();
+  }
+
   openNotification(idx: number, notification: Notification): void {
     this.dialogService.open(ConfigDialogComponent, {
       context: {
