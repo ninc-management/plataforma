@@ -34,8 +34,8 @@ router.post('/', (req, res, next) => {
 });
 
 router.post('/update', async (req, res, next) => {
-  const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
   try {
+    const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
     if (requested) {
       await mutex.runExclusive(async () => {
         usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());
