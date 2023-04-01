@@ -41,7 +41,7 @@ router.post('/update', async (req, res, next) => {
         usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());
       });
     }
-    return res.status(200).json({ message: req.body.successMessage || 'Associado Cadastrado!' });
+    return res.status(200).json({ message: req.body.successMessage || 'Associado atualizado!' });
   } catch (err) {
     return res.status(500).json({
       message: req.body.errorMessage || 'Erro ao atualizar associado!',
