@@ -80,16 +80,16 @@ export class OneDriveService implements OnDestroy {
     switch (oneDriveFolder) {
       case OneDriveFolders.PROVIDERS: {
         if (
-          this.config.oneDriveConfig.providerTransactions.oneDriveId &&
-          this.config.oneDriveConfig.providerTransactions.folderId
+          this.config.oneDriveConfig.providerFiles.oneDriveId &&
+          this.config.oneDriveConfig.providerFiles.folderId
         ) {
           URI =
             environment.onedriveUri +
-            this.config.oneDriveConfig.providerTransactions.oneDriveId.toLowerCase() +
+            this.config.oneDriveConfig.providerFiles.oneDriveId.toLowerCase() +
             '/items/' +
-            this.config.oneDriveConfig.providerTransactions.oneDriveId.toUpperCase() +
+            this.config.oneDriveConfig.providerFiles.oneDriveId.toUpperCase() +
             '!' +
-            this.config.oneDriveConfig.providerTransactions.folderId +
+            this.config.oneDriveConfig.providerFiles.folderId +
             ':/';
         }
         break;
@@ -178,7 +178,7 @@ export class OneDriveService implements OnDestroy {
 
   deleteFiles(path: string, filesToRemove: UploadedFile[], oneDriveFolder: OneDriveFolders): void {
     const onedriveId = {
-      [OneDriveFolders.PROVIDERS]: this.config.oneDriveConfig.providerTransactions.oneDriveId,
+      [OneDriveFolders.PROVIDERS]: this.config.oneDriveConfig.providerFiles.oneDriveId,
       [OneDriveFolders.TEAMS]: this.config.oneDriveConfig.teamTransactions.oneDriveId,
       [OneDriveFolders.CONTRACTS]: this.config.oneDriveConfig.contracts.oneDriveId,
     };

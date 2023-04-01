@@ -17,7 +17,7 @@ db.platformconfigs.find().forEach((config) => {
     oneDriveId: '',
     folderId: '',
   };
-  config.oneDriveConfig.providerTransactions = {
+  config.oneDriveConfig.providerFiles = {
     oneDriveId: '',
     folderId: '',
   };

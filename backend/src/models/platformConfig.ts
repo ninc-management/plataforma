@@ -122,7 +122,7 @@ export class OneDriveConfig {
   contracts: OneDriveFolderConfig = new OneDriveFolderConfig();
 
   @prop()
-  providerTransactions: OneDriveFolderConfig = new OneDriveFolderConfig();
+  providerFiles: OneDriveFolderConfig = new OneDriveFolderConfig();
 
   @prop()
   teamTransactions: OneDriveFolderConfig = new OneDriveFolderConfig();
