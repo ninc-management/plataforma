@@ -93,7 +93,7 @@ router.post('/read', (req, res, next) => {
       (err, savedUser) => {
         if (err) {
           return res.status(500).json({
-            message: 'Falha ao ler notificação!',
+            message: 'Falha ao marcar notificação como lida!',
             error: err,
           });
         }
