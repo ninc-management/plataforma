@@ -542,7 +542,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     return `CPF/CNPJ: ${document}
       \nTelefone: ${phone}
       \nEmail: ${email}
-      \nEndereço: ${Object.assign(new Address(), address)}`;
+      \nEndereço: ${Object.assign(new Address(), address).toString()}`;
   };
 
   fixHours(): void {
