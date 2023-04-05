@@ -641,11 +641,7 @@ export class PdfService {
 
         /* eslint-disable indent*/
         pdf.add({
-          text: idToProperty(
-            invoice.contractor,
-            this.contractorService.idToContractor.bind(this.contractorService),
-            'fullName'
-          ),
+          text: invoice.contractorFullName,
           style: 'insideText',
         });
         /* eslint-enable indent*/
