@@ -48,6 +48,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   hasInitialContract = true;
   validation = expense_validation as any;
   USER_SECTORS: Sector[] = [];
+  OneDriveFolders = OneDriveFolders;
   expenseTypes = EXPENSE_TYPES;
   contractExpenseTypes: ExpenseType[] = [];
   splitTypes = SPLIT_TYPES;
@@ -424,7 +425,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
-    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
+    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove, OneDriveFolders.CONTRACTS);
   }
 
   notifyManager(): void {
