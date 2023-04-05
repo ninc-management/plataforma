@@ -30,7 +30,7 @@ import {
   trackByIndex,
 } from 'app/shared/utils';
 
-import { Contractor } from '@models/contractor';
+import { Address, Contractor } from '@models/contractor';
 import {
   Invoice,
   InvoiceMaterial,
@@ -529,16 +529,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tooltipText = (contractorItem: Contractor | string | undefined): string => {
     if (contractorItem === undefined) return '';
-    return (
-      `CPF/CNPJ: ` +
-      this.contractorService.idToContractor(contractorItem).document +
-      `\nTelefone: ` +
-      this.contractorService.idToContractor(contractorItem).phone +
-      `\nEmail: ` +
-      this.contractorService.idToContractor(contractorItem).email +
-      `\nEndereço: ` +
-      this.contractorService.idToContractor(contractorItem).address
-    );
+    return `CPF/CNPJ: ${this.contractorService.idToContractor(contractorItem).document}
+      \nTelefone: ${this.contractorService.idToContractor(contractorItem).phone}
+      \nEmail: ${this.contractorService.idToContractor(contractorItem).email}
+      \nEndereço: ${Object.assign(new Address(), this.contractorService.idToContractor(contractorItem).address)}`;
   };
 
   fixHours(): void {
