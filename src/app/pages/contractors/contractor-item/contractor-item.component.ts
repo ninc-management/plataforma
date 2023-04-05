@@ -30,24 +30,24 @@ export enum RepresentativeTypes {
   styleUrls: ['./contractor-item.component.scss'],
 })
 export class ContractorItemComponent implements OnInit {
+  @ViewChild('form') ngForm = {} as NgForm;
   @Input() iContractor = new Contractor();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Input() contractors?: Contractor[];
   @Output() submit = new EventEmitter<void>();
-  @ViewChild('form') ngForm = {} as NgForm;
 
-  contractor = new Contractor();
   editing = false;
   submitted = false;
-  validation = contractor_validation as any;
-  typesOfPerson = TypesOfPerson;
-  selectedOption = TypesOfPerson.PESSOA_FISICA;
   cities: string[] = [];
   states: string[] = [];
-  representativeTypes = RepresentativeTypes;
-  hasPersonTypeChanged = false;
-
   trackByIndex = trackByIndex;
+  contractor = new Contractor();
+  typesOfPerson = TypesOfPerson;
+  representativeTypes = RepresentativeTypes;
+  validation = contractor_validation as any;
+  selectedOption = TypesOfPerson.PESSOA_FISICA;
+  personType = { hasChanged: false, type: this.typesOfPerson.PESSOA_FISICA };
 
   constructor(
     private contractorService: ContractorService,
@@ -138,7 +138,19 @@ export class ContractorItemComponent implements OnInit {
       });
   }
 
+  changeValues(option: string): void {
+    if (option === this.personType.type) return;
+    this.contractor.document = '';
+    this.personType.hasChanged = true;
+    this.personType.type = this.selectedOption;
+  }
+
   isNotEdited(): boolean {
     return isEqual(this.contractor, this.iContractor);
+  }
+
+  isSameDocument(fieldValue: string): Contractor[] {
+    if (!this.contractors) return [];
+    return this.contractors.filter((contractor) => contractor.document === fieldValue);
   }
 }
