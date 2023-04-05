@@ -1637,7 +1637,7 @@
                     [options]="{ animation: { type: 'pulse' } }"
                     [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
                     nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
-1-Abra o Onedrive;
+1-Abra o OneDrive;
 2-Vá no menu dos itens compartilhados;
 3-Por fim, escolha sua pasta.
 4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id do OneDrive está na posição dos valores AAAAAAAAAAAAAA."
@@ -1673,8 +1673,8 @@
                     pack="eva"
                     [options]="{ animation: { type: 'pulse' } }"
                     [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                    nbTooltip="Para pegar o id da pasta compartilhada do onedrive:
-1-Abra o Onedrive;
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o OneDrive;
 2-Vá no menu dos itens compartilhados da esquerda;
 3-Por fim, escolha sua pasta.
 4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores BBBBB."
@@ -1701,7 +1701,7 @@
           </div>
           <div class="row">
             <div class="col-auto">
-              <label class="label-divider">Pasta compartilhada fornecedores</label>
+              <label class="label-divider">Pasta compartilhada para os anexos dos fornecedores</label>
             </div>
             <div class="col">
               <hr />
@@ -1719,7 +1719,7 @@
                     [options]="{ animation: { type: 'pulse' } }"
                     [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
                     nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
-1-Abra o Onedrive;
+1-Abra o OneDrive;
 2-Vá no menu dos itens compartilhados;
 3-Por fim, escolha sua pasta.
 4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id do OneDrive está na posição dos valores AAAAAAAAAAAAAA."
@@ -1729,7 +1729,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.oneDriveId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providerFiles.oneDriveId"
                   #oneDriveIdOfProviders="ngModel"
                   id="input-onedrive-id"
                   name="oneDriveIdOfProviders"
@@ -1755,8 +1755,8 @@
                     pack="eva"
                     [options]="{ animation: { type: 'pulse' } }"
                     [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-                    nbTooltip="Para pegar o id da pasta compartilhada do onedrive:
-1-Abra o Onedrive;
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o OneDrive;
 2-Vá no menu dos itens compartilhados da esquerda;
 3-Por fim, escolha sua pasta.
 4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores BBBBB."
@@ -1766,7 +1766,7 @@
                 </label>
                 <input
                   nbInput
-                  [(ngModel)]="clonedConfig.oneDriveConfig.providers.folderId"
+                  [(ngModel)]="clonedConfig.oneDriveConfig.providerFiles.folderId"
                   #folderIdOfProviders="ngModel"
                   id="input-folder-id"
                   name="folderIdOfProviders"
@@ -1776,6 +1776,88 @@
                   [required]="validation.oneDriveFolderId.required"
                   [status]="folderIdOfProviders.dirty ? (folderIdOfProviders.invalid ? 'danger' : 'success') : 'basic'"
                   [attr.aria-invalid]="folderIdOfProviders.invalid && folderIdOfProviders.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
+                />
+              </div>
+            </div>
+          </div>
+           <div class="row">
+            <div class="col-auto">
+              <label class="label-divider">Pasta compartilhada para os anexos de transações de times</label>
+            </div>
+            <div class="col">
+              <hr />
+            </div>
+          </div>
+          <div class="row" style="align-items: end">
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-onedrive-id">
+                  Id do OneDrive
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o OneDrive;
+2-Vá no menu dos itens compartilhados;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id do OneDrive está na posição dos valores AAAAAAAAAAAAAA."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.oneDriveConfig.teamTransactions.oneDriveId"
+                  #oneDriveIdOfTeams="ngModel"
+                  id="input-onedrive-id"
+                  name="oneDriveIdOfTeams"
+                  placeholder="Id do OneDrive"
+                  fullWidth
+                  fieldSize="large"
+                  [required]="validation.oneDriveId.required"
+                  [status]="
+                    oneDriveIdOfTeams.dirty ? (oneDriveIdOfTeams.invalid ? 'danger' : 'success') : 'basic'
+                  "
+                  [attr.aria-invalid]="oneDriveIdOfTeams.invalid && oneDriveIdOfTeams.touched ? true : null"
+                  [disabled]="!toggleoneDrive.value"
+                />
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="form-control-group">
+                <label class="label" for="input-folder-id">
+                  Id da pasta compartilhada
+                  <nb-icon
+                    status="info"
+                    icon="info"
+                    pack="eva"
+                    [options]="{ animation: { type: 'pulse' } }"
+                    [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+                    nbTooltip="Para pegar o id da pasta compartilhada do OneDrive:
+1-Abra o OneDrive;
+2-Vá no menu dos itens compartilhados da esquerda;
+3-Por fim, escolha sua pasta.
+4-Na url,como por exemplo https://onedrive.live.com/?id=AAAAAAAAAAAAAA%21BBBBB&cid=AAAAAAAAAAAAAA, o id da pasta compartilhada está na posição dos valores BBBBB."
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                  ></nb-icon>
+                </label>
+                <input
+                  nbInput
+                  [(ngModel)]="clonedConfig.oneDriveConfig.teamTransactions.folderId"
+                  #folderIdOfTeams="ngModel"
+                  id="input-folder-id"
+                  name="folderIdOfTeams"
+                  fullWidth
+                  fieldSize="large"
+                  placeholder="id da pasta compatilhada"
+                  [required]="validation.oneDriveFolderId.required"
+                  [status]="folderIdOfTeams.dirty ? (folderIdOfTeams.invalid ? 'danger' : 'success') : 'basic'"
+                  [attr.aria-invalid]="folderIdOfTeams.invalid && folderIdOfTeams.touched ? true : null"
                   [disabled]="!toggleoneDrive.value"
                 />
               </div>
