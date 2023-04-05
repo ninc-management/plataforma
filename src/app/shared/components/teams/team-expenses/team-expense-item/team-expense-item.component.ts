@@ -9,7 +9,7 @@ import { skip, skipWhile, take, takeUntil } from 'rxjs/operators';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-expense.component';
 import { ConfigService } from 'app/shared/services/config.service';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -27,9 +27,6 @@ import expense_validation from 'app/shared/validators/expense-validation.json';
   styleUrls: ['./team-expense-item.component.scss'],
 })
 export class TeamExpenseItemComponent extends BaseExpenseComponent implements OnInit {
-  @ViewChild('form', { static: true })
-  formRef!: NgForm;
-  @ViewChild('form') ngForm = {} as NgForm;
   @Input() iTeam: Team = new Team();
   @Input() expenseIdx?: number;
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
@@ -43,7 +40,20 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   };
   splitSelectedMember = new User();
 
-  expense: TeamExpense = new TeamExpense();
+  expense: TeamExpense = {
+    author: '',
+    source: '',
+    description: '',
+    nf: true,
+    type: '',
+    subType: '',
+    value: '',
+    created: this.today,
+    lastUpdate: this.today,
+    paid: true,
+    uploadedFiles: [],
+    code: '#0',
+  };
 
   initialFiles: UploadedFile[] = [];
   registered: boolean = false;
@@ -51,6 +61,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   formatDate = formatDate;
   forceValidatorUpdate = forceValidatorUpdate;
+  OneDriveFolders = OneDriveFolders;
 
   constructor(
     protected stringUtil: StringUtilService,
@@ -67,7 +78,6 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   ngOnInit(): void {
     super.ngOnInit();
-
     this.registered = false;
     const tmp = cloneDeep(this.userService.getUsers().value.filter((user) => user.active));
     this.userData = of(cloneDeep(tmp));
@@ -82,7 +92,8 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       });
     tmp.unshift(NORTAN);
     this.sourceData = of(tmp);
-    if (this.expenseIdx != undefined) {
+    if (this.expenseIdx) {
+      this.updateUploaderOptions();
       this.expense = cloneDeep(this.iTeam.expenses[this.expenseIdx]);
       if (this.expense.author) this.expense.author = this.userService.idToUser(this.expense.author);
       if (this.expense.source) this.expense.source = this.userService.idToUser(this.expense.source);
@@ -103,18 +114,12 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     this.providerSearch = this.expense.provider
       ? this.providerService.idToProvider(this.expense.provider)?.fullName
       : '';
-
-    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
-      if (status === 'VALID' && this.expense.nf === true)
-        setTimeout(() => {
-          this.updateUploaderOptions();
-        }, 5);
-    });
   }
 
-  ngAfterViewInit() {
-    this.ngForm.statusChanges?.subscribe(() => {
-      if (this.ngForm.dirty) this.isFormDirty.next(true);
+  ngAfterViewInit(): void {
+    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (this.formRef.dirty) this.isFormDirty.next(true);
+      if (status === 'VALID' && this.expense.nf === true) this.updateUploaderOptions();
     });
   }
 
@@ -154,12 +159,12 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     this.expense.created = this.today;
     this.expense.lastUpdate = this.today;
     this.expense.paid = true;
-    this.ngForm.form.markAsPristine();
+    this.formRef.form.markAsPristine();
     this.isFormDirty.next(false);
   }
 
   updateUploaderOptions(): void {
-    const mediaFolderPath = 'SFC/Comprovantes/';
+    const mediaFolderPath = 'SFC/Comprovantes';
     const fn = (name: string) => {
       const type = this.expense.type;
       const date = formatDate(new Date(), '-');
@@ -171,7 +176,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
       return 'Comprovante-' + type + '-' + date + extension;
     };
     this.folderPath = mediaFolderPath;
-    super.updateUploaderOptions(mediaFolderPath, fn);
+    super.updateUploaderOptions(mediaFolderPath, fn, OneDriveFolders.TEAMS);
   }
 
   handleTypeChange(): void {
@@ -186,6 +191,6 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
-    this.onedrive.deleteFiles(this.folderPath, filesToRemove);
+    this.onedrive.deleteFiles(this.folderPath, filesToRemove, OneDriveFolders.TEAMS);
   }
 }

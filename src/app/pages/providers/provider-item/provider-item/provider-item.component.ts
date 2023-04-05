@@ -46,6 +46,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   isPhone = isPhone;
   tooltipTriggers = NbTrigger;
   dTypes = DIALOG_TYPES;
+  OneDriveFolders = OneDriveFolders;
 
   constructor(
     private providerService: ProviderService,
@@ -179,6 +180,6 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
 
   deleteFiles(): void {
     const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
-    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove);
+    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove, OneDriveFolders.PROVIDERS);
   }
 }
