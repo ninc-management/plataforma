@@ -24,6 +24,12 @@ export class Address {
 
   @prop({ required: true })
   state: string = '';
+
+  toString(): string {
+    return `${this.streetAddress}, ${this.complement ? this.complement + ', ' : ''} ${this.houseNumber}, ${
+      this.district
+    }, ${this.city}/${this.state}, ${this.zipCode}`;
+  }
 }
 
 export class ComercialRepresentative {
