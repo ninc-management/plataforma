@@ -79,10 +79,7 @@ export class OneDriveService implements OnDestroy {
     let URI = '';
     switch (oneDriveFolder) {
       case OneDriveFolders.PROVIDERS: {
-        if (
-          this.config.oneDriveConfig.providerFiles.oneDriveId &&
-          this.config.oneDriveConfig.providerFiles.folderId
-        ) {
+        if (this.config.oneDriveConfig.providerFiles.oneDriveId && this.config.oneDriveConfig.providerFiles.folderId) {
           URI =
             environment.onedriveUri +
             this.config.oneDriveConfig.providerFiles.oneDriveId.toLowerCase() +
