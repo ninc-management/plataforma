@@ -122,7 +122,10 @@ export class OneDriveConfig {
   contracts: OneDriveFolderConfig = new OneDriveFolderConfig();
 
   @prop()
-  providers: OneDriveFolderConfig = new OneDriveFolderConfig();
+  providerFiles: OneDriveFolderConfig = new OneDriveFolderConfig();
+
+  @prop()
+  teamTransactions: OneDriveFolderConfig = new OneDriveFolderConfig();
 }
 
 export class NotificationConfigTuple {

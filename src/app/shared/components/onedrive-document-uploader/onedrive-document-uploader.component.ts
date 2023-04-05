@@ -5,7 +5,7 @@ import { take, takeUntil } from 'rxjs/operators';
 
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
-import { OneDriveService } from 'app/shared/services/onedrive.service';
+import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 
 import { UploadedFile, UploadedFileWithDescription } from '@models/shared/uploadedFiles';
 
@@ -84,7 +84,7 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
     });
   }
 
-  removeFile(index: number, path: string): void {
+  removeFile(index: number, path: string, oneDriveFolder: OneDriveFolders): void {
     this.dialogService
       .open(ConfirmationDialogComponent, {
         context: {
@@ -98,7 +98,7 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
       .onClose.pipe(take(1))
       .subscribe((response: boolean) => {
         if (response) {
-          this.onedrive.deleteFiles(path, [this.uploadedFiles[index]]);
+          this.onedrive.deleteFiles(path, [this.uploadedFiles[index]], oneDriveFolder);
           this.uploadedFiles.splice(index, 1);
         }
       });
