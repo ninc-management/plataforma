@@ -78,7 +78,7 @@
           fieldSize="large"
           [brmasker]="{ person: true }"
           ngxSelectAllText
-          [checkList]="contractors"
+          [notIncluded]="isSameDocument.bind(this)"
           [required]="validation.cpf.required"
           [minlength]="validation.cpf.minLength"
           [maxlength]="validation.cpf.maxLength"
@@ -91,9 +91,9 @@
           <p class="caption status-danger" *ngIf="cpf.errors?.minlength || cpf.errors?.maxlength">
             O CPF deve ter {{ validation.cpf.minLength - 3 }} números
           </p>
-           <div *ngIf="cpf.errors?.itemExistente">
+           <div *ngIf="cpf.errors?.included">
             <p class="caption status-danger">O usuário abaixo já está cadastrado com este CPF!</p>
-            <p>{{ cpf.errors?.item }}</p>
+            <p>{{ cpf.errors?.included[0].fullName }}</p>
           </div>
         </ng-container>
       </div>
@@ -110,7 +110,7 @@
           fieldSize="large"
           [brmasker]="{ person: true }"
           ngxSelectAllText
-          [checkList]="contractors"
+          [notIncluded]="isSameDocument.bind(this)"
           [required]="validation.cnpj.required"
           [minlength]="validation.cnpj.minLength"
           [maxlength]="validation.cnpj.maxLength"
@@ -123,9 +123,9 @@
           <p class="caption status-danger" *ngIf="cnpj.errors?.minlength || cnpj.errors?.maxLength">
             O CNPJ deve ter {{ validation.cnpj.minLength - 4 }} números
           </p>
-           <div *ngIf="cnpj.errors?.itemExistente">
+           <div *ngIf="cnpj.errors?.included">
             <p class="caption status-danger">O usuário abaixo já está cadastrado com este CNPJ!</p>
-            <p>{{ cnpj.errors?.item }}</p>
+            <p>{{ cnpj.errors?.included[0].fullName }}</p>
           </div>
         </ng-container>
       </div>

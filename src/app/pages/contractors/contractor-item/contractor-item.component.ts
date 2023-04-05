@@ -148,4 +148,9 @@ export class ContractorItemComponent implements OnInit {
   isNotEdited(): boolean {
     return isEqual(this.contractor, this.iContractor);
   }
+
+  isSameDocument(fieldValue: string): Contractor[] {
+    if (!this.contractors) return [];
+    return this.contractors.filter((contractor) => contractor.document === fieldValue);
+  }
 }
