@@ -16,8 +16,8 @@ export class Address {
   @prop({ required: true })
   district: string = '';
 
-  @prop({ required: true })
-  complement: string = '';
+  @prop()
+  complement?: string = '';
 
   @prop({ required: true })
   city: string = '';
