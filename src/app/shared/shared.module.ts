@@ -36,6 +36,7 @@ import { TransactionDialogComponent } from './components/transactions/transactio
 import { UserTransactionComponent } from './components/user-transaction/user-transaction.component';
 import { BrMaskDirective } from './directives/br-mask.directive';
 import { LastPaymentDirective } from './directives/last-payment.directive';
+import { NotIncludedDirective } from './directives/not-included.directive';
 import { OverPaidDirective } from './directives/over-paid.directive';
 import { SelectAllTextDirective } from './directives/select-all-text.directive';
 import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-table.module';
@@ -74,6 +75,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     LastPaymentDirective,
     OverPaidDirective,
     SelectAllTextDirective,
+    NotIncludedDirective,
     TeamExpenseItemComponent,
     TeamExpensesComponent,
     TransactionDialogComponent,
@@ -101,6 +103,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     TextInputDialogComponent,
     TransactionDialogComponent,
     UserTransactionComponent,
+    NotIncludedDirective,
   ],
 })
 export class SharedModule {}

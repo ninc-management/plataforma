@@ -16,6 +16,7 @@ import { ComercialRepresentative, Contractor, LegalRepresentative } from '@model
 export class ContractorDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() contractor = new Contractor();
+  @Input() contractors?: Contractor[];
   @Input() representative?: LegalRepresentative | ComercialRepresentative;
 
   isPhone = isPhone;
