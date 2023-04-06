@@ -1,4 +1,4 @@
-import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, plugin, prop } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { Base } from './base';
@@ -65,8 +65,6 @@ export class Course extends Base<string> {
 
   @prop({ required: true, type: () => [CourseResource] })
   resources: CourseResource[] = [];
-
-  participantsQuantity = '';
 }
 
 export default getModelForClass(Course);
