@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { NbPopoverDirective } from '@nebular/theme';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { DefaultFilter } from './default-filter';
 
@@ -53,12 +53,10 @@ export class InputFilterComponent extends DefaultFilter implements OnInit {
     if (this.query) {
       this.inputControl.setValue(this.query);
     }
-    this.inputControl.valueChanges
-      .pipe(skip(1), distinctUntilChanged(), debounceTime(this.delay))
-      .subscribe((value: string) => {
-        this.query = value;
-        this.setFilter();
-      });
+    this.inputControl.valueChanges.pipe(distinctUntilChanged(), debounceTime(this.delay)).subscribe((value: string) => {
+      this.query = value;
+      this.setFilter();
+    });
   }
 
   setInputValue(values: { min: string; max: string }): void {
