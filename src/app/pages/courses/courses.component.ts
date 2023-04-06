@@ -64,9 +64,10 @@ export class CoursesComponent implements OnInit {
         valuePrepareFunction: (speaker: CourseParticipant): string => speaker.name,
         type: 'string',
       },
-      participantsQuantity: {
+      participants: {
         title: 'Nº de Participantes',
         type: 'string',
+        valuePrepareFunction: (participants: CourseParticipant[]): string => participants.length.toString(),
       },
       hasCertificate: {
         title: 'Tem certificado?',
@@ -104,11 +105,7 @@ export class CoursesComponent implements OnInit {
         takeUntil(this.destroy$)
       )
       .subscribe(([courses]) => {
-        this.courses = courses.map((course: Course) => {
-          course.participantsQuantity = course.participants.length.toString();
-          return course;
-        });
-        this.source.load(this.courses);
+        this.source.load(courses);
         this.isDataLoaded = true;
       });
   }
