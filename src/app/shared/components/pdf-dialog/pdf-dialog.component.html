@@ -26,12 +26,19 @@
         </div>
       </nb-card-header>
       <nb-card-body
-        style="height: 500px"
-        [nbSpinner]="data == undefined"
+        style="display: block; flex: unset"
+        [ngStyle]="{
+          'height.px': windowHeight()
+        }"
+        [nbSpinner]="!data"
         nbSpinnerStatus="primary"
         nbSpinnerSize="giant"
       >
-        <pdf-viewer [src]="data" [render-text]="true" style="display: block"></pdf-viewer>
+        <pdf-viewer
+          [src]="data"
+          [render-text]="false"
+          style="display: block; height: 100%"
+        ></pdf-viewer>
       </nb-card-body>
     </nb-card>
   </div>
