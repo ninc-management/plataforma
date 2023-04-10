@@ -1,6 +1,6 @@
 import { Options } from '@angular-slider/ngx-slider';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 
 import { appInjector } from 'app/shared/injector.module';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -11,11 +11,11 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
     <div>
       <p>
         Mínimo:
-        <input [(ngModel)]="minValue" nbInput (ngModelChange)="restrictMinValue$.next($event)" />
+        <input [(ngModel)]="minValue" nbInput (ngModelChange)="restrictMinValue$.next()" />
       </p>
       <p>
         Máximo:
-        <input [(ngModel)]="maxValue" nbInput (ngModelChange)="restrictMaxValue$.next($event)" />
+        <input [(ngModel)]="maxValue" nbInput (ngModelChange)="restrictMaxValue$.next()" />
       </p>
     </div>
     <ngx-slider
@@ -27,15 +27,16 @@ import { StringUtilService } from 'app/shared/services/string-util.service';
     ></ngx-slider>
   `,
 })
-export class RangeFilterComponent implements OnInit {
+export class RangeFilterComponent implements OnInit, OnDestroy {
   @Input() maxValue!: number;
   @Input() minValue!: number;
   @Input() query!: string;
   minValueSlider!: number;
   maxValueSlider!: number;
   @Output() valueChanged = new EventEmitter<{ min: string; max: string }>();
-  restrictMinValue$: Subject<string> = new Subject();
-  restrictMaxValue$: Subject<string> = new Subject();
+  restrictMinValue$: Subject<void> = new Subject();
+  restrictMaxValue$: Subject<void> = new Subject();
+  destroy$: Subject<void> = new Subject();
 
   options: Options = {
     translate: (value: number): string => {
@@ -46,6 +47,11 @@ export class RangeFilterComponent implements OnInit {
   };
 
   constructor(private stringUtil: StringUtilService) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit() {
     this.options.floor = this.minValue;
@@ -59,9 +65,9 @@ export class RangeFilterComponent implements OnInit {
       this.minValueSlider = this.minValue;
       this.maxValueSlider = this.maxValue;
     }
-    this.restrictMinValue$.pipe(debounceTime(700), distinctUntilChanged()).subscribe((value) => {
+    this.restrictMinValue$.pipe(debounceTime(700), takeUntil(this.destroy$)).subscribe(() => {
       if (this.options.floor) {
-        if (+value > this.options.floor) {
+        if (this.minValue < this.options.floor) {
           this.minValue = this.options.floor;
           this.minValueSlider = this.minValue;
         } else {
@@ -69,9 +75,9 @@ export class RangeFilterComponent implements OnInit {
         }
       }
     });
-    this.restrictMaxValue$.pipe(debounceTime(700), distinctUntilChanged()).subscribe((value) => {
+    this.restrictMaxValue$.pipe(debounceTime(700), takeUntil(this.destroy$)).subscribe(() => {
       if (this.options.ceil) {
-        if (+value > this.options.ceil) {
+        if (this.maxValue > this.options.ceil) {
           this.maxValue = this.options.ceil;
           this.maxValueSlider = this.maxValue;
         } else {
