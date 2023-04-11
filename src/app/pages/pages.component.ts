@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService, NbIconLibraries, NbMenuItem, NbMenuService, NbSidebarService } from '@nebular/theme';
 import { combineLatest, Subject } from 'rxjs';
-import { skipWhile, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { LayoutService } from '../@core/utils';
 import { OneColumnLayoutComponent } from '../@theme/layouts';
@@ -16,6 +16,7 @@ import {
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
+import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -263,12 +264,23 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
 
     this.wsService.manager.on('reconnect', () => {
       this.wsService.ioSocket.disconnect().connect();
-      const shouldUpdateCache = confirm(
-        'Novas alterações podem estar disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?'
-      );
-      if (shouldUpdateCache) {
-        window.location.reload();
-      }
+      this.dialogService
+        .open(ConfirmationDialogComponent, {
+          context: {
+            question:
+              'Novas alterações podem estar disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
+          },
+          dialogClass: 'my-dialog',
+          closeOnBackdropClick: false,
+          closeOnEsc: false,
+          autoFocus: false,
+        })
+        .onClose.pipe(take(1))
+        .subscribe((response: boolean) => {
+          if (response) {
+            window.location.reload();
+          }
+        });
     });
   }
 
