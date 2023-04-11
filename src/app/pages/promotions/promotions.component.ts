@@ -91,7 +91,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
     combineLatest([this.promotionService.getPromotions(), this.promotionService.isDataLoaded$])
       .pipe(
         takeUntil(this.destroy$),
-        skipWhile(([, promotionLoaded]) => !promotionLoaded)
+        skipWhile(([, isPromotionDataLoaded]) => !isPromotionDataLoaded)
       )
       .subscribe(([promotions]) => {
         this.promotions = promotions;
