@@ -51,15 +51,15 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
       delete: false,
     },
     columns: {
-      code: {
+      'contract.locals.code': {
         title: 'Contrato',
         type: 'string',
       },
-      contractor: {
+      'contract.locals.contractor': {
         title: 'Cliente',
         type: 'string',
       },
-      name: {
+      'contract.locals.name': {
         title: 'Empreendimento',
         type: 'string',
       },
@@ -99,19 +99,7 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.source.load(
-      this.userReceivableContracts
-        .filter((receivable) => receivable.receivableValue != '0,00')
-        .map((receivable) => {
-          return {
-            contract: receivable.contract,
-            code: receivable.contract.locals.code,
-            contractor: receivable.contract.locals.contractor,
-            name: receivable.contract.locals.name,
-            receivableValue: receivable.receivableValue,
-          };
-        })
-    );
+    this.source.load(this.userReceivableContracts.filter((receivable) => receivable.receivableValue !== '0,00'));
   }
 
   contractDialog(event: { data?: ReceivableByContract }): void {
