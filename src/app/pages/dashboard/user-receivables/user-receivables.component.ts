@@ -10,7 +10,6 @@ import {
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
-import { UserService } from 'app/shared/services/user.service';
 import { isPhone, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -87,11 +86,7 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
 
   isPhone = isPhone;
 
-  constructor(
-    public invoiceService: InvoiceService,
-    private dialogService: NbDialogService,
-    private userService: UserService
-  ) {}
+  constructor(public invoiceService: InvoiceService, private dialogService: NbDialogService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
