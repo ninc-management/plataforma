@@ -11,7 +11,6 @@ import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
-import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
@@ -159,7 +158,6 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: NbDialogService,
-    private teamService: TeamService,
     private configService: ConfigService,
     public userService: UserService
   ) {}
