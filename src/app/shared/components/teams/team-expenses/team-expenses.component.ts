@@ -174,9 +174,9 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
         skipWhile(([, isConfigLoaded]) => !isConfigLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([configs]) => {
+      .subscribe(([configs, _]) => {
         this.platformConfig = configs[0];
-        this.loadTableExpenses();
+        this.loadExpenseTable();
         this.reloadTableSettings();
       });
   }
@@ -219,7 +219,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  loadTableExpenses(): void {
+  loadExpenseTable(): void {
     this.source.load(this.clonedTeam.expenses);
     const expensesValues = greaterAndSmallerValue(this.clonedTeam.expenses);
     this.settings.columns.value.filter.config.minValue = expensesValues.min;
