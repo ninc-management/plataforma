@@ -11,6 +11,7 @@ import { idToProperty, isPhone, nameSort, NOT } from 'app/shared/utils';
 
 import { Sector } from '@models/shared/sector';
 import { Team } from '@models/team';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-teams',
@@ -67,16 +68,20 @@ export class TeamsComponent implements OnInit, OnDestroy {
       sectors: {
         title: 'Setores',
         type: 'string',
-        valuePrepareFunction: (array: any[]) => {
-          return array.map((sector: any) => this.teamService.idToSector(sector).abrev).join(', ');
+        valuePrepareFunction: (sectors: Sector[]) => {
+          return sectors
+            .map((sector: any) => this.teamService.idToSector(sector).abrev)
+            .sort()
+            .join(', ');
         },
         filterFunction: (sectors: Sector[], search: string) => {
           return sectors.some((sector) => sector.abrev.includes(search));
         },
       },
-      'locals.leaderName': {
+      leader: {
         title: 'Líder',
         type: 'string',
+        valuePrepareFunction: (leader: User) => (leader ? this.userService.idToUser(leader).fullName : ''),
       },
     },
   };
@@ -102,18 +107,11 @@ export class TeamsComponent implements OnInit, OnDestroy {
       this.userService.isDataLoaded$,
     ])
       .pipe(
-        skipWhile(([, , teamLoaded, userLoaded]) => !teamLoaded || !userLoaded),
+        skipWhile(([, , teamLoaded, userLoaded]) => !(teamLoaded && userLoaded)),
         takeUntil(this.destroy$)
       )
       .subscribe(([teams, , ,]) => {
-        this.teams = teams.map((team) => {
-          team.locals.leaderName = idToProperty(
-            team.leader,
-            this.userService.idToUser.bind(this.userService),
-            'fullName'
-          );
-          return team;
-        });
+        this.teams = teams;
         this.source.load(this.teams);
       });
   }
