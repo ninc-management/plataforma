@@ -36,7 +36,6 @@ export const externalMockedTeams: Team[] = [
     intermediationNfPercentage: '',
     locals: {
       balance: '0,00',
-      leaderName: externalMockedUsers[0].fullName,
     },
   },
   {
@@ -67,7 +66,6 @@ export const externalMockedTeams: Team[] = [
     intermediationNfPercentage: '',
     locals: {
       balance: '0,00',
-      leaderName: externalMockedUsers[0].fullName,
     },
   },
 ];

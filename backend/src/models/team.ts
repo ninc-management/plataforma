@@ -8,7 +8,6 @@ import { User } from './user';
 
 export interface TeamLocals {
   balance: string;
-  leaderName: string;
 }
 
 export class TeamMember {
@@ -147,7 +146,6 @@ export class Team extends Base<string> {
 
   locals: TeamLocals = {
     balance: '0,00',
-    leaderName: '',
   };
 }
 
