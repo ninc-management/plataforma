@@ -9,6 +9,7 @@ import path from 'path';
 import { NotificationApps } from './models/notification';
 // import logger from 'morgan';
 // Import API endpoint routes
+import apiRoutes from './routes/api';
 import authRoutes from './routes/auth';
 import companyRoutes from './routes/company';
 import contractRoutes from './routes/contract';
@@ -29,12 +30,14 @@ import { notification$ } from './shared/global';
 import { isNotificationEnabled, isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
-  public app;
+  public express;
+  public lastChange;
 
   constructor() {
-    this.app = express();
+    this.express = express();
+    this.lastChange = {};
 
-    // Connect to the database before starting the application server.
+    // Connect to the database before starting the expresslication server.
     const options = {
       autoIndex: false,
       maxPoolSize: 250,
@@ -65,43 +68,45 @@ class NortanAPI {
 
     mongoose.set('returnOriginal', false);
 
-    // app.use(logger('dev'));
-    this.app.use(compression());
-    this.app.use(
+    // express.use(logger('dev'));
+    this.express.use(compression());
+    this.express.use(
       helmet({
         contentSecurityPolicy: false,
       })
     );
-    this.app.use(cors());
-    this.app.use(express.json({ limit: '50mb' }));
-    this.app.use(express.urlencoded({ extended: false, limit: '50mb' }));
-    this.app.use('/', express.static(path.join(__dirname, 'angular')));
+    this.express.use(cors());
+    this.express.use(express.json({ limit: '50mb' }));
+    this.express.use(express.urlencoded({ extended: false, limit: '50mb' }));
+    this.express.use('/', express.static(path.join(__dirname, 'angular')));
 
     // API Public Routes
-    this.app.use('/api/public', publicRoutes);
+    this.express.use('/api/public', publicRoutes);
     // API Authentication Routes
-    this.app.use('/api/auth', authRoutes);
+    this.express.use('/api/auth', authRoutes);
     // API tooken validation
-    this.app.use(isUserAuthenticated);
+    this.express.use(isUserAuthenticated);
     // API endpoint routes
-    this.app.use('/api/sendmail', emailRoutes);
-    this.app.use('/api/user', userRoutes);
-    this.app.use('/api/contractor', contractorRoutes);
-    this.app.use('/api/contract', contractRoutes);
-    this.app.use('/api/invoice', invoiceRoutes);
-    this.app.use('/api/promotion', promotionRoutes);
-    this.app.use('/api/team', teamRoutes);
-    this.app.use('/api/course', courseRoutes);
-    this.app.use('/api/config', configRoutes);
-    this.app.use('/api/notify', notificationRoutes);
-    this.app.use('/api/transaction/internal', internalTransactionRoutes);
-    this.app.use('/api/transaction', transactionRoutes);
-    this.app.use('/api/provider', providerRoutes);
-    this.app.use('/api/company', companyRoutes);
+    this.express.use('/api/sendmail', emailRoutes);
+    this.express.use('/api/user', userRoutes);
+    this.express.use('/api/contractor', contractorRoutes);
+    this.express.use('/api/contract', contractRoutes);
+    this.express.use('/api/invoice', invoiceRoutes);
+    this.express.use('/api/promotion', promotionRoutes);
+    this.express.use('/api/team', teamRoutes);
+    this.express.use('/api/course', courseRoutes);
+    this.express.use('/api/config', configRoutes);
+    this.express.use('/api/notify', notificationRoutes);
+    this.express.use('/api/transaction/internal', internalTransactionRoutes);
+    this.express.use('/api/transaction', transactionRoutes);
+    this.express.use('/api/provider', providerRoutes);
+    this.express.use('/api/company', companyRoutes);
+
+    this.express.use('/api', apiRoutes);
 
     // For all GET requests, send back index.html
     // so that PathLocationStrategy can be used
-    this.app.get('/*', function (req, res) {
+    this.express.get('/*', function (req, res) {
       res.sendFile(path.join(__dirname, '/angular/index.html'));
     });
 
@@ -122,4 +127,6 @@ class NortanAPI {
   }
 }
 
-export default { express: new NortanAPI().app, db: mongoose.connection };
+const api = new NortanAPI();
+
+export default { api: api, db: mongoose.connection };
