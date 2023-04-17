@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, DoCheck, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbAccessChecker } from '@nebular/security';
@@ -51,8 +52,10 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
   nortanTeam!: Team;
   idleTimer?: number;
   company: Company = new Company();
+  lastReceivedChange: any = {};
 
   constructor(
+    private http: HttpClient,
     private router: Router,
     private iconsLibrary: NbIconLibraries,
     private layoutService: LayoutService,
@@ -262,25 +265,37 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         if (nortanTeam) this.nortanTeam = nortanTeam;
       });
 
+    this.wsService
+      .fromEvent('dbchange')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data: any) => (this.lastReceivedChange = data));
+
     this.wsService.manager.on('reconnect', () => {
-      this.wsService.ioSocket.disconnect().connect();
-      this.dialogService
-        .open(ConfirmationDialogComponent, {
-          context: {
-            question:
-              'Novas alterações podem estar disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
-          },
-          dialogClass: 'my-dialog',
-          closeOnBackdropClick: false,
-          closeOnEsc: false,
-          autoFocus: false,
-        })
-        .onClose.pipe(take(1))
-        .subscribe((response: boolean) => {
-          if (response) {
-            window.location.reload();
+      this.http
+        .post('/api/checkdb', { change: this.lastReceivedChange })
+        .pipe(take(1))
+        .subscribe((res: any) => {
+          if (!res['isUpdated']) {
+            this.dialogService
+              .open(ConfirmationDialogComponent, {
+                context: {
+                  question:
+                    'Novas alterações estão disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
+                },
+                dialogClass: 'my-dialog',
+                closeOnBackdropClick: false,
+                closeOnEsc: false,
+                autoFocus: false,
+              })
+              .onClose.pipe(take(1))
+              .subscribe((response: boolean) => {
+                if (response) {
+                  window.location.reload();
+                }
+              });
           }
         });
+      this.wsService.ioSocket.disconnect().connect();
     });
   }
 

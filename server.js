@@ -34,9 +34,9 @@ const onListening = () => {
 
 const port = util.normalizePort(process.env.PORT);
 console.log('App now running on port', port);
-app.express.set('port', port);
+app.api.express.set('port', port);
 
-const server = http.createServer(app.express);
+const server = http.createServer(app.api.express);
 server.on('error', onError);
 server.on('listening', onListening);
 server.listen(port);
@@ -51,5 +51,6 @@ const dbWatcher$ = app.db.watch();
 io.on('connection', (socket) => {
   dbWatcher$.on('change', (data) => {
     socket.emit('dbchange', data);
+    app.api.lastChange = data;
   });
 });
