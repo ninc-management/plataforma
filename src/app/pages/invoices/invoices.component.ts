@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import { Ref } from '@typegoose/typegoose';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -19,6 +20,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { codeSort, formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
 import { Invoice, InvoiceLocals } from '@models/invoice';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-invoices',
@@ -29,16 +31,27 @@ export class InvoicesComponent implements OnInit, OnDestroy {
   @ViewChild('smartTable', { read: ElementRef }) tableRef!: ElementRef;
   private destroy$ = new Subject<void>();
   invoices: any[] = [];
+  user: User = new User();
   searchQuery = '';
   isDataLoaded = false;
   get filtredInvoices(): any[] {
     if (this.searchQuery !== '')
       return this.invoices.filter((invoice) => {
         return (
-          invoice.locals.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (invoice.author &&
+            idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName')
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
           invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          invoice.contractor.document.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          invoice.contractorFullName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (invoice.contractor &&
+            idToProperty(
+              invoice.contractor,
+              this.contractorService.idToContractor.bind(this.contractorService),
+              'document'
+            )
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
           invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           invoice.status.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -70,9 +83,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       delete: true,
     },
     columns: {
-      'locals.fullName': {
+      author: {
         title: 'Autor',
         type: 'string',
+        valuePrepareFunction: (author: Ref<User>) => (author ? this.userService.idToShortName(author) : ''),
       },
       code: {
         title: 'Código',
@@ -80,7 +94,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         sortDirection: 'desc',
         compareFunction: codeSort,
       },
-      'locals.contractorName': {
+      contractorFullName: {
         title: 'Cliente',
         type: 'string',
       },
@@ -183,25 +197,10 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([user, invoices, , , isInvoiceDataLoaded, isContractorDataLoaded, isTeamDataLoaded]) => {
-        this.invoices = invoices.map((invoice: Invoice) => {
-          invoice.locals = {} as InvoiceLocals;
-          if (invoice.author) invoice.locals.fullName = this.userService.idToShortName(invoice.author);
-          if (invoice.contractor)
-            invoice.locals.contractorName = idToProperty(
-              invoice.contractor,
-              this.contractorService.idToContractor.bind(this.contractorService),
-              'fullName'
-            );
-
-          invoice.locals.role = this.invoiceService.role(invoice, user);
-          return invoice;
-        });
-        this.source.load(invoices);
-        const invoicesValues = greaterAndSmallerValue(invoices);
-        this.settings.columns.value.filter.config.minValue = invoicesValues.min;
-        this.settings.columns.value.filter.config.maxValue = invoicesValues.max;
-        this.isDataLoaded = true;
+      .subscribe(([user, invoices, , , , ,]) => {
+        this.invoices = invoices;
+        this.user = user;
+        this.loadInvoiceTable();
       });
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
@@ -249,5 +248,17 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       default:
         return 'warning';
     }
+  }
+  loadInvoiceTable(): void {
+    this.invoices.map((invoice: Invoice) => {
+      invoice.locals = {} as InvoiceLocals;
+      invoice.locals.role = this.invoiceService.role(invoice, this.user);
+      return invoice;
+    });
+    this.source.load(this.invoices);
+    const invoicesValues = greaterAndSmallerValue(this.invoices);
+    this.settings.columns.value.filter.config.minValue = invoicesValues.min;
+    this.settings.columns.value.filter.config.maxValue = invoicesValues.max;
+    this.isDataLoaded = true;
   }
 }

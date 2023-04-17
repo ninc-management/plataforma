@@ -68,8 +68,6 @@ export const externalMockedInvoices: Invoice[] = [
     providers: [],
     locals: {
       isModel: false,
-      contractorName: '',
-      fullName: '',
       role: 'Nenhum',
     },
   },
@@ -135,8 +133,6 @@ export const externalMockedInvoices: Invoice[] = [
     providers: [],
     locals: {
       isModel: false,
-      contractorName: '',
-      fullName: '',
       role: 'Nenhum',
     },
   },
@@ -202,8 +198,6 @@ export const externalMockedInvoices: Invoice[] = [
     providers: [],
     locals: {
       isModel: false,
-      contractorName: '',
-      fullName: '',
       role: 'Nenhum',
     },
   },

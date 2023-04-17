@@ -386,12 +386,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.notifyAllUsers();
           }
         }
-        this.tempInvoice.locals.contractorName = idToProperty(
-          this.tempInvoice.contractor,
-          this.contractorService.idToContractor.bind(this.contractorService),
-          'fullName'
-        );
-
         this.iInvoice = cloneDeep(this.tempInvoice);
         this.isFormDirty.next(false);
       }
