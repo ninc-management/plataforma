@@ -1,9 +1,10 @@
 import * as express from 'express';
 
-import ProspectModel from '../models/prospect';
+import ProspectModel, { Prospect } from '../models/prospect';
 import ProspectRefModel, { ProspectRef } from '../models/prospectRef';
 import UserModel from '../models/user';
 import UserRefModel from '../models/userRef';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
 
@@ -15,14 +16,20 @@ router.post('/register', async (req, res, next) => {
         error: 'Email já cadastrado na plataforma',
       });
     }
-    const newProspectRef: ProspectRef = {
-      _id: req.body._id,
-      email: req.body.email,
-      company: req.body.company,
-      active: req.body.active,
-    };
+    const newProspectRef: ProspectRef = new ProspectRef();
+    newProspectRef.email = req.body.email;
+    newProspectRef.company = req.body.company;
+    newProspectRef.active = req.body.active;
     const prospectRefModel = new ProspectRefModel(newProspectRef);
-    await prospectRefModel.save();
+    const savedProspectRef = await prospectRefModel.save();
+
+    const newProspect: Prospect = req.body;
+    newProspect._id = savedProspectRef._id;
+    const companyId = req.headers.companyid as string;
+    const prospectCompanyModel = await getModelForCompany(companyId, ProspectModel);
+    const prospectModel = new prospectCompanyModel(newProspect);
+    await prospectModel.save();
+
     if (process.env.GITPOD_WORKSPACE_URL) {
       return res.status(201).json({
         message: 'Prospecto cadastrado!',
@@ -39,25 +46,25 @@ router.post('/register', async (req, res, next) => {
 });
 
 router.post('/isRegistered', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(!!user);
   });
 });
 
 router.post('/isProspect', (req, res, next) => {
-  ProspectModel.findOne({ email: req.body.email }).then((prospect) => {
+  ProspectRefModel.findOne({ email: req.body.email }).then((prospect) => {
     res.status(200).json(!!prospect);
   });
 });
 
 router.post('/isActive', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(user ? user.active : false);
   });
 });
 
 router.post('/id', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(user ? user.company : '');
   });
 });
