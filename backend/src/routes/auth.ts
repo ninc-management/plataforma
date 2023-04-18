@@ -1,60 +1,70 @@
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
 import ProspectModel, { Prospect } from '../models/prospect';
+import ProspectRefModel, { ProspectRef } from '../models/prospectRef';
 import UserModel from '../models/user';
-import { prospectMap } from '../shared/global';
+import UserRefModel from '../models/userRef';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
 
-router.post('/register', (req, res, next) => {
-  const p = req.body as Prospect;
-  const prospect = new ProspectModel(p);
-  UserModel.findOne({ email: req.body.email }).then((user) => {
-    if (!user) {
-      prospect
-        .save()
-        .then((prospect) => {
-          prospectMap[prospect._id] = cloneDeep(prospect.toJSON());
-          if (process.env.GITPOD_WORKSPACE_URL)
-            res.status(201).json({
-              message: 'Prospecto cadastrado!',
-            });
-          else res.redirect(307, '/api/sendmail');
-        })
-        .catch((err) => {
-          console.log('Erro de cadastro:', err);
-          res.status(500).json({
-            error: 'Email já cadastrado na plataforma',
-          });
-        });
-    } else
-      res.status(500).json({
+router.post('/register', async (req, res, next) => {
+  try {
+    const existingUser = await UserRefModel.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(500).json({
         error: 'Email já cadastrado na plataforma',
       });
-  });
+    }
+    const newProspectRef: ProspectRef = new ProspectRef();
+    newProspectRef.email = req.body.email;
+    newProspectRef.company = req.body.company;
+    newProspectRef.active = req.body.active;
+    const prospectRefModel = new ProspectRefModel(newProspectRef);
+    const savedProspectRef = await prospectRefModel.save();
+
+    const newProspect: Prospect = req.body;
+    newProspect._id = savedProspectRef._id;
+    const companyId = req.headers.companyid as string;
+    const prospectCompanyModel = await getModelForCompany(companyId, ProspectModel);
+    const prospectModel = new prospectCompanyModel(newProspect);
+    await prospectModel.save();
+
+    if (process.env.GITPOD_WORKSPACE_URL) {
+      return res.status(201).json({
+        message: 'Prospecto cadastrado!',
+      });
+    } else {
+      return res.redirect(307, '/api/sendmail');
+    }
+  } catch (err) {
+    console.log('Erro de cadastro:', err);
+    return res.status(500).json({
+      error: 'Email já cadastrado na plataforma',
+    });
+  }
 });
 
 router.post('/isRegistered', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(!!user);
   });
 });
 
 router.post('/isProspect', (req, res, next) => {
-  ProspectModel.findOne({ email: req.body.email }).then((prospect) => {
+  ProspectRefModel.findOne({ email: req.body.email }).then((prospect) => {
     res.status(200).json(!!prospect);
   });
 });
 
 router.post('/isActive', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(user ? user.active : false);
   });
 });
 
 router.post('/id', (req, res, next) => {
-  UserModel.findOne({ email: req.body.email }).then((user) => {
+  UserRefModel.findOne({ email: req.body.email }).then((user) => {
     res.status(200).json(user ? user.company : '');
   });
 });
