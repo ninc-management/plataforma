@@ -47,9 +47,8 @@ router.post('/all', async (req, res) => {
 router.post('/update', async (req, res, next) => {
   try {
     const companyId = req.headers.companyid as string;
-    const companyModel = await getModelForCompany(companyId, CompanyModel);
     const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
-    await companyModel.findByIdAndUpdate(req.body.config.company._id, req.body.config.company, {
+    await CompanyModel.findByIdAndUpdate(req.body.config.company._id, req.body.config.company, {
       upsert: false,
     });
     await platformConfigCompanyModel.findByIdAndUpdate(req.body.config._id, req.body.config, {
