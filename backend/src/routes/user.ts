@@ -13,6 +13,15 @@ router.post('/update', async (req, res, next) => {
     const companyId = req.headers.companyid as string;
     const userCompanyModel = await getModelForCompany(companyId, UserModel);
     await userCompanyModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
+    await UserRefModel.findByIdAndUpdate(
+      req.body.user._id,
+      {
+        $set: {
+          active: req.body.user.active,
+        },
+      },
+      { upsert: false }
+    );
     return res.status(200).json({ message: req.body.successMessage || 'Associado atualizado!' });
   } catch (err) {
     return res.status(500).json({
