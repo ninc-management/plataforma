@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, share } from 'rxjs';
+import { merge, Observable, share, Subject } from 'rxjs';
 import { Manager } from 'socket.io-client';
 
 @Injectable({
@@ -10,6 +10,7 @@ export class WebSocketService {
   socket: any;
   subscribersCounter: Record<string, number> = {};
   eventObservables$: Record<string, Observable<any>> = {};
+  manualEvents$: Subject<any> = new Subject<any>();
   ioSocket: any;
 
   constructor() {
@@ -57,19 +58,22 @@ export class WebSocketService {
     this.subscribersCounter[eventName]++;
 
     if (!this.eventObservables$[eventName]) {
-      this.eventObservables$[eventName] = new Observable((observer: any) => {
-        const listener = (data: T) => {
-          observer.next(data);
-        };
-        this.ioSocket.on(eventName, listener);
-        return () => {
-          this.subscribersCounter[eventName]--;
-          if (this.subscribersCounter[eventName] === 0) {
-            this.ioSocket.removeListener(eventName, listener);
-            delete this.eventObservables$[eventName];
-          }
-        };
-      }).pipe(share());
+      this.eventObservables$[eventName] = merge(
+        new Observable((observer: any) => {
+          const listener = (data: T) => {
+            observer.next(data);
+          };
+          this.ioSocket.on(eventName, listener);
+          return () => {
+            this.subscribersCounter[eventName]--;
+            if (this.subscribersCounter[eventName] === 0) {
+              this.ioSocket.removeListener(eventName, listener);
+              delete this.eventObservables$[eventName];
+            }
+          };
+        }).pipe(share()),
+        this.manualEvents$
+      );
     }
     return this.eventObservables$[eventName];
   }
