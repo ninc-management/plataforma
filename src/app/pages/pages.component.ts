@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/shared/services/web-socket.service';
 import { Permissions } from 'app/shared/utils';
 
 import { Company } from '@models/company';
+import { EventsChecker } from '@models/platformConfig';
 import { Team } from '@models/team';
 
 enum DIALOG_TYPES {
@@ -275,24 +276,32 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         .post('/api/checkdb', { change: this.lastReceivedChange })
         .pipe(take(1))
         .subscribe((res: any) => {
-          if (!res['isUpdated']) {
-            this.dialogService
-              .open(ConfirmationDialogComponent, {
-                context: {
-                  question:
-                    'Novas alterações estão disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
-                },
-                dialogClass: 'my-dialog',
-                closeOnBackdropClick: false,
-                closeOnEsc: false,
-                autoFocus: false,
-              })
-              .onClose.pipe(take(1))
-              .subscribe((response: boolean) => {
-                if (response) {
-                  window.location.reload();
-                }
+          const response = JSON.parse(res) as EventsChecker<object>;
+          if (!response['isUpdated']) {
+            // Last received event is too old
+            if (response['newEvents'].length == 0) {
+              this.dialogService
+                .open(ConfirmationDialogComponent, {
+                  context: {
+                    question:
+                      'Novas alterações estão disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
+                  },
+                  dialogClass: 'my-dialog',
+                  closeOnBackdropClick: false,
+                  closeOnEsc: false,
+                  autoFocus: false,
+                })
+                .onClose.pipe(take(1))
+                .subscribe((response: boolean) => {
+                  if (response) {
+                    window.location.reload();
+                  }
+                });
+            } else {
+              response['newEvents'].forEach((event: any) => {
+                this.wsService.manualEvents$.next(event);
               });
+            }
           }
         });
       this.wsService.ioSocket.disconnect().connect();

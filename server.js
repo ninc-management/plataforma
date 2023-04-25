@@ -46,11 +46,25 @@ const io = require('socket.io')(server, {
   transports: ['websocket'],
 });
 
+const connMap = {};
+
 const dbWatcher$ = app.db.watch();
 
+dbWatcher$.on('change', (data) => {
+  app.api.lastChanges.queue(data);
+});
+
 io.on('connection', (socket) => {
-  dbWatcher$.on('change', (data) => {
+  console.log('Nova conexao', socket.id, socket.client.conn.id);
+  connMap[socket.id] = app.api.lastChanges.inserted$.subscribe((data) => {
     socket.emit('dbchange', data);
-    app.api.lastChange = data;
+  });
+
+  socket.on('disconnect', (socket) => {
+    if (connMap[socket.id]) {
+      console.log('Encerrando conexao', socket.id);
+      connMap[socket.id].unsubscribe();
+      delete connMap[socket.id];
+    }
   });
 });
