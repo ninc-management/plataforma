@@ -4,6 +4,11 @@ import { Base } from './base';
 import { Company } from './company';
 import { ExpenseType } from './team';
 
+export type EventsChecker<T extends object> = {
+  isUpdated: boolean;
+  newEvents: T[];
+};
+
 export class FeesPercentages {
   @prop({ required: true })
   organizationPercentage: string = '0,00';

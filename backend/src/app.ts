@@ -27,15 +27,16 @@ import teamRoutes from './routes/team';
 import transactionRoutes from './routes/transaction';
 import userRoutes from './routes/user';
 import { notification$ } from './shared/global';
+import { SizeLimitedQueue } from './shared/sizeLimitedQueue';
 import { isNotificationEnabled, isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public express;
-  public lastChange;
+  public lastChanges: SizeLimitedQueue<any>;
 
   constructor() {
     this.express = express();
-    this.lastChange = {};
+    this.lastChanges = new SizeLimitedQueue<any>(10000);
 
     // Connect to the database before starting the expresslication server.
     const options = {
