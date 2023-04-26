@@ -25,3 +25,28 @@ db.platformconfigs.find().forEach((config) => {
   delete config.oneDriveConfig.providers;
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.certificates.drop();
+db.contractors.drop();
+db.contracts.drop();
+db.courses.drop();
+db.expenses.drop();
+db.internaltransactions.drop();
+db.invoices.drop();
+db.messages.drop();
+db.notifications.drop();
+db.platformconfigs.drop();
+db.promotions.drop();
+db.providers.drop();
+db.teams.drop();
+db.transactions.drop();
+
+db.users.find().forEach((user) => {
+  db.userrefs.insertOne({ _id: user._id, email: user.email, active: user.active, company: user.company });
+});
+db.users.drop();
+
+db.prospects.find().forEach((prospect) => {
+  db.prospectrefs.insertOne({ _id: prospect._id, email: prospect.email, active: prospect.active, company: prospect.company });
+});
+db.prospects.drop();
