@@ -6,10 +6,11 @@ import CompanyModel, { Company } from '../models/company';
 import ContractModel, { Contract } from '../models/contract';
 import InvoiceModel, { Invoice } from '../models/invoice';
 import { Notification, NotificationTags } from '../models/notification';
+import PlatformConfigModel from '../models/platformConfig';
 import UserModel, { User } from '../models/user';
 import { sendMail } from '../routes/email';
 import { updateNotification } from '../routes/notification';
-import { configMap, connectionPool } from './global';
+import { connectionPool } from './global';
 
 function createId(): string {
   const timestamp = ((new Date().getTime() / 1000) | 0).toString(16);
@@ -64,7 +65,7 @@ function sendNotification(invoice: Invoice, author: User, days: number): void {
   notification.tag = 'receipt-due';
   notification.to = author._id;
   notification.from = author._id;
-  updateNotification(notification, undefined);
+  updateNotification(notification, author.company as string, undefined);
 }
 
 export async function overdueReceiptNotification() {
@@ -86,31 +87,33 @@ export async function overdueReceiptNotification() {
   });
 }
 
-export async function isNotificationEnabled(notificationTag: string, platform: string): Promise<boolean> {
-  const platformConfig = configMap[Object.keys(configMap)[0]];
+export async function getPermissionsFromNotificationConfig(companyId: string, notificationTag: string): Promise<any> {
+  const defaultPermission = { email: false, platform: false };
+  const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
+  const platformConfig = await platformConfigCompanyModel.findOne();
   if (platformConfig != undefined) {
     switch (notificationTag) {
       case NotificationTags.APPOINTED_AS_ASSIGNEE:
-        return platformConfig.notificationConfig.stageResponsible[platform];
+        return platformConfig.notificationConfig.stageResponsible;
       case NotificationTags.CONTRACT_SIGNED:
-        return platformConfig.notificationConfig.contractClosed[platform];
+        return platformConfig.notificationConfig.contractClosed;
       case NotificationTags.MENTION:
-        return platformConfig.notificationConfig.userMentioned[platform];
+        return platformConfig.notificationConfig.userMentioned;
       case NotificationTags.RECEIPT_DUE:
-        return platformConfig.notificationConfig.receiptDue[platform];
+        return platformConfig.notificationConfig.receiptDue;
       case NotificationTags.VALUE_TO_RECEIVE_PAID:
-        return platformConfig.notificationConfig.teamMemberPaid[platform];
+        return platformConfig.notificationConfig.teamMemberPaid;
       case NotificationTags.EXPENSE_ORDER_CREATED ||
         NotificationTags.PAYMENT_ORDER_CREATED ||
         NotificationTags.RECEIPT_ORDER_CREATED:
-        return platformConfig.notificationConfig.transactionCreated[platform];
+        return platformConfig.notificationConfig.transactionCreated;
       case NotificationTags.EXPENSE_PAID || NotificationTags.PAYMENT_ORDER_PAID || NotificationTags.RECEIPT_PAID:
-        return platformConfig.notificationConfig.transactionPaid[platform];
+        return platformConfig.notificationConfig.transactionPaid;
       default:
-        return false;
+        return defaultPermission;
     }
   }
-  return false;
+  return defaultPermission;
 }
 
 export async function getModelForCompany<T>(companyId: string, model: ModelType<T>): Promise<ModelType<T>> {
