@@ -1,39 +1,38 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 
 import { Notification, NotificationApps } from '../models/notification';
 import UserModel from '../models/user';
-import { notification$, usersMap } from '../shared/global';
-import { isNotificationEnabled } from '../shared/util';
+import { getModelForCompany, getPermissionsFromNotificationConfig, notifyByEmail } from '../shared/util';
 
 const router = express.Router();
-const mutex = new Mutex();
 let lastNotification: Notification;
 
-export async function updateNotification(notification: Notification, res: any) {
-  if (await isNotificationEnabled(notification.tag, NotificationApps.PLATFORM)) {
-    UserModel.findByIdAndUpdate(
-      notification.to,
-      { $push: { notifications: notification } },
-      { upsert: false },
-      (err, savedUser) => {
-        if (err && res) {
-          return res.status(500).json({
-            message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
-            error: err,
-          });
-        }
-        if (Object.keys(usersMap).length > 0) usersMap[notification.to as any] = cloneDeep(savedUser.toJSON());
-        notification$.next(notification);
-        if (isEqual(notification, lastNotification) && res) {
-          return res
-            .status(200)
-            .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
-        }
+export async function updateNotification(notification: Notification, companyId: string, res: any) {
+  const notificationConfig = await getPermissionsFromNotificationConfig(companyId, notification.tag);
+  if (notificationConfig[NotificationApps.PLATFORM]) {
+    try {
+      const userCompanyModel = await getModelForCompany(companyId, UserModel);
+      await userCompanyModel.findByIdAndUpdate(
+        notification.to,
+        { $push: { notifications: notification } },
+        { upsert: false }
+      );
+      if (notificationConfig[NotificationApps.EMAIL]) notifyByEmail(notification);
+      if (isEqual(notification, lastNotification) && res) {
+        return res
+          .status(200)
+          .json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
       }
-    );
-  } else notification$.next(notification);
+    } catch (err) {
+      return res.status(500).json({
+        message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
+        error: err,
+      });
+    }
+  } else {
+    if (notificationConfig[NotificationApps.EMAIL]) notifyByEmail(notification);
+  }
 }
 
 /**
@@ -47,11 +46,8 @@ export async function updateNotification(notification: Notification, res: any) {
  * @return {void}
  */
 router.post('/', (req, res, next) => {
-  mutex.acquire().then((release) => {
-    lastNotification = req.body.notification;
-    updateNotification(req.body.notification, res);
-    release();
-  });
+  lastNotification = req.body.notification;
+  updateNotification(req.body.notification, req.headers.companyid as string, res);
 });
 
 /**
@@ -65,12 +61,9 @@ router.post('/', (req, res, next) => {
  * @return {void}
  */
 router.post('/many', (req, res, next) => {
-  mutex.acquire().then((release) => {
-    lastNotification = req.body.notifications[req.body.notifications.length - 1];
-    req.body.notifications.forEach((notification) => {
-      updateNotification(notification, res);
-    });
-    release();
+  lastNotification = req.body.notifications[req.body.notifications.length - 1];
+  req.body.notifications.forEach((notification) => {
+    updateNotification(notification, req.headers.companyid as string, res);
   });
 });
 
@@ -84,25 +77,22 @@ router.post('/many', (req, res, next) => {
  * @param {string} tag
  * @return {void}
  */
-router.post('/read', (req, res, next) => {
-  mutex.acquire().then((release) => {
-    UserModel.findByIdAndUpdate(
+router.post('/read', async (req, res, next) => {
+  try {
+    const companyId = req.headers.companyid as string;
+    const userCompanyModel = await getModelForCompany(companyId, UserModel);
+    await userCompanyModel.findByIdAndUpdate(
       { _id: req.body.notification.to },
       { $pull: { notifications: { _id: req.body.notification._id } } },
-      { safe: true, multi: false, upsert: false },
-      (err, savedUser) => {
-        if (err) {
-          return res.status(500).json({
-            message: 'Falha ao marcar notificação como lida!',
-            error: err,
-          });
-        }
-        if (Object.keys(usersMap).length > 0) usersMap[req.body.notification.to] = cloneDeep(savedUser.toJSON());
-        return res.status(200).json({ message: 'Notificação marcada como lida!' });
-      }
+      { safe: true, multi: false, upsert: false }
     );
-    release();
-  });
+    return res.status(200).json({ message: 'Notificação marcada como lida!' });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Falha ao ler notificação!',
+      error: err,
+    });
+  }
 });
 
 export default router;

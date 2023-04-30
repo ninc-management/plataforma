@@ -1,68 +1,68 @@
-import { Mutex } from 'async-mutex';
 import * as express from 'express';
-import { cloneDeep } from 'lodash';
 
+import CompanyModel from '../models/company';
 import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
-import { configMap } from '../shared/global';
+import { getModelForCompany } from '../shared/util';
 
 const router = express.Router();
-let requested = false;
-const mutex = new Mutex();
 const https = require('https');
 
 router.post('/', async (req, res, next) => {
-  const configs: PlatformConfig[] = await PlatformConfigModel.find({});
-  if (configs.length > 0) {
+  try {
+    const companyId = req.headers.companyid as string;
+    const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
+    const configs: PlatformConfig[] = await platformConfigCompanyModel.find({});
+    if (configs.length > 0) {
+      return res.status(500).json({
+        message: 'Já existe uma configuração para a plataforma!',
+      });
+    }
+    const config = new platformConfigCompanyModel(req.body.config);
+    await config.save();
+    return res.status(201).json({
+      message: 'Configuração criada!',
+    });
+  } catch (err) {
     return res.status(500).json({
-      message: 'Já existe uma configuração para a plataforma!',
+      message: 'Erro ao criar configuração!',
+      error: err,
     });
   }
-
-  const config = new PlatformConfigModel(req.body.config);
-  mutex.acquire().then((release) => {
-    config
-      .save()
-      .then((savedConfig) => {
-        if (requested) configMap[savedConfig._id] = cloneDeep(savedConfig.toJSON());
-        release();
-        return res.status(201).json({
-          message: 'Configuração criada!',
-        });
-      })
-      .catch((err) => {
-        release();
-        return res.status(500).json({
-          message: 'Erro ao criar configuração!',
-          error: err,
-        });
-      });
-  });
 });
 
 router.post('/all', async (req, res) => {
-  if (!requested) {
-    const configs: PlatformConfig[] = await PlatformConfigModel.find({});
-    configs.map((config) => (configMap[config._id] = cloneDeep(config)));
-    requested = true;
+  try {
+    const companyId = req.headers.companyid as string;
+    const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
+    const configs: PlatformConfig[] = await platformConfigCompanyModel.find({});
+    return res.status(200).json(configs);
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erro ao criar configuração!',
+      error: err,
+    });
   }
-  return res.status(200).json(Array.from(Object.values(configMap)));
 });
 
 router.post('/update', async (req, res, next) => {
   try {
-    const config = await PlatformConfigModel.findOneAndUpdate(
+    const companyId = req.headers.companyid as string;
+    const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
+    const gconfig = await CompanyModel.findByIdAndUpdate(
+      { _id: req.body.config.company._id, __v: req.body.config.company.__v },
+      req.body.config.company,
+      {
+        upsert: false,
+      }
+    );
+    const config = await platformConfigCompanyModel.findOneAndUpdate(
       { _id: req.body.config._id, __v: req.body.config.__v },
       req.body.config,
       { upsert: false }
     );
-    if (!config) {
+    if (!gconfig || !config) {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
-      });
-    }
-    if (requested) {
-      await mutex.runExclusive(async () => {
-        configMap[req.body.config._id] = cloneDeep(config.toJSON());
       });
     }
     return res.status(200).json({
