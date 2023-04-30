@@ -6,7 +6,6 @@ import mongoose from 'mongoose';
 import cron from 'node-cron';
 import path from 'path';
 
-import { NotificationApps } from './models/notification';
 // import logger from 'morgan';
 // Import API endpoint routes
 import apiRoutes from './routes/api';
@@ -26,8 +25,7 @@ import publicRoutes from './routes/public';
 import teamRoutes from './routes/team';
 import transactionRoutes from './routes/transaction';
 import userRoutes from './routes/user';
-import { notification$ } from './shared/global';
-import { isNotificationEnabled, isUserAuthenticated, notifyByEmail, overdueReceiptNotification } from './shared/util';
+import { isUserAuthenticated, overdueReceiptNotification } from './shared/util';
 
 class NortanAPI {
   public express;
@@ -108,10 +106,6 @@ class NortanAPI {
     // so that PathLocationStrategy can be used
     this.express.get('/*', function (req, res) {
       res.sendFile(path.join(__dirname, '/angular/index.html'));
-    });
-
-    notification$.subscribe(async (notification) => {
-      if (await isNotificationEnabled(notification.tag, NotificationApps.EMAIL)) notifyByEmail(notification);
     });
 
     cron.schedule(
