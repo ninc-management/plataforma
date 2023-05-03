@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { skipWhile, takeUntil } from 'rxjs/operators';
 
 import { PromotionDialogComponent } from './promotion-dialog/promotion-dialog.component';
 import { PROMOTION_STATOOS } from './promotion-item/promotion-item.component';
@@ -59,6 +59,7 @@ export class PromotionsComponent implements OnInit, OnDestroy {
       name: {
         title: 'Nome',
         type: 'string',
+        width: '80%',
       },
       status: {
         title: 'Status',
@@ -87,15 +88,15 @@ export class PromotionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.promotionService.isDataLoaded$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((reqPromotion) => (this.isDataLoaded = reqPromotion));
-    this.promotionService
-      .getPromotions()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((promotions) => {
+    combineLatest([this.promotionService.getPromotions(), this.promotionService.isDataLoaded$])
+      .pipe(
+        takeUntil(this.destroy$),
+        skipWhile(([, isPromotionDataLoaded]) => !isPromotionDataLoaded)
+      )
+      .subscribe(([promotions]) => {
         this.promotions = promotions;
         this.source.load(this.promotions);
+        this.isDataLoaded = true;
       });
   }
 
