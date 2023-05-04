@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
-import { Ref } from '@typegoose/typegoose';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -86,7 +85,14 @@ export class InvoicesComponent implements OnInit, OnDestroy {
       author: {
         title: 'Autor',
         type: 'string',
-        valuePrepareFunction: (author: Ref<User>) => (author ? this.userService.idToShortName(author) : ''),
+        valuePrepareFunction: (author: User | string | undefined): string => {
+          return author ? this.userService.idToShortName(author) : '';
+        },
+        filterFunction: (author: User | string | undefined, search?: string): boolean => {
+          return author && search
+            ? this.userService.idToShortName(author).toLowerCase().includes(search.toLowerCase())
+            : false;
+        },
       },
       code: {
         title: 'Código',
@@ -249,6 +255,7 @@ export class InvoicesComponent implements OnInit, OnDestroy {
         return 'warning';
     }
   }
+
   loadInvoiceTable(): void {
     this.invoices.map((invoice: Invoice) => {
       invoice.locals = {} as InvoiceLocals;
