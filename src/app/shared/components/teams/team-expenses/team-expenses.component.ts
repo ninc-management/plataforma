@@ -15,7 +15,15 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, populateList, valueSort } from 'app/shared/utils';
+import {
+  formatDate,
+  greaterAndSmallerValue,
+  idToProperty,
+  isPhone,
+  nameSort,
+  populateList,
+  valueSort,
+} from 'app/shared/utils';
 
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
@@ -103,6 +111,13 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
         title: 'Fonte',
         type: 'string',
         valuePrepareFunction: (value: User | Team) => value.name,
+        compareFunction: (direction: number, a: User | Team, b: User | Team) => {
+          return nameSort(direction, a.name, b.name);
+        },
+        filterFunction: (cell: User | Team, search?: string): boolean => {
+          if (search && cell.name.toLowerCase().includes(search.toLowerCase())) return true;
+          return false;
+        },
       },
       description: {
         title: 'Descrição',
