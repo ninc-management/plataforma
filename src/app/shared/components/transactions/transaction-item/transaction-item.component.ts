@@ -199,7 +199,10 @@ export class TransactionItemComponent implements OnInit {
   }
 
   registerTransaction(): void {
-    if (this.clonedTeam) {
+    if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
+      if (this.clonedTeam) {
+        this.clonedTeam = cloneDeep(this.transaction.costCenter as Team);
+      }
       this.transaction.costCenter = (this.transaction.costCenter as User | Team)._id;
       this.clonedTeam.expenses.push(this.transaction);
       this.teamService.editTeam(this.clonedTeam, true);

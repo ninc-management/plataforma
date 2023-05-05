@@ -104,8 +104,8 @@ export class InvoicesComponent implements OnInit, OnDestroy {
             ],
           },
         },
-        filterFunction(cell: string, search?: string): boolean {
-          if (search && search.includes(cell)) return true;
+        filterFunction: (cell: string, search?: string): boolean => {
+          if (search && cell.toLowerCase().includes(search.toLowerCase())) return true;
           return false;
         },
       },
