@@ -30,7 +30,7 @@ import {
   trackByIndex,
 } from 'app/shared/utils';
 
-import { Contractor } from '@models/contractor';
+import { Address, Contractor } from '@models/contractor';
 import {
   Invoice,
   InvoiceMaterial,
@@ -386,11 +386,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.notifyAllUsers();
           }
         }
-        this.tempInvoice.locals.contractorName = idToProperty(
-          this.tempInvoice.contractor,
-          this.contractorService.idToContractor.bind(this.contractorService),
-          'fullName'
-        );
 
         this.iInvoice = cloneDeep(this.tempInvoice);
         this.isFormDirty.next(false);
@@ -529,16 +524,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   tooltipText = (contractorItem: Contractor | string | undefined): string => {
     if (contractorItem === undefined) return '';
-    return (
-      `CPF/CNPJ: ` +
-      this.contractorService.idToContractor(contractorItem).document +
-      `\nTelefone: ` +
-      this.contractorService.idToContractor(contractorItem).phone +
-      `\nEmail: ` +
-      this.contractorService.idToContractor(contractorItem).email +
-      `\nEndereço: ` +
-      this.contractorService.idToContractor(contractorItem).address
-    );
+    const { document, phone, email, address } = this.contractorService.idToContractor(contractorItem);
+    return `CPF/CNPJ: ${document}
+      \nTelefone: ${phone}
+      \nEmail: ${email}
+      \nEndereço: ${Object.assign(new Address(), address)}`;
   };
 
   fixHours(): void {

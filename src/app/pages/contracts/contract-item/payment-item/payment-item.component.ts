@@ -220,16 +220,15 @@ export class PaymentItemComponent implements OnInit {
     } else {
       this.contract.payments.push(cloneDeep(this.payment));
     }
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.author) {
-        const manager = this.userService.idToUser(invoice.author);
+    if (this.invoice._id) {
+      if (this.invoice.author) {
+        const manager = this.userService.idToUser(this.invoice.author);
         this.notificationService.notifyFinancial({
-          title: 'Nova pagamento ' + this.contract.locals.code,
+          title: 'Nova pagamento ' + this.invoice.code,
           tag: NotificationTags.PAYMENT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
             manager.fullName
-          } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.contract.locals.code}.`,
+          } criou a ordem de pagamento no valor de R$${this.payment.value} no contrato ${this.invoice.code}.`,
         });
       }
     }
@@ -247,13 +246,9 @@ export class PaymentItemComponent implements OnInit {
         const valueReceived = this.contractService.receivedValue(member.user, this.contract);
         if (notPaidValue === '0,00' && this.stringUtil.moneyToNumber(paymentMember.value) != 0) {
           this.notificationService.notify(member.user, {
-            title: 'Recebimento total do valor do contrato ' + this.contract.locals.code,
+            title: 'Recebimento total do valor do contrato ' + this.invoice.code,
             tag: NotificationTags.VALUE_TO_RECEIVE_PAID,
-            message:
-              'Parabéns! Você recebeu o valor total de R$' +
-              valueReceived +
-              ' do contrato ' +
-              this.contract.locals.code,
+            message: 'Parabéns! Você recebeu o valor total de R$' + valueReceived + ' do contrato ' + this.invoice.code,
           });
         }
       }
@@ -375,10 +370,9 @@ export class PaymentItemComponent implements OnInit {
   }
 
   notifyManager(): void {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.notificationService.notify(invoice.author, {
-        title: 'Uma ordem de pagamento do contrato ' + this.contract.locals.code + ' foi paga!',
+    if (this.invoice._id) {
+      this.notificationService.notify(this.invoice.author, {
+        title: 'Uma ordem de pagamento do contrato ' + this.invoice.code + ' foi paga!',
         tag: NotificationTags.PAYMENT_ORDER_PAID,
         message:
           'A ordem de pagamento de código #' +

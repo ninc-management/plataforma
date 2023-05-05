@@ -297,7 +297,13 @@ export class ContractService implements OnDestroy {
     let sum = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.toNetValue(
-          this.subtractComissions(this.stringUtil.removePercentage(contract.locals.value, contract.ISS), contract),
+          this.subtractComissions(
+            this.stringUtil.removePercentage(
+              idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
+              contract.ISS
+            ),
+            contract
+          ),
           nfPercentage(contract, this.config.invoiceConfig),
           nortanPercentage(contract, this.config.invoiceConfig),
           contract.created
@@ -425,29 +431,11 @@ export class ContractService implements OnDestroy {
       const invoice = this.invoiceService.idToInvoice(contract.invoice);
       contract.invoice = invoice;
       contract.locals = {} as ContractLocals;
-
-      if (invoice.author) {
-        const managerPicture = this.userService.idToUser(invoice.author).profilePicture;
-        if (managerPicture) contract.locals.managerPicture = managerPicture;
-        contract.locals.fullName = this.userService.idToShortName(invoice.author);
-      }
-
-      if (invoice.contractor) {
-        contract.locals.contractor = idToProperty(
-          invoice.contractor,
-          this.contractorService.idToContractor.bind(this.contractorService),
-          'fullName'
-        );
-      }
-
       contract.locals.interests = contract.receipts.length.toString() + '/' + contract.total;
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
         contract.locals.role = this.invoiceService.role(invoice, user);
       });
 
-      contract.locals.name = invoice.name;
-      contract.locals.value = invoice.value;
-      contract.locals.code = invoice.code;
       contract.locals.balance = this.balance(contract);
       contract.locals.liquid = this.contractNetValue(contract);
 
@@ -466,7 +454,7 @@ export class ContractService implements OnDestroy {
       );
 
       contract.locals.notPaid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.toNetValue(contract.locals.value, nf, nortan, contract.created)) -
+        this.stringUtil.moneyToNumber(this.toNetValue(invoice.value, nf, nortan, contract.created)) -
           this.stringUtil.moneyToNumber(paid)
       );
     }
@@ -573,7 +561,10 @@ export class ContractService implements OnDestroy {
   }
 
   contractNetValue(contract: Contract): string {
-    const contractValueWithoutISS = this.stringUtil.removePercentage(contract.locals.value, contract.ISS);
+    const contractValueWithoutISS = this.stringUtil.removePercentage(
+      idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
+      contract.ISS
+    );
 
     return this.toNetValue(
       this.subtractComissions(contractValueWithoutISS, contract),

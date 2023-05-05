@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, take } from 'rxjs';
-import { map, skipWhile } from 'rxjs/operators';
+import { skipWhile } from 'rxjs/operators';
 
 import contract_validation from '../../../../shared/validators/payment-validation.json';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -12,9 +12,10 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
+import { formatDate, idToProperty, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 
 import { Contract, ContractReceipt } from '@models/contract';
+import { Invoice } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
 import { PlatformConfig } from '@models/platformConfig';
 
@@ -33,6 +34,7 @@ export class ReceiptItemComponent implements OnInit {
   hasInitialContract = true;
   validation = contract_validation as any;
   today = new Date();
+  invoice = new Invoice();
   isEditionGranted = false;
   isFinancialManager = false;
   receipt: ContractReceipt = {
@@ -94,7 +96,7 @@ export class ReceiptItemComponent implements OnInit {
       this.receipt.notaFiscal = nfPercentage(tmp, this.config.invoiceConfig);
       this.receipt.nortanPercentage = nortanPercentage(tmp, this.config.invoiceConfig);
       this.contractService
-        .checkEditPermission(tmp.invoice)
+        .checkEditPermission(this.invoice)
         .pipe(take(1))
         .subscribe((isGranted) => {
           this.isEditionGranted = isGranted;
@@ -162,11 +164,11 @@ export class ReceiptItemComponent implements OnInit {
       if (invoice.author) {
         const manager = this.userService.idToUser(invoice.author);
         this.notificationService.notifyFinancial({
-          title: 'Nova ordem de empenho ' + this.contract.locals.code,
+          title: 'Nova ordem de empenho ' + invoice.code,
           tag: NotificationTags.RECEIPT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
             manager.fullName
-          } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.contract.locals.code}.`,
+          } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${invoice.code}.`,
         });
       }
     }
@@ -184,8 +186,13 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   notPaid(): string {
+    const contractValue = idToProperty(
+      this.contract.invoice,
+      this.invoiceService.idToInvoice.bind(this.invoice),
+      'value'
+    );
     let result =
-      this.stringUtil.moneyToNumber(this.contract.locals.value) -
+      this.stringUtil.moneyToNumber(contractValue) -
       this.contract.receipts.reduce(
         (sum: number, receipt: ContractReceipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
         0
@@ -220,7 +227,7 @@ export class ReceiptItemComponent implements OnInit {
     if (this.contract.invoice) {
       const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       this.notificationService.notify(invoice.author, {
-        title: 'Uma ordem de empenho do contrato ' + this.contract.locals.code + ' foi paga!',
+        title: 'Uma ordem de empenho do contrato ' + this.invoice.code + ' foi paga!',
         tag: NotificationTags.RECEIPT_PAID,
         message:
           'A ordem de empenho de código #' +

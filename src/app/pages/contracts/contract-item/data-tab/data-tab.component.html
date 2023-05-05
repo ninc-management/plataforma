@@ -75,7 +75,7 @@
           <label class="label" for="input-code">Código do orçamento:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.locals.code"
+            [ngModel]="invoice.code"
             #code="ngModel"
             id="input-code"
             name="code"
@@ -134,14 +134,14 @@
           <label class="label" for="input-contractor">Cliente:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.locals.contractor"
+            [ngModel]=" [invoice.contractor, contractorService.idToContractor.bind(contractorService), 'fullName'] | transformPipe: idToProperty"
             #contractor="ngModel"
             id="input-contractor"
             name="contractor"
             placeholder="Nome do cliente"
             fullWidth
             fieldSize="large"
-            [nbTooltip]="tooltipText()"
+            [nbTooltip]="[] | transformPipe: tooltipText.bind(this)"
             nbTooltipPlacement="top"
             nbTooltipStatus="primary"
             [required]="validation.contractor.required"
@@ -162,7 +162,7 @@
         <div class="form-control-group">
           <label class="label" for="input-administration">Administração do contrato:</label>
           <nb-select
-            [ngModel]="invoiceAdministration"
+            [ngModel]="invoice.administration"
             #administration="ngModel"
             id="input-administration"
             name="administration"
@@ -184,7 +184,7 @@
       <label class="label" for="input-name">Empreendimento:</label>
       <input
         nbInput
-        [(ngModel)]="clonedContract.locals.name"
+        [ngModel]="invoice.name"
         #name="ngModel"
         id="input-name"
         name="name"
@@ -210,7 +210,7 @@
           <label class="label" for="input-value">Valor do contrato:</label>
           <input
             nbInput
-            [ngModel]="clonedContract.locals.value"
+            [ngModel]="invoice.value"
             #value="ngModel"
             id="input-value"
             name="value"
@@ -270,7 +270,7 @@
           <label class="label" for="input-created">Data de criação:</label>
           <input
             nbInput
-            [(ngModel)]="clonedContract.created"
+            [ngModel]="clonedContract.created"
             #created="ngModel"
             id="input-created"
             name="created"

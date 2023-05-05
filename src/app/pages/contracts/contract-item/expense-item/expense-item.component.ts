@@ -18,6 +18,7 @@ import {
   compareFiles,
   forceValidatorUpdate,
   formatDate,
+  idToProperty,
   isPhone,
   shouldNotifyManager,
   trackByIndex,
@@ -83,9 +84,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   }
 
   isPhone = isPhone;
-  forceValidatorUpdate = forceValidatorUpdate;
-  trackByIndex = trackByIndex;
   formatDate = formatDate;
+  idToProperty = idToProperty;
+  trackByIndex = trackByIndex;
+  forceValidatorUpdate = forceValidatorUpdate;
 
   lastType = EXPENSE_TYPES.COMISSAO;
 
@@ -296,11 +298,11 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     if (this.expense.author) {
       const expenseAuthor = this.userService.idToUser(this.expense.author);
       this.notificationService.notifyFinancial({
-        title: 'Nova ordem de despesa ' + this.contract.locals.code,
+        title: 'Nova ordem de despesa ' + this.invoice.code,
         tag: NotificationTags.EXPENSE_ORDER_CREATED,
         message: `${expenseAuthor.article.toUpperCase()} ${
           expenseAuthor.fullName
-        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.contract.locals.code}.`,
+        } criou uma transação de despesa no valor de R$${this.expense.value} no contrato ${this.invoice.code}.`,
       });
     }
     this.contractService.editContract(this.contract);
@@ -429,13 +431,10 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   }
 
   notifyManager(): void {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.notificationService.notify(invoice.author, {
-        title: 'Uma despesa do contrato ' + this.contract.locals.code + ' foi paga!',
-        tag: NotificationTags.EXPENSE_PAID,
-        message: 'A despesa de código ' + this.expense.code + ' com o valor de R$ ' + this.expense.value + ' foi paga.',
-      });
-    }
+    this.notificationService.notify(this.invoice.author, {
+      title: 'Uma despesa do contrato ' + this.invoice.code + ' foi paga!',
+      tag: NotificationTags.EXPENSE_PAID,
+      message: 'A despesa de código ' + this.expense.code + ' com o valor de R$ ' + this.expense.value + ' foi paga.',
+    });
   }
 }

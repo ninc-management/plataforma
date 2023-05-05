@@ -28,22 +28,31 @@
             <div class="col-12" style="margin-bottom: 10px">
               <nb-user
                 size="giant"
-                [name]="receivable.contract.locals.name"
-                [title]="receivable.contract.locals.code"
-                [picture]="this.invoiceService.idToProfilePicture(receivable.contract.invoice)"
+                [name]="
+                  [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'name']
+                    | transformPipe : idToProperty
+                "
+                [title]="
+                  [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'code']
+                    | transformPipe : idToProperty
+                "
+                [picture]="[receivable.contract.invoice] | transformPipe : invoiceService.idToProfilePicture.bind(invoiceService)"
               ></nb-user>
             </div>
             <div class="col-12">
               <p>
                 <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                 <span style="vertical-align: 0.1em">
-                  {{ receivable.contract.locals.value }}
+                  {{
+                    [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'value']
+                      | transformPipe : idToProperty
+                  }}
                 </span>
               </p>
             </div>
             <div class="col-12">
               <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
-              {{ receivable.contract.locals.contractor }}
+              {{ [receivable.contract.invoice] | transformPipe: getContractorName.bind(this) }}
             </div>
           </div>
         </a>

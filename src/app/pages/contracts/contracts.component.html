@@ -37,22 +37,31 @@
       </ng-template>
       <ng-template #phone>
         <nb-list>
-          <nb-list-item *ngFor="let contract of filtredContracts; let i = index">
+          <nb-list-item *ngFor="let contract of filteredContracts; let i = index">
             <a (click)="contractDialog({ data: contract }, true)">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
                   <nb-user
                     size="giant"
-                    [name]="contract.locals.name"
-                    [title]="contract.locals.code"
-                    [picture]="this.invoiceService.idToProfilePicture(contract.invoice)"
+                    [name]="
+                      [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'name']
+                        | transformPipe : idToProperty
+                    "
+                    [title]="
+                      [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'code']
+                        | transformPipe : idToProperty
+                    "
+                    [picture]="invoiceService.idToProfilePicture(contract.invoice)"
                   ></nb-user>
                 </div>
                 <div class="col-6">
                   <p>
                     <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
                     <span style="vertical-align: 0.1em">
-                      {{ contract.locals.value }}
+                      {{
+                        [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'value']
+                          | transformPipe : idToProperty
+                      }}
                     </span>
                   </p>
                 </div>
@@ -64,7 +73,7 @@
                 </div>
                 <div class="col-12">
                   <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
-                  {{ contract.locals.contractor }}
+                  {{ [contract.invoice] | transformPipe: getContractorName.bind(this) }}
                 </div>
               </div>
             </a>

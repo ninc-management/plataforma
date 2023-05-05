@@ -177,7 +177,7 @@ export class BalanceTabComponent implements OnInit {
     this.clonedContract.locals.notPaid = this.stringUtil.numberToMoney(
       this.stringUtil.moneyToNumber(
         this.contractService.toNetValue(
-          this.clonedContract.locals.value,
+          idToProperty(this.clonedContract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
           this.options.notaFiscal,
           this.options.nortanPercentage,
           this.clonedContract.created

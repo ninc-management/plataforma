@@ -5,10 +5,15 @@ import { combineLatest, skipWhile, Subject, takeUntil } from 'rxjs';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { generateExpensesReport } from 'app/shared/report-generator';
 import { ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { codeSort, isPhone } from 'app/shared/utils';
+import { UserService } from 'app/shared/services/user.service';
+import { codeSort, idToProperty, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
+import { Contractor } from '@models/contractor';
+import { Invoice } from '@models/invoice';
+import { User } from '@models/user';
 
 @Component({
   selector: 'ngx-contract-expenses-report',
@@ -20,6 +25,9 @@ export class ContractExpensesReportComponent implements OnInit {
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
   contracts: Contract[] = [];
+
+  isPhone = isPhone;
+  idToProperty = idToProperty;
 
   settings = {
     mode: 'external',
@@ -36,30 +44,47 @@ export class ContractExpensesReportComponent implements OnInit {
       delete: false,
     },
     columns: {
-      'locals.fullName': {
+      'invoice.author': {
         title: 'Autor',
         type: 'string',
+        valuePrepareFunction: (author: User | string | undefined) =>
+          author ? this.userService.idToShortName(author) : '',
+        filterFunction: (author: User | string | undefined, search?: string): boolean => {
+          return author && search
+            ? this.userService.idToShortName(author).toLowerCase().includes(search.toLowerCase())
+            : false;
+        },
       },
-      'locals.code': {
+      'invoice.code': {
         title: 'Código',
         type: 'string',
         sortDirection: 'desc',
         compareFunction: codeSort,
       },
-      'locals.contractor': {
+      'invoice.contractor': {
         title: 'Cliente',
         type: 'string',
+        valuePrepareFunction: (contractor: Contractor | string | undefined) =>
+          contractor ? this.contractorService.idToContractor(contractor).fullName : '',
+        filterFunction: (contractor: Contractor | string | undefined, search?: string): boolean => {
+          return contractor && search
+            ? this.contractorService.idToContractor(contractor).fullName.toLowerCase().includes(search.toLowerCase())
+            : false;
+        },
       },
-      'locals.name': {
+      'invoice.name': {
         title: 'Empreendimento',
         type: 'string',
       },
     },
   };
 
-  isPhone = isPhone;
-
-  constructor(private contractService: ContractService, public invoiceService: InvoiceService) {}
+  constructor(
+    private contractService: ContractService,
+    public invoiceService: InvoiceService,
+    public userService: UserService,
+    public contractorService: ContractorService
+  ) {}
 
   ngOnInit(): void {
     combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$])
@@ -68,10 +93,21 @@ export class ContractExpensesReportComponent implements OnInit {
         takeUntil(this.destroy$)
       )
       .subscribe(([contracts, _]) => {
-        contracts.forEach((contract) => this.contractService.fillContract(contract));
-        this.contracts = contracts;
+        this.contracts = contracts.map((contract) => this.contractService.fillContract(contract));
         this.source.load(contracts);
       });
+  }
+
+  getContractorName(invoice: Invoice | string | undefined): string {
+    if (invoice) {
+      invoice = this.invoiceService.idToInvoice(invoice);
+      return idToProperty(
+        invoice.contractor,
+        this.contractorService.idToContractor.bind(this.contractorService),
+        'fullName'
+      );
+    }
+    return '';
   }
 
   downloadExpensesReport(contract: Contract): void {
