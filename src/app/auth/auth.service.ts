@@ -13,6 +13,7 @@ export class AuthService {
   private destroy$ = new Subject<void>();
   submitted$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
+  isAuthenticated = false;
   companyId = '';
 
   get isCompanyLoaded$(): Observable<boolean> {

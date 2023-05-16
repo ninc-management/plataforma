@@ -15,7 +15,7 @@ function addTransaction(internalTransaction: InternalTransaction, res, lastTrans
     transactionItem
       .save()
       .then((savedTransaction) => {
-        if (requested) internalTransactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
+        // if (requested) internalTransactionsMap[savedTransaction._id] = cloneDeep(savedTransaction.toJSON());
         release();
         if (isEqual(internalTransaction, lastTransaction))
           return res.status(201).json({
@@ -52,7 +52,7 @@ router.post('/update', async (req, res, next) => {
     );
     if (requested) {
       await mutex.runExclusive(async () => {
-        internalTransactionsMap[req.body.internalTransaction._id] = cloneDeep(savedTransaction.toJSON());
+        // internalTransactionsMap[req.body.internalTransaction._id] = cloneDeep(savedTransaction.toJSON());
       });
     }
     return res.status(200).json({
