@@ -7,7 +7,7 @@ import { CourseDialogComponent, DIALOG_TYPES } from './course-dialog/course-dial
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { CourseService } from 'app/shared/services/course.service';
 import { UserService } from 'app/shared/services/user.service';
-import { isPhone } from 'app/shared/utils';
+import { isPhone, nameSort } from 'app/shared/utils';
 
 import { Course, CourseParticipant } from '@models/course';
 
@@ -61,13 +61,24 @@ export class CoursesComponent implements OnInit {
       },
       speaker: {
         title: 'Ministrante',
-        valuePrepareFunction: (speaker: CourseParticipant): string => speaker.name,
         type: 'string',
+        valuePrepareFunction: (speaker: CourseParticipant): string => speaker.name,
+        filterFunction: (speaker: CourseParticipant, search: string): boolean => {
+          if (speaker.name) return speaker.name.includes(search);
+          return false;
+        },
+        compareFunction: (direction: number, a: CourseParticipant, b: CourseParticipant): number =>
+          nameSort(direction, a.name, b.name),
       },
       participants: {
         title: 'Nº de Participantes',
         type: 'string',
         valuePrepareFunction: (participants: CourseParticipant[]): string => participants.length.toString(),
+        filterFunction: (participants: CourseParticipant[], search: string): boolean => {
+          return participants.length.toString() === search;
+        },
+        compareFunction: (direction: number, a: CourseParticipant[], b: CourseParticipant[]): number =>
+          valueSort(direction, a.length.toString(), b.length.toString()),
       },
       hasCertificate: {
         title: 'Tem certificado?',
@@ -105,6 +116,7 @@ export class CoursesComponent implements OnInit {
         takeUntil(this.destroy$)
       )
       .subscribe(([courses]) => {
+        this.courses = courses;
         this.source.load(courses);
         this.isDataLoaded = true;
       });
@@ -140,4 +152,7 @@ export class CoursesComponent implements OnInit {
       autoFocus: false,
     });
   }
+}
+function valueSort(direction: number, name: any, name1: any): number {
+  throw new Error('Function not implemented.');
 }
