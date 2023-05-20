@@ -77,11 +77,35 @@ export class TeamsComponent implements OnInit, OnDestroy {
         filterFunction: (sectors: Sector[], search: string) => {
           return sectors.some((sector) => sector.abrev.includes(search));
         },
+        compareFunction: (direction: number, a: Sector[], b: Sector[]): number =>
+          nameSort(
+            direction,
+            a
+              .map((sector: any) => this.teamService.idToSector(sector).abrev)
+              .sort()
+              .join(', '),
+            b
+              .map((sector: any) => this.teamService.idToSector(sector).abrev)
+              .sort()
+              .join(', ')
+          ),
       },
       leader: {
         title: 'Líder',
         type: 'string',
-        valuePrepareFunction: (leader: User) => (leader ? this.userService.idToUser(leader).fullName : ''),
+        valuePrepareFunction: (leader: User | string | undefined) =>
+          idToProperty(leader, this.userService.idToUser.bind(this), 'fullName'),
+        filterFunction: (leader: User | string | undefined, search?: string): boolean => {
+          return leader && search
+            ? this.userService.idToUser(leader).fullName.toLowerCase().includes(search.toLowerCase())
+            : false;
+        },
+        compareFunction: (direction: number, a: User | string | undefined, b: User | string | undefined): number =>
+          nameSort(
+            direction,
+            idToProperty(a, this.userService.idToUser.bind(this), 'fullName'),
+            idToProperty(b, this.userService.idToUser.bind(this), 'fullName')
+          ),
       },
     },
   };
