@@ -65,8 +65,6 @@ export class NgxLoginComponent extends NbLoginComponent {
                   this.authService.isCompanyLoaded$
                     .pipe(skipWhile((isCompanyLoaded) => !isCompanyLoaded))
                     .subscribe(() => {
-                      this.authService.isAuthenticated = true;
-                      this.authService.onUserChange$.next();
                       super.login();
                     });
                 } else {
