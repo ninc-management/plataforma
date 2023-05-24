@@ -2,7 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
@@ -10,7 +10,7 @@ import { SocketMock } from 'types/socketio-mock';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { InvoiceService } from './invoice.service';
-import { CONTRACT_BALANCE } from './user.service';
+import { CONTRACT_BALANCE, UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
@@ -20,6 +20,7 @@ import { User } from '@models/user';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
+  let userService: UserService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -27,6 +28,8 @@ describe('InvoiceService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: '000000000000000000000000',
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
@@ -74,11 +77,13 @@ describe('InvoiceService', () => {
     authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(InvoiceService);
+    userService = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedInvoices = cloneDeep(externalMockedInvoices);
 
+    userService.getUsers().pipe(take(1)).subscribe();
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');

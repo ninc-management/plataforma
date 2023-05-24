@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { SocketMock } from 'app/../types/socketio-mock';
 import { cloneDeep } from 'lodash';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { last, mergeMap, take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 
@@ -23,6 +23,8 @@ describe('UserService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: '000000000000000000000000',
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 

@@ -2,7 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
@@ -12,6 +12,7 @@ import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { reviveDates } from '../utils';
 import { TeamService } from './team.service';
+import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
@@ -21,8 +22,8 @@ import { User } from '@models/user';
 
 describe('TeamService', () => {
   let service: TeamService;
+  let userService: UserService;
   let httpMock: HttpTestingController;
-
   let mockedUsers: User[];
   let mockedTeams: Team[];
   let mockedSectors: Sector[];
@@ -31,6 +32,8 @@ describe('TeamService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: '000000000000000000000000',
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('Socket', ['fromEvent']);
   CommonTestingModule.setUpTestBed();
@@ -77,12 +80,14 @@ describe('TeamService', () => {
     authServiceSpy.userEmail.and.returnValue('test1@te.st');
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(TeamService);
+    userService = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedUsers = cloneDeep(externalMockedUsers);
     mockedTeams = cloneDeep(externalMockedTeams);
     mockedSectors = cloneDeep(externalMockedSectors);
 
+    userService.getUsers().pipe(take(1)).subscribe();
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
     req.flush(mockedUsers);

@@ -2,7 +2,7 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Subject, take } from 'rxjs';
+import { of, Subject, take } from 'rxjs';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
@@ -15,9 +15,9 @@ import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
 
-import { Invoice, InvoiceTeamMember } from '@models/invoice';
+import { Invoice } from '@models/invoice';
 import { Notification } from '@models/notification';
-import { Team, TeamMember } from '@models/team';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 describe('NotificationService', () => {
@@ -28,6 +28,8 @@ describe('NotificationService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: '000000000000000000000000',
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
