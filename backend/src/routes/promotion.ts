@@ -35,7 +35,7 @@ router.post('/update', async (req, res, next) => {
   try {
     const updatedUser = await PromotionModel.findOneAndUpdate(
       { _id: req.body.promotion._id, __v: req.body.promotion.__v },
-      { $set: req.body.promotion },
+      req.body.promotion,
       {
         upsert: false,
       }
