@@ -37,12 +37,18 @@ router.post('/', async (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedInvoice = await InvoiceModel.findByIdAndUpdate(req.body.invoice._id, req.body.invoice, {
-      upsert: false,
-    });
+    const invoice = await InvoiceModel.findOneAndUpdate(
+      { _id: req.body.invoice._id, __v: req.body.invoice.__v },
+      req.body.invoice,
+      { upsert: false }
+    );
+    if (!invoice)
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
     if (requested) {
       await mutex.runExclusive(async () => {
-        invoicesMap[req.body.invoice._id] = cloneDeep(savedInvoice.toJSON());
+        invoicesMap[req.body.invoice._id] = cloneDeep(invoice.toJSON());
       });
     }
     return res.status(200).json({
