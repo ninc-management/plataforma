@@ -36,12 +36,19 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedContract = await ContractModel.findByIdAndUpdate(req.body.contract._id, req.body.contract, {
-      upsert: false,
-    });
+    const contract = await ContractModel.findOneAndUpdate(
+      { _id: req.body.contract._id, __v: req.body.contract.__v },
+      req.body.contract,
+      { upsert: false }
+    );
+    if (!contract) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        contractsMap[req.body.contract._id] = cloneDeep(savedContract.toJSON());
+        contractsMap[req.body.contract._id] = cloneDeep(contract.toJSON());
       });
     }
     return res.status(200).json({
