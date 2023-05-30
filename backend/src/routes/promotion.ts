@@ -33,20 +33,18 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const updatedUser = await PromotionModel.findOneAndUpdate(
+    const promotion = await PromotionModel.findOneAndUpdate(
       { _id: req.body.promotion._id, __v: req.body.promotion.__v },
       req.body.promotion,
-      {
-        upsert: false,
-      }
+      { upsert: false }
     );
-    if (!updatedUser)
+    if (!promotion)
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
       });
     if (requested) {
       await mutex.runExclusive(async () => {
-        promotionsMap[req.body.promotion._id] = cloneDeep(updatedUser.toJSON());
+        promotionsMap[req.body.promotion._id] = cloneDeep(promotion.toJSON());
       });
     }
     return res.status(200).json({

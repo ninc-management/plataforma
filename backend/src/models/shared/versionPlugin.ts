@@ -1,7 +1,3 @@
-import 'core-js/stable';
-
-import 'regenerator-runtime/runtime';
-
 /**
  * Implement optimistic concurrency control on a Mongoose schema.
  *
