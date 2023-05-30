@@ -2,7 +2,6 @@ import { Mutex } from 'async-mutex';
 import * as express from 'express';
 import { cloneDeep } from 'lodash';
 
-import CompanyModel from '../models/company';
 import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
 import { configMap } from '../shared/global';
 
@@ -51,15 +50,19 @@ router.post('/all', async (req, res) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedCompany = await CompanyModel.findByIdAndUpdate(req.body.config.company._id, req.body.config.company, {
-      upsert: false,
-    });
-    const savedConfig = await PlatformConfigModel.findByIdAndUpdate(req.body.config._id, req.body.config, {
-      upsert: false,
-    });
+    const config = await PlatformConfigModel.findOneAndUpdate(
+      { _id: req.body.config._id, __v: req.body.config.__v },
+      req.body.config,
+      { upsert: false }
+    );
+    if (!config) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        configMap[req.body.config._id] = cloneDeep(savedConfig.toJSON());
+        configMap[req.body.config._id] = cloneDeep(config.toJSON());
       });
     }
     return res.status(200).json({
