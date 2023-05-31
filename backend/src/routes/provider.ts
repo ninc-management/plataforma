@@ -33,12 +33,19 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedProvider = await ProviderModel.findByIdAndUpdate(req.body.provider._id, req.body.provider, {
-      upsert: false,
-    });
+    const provider = await ProviderModel.findOneAndUpdate(
+      { _id: req.body.provider._id, __v: req.body.provider.__v },
+      req.body.provider,
+      { upsert: false }
+    );
+    if (!provider) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        providersMap[req.body.provider._id] = cloneDeep(savedProvider.toJSON());
+        providersMap[req.body.provider._id] = cloneDeep(provider.toJSON());
       });
     }
     return res.status(200).json({
