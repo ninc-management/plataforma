@@ -1,6 +1,8 @@
 import { ElementRef } from '@angular/core';
 
 import { BrMaskDirective } from './directives/br-mask.directive';
+import { appInjector } from './injector.module';
+import { TransactionService } from './services/transaction.service';
 import { codeSort, formatDate, idToProperty } from './utils';
 import {
   GROUPING_TYPES,
@@ -8,9 +10,10 @@ import {
   TeamData,
 } from 'app/pages/dashboard/report-menu/annual-report/annual-report.component';
 
-import { Contract, ContractExpense } from '@models/contract';
+import { Contract } from '@models/contract';
 import { Sector } from '@models/shared/sector';
 import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 export enum EXCLUDED_TYPOLOGIES {
@@ -22,7 +25,7 @@ export enum EXCLUDED_EXPENSE_TYPES {
 }
 
 interface ExpensesData {
-  expenses: ContractExpense[];
+  expenses: (Transaction | string | undefined)[];
   subTotal: string;
 }
 
@@ -33,6 +36,7 @@ interface Metrics {
 }
 
 export function generateExpensesReport(contract: Contract): string {
+  const transactionService = appInjector.get(TransactionService);
   const mappedExpenses = mapExpensesByCategory(contract);
   const mainHeaders = ['Nº', '', 'GASTOS/SAÍDAS', 'DATA DE PAGAMENTO', 'VALOR DA DESPESA'];
   let csv = mainHeaders.join(';') + '\r\n';
@@ -43,19 +47,24 @@ export function generateExpensesReport(contract: Contract): string {
     csv += '\r\n';
     mappedExpenses[category].expenses.forEach((expense) => {
       csv +=
-        expense.code +
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'code') +
         ';' +
-        expense.description +
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'description') +
         ';' +
         ';' +
-        (expense.paidDate ? formatDate(expense.paidDate) : 'Não pago') +
+        (idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'paidDate')
+          ? idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'paidDate')
+          : 'Não pago') +
         ';' +
         'R$ ' +
-        expense.value +
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'value') +
         ';' +
         '\r\n';
 
-      mappedExpenses[category].subTotal = sumMoney(mappedExpenses[category].subTotal, expense.value);
+      mappedExpenses[category].subTotal = sumMoney(
+        mappedExpenses[category].subTotal,
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'value')
+      );
     });
     csv += '\r\n';
     csv += ';' + 'SUBTOTAL' + ';' + ';' + ';' + 'R$ ' + mappedExpenses[category].subTotal + ';';
@@ -281,15 +290,33 @@ export function generateTeamsReport(
 }
 
 function mapExpensesByCategory(contract: Contract): Record<string, ExpensesData> {
-  contract.expenses.sort((a, b) => codeSort(1, a.code, b.code));
+  const transactionService = appInjector.get(TransactionService);
+  contract.expenses.sort((a, b) =>
+    codeSort(
+      1,
+      idToProperty(a, transactionService.idToTransaction.bind(transactionService), 'code'),
+      idToProperty(b, transactionService.idToTransaction.bind(transactionService), 'code')
+    )
+  );
   return contract.expenses
-    .filter((expense) => expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER)
+    .filter(
+      (expense) =>
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'type') !=
+        EXCLUDED_EXPENSE_TYPES.TRANSFER
+    )
     .reduce((mappedExpenses: Record<string, ExpensesData>, expense) => {
-      if (!mappedExpenses[expense.type]) {
-        mappedExpenses[expense.type] = { expenses: [], subTotal: '0' };
-        mappedExpenses[expense.type].expenses = [];
+      if (!mappedExpenses[idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'type')]) {
+        mappedExpenses[idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'type')] = {
+          expenses: [],
+          subTotal: '0',
+        };
+        mappedExpenses[
+          idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'type')
+        ].expenses = [];
       }
-      mappedExpenses[expense.type].expenses.push(expense);
+      mappedExpenses[
+        idToProperty(expense, transactionService.idToTransaction.bind(transactionService), 'type')
+      ].expenses.push(expense);
       return mappedExpenses;
     }, {});
 }

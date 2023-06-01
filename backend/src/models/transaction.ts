@@ -4,6 +4,7 @@ import { Base } from './base';
 import { Contract } from './contract';
 import { Provider } from './provider';
 import { EditionHistoryItem } from './shared/editionHistoryItem';
+import { Sector } from './shared/sector';
 import { UploadedFile } from './shared/uploadedFiles';
 import { Team } from './team';
 import { User } from './user';
@@ -11,6 +12,20 @@ import { User } from './user';
 export enum COST_CENTER_TYPES {
   USER = 'Associados',
   TEAM = 'Times',
+}
+
+export class TransactionTeamMember {
+  @prop({ required: true, ref: () => User })
+  user!: Ref<User>;
+
+  @prop({ required: true })
+  value!: string;
+
+  @prop({ required: true })
+  percentage!: string;
+
+  @prop({ required: true, ref: () => Sector })
+  sector!: Ref<Sector>;
 }
 
 export class Transaction extends Base<string> {
@@ -67,6 +82,9 @@ export class Transaction extends Base<string> {
 
   @prop({ ref: () => Contract })
   contract?: Ref<Contract>;
+
+  @prop({ type: () => [TransactionTeamMember] })
+  team: TransactionTeamMember[] = [];
 
   @prop({ type: () => [UploadedFile] })
   uploadedFiles: UploadedFile[] = [];

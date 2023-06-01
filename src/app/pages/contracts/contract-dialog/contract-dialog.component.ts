@@ -1,14 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
-import saveAs from 'file-saver';
 import { cloneDeep } from 'lodash';
 import { combineLatest, map, skipWhile, take, takeUntil } from 'rxjs';
 
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { generateExpensesReport } from 'app/shared/report-generator';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
@@ -24,7 +22,6 @@ export enum COMPONENT_TYPES {
   CONTRACT,
   PAYMENT,
   RECEIPT,
-  EXPENSE,
 }
 
 @Component({
@@ -106,12 +103,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                   this.isPayable = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.PAYMENT:
-                  this.availableContracts = contracts.filter(
-                    (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
-                  );
-                  this.hasBalance = this.availableContracts.length !== 0;
-                  break;
-                case COMPONENT_TYPES.EXPENSE:
                   this.availableContracts = contracts.filter(
                     (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
                   );

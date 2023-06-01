@@ -9,9 +9,9 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { TeamService } from 'app/shared/services/team.service';
+import { CLIENT, TeamService } from 'app/shared/services/team.service';
 import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
-import { CLIENT, UserService } from 'app/shared/services/user.service';
+import { UserService } from 'app/shared/services/user.service';
 import {
   codeSort,
   formatDate,
@@ -57,7 +57,9 @@ export class TransactionItemComponent implements OnInit {
   STATUS_RULES = STATUS_RULES;
   validation = transaction_validation as any;
   user: User = new User();
+  cloneDeep = cloneDeep;
   clonedTeam: Team = new Team();
+  clonedContract: Contract = new Contract();
   transaction: Transaction = new Transaction();
   platformConfig: PlatformConfig = new PlatformConfig();
   availableContracts: Contract[] = [];
@@ -117,7 +119,7 @@ export class TransactionItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.contract) this.hasInputContract = this.options.relatedWithContract = true;
+    if (this.contract) this.configureContractTransaction();
     if (this.team) this.configureTeamTransaction();
     combineLatest([
       this.userService.currentUser$,
@@ -168,6 +170,11 @@ export class TransactionItemComponent implements OnInit {
             this.providerService.idToProvider.bind(this.providerService),
             'name'
           );
+          this.costCenterSearch = this.transactionService.populateCostCenter(
+            this.transaction,
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          ).name;
         } else {
           this.transaction.author = user;
           if (!this.transaction.modelCostCenter) this.transaction.modelCostCenter = COST_CENTER_TYPES.USER;
@@ -179,9 +186,9 @@ export class TransactionItemComponent implements OnInit {
   }
 
   fillContractData(): void {
-    if (this.contract) {
-      this.transaction.notaFiscal = nfPercentage(this.contract, this.platformConfig.invoiceConfig);
-      this.transaction.companyPercentage = nortanPercentage(this.contract, this.platformConfig.invoiceConfig);
+    if (this.clonedContract) {
+      this.transaction.notaFiscal = nfPercentage(this.clonedContract, this.platformConfig.invoiceConfig);
+      this.transaction.companyPercentage = nortanPercentage(this.clonedContract, this.platformConfig.invoiceConfig);
     }
   }
 
@@ -198,14 +205,22 @@ export class TransactionItemComponent implements OnInit {
     console.log('remover arquivo');
   }
 
+  saveRefTransaction(savedTransaction: Transaction): void {
+    this.clonedTeam.expenses.push(savedTransaction);
+    this.teamService.editTeam(this.clonedTeam);
+    if (this.options.relatedWithContract) {
+      this.clonedContract.expenses.push(savedTransaction);
+      this.contractService.editContract(this.clonedContract);
+    }
+  }
+
   registerTransaction(): void {
     if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
       if (this.clonedTeam) {
         this.clonedTeam = cloneDeep(this.transaction.costCenter as Team);
       }
       this.transaction.costCenter = (this.transaction.costCenter as User | Team)._id;
-      this.clonedTeam.expenses.push(this.transaction);
-      this.teamService.editTeam(this.clonedTeam, true);
+      this.transactionService.saveTransaction(this.transaction, this.saveRefTransaction.bind(this));
     }
     this.submit.emit();
   }
@@ -287,7 +302,7 @@ export class TransactionItemComponent implements OnInit {
       if (this.contract.invoice) {
         if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM)
           setTimeout(() => {
-            this.costCenterData$.next(this.teams);
+            this.costCenterData$.next([CLIENT].concat(this.teams));
           }, 50);
         else {
           const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
@@ -300,7 +315,7 @@ export class TransactionItemComponent implements OnInit {
     } else {
       if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
         setTimeout(() => {
-          this.costCenterData$.next(this.teams);
+          this.costCenterData$.next([CLIENT].concat(this.teams));
         }, 50);
       } else {
         setTimeout(() => {
@@ -311,7 +326,7 @@ export class TransactionItemComponent implements OnInit {
   }
 
   updateTransactionKinds(): void {
-    if (this.options.relatedWithContract) {
+    if (!this.options.relatedWithContract) {
       this.transactionKinds = this.platformConfig.expenseConfig.adminExpenseTypes;
     } else this.transactionKinds = this.platformConfig.expenseConfig.contractExpenseTypes;
   }
@@ -334,6 +349,17 @@ export class TransactionItemComponent implements OnInit {
         this.transaction.costCenter = this.clonedTeam;
       }
       this.costCenterSearch = this.clonedTeam.name;
+    }
+  }
+
+  private configureContractTransaction(): void {
+    if (this.contract) {
+      this.hasInputContract = this.options.relatedWithContract = true;
+      this.clonedContract = cloneDeep(this.contract);
+      this.options.type = TRANSACTION_TYPES.EXPENSE;
+      this.handleType();
+      this.contractSearch = this.clonedContract.locals.code;
+      this.fillContractData();
     }
   }
 

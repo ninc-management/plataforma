@@ -16,12 +16,15 @@ import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.ser
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
+import { CLIENT, UserService } from 'app/shared/services/user.service';
+import { idToProperty } from 'app/shared/utils';
 
-import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
+import { Contract, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
+import { COST_CENTER_TYPES, Transaction, TransactionTeamMember } from '@models/transaction';
 import { User } from '@models/user';
 
 export enum GROUPING_TYPES {
@@ -119,7 +122,8 @@ export class AnnualReportComponent implements OnInit {
     private contractService: ContractService,
     private metricsService: MetricsService,
     private stringUtil: StringUtilService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private transactionService: TransactionService
   ) {
     for (let i = 0; i < defaultMonthlyData.length; i++) {
       defaultMonthlyData[i] = {
@@ -343,24 +347,66 @@ export class AnnualReportComponent implements OnInit {
                   monthContract.contract.expenses
                     .filter(
                       (expense) =>
-                        expense.paid &&
-                        expense.paidDate &&
-                        getYear(expense.paidDate) == year &&
-                        expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paid'
+                        ) &&
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paidDate'
+                        ) &&
+                        getYear(
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'paidDate'
+                          )
+                        ) == year &&
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'type'
+                        ) != EXCLUDED_EXPENSE_TYPES.TRANSFER
                     )
-                    .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                    .map((expense) => ({
+                      expense: expense,
+                      month: getMonth(
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paidDate'
+                        ) as Date
+                      ),
+                    })),
                   '1'
                 )
-              ) as { expense: ContractExpense; month: number }[][];
+              ) as { expense: Transaction | string | undefined; month: number }[][];
               expensesByMonth.forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
-                    monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
-                    monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
-                    !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
-                    !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'type'
+                    ) !== EXPENSE_TYPES.APORTE &&
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'type'
+                    ) !== EXPENSE_TYPES.COMISSAO &&
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'modelCostCenter'
+                    ) == COST_CENTER_TYPES.USER
                   ) {
-                    const userExpense = monthExpense.expense.team.reduce((sum, member) => {
+                    const userExpense = idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'team'
+                    ).reduce((sum: string, member: TransactionTeamMember) => {
                       if (this.userService.isEqual(member.user, uId)) {
                         sum = this.stringUtil.sumMoney(sum, member.value);
                       }
@@ -543,24 +589,66 @@ export class AnnualReportComponent implements OnInit {
                   monthContract.contract.expenses
                     .filter(
                       (expense) =>
-                        expense.paid &&
-                        expense.paidDate &&
-                        getYear(expense.paidDate) == year &&
-                        expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paid'
+                        ) &&
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paidDate'
+                        ) &&
+                        getYear(
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'paidDate'
+                          )
+                        ) == year &&
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'type'
+                        ) != EXCLUDED_EXPENSE_TYPES.TRANSFER
                     )
-                    .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                    .map((expense) => ({
+                      expense: expense,
+                      month: getMonth(
+                        idToProperty(
+                          expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'paidDate'
+                        ) as Date
+                      ),
+                    })),
                   '1'
                 )
-              ) as { expense: ContractExpense; month: number }[][];
+              ) as { expense: Transaction | string | undefined; month: number }[][];
               expensesByMonth.forEach((monthExpenses) => {
                 monthExpenses.forEach((monthExpense) => {
                   if (
-                    monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
-                    monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
-                    !this.userService.isEqual(monthExpense.expense.source, CONTRACT_BALANCE) &&
-                    !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'type'
+                    ) !== EXPENSE_TYPES.APORTE &&
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'type'
+                    ) !== EXPENSE_TYPES.COMISSAO &&
+                    idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'modelCostCenter'
+                    ) == COST_CENTER_TYPES.USER
                   ) {
-                    const userExpense = monthExpense.expense.team.reduce((sum, member) => {
+                    const userExpense = idToProperty(
+                      monthExpense.expense,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'team'
+                    ).reduce((sum: string, member: TransactionTeamMember) => {
                       if (this.teamService.isSectorEqual(member.sector, sector)) {
                         sum = this.stringUtil.sumMoney(sum, member.value);
                       }
@@ -733,25 +821,69 @@ export class AnnualReportComponent implements OnInit {
                     monthContract.contract.expenses
                       .filter(
                         (expense) =>
-                          expense.paid &&
-                          expense.paidDate &&
-                          getYear(expense.paidDate) == year &&
-                          expense.type != EXCLUDED_EXPENSE_TYPES.TRANSFER
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'paid'
+                          ) &&
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'paidDate'
+                          ) &&
+                          getYear(
+                            idToProperty(
+                              expense,
+                              this.transactionService.idToTransaction.bind(this.transactionService),
+                              'paidDate'
+                            )
+                          ) == year &&
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'type'
+                          ) != EXCLUDED_EXPENSE_TYPES.TRANSFER
                       )
-                      .map((expense) => ({ expense: expense, month: getMonth(expense.paidDate as Date) })),
+                      .map((expense) => ({
+                        expense: expense,
+                        month: getMonth(
+                          idToProperty(
+                            expense,
+                            this.transactionService.idToTransaction.bind(this.transactionService),
+                            'paidDate'
+                          ) as Date
+                        ),
+                      })),
                     '1'
                   )
-                ) as { expense: ContractExpense; month: number }[][];
+                ) as { expense: Transaction | string | undefined; month: number }[][];
                 expensesByMonth.forEach((monthExpenses) => {
                   monthExpenses.forEach((monthExpense) => {
                     if (
-                      monthExpense.expense.type !== EXPENSE_TYPES.APORTE &&
-                      monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
-                      !this.userService.isEqual(monthExpense.expense.source, CLIENT)
+                      idToProperty(
+                        monthExpense.expense,
+                        this.transactionService.idToTransaction.bind(this.transactionService),
+                        'type'
+                      ) !== EXPENSE_TYPES.APORTE &&
+                      idToProperty(
+                        monthExpense.expense,
+                        this.transactionService.idToTransaction.bind(this.transactionService),
+                        'type'
+                      ) !== EXPENSE_TYPES.COMISSAO &&
+                      monthExpense.expense &&
+                      this.transactionService.populateCostCenter(
+                        this.transactionService.idToTransaction(monthExpense.expense),
+                        this.teamService.idToTeam.bind(this.teamService),
+                        this.userService.idToUser.bind(this.userService)
+                      )._id != CLIENT._id
                     ) {
                       data[team][monthExpense.month].expenses = this.stringUtil.sumMoney(
                         data[team][monthExpense.month].expenses,
-                        monthExpense.expense.value
+                        idToProperty(
+                          monthExpense.expense,
+                          this.transactionService.idToTransaction.bind(this.transactionService),
+                          'value'
+                        )
                       );
                     }
                   });

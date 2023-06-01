@@ -19,13 +19,16 @@ import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
 import { OneDriveService } from './onedrive.service';
 import { StringUtilService } from './string-util.service';
-import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
+import { CLIENT, TeamService } from './team.service';
+import { TransactionService } from './transaction.service';
+import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { ChecklistItemAction, Contract, ContractExpense, ContractLocals, ContractReceipt } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractLocals, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { COST_CENTER_TYPES, Transaction, TransactionTeamMember } from '@models/transaction';
 import { User } from '@models/user';
 
 export enum SPLIT_TYPES {
@@ -86,10 +89,13 @@ export class ContractService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
+  private _edited$ = new Subject<void>();
 
-  edited$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
 
+  get edited$(): Observable<void> {
+    return this._edited$.asObservable();
+  }
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
@@ -102,7 +108,9 @@ export class ContractService implements OnDestroy {
     private onedrive: OneDriveService,
     private stringUtil: StringUtilService,
     private userService: UserService,
-    private wsService: WebSocketService
+    private wsService: WebSocketService,
+    private transactionService: TransactionService,
+    private teamService: TeamService
   ) {
     combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
@@ -147,7 +155,6 @@ export class ContractService implements OnDestroy {
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
-        this.edited$.next();
         if (contract.status === CONTRACT_STATOOS.CONCLUIDO && !isMoved && isOfType(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
@@ -167,7 +174,7 @@ export class ContractService implements OnDestroy {
       this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => handle(data, this.contracts$, 'contracts'));
+        .subscribe((data: any) => handle(data, this.contracts$, 'contracts', undefined, this._edited$));
     }
     return this.contracts$;
   }
@@ -215,20 +222,64 @@ export class ContractService implements OnDestroy {
     const expenseContribution = contract.expenses
       .filter(
         (expense) =>
-          expense.paid &&
-          expense.source &&
-          this.userService.idToUser(expense.source)._id != CLIENT._id &&
-          expense.type != EXPENSE_TYPES.COMISSAO
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+          expense &&
+          this.transactionService.populateCostCenter(
+            this.transactionService.idToTransaction(expense),
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          )._id != CLIENT._id &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') !=
+            EXPENSE_TYPES.COMISSAO
       )
       .reduce(
         (sum, expense) => {
-          if (expense.type == EXPENSE_TYPES.APORTE) {
-            if (this.userService.isEqual(expense.source, user))
-              sum.contribution += this.stringUtil.moneyToNumber(expense.value);
+          if (
+            idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') ==
+            EXPENSE_TYPES.APORTE
+          ) {
+            if (
+              idToProperty(
+                expense,
+                this.transactionService.idToTransaction.bind(this.transactionService),
+                'modelCostCenter'
+              ) == COST_CENTER_TYPES.USER &&
+              this.userService.isEqual(
+                idToProperty(
+                  expense,
+                  this.transactionService.idToTransaction.bind(this.transactionService),
+                  'costCenter'
+                ) as User | string | undefined,
+                user
+              )
+            )
+              sum.contribution += this.stringUtil.moneyToNumber(
+                idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+              );
           } else {
-            if (this.userService.isEqual(expense.source, user))
-              sum.expense += this.stringUtil.moneyToNumber(expense.value);
-            for (const member of expense.team) {
+            if (
+              idToProperty(
+                expense,
+                this.transactionService.idToTransaction.bind(this.transactionService),
+                'modelCostCenter'
+              ) == COST_CENTER_TYPES.USER &&
+              this.userService.isEqual(
+                idToProperty(
+                  expense,
+                  this.transactionService.idToTransaction.bind(this.transactionService),
+                  'costCenter'
+                ) as User | string | undefined,
+                user
+              )
+            )
+              sum.expense += this.stringUtil.moneyToNumber(
+                idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+              );
+            for (const member of idToProperty(
+              expense,
+              this.transactionService.idToTransaction.bind(this.transactionService),
+              'team'
+            )) {
               if (this.userService.isEqual(member.user, user))
                 sum.contract += this.stringUtil.moneyToNumber(member.value);
             }
@@ -258,28 +309,67 @@ export class ContractService implements OnDestroy {
     /* eslint-enable @typescript-eslint/indent */
     return contract.expenses
       .filter(
-        (expense) => expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id
+        (expense) =>
+          expense &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'costCenter') &&
+          this.transactionService.populateCostCenter(
+            this.transactionService.idToTransaction(expense),
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          )._id != CLIENT._id
       )
       .reduce(
-        (accumulator, expense: ContractExpense) => {
-          if (expense.source && this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id) {
-            const expenseValue = this.stringUtil.moneyToNumber(expense.value);
-            const member = expense.team.find((el) => {
+        (accumulator, expense: Transaction | string | undefined) => {
+          if (
+            idToProperty(
+              expense,
+              this.transactionService.idToTransaction.bind(this.transactionService),
+              'modelCostCenter'
+            ) == COST_CENTER_TYPES.TEAM
+          ) {
+            const expenseValue = this.stringUtil.moneyToNumber(
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+            );
+            const member = idToProperty(
+              expense,
+              this.transactionService.idToTransaction.bind(this.transactionService),
+              'team'
+            ).find((el: TransactionTeamMember) => {
               return this.userService.isEqual(el.user, user);
             });
 
-            if (expense.type == EXPENSE_TYPES.COMISSAO) {
-              accumulator.global.comission += this.stringUtil.moneyToNumber(expense.value);
+            if (
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') ==
+              EXPENSE_TYPES.COMISSAO
+            ) {
+              accumulator.global.comission += this.stringUtil.moneyToNumber(
+                idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+              );
             }
-            if (member && expense.type != EXPENSE_TYPES.COMISSAO) {
+            if (
+              member &&
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') !=
+                EXPENSE_TYPES.COMISSAO
+            ) {
               accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
             }
             accumulator.global.expense += expenseValue;
           }
 
-          if (expense.type == EXPENSE_TYPES.APORTE) {
-            const contributionValue = this.stringUtil.moneyToNumber(expense.value);
-            if (this.userService.isEqual(expense.author, user)) {
+          if (
+            idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') ==
+            EXPENSE_TYPES.APORTE
+          ) {
+            const contributionValue = this.stringUtil.moneyToNumber(
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+            );
+            if (
+              this.userService.isEqual(
+                idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'author'),
+                user
+              )
+            ) {
               accumulator.user.contribution += contributionValue;
             }
             accumulator.global.contribution += contributionValue;
@@ -375,22 +465,34 @@ export class ContractService implements OnDestroy {
     let validExpenses = contract.expenses;
 
     if (start && end) {
-      validExpenses = contract.expenses.filter(
-        (expense) => expense.paidDate && isWithinInterval(expense.paidDate, start, end)
-      );
+      validExpenses = contract.expenses.filter((expense) => {
+        idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paidDate') &&
+          isWithinInterval(
+            idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paidDate'),
+            start,
+            end
+          );
+      });
     }
 
     const filteredExpenses = validExpenses
       .filter((expense) => {
         return (
-          expense.paid &&
-          expense.type !== EXPENSE_TYPES.APORTE &&
-          expense.type !== EXPENSE_TYPES.COMISSAO &&
-          !this.userService.isEqual(expense.source, CONTRACT_BALANCE) &&
-          !this.userService.isEqual(expense.source, CLIENT)
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') !==
+            EXPENSE_TYPES.APORTE &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type') !==
+            EXPENSE_TYPES.COMISSAO &&
+          idToProperty(
+            expense,
+            this.transactionService.idToTransaction.bind(this.transactionService),
+            'modelCostCenter'
+          ) == COST_CENTER_TYPES.USER
         );
       })
-      .map((expense) => expense.team)
+      .map((expense) =>
+        idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'team')
+      )
       .flat();
 
     const expensesSum = filteredExpenses.reduce((sum, expense) => {
@@ -478,15 +580,30 @@ export class ContractService implements OnDestroy {
       skipWhile(([_, isLoaded]) => !isLoaded),
       map(([configs, _]) => {
         const result = contract.expenses.reduce(
-          (sum: ExpenseTypesSum[], expense: ContractExpense) => {
+          (sum: ExpenseTypesSum[], expense: Transaction | string | undefined) => {
             if (
-              expense.source &&
+              expense &&
               (wantsClient
-                ? this.userService.isEqual(expense.source, CLIENT._id)
-                : !this.userService.isEqual(expense.source, CLIENT._id))
+                ? this.transactionService.populateCostCenter(
+                    this.transactionService.idToTransaction(expense),
+                    this.teamService.idToTeam.bind(this.teamService),
+                    this.userService.idToUser.bind(this.userService)
+                  )._id == CLIENT._id
+                : this.transactionService.populateCostCenter(
+                    this.transactionService.idToTransaction(expense),
+                    this.teamService.idToTeam.bind(this.teamService),
+                    this.userService.idToUser.bind(this.userService)
+                  )._id != CLIENT._id)
             ) {
-              const idx = sum.findIndex((el) => el.type == expense.type);
-              sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+              const idx = sum.findIndex(
+                (el) =>
+                  el.type ==
+                  idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'type')
+              );
+              sum[idx].value = this.stringUtil.sumMoney(
+                sum[idx].value,
+                idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+              );
             }
             return sum;
           },
@@ -532,7 +649,9 @@ export class ContractService implements OnDestroy {
 
   contractHasExpensesWithUser(contract: Contract, userID: string) {
     return contract.expenses.some((expense) =>
-      expense.team.some((expenseTeamMember) => this.userService.isEqual(expenseTeamMember.user, userID))
+      idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'team').some(
+        (expenseTeamMember: TransactionTeamMember) => this.userService.isEqual(expenseTeamMember.user, userID)
+      )
     );
   }
 

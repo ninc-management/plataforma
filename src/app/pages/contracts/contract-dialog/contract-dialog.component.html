@@ -172,14 +172,6 @@
               (submit)="dismiss()"
               *ngIf="componentType == types.RECEIPT"
             ></ngx-receipt-item>
-            <ngx-expense-item
-              [contract]="contract"
-              [expenseIndex]="expenseIndex"
-              [availableContracts]="availableContracts"
-              [isFormDirty]="isFormDirty"
-              (submit)="dismiss()"
-              *ngIf="componentType == types.EXPENSE"
-            ></ngx-expense-item>
           </nb-card-body>
         </nb-card>
       </ng-template>

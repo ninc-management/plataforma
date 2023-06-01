@@ -32,7 +32,6 @@ import { ContractDialogComponent } from './contracts/contract-dialog/contract-di
 import { BalanceTabComponent } from './contracts/contract-item/balance-tab/balance-tab.component';
 import { ContractItemComponent } from './contracts/contract-item/contract-item.component';
 import { DataTabComponent } from './contracts/contract-item/data-tab/data-tab.component';
-import { ExpenseItemComponent } from './contracts/contract-item/expense-item/expense-item.component';
 import { ExpenseTabComponent } from './contracts/contract-item/expense-tab/expense-tab.component';
 import { ChecklistItemDialogComponent } from './contracts/contract-item/management-tab/checklist-item-dialog/checklist-item-dialog.component';
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
@@ -109,7 +108,6 @@ import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-tabl
     ContractorDialogComponent,
     ContractorItemComponent,
     ReceiptItemComponent,
-    ExpenseItemComponent,
     UsersComponent,
     UserDialogComponent,
     PromotionsComponent,

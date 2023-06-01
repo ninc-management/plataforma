@@ -18,7 +18,7 @@
           id="input-transaction-type"
           name="transactionType"
           required="true"
-          [disabled]="!!this.team"
+          [disabled]="!!team||!!contract"
           [ngStyle]="{
             'height.px': 16,
             display: isPhone() ? 'contents' : 'flex'
@@ -47,7 +47,7 @@
           </label>
           <nb-completer
             [(ngModel)]="contractSearch"
-            (selected)="this.contract = $event; fillContractData()"
+            (selected)="clonedContract = cloneDeep($event); fillContractData()"
             inputName="contractListCompleter"
             #contractList="ngModel"
             id="input-contract"
@@ -447,7 +447,7 @@
           Não foi possível achar um centro de custo
           "
             fieldSize="large"
-            [nameProperty]="transaction.modelCostCenter == cCTypes.USER ? 'name' : 'name'"
+            nameProperty="name"
             pictureProperty="profilePicture"
             [data$]="costCenterData$"
             [minSearchLength]="0"

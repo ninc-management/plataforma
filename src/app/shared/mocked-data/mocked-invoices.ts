@@ -23,7 +23,7 @@ export const externalMockedInvoices: Invoice[] = [
     materialListType: '1',
     materials: [],
     description: 'InvoiceTest',
-    nortanTeam: '6201b405329f446f16e1b404',
+    nortanTeam: externalMockedTeams[1],
     productListType: '2',
     products: [],
     prospectedBy: externalMockedUsers[0],

@@ -9,6 +9,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
 import { codeSort, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
@@ -35,7 +36,8 @@ export class OngoingContractsReportComponent implements OnInit {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private userService: UserService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private transactionService: TransactionService
   ) {}
 
   ngOnInit(): void {
@@ -82,8 +84,19 @@ export class OngoingContractsReportComponent implements OnInit {
 
   getReportExpensesValue(contract: Contract): string {
     return contract.expenses
-      .filter((expense) => expense.paid && expense.paidDate)
-      .reduce((totalExpenseValue, expense) => this.stringUtil.sumMoney(totalExpenseValue, expense.value), '0,00');
+      .filter(
+        (expense) =>
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paidDate')
+      )
+      .reduce(
+        (totalExpenseValue: string, expense) =>
+          this.stringUtil.sumMoney(
+            totalExpenseValue,
+            idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+          ),
+        '0,00'
+      );
   }
 
   getReportContractNotPaid(contract: Contract, invoice: Invoice): string {
