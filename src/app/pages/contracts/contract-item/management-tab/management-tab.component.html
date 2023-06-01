@@ -4,10 +4,10 @@
       <div class="row">
         <div class="col-12 my-3">
           <nb-progress-bar
-            [status]="([] | transformPipe : percentualProgress.bind(this)) == 100 ? 'success' : 'primary'"
+            [status]="([] | transformPipe: percentualProgress.bind(this)) == 100 ? 'success' : 'primary'"
             [size]="'tiny'"
             [displayValue]="true"
-            [value]="[] | transformPipe : percentualProgress.bind(this)"
+            [value]="[] | transformPipe: percentualProgress.bind(this)"
           ></nb-progress-bar>
         </div>
       </div>
@@ -34,12 +34,12 @@
                   nbInput
                   [ngModel]="
                     [invoice.contractor, contractorService.idToContractor.bind(contractorService), 'fullName']
-                      | transformPipe : idToProperty
+                      | transformPipe: idToProperty
                   "
                   name="contractor"
                   fullWidth
                   fieldSize="large"
-                  [nbTooltip]="[] | transformPipe : tooltipText.bind(this)"
+                  [nbTooltip]="[] | transformPipe: tooltipText.bind(this)"
                   nbTooltipPlacement="top"
                   nbTooltipStatus="primary"
                   [readonly]="true"
@@ -72,7 +72,7 @@
                 <label class="label" for="start-date">Início:</label>
                 <input
                   nbInput
-                  [ngModel]="[clonedContract.created] | transformPipe : formatDate"
+                  [ngModel]="[clonedContract.created] | transformPipe: formatDate"
                   name="start-date"
                   fullWidth
                   fieldSize="large"
@@ -96,7 +96,7 @@
                 </label>
                 <input
                   nbInput
-                  [ngModel]="deadline ? ([deadline] | transformPipe : formatDate) : ''"
+                  [ngModel]="deadline ? ([deadline] | transformPipe: formatDate) : ''"
                   name="end-date"
                   fullWidth
                   fieldSize="large"
@@ -109,7 +109,7 @@
                 <label class="label" for="remaining-days">Dias restantes:</label>
                 <input
                   nbInput
-                  [ngModel]="[] | transformPipe : checklistRemainingDays.bind(this)"
+                  [ngModel]="[] | transformPipe: checklistRemainingDays.bind(this)"
                   name="remaining-days"
                   fullWidth
                   fieldSize="large"
@@ -296,7 +296,7 @@
                     nbInput
                     [ngModel]="
                       [clonedContract.checklist[i].assignee, userService.idToUser.bind(userService), 'fullName']
-                        | transformPipe : idToProperty
+                        | transformPipe: idToProperty
                     "
                     #assignee="ngModel"
                     id="item-assignee-{{ i }}"
@@ -345,14 +345,14 @@
               <div class="row w-100">
                 <div class="col-12 mt-3">
                   <nb-progress-bar
-                    [status]="[clonedContract.checklist[i]] | transformPipe : itemProgressStatus.bind(this)"
+                    [status]="[clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this)"
                     [class]="
                       'progress-border ' +
-                      ([clonedContract.checklist[i]] | transformPipe : itemProgressStatus.bind(this))
+                      ([clonedContract.checklist[i]] | transformPipe: itemProgressStatus.bind(this))
                     "
                     [size]="'tiny'"
                     [displayValue]="true"
-                    [value]="[clonedContract.checklist[i]] | transformPipe : percentualItemProgress.bind(this)"
+                    [value]="[clonedContract.checklist[i]] | transformPipe: percentualItemProgress.bind(this)"
                   ></nb-progress-bar>
                 </div>
               </div>
@@ -387,14 +387,14 @@
           *ngFor="let comment of availableMessages; let i = index; trackBy: trackByIndex"
           [ngClass]="{
             'comment-current-user':
-              [comment.author, currentUser] | transformPipe : this.userService.isEqual.bind(userService)
+              [comment.author, currentUser] | transformPipe: this.userService.isEqual.bind(userService)
           }"
         >
           <nb-user
             class="comment-author"
             size="large"
             [picture]="
-              [comment.author, userService.idToUser.bind(userService), 'profilePicture'] | transformPipe : idToProperty
+              [comment.author, userService.idToUser.bind(userService), 'profilePicture'] | transformPipe: idToProperty
             "
             onlyPicture
             shape="rectangle"
@@ -404,12 +404,12 @@
               <span>
                 <b>
                   {{
-                    [comment.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe : idToProperty
+                    [comment.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
                   }}
                 </b>
               </span>
               <span class="label comment-created">
-                {{ [comment.created] | transformPipe : formatDate }}
+                {{ [comment.created] | transformPipe: formatDate }}
               </span>
             </div>
             <pre [innerHTML]="comment.body"></pre>

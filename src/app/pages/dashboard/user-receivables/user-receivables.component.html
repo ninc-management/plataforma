@@ -30,13 +30,13 @@
                 size="giant"
                 [name]="
                   [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'name']
-                    | transformPipe : idToProperty
+                    | transformPipe: idToProperty
                 "
                 [title]="
                   [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'code']
-                    | transformPipe : idToProperty
+                    | transformPipe: idToProperty
                 "
-                [picture]="[receivable.contract.invoice] | transformPipe : invoiceService.idToProfilePicture.bind(invoiceService)"
+                [picture]="[receivable.contract.invoice] | transformPipe: invoiceService.idToProfilePicture.bind(invoiceService)"
               ></nb-user>
             </div>
             <div class="col-12">
@@ -45,7 +45,7 @@
                 <span style="vertical-align: 0.1em">
                   {{
                     [receivable.contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'value']
-                      | transformPipe : idToProperty
+                      | transformPipe: idToProperty
                   }}
                 </span>
               </p>
