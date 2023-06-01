@@ -1,11 +1,10 @@
-import { getModelForClass, plugin, prop, Ref } from '@typegoose/typegoose';
+import { plugin, prop, Ref } from '@typegoose/typegoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 import { StatusHistory } from './baseStatusHistory';
 import { Invoice } from './invoice';
-import { Provider } from './provider';
 import { Sector } from './shared/sector';
-import { UploadedFile } from './shared/uploadedFiles';
+import { Transaction } from './transaction';
 import { User } from './user';
 
 export interface ContractLocals {
@@ -30,70 +29,6 @@ export interface ChecklistItemLocals {
 export interface ItemActionLocals {
   isNew: boolean;
   parentItemName: string;
-}
-
-export class ContractExpenseTeamMember {
-  @prop({ required: true, ref: () => User })
-  user!: Ref<User>;
-
-  @prop({ required: true })
-  value!: string;
-
-  @prop({ required: true })
-  percentage!: string;
-
-  @prop({ required: true, ref: () => Sector })
-  sector!: Ref<Sector>;
-}
-
-export class ContractExpense {
-  @prop({ required: true, ref: () => User })
-  author!: Ref<User>;
-
-  @prop({ required: true, ref: () => User })
-  source!: Ref<User>;
-
-  @prop({ required: true, ref: () => Provider })
-  provider?: Ref<Provider>;
-
-  @prop({ required: true })
-  description!: string;
-
-  @prop({ required: true })
-  nf!: boolean;
-
-  @prop({ required: true })
-  type!: string;
-
-  @prop()
-  subType?: string;
-
-  @prop({ required: true })
-  splitType!: string;
-
-  @prop({ required: true })
-  value!: string;
-
-  @prop({ required: true })
-  created: Date = new Date();
-
-  @prop({ required: true })
-  lastUpdate: Date = new Date();
-
-  @prop({ required: true })
-  paid: boolean = false;
-
-  @prop({ required: true })
-  code!: string;
-
-  @prop()
-  paidDate?: Date;
-
-  @prop({ type: () => [UploadedFile] })
-  uploadedFiles: UploadedFile[] = [];
-
-  @prop({ type: () => [ContractExpenseTeamMember] })
-  team: ContractExpenseTeamMember[] = [];
 }
 
 export class ContractUserPayment {
@@ -232,8 +167,8 @@ export class Contract extends StatusHistory {
   @prop({ type: () => [ContractReceipt] })
   receipts: ContractReceipt[] = [];
 
-  @prop({ type: () => [ContractExpense] })
-  expenses: ContractExpense[] = [];
+  @prop({ ref: () => Transaction })
+  expenses: Ref<Transaction>[] = [];
 
   @prop({ required: true })
   status: string = 'Em andamento';

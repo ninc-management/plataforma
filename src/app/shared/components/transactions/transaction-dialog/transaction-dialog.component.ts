@@ -5,6 +5,7 @@ import { BaseDialogComponent } from '../../base-dialog/base-dialog.component';
 import { INPUT_TYPES, TextInputDialogComponent } from '../../text-input-dialog/text-input-dialog.component';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
+import { Contract } from '@models/contract';
 import { Team } from '@models/team';
 import { Transaction } from '@models/transaction';
 
@@ -17,6 +18,7 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
   @Input() title = '';
   @Input() transaction = new Transaction();
   @Input() team?: Team;
+  @Input() contract?: Contract;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;

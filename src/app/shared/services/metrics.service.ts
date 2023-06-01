@@ -21,10 +21,12 @@ import { INVOICE_STATOOS, InvoiceService } from './invoice.service';
 import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { TransactionService } from './transaction.service';
-import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
+import { UserService } from './user.service';
 
 import { Contract, ContractLocals } from '@models/contract';
 import { InvoiceTeamMember } from '@models/invoice';
+import { COST_CENTER_TYPES, Transaction, TransactionTeamMember } from '@models/transaction';
+import { User } from '@models/user';
 
 export type TimeSeriesItem = [string, number];
 
@@ -137,13 +139,12 @@ export class MetricsService implements OnDestroy {
     private configService: ConfigService,
     private transactionService: TransactionService
   ) {
-    this.teamService
-      .getTeams()
+    combineLatest([this.teamService.getTeams(), this.teamService.isDataLoaded$])
       .pipe(
-        skipWhile((teams) => teams.length == 0),
+        skipWhile(([_, isTeamDataLoaded]) => !isTeamDataLoaded),
         take(1)
       )
-      .subscribe((teams) => {
+      .subscribe(([teams, _]) => {
         const baseTeams = teams.map((team): TeamInfo => ({ id: team._id, value: 0 }));
         const baseSectors = teams
           .map((team, idx) => team.sectors.map((sector): SectorInfo => ({ id: sector._id, value: 0, teamIdx: idx })))
@@ -316,9 +317,16 @@ export class MetricsService implements OnDestroy {
   }
 
   receivedValueBySectors(start: Date, end: Date, uId?: string): Observable<UserAndSectors> {
-    return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
-      map(([contracts, _]) => {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.transactionService.getTransactions(),
+      this.contractService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(
+        ([, , isContractDataLoaded, isTransactionDataLoaded]) => !isContractDataLoaded || !isTransactionDataLoaded
+      ),
+      map(([contracts, , ,]) => {
         return contracts.reduce((received: UserAndSectors, contract) => {
           if (this.contractService.hasPayments(contract._id)) {
             const value = contract.payments.reduce((paid: UserAndSectors, payment) => {
@@ -349,25 +357,25 @@ export class MetricsService implements OnDestroy {
             received.global = mergeWith([], received.global, value.global, this.mergeSectorInfo);
           }
           if (this.contractService.hasExpenses(contract._id)) {
-            for (const expense of contract.expenses) {
-              if (expense.paid && expense.source) {
-                const paidDate = expense.paidDate;
-                const source = this.userService.idToUser(expense.source);
-                if (
-                  paidDate &&
-                  isWithinInterval(paidDate, start, end) &&
-                  source._id != CONTRACT_BALANCE._id &&
-                  source._id != CLIENT._id &&
-                  source.position.some((p) => new RegExp('/Direto(r|ra) de T.I/').test(p))
-                ) {
-                  for (const member of expense.team) {
-                    const globalIdx = received.global.findIndex(
-                      (o) => o.id == this.teamService.idToSector(member.sector)._id
-                    );
-                    if (globalIdx != -1) {
-                      received.global[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
-                      if (this.userService.isEqual(member.user, uId)) {
-                        received.user[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+            for (const expenseRef of contract.expenses) {
+              if (expenseRef) {
+                const expense = this.transactionService.idToTransaction(expenseRef);
+                if (expense.paid && expense.costCenter) {
+                  const paidDate = expense.paidDate;
+                  const isUser = expense.modelCostCenter === COST_CENTER_TYPES.USER;
+                  if (paidDate && isWithinInterval(paidDate, start, end) && isUser) {
+                    const user = this.userService.idToUser(expense.costCenter as User | string);
+                    if (!user.position.some((p) => new RegExp('/Direto(r|ra) de T.I/').test(p))) {
+                      for (const member of expense.team) {
+                        const globalIdx = received.global.findIndex(
+                          (o) => o.id == this.teamService.idToSector(member.sector)._id
+                        );
+                        if (globalIdx != -1) {
+                          received.global[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                          if (this.userService.isEqual(member.user, uId)) {
+                            received.user[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                          }
+                        }
                       }
                     }
                   }
@@ -723,7 +731,7 @@ export class MetricsService implements OnDestroy {
     return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
       skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
       map(([contracts, _]) => {
-        const fContracts = contracts.filter((contract) => this.contractService.hasPayments(contract));
+        const fContracts: Contract[] = contracts.filter((contract) => this.contractService.hasPayments(contract));
         const timeSeriesItems = fContracts.map((contract) => {
           let fPayments = contract.payments.filter((payment) => payment.paid);
           if (uId != undefined) {
@@ -750,31 +758,70 @@ export class MetricsService implements OnDestroy {
   }
 
   expensesTimeSeries(uId?: string): Observable<TimeSeriesItem[]> {
-    return combineLatest([this.contractService.getContracts(), this.contractService.isDataLoaded$]).pipe(
-      skipWhile(([, isContractDataLoaded]) => !isContractDataLoaded),
-      map(([contracts, _]) => {
+    return combineLatest([
+      this.contractService.getContracts(),
+      this.transactionService.getTransactions(),
+      this.contractService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
+    ]).pipe(
+      skipWhile(
+        ([, , isContractDataLoaded, isTransactionDataLoaded]) => !isContractDataLoaded || !isTransactionDataLoaded
+      ),
+      map(([contracts, , ,]) => {
         const fContracts = cloneDeep(contracts.filter((contract) => this.contractService.hasExpenses(contract)));
         const timeSeriesItems = fContracts.map((contract) => {
-          let fExpenses = contract.expenses.filter(
-            (expense) =>
-              expense.paid &&
-              !this.userService.isEqual(expense.source, CONTRACT_BALANCE) &&
-              !this.userService.isEqual(expense.source, CLIENT)
-          );
+          let fExpenses = (contract.expenses as (Transaction | string | undefined)[]).filter((expense) => {
+            const isUser =
+              idToProperty(
+                expense,
+                this.transactionService.idToTransaction.bind(this.transactionService),
+                'modelCostCenter'
+              ) === COST_CENTER_TYPES.USER;
+            return (
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+              isUser
+            );
+          });
           if (uId != undefined) {
             fExpenses = fExpenses.filter((expense) => {
-              return expense.team
-                .map((team) => this.userService.isEqual(team.user, uId))
-                .filter((isSameUser) => isSameUser).length;
+              return idToProperty(
+                expense,
+                this.transactionService.idToTransaction.bind(this.transactionService),
+                'team'
+              )
+                .map((member: TransactionTeamMember) => this.userService.isEqual(member.user, uId))
+                .filter((isSameUser: boolean) => isSameUser).length;
             });
-            fExpenses = fExpenses.map((expense) => {
-              expense.value = expense.team[0].value;
-              return expense;
-            });
+            fExpenses = fExpenses
+              .filter((expenseRef): expenseRef is Transaction | string => expenseRef != undefined)
+              .map((expenseRef) => {
+                const expense = this.transactionService.idToTransaction(expenseRef);
+                expense.value = expense.team[0].value;
+                return expense;
+              });
           }
           return fExpenses.map((expense) => {
-            const date: string = expense.paidDate ? format(expense.paidDate, 'yyyy/MM/dd') : '';
-            return [date, -1 * this.stringUtil.moneyToNumber(expense.value)] as TimeSeriesItem;
+            const date: string = idToProperty(
+              expense,
+              this.transactionService.idToTransaction.bind(this.transactionService),
+              'paidDate'
+            )
+              ? format(
+                  idToProperty(
+                    expense,
+                    this.transactionService.idToTransaction.bind(this.transactionService),
+                    'paidDate'
+                  ),
+                  'yyyy/MM/dd'
+                )
+              : '';
+            return [
+              date,
+              -1 *
+                this.stringUtil.moneyToNumber(
+                  idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+                ),
+            ] as TimeSeriesItem;
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
@@ -938,12 +985,17 @@ export class MetricsService implements OnDestroy {
     return combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
+      this.transactionService.getTransactions(),
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
     ]).pipe(
-      skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
+      skipWhile(
+        ([, , , isContractDataLoaded, isInvoiceDataLoaded, isTransactionDataLoaded]) =>
+          !(isContractDataLoaded && isInvoiceDataLoaded && isTransactionDataLoaded)
+      ),
       takeUntil(this.destroy$),
-      map(([contracts, , ,]) => {
+      map(([contracts, , , , ,]) => {
         const validContracts = contracts.filter((contract) =>
           this.contractService.contractHasExpensesWithUser(contract, userID)
         );

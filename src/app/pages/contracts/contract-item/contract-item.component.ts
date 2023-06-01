@@ -2,7 +2,8 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { isPhone } from 'app/shared/utils';
+import { TransactionService } from 'app/shared/services/transaction.service';
+import { idToProperty, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 
@@ -54,7 +55,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor() {}
+  constructor(private transactionService: TransactionService) {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);
@@ -66,7 +67,10 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   }
 
   expenseIndex(code: 'string'): number {
-    return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedContract.expenses.findIndex(
+      (expense) =>
+        idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'code') == code
+    );
   }
 
   getActiveTab(e: any) {

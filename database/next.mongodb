@@ -17,6 +17,35 @@ function teamExpense2Transaction(teamExpense, teamId, codeNumber) {
   return transaction;
 }
 
+function contractExpense2Transaction(contractExpense, contractId, invoiceTeamId, codeNumber) {
+  var transaction = {};
+  if (contractExpense.source == '000000000000000000000000') {
+    transaction.modelCostCenter = 'Times';
+    transaction.costCenter = invoiceTeamId;
+  } else if (contractExpense.source == '000000000000000000000001') {
+    transaction.modelCostCenter = 'Times';
+    transaction.costCenter = '000000000000000000000000'; // ID para o time invisivel de clientes
+  } else {
+    transaction.modelCostCenter = 'Associados';
+    transaction.costCenter = contractExpense.source;
+  }
+
+  transaction.contract = contractId;
+  transaction.author = contractExpense.author;
+  transaction.description = contractExpense.description;
+  transaction.nf = contractExpense.nf;
+  transaction.type = contractExpense.type;
+  transaction.subType = contractExpense.subType;
+  transaction.value = contractExpense.value;
+  transaction.created = contractExpense.created;
+  transaction.lastUpdate = contractExpense.lastUpdate;
+  transaction.paid = contractExpense.paid;
+  transaction.code = '#' + codeNumber.toString();
+  transaction.paidDate = contractExpense.paidDate;
+  transaction.uploadedFiles = contractExpense.uploadedFiles;
+  return transaction;
+}
+
 db.companies.find().forEach((company) => {
   company.logoSupport = {
     url: '',
@@ -59,6 +88,22 @@ db.teams.find().forEach((team) => {
     team.expenses = [];
   }
   db.teams.replaceOne({ _id: team._id }, team);
+});
+
+db.contracts.find().forEach((contract) => {
+  var i = db.transactions.estimatedDocumentCount();
+  if (contract.expenses) {
+    contract.expenses = contract.expenses.map((contractExpense) => {
+      i++;
+      const invoiceTeamId = db.invoices.findOne({ _id: contract.invoice }).nortanTeam;
+      const transaction = contractExpense2Transaction(contractExpense, contract._id, invoiceTeamId, i);
+      const result = db.transactions.insertOne(transaction);
+      return result.insertedId;
+    });
+  } else {
+    contract.expenses = [];
+  }
+  db.contracts.replaceOne({ _id: contract._id }, contract);
 });
 
 /**

@@ -11,8 +11,27 @@ import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { Sector, SectorLocals } from '@models/shared/sector';
-import { Team, TeamLocals } from '@models/team';
+import { Team, TeamConfig, TeamLocals } from '@models/team';
 import { User } from '@models/user';
+
+export const CLIENT: Team = {
+  _id: '000000000000000000000000',
+  name: 'Cliente',
+  members: [],
+  created: new Date('May 11, 2023'),
+  purpose: 'Time para representar o cliente',
+  expenses: [],
+  config: new TeamConfig(),
+  abrev: 'Cliente',
+  isOrganizationTeam: false,
+  sectors: [],
+  overrideSupportPercentages: false,
+  overrideIntermediationPercentages: false,
+  locals: {
+    balance: '0,00',
+    leaderName: '',
+  },
+};
 
 @Injectable({
   providedIn: 'root',
@@ -46,10 +65,9 @@ export class TeamService implements OnDestroy {
     this.http.post('/api/team/', req).pipe(take(1)).subscribe();
   }
 
-  editTeam(team: Team, creatingTransaction = false): void {
+  editTeam(team: Team): void {
     const req = {
       team: team,
-      creatingTransaction: creatingTransaction,
     };
     this.http.post('/api/team/update', req).pipe(take(1)).subscribe();
   }

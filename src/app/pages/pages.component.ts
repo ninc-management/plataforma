@@ -11,10 +11,6 @@ import { OneColumnLayoutComponent } from '../@theme/layouts';
 import { ReportMenuDialogComponent } from './dashboard/report-menu-dialog/report-menu-dialog.component';
 import { MENU_ITEMS } from './pages-menu';
 import { ContractorDialogComponent } from 'app/pages/contractors/contractor-dialog/contractor-dialog.component';
-import {
-  COMPONENT_TYPES,
-  ContractDialogComponent,
-} from 'app/pages/contracts/contract-dialog/contract-dialog.component';
 import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoice-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
@@ -31,7 +27,6 @@ import { Team } from '@models/team';
 
 enum DIALOG_TYPES {
   INVOICE,
-  EXPENSE,
   CLIENT,
   TRANSFER,
   REPORT_MENU,
@@ -339,20 +334,6 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
 
   openDialog(dType: DIALOG_TYPES): void {
     switch (dType) {
-      case DIALOG_TYPES.EXPENSE: {
-        this.dialogService.open(ContractDialogComponent, {
-          context: {
-            title: 'ADICIONAR DESPESA',
-            componentType: COMPONENT_TYPES.EXPENSE,
-          },
-          dialogClass: 'my-dialog',
-          closeOnBackdropClick: false,
-          closeOnEsc: false,
-          autoFocus: false,
-        });
-        break;
-      }
-
       case DIALOG_TYPES.INVOICE: {
         this.dialogService.open(InvoiceDialogComponent, {
           context: {

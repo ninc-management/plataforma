@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, skipWhile, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, merge, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
-import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
+import { COMPONENT_TYPES } from '../../contract-dialog/contract-dialog.component';
 import {
   DateFilterComponent,
   dateRangeFilter,
@@ -11,16 +11,21 @@ import {
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
-import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
+import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, nameSort, valueSort } from 'app/shared/utils';
 
-import { Contract, ContractExpense } from '@models/contract';
+import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
+import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 @Component({
@@ -28,10 +33,11 @@ import { User } from '@models/user';
   templateUrl: './expense-tab.component.html',
   styleUrls: ['./expense-tab.component.scss'],
 })
-export class ExpenseTabComponent implements OnInit {
+export class ExpenseTabComponent implements OnInit, OnDestroy {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  destroy$ = new Subject<void>();
 
   types = COMPONENT_TYPES;
   isEditionGranted = false;
@@ -40,9 +46,12 @@ export class ExpenseTabComponent implements OnInit {
   searchQuery = '';
   platformConfig: PlatformConfig = new PlatformConfig();
 
-  get filtredExpenses(): ContractExpense[] {
+  get filtredExpenses(): Transaction[] {
+    const filtredExpenses = this.clonedContract.expenses
+      .filter((expenseRef): expenseRef is Transaction | string => expenseRef != undefined)
+      .map((expenseRef) => this.transactionService.idToTransaction(expenseRef));
     if (this.searchQuery !== '')
-      return this.clonedContract.expenses.filter((expense) => {
+      return filtredExpenses.filter((expense) => {
         return (
           expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
           expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -51,14 +60,18 @@ export class ExpenseTabComponent implements OnInit {
             idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase())) ||
-          (expense.source &&
-            idToProperty(expense.source, this.userService.idToUser.bind(this.userService), 'name')
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase())) ||
+          this.transactionService
+            .populateCostCenter(
+              expense,
+              this.teamService.idToTeam.bind(this.teamService),
+              this.userService.idToUser.bind(this.userService)
+            )
+            .name.toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
           formatDate(expense.created).includes(this.searchQuery.toLowerCase())
         );
       });
-    return this.clonedContract.expenses;
+    return filtredExpenses;
   }
   settings = {
     mode: 'external',
@@ -91,11 +104,24 @@ export class ExpenseTabComponent implements OnInit {
         width: '5%',
         compareFunction: this.itemSort,
       },
-      source: {
-        title: 'Fonte',
+      costCenter: {
+        title: 'Centro de Custo',
         type: 'string',
-        valuePrepareFunction: (source: User | string | undefined) =>
-          source ? this.userService.idToShortName(source) : '',
+        width: '10%',
+        valuePrepareFunction: (costCenter: User | Team | string | undefined) => {
+          return (costCenter as User | Team).name;
+        },
+        compareFunction: (
+          direction: number,
+          a: User | Team | string | undefined,
+          b: User | Team | string | undefined
+        ) => {
+          return nameSort(direction, (a as User | Team).name, (b as User | Team).name);
+        },
+        filterFunction: (costCenter: User | Team | string | undefined, search?: string): boolean => {
+          if (search && (costCenter as User | Team).name.includes(search)) return true;
+          return false;
+        },
       },
       description: {
         title: 'Descrição',
@@ -122,20 +148,6 @@ export class ExpenseTabComponent implements OnInit {
           config: {
             selectText: 'Todos',
             list: [] as any[],
-          },
-        },
-      },
-      splitType: {
-        title: 'Tipo',
-        type: 'string',
-        filter: {
-          type: 'list',
-          config: {
-            selectText: 'Todos',
-            list: Object.values(SPLIT_TYPES).map((type) => ({
-              value: type,
-              title: type,
-            })),
           },
         },
       },
@@ -191,12 +203,23 @@ export class ExpenseTabComponent implements OnInit {
     private dialogService: NbDialogService,
     private invoiceService: InvoiceService,
     private configService: ConfigService,
+    private transactionService: TransactionService,
+    private teamService: TeamService,
     public contractService: ContractService,
     public userService: UserService,
     public stringUtil: StringUtilService
   ) {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
+    merge(this.contractService.edited$, this.transactionService.edited$)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.loadTableExpenses());
+
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     //INVARIANT: The config service data must be loaded for the code to be synchronous
     combineLatest([
@@ -216,18 +239,14 @@ export class ExpenseTabComponent implements OnInit {
       });
   }
 
-  openDialog(index?: number): void {
+  openDialog(event: { data?: any }): void {
     this.isDialogBlocked.next(true);
-    index = index != undefined ? index : undefined;
-    const title = index != undefined ? 'DESPESA' : 'ADICIONAR DESPESA';
-
     this.dialogService
-      .open(ContractDialogComponent, {
+      .open(TransactionDialogComponent, {
         context: {
-          title: title,
-          contract: this.clonedContract,
-          expenseIndex: index,
-          componentType: COMPONENT_TYPES.EXPENSE,
+          title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
+          transaction: event.data ? event.data : new Transaction(),
+          contract: this.contract,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
@@ -244,7 +263,14 @@ export class ExpenseTabComponent implements OnInit {
 
   confirmationDialog(index: number): void {
     this.isDialogBlocked.next(true);
-    const item = 'a despesa ' + this.clonedContract.expenses[index].code + '?';
+    const item =
+      'a despesa ' +
+      idToProperty(
+        this.clonedContract.expenses[index],
+        this.transactionService.idToTransaction.bind(this.userService),
+        'code'
+      ) +
+      '?';
 
     this.dialogService
       .open(ConfirmationDialogComponent, {
@@ -286,13 +312,27 @@ export class ExpenseTabComponent implements OnInit {
   }
 
   expenseIndex(code: 'string'): number {
-    return this.clonedContract.expenses.findIndex((expense) => expense.code == code);
+    return this.clonedContract.expenses.findIndex(
+      (expense) => idToProperty(expense, this.transactionService.idToTransaction.bind(this.userService), 'code') == code
+    );
   }
 
   loadTableExpenses(): void {
     this.settings.actions.add = this.isEditionGranted;
     this.settings.actions.delete = this.isEditionGranted;
-    this.source.load(this.clonedContract.expenses);
+    this.source.load(
+      this.contract.expenses
+        .filter((expenseRef): expenseRef is Transaction | string => expenseRef != undefined)
+        .map((expenseRef) => {
+          const expense = this.transactionService.idToTransaction(expenseRef);
+          expense.costCenter = this.transactionService.populateCostCenter(
+            expense,
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          );
+          return expense;
+        })
+    );
     const expensesValues = greaterAndSmallerValue(this.clonedContract.expenses);
     this.settings.columns.value.filter.config.minValue = expensesValues.min;
     this.settings.columns.value.filter.config.maxValue = expensesValues.max;

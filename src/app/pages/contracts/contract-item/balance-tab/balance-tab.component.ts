@@ -5,7 +5,9 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
-import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { CLIENT, TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
+import { UserService } from 'app/shared/services/user.service';
 import { idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -26,6 +28,7 @@ export class BalanceTabComponent implements OnInit {
   @Input() clonedContract: Contract = new Contract();
   private destroy$ = new Subject<void>();
 
+  companyTeamsNames: string[] = [];
   comissionSum = '';
   contractId!: string;
   invoice: Invoice = new Invoice();
@@ -63,6 +66,8 @@ export class BalanceTabComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private configService: ConfigService,
+    private transactionService: TransactionService,
+    private teamService: TeamService,
     public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService
@@ -74,15 +79,22 @@ export class BalanceTabComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
+    combineLatest([
+      this.configService.getConfig(),
+      this.teamService.getTeams(),
+      this.configService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+    ])
       .pipe(
-        skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
+        skipWhile(([, , isConfigDataLoaded, isTeamDataLoaded]) => !isConfigDataLoaded && !isTeamDataLoaded),
         take(1)
       )
-      .subscribe(([configs, _]) => {
+      .subscribe(([configs, teams, ,]) => {
         this.config = configs[0];
         this.options.notaFiscal = nfPercentage(this.clonedContract, this.config.invoiceConfig);
         this.options.nortanPercentage = nortanPercentage(this.clonedContract, this.config.invoiceConfig);
+
+        this.companyTeamsNames = teams.map((team) => team.name);
       });
     if (this.clonedContract.invoice) this.invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
     this.invoice.team.forEach(
@@ -98,20 +110,27 @@ export class BalanceTabComponent implements OnInit {
   expenseSourceSum(): ExpenseSourceSum[] {
     const result = this.clonedContract.expenses.reduce(
       (sum: ExpenseSourceSum[], expense) => {
-        if (expense.source != undefined) {
-          const source = this.userService.idToShortName(expense.source);
+        if (expense) {
+          const costCenter = this.transactionService.populateCostCenter(
+            this.transactionService.idToTransaction(expense),
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          );
+          const source = costCenter.name;
           const idx = sum.findIndex((el) => el.user == source);
-          if (idx != -1) sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+          if (idx != -1)
+            sum[idx].value = this.stringUtil.sumMoney(
+              sum[idx].value,
+              idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+            );
         }
         return sum;
       },
-      [CONTRACT_BALANCE.name, CLIENT.name]
+      [CLIENT.name]
+        .concat(this.companyTeamsNames)
         .concat(
           this.invoice.team
-            .map((member) => {
-              if (member.user) return this.userService.idToShortName(member.user);
-              return '';
-            })
+            .map((member) => idToProperty(member.user, this.userService.idToUser.bind(this.userService), 'name'))
             .filter((n) => n.length > 0)
         )
         .map((name) => ({ user: name, value: '0,00' }))

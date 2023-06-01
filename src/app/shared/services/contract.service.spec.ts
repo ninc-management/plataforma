@@ -11,6 +11,7 @@ import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedContracts } from '../mocked-data/mocked-contracts';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
+import { externalMockedTransactions } from '../mocked-data/mocked-transaction';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
@@ -22,6 +23,7 @@ import { Contract, ContractChecklistItem } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 describe('ContractService', () => {
@@ -34,6 +36,7 @@ describe('ContractService', () => {
   let mockedTeams: Team[];
   let mockedConfigs: PlatformConfig[];
   let mockedChecklistItem: ContractChecklistItem[];
+  let mockedTransactions: Transaction[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
@@ -95,6 +98,7 @@ describe('ContractService', () => {
     mockedContracts = cloneDeep(externalMockedContracts);
     mockedChecklistItem = cloneDeep(externalMockedChecklistItems);
     mockedConfigs = cloneDeep(externalMockedConfigs);
+    mockedTransactions = cloneDeep(externalMockedTransactions);
 
     // mock response
     const req = httpMock.expectOne('/api/user/all');
@@ -107,7 +111,7 @@ describe('ContractService', () => {
 
     const transactionReq = httpMock.expectOne('/api/transaction/all');
     expect(transactionReq.request.method).toBe('POST');
-    transactionReq.flush([]);
+    transactionReq.flush(mockedTransactions);
 
     const configReq = httpMock.expectOne('/api/config/all');
     expect(configReq.request.method).toBe('POST');

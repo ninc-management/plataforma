@@ -21,7 +21,7 @@ import {
   isWithinInterval as withinInterval,
 } from 'date-fns';
 import { cloneDeep, groupBy, isEqual } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { appInjector } from './injector.module';
@@ -31,10 +31,11 @@ import { StringUtilService } from './services/string-util.service';
 import { TeamService } from './services/team.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
-import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
+import { Contract, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { Notification } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';
+import { Transaction } from '@models/transaction';
 
 export enum Permissions {
   PARCEIRO = 'parceiro',
@@ -371,8 +372,8 @@ export function reviveDates<T>(obj: T): T {
 }
 
 export function shouldNotifyManager(
-  currentResource: ContractReceipt | ContractPayment | ContractExpense,
-  newResource: ContractReceipt | ContractPayment | ContractExpense
+  currentResource: ContractReceipt | ContractPayment | Transaction,
+  newResource: ContractReceipt | ContractPayment | Transaction
 ): boolean {
   return !currentResource.paid && newResource.paid;
 }
@@ -422,7 +423,8 @@ export async function handle<T extends IdWise>(
   data: any,
   oArray$: BehaviorSubject<T[]>,
   coll: string,
-  cbk?: (oArray: T[]) => Promise<T[]>
+  cbk?: (oArray: T[]) => Promise<T[]>,
+  editedObject$?: Subject<void>
 ): Promise<void> {
   if (data == new Object()) return;
   if (data.ns.coll != coll) return;
@@ -442,6 +444,7 @@ export async function handle<T extends IdWise>(
         for (const f of data.updateDescription.removedFields) delete (tmpArray[idx] as any)[f];
       if (cbk) tmpArray = await cbk(tmpArray);
       oArray$.next(tmpArray);
+      if (editedObject$) editedObject$.next();
       break;
     }
 

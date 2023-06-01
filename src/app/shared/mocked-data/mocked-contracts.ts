@@ -1,11 +1,9 @@
-import { EXPENSE_TYPES } from '../services/config.service';
-import { SPLIT_TYPES } from '../services/contract.service';
-import { CONTRACT_BALANCE } from '../services/user.service';
 import { externalMockedChecklistItems } from './mocked-checklist-items';
 import { externalMockedInvoices } from './mocked-invoices';
+import { externalMockedTransactions } from './mocked-transaction';
 import { externalMockedUsers } from './mocked-users';
 
-import { Contract, ContractExpense, ContractPayment } from '@models/contract';
+import { Contract, ContractPayment } from '@models/contract';
 
 export const externalMockedContracts: Contract[] = [
   {
@@ -14,68 +12,14 @@ export const externalMockedContracts: Contract[] = [
     invoice: externalMockedInvoices[0],
     payments: [],
     receipts: [],
-    expenses: [
-      {
-        author: externalMockedUsers[0],
-        source: externalMockedUsers[0],
-        description: 'TestExpense1',
-        nf: false,
-        type: EXPENSE_TYPES.APORTE,
-        splitType: SPLIT_TYPES.INDIVIDUAL,
-        value: '1.000,00',
-        paid: true,
-        code: '#0',
-        paidDate: new Date(),
-        created: new Date(),
-        lastUpdate: new Date(),
-        uploadedFiles: [],
-        team: [
-          {
-            user: externalMockedUsers[0],
-            value: '1.000,00',
-            percentage: '100,00',
-            sector: 'Trocar',
-          },
-        ],
-      },
-      {
-        author: externalMockedUsers[1],
-        source: CONTRACT_BALANCE,
-        description: 'TestExpense2',
-        nf: false,
-        type: EXPENSE_TYPES.COMISSAO,
-        splitType: SPLIT_TYPES.PROPORCIONAL,
-        value: '200,00',
-        paid: true,
-        code: '#1',
-        paidDate: new Date(),
-        created: new Date(),
-        lastUpdate: new Date(),
-        uploadedFiles: [],
-        team: [
-          {
-            user: externalMockedUsers[0],
-            value: '120,00',
-            percentage: '60,00',
-            sector: 'Trocar',
-          },
-          {
-            user: externalMockedUsers[1],
-            value: '80,00',
-            percentage: '40,00',
-            sector: 'Trocar',
-          },
-        ],
-      },
-      new ContractExpense(),
-    ],
+    expenses: [externalMockedTransactions[0], externalMockedTransactions[1]],
     status: 'Em andamento',
     version: '00',
     ISS: '0,00',
     total: '1',
     created: new Date('2021/09/14'),
     lastUpdate: new Date('2021/09/14'),
-    createdExpenses: 0,
+    createdExpenses: 2,
     checklist: [externalMockedChecklistItems[0]],
     managementStatus: '',
     managementNotes: '',

@@ -10,6 +10,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
@@ -77,6 +78,7 @@ export class DataTabComponent implements OnInit {
     private contractorService: ContractorService,
     private contractService: ContractService,
     private configService: ConfigService,
+    private transactionService: TransactionService,
     public teamService: TeamService,
     public stringUtil: StringUtilService,
     public userService: UserService
@@ -290,7 +292,16 @@ export class DataTabComponent implements OnInit {
       return false;
     }
     if (
-      !!this.clonedContract.expenses.find((expense) => expense.paid && this.userService.isEqual(expense.source, user))
+      !!this.clonedContract.expenses.find(
+        (expense) =>
+          expense &&
+          idToProperty(expense, this.transactionService.idToTransaction.bind(this.transactionService), 'paid') &&
+          this.transactionService.populateCostCenter(
+            this.transactionService.idToTransaction(expense),
+            this.teamService.idToTeam.bind(this.teamService),
+            this.userService.idToUser.bind(this.userService)
+          )._id == idToProperty(user, this.userService.idToUser.bind(this.userService), '_id')
+      )
     ) {
       return false;
     }

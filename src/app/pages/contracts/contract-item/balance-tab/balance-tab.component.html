@@ -216,9 +216,9 @@
             <nb-list-item *ngFor="let expense of expenseSourceSum(); let i = index; trackBy: trackByIndex">
               <div class="row irow">
                 <div class="col-md-6">
-                  <b>{{ expense.user }}</b>
+                  <b>{{ expense?.user }}</b>
                 </div>
-                <div class="col-md-6">{{ expense.value }}</div>
+                <div class="col-md-6">{{ expense?.value }}</div>
               </div>
             </nb-list-item>
           </nb-list>

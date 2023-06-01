@@ -30,7 +30,11 @@ export class TransactionService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private transactions$ = new BehaviorSubject<Transaction[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
+  private _edited$ = new Subject<void>();
 
+  get edited$(): Observable<void> {
+    return this._edited$.asObservable();
+  }
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
@@ -42,12 +46,17 @@ export class TransactionService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  saveTransaction(transaction: Transaction): void {
+  saveTransaction(transaction: Transaction, callback?: (savedTransaction: Transaction) => void): void {
     const req = {
       transaction: transaction,
     };
 
-    this.http.post<SaveTransactionResponse>('/api/transaction/', req).pipe(take(1)).subscribe();
+    this.http
+      .post<SaveTransactionResponse>('/api/transaction/', req)
+      .pipe(take(1))
+      .subscribe((obj) => {
+        if (callback && obj.transaction) callback(obj.transaction);
+      });
   }
 
   saveManyTransaction(transactions: Transaction[]): void {
@@ -79,7 +88,7 @@ export class TransactionService implements OnDestroy {
       this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => handle(data, this.transactions$, 'transactions'));
+        .subscribe((data: any) => handle(data, this.transactions$, 'transactions', undefined, this._edited$));
     }
     return this.transactions$;
   }
