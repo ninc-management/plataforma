@@ -8,12 +8,15 @@ import {
   COMPONENT_TYPES,
   ContractDialogComponent,
 } from 'app/pages/contracts/contract-dialog/contract-dialog.component';
+import { ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
-import { UserService } from 'app/shared/services/user.service';
-import { isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, idToProperty, isOfType, isPhone, nameSort, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
+import { Contractor } from '@models/contractor';
+import { Invoice } from '@models/invoice';
 
 @Component({
   selector: 'ngx-user-receivables',
@@ -26,6 +29,36 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
   source: LocalDataSource = new LocalDataSource();
   searchQuery = '';
+
+  isPhone = isPhone;
+  idToProperty = idToProperty;
+
+  get filteredReceivables(): ReceivableByContract[] {
+    if (this.searchQuery !== '')
+      return this.userReceivableContracts.filter((receivable) => {
+        if (isOfType(Invoice, receivable.contract.invoice))
+          return (
+            receivable.contract.invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            idToProperty(
+              receivable.contract.invoice.contractor,
+              this.contractorService.idToContractor.bind(this.contractorService),
+              'fullName'
+            )
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase()) ||
+            receivable.contract.invoice.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            receivable.receivableValue.toLowerCase().includes(this.searchQuery.toLowerCase())
+          );
+        return false;
+      });
+    return this.userReceivableContracts.sort((a, b) =>
+      codeSort(
+        -1,
+        idToProperty(a.contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code'),
+        idToProperty(b.contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code')
+      )
+    );
+  }
 
   settings = {
     mode: 'external',
@@ -51,15 +84,31 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
       delete: false,
     },
     columns: {
-      code: {
+      'contract.invoice.code': {
         title: 'Contrato',
         type: 'string',
       },
-      contractor: {
+      'contract.invoice.contractor': {
         title: 'Cliente',
         type: 'string',
+        valuePrepareFunction: (contractor: Contractor | string | undefined): string =>
+          contractor ? this.contractorService.idToContractor(contractor).fullName : '',
+        filterFunction: (contractor: Contractor | string | undefined, search?: string): boolean => {
+          return contractor && search
+            ? this.contractorService.idToContractor(contractor).fullName.toLowerCase().includes(search.toLowerCase())
+            : false;
+        },
+        compareFunction: (
+          direction: number | undefined,
+          a: Contractor | string | undefined,
+          b: Contractor | string | undefined
+        ) => {
+          const a1 = a ? this.contractorService.idToContractor(a).fullName : '';
+          const a2 = b ? this.contractorService.idToContractor(b).fullName : '';
+          return nameSort(direction, a1, a2);
+        },
       },
-      name: {
+      'contract.invoice.name': {
         title: 'Empreendimento',
         type: 'string',
       },
@@ -72,25 +121,11 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
     },
   };
 
-  get filteredReceivables(): ReceivableByContract[] {
-    if (this.searchQuery !== '')
-      return this.userReceivableContracts.filter((receivable) => {
-        return (
-          receivable.contract.locals.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          receivable.contract.locals.contractor.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          receivable.contract.locals.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          receivable.receivableValue.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      });
-    return this.userReceivableContracts;
-  }
-
-  isPhone = isPhone;
-
   constructor(
-    public invoiceService: InvoiceService,
     private dialogService: NbDialogService,
-    private userService: UserService
+    public invoiceService: InvoiceService,
+    public contractService: ContractService,
+    public contractorService: ContractorService
   ) {}
 
   ngOnDestroy(): void {
@@ -99,19 +134,19 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.source.load(
-      this.userReceivableContracts
-        .filter((receivable) => receivable.receivableValue != '0,00')
-        .map((receivable) => {
-          return {
-            contract: receivable.contract,
-            code: receivable.contract.locals.code,
-            contractor: receivable.contract.locals.contractor,
-            name: receivable.contract.locals.name,
-            receivableValue: receivable.receivableValue,
-          };
-        })
-    );
+    this.source.load(this.userReceivableContracts.filter((receivable) => receivable.receivableValue !== '0,00'));
+  }
+
+  getContractorName(invoice: Invoice | string | undefined): string {
+    if (invoice) {
+      invoice = this.invoiceService.idToInvoice(invoice);
+      return idToProperty(
+        invoice.contractor,
+        this.contractorService.idToContractor.bind(this.contractorService),
+        'fullName'
+      );
+    }
+    return '';
   }
 
   contractDialog(event: { data?: ReceivableByContract }): void {

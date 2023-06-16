@@ -45,7 +45,7 @@ import { Contract, ContractReceipt } from '@models/contract';
 import { Contractor } from '@models/contractor';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
-import { Team, TeamMember } from '@models/team';
+import { Team } from '@models/team';
 import { User } from '@models/user';
 
 interface MockedUser {
@@ -364,13 +364,6 @@ describe('UtilsService', () => {
       mockedTeams[0].purpose
     );
     expect(idToProperty(mockedTeams[0], teamService.idToTeam.bind(teamService), 'abrev')).toBe(mockedTeams[0].abrev);
-    expect(idToProperty(undefined, contractService.idToContract.bind(contractService), 'locals').name).toBe(undefined);
-    expect(
-      idToProperty(mockedContracts[0]._id, contractService.idToContract.bind(contractService), 'locals').name
-    ).toBe(mockedContracts[0].locals.name);
-    expect(idToProperty(mockedContracts[0], contractService.idToContract.bind(contractService), 'locals').value).toBe(
-      mockedContracts[0].locals.value
-    );
     expect(idToProperty(undefined, contractorService.idToContractor.bind(contractorService), 'fullName')).toBe('');
     expect(
       idToProperty(mockedContractors[0]._id, contractorService.idToContractor.bind(contractorService), 'fullName')

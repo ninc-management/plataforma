@@ -144,7 +144,13 @@ export class OngoingContractsReportComponent implements OnInit {
     let csv = mainHeaders.join(';') + '\r\n';
 
     contracts
-      .sort((a, b) => codeSort(1, a.locals.code, b.locals.code))
+      .sort((a, b) =>
+        codeSort(
+          1,
+          idToProperty(a.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code'),
+          idToProperty(b.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code')
+        )
+      )
       .forEach((contract) => {
         if (contract.invoice) {
           const invoice = this.invoiceService.idToInvoice(contract.invoice);

@@ -1,21 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
-import saveAs from 'file-saver';
 import { cloneDeep } from 'lodash';
 import { combineLatest, map, skipWhile, take, takeUntil } from 'rxjs';
 
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { generateExpensesReport } from 'app/shared/report-generator';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, isPhone, tooltipTriggers } from 'app/shared/utils';
+import { codeSort, idToProperty, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
@@ -47,6 +45,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   config: PlatformConfig = new PlatformConfig();
 
   isPhone = isPhone;
+  idToProperty = idToProperty;
   tooltipTriggers = tooltipTriggers;
 
   constructor(
@@ -92,7 +91,13 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                     this.invoiceService.isInvoiceMember(contract.invoice, user))
               );
               contracts.map((contract) => this.contractService.fillContract(contract));
-              return contracts.sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
+              return contracts.sort((a, b) =>
+                codeSort(
+                  -1,
+                  idToProperty(a.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code'),
+                  idToProperty(b.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code')
+                )
+              );
             })
           )
           .subscribe((contracts) => {

@@ -10,17 +10,11 @@ import { User } from './user';
 
 export interface ContractLocals {
   balance: string;
-  value: string;
-  fullName: string;
-  code: string;
-  contractor: string;
-  name: string;
   interests: string;
   role: string;
   notPaid: string;
   liquid: string;
   cashback: string;
-  managerPicture: string;
 }
 
 export interface ChecklistItemLocals {
@@ -267,17 +261,11 @@ export class Contract extends StatusHistory {
 
   locals: ContractLocals = {
     balance: '',
-    value: '',
-    fullName: '',
-    code: '',
-    contractor: '',
-    name: '',
     interests: '',
     role: '',
     notPaid: '',
     liquid: '',
     cashback: '',
-    managerPicture: '',
   };
 }
 

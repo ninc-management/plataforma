@@ -21,7 +21,7 @@ import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 
-import { Contract, ContractLocals } from '@models/contract';
+import { Contract } from '@models/contract';
 import { InvoiceTeamMember } from '@models/invoice';
 
 export type TimeSeriesItem = [string, number];
@@ -784,33 +784,35 @@ export class MetricsService implements OnDestroy {
     ]).pipe(
       skipWhile(([, , isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded)),
       map(([contracts, , ,]) => {
-        let fContracts = contracts.map((iContract) => {
-          const contract = cloneDeep(iContract);
-          contract.locals = {} as ContractLocals;
-          if (contract.invoice) contract.locals.value = this.invoiceService.idToInvoice(contract.invoice).value;
-          return contract;
-        });
-        if (uId != undefined) {
-          fContracts = fContracts.filter((contract) => {
-            if (contract.invoice === undefined) return false;
+        let fContracts: Contract[] = [];
+        if (!uId) {
+          fContracts = contracts.filter((contract) => {
+            if (!contract.invoice) return false;
             return this.invoiceService
               .idToInvoice(contract.invoice)
-              .team.map((team) => this.userService.isEqual(team.user, uId) && team.distribution != undefined)
+              .team.map((team) => this.userService.isEqual(team.user, uId) && team.distribution !== undefined)
               .filter((isSameUser) => isSameUser).length;
           });
           fContracts = fContracts.map((contract) => {
-            if (contract.invoice !== undefined) {
-              contract.locals.value = this.stringUtil.applyPercentage(
-                contract.locals.value,
+            if (contract.invoice) {
+              const invoice = cloneDeep(this.invoiceService.idToInvoice(contract.invoice));
+              invoice.value = this.stringUtil.applyPercentage(
+                invoice.value,
                 this.invoiceService.idToInvoice(contract.invoice).team[0].distribution
               );
+              contract.invoice = invoice;
             }
             return contract;
           });
         }
         const timeSeriesItems = fContracts.map((contract) => {
           const date: string = contract.created ? format(contract.created, 'yyyy/MM/dd') : '';
-          return [date, this.stringUtil.moneyToNumber(contract.locals.value)] as TimeSeriesItem;
+          return [
+            date,
+            this.stringUtil.moneyToNumber(
+              idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value')
+            ),
+          ] as TimeSeriesItem;
         });
         return groupByDateTimeSerie(timeSeriesItems);
       })

@@ -29,7 +29,7 @@
       <p>
         <b>
           {{
-            [stringUtil.removePercentage(clonedContract.locals.value, clonedContract.ISS), clonedContract]
+            [stringUtil.removePercentage(invoice.value, clonedContract.ISS), clonedContract]
               | transformPipe: contractService.subtractComissions.bind(contractService)
           }}
         </b>

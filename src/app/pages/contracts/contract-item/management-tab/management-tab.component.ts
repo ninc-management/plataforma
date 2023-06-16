@@ -30,6 +30,7 @@ import {
   DateRange,
   ItemActionLocals,
 } from '@models/contract';
+import { Contractor } from '@models/contractor';
 import { Invoice } from '@models/invoice';
 import { Message } from '@models/message';
 import { Notification, NotificationTags } from '@models/notification';
@@ -57,6 +58,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
+  contractor: Contractor = new Contractor();
   newChecklistItem = new ContractChecklistItem();
   deadline!: Date | undefined;
   currentUser: User = new User();
@@ -84,14 +86,14 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   trackByIndex = trackByIndex;
 
   constructor(
-    public userService: UserService,
-    private invoiceService: InvoiceService,
-    private contractorService: ContractorService,
     private contractService: ContractService,
     private stringUtils: StringUtilService,
     private messageService: MessageService,
     private dialogService: NbDialogService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public contractorService: ContractorService,
+    public userService: UserService,
+    public invoiceService: InvoiceService
   ) {}
 
   ngOnDestroy(): void {
@@ -158,15 +160,10 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   tooltipText(): string {
-    if (this.invoice.contractor)
-      return (
-        `CPF/CNPJ: ` +
-        this.contractorService.idToContractor(this.invoice.contractor).document +
-        `\nEmail: ` +
-        this.contractorService.idToContractor(this.invoice.contractor).email +
-        `\nEndereço: ` +
-        this.contractorService.idToContractor(this.invoice.contractor).address
-      );
+    if (this.invoice._id && this.invoice.contractor) {
+      const { document, email, address } = this.contractorService.idToContractor(this.invoice.contractor);
+      return `CPF/CNPJ: ` + document + `\nEmail: ` + email + `\nEndereço: ` + address;
+    }
     return '';
   }
 
@@ -322,7 +319,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         context: {
           question:
             'Você tem certeza que deseja importar a checklist do contrato ' +
-            selectedContract.locals.code +
+            idToProperty(selectedContract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code') +
             '? Os dados atuais serão apagados.',
         },
         dialogClass: 'my-dialog',
@@ -352,7 +349,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         const usersToNotify = this.searchUsersToNotify(users, mentionedUsers);
         if (usersToNotify) {
           this.notificationService.notifyMany(usersToNotify, {
-            title: 'Novo comentário na gestão do contrato ' + this.clonedContract.locals.code,
+            title: 'Novo comentário na gestão do contrato ' + this.invoice.code,
             tag: NotificationTags.MENTION,
             message: this.newComment.body,
           });
@@ -478,7 +475,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de uma nova ação de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.clonedContract.locals.code +
+        this.invoice.code +
         ', você foi selecionado como responsável da ação "' +
         task.name +
         '" que faz parte do item "' +
@@ -493,7 +490,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       notification.title = 'Você foi selecionado como responsável de um novo item de gestão do contrato!';
       notification.message =
         'No contrato ' +
-        this.clonedContract.locals.code +
+        this.invoice.code +
         ', você foi selecionado como responsável do item "' +
         task.name +
         '" cujo status é "' +

@@ -19,7 +19,7 @@
                 <label class="label" for="contract-code">Código do Contrato:</label>
                 <input
                   nbInput
-                  [ngModel]="clonedContract.locals.code"
+                  [ngModel]="invoice.code"
                   name="contract-code"
                   fullWidth
                   fieldSize="large"
@@ -32,7 +32,10 @@
                 <label class="label" for="contractor">Cliente:</label>
                 <input
                   nbInput
-                  [ngModel]="clonedContract.locals.contractor"
+                  [ngModel]="
+                    [invoice.contractor, contractorService.idToContractor.bind(contractorService), 'fullName']
+                      | transformPipe: idToProperty
+                  "
                   name="contractor"
                   fullWidth
                   fieldSize="large"
@@ -52,7 +55,7 @@
                   (selected)="applyManagementModel($event)"
                   id="management-model"
                   name="management-model"
-                  nameProperty="locals.code"
+                  nameProperty="invoice.code"
                   [data$]="avaliableContracts$"
                   [placeholder]="'Digite o código do contrato'"
                   [fullWidth]="true"
@@ -292,7 +295,7 @@
                   <input
                     nbInput
                     [ngModel]="
-                      [clonedContract.checklist[i].assignee, this.userService.idToUser.bind(userService), 'fullName']
+                      [clonedContract.checklist[i].assignee, userService.idToUser.bind(userService), 'fullName']
                         | transformPipe: idToProperty
                     "
                     #assignee="ngModel"
@@ -391,8 +394,7 @@
             class="comment-author"
             size="large"
             [picture]="
-              [comment.author, this.userService.idToUser.bind(userService), 'profilePicture']
-                | transformPipe: idToProperty
+              [comment.author, userService.idToUser.bind(userService), 'profilePicture'] | transformPipe: idToProperty
             "
             onlyPicture
             shape="rectangle"

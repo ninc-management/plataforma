@@ -66,17 +66,13 @@ export class DataTabComponent implements OnInit {
   formatDate = formatDate;
   trackByIndex = trackByIndex;
 
-  get invoiceAdministration(): string {
-    if (this.contract.invoice) return this.invoiceService.idToInvoice(this.contract.invoice).administration;
-    return '';
-  }
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    private invoiceService: InvoiceService,
-    private contractorService: ContractorService,
-    private contractService: ContractService,
     private configService: ConfigService,
+    public contractorService: ContractorService,
+    public invoiceService: InvoiceService,
+    public contractService: ContractService,
     public teamService: TeamService,
     public stringUtil: StringUtilService,
     public userService: UserService
@@ -177,19 +173,9 @@ export class DataTabComponent implements OnInit {
   }
 
   tooltipText(): string {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.contractor)
-        return (
-          `CPF/CNPJ: ` +
-          this.contractorService.idToContractor(invoice.contractor).document +
-          `\nTelefone: ` +
-          this.contractorService.idToContractor(invoice.contractor).phone +
-          `\nEmail: ` +
-          this.contractorService.idToContractor(invoice.contractor).email +
-          `\nEndereço: ` +
-          this.contractorService.idToContractor(invoice.contractor).address
-        );
+    if (this.invoice._id && this.invoice.contractor) {
+      const { document, phone, email, address } = this.contractorService.idToContractor(this.invoice.contractor);
+      return `CPF/CNPJ: ` + document + `\nTelefone: ` + phone + `\nEmail: ` + email + `\nEndereço: ` + address;
     }
     return '';
   }
@@ -302,7 +288,7 @@ export class DataTabComponent implements OnInit {
       this.stringUtil.numberToMoney(
         this.stringUtil.moneyToNumber(this.teamTotal.grossValue) +
           this.contractService.getComissionsSum(this.clonedContract)
-      ) === this.stringUtil.removePercentage(this.clonedContract.locals.value, this.clonedContract.ISS) &&
+      ) === this.stringUtil.removePercentage(this.invoice.value, this.clonedContract.ISS) &&
       this.teamTotal.grossValue !== '0,00'
     );
   }
