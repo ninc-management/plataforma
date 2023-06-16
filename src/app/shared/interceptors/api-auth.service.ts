@@ -14,20 +14,18 @@ export class ApiAuthService implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const urlCheck = request.url.split('/').filter((el) => el.length > 0);
-
     if (urlCheck.length > 0 && urlCheck[0] == 'api' && urlCheck[1] != 'auth') {
       this.nbAuthService
         .isAuthenticated()
         .pipe(take(1))
-        .subscribe((isAuthenticated) => {
+        .subscribe((isUserAuthenticated) => {
           request = request.clone({
             headers: request.headers
               .set('Authorization', environment.apiToken)
-              .set('CompanyId', isAuthenticated && this.authService.companyId ? this.authService.companyId : ''),
+              .set('CompanyId', isUserAuthenticated && this.authService.companyId ? this.authService.companyId : ''),
           });
         });
     }
-
     return next.handle(request);
   }
 }

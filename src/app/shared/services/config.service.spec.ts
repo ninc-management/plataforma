@@ -2,10 +2,11 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Subject, take } from 'rxjs';
+import { of, Subject, take } from 'rxjs';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { ConfigService, DEFAULT_CONFIG } from './config.service';
 import { WebSocketService } from './web-socket.service';
@@ -21,6 +22,8 @@ describe('ConfigService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
   CommonTestingModule.setUpTestBed();
@@ -68,7 +71,6 @@ describe('ConfigService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     httpMock = TestBed.inject(HttpTestingController);
     service = TestBed.inject(ConfigService);
-
     mockedConfigs = cloneDeep(externalMockedConfigs);
   });
 

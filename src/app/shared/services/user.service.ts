@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { last, skipWhile, take, takeUntil } from 'rxjs/operators';
+import { last, skipWhile, switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
@@ -108,10 +108,16 @@ export class UserService implements OnDestroy {
   }
 
   constructor(private http: HttpClient, private authService: AuthService, private wsService: WebSocketService) {
-    this.authService.onUserChange$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.refreshCurrentUser();
-    });
-    this.refreshCurrentUser();
+    this.authService.isCompanyLoaded$
+      .pipe(
+        skipWhile((isCompanyLoaded) => !isCompanyLoaded),
+        switchMap(() => {
+          return this.authService.onUserChange$.pipe(takeUntil(this.destroy$));
+        })
+      )
+      .subscribe(() => {
+        this.refreshCurrentUser();
+      });
   }
 
   ngOnDestroy(): void {

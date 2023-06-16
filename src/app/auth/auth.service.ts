@@ -9,8 +9,8 @@ import { filter, skipWhile, take, takeUntil } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private _isCompanyLoaded$ = new BehaviorSubject<boolean>(false);
   private destroy$ = new Subject<void>();
+  private _isCompanyLoaded$ = new BehaviorSubject<boolean>(false);
   submitted$ = new BehaviorSubject<boolean>(false);
   onUserChange$ = new Subject<void>();
   companyId = '';

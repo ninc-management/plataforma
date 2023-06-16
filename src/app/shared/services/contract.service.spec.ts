@@ -2,18 +2,19 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
-import { Subject, take } from 'rxjs';
+import { of, Subject, take } from 'rxjs';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
 import { externalMockedChecklistItems } from '../mocked-data/mocked-checklist-items';
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedContracts } from '../mocked-data/mocked-contracts';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
+import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
@@ -26,7 +27,7 @@ import { User } from '@models/user';
 
 describe('ContractService', () => {
   let service: ContractService;
-  let configService: ConfigService;
+  let userService: UserService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -38,6 +39,8 @@ describe('ContractService', () => {
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
+    isCompanyLoaded$: of(true),
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
@@ -86,7 +89,7 @@ describe('ContractService', () => {
     authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
-    configService = TestBed.inject(ConfigService);
+    userService = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedTeams = cloneDeep(externalMockedTeams);
@@ -96,6 +99,7 @@ describe('ContractService', () => {
     mockedChecklistItem = cloneDeep(externalMockedChecklistItems);
     mockedConfigs = cloneDeep(externalMockedConfigs);
 
+    userService.getUsers().pipe(take(1)).subscribe();
     // mock response
     const req = httpMock.expectOne('/api/user/all');
     expect(req.request.method).toBe('POST');
