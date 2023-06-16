@@ -7,12 +7,12 @@ import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
 import { externalMockedChecklistItems } from '../mocked-data/mocked-checklist-items';
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedContracts } from '../mocked-data/mocked-contracts';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
-import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
@@ -27,7 +27,6 @@ import { User } from '@models/user';
 
 describe('ContractService', () => {
   let service: ContractService;
-  let configService: ConfigService;
   let userService: UserService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
@@ -41,7 +40,7 @@ describe('ContractService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
     isCompanyLoaded$: of(true),
-    companyId: '000000000000000000000000',
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
@@ -90,7 +89,6 @@ describe('ContractService', () => {
     authServiceSpy.userEmail.and.returnValue(externalMockedUsers[0].email);
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
-    configService = TestBed.inject(ConfigService);
     userService = TestBed.inject(UserService);
     httpMock = TestBed.inject(HttpTestingController);
 

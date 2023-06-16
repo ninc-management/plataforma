@@ -7,26 +7,24 @@ import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedContractors } from '../mocked-data/mocked-contractors';
-import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ContractorService } from './contractor.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
 import { Contractor } from '@models/contractor';
-import { User } from '@models/user';
 
 describe('ContractorService', () => {
   let service: ContractorService;
   let httpMock: HttpTestingController;
-  let mockedUsers: User[];
   let mockedContractors: Contractor[];
   const socket$ = new Subject<any>();
   const socket: SocketMock = new MockedServerSocket();
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
     isCompanyLoaded$: of(true),
-    companyId: '000000000000000000000000',
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
@@ -75,7 +73,6 @@ describe('ContractorService', () => {
     service = TestBed.inject(ContractorService);
     httpMock = TestBed.inject(HttpTestingController);
 
-    mockedUsers = cloneDeep(externalMockedUsers);
     mockedContractors = cloneDeep(externalMockedContractors);
   });
 

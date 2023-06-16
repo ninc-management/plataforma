@@ -6,6 +6,7 @@ import { of, Subject, take } from 'rxjs';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { ConfigService, DEFAULT_CONFIG } from './config.service';
 import { WebSocketService } from './web-socket.service';
@@ -22,7 +23,7 @@ describe('ConfigService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
     isCompanyLoaded$: of(true),
-    companyId: '000000000000000000000000',
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
   CommonTestingModule.setUpTestBed();

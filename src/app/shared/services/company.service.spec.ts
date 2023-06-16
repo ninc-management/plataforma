@@ -23,7 +23,7 @@ describe('CompanyService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
     isCompanyLoaded$: of(true),
-    companyId: '000000000000000000000000',
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
   CommonTestingModule.setUpTestBed();

@@ -7,6 +7,7 @@ import { take } from 'rxjs/operators';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
+import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedInvoices } from '../mocked-data/mocked-invoices';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { InvoiceService } from './invoice.service';
@@ -29,7 +30,7 @@ describe('InvoiceService', () => {
   const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['userEmail'], {
     onUserChange$: new Subject<void>(),
     isCompanyLoaded$: of(true),
-    companyId: '000000000000000000000000',
+    companyId: externalMockedCompanies[0]._id,
   });
   const socketServiceSpy = jasmine.createSpyObj<WebSocketService>('WebSocketService', ['fromEvent']);
 
