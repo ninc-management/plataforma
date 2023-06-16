@@ -172,6 +172,21 @@ export class ContractService implements OnDestroy {
     return this.contracts$;
   }
 
+  getContractStatusByDate(statusHistory: StatusHistoryItem[], targetDate: Date): string {
+    for (const statusObj of statusHistory) {
+      if (statusObj.end) {
+        if (targetDate >= statusObj.start && targetDate <= statusObj.end) {
+          return statusObj.status;
+        }
+      } else {
+        if (targetDate >= statusObj.start) {
+          return statusObj.status;
+        }
+      }
+    }
+    return 'Desconhecido';
+  }
+
   idToContract(id: string | Contract): Contract {
     if (isOfType(Contract, id)) return id;
     const tmp = this.contracts$.getValue();
