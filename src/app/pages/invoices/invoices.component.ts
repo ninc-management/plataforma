@@ -16,7 +16,15 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import {
+  codeSort,
+  formatDate,
+  greaterAndSmallerValue,
+  idToProperty,
+  isPhone,
+  nameSort,
+  valueSort,
+} from 'app/shared/utils';
 
 import { Invoice, InvoiceLocals } from '@models/invoice';
 import { User } from '@models/user';
@@ -95,6 +103,15 @@ export class InvoicesComponent implements OnInit, OnDestroy {
           return author && search
             ? this.userService.idToShortName(author).toLowerCase().includes(search.toLowerCase())
             : false;
+        },
+        compareFunction: (
+          direction: number | undefined,
+          a: User | string | undefined,
+          b: User | string | undefined
+        ) => {
+          const a1 = a ? this.userService.idToShortName(a) : '';
+          const a2 = b ? this.userService.idToShortName(b) : '';
+          return nameSort(direction, a1, a2);
         },
       },
       code: {

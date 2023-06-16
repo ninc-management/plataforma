@@ -12,7 +12,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ReceivableByContract } from 'app/shared/services/metrics.service';
-import { codeSort, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import { codeSort, idToProperty, isOfType, isPhone, nameSort, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Contractor } from '@models/contractor';
@@ -36,7 +36,7 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
   get filteredReceivables(): ReceivableByContract[] {
     if (this.searchQuery !== '')
       return this.userReceivableContracts.filter((receivable) => {
-        if (receivable.contract.invoice && typeof receivable.contract.invoice !== 'string')
+        if (isOfType(Invoice, receivable.contract.invoice))
           return (
             receivable.contract.invoice.code.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
             idToProperty(
@@ -97,6 +97,15 @@ export class UserReceivablesComponent implements OnInit, OnDestroy {
           return contractor && search
             ? this.contractorService.idToContractor(contractor).fullName.toLowerCase().includes(search.toLowerCase())
             : false;
+        },
+        compareFunction: (
+          direction: number | undefined,
+          a: Contractor | string | undefined,
+          b: Contractor | string | undefined
+        ) => {
+          const a1 = a ? this.contractorService.idToContractor(a).fullName : '';
+          const a2 = b ? this.contractorService.idToContractor(b).fullName : '';
+          return nameSort(direction, a1, a2);
         },
       },
       'contract.invoice.name': {

@@ -8,7 +8,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, idToProperty, isPhone } from 'app/shared/utils';
+import { codeSort, idToProperty, isPhone, nameSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Contractor } from '@models/contractor';
@@ -54,6 +54,15 @@ export class ContractExpensesReportComponent implements OnInit {
             ? this.userService.idToShortName(author).toLowerCase().includes(search.toLowerCase())
             : false;
         },
+        compareFunction: (
+          direction: number | undefined,
+          a: User | string | undefined,
+          b: User | string | undefined
+        ) => {
+          const a1 = a ? this.userService.idToShortName(a) : '';
+          const a2 = b ? this.userService.idToShortName(b) : '';
+          return nameSort(direction, a1, a2);
+        },
       },
       'invoice.code': {
         title: 'Código',
@@ -70,6 +79,15 @@ export class ContractExpensesReportComponent implements OnInit {
           return contractor && search
             ? this.contractorService.idToContractor(contractor).fullName.toLowerCase().includes(search.toLowerCase())
             : false;
+        },
+        compareFunction: (
+          direction: number | undefined,
+          a: Contractor | string | undefined,
+          b: Contractor | string | undefined
+        ) => {
+          const a1 = a ? this.contractorService.idToContractor(a).fullName : '';
+          const a2 = b ? this.contractorService.idToContractor(b).fullName : '';
+          return nameSort(direction, a1, a2);
         },
       },
       'invoice.name': {

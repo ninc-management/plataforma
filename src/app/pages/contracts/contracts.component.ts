@@ -16,7 +16,16 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { codeSort, formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
+import {
+  codeSort,
+  formatDate,
+  greaterAndSmallerValue,
+  idToProperty,
+  isOfType,
+  isPhone,
+  nameSort,
+  valueSort,
+} from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Contractor } from '@models/contractor';
@@ -42,7 +51,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   get filteredContracts(): Contract[] {
     if (this.searchQuery !== '')
       return this.contracts.filter((contract) => {
-        if (contract.invoice && typeof contract.invoice !== 'string') {
+        if (isOfType(Invoice, contract.invoice)) {
           return (
             idToProperty(contract.invoice.author, this.userService.idToUser.bind(this.userService), 'exibitionName')
               .toLowerCase()
@@ -98,6 +107,15 @@ export class ContractsComponent implements OnInit, OnDestroy {
             ? this.userService.idToShortName(author).toLowerCase().includes(search.toLowerCase())
             : false;
         },
+        compareFunction: (
+          direction: number | undefined,
+          a: User | string | undefined,
+          b: User | string | undefined
+        ) => {
+          const a1 = a ? this.userService.idToShortName(a) : '';
+          const a2 = b ? this.userService.idToShortName(b) : '';
+          return nameSort(direction, a1, a2);
+        },
       },
       'invoice.code': {
         title: 'Código',
@@ -114,6 +132,15 @@ export class ContractsComponent implements OnInit, OnDestroy {
           return contractor && search
             ? this.contractorService.idToContractor(contractor).fullName.toLowerCase().includes(search.toLowerCase())
             : false;
+        },
+        compareFunction: (
+          direction: number | undefined,
+          a: Contractor | string | undefined,
+          b: Contractor | string | undefined
+        ) => {
+          const a1 = a ? this.contractorService.idToContractor(a).fullName : '';
+          const a2 = b ? this.contractorService.idToContractor(b).fullName : '';
+          return nameSort(direction, a1, a2);
         },
       },
       'invoice.name': {

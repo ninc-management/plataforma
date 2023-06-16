@@ -12,7 +12,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
-import { formatDate, idToProperty, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
+import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 
 import { Contract, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -92,7 +92,7 @@ export class ReceiptItemComponent implements OnInit {
   fillContractData(): void {
     if (this.contract.invoice) {
       const tmp = cloneDeep(this.contract);
-      tmp.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+      this.invoice = this.invoiceService.idToInvoice(this.contract.invoice);
       this.receipt.notaFiscal = nfPercentage(tmp, this.config.invoiceConfig);
       this.receipt.nortanPercentage = nortanPercentage(tmp, this.config.invoiceConfig);
       this.contractService
@@ -109,12 +109,9 @@ export class ReceiptItemComponent implements OnInit {
       if (this.contract.total && this.contract.receipts.length === +this.contract.total - 1) {
         this.receipt.value = this.notPaid();
       } else {
-        if (this.contract.invoice) {
-          const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-          const stage = invoice.stages[this.contract.receipts.length];
-          if (stage) {
-            this.receipt.value = stage.value;
-          }
+        const stage = this.invoice.stages[this.contract.receipts.length];
+        if (stage) {
+          this.receipt.value = stage.value;
         }
       }
     }
@@ -159,18 +156,15 @@ export class ReceiptItemComponent implements OnInit {
     }
 
     this.isFormDirty.next(false);
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      if (invoice.author) {
-        const manager = this.userService.idToUser(invoice.author);
-        this.notificationService.notifyFinancial({
-          title: 'Nova ordem de empenho ' + invoice.code,
-          tag: NotificationTags.RECEIPT_ORDER_CREATED,
-          message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
-            manager.fullName
-          } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${invoice.code}.`,
-        });
-      }
+    if (this.invoice.author) {
+      const manager = this.userService.idToUser(this.invoice.author);
+      this.notificationService.notifyFinancial({
+        title: 'Nova ordem de empenho ' + this.invoice.code,
+        tag: NotificationTags.RECEIPT_ORDER_CREATED,
+        message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
+          manager.fullName
+        } criou a ordem de empenho no valor de R$${this.receipt.value} no contrato ${this.invoice.code}.`,
+      });
     }
     this.contractService.editContract(this.contract);
   }
@@ -186,13 +180,8 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   notPaid(): string {
-    const contractValue = idToProperty(
-      this.contract.invoice,
-      this.invoiceService.idToInvoice.bind(this.invoice),
-      'value'
-    );
     let result =
-      this.stringUtil.moneyToNumber(contractValue) -
+      this.stringUtil.moneyToNumber(this.invoice.value) -
       this.contract.receipts.reduce(
         (sum: number, receipt: ContractReceipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
         0
@@ -224,19 +213,16 @@ export class ReceiptItemComponent implements OnInit {
   }
 
   notifyManager(): void {
-    if (this.contract.invoice) {
-      const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-      this.notificationService.notify(invoice.author, {
-        title: 'Uma ordem de empenho do contrato ' + this.invoice.code + ' foi paga!',
-        tag: NotificationTags.RECEIPT_PAID,
-        message:
-          'A ordem de empenho de código #' +
-          this.receiptIndex +
-          ' com o valor de R$ ' +
-          this.receipt.value +
-          ' foi paga.',
-      });
-    }
+    this.notificationService.notify(this.invoice.author, {
+      title: 'Uma ordem de empenho do contrato ' + this.invoice.code + ' foi paga!',
+      tag: NotificationTags.RECEIPT_PAID,
+      message:
+        'A ordem de empenho de código #' +
+        this.receiptIndex +
+        ' com o valor de R$ ' +
+        this.receipt.value +
+        ' foi paga.',
+    });
   }
 
   onContractSelected(selectedContract: Contract): void {

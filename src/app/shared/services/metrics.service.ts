@@ -795,7 +795,7 @@ export class MetricsService implements OnDestroy {
           });
           fContracts = fContracts.map((contract) => {
             if (contract.invoice) {
-              const invoice = this.invoiceService.idToInvoice(contract.invoice);
+              const invoice = cloneDeep(this.invoiceService.idToInvoice(contract.invoice));
               invoice.value = this.stringUtil.applyPercentage(
                 invoice.value,
                 this.invoiceService.idToInvoice(contract.invoice).team[0].distribution
