@@ -45,12 +45,19 @@ router.post('/many', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedTransaction = await TransactionModel.findByIdAndUpdate(req.body.transaction._id, req.body.transaction, {
-      upsert: false,
-    });
+    const transaction = await TransactionModel.findOneAndUpdate(
+      { _id: req.body.transaction._id, __v: req.body.transaction.__v },
+      req.body.transaction,
+      { upsert: false }
+    );
+    if (!transaction) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        transactionsMap[req.body.transaction._id] = cloneDeep(savedTransaction.toJSON());
+        transactionsMap[req.body.transaction._id] = cloneDeep(transaction.toJSON());
       });
     }
     return res.status(200).json({
