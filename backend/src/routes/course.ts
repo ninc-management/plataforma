@@ -33,10 +33,21 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedCourse = await CourseModel.findByIdAndUpdate(req.body.course._id, req.body.course, { upsert: false });
+    const course = await CourseModel.findOneAndUpdate(
+      { _id: req.body.course._id, __v: req.body.course.__v },
+      req.body.course,
+      {
+        upsert: false,
+      }
+    );
+    if (!course) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        coursesMap[req.body.course._id] = cloneDeep(savedCourse.toJSON());
+        coursesMap[req.body.course._id] = cloneDeep(course.toJSON());
       });
     }
     return res.status(200).json({
