@@ -13,5 +13,6 @@ function dummyDecorator() {
 
 exports.dummyDecorator = dummyDecorator;
 exports.prop = dummyDecorator;
+exports.pre = dummyDecorator;
 exports.plugin = dummyDecorator;
 exports.getModelForClass = dummyFn;

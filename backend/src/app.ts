@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
@@ -5,6 +6,9 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import cron from 'node-cron';
 import path from 'path';
+
+import { updateIfCurrentPlugin } from './models/shared/versionPlugin';
+mongoose.plugin(updateIfCurrentPlugin);
 
 import { NotificationApps } from './models/notification';
 // import logger from 'morgan';
