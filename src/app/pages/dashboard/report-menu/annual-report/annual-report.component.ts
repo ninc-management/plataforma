@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { differenceInMonths, endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
+import { endOfMonth, getMonth, getYear, isWithinInterval, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
@@ -833,14 +833,13 @@ export class AnnualReportComponent implements OnInit {
                         //TODO: fazer um for para atribuir
                         const start = monthReceipt.receipt.created;
                         const end = monthReceipt.receipt.paidDate || new Date();
-                        const months = differenceInMonths(end, start);
-                        for (let i = start.getMonth(); i <= start.getMonth() + months; i++) {
-                          data[team][i].ongoing_oe += 1;
-                          data[team][i].ongoing_oe_value = this.stringUtil.sumMoney(
-                            data[team][i].ongoing_oe_value,
-                            monthReceipt.receipt.value
-                          );
-                        }
+                        console.log('meses em que ficou aberto', start, end, this.checkMonthInOpen(start, end));
+                        const month = monthContract.month;
+                        data[team][month].ongoing_oe += 1;
+                        data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
+                          data[team][month].ongoing_oe_value,
+                          monthReceipt.receipt.value
+                        );
                         //TODO: count invoices by status history
                       }
                     });
@@ -880,6 +879,23 @@ export class AnnualReportComponent implements OnInit {
         return data;
       })
     );
+  }
+
+  checkMonthInOpen(startDate: Date, endDate: Date): number[] {
+    const months: number[] = [];
+    let currentDate = startDate;
+
+    while (currentDate <= endDate) {
+      const lastDayOfMonth = endOfMonth(currentDate);
+
+      if (isWithinInterval(lastDayOfMonth, { start: startDate, end: endDate })) {
+        months.push(currentDate.getMonth());
+      }
+
+      currentDate = startOfMonth(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    }
+
+    return months;
   }
 
   async contractsYearReview(year: number): Promise<string> {
