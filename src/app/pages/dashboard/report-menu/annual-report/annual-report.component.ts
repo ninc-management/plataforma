@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
+import { differenceInMonths, endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
@@ -829,16 +829,19 @@ export class AnnualReportComponent implements OnInit {
                           );
                         }
                       } else {
-                        if (!monthReceipt.receipt.paid && getYear(monthReceipt.receipt.created) <= year) {
-                          //TODO: count invoices by status history
-                          let month = monthContract.month;
-                          if (getYear(monthContract.contract.created) < year) month = 0;
-                          data[team][month].ongoing_oe += 1;
-                          data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
-                            data[team][month].ongoing_oe_value,
+                        //TODO: pegar meses em que ele ficou aberto
+                        //TODO: fazer um for para atribuir
+                        const start = monthReceipt.receipt.created;
+                        const end = monthReceipt.receipt.paidDate || new Date();
+                        const months = differenceInMonths(end, start);
+                        for (let i = start.getMonth(); i <= start.getMonth() + months; i++) {
+                          data[team][i].ongoing_oe += 1;
+                          data[team][i].ongoing_oe_value = this.stringUtil.sumMoney(
+                            data[team][i].ongoing_oe_value,
                             monthReceipt.receipt.value
                           );
                         }
+                        //TODO: count invoices by status history
                       }
                     });
                   });
