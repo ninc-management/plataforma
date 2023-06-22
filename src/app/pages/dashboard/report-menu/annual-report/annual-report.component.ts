@@ -17,6 +17,7 @@ import { MetricsService } from 'app/shared/services/metrics.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
 import { applyPercentage, numberToMoney, subtractMoney, sumMoney } from 'app/shared/string-utils';
+import { getIntersectionBetweenDates } from 'app/shared/utils';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -107,6 +108,8 @@ export class AnnualReportComponent implements OnInit {
   availableYears = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
   availableReportTypes = Object.values(REPORT_TYPES);
   availableGroupingTypes = Object.values(GROUPING_TYPES);
+
+  getIntersectionBetweenDates = getIntersectionBetweenDates;
 
   users: User[] = [];
   teams: Team[] = [];
@@ -814,15 +817,21 @@ export class AnnualReportComponent implements OnInit {
                           );
                         }
                       } else {
-                        if (!monthReceipt.receipt.paid && getYear(monthReceipt.receipt.created) <= year) {
-                          //TODO: count invoices by status history
-                          let month = monthContract.month;
-                          if (getYear(monthContract.contract.created) < year) month = 0;
-                          data[team][month].ongoing_oe += 1;
-                          data[team][month].ongoing_oe_value = sumMoney(
-                            data[team][month].ongoing_oe_value,
-                            monthReceipt.receipt.value
-                          );
+                        const start = monthReceipt.receipt.created;
+                        const end = monthReceipt.receipt.paidDate || new Date();
+                        const intersection = getIntersectionBetweenDates(start, end, year);
+                        if (intersection) {
+                          for (
+                            let month = intersection.start.getMonth();
+                            month < intersection.end.getMonth();
+                            month++
+                          ) {
+                            data[team][month].ongoing_oe += 1;
+                            data[team][month].ongoing_oe_value = sumMoney(
+                              data[team][month].ongoing_oe_value,
+                              monthReceipt.receipt.value
+                            );
+                          }
                         }
                       }
                     });

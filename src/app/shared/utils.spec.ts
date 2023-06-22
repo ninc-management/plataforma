@@ -25,6 +25,7 @@ import {
   elapsedTime,
   Fees,
   formatDate,
+  getIntersectionBetweenDates,
   groupByDateTimeSerie,
   handle,
   idToProperty,
@@ -438,6 +439,27 @@ describe('UtilsService', () => {
     data.operationType = 'test';
     handle(data, users$, 'users');
     expect(console.log).toHaveBeenCalled();
+  });
+
+  it('getIntersectionBetweenDates should work', () => {
+    let leftInterval = new Date(2020, 0, 31);
+    let rightInterval = new Date(2020, 1, 14);
+
+    expect(getIntersectionBetweenDates(leftInterval, rightInterval, 2020)).toEqual({
+      start: new Date(2020, 0, 31),
+      end: new Date(2020, 1, 14),
+    });
+
+    leftInterval = new Date(2021, 0, 31);
+    rightInterval = new Date(2020, 1, 14);
+    expect(getIntersectionBetweenDates(leftInterval, rightInterval, 2020)).toEqual(null);
+
+    leftInterval = new Date(2020, 0, 31);
+    rightInterval = new Date(2021, 1, 14);
+    expect(getIntersectionBetweenDates(leftInterval, rightInterval, 2020)).toEqual({
+      start: new Date(2020, 0, 31),
+      end: new Date(2020, 11, 31),
+    });
   });
 });
 
