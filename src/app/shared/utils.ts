@@ -454,7 +454,11 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
   }
 }
 
-export function getIntersection(startDate: Date, endDate: Date, year: number): IntersectionBetweenDates | null {
+export function getIntersectionBetweenDates(
+  startDate: Date,
+  endDate: Date,
+  year: number
+): IntersectionBetweenDates | null {
   const startOfYear = new Date(year, 0, 1);
   const endOfYear = new Date(year, 11, 31);
   if (startDate > endDate || startDate > endOfYear || endDate < lastDayOfMonth(startOfYear)) {

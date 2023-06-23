@@ -17,7 +17,7 @@ import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
-import { getIntersection } from 'app/shared/utils';
+import { getIntersectionBetweenDates } from 'app/shared/utils';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -108,6 +108,8 @@ export class AnnualReportComponent implements OnInit {
   availableYears = Array.from({ length: new Date().getFullYear() - 2020 + 1 }, (v, k) => 2020 + k);
   availableReportTypes = Object.values(REPORT_TYPES);
   availableGroupingTypes = Object.values(GROUPING_TYPES);
+
+  getIntersectionBetweenDates = getIntersectionBetweenDates;
 
   users: User[] = [];
   teams: Team[] = [];
@@ -832,7 +834,7 @@ export class AnnualReportComponent implements OnInit {
                       } else {
                         const start = monthReceipt.receipt.created;
                         const end = monthReceipt.receipt.paidDate || new Date();
-                        const intersection = getIntersection(start, end, year);
+                        const intersection = getIntersectionBetweenDates(start, end, year);
                         if (intersection) {
                           for (
                             let month = intersection.start.getMonth();
