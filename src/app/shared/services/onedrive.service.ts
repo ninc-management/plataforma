@@ -32,7 +32,7 @@ export class OneDriveService implements OnDestroy {
     private configService: ConfigService
   ) {
     combineLatest([
-      teamService.getTeams(),
+      this.teamService.getTeams(),
       this.configService.getConfig(),
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,

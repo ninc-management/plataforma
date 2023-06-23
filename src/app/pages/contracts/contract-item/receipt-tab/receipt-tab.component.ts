@@ -1,16 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, take } from 'rxjs';
 
-import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/contract-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
+import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
+import { idToProperty, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
+import { Transaction } from '@models/transaction';
 
 @Component({
   selector: 'ngx-receipt-tab',
@@ -23,12 +26,14 @@ export class ReceiptTabComponent implements OnInit {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   invoice: Invoice = new Invoice();
   isEditionGranted = false;
+  idToProperty = idToProperty;
 
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     public stringUtil: StringUtilService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    public transactionService: TransactionService
   ) {}
 
   ngOnInit(): void {
@@ -41,18 +46,16 @@ export class ReceiptTabComponent implements OnInit {
       });
   }
 
-  openDialog(index?: number): void {
+  openDialog(transaction?: Transaction | string | undefined): void {
     this.isDialogBlocked.next(true);
-    index = index != undefined ? index : undefined;
-    const title = index != undefined ? 'ORDEM DE EMPENHO' : 'ADICIONAR ORDEM DE EMPENHO';
 
     this.dialogService
-      .open(ContractDialogComponent, {
+      .open(TransactionDialogComponent, {
         context: {
-          title: title,
-          contract: this.clonedContract,
-          receiptIndex: index,
-          componentType: COMPONENT_TYPES.RECEIPT,
+          title: transaction ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
+          transaction: transaction ? this.transactionService.idToTransaction(transaction) : new Transaction(),
+          contract: this.contract,
+          type: TRANSACTION_TYPES.RECEIPT,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,

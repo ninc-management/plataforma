@@ -2,7 +2,7 @@ import { differenceInDays } from 'date-fns';
 
 import { Contract } from '../models/contract';
 import { Invoice } from '../models/invoice';
-import { ContractModel, InvoiceModel, UserModel } from '../models/models';
+import { ContractModel, InvoiceModel, TransactionModel, UserModel } from '../models/models';
 import { Notification, NotificationTags } from '../models/notification';
 import { User } from '../models/user';
 import { sendMail } from '../routes/email';
@@ -68,7 +68,8 @@ function sendNotification(invoice: Invoice, author: User, days: number): void {
 export async function overdueReceiptNotification() {
   const contracts: Contract[] = await ContractModel.find({});
   contracts.map((contract) => {
-    contract.receipts.map(async (receipt) => {
+    contract.receipts.map(async (receiptId) => {
+      const receipt = await TransactionModel.findOne({ _id: receiptId });
       const dueDate = receipt.dueDate;
       if (dueDate && !receipt.paid) {
         const invoice = await InvoiceModel.findOne({ _id: contract.invoice });

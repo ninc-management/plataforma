@@ -10,15 +10,18 @@ import {
 } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
+import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
+import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
 import { codeSort, formatDate, greaterAndSmallerValue, isPhone, valueSort } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
+import { Transaction } from '@models/transaction';
 
 @Component({
   selector: 'ngx-contracts',
@@ -165,6 +168,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     private contractorService: ContractorService,
     private teamService: TeamService,
     private configService: ConfigService,
+    private transactionService: TransactionService,
     public invoiceService: InvoiceService
   ) {}
 
@@ -177,15 +181,17 @@ export class ContractsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     combineLatest([
       this.contractService.getContracts(),
+      this.configService.getConfig(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
       this.teamService.getTeams(),
-      this.configService.getConfig(),
+      this.transactionService.getTransactions(),
       this.contractService.isDataLoaded$,
+      this.configService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
       this.contractorService.isDataLoaded$,
       this.teamService.isDataLoaded$,
-      this.configService.isDataLoaded$,
+      this.transactionService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
@@ -195,43 +201,34 @@ export class ContractsComponent implements OnInit, OnDestroy {
             ,
             ,
             ,
+            ,
             isContractDataLoaded,
+            isConfigDataLoaded,
             isInvoiceDataLoaded,
             isContractorDataLoaded,
             isTeamDataLoaded,
-            isConfigDataLoaded,
+            isTransactionDataLoaded,
           ]) =>
             !(
               isContractDataLoaded &&
               isInvoiceDataLoaded &&
               isContractorDataLoaded &&
               isTeamDataLoaded &&
-              isConfigDataLoaded
+              isConfigDataLoaded &&
+              isTransactionDataLoaded
             )
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(
-        ([
-          contracts,
-          ,
-          ,
-          ,
-          configs,
-          isContractDataLoaded,
-          isInvoiceDataLoaded,
-          isContractorDataLoaded,
-          isTeamDataLoaded,
-        ]) => {
-          this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
-          this.source.load(this.contracts);
-          this.config = configs[0];
-          const contractsValues = greaterAndSmallerValue(this.contracts.map((c) => c.invoice));
-          this.settings.columns['locals.value'].filter.config.minValue = contractsValues.min;
-          this.settings.columns['locals.value'].filter.config.maxValue = contractsValues.max;
-          this.isDataLoaded = isContractDataLoaded && isInvoiceDataLoaded && isContractorDataLoaded && isTeamDataLoaded;
-        }
-      );
+      .subscribe(([contracts, configs, , , , , , , , , ,]) => {
+        this.contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
+        this.source.load(this.contracts);
+        this.config = configs[0];
+        const contractsValues = greaterAndSmallerValue(this.contracts.map((c) => c.invoice));
+        this.settings.columns['locals.value'].filter.config.minValue = contractsValues.min;
+        this.settings.columns['locals.value'].filter.config.maxValue = contractsValues.max;
+        this.isDataLoaded = true;
+      });
 
     this.source.setFilter([
       { field: 'locals.role', search: 'Equipe Gestor' },
@@ -242,18 +239,33 @@ export class ContractsComponent implements OnInit, OnDestroy {
     ]);
   }
 
-  contractDialog(event: { data?: Contract }, isEditing: boolean): void {
-    this.dialogService.open(ContractDialogComponent, {
-      context: {
-        title: isEditing ? 'EDIÇÃO DE CONTRATO' : 'ADICIONAR ORDEM DE EMPENHO',
-        contract: event.data ? event.data : new Contract(),
-        componentType: isEditing ? COMPONENT_TYPES.CONTRACT : COMPONENT_TYPES.RECEIPT,
-      },
-      dialogClass: 'my-dialog',
-      closeOnBackdropClick: false,
-      closeOnEsc: false,
-      autoFocus: false,
-    });
+  openDialog(event: { data?: Contract }, isEditing: boolean): void {
+    if (isEditing) {
+      this.dialogService.open(ContractDialogComponent, {
+        context: {
+          title: 'EDIÇÃO DE CONTRATO',
+          contract: event.data ? event.data : new Contract(),
+          componentType: COMPONENT_TYPES.CONTRACT,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    } else {
+      this.dialogService.open(TransactionDialogComponent, {
+        context: {
+          title: 'ADICIONAR MOVIMENTAÇÃO',
+          transaction: new Transaction(),
+          contract: event.data ? event.data : new Contract(),
+          type: TRANSACTION_TYPES.RECEIPT,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      });
+    }
   }
 
   pageWidth(): number {

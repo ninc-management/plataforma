@@ -15,6 +15,7 @@ import { externalMockedTransactions } from '../mocked-data/mocked-transaction';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
+import { TransactionService } from './transaction.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 import { reviveDates } from 'app/shared/utils';
@@ -29,6 +30,7 @@ import { User } from '@models/user';
 describe('ContractService', () => {
   let service: ContractService;
   let configService: ConfigService;
+  let transactionService: TransactionService;
   let httpMock: HttpTestingController;
   let mockedUsers: User[];
   let mockedInvoices: Invoice[];
@@ -90,6 +92,7 @@ describe('ContractService', () => {
     socketServiceSpy.fromEvent.and.returnValue(socket$);
     service = TestBed.inject(ContractService);
     configService = TestBed.inject(ConfigService);
+    transactionService = TestBed.inject(TransactionService);
     httpMock = TestBed.inject(HttpTestingController);
 
     mockedTeams = cloneDeep(externalMockedTeams);
@@ -109,6 +112,7 @@ describe('ContractService', () => {
     expect(teamReq.request.method).toBe('POST');
     teamReq.flush(mockedTeams);
 
+    transactionService.getTransactions().pipe(take(1)).subscribe();
     const transactionReq = httpMock.expectOne('/api/transaction/all');
     expect(transactionReq.request.method).toBe('POST');
     transactionReq.flush(mockedTransactions);
@@ -312,29 +316,38 @@ describe('ContractService', () => {
     expect(service.hasExpenses(expectedContracts[1])).toBe(false);
   });
 
-  it('balance should work', () => {
-    expect(service.balance(mockedContracts[0])).toBe(mockedContracts[0].locals.balance);
-    expect(service.balance(mockedContracts[1])).toBe(mockedContracts[1].locals.balance);
+  it('balance should work', (done: DoneFn) => {
+    setTimeout(() => {
+      expect(service.balance(mockedContracts[0])).toBe(mockedContracts[0].locals.balance);
+      expect(service.balance(mockedContracts[1])).toBe(mockedContracts[1].locals.balance);
+      done();
+    }, 1);
   });
 
-  it('netValueBalance should work', () => {
-    expect(service.netValueBalance(mockedInvoices[0].team[0].distribution, mockedContracts[0], mockedUsers[0])).toBe(
-      '1.344,76'
-    );
-    expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('229,84');
-    expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('964,32');
-    expect(service.netValueBalance(mockedInvoices[1].team[1].distribution, mockedContracts[1], mockedUsers[1])).toBe(
-      '642,88'
-    );
+  it('netValueBalance should work', (done: DoneFn) => {
+    setTimeout(() => {
+      expect(service.netValueBalance(mockedInvoices[0].team[0].distribution, mockedContracts[0], mockedUsers[0])).toBe(
+        '1.344,76'
+      );
+      expect(service.netValueBalance(mockedInvoices[0].team[1].distribution, mockedContracts[0], '1')).toBe('229,84');
+      expect(service.netValueBalance(mockedInvoices[1].team[0].distribution, mockedContracts[1], '0')).toBe('964,32');
+      expect(service.netValueBalance(mockedInvoices[1].team[1].distribution, mockedContracts[1], mockedUsers[1])).toBe(
+        '642,88'
+      );
+      done();
+    }, 1);
   });
 
-  it('expensesContributions should work', () => {
-    let expensesContributions = service.expensesContributions(mockedContracts[0], mockedUsers[0]);
-    expect(expensesContributions.user).toEqual({ expense: 0, contribution: 1000, cashback: 0, comission: 0 });
-    expect(expensesContributions.global).toEqual({ expense: 200, contribution: 1000, cashback: 0, comission: 200 });
-    expensesContributions = service.expensesContributions(mockedContracts[1]);
-    expect(expensesContributions.user).toEqual({ expense: 0, contribution: 0, cashback: 0, comission: 0 });
-    expect(expensesContributions.global).toEqual({ expense: 0, contribution: 0, cashback: 0, comission: 0 });
+  it('expensesContributions should work', (done: DoneFn) => {
+    setTimeout(() => {
+      let expensesContributions = service.expensesContributions(mockedContracts[0], mockedUsers[0]);
+      expect(expensesContributions.user).toEqual({ expense: 0, contribution: 1000, cashback: 0, comission: 0 });
+      expect(expensesContributions.global).toEqual({ expense: 200, contribution: 1000, cashback: 0, comission: 200 });
+      expensesContributions = service.expensesContributions(mockedContracts[1]);
+      expect(expensesContributions.user).toEqual({ expense: 0, contribution: 0, cashback: 0, comission: 0 });
+      expect(expensesContributions.global).toEqual({ expense: 0, contribution: 0, cashback: 0, comission: 0 });
+      done();
+    }, 1);
   });
 
   it('percentageToReceive should work', (done: DoneFn) => {
@@ -362,15 +375,18 @@ describe('ContractService', () => {
     expect(service.receivedValue(mockedUsers[1], mockedContracts[1])).toBe('205,00');
   });
 
-  it('notPaidValue should work', () => {
-    expect(service.notPaidValue(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])).toBe(
-      '1.344,76'
-    );
-    expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('229,84');
-    expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('349,32');
-    expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
-      '437,88'
-    );
+  it('notPaidValue should work', (done: DoneFn) => {
+    setTimeout(() => {
+      expect(service.notPaidValue(mockedInvoices[0].team[0].distribution, mockedUsers[0], mockedContracts[0])).toBe(
+        '1.344,76'
+      );
+      expect(service.notPaidValue(mockedInvoices[0].team[1].distribution, '1', mockedContracts[0])).toBe('229,84');
+      expect(service.notPaidValue(mockedInvoices[1].team[0].distribution, '0', mockedContracts[1])).toBe('349,32');
+      expect(service.notPaidValue(mockedInvoices[1].team[1].distribution, mockedUsers[1], mockedContracts[1])).toBe(
+        '437,88'
+      );
+      done();
+    }, 1);
   });
 
   it('toGrossValue should work', () => {
@@ -388,14 +404,20 @@ describe('ContractService', () => {
     expect(service.toNetValue('1.503,76', '15,5', '18,00', new Date('2022/08/15'))).toBe('1.000,00');
   });
 
-  it('subtractComissions should work', () => {
-    expect(service.subtractComissions(mockedInvoices[0].value, mockedContracts[0])).toBe('800,00');
-    expect(service.subtractComissions(mockedInvoices[1].value, mockedContracts[1])).toBe('2.000,00');
+  it('subtractComissions should work', (done: DoneFn) => {
+    setTimeout(() => {
+      expect(service.subtractComissions(mockedInvoices[0].value, mockedContracts[0])).toBe('800,00');
+      expect(service.subtractComissions(mockedInvoices[1].value, mockedContracts[1])).toBe('2.000,00');
+      done();
+    }, 1);
   });
 
-  it('getComissionsSum should work', () => {
-    expect(service.getComissionsSum(mockedContracts[0])).toBe(200);
-    expect(service.getComissionsSum(mockedContracts[1])).toBe(0);
+  it('getComissionsSum should work', (done: DoneFn) => {
+    setTimeout(() => {
+      expect(service.getComissionsSum(mockedContracts[0])).toBe(200);
+      expect(service.getComissionsSum(mockedContracts[1])).toBe(0);
+      done();
+    }, 1);
   });
 
   it('getMemberExpensesSum should work', () => {
@@ -447,8 +469,8 @@ describe('ContractService', () => {
   });
 
   it('receiptNetValue should work', () => {
-    expect(service.receiptNetValue(mockedContracts[2].receipts[0])).toEqual('791,30');
-    expect(service.receiptNetValue(mockedContracts[2].receipts[1])).toEqual('1.527,91');
-    expect(service.receiptNetValue(mockedContracts[2].receipts[2])).toEqual('2.925,89');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[0] as Transaction)).toEqual('791,30');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[1] as Transaction)).toEqual('1.527,91');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[2] as Transaction)).toEqual('2.925,89');
   });
 });

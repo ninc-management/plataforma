@@ -20,7 +20,7 @@ import { TransactionService } from 'app/shared/services/transaction.service';
 import { CLIENT, UserService } from 'app/shared/services/user.service';
 import { idToProperty } from 'app/shared/utils';
 
-import { Contract, ContractPayment, ContractReceipt } from '@models/contract';
+import { Contract, ContractPayment } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
@@ -913,18 +913,22 @@ export class AnnualReportComponent implements OnInit {
                 ) {
                   const receiptsByMonth = Object.values(
                     groupBy(
-                      monthContract.contract.receipts.map((receipt) => ({
-                        receipt: receipt,
-                        month: getMonth(receipt.paidDate as Date),
-                      })),
+                      monthContract.contract.receipts
+                        .filter((receiptRef): receiptRef is Transaction | string => receiptRef != undefined)
+                        .map((receiptRef) => {
+                          const receipt = this.transactionService.idToTransaction(receiptRef);
+                          return { receipt: receipt, month: getMonth(receipt.paidDate as Date) };
+                        }),
                       '1'
                     )
-                  ) as { receipt: ContractReceipt; month: number }[][];
+                  ) as { receipt: Transaction; month: number }[][];
                   receiptsByMonth.forEach((monthReceipts) => {
                     monthReceipts.forEach((monthReceipt) => {
                       if (
                         monthReceipt.receipt.paid &&
                         monthReceipt.receipt.paidDate &&
+                        monthReceipt.receipt.companyPercentage &&
+                        monthReceipt.receipt.notaFiscal &&
                         getYear(monthReceipt.receipt.paidDate) == year
                       ) {
                         data[team][monthReceipt.month].oe_gross = this.stringUtil.sumMoney(
@@ -939,7 +943,7 @@ export class AnnualReportComponent implements OnInit {
                           data[team][monthReceipt.month].oe_organization,
                           this.stringUtil.applyPercentage(
                             monthReceipt.receipt.value,
-                            monthReceipt.receipt.nortanPercentage
+                            monthReceipt.receipt.companyPercentage
                           )
                         );
                         data[team][monthReceipt.month].oe_nf = this.stringUtil.sumMoney(

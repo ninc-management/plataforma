@@ -29,9 +29,10 @@ import { InvoiceService } from './services/invoice.service';
 import { TimeSeriesItem } from './services/metrics.service';
 import { StringUtilService } from './services/string-util.service';
 import { TeamService } from './services/team.service';
+import { TransactionService } from './services/transaction.service';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
-import { Contract, ContractPayment, ContractReceipt } from '@models/contract';
+import { Contract, ContractPayment } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { Notification } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';
@@ -82,12 +83,18 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
 export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: InvoiceConfig): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
+  const transactionService = appInjector.get(TransactionService);
 
   let invoice: Invoice = new Invoice();
   if (isOfType(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
-    if (iDocument.receipts.length > 0) return iDocument.receipts[0].notaFiscal;
+    if (iDocument.receipts.length > 0)
+      return idToProperty(
+        iDocument.receipts[0],
+        transactionService.idToTransaction.bind(transactionService),
+        'notaFiscal'
+      );
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
 
@@ -114,12 +121,18 @@ export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: Invoi
 export function nortanPercentage(iDocument: Contract | Invoice, invoiceConfig: InvoiceConfig): string {
   const teamService = appInjector.get(TeamService);
   const invoiceService = appInjector.get(InvoiceService);
+  const transactionService = appInjector.get(TransactionService);
 
   let invoice: Invoice = new Invoice();
   if (isOfType(Invoice, iDocument)) {
     invoice = iDocument;
   } else {
-    if (iDocument.receipts?.length > 0) return iDocument.receipts[0].nortanPercentage;
+    if (iDocument.receipts?.length > 0)
+      return idToProperty(
+        iDocument.receipts[0],
+        transactionService.idToTransaction.bind(transactionService),
+        'companyPercentage'
+      );
     if (iDocument.invoice) invoice = invoiceService.idToInvoice(iDocument.invoice);
   }
 
@@ -372,8 +385,8 @@ export function reviveDates<T>(obj: T): T {
 }
 
 export function shouldNotifyManager(
-  currentResource: ContractReceipt | ContractPayment | Transaction,
-  newResource: ContractReceipt | ContractPayment | Transaction
+  currentResource: ContractPayment | Transaction,
+  newResource: ContractPayment | Transaction
 ): boolean {
   return !currentResource.paid && newResource.paid;
 }

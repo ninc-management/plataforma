@@ -536,13 +536,23 @@ export class MetricsService implements OnDestroy {
         return contracts.reduce((sum, contract) => {
           if (this.contractService.hasReceipts(contract._id)) {
             sum += contract.receipts
-              .filter((r) => r.paid)
+              .filter((r) =>
+                idToProperty(r, this.transactionService.idToTransaction.bind(this.transactionService), 'paid')
+              )
               .reduce((acc, receipt) => {
-                const paidDate = receipt.paidDate;
+                const paidDate = idToProperty(
+                  receipt,
+                  this.transactionService.idToTransaction.bind(this.transactionService),
+                  'paidDate'
+                );
                 if (paidDate && isValidDate(paidDate, last, number, fromToday))
                   acc += this.stringUtil.moneyToNumber(
                     this.contractService.toNetValue(
-                      receipt.value,
+                      idToProperty(
+                        receipt,
+                        this.transactionService.idToTransaction.bind(this.transactionService),
+                        'value'
+                      ),
                       nfPercentage(contract, configs[0].invoiceConfig),
                       nortanPercentage(contract, configs[0].invoiceConfig),
                       contract.created
@@ -631,16 +641,29 @@ export class MetricsService implements OnDestroy {
           (metricInfo: UserAndGlobalMetric, contract) => {
             if (this.contractService.hasReceipts(contract._id)) {
               const value = contract.receipts
-                .filter((receipt) => receipt.paid)
+                .filter(
+                  (receipt): receipt is Transaction | string =>
+                    idToProperty(
+                      receipt,
+                      this.transactionService.idToTransaction.bind(this.transactionService),
+                      'paid'
+                    ) && receipt != undefined
+                )
                 .reduce(
-                  (paid: UserAndGlobalMetric, receipt) => {
+                  (paid: UserAndGlobalMetric, receiptId) => {
+                    const receipt = this.transactionService.idToTransaction(receiptId);
                     const paidDate = receipt.paidDate;
-                    if (paidDate && isWithinInterval(paidDate, start, end)) {
+                    if (
+                      paidDate &&
+                      isWithinInterval(paidDate, start, end) &&
+                      receipt.companyPercentage &&
+                      receipt.notaFiscal
+                    ) {
                       const value = this.stringUtil.moneyToNumber(
                         type != 'oe'
                           ? this.stringUtil.applyPercentage(
                               receipt.value,
-                              type == 'nortan' ? receipt.nortanPercentage : receipt.notaFiscal
+                              type == 'nortan' ? receipt.companyPercentage : receipt.notaFiscal
                             )
                           : receipt.value
                       );

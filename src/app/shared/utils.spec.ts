@@ -41,11 +41,12 @@ import {
   valueSort,
 } from './utils';
 
-import { Contract, ContractReceipt } from '@models/contract';
+import { Contract } from '@models/contract';
 import { Contractor } from '@models/contractor';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { Team } from '@models/team';
+import { Transaction } from '@models/transaction';
 import { User } from '@models/user';
 
 interface MockedUser {
@@ -288,7 +289,7 @@ describe('UtilsService', () => {
     expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
       mockedConfigs[0].invoiceConfig.businessFees.support.nfPercentage
     );
-    const receipt = new ContractReceipt();
+    const receipt = new Transaction();
     receipt.notaFiscal = '0,00';
     contract.receipts.push(receipt);
     expect(nfPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('0,00');
@@ -316,8 +317,8 @@ describe('UtilsService', () => {
     expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe(
       mockedConfigs[0].invoiceConfig.businessFees.support.organizationPercentage
     );
-    const receipt = new ContractReceipt();
-    receipt.nortanPercentage = '20,00';
+    const receipt = new Transaction();
+    receipt.companyPercentage = '20,00';
     contract.receipts.push(receipt);
     expect(nortanPercentage(contract, mockedConfigs[0].invoiceConfig)).toBe('20,00');
     invoice.nortanTeam = '1';
@@ -465,8 +466,11 @@ describe('UtilsService', () => {
 });
 
 it('shouldNotifyManager should work', () => {
-  const unpaidResource = { paid: false } as ContractReceipt;
-  const paidResource = { paid: true } as ContractReceipt;
+  const receipt = new Transaction();
+  receipt.paid = false;
+  const unpaidResource = cloneDeep(receipt);
+  receipt.paid = true;
+  const paidResource = receipt;
   expect(shouldNotifyManager(unpaidResource, paidResource)).toBe(true);
   expect(shouldNotifyManager(paidResource, paidResource)).toBe(false);
   expect(shouldNotifyManager(unpaidResource, unpaidResource)).toBe(false);

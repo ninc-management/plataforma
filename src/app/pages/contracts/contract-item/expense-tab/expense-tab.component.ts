@@ -17,7 +17,7 @@ import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { TransactionService } from 'app/shared/services/transaction.service';
+import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, nameSort, valueSort } from 'app/shared/utils';
 
@@ -247,6 +247,7 @@ export class ExpenseTabComponent implements OnInit, OnDestroy {
           title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
           transaction: event.data ? event.data : new Transaction(),
           contract: this.contract,
+          type: TRANSACTION_TYPES.EXPENSE,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
