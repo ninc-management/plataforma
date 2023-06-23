@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { endOfMonth, getMonth, getYear, isWithinInterval, startOfMonth } from 'date-fns';
+import { endOfMonth, getMonth, getYear, lastDayOfMonth, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
@@ -35,6 +35,11 @@ enum REPORT_TYPES {
   GERAL = 'Geral',
   NORTAN = 'Suporte Administrativo',
   PESSOAL = 'Administração Pessoal',
+}
+
+interface IntersectionBetweenDates {
+  start: Date;
+  end: Date;
 }
 
 interface IndividualData {
@@ -829,18 +834,22 @@ export class AnnualReportComponent implements OnInit {
                           );
                         }
                       } else {
-                        //TODO: pegar meses em que ele ficou aberto
-                        //TODO: fazer um for para atribuir
                         const start = monthReceipt.receipt.created;
                         const end = monthReceipt.receipt.paidDate || new Date();
-                        console.log('meses em que ficou aberto', start, end, this.checkMonthInOpen(start, end));
-                        const month = monthContract.month;
-                        data[team][month].ongoing_oe += 1;
-                        data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
-                          data[team][month].ongoing_oe_value,
-                          monthReceipt.receipt.value
-                        );
-                        //TODO: count invoices by status history
+                        const intersection = this.getIntersection(start, end, year);
+                        if (intersection) {
+                          for (
+                            let month = intersection.start.getMonth();
+                            month < intersection.end.getMonth();
+                            month++
+                          ) {
+                            data[team][month].ongoing_oe += 1;
+                            data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
+                              data[team][month].ongoing_oe_value,
+                              monthReceipt.receipt.value
+                            );
+                          }
+                        }
                       }
                     });
                   });
@@ -881,21 +890,15 @@ export class AnnualReportComponent implements OnInit {
     );
   }
 
-  checkMonthInOpen(startDate: Date, endDate: Date): number[] {
-    const months: number[] = [];
-    let currentDate = startDate;
-
-    while (currentDate <= endDate) {
-      const lastDayOfMonth = endOfMonth(currentDate);
-
-      if (isWithinInterval(lastDayOfMonth, { start: startDate, end: endDate })) {
-        months.push(currentDate.getMonth());
-      }
-
-      currentDate = startOfMonth(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  getIntersection(startDate: Date, endDate: Date, year: number): IntersectionBetweenDates | null {
+    const startOfYear = new Date(year, 0, 1);
+    const endOfYear = new Date(year, 11, 31);
+    if (startDate > endDate || startDate > endOfYear || endDate < lastDayOfMonth(startOfYear)) {
+      return null;
     }
-
-    return months;
+    const start = startDate > lastDayOfMonth(startOfYear) ? startDate : lastDayOfMonth(startOfYear);
+    const end = endDate < endOfYear ? endDate : endOfYear;
+    return { start, end };
   }
 
   async contractsYearReview(year: number): Promise<string> {
