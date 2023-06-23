@@ -3,6 +3,7 @@ import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../../base-dialog/base-dialog.component';
 import { INPUT_TYPES, TextInputDialogComponent } from '../../text-input-dialog/text-input-dialog.component';
+import { TRANSACTION_TYPES } from 'app/shared/services/transaction.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -17,11 +18,14 @@ import { Transaction } from '@models/transaction';
 export class TransactionDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() title = '';
   @Input() transaction = new Transaction();
+  @Input() type?: TRANSACTION_TYPES;
   @Input() team?: Team;
   @Input() contract?: Contract;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
+  TRANSACTION_TYPES = TRANSACTION_TYPES;
+  isPayable = true;
 
   constructor(
     private dialogService: NbDialogService,
@@ -33,6 +37,9 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
 
   ngOnInit(): void {
     super.ngOnInit();
+    if (this.contract) {
+      this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
+    }
   }
 
   openDialog(): void {

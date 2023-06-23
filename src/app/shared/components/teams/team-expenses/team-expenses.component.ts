@@ -13,7 +13,7 @@ import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
-import { TransactionService } from 'app/shared/services/transaction.service';
+import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
 import {
   formatDate,
@@ -244,6 +244,7 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
         context: {
           title: event.data ? (isPhone() ? 'EDIÇÃO' : 'EDITAR MOVIMENTAÇÃO') : 'ADICIONAR MOVIMENTAÇÃO',
           transaction: event.data ? event.data : new Transaction(),
+          type: TRANSACTION_TYPES.EXPENSE,
           team: this.clonedTeam,
         },
         dialogClass: 'my-dialog',

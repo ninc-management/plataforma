@@ -25,7 +25,7 @@ import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { ChecklistItemAction, Contract, ContractLocals, ContractReceipt } from '@models/contract';
+import { ChecklistItemAction, Contract, ContractLocals } from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { COST_CENTER_TYPES, Transaction, TransactionTeamMember } from '@models/transaction';
@@ -423,10 +423,13 @@ export class ContractService implements OnDestroy {
   }
 
   paidValue(contract: Contract): string {
-    const totalPaidValue = contract.receipts.reduce((total, receipt) => {
-      if (!receipt.paid) return total;
-      return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
-    }, '0,00');
+    const totalPaidValue = contract.receipts
+      .filter((receipt): receipt is Transaction | string => receipt != undefined)
+      .reduce((total: string, receiptId) => {
+        const receipt = this.transactionService.idToTransaction(receiptId);
+        if (!receipt.paid) return total;
+        return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
+      }, '0,00');
 
     return totalPaidValue;
   }
@@ -670,18 +673,21 @@ export class ContractService implements OnDestroy {
     );
   }
 
-  receiptNetValue(receipt: ContractReceipt): string {
+  receiptNetValue(receipt: Transaction): string {
     if (isBefore(receipt.created, new Date('2023/04/05'))) {
       return this.oldReceiptNetValue(receipt);
     }
 
     const receiptGrossValue = receipt.value;
-    let receiptNetValue = this.toNetValue(
-      receiptGrossValue,
-      this.stringUtil.subtractMoney(receipt.notaFiscal, receipt.ISS),
-      receipt.nortanPercentage,
-      receipt.created
-    );
+    let receiptNetValue: string = '';
+    if (receipt.notaFiscal && receipt.companyPercentage) {
+      receiptNetValue = this.toNetValue(
+        receiptGrossValue,
+        this.stringUtil.subtractMoney(receipt.notaFiscal, receipt.ISS),
+        receipt.companyPercentage,
+        receipt.created
+      );
+    }
 
     receiptNetValue = this.stringUtil.subtractMoney(
       receiptNetValue,
@@ -702,14 +708,21 @@ export class ContractService implements OnDestroy {
     );
   }
 
-  private oldReceiptNetValue(receipt: ContractReceipt): string {
-    if (isBefore(receipt.created, new Date('2022/09/01'))) {
-      return this.toNetValue(receipt.value, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+  private oldReceiptNetValue(receipt: Transaction): string {
+    if (isBefore(receipt.created, new Date('2022/09/01')) && receipt.notaFiscal && receipt.companyPercentage) {
+      return this.toNetValue(receipt.value, receipt.notaFiscal, receipt.companyPercentage, receipt.created);
     }
 
     let receiptNetValue = receipt.value;
     receiptNetValue = this.stringUtil.removePercentage(receiptNetValue, receipt.ISS);
-    receiptNetValue = this.toNetValue(receiptNetValue, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
+    if (receipt.notaFiscal && receipt.companyPercentage) {
+      receiptNetValue = this.toNetValue(
+        receiptNetValue,
+        receipt.notaFiscal,
+        receipt.companyPercentage,
+        receipt.created
+      );
+    }
     return receiptNetValue;
   }
 

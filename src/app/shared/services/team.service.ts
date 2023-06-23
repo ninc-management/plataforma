@@ -21,6 +21,7 @@ export const CLIENT: Team = {
   created: new Date('May 11, 2023'),
   purpose: 'Time para representar o cliente',
   expenses: [],
+  receipts: [],
   config: new TeamConfig(),
   abrev: 'Cliente',
   isOrganizationTeam: false,

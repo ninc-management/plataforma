@@ -14,6 +14,9 @@ function teamExpense2Transaction(teamExpense, teamId, codeNumber) {
   transaction.code = '#' + codeNumber.toString();
   transaction.paidDate = teamExpense.paidDate;
   transaction.uploadedFiles = teamExpense.uploadedFiles;
+  transaction.ISS = "0,00";
+  transaction.editionHistory = [];
+
   return transaction;
 }
 
@@ -43,6 +46,35 @@ function contractExpense2Transaction(contractExpense, contractId, invoiceTeamId,
   transaction.code = '#' + codeNumber.toString();
   transaction.paidDate = contractExpense.paidDate;
   transaction.uploadedFiles = contractExpense.uploadedFiles;
+  transaction.editionHistory = [];
+  transaction.ISS = "0,00";
+
+  return transaction;
+}
+
+function receipt2Transaction(contractReceipt, codeNumber, teamId, managerId){
+  var transaction = {};
+  transaction.author = managerId;
+  transaction.costCenter = teamId;
+  transaction.modelCostCenter = 'Times';
+  transaction.description = contractReceipt.description;
+  transaction.value = contractReceipt.value;
+  transaction.notaFiscal = contractReceipt.notaFiscal;
+  transaction.companyPercentage = contractReceipt.nortanPercentage;
+  transaction.created = contractReceipt.created;
+  transaction.lastUpdate = contractReceipt.lastUpdate;
+  transaction.paid = contractReceipt.paid;
+  transaction.paidDate = contractReceipt.paidDate;
+  transaction.dueDate = contractReceipt.dueDate;
+  transaction.ISS = contractReceipt.ISS;
+  transaction.editionHistory = [];
+  transaction.uploadedFiles = [];
+  transaction.team = [];
+  transaction.code = '#' + codeNumber.toString();
+  transaction.type = '';
+  transaction.subType = '';
+  transaction.nf = true;
+
   return transaction;
 }
 
@@ -105,6 +137,27 @@ db.contracts.find().forEach((contract) => {
   }
   db.contracts.replaceOne({ _id: contract._id }, contract);
 });
+
+db.contracts.find().forEach((contract) => {
+  var i = db.transactions.estimatedDocumentCount();
+  if (contract.receipts) {
+    contract.receipts = contract.receipts.map((contractReceipt) => {
+      i++;
+      const invoice = db.invoices.findOne({ _id: contract.invoice });
+      const transaction = receipt2Transaction(contractReceipt, i, invoice.nortanTeam ,invoice.author);
+      const result = db.transactions.insertOne(transaction);
+      return result.insertedId;
+    });
+  } else {
+    contract.receipts = [];
+  }
+  db.contracts.replaceOne({ _id: contract._id }, contract);
+});
+
+db.teams.find().forEach((team) => {
+  team.receipts = [];
+  db.teams.replaceOne({ _id: team._id }, team);
+})
 
 /**
  * Start of fullName migration

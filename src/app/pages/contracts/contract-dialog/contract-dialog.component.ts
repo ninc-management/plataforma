@@ -21,7 +21,6 @@ import { PlatformConfig } from '@models/platformConfig';
 export enum COMPONENT_TYPES {
   CONTRACT,
   PAYMENT,
-  RECEIPT,
 }
 
 @Component({
@@ -35,8 +34,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   @Input() paymentIndex?: number;
   @Input() receiptIndex?: number;
   @Input() expenseIndex?: number;
-  @Input() componentType = COMPONENT_TYPES.RECEIPT;
-  isPayable = true;
+  @Input() componentType = COMPONENT_TYPES.CONTRACT;
   hasBalance = true;
   types = COMPONENT_TYPES;
   onedriveUrl = '';
@@ -72,7 +70,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
       .subscribe(([_, config]) => {
         this.config = config[0];
       });
-    this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     this.hasBalance = this.stringUtil.moneyToNumber(this.contract.locals.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT && this.config.oneDriveConfig.isActive) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
@@ -93,15 +90,9 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
             })
           )
           .subscribe((contracts) => {
-            if (contracts.length === 0) this.isPayable = this.hasBalance = false;
+            if (contracts.length === 0) this.hasBalance = false;
             else {
               switch (this.componentType) {
-                case COMPONENT_TYPES.RECEIPT:
-                  this.availableContracts = contracts.filter(
-                    (contract) => contract.total !== contract.receipts.length.toString()
-                  );
-                  this.isPayable = this.availableContracts.length !== 0;
-                  break;
                 case COMPONENT_TYPES.PAYMENT:
                   this.availableContracts = contracts.filter(
                     (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0

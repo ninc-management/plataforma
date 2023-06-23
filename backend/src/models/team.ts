@@ -65,6 +65,9 @@ export class Team extends Base<string> {
   purpose!: string;
 
   @prop({ ref: () => Transaction })
+  receipts: Ref<Transaction>[] = [];
+
+  @prop({ ref: () => Transaction })
   expenses: Ref<Transaction>[] = [];
 
   @prop({ required: true })

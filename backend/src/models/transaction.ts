@@ -91,4 +91,7 @@ export class Transaction extends Base<string> {
 
   @prop({ type: () => [EditionHistoryItem] })
   editionHistory: EditionHistoryItem[] = [];
+
+  @prop({ required: true })
+  ISS: string = '0,00';
 }

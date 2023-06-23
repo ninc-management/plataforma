@@ -1,4 +1,5 @@
 import { externalMockedSectors } from './mocked-sectors';
+import { externalMockedTransactions } from './mocked-transaction';
 import { externalMockedUsers } from './mocked-users';
 
 import { Team } from '@models/team';
@@ -20,6 +21,7 @@ export const externalMockedTeams: Team[] = [
     ],
     created: new Date(),
     purpose: 'To test',
+    receipts: [],
     expenses: [],
     config: {
       path: 'testPath',
@@ -50,6 +52,12 @@ export const externalMockedTeams: Team[] = [
     ],
     created: new Date(),
     purpose: 'To test',
+    receipts: [
+      externalMockedTransactions[2],
+      externalMockedTransactions[3],
+      externalMockedTransactions[4],
+      externalMockedTransactions[5],
+    ],
     expenses: [],
     config: {
       path: 'testPath',

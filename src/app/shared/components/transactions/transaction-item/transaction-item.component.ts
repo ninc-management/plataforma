@@ -49,6 +49,7 @@ export enum STATUS_RULES {
 export class TransactionItemComponent implements OnInit {
   @Input() contract?: Contract;
   @Input() iTransaction = new Transaction();
+  @Input() type?: TRANSACTION_TYPES;
   @Input() team?: Team;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Output()
@@ -65,12 +66,14 @@ export class TransactionItemComponent implements OnInit {
   availableContracts: Contract[] = [];
   teams: Team[] = [];
   users: User[] = [];
+  filteredContracts: Contract[] = [];
   hasInputContract = false;
   requiredContract = false;
   options = {
     liquid: '0,00',
     type: '',
     relatedWithContract: false,
+    hasISS: false,
   };
   transactionKinds: ExpenseType[] = [];
   tTypes = TRANSACTION_TYPES;
@@ -119,6 +122,9 @@ export class TransactionItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.type) {
+      this.options.type = this.type;
+    }
     if (this.contract) this.configureContractTransaction();
     if (this.team) this.configureTeamTransaction();
     combineLatest([
@@ -145,16 +151,14 @@ export class TransactionItemComponent implements OnInit {
       )
       .subscribe(([user, contracts, , teams, config, users, , , , , , ,]) => {
         this.user = user;
-        this.availableContracts = contracts.filter(
+        this.filteredContracts = contracts.filter(
           (contract) =>
             contract.invoice &&
             (contract.status == CONTRACT_STATOOS.EM_ANDAMENTO || contract.status == CONTRACT_STATOOS.A_RECEBER) &&
-            (this.invoiceService.isInvoiceAuthor(contract.invoice, user) ||
-              this.invoiceService.isInvoiceMember(contract.invoice, user))
+            (this.invoiceService.isInvoiceAuthor(contract.invoice, this.user) ||
+              this.invoiceService.isInvoiceMember(contract.invoice, this.user))
         );
-        this.availableContracts = this.availableContracts
-          .map((contract) => this.contractService.fillContract(contract))
-          .sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
+        this.handleType();
         this.userSearch = user.name;
         this.userData =
           user.AER.length > 0
@@ -165,6 +169,7 @@ export class TransactionItemComponent implements OnInit {
         this.users = users;
         if (this.iTransaction._id) {
           this.transaction = cloneDeep(this.iTransaction);
+          this.updateLiquidValue();
           this.providerSearch = idToProperty(
             this.transaction.provider,
             this.providerService.idToProvider.bind(this.providerService),
@@ -206,10 +211,12 @@ export class TransactionItemComponent implements OnInit {
   }
 
   saveRefTransaction(savedTransaction: Transaction): void {
-    this.clonedTeam.expenses.push(savedTransaction);
+    const property = savedTransaction.type == TRANSACTION_TYPES.EXPENSE ? 'expenses' : 'receipts';
+
+    this.clonedTeam[property].push(savedTransaction);
     this.teamService.editTeam(this.clonedTeam);
     if (this.options.relatedWithContract) {
-      this.clonedContract.expenses.push(savedTransaction);
+      this.clonedContract[property].push(savedTransaction);
       this.contractService.editContract(this.clonedContract);
     }
   }
@@ -268,13 +275,17 @@ export class TransactionItemComponent implements OnInit {
   urlReceiver(event: any): void {}
 
   updateLiquidValue(): void {
-    if (this.transaction.notaFiscal && this.transaction.companyPercentage)
-      this.options.liquid = this.contractService.toNetValue(
-        this.transaction.value,
-        this.transaction.notaFiscal,
-        this.transaction.companyPercentage,
-        this.transaction.created
-      );
+    if (this.options.type == TRANSACTION_TYPES.RECEIPT) {
+      this.options.liquid = this.contractService.receiptNetValue(this.transaction);
+    } else {
+      if (this.transaction.notaFiscal && this.transaction.companyPercentage)
+        this.options.liquid = this.contractService.toNetValue(
+          this.transaction.value,
+          this.transaction.notaFiscal,
+          this.transaction.companyPercentage,
+          this.transaction.created
+        );
+    }
   }
 
   handleType(): void {
@@ -282,8 +293,16 @@ export class TransactionItemComponent implements OnInit {
       case TRANSACTION_TYPES.RECEIPT: {
         this.requiredContract = true;
         this.options.relatedWithContract = true;
-        this.transaction.costCenter = CLIENT;
-        this.transaction.modelCostCenter = COST_CENTER_TYPES.USER;
+        if (!this.iTransaction._id) {
+          this.transaction.costCenter = this.teamService.idToTeam(
+            idToProperty(
+              this.contract?.invoice,
+              this.invoiceService.idToInvoice.bind(this.invoiceService),
+              'nortanTeam'
+            )
+          );
+          this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
+        }
         break;
       }
 
@@ -295,6 +314,16 @@ export class TransactionItemComponent implements OnInit {
       case 'default':
         break;
     }
+    this.availableContracts = this.filteredContracts.filter(
+      (contract) =>
+        (this.options.type == TRANSACTION_TYPES.RECEIPT &&
+          contract.total &&
+          contract.receipts.length < +contract.total) ||
+        this.options.type == TRANSACTION_TYPES.EXPENSE
+    );
+    this.availableContracts = this.availableContracts
+      .map((contract) => this.contractService.fillContract(contract))
+      .sort((a, b) => codeSort(-1, a.locals.code, b.locals.code));
   }
 
   setCostCenterData(): void {
@@ -342,8 +371,6 @@ export class TransactionItemComponent implements OnInit {
   private configureTeamTransaction(): void {
     if (this.team) {
       this.clonedTeam = cloneDeep(this.team);
-      this.options.type = TRANSACTION_TYPES.EXPENSE;
-      this.handleType();
       if (!this.iTransaction._id) {
         this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
         this.transaction.costCenter = this.clonedTeam;
@@ -356,8 +383,6 @@ export class TransactionItemComponent implements OnInit {
     if (this.contract) {
       this.hasInputContract = this.options.relatedWithContract = true;
       this.clonedContract = cloneDeep(this.contract);
-      this.options.type = TRANSACTION_TYPES.EXPENSE;
-      this.handleType();
       this.contractSearch = this.clonedContract.locals.code;
       this.fillContractData();
     }
@@ -405,5 +430,10 @@ export class TransactionItemComponent implements OnInit {
       default:
         return 'basic';
     }
+  }
+
+  handleISSToggle(): void {
+    this.transaction.ISS = '0,00';
+    this.updateLiquidValue();
   }
 }

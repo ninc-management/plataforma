@@ -70,38 +70,6 @@ export class ContractPayment {
   paidDate?: Date;
 }
 
-export class ContractReceipt {
-  @prop({ required: true })
-  description!: string;
-
-  @prop({ required: true })
-  value!: string;
-
-  @prop({ required: true })
-  notaFiscal!: string;
-
-  @prop({ required: true })
-  nortanPercentage!: string;
-
-  @prop({ required: true })
-  created: Date = new Date();
-
-  @prop({ required: true })
-  lastUpdate: Date = new Date();
-
-  @prop({ required: true })
-  paid: boolean = false;
-
-  @prop()
-  paidDate?: Date;
-
-  @prop()
-  dueDate?: Date;
-
-  @prop({ required: true })
-  ISS: string = '0,00';
-}
-
 export class DateRange {
   @prop({ required: true })
   start!: Date;
@@ -164,8 +132,8 @@ export class Contract extends StatusHistory {
   @prop({ type: () => [ContractPayment] })
   payments: ContractPayment[] = [];
 
-  @prop({ type: () => [ContractReceipt] })
-  receipts: ContractReceipt[] = [];
+  @prop({ ref: () => Transaction })
+  receipts: Ref<Transaction>[] = [];
 
   @prop({ ref: () => Transaction })
   expenses: Ref<Transaction>[] = [];

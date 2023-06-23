@@ -35,15 +35,25 @@
     <div class="row">
       <div class="col-12">
         <div class="form-control-group">
-          <label class="label" style="display: flex" for="input-contract-list">
+          <label class="label d-flex align-items-center" for="input-contract-list">
             Associado ao contrato
             <nb-checkbox
               [(ngModel)]="options.relatedWithContract"
               #contractCheckbox="ngModel"
               name="checkbox-contract"
-              class="ml-2"
+              class="d-flex ml-2"
               [disabled]="hasInputContract || requiredContract"
             ></nb-checkbox>
+            <nb-icon
+              class="ml-2"
+              status="info"
+              icon="info"
+              pack="eva"
+              [options]="{ animation: { type: 'pulse' } }"
+              nbTooltip='A lista de contratos exibe apenas os contratos com status "Em Andamento" ou "A Receber" que você é gestor do contrato ou faz parte do time de contrato, filtrando os contratos que tem todas as OEs já foram criadas.'
+              nbTooltipPlacement="top"
+              nbTooltipStatus="info"
+            ></nb-icon>
           </label>
           <nb-completer
             [(ngModel)]="contractSearch"
@@ -69,7 +79,7 @@
           ></nb-completer>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2">
         <div class="form-control-group">
           <label class="label" for="input-value">
             Valor
@@ -193,7 +203,7 @@
           />
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="form-control-group">
           <label class="label" for="input-liquid">Valor liquído:</label>
           <input
@@ -218,6 +228,42 @@
             "
             [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
             [readonly]="true"
+          />
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="form-control-group">
+          <label class="label d-flex align-items-center" for="input-has-ISS">
+            <span class="mr-2">Houve retenção de ISS? (%)</span>
+            <nb-checkbox
+              status="basic"
+              class="d-flex"
+              [(ngModel)]="options.hasISS"
+              (ngModelChange)="handleISSToggle()"
+              id="input-has-ISS"
+              name="input-has-ISS"
+              #actionChecked="ngModel"
+            ></nb-checkbox>
+          </label>
+          <input
+            nbInput
+            [(ngModel)]="transaction.ISS"
+            #iss="ngModel"
+            id="input-iss"
+            name="iss"
+            placeholder="Alíquota"
+            fullWidth
+            [brmasker]="{
+              money: true,
+              thousand: '.',
+              decimalCaracter: ',',
+              decimal: 2
+            }"
+            fieldSize="large"
+            ngxSelectAllText
+            [disabled]="!options.hasISS"
+            (ngModelChange)="updateLiquidValue()"
+            [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
           />
         </div>
       </div>
@@ -280,6 +326,7 @@
             id="input-is-paid"
             name="is-paid"
             placeholder="Movimentação paga?"
+            (ngModelChange)="updatePaidDate()"
             fullWidth
             size="large"
             [required]="validation.paidCheck.required"

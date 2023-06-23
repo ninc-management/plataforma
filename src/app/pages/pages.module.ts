@@ -37,7 +37,6 @@ import { ChecklistItemDialogComponent } from './contracts/contract-item/manageme
 import { ManagementTabComponent } from './contracts/contract-item/management-tab/management-tab.component';
 import { PaymentItemComponent } from './contracts/contract-item/payment-item/payment-item.component';
 import { PaymentTabComponent } from './contracts/contract-item/payment-tab/payment-tab.component';
-import { ReceiptItemComponent } from './contracts/contract-item/receipt-item/receipt-item.component';
 import { ReceiptTabComponent } from './contracts/contract-item/receipt-tab/receipt-tab.component';
 import { ContractsComponent } from './contracts/contracts.component';
 import { CourseDialogComponent } from './courses/course-dialog/course-dialog.component';
@@ -107,7 +106,6 @@ import { NbSmartTableModule } from 'app/@theme/components/smart-table/smart-tabl
     ContractorsComponent,
     ContractorDialogComponent,
     ContractorItemComponent,
-    ReceiptItemComponent,
     UsersComponent,
     UserDialogComponent,
     PromotionsComponent,

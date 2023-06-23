@@ -31,14 +31,14 @@
           #smartTable
           [settings]="settings"
           [source]="source"
-          (edit)="contractDialog($event, true)"
-          (delete)="contractDialog($event, false)"
+          (edit)="openDialog($event, true)"
+          (delete)="openDialog($event, false)"
         ></nb-smart-table>
       </ng-template>
       <ng-template #phone>
         <nb-list>
           <nb-list-item *ngFor="let contract of filtredContracts; let i = index">
-            <a (click)="contractDialog({ data: contract }, true)">
+            <a (click)="openDialog({ data: contract }, true)">
               <div class="row">
                 <div class="col-12" style="margin-bottom: 10px">
                   <nb-user
