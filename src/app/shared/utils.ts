@@ -12,6 +12,7 @@ import {
   format,
   isBefore,
   isSameMonth,
+  lastDayOfMonth,
   parseISO,
   startOfMonth,
   startOfYear,
@@ -57,6 +58,11 @@ export enum Fees {
   NF_INTERMEDIATION = '0,00',
   NORTAN_SUPPORT = '15,00',
   NORTAN_INTERMEDIATION = '17,00',
+}
+
+export interface IntersectionBetweenDates {
+  start: Date;
+  end: Date;
 }
 
 type NonOptionalKeys<T> = {
@@ -446,4 +452,15 @@ export function handle<T extends IdWise>(data: any, oArray$: BehaviorSubject<T[]
       break;
     }
   }
+}
+
+export function getIntersection(startDate: Date, endDate: Date, year: number): IntersectionBetweenDates | null {
+  const startOfYear = new Date(year, 0, 1);
+  const endOfYear = new Date(year, 11, 31);
+  if (startDate > endDate || startDate > endOfYear || endDate < lastDayOfMonth(startOfYear)) {
+    return null;
+  }
+  const start = startDate > lastDayOfMonth(startOfYear) ? startDate : lastDayOfMonth(startOfYear);
+  const end = endDate < endOfYear ? endDate : endOfYear;
+  return { start, end };
 }

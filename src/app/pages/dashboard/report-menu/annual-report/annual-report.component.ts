@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { endOfMonth, getMonth, getYear, lastDayOfMonth, startOfMonth } from 'date-fns';
+import { endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
@@ -17,6 +17,7 @@ import { MetricsService } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { getIntersection } from 'app/shared/utils';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -35,11 +36,6 @@ enum REPORT_TYPES {
   GERAL = 'Geral',
   NORTAN = 'Suporte Administrativo',
   PESSOAL = 'Administração Pessoal',
-}
-
-interface IntersectionBetweenDates {
-  start: Date;
-  end: Date;
 }
 
 interface IndividualData {
@@ -836,7 +832,7 @@ export class AnnualReportComponent implements OnInit {
                       } else {
                         const start = monthReceipt.receipt.created;
                         const end = monthReceipt.receipt.paidDate || new Date();
-                        const intersection = this.getIntersection(start, end, year);
+                        const intersection = getIntersection(start, end, year);
                         if (intersection) {
                           for (
                             let month = intersection.start.getMonth();
@@ -888,17 +884,6 @@ export class AnnualReportComponent implements OnInit {
         return data;
       })
     );
-  }
-
-  getIntersection(startDate: Date, endDate: Date, year: number): IntersectionBetweenDates | null {
-    const startOfYear = new Date(year, 0, 1);
-    const endOfYear = new Date(year, 11, 31);
-    if (startDate > endDate || startDate > endOfYear || endDate < lastDayOfMonth(startOfYear)) {
-      return null;
-    }
-    const start = startDate > lastDayOfMonth(startOfYear) ? startDate : lastDayOfMonth(startOfYear);
-    const end = endDate < endOfYear ? endDate : endOfYear;
-    return { start, end };
   }
 
   async contractsYearReview(year: number): Promise<string> {
