@@ -441,6 +441,6 @@ describe('ContractService', () => {
   it('receiptNetValue should work', () => {
     expect(service.receiptNetValue(mockedContracts[2].receipts[0])).toEqual('791,30');
     expect(service.receiptNetValue(mockedContracts[2].receipts[1])).toEqual('1.527,91');
-    expect(service.receiptNetValue(mockedContracts[2].receipts[2])).toEqual('2.925,89');
+    expect(service.receiptNetValue(mockedContracts[2].receipts[2])).toEqual('2.952,96');
   });
 });

@@ -543,21 +543,16 @@ export class ContractService implements OnDestroy {
     if (isBefore(receipt.created, new Date('2023/04/05'))) {
       return this.oldReceiptNetValue(receipt);
     }
-
-    const receiptGrossValue = receipt.value;
-    let receiptNetValue = this.toNetValue(
-      receiptGrossValue,
+    const receiptNetValue = this.stringUtil.subtractMoney(
+      receipt.value,
+      this.stringUtil.applyPercentage(receipt.value, receipt.ISS)
+    );
+    return this.toNetValue(
+      receiptNetValue,
       this.stringUtil.subtractMoney(receipt.notaFiscal, receipt.ISS),
       receipt.nortanPercentage,
       receipt.created
     );
-
-    receiptNetValue = this.stringUtil.subtractMoney(
-      receiptNetValue,
-      this.stringUtil.applyPercentage(receiptGrossValue, receipt.ISS)
-    );
-
-    return receiptNetValue;
   }
 
   contractNetValue(contract: Contract): string {
