@@ -42,12 +42,19 @@ router.post('/all', async (req, res) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedCompany = await CompanyModel.findByIdAndUpdate(req.body.company._id, req.body.company, {
-      upsert: false,
-    });
+    const company = await CompanyModel.findOneAndUpdate(
+      { _id: req.body.company._id, __v: req.body.company.__v },
+      req.body.company,
+      { upsert: false }
+    );
+    if (!company) {
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+      });
+    }
     if (requested) {
       await mutex.runExclusive(async () => {
-        companyMap[req.body.company._id] = cloneDeep(savedCompany.toJSON());
+        companyMap[req.body.company._id] = cloneDeep(company.toJSON());
       });
     }
     return res.status(200).json({
