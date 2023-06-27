@@ -10,7 +10,7 @@
         }"
       >
         <label class="label" for="input-transaction-type" style="margin-bottom: 0; margin-right: 10px">
-          Tipo da movimentação:
+          O que deseja {{iTransaction._id ? 'editar' : 'adicionar'}}?
         </label>
         <nb-radio-group
           [(ngModel)]="options.type"

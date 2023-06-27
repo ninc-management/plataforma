@@ -211,10 +211,12 @@ export class TransactionItemComponent implements OnInit {
   }
 
   saveRefTransaction(savedTransaction: Transaction): void {
-    const property = savedTransaction.type == TRANSACTION_TYPES.EXPENSE ? 'expenses' : 'receipts';
+    const property = this.options.type == TRANSACTION_TYPES.EXPENSE ? 'expenses' : 'receipts';
 
-    this.clonedTeam[property].push(savedTransaction);
-    this.teamService.editTeam(this.clonedTeam);
+    if (this.clonedTeam._id != CLIENT._id) {
+      this.clonedTeam[property].push(savedTransaction);
+      this.teamService.editTeam(this.clonedTeam);
+    }
     if (this.options.relatedWithContract) {
       this.clonedContract[property].push(savedTransaction);
       this.contractService.editContract(this.clonedContract);
