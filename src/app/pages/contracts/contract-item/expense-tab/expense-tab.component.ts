@@ -325,7 +325,7 @@ export class ExpenseTabComponent implements OnInit, OnDestroy {
       this.contract.expenses
         .filter((expenseRef): expenseRef is Transaction | string => expenseRef != undefined)
         .map((expenseRef) => {
-          const expense = this.transactionService.idToTransaction(expenseRef);
+          const expense = cloneDeep(this.transactionService.idToTransaction(expenseRef));
           expense.costCenter = this.transactionService.populateCostCenter(
             expense,
             this.teamService.idToTeam.bind(this.teamService),

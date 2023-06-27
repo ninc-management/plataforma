@@ -105,6 +105,7 @@ export class TeamService implements OnDestroy {
 
   idToTeam(id: string | Team): Team {
     if (isOfType(Team, id)) return id;
+    if (id == CLIENT._id) return CLIENT as Team;
     const tmp = this.teams$.getValue();
     return tmp[tmp.findIndex((el) => el._id === id)];
   }
