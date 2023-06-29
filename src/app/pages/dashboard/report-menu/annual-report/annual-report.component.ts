@@ -683,18 +683,27 @@ export class AnnualReportComponent implements OnInit {
                     monthInvoice.invoice.value
                   );
                 }
-                if (
-                  monthInvoice.invoice.status == INVOICE_STATOOS.EM_ANALISE &&
-                  getYear(monthInvoice.invoice.created) <= year
-                ) {
-                  //TODO: count invoices by status history
-                  let month = monthInvoice.month;
-                  if (getYear(monthInvoice.invoice.created) < year) month = 0;
-                  data[team][month].ongoing_invoice += 1;
-                  data[team][month].ongoing_invoice_value = this.stringUtil.sumMoney(
-                    data[team][month].ongoing_invoice_value,
-                    monthInvoice.invoice.value
+                if (monthInvoice.invoice.status == INVOICE_STATOOS.EM_ANALISE) {
+                  const monthsUnderReview = monthInvoice.invoice.statusHistory.find(
+                    (item) => item.status === INVOICE_STATOOS.EM_ANALISE
                   );
+                  if (monthsUnderReview) {
+                    monthsUnderReview.end = monthsUnderReview.end || new Date();
+                    const intersection = getIntersectionBetweenDates(
+                      monthsUnderReview.start,
+                      monthsUnderReview.end,
+                      year
+                    );
+                    if (intersection) {
+                      for (let month = intersection.start.getMonth(); month < intersection.end.getMonth(); month++) {
+                        data[team][month].ongoing_invoice += 1;
+                        data[team][month].ongoing_invoice_value = this.stringUtil.sumMoney(
+                          data[team][month].ongoing_invoice_value,
+                          monthInvoice.invoice.value
+                        );
+                      }
+                    }
+                  }
                 }
               }
             }
