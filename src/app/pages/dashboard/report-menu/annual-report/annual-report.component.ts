@@ -652,37 +652,52 @@ export class AnnualReportComponent implements OnInit {
         invoicesByMonth.forEach((monthInvoices) => {
           monthInvoices.forEach((monthInvoice) => {
             for (const team of Object.keys(data)) {
-              if (
-                this.teamService.isTeamEqual(monthInvoice.invoice.nortanTeam, team) &&
-                getYear(monthInvoice.invoice.created) == year
-              ) {
-                data[team][monthInvoice.month].sent_invoices += 1;
-                data[team][monthInvoice.month].sent_invoices_value = sumMoney(
-                  data[team][monthInvoice.month].sent_invoices_value,
-                  monthInvoice.invoice.value
-                );
-                if (
-                  monthInvoice.invoice.status == INVOICE_STATOOS.FECHADO &&
-                  getYear(monthInvoice.invoice.created) == year
-                ) {
-                  data[team][monthInvoice.month].concluded_invoices += 1;
-                  data[team][monthInvoice.month].concluded_invoices_value = sumMoney(
-                    data[team][monthInvoice.month].concluded_invoices_value,
+              if (this.teamService.isTeamEqual(monthInvoice.invoice.nortanTeam, team)) {
+                if (getYear(monthInvoice.invoice.created) == year) {
+                  data[team][monthInvoice.month].sent_invoices += 1;
+                  data[team][monthInvoice.month].sent_invoices_value = sumMoney(
+                    data[team][monthInvoice.month].sent_invoices_value,
                     monthInvoice.invoice.value
                   );
                 }
-                if (
-                  monthInvoice.invoice.status == INVOICE_STATOOS.EM_ANALISE &&
-                  getYear(monthInvoice.invoice.created) <= year
-                ) {
-                  //TODO: count invoices by status history
-                  let month = monthInvoice.month;
-                  if (getYear(monthInvoice.invoice.created) < year) month = 0;
-                  data[team][month].ongoing_invoice += 1;
-                  data[team][month].ongoing_invoice_value = sumMoney(
-                    data[team][month].ongoing_invoice_value,
-                    monthInvoice.invoice.value
+                if (monthInvoice.invoice.status == INVOICE_STATOOS.FECHADO) {
+                  const statusEditionHistoryItem = monthInvoice.invoice.statusHistory.find(
+                    (item) => item.status === INVOICE_STATOOS.FECHADO
                   );
+                  if (statusEditionHistoryItem) {
+                    if (
+                      getYear(statusEditionHistoryItem.start) == year &&
+                      getMonth(statusEditionHistoryItem.start) == monthInvoice.month
+                    ) {
+                      data[team][monthInvoice.month].concluded_invoices += 1;
+                      data[team][monthInvoice.month].concluded_invoices_value = sumMoney(
+                        data[team][monthInvoice.month].concluded_invoices_value,
+                        monthInvoice.invoice.value
+                      );
+                    }
+                  }
+                }
+                if (monthInvoice.invoice.status != INVOICE_STATOOS.INVALIDADO) {
+                  const statusEditionHistoryItem = monthInvoice.invoice.statusHistory.find(
+                    (item) => item.status === INVOICE_STATOOS.EM_ANALISE
+                  );
+                  if (statusEditionHistoryItem) {
+                    statusEditionHistoryItem.end = statusEditionHistoryItem.end || new Date();
+                    const intersection = getIntersectionBetweenDates(
+                      statusEditionHistoryItem.start,
+                      statusEditionHistoryItem.end,
+                      year
+                    );
+                    if (intersection) {
+                      for (let month = intersection.start.getMonth(); month < intersection.end.getMonth(); month++) {
+                        data[team][month].ongoing_invoice += 1;
+                        data[team][month].ongoing_invoice_value = sumMoney(
+                          data[team][month].ongoing_invoice_value,
+                          monthInvoice.invoice.value
+                        );
+                      }
+                    }
+                  }
                 }
               }
             }
