@@ -50,27 +50,26 @@ export class TeamExpensesComponent implements OnInit, OnDestroy {
   idToProperty = idToProperty;
 
   get filtredExpenses(): Transaction[] {
-    //TODO: NINC-2106
+    const filtredExpenses = this.clonedTeam.expenses
+      .filter((expenseRef): expenseRef is Transaction | string => expenseRef != undefined)
+      .map((expenseRef) => this.transactionService.idToTransaction(expenseRef));
     if (this.searchQuery !== '')
-      return this.clonedTeam.expenses
-        .filter((expense): expense is NonNullable<Transaction | string | undefined> => expense !== undefined)
-        .map((expense) => this.transactionService.idToTransaction(expense))
-        .filter((expense) => {
-          return (
-            expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            (expense.author &&
-              idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
-                .toLowerCase()
-                .includes(this.searchQuery.toLowerCase())) ||
-            (expense.costCenter &&
-              idToProperty(expense, this.transactionService.populateCostCenter.bind(this.transactionService), 'name')
-                .toLowerCase()
-                .includes(this.searchQuery.toLowerCase())) ||
-            formatDate(expense.created).includes(this.searchQuery.toLowerCase())
-          );
-        }) as Transaction[];
+      return filtredExpenses.filter((expense) => {
+        return (
+          expense.description.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          expense.value.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          expense.type.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          (expense.author &&
+            idToProperty(expense.author, this.userService.idToUser.bind(this.userService), 'name')
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          (expense.costCenter &&
+            idToProperty(expense, this.transactionService.populateCostCenter.bind(this.transactionService), 'name')
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase())) ||
+          formatDate(expense.created).includes(this.searchQuery.toLowerCase())
+        );
+      }) as Transaction[];
     return this.clonedTeam.expenses
       .filter((expense): expense is NonNullable<Transaction | string | undefined> => expense !== undefined)
       .map((expense) => this.transactionService.idToTransaction(expense));
