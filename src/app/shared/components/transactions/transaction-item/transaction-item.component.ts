@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NbAccessChecker } from '@nebular/security';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
@@ -7,8 +8,10 @@ import { INPUT_TYPES, TextInputDialogComponent } from '../../text-input-dialog/t
 import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { ProviderService } from 'app/shared/services/provider.service';
+import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, TeamService } from 'app/shared/services/team.service';
 import { TRANSACTION_TYPES, TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -81,6 +84,8 @@ export class TransactionItemComponent implements OnInit {
   expenseSubTypes: string[] = [];
   costCenterTypes: COST_CENTER_TYPES[] = Object.values(COST_CENTER_TYPES);
   cCTypes = COST_CENTER_TYPES;
+  isEditionGranted: boolean = true;
+  isFinancialManager: boolean = false;
 
   contractSearch = '';
   get availableContractsData$(): Observable<Contract[]> {
@@ -118,13 +123,20 @@ export class TransactionItemComponent implements OnInit {
     private userService: UserService,
     private configService: ConfigService,
     private providerService: ProviderService,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private stringUtil: StringUtilService,
+    private contractorService: ContractorService,
+    public accessChecker: NbAccessChecker
   ) {}
 
   ngOnInit(): void {
     if (this.type) {
       this.options.type = this.type;
     }
+    this.accessChecker
+      .isGranted('df', 'receipt-financial-manager')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
     if (this.contract) this.configureContractTransaction();
     if (this.team) this.configureTeamTransaction();
     combineLatest([
@@ -135,21 +147,47 @@ export class TransactionItemComponent implements OnInit {
       this.configService.getConfig(),
       this.userService.getActiveUsers(),
       this.providerService.getProviders(),
+      this.contractorService.getContractors(),
       this.contractService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
       this.teamService.isDataLoaded$,
       this.configService.isDataLoaded$,
       this.userService.isDataLoaded$,
       this.providerService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
-          ([, , , , , , , contractsLoaded, invoicesLoaded, teamsLoaded, configLoaded, usersLoaded, providerLoaded]) =>
-            !contractsLoaded || !invoicesLoaded || !teamsLoaded || !configLoaded || !usersLoaded || !providerLoaded
+          ([
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            ,
+            contractsLoaded,
+            invoicesLoaded,
+            teamsLoaded,
+            configLoaded,
+            usersLoaded,
+            providerLoaded,
+            contractorsLoaded,
+          ]) =>
+            !(
+              contractsLoaded &&
+              invoicesLoaded &&
+              teamsLoaded &&
+              configLoaded &&
+              usersLoaded &&
+              providerLoaded &&
+              contractorsLoaded
+            )
         ),
         take(1)
       )
-      .subscribe(([user, contracts, , teams, config, users, , , , , , ,]) => {
+      .subscribe(([user, contracts, , teams, config, users, , , , , , , , ,]) => {
         this.user = user;
         this.filteredContracts = contracts.filter(
           (contract) =>
@@ -191,10 +229,42 @@ export class TransactionItemComponent implements OnInit {
   }
 
   fillContractData(): void {
-    if (this.clonedContract) {
+    if (this.clonedContract._id && this.clonedContract.invoice) {
+      this.contractService
+        .checkEditPermission(this.invoiceService.idToInvoice(this.clonedContract.invoice))
+        .pipe(take(1))
+        .subscribe((isGranted) => {
+          this.isEditionGranted = isGranted;
+        });
       this.transaction.notaFiscal = nfPercentage(this.clonedContract, this.platformConfig.invoiceConfig);
       this.transaction.companyPercentage = nortanPercentage(this.clonedContract, this.platformConfig.invoiceConfig);
+      if (this.options.type == TRANSACTION_TYPES.RECEIPT) {
+        if (this.clonedContract.total && this.clonedContract.receipts.length === +this.clonedContract.total - 1) {
+          this.transaction.value = this.notPaid();
+        } else {
+          const invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
+          const stage = invoice.stages[this.clonedContract.receipts.length];
+          if (stage) {
+            this.transaction.value = stage.value;
+          }
+        }
+      }
     }
+  }
+
+  notPaid(): string {
+    let result =
+      this.stringUtil.moneyToNumber(this.transaction.value) -
+      this.clonedContract.receipts.reduce(
+        (sum: number, receipt: Transaction | string | undefined) =>
+          (sum += this.stringUtil.moneyToNumber(
+            idToProperty(receipt, this.transactionService.idToTransaction.bind(this.transactionService), 'value')
+          )),
+        0
+      );
+
+    if (this.iTransaction._id) result += this.stringUtil.moneyToNumber(this.iTransaction.value);
+    return this.stringUtil.numberToMoney(result);
   }
 
   overPaid(): string {

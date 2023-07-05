@@ -1,783 +1,350 @@
 <form #form="ngForm" aria-labelledby="title">
-  <div class="row">
-    <div class="col-12">
-      <div
-        class="form-control-group"
-        [ngStyle]="{
-          'align-items': 'center',
-          'margin-top.px': 5,
-          display: isPhone() ? 'contents' : 'flex'
-        }"
-      >
-        <label class="label" for="input-transaction-type" style="margin-bottom: 0; margin-right: 10px">
-          O que deseja {{iTransaction._id ? 'editar' : 'adicionar'}}?
-        </label>
-        <nb-radio-group
-          [(ngModel)]="options.type"
-          (ngModelChange)="handleType()"
-          id="input-transaction-type"
-          name="transactionType"
-          required="true"
-          [disabled]="!!team||!!contract"
+  <fieldset [disabled]="!isEditionGranted && !isFinancialManager">
+    <div class="row">
+      <div class="col-12">
+        <div
+          class="form-control-group"
           [ngStyle]="{
-            'height.px': 16,
+            'align-items': 'center',
+            'margin-top.px': 5,
             display: isPhone() ? 'contents' : 'flex'
           }"
         >
-          <nb-radio *ngFor="let type of transactionTypes" [value]="type" class="transaction-radio">
-            {{ type }}
-          </nb-radio>
-        </nb-radio-group>
-      </div>
-    </div>
-  </div>
-  <ng-container *ngIf="options.type == tTypes.RECEIPT">
-    <div class="row">
-      <div class="col-12">
-        <div class="form-control-group">
-          <label class="label d-flex align-items-center" for="input-contract-list">
-            Associado ao contrato
-            <nb-checkbox
-              [(ngModel)]="options.relatedWithContract"
-              #contractCheckbox="ngModel"
-              name="checkbox-contract"
-              class="d-flex ml-2"
-              [disabled]="hasInputContract || requiredContract"
-            ></nb-checkbox>
-            <nb-icon
-              class="ml-2"
-              status="info"
-              icon="info"
-              pack="eva"
-              [options]="{ animation: { type: 'pulse' } }"
-              nbTooltip='A lista de contratos exibe apenas os contratos com status "Em Andamento" ou "A Receber" que você é gestor do contrato ou faz parte do time de contrato, filtrando os contratos que tem todas as OEs já foram criadas.'
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            ></nb-icon>
+          <label class="label" for="input-transaction-type" style="margin-bottom: 0; margin-right: 10px">
+            O que deseja {{iTransaction._id ? 'editar' : 'adicionar'}}?
           </label>
-          <nb-completer
-            [(ngModel)]="contractSearch"
-            (selected)="clonedContract = cloneDeep($event); fillContractData()"
-            inputName="contractListCompleter"
-            #contractList="ngModel"
-            id="input-contract"
-            name="contractList"
-            placeholder="Digite e selecione o código do contrato"
-            textNoResults="
-          Não foi possível achar um contrato com o código digitado
-          "
-            fieldSize="large"
-            nameProperty="locals.code"
-            pictureProperty="locals.managerPicture"
-            [disabled]="hasInputContract || !options.relatedWithContract"
-            [required]="options.relatedWithContract"
-            [data$]="availableContractsData$"
-            [minSearchLength]="0"
-            [fullWidth]="true"
-            [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id', contractSearch !== '')"
-            [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
-          ></nb-completer>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-value">
-            Valor
-            <nb-icon
-              status="info"
-              icon="info"
-              pack="eva"
-              [options]="{ animation: { type: 'pulse' } }"
-              nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            ></nb-icon>
-          </label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.value"
-            (ngModelChange)="updateLiquidValue()"
-            #value="ngModel"
-            id="input-value"
-            name="value"
-            placeholder="Valor da despesa"
-            fullWidth
-            fieldSize="large"
-            [overPaid]="overPaid()"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
+          <nb-radio-group
+            [(ngModel)]="options.type"
+            (ngModelChange)="handleType()"
+            id="input-transaction-type"
+            name="transactionType"
+            required="true"
+            [disabled]="!!team||!!contract"
+            [ngStyle]="{
+              'height.px': 16,
+              display: isPhone() ? 'contents' : 'flex'
             }"
-            ngxSelectAllText
-            [required]="validation.value.required"
-            [minLength]="validation.value.minLength"
-            [maxLength]="validation.value.maxLength"
-            [status]="setStatus(value, STATUS_RULES.SECOND_RULE, 'value')"
-            [disabled]="transaction.paid && iTransaction._id !== undefined"
-            [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          />
-          <ng-container>
-            <p class="caption">
-              Valor em caixa: R$
-              {{ contract ? contract.locals.balance : '0,00' }}
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
-            >
-              O valor do empenho é superior ao valor em caixa no contrato!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
-            >
-              O valor da despesa é obrigatório!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="
-                (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
-              "
-            >
-              O valor da despesa deve conter entre
-              {{ validation.value.minLength }} a
-              {{ validation.value.maxLength }}
-              números
-            </p>
-          </ng-container>
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-nota-fiscal">NF(%):</label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.notaFiscal"
-            (ngModelChange)="updateLiquidValue()"
-            #notaFiscal="ngModel"
-            id="input-nota-fiscal"
-            name="notaFiscal"
-            placeholder="Porcentagem"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.notaFiscal.required"
-            [status]="setStatus(notaFiscal, STATUS_RULES.SECOND_RULE, 'notaFiscal')"
-            [disabled]="transaction.paid && iTransaction._id !== undefined"
-            [attr.aria-invalid]="notaFiscal.invalid && notaFiscal.touched ? true : null"
-          />
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-company-percentage">Empresa(%):</label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.companyPercentage"
-            (ngModelChange)="updateLiquidValue()"
-            #companyPercentage="ngModel"
-            id="input-company-percentage"
-            name="nortan"
-            placeholder="Porcentagem"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.companyPercentage.required"
-            [status]="setStatus(companyPercentage, STATUS_RULES.SECOND_RULE, 'companyPercentage')"
-            [disabled]="transaction.paid && iTransaction._id !== undefined"
-            [attr.aria-invalid]="companyPercentage.invalid && companyPercentage.touched ? true : null"
-          />
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-liquid">Valor liquído:</label>
-          <input
-            nbInput
-            [(ngModel)]="options.liquid"
-            #liquid="ngModel"
-            id="input-liquid"
-            name="liquid"
-            placeholder="Valor liquido"
-            fullWidth
-            fieldSize="large"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.liquid.required"
-            [status]="
-              liquid.dirty ? (liquid.invalid ? 'danger' : 'success') : options.liquid != undefined ? 'success' : 'basic'
-            "
-            [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
-            [readonly]="true"
-          />
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="form-control-group">
-          <label class="label d-flex align-items-center" for="input-has-ISS">
-            <span class="mr-2">Houve retenção de ISS? (%)</span>
-            <nb-checkbox
-              status="basic"
-              class="d-flex"
-              [(ngModel)]="options.hasISS"
-              (ngModelChange)="handleISSToggle()"
-              id="input-has-ISS"
-              name="input-has-ISS"
-              #actionChecked="ngModel"
-            ></nb-checkbox>
-          </label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.ISS"
-            #iss="ngModel"
-            id="input-iss"
-            name="iss"
-            placeholder="Alíquota"
-            fullWidth
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            fieldSize="large"
-            ngxSelectAllText
-            [disabled]="!options.hasISS"
-            (ngModelChange)="updateLiquidValue()"
-            [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
-          />
-        </div>
-      </div>
-      <div class="col-12">
-        <div class="form-control-group">
-          <label class="label" for="input-description">Descrição</label>
-          <textarea
-            nbInput
-            [(ngModel)]="transaction.description"
-            #description="ngModel"
-            id="input-description"
-            name="description"
-            placeholder="Descreva os detalhes da movimentação"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.description.required"
-            [minlength]="validation.description.minLength"
-            [maxlength]="validation.description.maxLength"
-            [status]="setStatus(description, STATUS_RULES.FIRST_RULE)"
-            [attr.aria-invalid]="description.invalid && description.touched ? true : null"
-          ></textarea>
-          <ng-container *ngIf="description.invalid && description.touched">
-            <p class="caption status-danger" *ngIf="description.errors?.required">
-              O campo de descrição é obrigatório!
-            </p>
-            <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
-              O campo de descrição deve conter entre
-              {{ validation.description.minLength }} a
-              {{ validation.description.maxLength }}
-              caracteres
-            </p>
-          </ng-container>
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-paidDate">Será pago em:</label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.dueDate"
-            #dueDate="ngModel"
-            id="input-due-date"
-            name="dueDate"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [nbDatepicker]="dueDatepicker"
-            [status]="setStatus(dueDate, STATUS_RULES.THIRD_RULE, '_id')"
-            [attr.aria-invalid]="dueDate.invalid && dueDate.touched ? true : null"
-          />
-          <nb-datepicker #dueDatepicker></nb-datepicker>
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-is-paid">Pago?</label>
-          <nb-select
-            [(ngModel)]="transaction.paid"
-            #isPaidInput="ngModel"
-            id="input-is-paid"
-            name="is-paid"
-            placeholder="Movimentação paga?"
-            (ngModelChange)="updatePaidDate()"
-            fullWidth
-            size="large"
-            [required]="validation.paidCheck.required"
-            [status]="setStatus(isPaidInput, STATUS_RULES.SECOND_RULE, 'paid')"
-            [attr.aria-invalid]="isPaidInput.invalid && isPaidInput.touched ? true : null"
           >
-            <nb-option [value]="false">NÃO</nb-option>
-            <nb-option [value]="true">SIM</nb-option>
-          </nb-select>
-        </div>
-      </div>
-      <div class="col-6 col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-paid-date">Data do pagamento</label>
-          <input
-            *ngIf="!transaction.paid; else withDateReceipt"
-            nbInput
-            [(ngModel)]="transaction.paidDate"
-            #paidDate="ngModel"
-            id="input-paid-date"
-            name="paid-date"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.paidDate.required"
-            [readonly]="true"
-            [disabled]="!transaction.paid"
-            [status]="setStatus(paidDate, STATUS_RULES.FIRST_RULE)"
-            [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
-          />
-          <ng-template #withDateReceipt>
-            <input
-              nbInput
-              [(ngModel)]="transaction.paidDate"
-              #paidDate="ngModel"
-              id="input-paid-date"
-              name="paid-date"
-              placeholder="Escolha uma data"
-              fullWidth
-              fieldSize="large"
-              [nbDatepicker]="paidDatePicker"
-              [required]="validation.paidDate.required"
-              [readonly]="true"
-              [status]="setStatus(paidDate, STATUS_RULES.FIRST_RULE)"
-              [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
-            />
-            <nb-datepicker #paidDatePicker [max]="today"></nb-datepicker>
-          </ng-template>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-created">Data de criação</label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.created"
-            #created="ngModel"
-            id="input-created"
-            name="created"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [nbDatepicker]="createdDatePicker"
-            [required]="validation.created.required"
-            [readonly]="true"
-            [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')"
-            [attr.aria-invalid]="created.invalid && created.touched ? true : null"
-          />
-          <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-updated">Última atualização</label>
-          <input
-            nbInput
-            [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
-            #updated="ngModel"
-            id="input-updated"
-            name="updated"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.lastUpdate.required"
-            [readonly]="true"
-            [status]="setStatus(updated, STATUS_RULES.SECOND_RULE, 'lastUpdate')"
-            [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
-          />
-        </div>
-      </div>
-    </div>
-  </ng-container>
-  <ng-container *ngIf="options.type == tTypes.EXPENSE">
-    <div class="row">
-      <div class="col-12">
-        <div *ngIf="!this.team" class="form-control-group">
-          <label class="label" style="display: flex" for="input-contract-list">
-            Associado ao contrato
-            <nb-checkbox
-              [(ngModel)]="options.relatedWithContract"
-              (ngModelChange)="updateTransactionKinds()"
-              #contractCheckbox="ngModel"
-              name="checkbox-contract"
-              class="ml-2"
-              [disabled]="hasInputContract"
-            ></nb-checkbox>
-          </label>
-          <nb-completer
-            [(ngModel)]="contractSearch"
-            (selected)="this.contract = $event"
-            inputName="contractListCompleter"
-            #contractList="ngModel"
-            id="input-contract"
-            name="contractList"
-            placeholder="Digite e selecione o código do contrato"
-            textNoResults="
-          Não foi possível achar um contrato com o código digitado
-          "
-            fieldSize="large"
-            nameProperty="locals.code"
-            pictureProperty="locals.managerPicture"
-            [disabled]="!!this.team || hasInputContract || !options.relatedWithContract"
-            [data$]="availableContractsData$"
-            [minSearchLength]="0"
-            [fullWidth]="true"
-            [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id',contractSearch !== '')"
-            [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
-          ></nb-completer>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-control-group">
-          <div style="height: 29px; display: flex; align-items: flex-end">
-            <label class="label" for="input-cost-center" style="margin-right: 10px">Centro de custo</label>
-            <nb-radio-group
-              [(ngModel)]="transaction.modelCostCenter"
-              (ngModelChange)="setCostCenterData()"
-              [disabled]="!!this.team"
-              id="input-cost-center-type"
-              name="costCenterType"
-              required="true"
-              [ngStyle]="{
-                'height.px': 16,
-                display: isPhone() ? 'contents' : 'flex',
-                'align-self': 'center'
-              }"
-            >
-              <nb-radio *ngFor="let type of costCenterTypes" [value]="type" class="transaction-radio">
-                {{ type }}
-              </nb-radio>
-            </nb-radio-group>
-          </div>
-          <nb-completer
-            [(ngModel)]="costCenterSearch"
-            (selected)="transaction.costCenter = $event"
-            [disabled]="!!this.team"
-            inputName="costCenterCompleter"
-            #costCenterCompleter="ngModel"
-            id="input-cost-center"
-            name="costCenterCompleter"
-            placeholder="Digite e selecione o centro de custo"
-            textNoResults="
-          Não foi possível achar um centro de custo
-          "
-            fieldSize="large"
-            nameProperty="name"
-            pictureProperty="profilePicture"
-            [data$]="costCenterData$"
-            [minSearchLength]="0"
-            [fullWidth]="true"
-            [status]="setStatus(costCenterCompleter, STATUS_RULES.FIRST_RULE)"
-            [attr.aria-invalid]="costCenterCompleter.invalid && costCenterCompleter.touched ? true : null"
-          ></nb-completer>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="form-control-group">
-          <label class="label" for="input-value">
-            Valor
-            <nb-icon
-              status="info"
-              icon="info"
-              pack="eva"
-              [options]="{ animation: { type: 'pulse' } }"
-              nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            ></nb-icon>
-          </label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.value"
-            #value="ngModel"
-            id="input-value"
-            name="value"
-            placeholder="Valor da despesa"
-            fullWidth
-            fieldSize="large"
-            [overPaid]="overPaid()"
-            [brmasker]="{
-              money: true,
-              thousand: '.',
-              decimalCaracter: ',',
-              decimal: 2
-            }"
-            ngxSelectAllText
-            [required]="validation.value.required"
-            [minLength]="validation.value.minLength"
-            [maxLength]="validation.value.maxLength"
-            [status]="setStatus(value, STATUS_RULES.FIRST_RULE)"
-            [disabled]="transaction.paid && iTransaction._id !== undefined"
-            [attr.aria-invalid]="value.invalid && value.touched ? true : null"
-          />
-          <ng-container>
-            <p class="caption">
-              Valor em caixa: R$
-              {{ contract ? contract.locals.balance : '0,00' }}
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
-            >
-              O valor do empenho é superior ao valor em caixa no contrato!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
-            >
-              O valor da despesa é obrigatório!
-            </p>
-            <p
-              class="caption status-danger"
-              *ngIf="
-                (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
-              "
-            >
-              O valor da despesa deve conter entre
-              {{ validation.value.minLength }} a
-              {{ validation.value.maxLength }}
-              números
-            </p>
-          </ng-container>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="form-control-group">
-          <label class="label" for="input-nf">
-            Com comprovante?
-            <nb-icon
-              status="info"
-              icon="info"
-              pack="eva"
-              [options]="{ animation: { type: 'pulse' } }"
-              nbTooltip="Caso possua comprovante, é nessário anexar um arquivo para cadastrar a movimentação. Esse arquivo deve ter no máximo 4mb."
-              nbTooltipPlacement="top"
-              nbTooltipStatus="info"
-            ></nb-icon>
-          </label>
-          <nb-select
-            [(ngModel)]="transaction.nf"
-            #nf="ngModel"
-            id="input-nf"
-            name="nf"
-            placeholder="nota fiscal?"
-            fullWidth
-            size="large"
-            [required]="validation.nf.required"
-            [status]="setStatus(nf, STATUS_RULES.FIFTH_RULE, '_id')"
-            [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
-          >
-            <nb-option [value]="false">NÃO</nb-option>
-            <nb-option [value]="true">SIM</nb-option>
-          </nb-select>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-control-group">
-          <label class="label" for="input-user">Autor</label>
-          <nb-completer
-            [(ngModel)]="userSearch"
-            (selected)="transaction.author = $event"
-            inputName="userListCompleter"
-            #userList="ngModel"
-            id="input-user"
-            name="userList"
-            placeholder="Digite e selecione o nome do colaborador"
-            textNoResults="
-            Não foi possível achar um colaborador com o nome digitado
-            "
-            fieldSize="large"
-            nameProperty="name"
-            pictureProperty="profilePicture"
-            [data$]="userData"
-            [minSearchLength]="0"
-            [fullWidth]="true"
-            [status]="setStatus(userList, STATUS_RULES.FOURTH_RULE, '_id', userSearch !== '')"
-            [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
-          ></nb-completer>
-        </div>
-      </div>
-      <div [ngClass]="currentTypeHasSubTypes() ? 'col-md-3' : 'col-md-6'">
-        <div class="form-control-group">
-          <label class="label" for="input-type">Tipo da movimentação</label>
-          <nb-select
-            [(ngModel)]="transaction.type"
-            (ngModelChange)="updateExpenseSubTypes()"
-            #type="ngModel"
-            id="input-type"
-            name="type"
-            placeholder="Tipo da movimentação"
-            fullWidth
-            size="large"
-            [required]="validation.type.required"
-            [status]="type.dirty ? 'success' : 'basic'"
-            [attr.aria-invalid]="type.invalid && type.touched ? true : null"
-          >
-            <nb-option *ngFor="let type of transactionKinds" [value]="type.name">
-              {{ type.name }}
-            </nb-option>
-          </nb-select>
-        </div>
-      </div>
-      <div *ngIf="currentTypeHasSubTypes()" class="col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-sub-type">Subtipo da movimentação</label>
-          <nb-select
-            [(ngModel)]="transaction.subType"
-            #subTypeInput="ngModel"
-            id="input-sub-type"
-            name="sub-type"
-            placeholder="Subtipo da movimentação"
-            fullWidth
-            size="large"
-            [required]="validation.type.required"
-            [status]="setStatus(subTypeInput, STATUS_RULES.SECOND_RULE,'subType')"
-            [attr.aria-invalid]="subTypeInput.invalid && subTypeInput.touched ? true : null"
-          >
-            <nb-option *ngFor="let type of expenseSubTypes" [value]="type">
+            <nb-radio *ngFor="let type of transactionTypes" [value]="type" class="transaction-radio">
               {{ type }}
-            </nb-option>
-          </nb-select>
+            </nb-radio>
+          </nb-radio-group>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="form-group">
-          <label class="label" for="input-provider">Fornecedor</label>
-          <nb-completer
-            [(ngModel)]="providerSearch"
-            (selected)="transaction.provider = $event"
-            inputName="providerListCompleter"
-            #providerList="ngModel"
-            id="input-provider"
-            name="providerList"
-            placeholder="Digite e selecione o nome do fornecedor"
-            textNoResults="
-        Não foi possível achar um fornecedor com o nome digitado
-        "
-            fieldSize="large"
-            nameProperty="name"
-            pictureProperty="profilePicture"
-            [data$]="providerData$"
-            [minSearchLength]="0"
-            [fullWidth]="true"
-            [status]="setStatus(providerList, STATUS_RULES.FIRST_RULE)"
-            [attr.aria-invalid]="providerList.invalid && providerList.touched ? true : null"
-          ></nb-completer>
+    <ng-container *ngIf="options.type == tTypes.RECEIPT">
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label d-flex align-items-center" for="input-contract-list">
+              Associado ao contrato
+              <nb-checkbox
+                [(ngModel)]="options.relatedWithContract"
+                #contractCheckbox="ngModel"
+                name="checkbox-contract"
+                class="d-flex ml-2"
+                [disabled]="hasInputContract || requiredContract"
+              ></nb-checkbox>
+              <nb-icon
+                class="ml-2"
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip='A lista de contratos exibe apenas os contratos com status "Em Andamento" ou "A Receber" que você é gestor do contrato ou faz parte do time de contrato, filtrando os contratos que tem todas as OEs já foram criadas.'
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+            <nb-completer
+              [(ngModel)]="contractSearch"
+              (selected)="clonedContract = cloneDeep($event); fillContractData()"
+              inputName="contractListCompleter"
+              #contractList="ngModel"
+              id="input-contract"
+              name="contractList"
+              placeholder="Digite e selecione o código do contrato"
+              textNoResults="
+            Não foi possível achar um contrato com o código digitado
+            "
+              fieldSize="large"
+              nameProperty="locals.code"
+              pictureProperty="locals.managerPicture"
+              [disabled]="hasInputContract || !options.relatedWithContract"
+              [required]="options.relatedWithContract"
+              [data$]="availableContractsData$"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id', contractSearch !== '')"
+              [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
+            ></nb-completer>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="form-control-group">
-          <label class="label" for="input-description">Descrição</label>
-          <textarea
-            nbInput
-            [(ngModel)]="transaction.description"
-            #description="ngModel"
-            id="input-description"
-            name="description"
-            placeholder="Descreva os detalhes da movimentação"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.description.required"
-            [minlength]="validation.description.minLength"
-            [maxlength]="validation.description.maxLength"
-            [status]="setStatus(description, STATUS_RULES.FIRST_RULE)"
-            [attr.aria-invalid]="description.invalid && description.touched ? true : null"
-          ></textarea>
-          <ng-container *ngIf="description.invalid && description.touched">
-            <p class="caption status-danger" *ngIf="description.errors?.required">
-              O campo de descrição é obrigatório!
-            </p>
-            <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
-              O campo de descrição deve conter entre
-              {{ validation.description.minLength }} a
-              {{ validation.description.maxLength }}
-              caracteres
-            </p>
-          </ng-container>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-is-paid">Pago?</label>
-          <nb-select
-            [(ngModel)]="transaction.paid"
-            #isPaidInput="ngModel"
-            id="input-is-paid"
-            name="is-paid"
-            placeholder="Movimentação paga?"
-            fullWidth
-            size="large"
-            (ngModelChange)="updatePaidDate()"
-            [required]="validation.paidCheck.required"
-            [status]="setStatus(isPaidInput, STATUS_RULES.SECOND_RULE, 'paid')"
-            [attr.aria-invalid]="isPaidInput.invalid && isPaidInput.touched ? true : null"
-          >
-            <nb-option [value]="false">NÃO</nb-option>
-            <nb-option [value]="true">SIM</nb-option>
-          </nb-select>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-paid-date">Data do pagamento</label>
-          <input
-            *ngIf="!transaction.paid; else withDateExpense"
-            nbInput
-            [(ngModel)]="transaction.paidDate"
-            #paidDate="ngModel"
-            id="input-paid-date"
-            name="paid-date"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.paidDate.required"
-            [readonly]="true"
-            [disabled]="!transaction.paid"
-            [status]="setStatus(paidDate, STATUS_RULES.SECOND_RULE, 'paidDate')"
-            [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
-          />
-          <ng-template #withDateExpense>
+        <div class="col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-value">
+              Valor
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
             <input
+              nbInput
+              [(ngModel)]="transaction.value"
+              (ngModelChange)="updateLiquidValue()"
+              #value="ngModel"
+              id="input-value"
+              name="value"
+              placeholder="Valor da despesa"
+              fullWidth
+              fieldSize="large"
+              [overPaid]="overPaid()"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.value.required"
+              [minLength]="validation.value.minLength"
+              [maxLength]="validation.value.maxLength"
+              [status]="setStatus(value, STATUS_RULES.SECOND_RULE, 'value')"
+              [disabled]="transaction.paid && iTransaction._id !== undefined"
+              [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+            />
+            <ng-container>
+              <p class="caption">
+                Valor em caixa: R$
+                {{ contract ? contract.locals.balance : '0,00' }}
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
+              >
+                O valor do empenho é superior ao valor em caixa no contrato!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
+              >
+                O valor da despesa é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="
+                  (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
+                "
+              >
+                O valor da despesa deve conter entre
+                {{ validation.value.minLength }} a
+                {{ validation.value.maxLength }}
+                números
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-nota-fiscal">NF(%):</label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.notaFiscal"
+              (ngModelChange)="updateLiquidValue()"
+              #notaFiscal="ngModel"
+              id="input-nota-fiscal"
+              name="notaFiscal"
+              placeholder="Porcentagem"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.notaFiscal.required"
+              [status]="setStatus(notaFiscal, STATUS_RULES.SECOND_RULE, 'notaFiscal')"
+              [disabled]="transaction.paid && iTransaction._id !== undefined"
+              [attr.aria-invalid]="notaFiscal.invalid && notaFiscal.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-company-percentage">Empresa(%):</label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.companyPercentage"
+              (ngModelChange)="updateLiquidValue()"
+              #companyPercentage="ngModel"
+              id="input-company-percentage"
+              name="nortan"
+              placeholder="Porcentagem"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.companyPercentage.required"
+              [status]="setStatus(companyPercentage, STATUS_RULES.SECOND_RULE, 'companyPercentage')"
+              [disabled]="transaction.paid && iTransaction._id !== undefined"
+              [attr.aria-invalid]="companyPercentage.invalid && companyPercentage.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-liquid">Valor liquído:</label>
+            <input
+              nbInput
+              [(ngModel)]="options.liquid"
+              #liquid="ngModel"
+              id="input-liquid"
+              name="liquid"
+              placeholder="Valor liquido"
+              fullWidth
+              fieldSize="large"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.liquid.required"
+              [status]="
+                liquid.dirty ? (liquid.invalid ? 'danger' : 'success') : options.liquid != undefined ? 'success' : 'basic'
+              "
+              [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
+              [readonly]="true"
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-control-group">
+            <label class="label d-flex align-items-center" for="input-has-ISS">
+              <span class="mr-2">Houve retenção de ISS? (%)</span>
+              <nb-checkbox
+                status="basic"
+                class="d-flex"
+                [(ngModel)]="options.hasISS"
+                (ngModelChange)="handleISSToggle()"
+                id="input-has-ISS"
+                name="input-has-ISS"
+                #actionChecked="ngModel"
+              ></nb-checkbox>
+            </label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.ISS"
+              #iss="ngModel"
+              id="input-iss"
+              name="iss"
+              placeholder="Alíquota"
+              fullWidth
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              fieldSize="large"
+              ngxSelectAllText
+              [disabled]="!options.hasISS"
+              (ngModelChange)="updateLiquidValue()"
+              [attr.aria-invalid]="iss.invalid && iss.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-description">Descrição</label>
+            <textarea
+              nbInput
+              [(ngModel)]="transaction.description"
+              #description="ngModel"
+              id="input-description"
+              name="description"
+              placeholder="Descreva os detalhes da movimentação"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.description.required"
+              [minlength]="validation.description.minLength"
+              [maxlength]="validation.description.maxLength"
+              [status]="setStatus(description, STATUS_RULES.FIRST_RULE)"
+              [attr.aria-invalid]="description.invalid && description.touched ? true : null"
+            ></textarea>
+            <ng-container *ngIf="description.invalid && description.touched">
+              <p class="caption status-danger" *ngIf="description.errors?.required">
+                O campo de descrição é obrigatório!
+              </p>
+              <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
+                O campo de descrição deve conter entre
+                {{ validation.description.minLength }} a
+                {{ validation.description.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-paidDate">Será pago em:</label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.dueDate"
+              #dueDate="ngModel"
+              id="input-due-date"
+              name="dueDate"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [nbDatepicker]="dueDatepicker"
+              [status]="setStatus(dueDate, STATUS_RULES.THIRD_RULE, '_id')"
+              [attr.aria-invalid]="dueDate.invalid && dueDate.touched ? true : null"
+            />
+            <nb-datepicker #dueDatepicker></nb-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-is-paid">Pago?</label>
+            <nb-select
+              [(ngModel)]="transaction.paid"
+              [disabled]="!isEditionGranted  && !isFinancialManager"
+              #isPaidInput="ngModel"
+              id="input-is-paid"
+              name="is-paid"
+              placeholder="Movimentação paga?"
+              (ngModelChange)="updatePaidDate()"
+              fullWidth
+              size="large"
+              [required]="validation.paidCheck.required"
+              [status]="setStatus(isPaidInput, STATUS_RULES.SECOND_RULE, 'paid')"
+              [attr.aria-invalid]="isPaidInput.invalid && isPaidInput.touched ? true : null"
+            >
+              <nb-option [value]="false">NÃO</nb-option>
+              <nb-option [value]="true">SIM</nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-paid-date">Data do pagamento</label>
+            <input
+              *ngIf="!transaction.paid; else withDateReceipt"
               nbInput
               [(ngModel)]="transaction.paidDate"
               #paidDate="ngModel"
@@ -786,104 +353,544 @@
               placeholder="Escolha uma data"
               fullWidth
               fieldSize="large"
-              [nbDatepicker]="paidDatePicker"
               [required]="validation.paidDate.required"
               [readonly]="true"
+              [disabled]="!transaction.paid"
               [status]="setStatus(paidDate, STATUS_RULES.FIRST_RULE)"
               [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
             />
-            <nb-datepicker #paidDatePicker [max]="today"></nb-datepicker>
-          </ng-template>
+            <ng-template #withDateReceipt>
+              <input
+                nbInput
+                [(ngModel)]="transaction.paidDate"
+                #paidDate="ngModel"
+                id="input-paid-date"
+                name="paid-date"
+                placeholder="Escolha uma data"
+                fullWidth
+                fieldSize="large"
+                [nbDatepicker]="paidDatePicker"
+                [required]="validation.paidDate.required"
+                [readonly]="true"
+                [status]="setStatus(paidDate, STATUS_RULES.FIRST_RULE)"
+                [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
+              />
+              <nb-datepicker #paidDatePicker [max]="today"></nb-datepicker>
+            </ng-template>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-created">Data de criação</label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.created"
+              #created="ngModel"
+              id="input-created"
+              name="created"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [nbDatepicker]="createdDatePicker"
+              [required]="validation.created.required"
+              [readonly]="true"
+              [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')"
+              [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+            />
+            <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-updated">Última atualização</label>
+            <input
+              nbInput
+              [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
+              #updated="ngModel"
+              id="input-updated"
+              name="updated"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.lastUpdate.required"
+              [readonly]="true"
+              [status]="setStatus(updated, STATUS_RULES.SECOND_RULE, 'lastUpdate')"
+              [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
+            />
+          </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-created">Data de criação</label>
-          <input
-            nbInput
-            [(ngModel)]="transaction.created"
-            #created="ngModel"
-            id="input-created"
-            name="created"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [nbDatepicker]="createdDatePicker"
-            [required]="validation.created.required"
-            [readonly]="true"
-            [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')
+    </ng-container>
+    <ng-container *ngIf="options.type == tTypes.EXPENSE">
+      <div class="row">
+        <div class="col-12">
+          <div *ngIf="!this.team" class="form-control-group">
+            <label class="label" style="display: flex" for="input-contract-list">
+              Associado ao contrato
+              <nb-checkbox
+                [(ngModel)]="options.relatedWithContract"
+                (ngModelChange)="updateTransactionKinds()"
+                #contractCheckbox="ngModel"
+                name="checkbox-contract"
+                class="ml-2"
+                [disabled]="hasInputContract"
+              ></nb-checkbox>
+            </label>
+            <nb-completer
+              [(ngModel)]="contractSearch"
+              (selected)="this.contract = $event"
+              inputName="contractListCompleter"
+              #contractList="ngModel"
+              id="input-contract"
+              name="contractList"
+              placeholder="Digite e selecione o código do contrato"
+              textNoResults="
+            Não foi possível achar um contrato com o código digitado
             "
-            [attr.aria-invalid]="created.invalid && created.touched ? true : null"
-          />
-          <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
+              fieldSize="large"
+              nameProperty="locals.code"
+              pictureProperty="locals.managerPicture"
+              [disabled]="!!this.team || hasInputContract || !options.relatedWithContract"
+              [data$]="availableContractsData$"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id',contractSearch !== '')"
+              [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
+            ></nb-completer>
+          </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
-        <div class="form-control-group">
-          <label class="label" for="input-updated">Última atualização</label>
-          <input
-            nbInput
-            [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
-            #updated="ngModel"
-            id="input-updated"
-            name="updated"
-            placeholder="Escolha uma data"
-            fullWidth
-            fieldSize="large"
-            [required]="validation.lastUpdate.required"
-            [readonly]="true"
-            [status]="setStatus(updated, STATUS_RULES.SECOND_RULE, 'lastUpdate')"
-            [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
-          />
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <div style="height: 29px; display: flex; align-items: flex-end">
+              <label class="label" for="input-cost-center" style="margin-right: 10px">Centro de custo</label>
+              <nb-radio-group
+                [(ngModel)]="transaction.modelCostCenter"
+                (ngModelChange)="setCostCenterData()"
+                [disabled]="!!this.team"
+                id="input-cost-center-type"
+                name="costCenterType"
+                required="true"
+                [ngStyle]="{
+                  'height.px': 16,
+                  display: isPhone() ? 'contents' : 'flex',
+                  'align-self': 'center'
+                }"
+              >
+                <nb-radio *ngFor="let type of costCenterTypes" [value]="type" class="transaction-radio">
+                  {{ type }}
+                </nb-radio>
+              </nb-radio-group>
+            </div>
+            <nb-completer
+              [(ngModel)]="costCenterSearch"
+              (selected)="transaction.costCenter = $event"
+              [disabled]="!!this.team"
+              inputName="costCenterCompleter"
+              #costCenterCompleter="ngModel"
+              id="input-cost-center"
+              name="costCenterCompleter"
+              placeholder="Digite e selecione o centro de custo"
+              textNoResults="
+            Não foi possível achar um centro de custo
+            "
+              fieldSize="large"
+              nameProperty="name"
+              pictureProperty="profilePicture"
+              [data$]="costCenterData$"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="setStatus(costCenterCompleter, STATUS_RULES.FIRST_RULE)"
+              [attr.aria-invalid]="costCenterCompleter.invalid && costCenterCompleter.touched ? true : null"
+            ></nb-completer>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-control-group">
+            <label class="label" for="input-value">
+              Valor
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Não será possível alterar o valor da despesa se ela já foi paga."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.value"
+              #value="ngModel"
+              id="input-value"
+              name="value"
+              placeholder="Valor da despesa"
+              fullWidth
+              fieldSize="large"
+              [overPaid]="overPaid()"
+              [brmasker]="{
+                money: true,
+                thousand: '.',
+                decimalCaracter: ',',
+                decimal: 2
+              }"
+              ngxSelectAllText
+              [required]="validation.value.required"
+              [minLength]="validation.value.minLength"
+              [maxLength]="validation.value.maxLength"
+              [status]="setStatus(value, STATUS_RULES.FIRST_RULE)"
+              [disabled]="transaction.paid && iTransaction._id !== undefined"
+              [attr.aria-invalid]="value.invalid && value.touched ? true : null"
+            />
+            <ng-container>
+              <p class="caption">
+                Valor em caixa: R$
+                {{ contract ? contract.locals.balance : '0,00' }}
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.overpaid && value.invalid && (value.dirty || value.touched)"
+              >
+                O valor do empenho é superior ao valor em caixa no contrato!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="value.errors?.required && value.invalid && (value.dirty || value.touched)"
+              >
+                O valor da despesa é obrigatório!
+              </p>
+              <p
+                class="caption status-danger"
+                *ngIf="
+                  (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
+                "
+              >
+                O valor da despesa deve conter entre
+                {{ validation.value.minLength }} a
+                {{ validation.value.maxLength }}
+                números
+              </p>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-control-group">
+            <label class="label" for="input-nf">
+              Com comprovante?
+              <nb-icon
+                status="info"
+                icon="info"
+                pack="eva"
+                [options]="{ animation: { type: 'pulse' } }"
+                nbTooltip="Caso possua comprovante, é nessário anexar um arquivo para cadastrar a movimentação. Esse arquivo deve ter no máximo 4mb."
+                nbTooltipPlacement="top"
+                nbTooltipStatus="info"
+              ></nb-icon>
+            </label>
+            <nb-select
+              [(ngModel)]="transaction.nf"
+              [disabled]="!isEditionGranted  && !isFinancialManager"
+              #nf="ngModel"
+              id="input-nf"
+              name="nf"
+              placeholder="nota fiscal?"
+              fullWidth
+              size="large"
+              [required]="validation.nf.required"
+              [status]="setStatus(nf, STATUS_RULES.FIFTH_RULE, '_id')"
+              [attr.aria-invalid]="nf.invalid && nf.touched ? true : null"
+            >
+              <nb-option [value]="false">NÃO</nb-option>
+              <nb-option [value]="true">SIM</nb-option>
+            </nb-select>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
-        <div class="form-control-group">
-          <label class="label" for="input-description">Comprovantes anexados:</label>
-          <nb-list>
-            <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
-              <div class="row irow" style="width: 100%">
-                <div class="col-10 col-md-11">
-                  <div class="irow row">
-                    <div class="col-1">#{{ +i + 1 }}</div>
-                    <a
-                      [href]="file.url"
-                      class="col"
-                      target="_blank"
-                      style="width: 100%; cursor: pointer; display: flex"
-                    >
-                      {{ file.name }}
-                    </a>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-control-group">
+            <label class="label" for="input-user">Autor</label>
+            <nb-completer
+              [(ngModel)]="userSearch"
+              (selected)="transaction.author = $event"
+              inputName="userListCompleter"
+              #userList="ngModel"
+              id="input-user"
+              name="userList"
+              placeholder="Digite e selecione o nome do colaborador"
+              textNoResults="
+              Não foi possível achar um colaborador com o nome digitado
+              "
+              fieldSize="large"
+              nameProperty="name"
+              pictureProperty="profilePicture"
+              [data$]="userData"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="setStatus(userList, STATUS_RULES.FOURTH_RULE, '_id', userSearch !== '')"
+              [attr.aria-invalid]="userList.invalid && userList.touched ? true : null"
+            ></nb-completer>
+          </div>
+        </div>
+        <div [ngClass]="currentTypeHasSubTypes() ? 'col-md-3' : 'col-md-6'">
+          <div class="form-control-group">
+            <label class="label" for="input-type">Tipo da movimentação</label>
+            <nb-select
+              [(ngModel)]="transaction.type"
+              [disabled]="!isEditionGranted && !isFinancialManager"
+              (ngModelChange)="updateExpenseSubTypes()"
+              #type="ngModel"
+              id="input-type"
+              name="type"
+              placeholder="Tipo da movimentação"
+              fullWidth
+              size="large"
+              [required]="validation.type.required"
+              [status]="type.dirty ? 'success' : 'basic'"
+              [attr.aria-invalid]="type.invalid && type.touched ? true : null"
+            >
+              <nb-option *ngFor="let type of transactionKinds" [value]="type.name">
+                {{ type.name }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div *ngIf="currentTypeHasSubTypes()" class="col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-sub-type">Subtipo da movimentação</label>
+            <nb-select
+              [(ngModel)]="transaction.subType"
+              [disabled]="!isEditionGranted && !isFinancialManager"
+              #subTypeInput="ngModel"
+              id="input-sub-type"
+              name="sub-type"
+              placeholder="Subtipo da movimentação"
+              fullWidth
+              size="large"
+              [required]="validation.type.required"
+              [status]="setStatus(subTypeInput, STATUS_RULES.SECOND_RULE,'subType')"
+              [attr.aria-invalid]="subTypeInput.invalid && subTypeInput.touched ? true : null"
+            >
+              <nb-option *ngFor="let type of expenseSubTypes" [value]="type">
+                {{ type }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="label" for="input-provider">Fornecedor</label>
+            <nb-completer
+              [(ngModel)]="providerSearch"
+              (selected)="transaction.provider = $event"
+              inputName="providerListCompleter"
+              #providerList="ngModel"
+              id="input-provider"
+              name="providerList"
+              placeholder="Digite e selecione o nome do fornecedor"
+              textNoResults="
+          Não foi possível achar um fornecedor com o nome digitado
+          "
+              fieldSize="large"
+              nameProperty="name"
+              pictureProperty="profilePicture"
+              [data$]="providerData$"
+              [minSearchLength]="0"
+              [fullWidth]="true"
+              [status]="setStatus(providerList, STATUS_RULES.FIRST_RULE)"
+              [attr.aria-invalid]="providerList.invalid && providerList.touched ? true : null"
+            ></nb-completer>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-description">Descrição</label>
+            <textarea
+              nbInput
+              [(ngModel)]="transaction.description"
+              #description="ngModel"
+              id="input-description"
+              name="description"
+              placeholder="Descreva os detalhes da movimentação"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.description.required"
+              [minlength]="validation.description.minLength"
+              [maxlength]="validation.description.maxLength"
+              [status]="setStatus(description, STATUS_RULES.FIRST_RULE)"
+              [attr.aria-invalid]="description.invalid && description.touched ? true : null"
+            ></textarea>
+            <ng-container *ngIf="description.invalid && description.touched">
+              <p class="caption status-danger" *ngIf="description.errors?.required">
+                O campo de descrição é obrigatório!
+              </p>
+              <p class="caption status-danger" *ngIf="description.errors?.minlength || description.errors?.maxlength">
+                O campo de descrição deve conter entre
+                {{ validation.description.minLength }} a
+                {{ validation.description.maxLength }}
+                caracteres
+              </p>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-is-paid">Pago?</label>
+            <nb-select
+              [(ngModel)]="transaction.paid"
+              [disabled]="!isEditionGranted && !isFinancialManager"
+              #isPaidInput="ngModel"
+              id="input-is-paid"
+              name="is-paid"
+              placeholder="Movimentação paga?"
+              fullWidth
+              size="large"
+              (ngModelChange)="updatePaidDate()"
+              [required]="validation.paidCheck.required"
+              [status]="setStatus(isPaidInput, STATUS_RULES.SECOND_RULE, 'paid')"
+              [attr.aria-invalid]="isPaidInput.invalid && isPaidInput.touched ? true : null"
+            >
+              <nb-option [value]="false">NÃO</nb-option>
+              <nb-option [value]="true">SIM</nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-paid-date">Data do pagamento</label>
+            <input
+              *ngIf="!transaction.paid; else withDateExpense"
+              nbInput
+              [(ngModel)]="transaction.paidDate"
+              #paidDate="ngModel"
+              id="input-paid-date"
+              name="paid-date"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.paidDate.required"
+              [readonly]="true"
+              [disabled]="!transaction.paid"
+              [status]="setStatus(paidDate, STATUS_RULES.SECOND_RULE, 'paidDate')"
+              [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
+            />
+            <ng-template #withDateExpense>
+              <input
+                nbInput
+                [(ngModel)]="transaction.paidDate"
+                #paidDate="ngModel"
+                id="input-paid-date"
+                name="paid-date"
+                placeholder="Escolha uma data"
+                fullWidth
+                fieldSize="large"
+                [nbDatepicker]="paidDatePicker"
+                [required]="validation.paidDate.required"
+                [readonly]="true"
+                [status]="setStatus(paidDate, STATUS_RULES.FIRST_RULE)"
+                [attr.aria-invalid]="paidDate.invalid && paidDate.touched ? true : null"
+              />
+              <nb-datepicker #paidDatePicker [max]="today"></nb-datepicker>
+            </ng-template>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-created">Data de criação</label>
+            <input
+              nbInput
+              [(ngModel)]="transaction.created"
+              #created="ngModel"
+              id="input-created"
+              name="created"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [nbDatepicker]="createdDatePicker"
+              [required]="validation.created.required"
+              [readonly]="true"
+              [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')
+              "
+              [attr.aria-invalid]="created.invalid && created.touched ? true : null"
+            />
+            <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="form-control-group">
+            <label class="label" for="input-updated">Última atualização</label>
+            <input
+              nbInput
+              [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
+              #updated="ngModel"
+              id="input-updated"
+              name="updated"
+              placeholder="Escolha uma data"
+              fullWidth
+              fieldSize="large"
+              [required]="validation.lastUpdate.required"
+              [readonly]="true"
+              [status]="setStatus(updated, STATUS_RULES.SECOND_RULE, 'lastUpdate')"
+              [attr.aria-invalid]="updated.invalid && updated.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" *ngIf="uploadedFiles.length > 0">
+          <div class="form-control-group">
+            <label class="label" for="input-description">Comprovantes anexados:</label>
+            <nb-list>
+              <nb-list-item *ngFor="let file of uploadedFiles; let i = index">
+                <div class="row irow" style="width: 100%">
+                  <div class="col-10 col-md-11">
+                    <div class="irow row">
+                      <div class="col-1">#{{ +i + 1 }}</div>
+                      <a
+                        [href]="file.url"
+                        class="col"
+                        target="_blank"
+                        style="width: 100%; cursor: pointer; display: flex"
+                      >
+                        {{ file.name }}
+                      </a>
+                    </div>
+                  </div>
+                  <div class="col-2 col-md-1" style="text-align: right">
+                    <nb-icon
+                      class="xIcon"
+                      status="danger"
+                      icon="trash-2-outline"
+                      pack="eva"
+                      (click)="removeFile(i)"
+                      [options]="{ animation: { type: 'shake' } }"
+                    ></nb-icon>
                   </div>
                 </div>
-                <div class="col-2 col-md-1" style="text-align: right">
-                  <nb-icon
-                    class="xIcon"
-                    status="danger"
-                    icon="trash-2-outline"
-                    pack="eva"
-                    (click)="removeFile(i)"
-                    [options]="{ animation: { type: 'shake' } }"
-                  ></nb-icon>
-                </div>
-              </div>
-            </nb-list-item>
-          </nb-list>
+              </nb-list-item>
+            </nb-list>
+          </div>
+        </div>
+        <div class="col-md-12" *ngIf="transaction.nf && form.valid">
+          <nb-file-uploader
+            [options]="uploaderOptions"
+            [isFileDrop]="true"
+            (filesList)="urlReceiver($event)"
+            dropAreaLabel="Arraste seu comprovante aqui ou"
+            dropAreaFileChooserLabel="escolha um arquivo"
+          ></nb-file-uploader>
         </div>
       </div>
-      <div class="col-md-12" *ngIf="transaction.nf && form.valid">
-        <nb-file-uploader
-          [options]="uploaderOptions"
-          [isFileDrop]="true"
-          (filesList)="urlReceiver($event)"
-          dropAreaLabel="Arraste seu comprovante aqui ou"
-          dropAreaFileChooserLabel="escolha um arquivo"
-        ></nb-file-uploader>
-      </div>
-    </div>
-  </ng-container>
+    </ng-container>
+  </fieldset>
 </form>
 <div class="row">
   <div
@@ -897,14 +904,14 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="iTransaction._id || !form.valid"
+      [disabled]="(!isEditionGranted && !isFinancialManager) || iTransaction._id || !form.valid"
       (click)="iTransaction._id ? editTransaction() : registerTransaction()"
     >
       {{ iTransaction._id ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
   <div class="col-6" *ngIf="iTransaction._id === undefined">
-    <button nbButton fullWidth status="success" size="large" [disabled]="!form.valid" (click)="addAndClean()">
+    <button nbButton fullWidth status="success" size="large" [disabled]="!form.valid || (!isEditionGranted && !isFinancialManager)" (click)="addAndClean()">
       Adicionar Outro
     </button>
   </div>
