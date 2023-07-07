@@ -48,19 +48,15 @@ const io = require('socket.io')(server, {
 });
 
 const connMap = {};
-let dbWatcher$; // Variável para armazenar o observador do banco de dados
 
-function setupDBWatcher() {
-  dbWatcher$ = app.db.watch();
+const dbWatcher$ = app.db.watch();
 
-  dbWatcher$.on('change', (data) => {
-    app.api.lastChanges.queue(data);
-  });
-}
+dbWatcher$.on('change', (data) => {
+  app.api.lastChanges.queue(data);
+});
 
-function handleConnection(socket) {
+io.on('connection', (socket) => {
   console.log('Nova conexao', socket.id, socket.client.conn.id);
-
   connMap[socket.id] = app.api.lastChanges.inserted$.subscribe((data) => {
     socket.emit('dbchange', data);
   });
@@ -71,17 +67,5 @@ function handleConnection(socket) {
       connMap[socket.id].unsubscribe();
       delete connMap[socket.id];
     }
-
-    // Verificar se todas as conexões foram perdidas
-    if (Object.keys(connMap).length === 0) {
-      // Reconstruir o observador do banco de dados após um período de espera
-      setTimeout(setupDBWatcher, 2000);
-    }
   });
-}
-
-// Configurar evento de conexão no socket.io
-io.on('connection', handleConnection);
-
-// Inicializar o observador do banco de dados
-setupDBWatcher();
+});
