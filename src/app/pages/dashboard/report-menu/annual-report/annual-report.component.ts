@@ -871,7 +871,12 @@ export class AnnualReportComponent implements OnInit {
                             month < intersection.end.getMonth();
                             month++
                           ) {
+                            const endDate = endOfMonth(new Date(year, month));
                             data[team][month].ongoing_oe += 1;
+                            data[team][month].balance = this.stringUtil.sumMoney(
+                              data[team][month].balance,
+                              this.contractService.balance(monthContract.contract, endDate)
+                            );
                             data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
                               data[team][month].ongoing_oe_value,
                               monthReceipt.receipt.value

@@ -193,16 +193,18 @@ export class ContractService implements OnDestroy {
     return contract.expenses.length != 0;
   }
 
-  balance(contract: Contract): string {
-    const paid = this.paidValue(contract);
-    const expenseContribution = this.expensesContributions(contract);
+  balance(contract: Contract, endDate: Date = new Date()): string {
+    const paid = this.paidValue(contract, endDate);
+    const expenseContribution = this.expensesContributions(contract, undefined, endDate);
     return this.stringUtil.numberToMoney(
       this.stringUtil.round(
         this.stringUtil.moneyToNumber(paid) -
-          contract.payments.reduce((accumulator: number, payment: any) => {
-            if (payment.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(payment.value);
-            return accumulator;
-          }, 0) -
+          contract.payments
+            .filter((payment) => payment.paidDate && !isAfter(payment.paidDate, endDate))
+            .reduce((accumulator: number, payment: any) => {
+              if (payment.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(payment.value);
+              return accumulator;
+            }, 0) -
           expenseContribution.global.expense +
           expenseContribution.global.contribution +
           expenseContribution.global.cashback
@@ -250,7 +252,8 @@ export class ContractService implements OnDestroy {
   /* eslint-disable indent */
   expensesContributions(
     contract: Contract,
-    user?: User | string
+    user?: User | string,
+    endDate: Date = new Date()
   ): {
     user: ExpenseParts;
     global: ExpenseParts;
@@ -258,7 +261,11 @@ export class ContractService implements OnDestroy {
     /* eslint-enable @typescript-eslint/indent */
     return contract.expenses
       .filter(
-        (expense) => expense.paid && expense.source && this.userService.idToUser(expense.source)._id != CLIENT._id
+        (expense) =>
+          expense.paidDate &&
+          expense.source &&
+          this.userService.idToUser(expense.source)._id != CLIENT._id &&
+          !isAfter(expense.paidDate, endDate)
       )
       .reduce(
         (accumulator, expense: ContractExpense) => {
@@ -338,11 +345,13 @@ export class ContractService implements OnDestroy {
     return this.stringUtil.numberToMoney(received);
   }
 
-  paidValue(contract: Contract): string {
-    const totalPaidValue = contract.receipts.reduce((total, receipt) => {
-      if (!receipt.paid) return total;
-      return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
-    }, '0,00');
+  paidValue(contract: Contract, endDate: Date = new Date()): string {
+    const totalPaidValue = contract.receipts
+      .filter((receipt) => receipt.paidDate && !isAfter(receipt.paidDate, endDate))
+      .reduce((total, receipt) => {
+        if (!receipt.paid) return total;
+        return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
+      }, '0,00');
 
     return totalPaidValue;
   }
@@ -453,9 +462,9 @@ export class ContractService implements OnDestroy {
         contract.created
       );
 
-      contract.locals.notPaid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.toNetValue(invoice.value, nf, nortan, contract.created)) -
-          this.stringUtil.moneyToNumber(paid)
+      contract.locals.notPaid = this.stringUtil.subtractMoney(
+        this.toNetValue(invoice.value, nf, nortan, contract.created),
+        paid
       );
     }
     return contract;
