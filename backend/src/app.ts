@@ -50,11 +50,16 @@ class NortanAPI {
       connectTimeoutMS: 15000,
     };
 
+    const dbWatcher$ = mongoose.connection.watch();
+
     const connectWithRetry = () => {
       console.log('Trying to connect with database');
       mongoose
         .connect(process.env.MONGODB_URI, options)
         .then(() => {
+          dbWatcher$.on('change', (data) => {
+            api.lastChanges.queue(data);
+          });
           console.log('Database connection ready!');
         })
         .catch((error) => {
