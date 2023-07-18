@@ -370,12 +370,13 @@ export class ContractService implements OnDestroy {
     return numberToMoney(received);
   }
 
-  paidValue(contract: Contract, endDate: Date = new Date()): string {
+  paidValue(contract: Contract, endDate: Date = new Date(), isNet = true): string {
     const totalPaidValue = contract.receipts
       .filter((receipt) => receipt.paidDate && !isAfter(receipt.paidDate, endDate))
       .reduce((total, receipt) => {
         if (!receipt.paid) return total;
-        return sumMoney(this.receiptNetValue(receipt), total);
+        if (isNet) return sumMoney(this.receiptNetValue(receipt), total);
+        else return sumMoney(receipt.value, total);
       }, '0,00');
 
     return totalPaidValue;
