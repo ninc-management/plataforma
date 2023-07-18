@@ -865,6 +865,9 @@ export class AnnualReportComponent implements OnInit {
                         const start = monthReceipt.receipt.created;
                         const end = monthReceipt.receipt.paidDate || new Date();
                         const intersection = getIntersectionBetweenDates(start, end, year);
+                        const invoiceValue = monthContract.contract.invoice
+                          ? this.invoiceService.idToInvoice(monthContract.contract.invoice).value
+                          : '0,00';
                         if (intersection) {
                           for (
                             let month = intersection.start.getMonth();
@@ -880,6 +883,11 @@ export class AnnualReportComponent implements OnInit {
                             data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
                               data[team][month].ongoing_oe_value,
                               monthReceipt.receipt.value
+                            );
+
+                            data[team][month].not_paid = this.stringUtil.subtractMoney(
+                              invoiceValue,
+                              this.contractService.paidValue(monthContract.contract, endDate, false)
                             );
                           }
                         }
