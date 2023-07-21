@@ -735,21 +735,20 @@ export class AnnualReportComponent implements OnInit {
                   )
                 ) {
                   //TODO: count invoices by status history
-                  const monthsInProgress = monthContract.contract.statusHistory.find(
-                    (item) => item.status === CONTRACT_STATOOS.EM_ANDAMENTO
+                  const statusHistoryItens = monthContract.contract.statusHistory.filter(
+                    (item) =>
+                      item.status === CONTRACT_STATOOS.EM_ANDAMENTO || item.status === CONTRACT_STATOOS.A_RECEBER
                   );
-                  if (monthsInProgress) {
-                    monthsInProgress.end = monthsInProgress.end || new Date();
-                    const intersection = getIntersectionBetweenDates(
-                      monthsInProgress.start,
-                      monthsInProgress.end,
-                      year
-                    );
-                    if (intersection) {
-                      for (let month = intersection.start.getMonth(); month < intersection.end.getMonth(); month++) {
-                        data[team][month].ongoing_contracts += 1;
+                  if (statusHistoryItens.length > 0) {
+                    statusHistoryItens.forEach((item) => {
+                      item.end = item.end || new Date();
+                      const intersection = getIntersectionBetweenDates(item.start, item.end, year);
+                      if (intersection) {
+                        for (let month = intersection.start.getMonth(); month < intersection.end.getMonth(); month++) {
+                          data[team][month].ongoing_contracts += 1;
+                        }
                       }
-                    }
+                    });
                   }
                 }
                 // Sum expenses in related months
