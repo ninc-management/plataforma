@@ -1,45 +1,45 @@
-// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/docker-from-docker
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-  "name": "Nortan",
-  "build": { "dockerfile": "Dockerfile" },
-  "mounts": ["source=${localWorkspaceFolder},target=/root/nortan,type=bind"],
-
-  // Set *default* container specific settings.json values on container create.
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
-  },
-
-  // Add the IDs of extensions you want installed when the container is created.
-  "extensions": [
-    "eamodio.gitlens",
-    "esbenp.prettier-vscode",
-    "TabNine.tabnine-vscode",
-    "ms-vsliveshare.vsliveshare",
-    "coenraads.bracket-pair-colorizer-2",
-    "johnpapa.angular2",
-    "aaron-bond.better-comments",
-    "zaczero.bootstrap-v4-snippets",
-    "pkief.material-icon-theme",
-    "angular.ng-template",
-    "royaction.color-manager",
-    "dbaeumer.vscode-eslint",
-    "yzhang.markdown-all-in-one",
-    "davidanson.vscode-markdownlint",
-    "jakewilson.vscode-placeholder-images",
-    "mrmlnc.vscode-scss",
-    "equinusocio.vsc-material-theme",
-    "github.vscode-pull-request-github",
-    "rangav.vscode-thunder-client",
-    "mongodb.mongodb-vscode"
-  ],
-
-  // Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-  "runArgs": ["-it", "--rm", "--network=host", "--user=root"],
-
-  "containerEnv": {},
-
-  "workspaceFolder": "/root/nortan",
-
-  "overrideCommand": false
+	"name": "Node.js & TypeScript",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-18-bullseye",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/mongodb-atlas-cli-homebrew:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-contrib/features/mongosh-homebrew:1": {
+			"version": "latest"
+		}
+	},
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "npm install",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"esbenp.prettier-vscode",
+				"TabNine.tabnine-vscode",
+				"johnpapa.angular2",
+				"aaron-bond.better-comments",
+				"pkief.material-icon-theme",
+				"angular.ng-template",
+				"dbaeumer.vscode-eslint",
+				"yzhang.markdown-all-in-one",
+				"davidanson.vscode-markdownlint",
+				"mrmlnc.vscode-scss",
+				"equinusocio.vsc-material-theme",
+				"github.vscode-pull-request-github",
+				"mongodb.mongodb-vscode",
+				"leonardoholanda.changes-counter"
+			]
+		}
+	}
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
 }
