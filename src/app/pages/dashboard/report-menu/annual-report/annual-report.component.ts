@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
+import { differenceInDays, endOfMonth, getMonth, getYear, startOfMonth } from 'date-fns';
 import saveAs from 'file-saver';
 import { cloneDeep, groupBy } from 'lodash';
 import { combineLatest, firstValueFrom, from, map, Observable, skipWhile, take } from 'rxjs';
@@ -661,7 +661,7 @@ export class AnnualReportComponent implements OnInit {
             '1'
           )
         ) as { invoice: Invoice; month: number }[][];
-        invoicesByMonth.forEach((monthInvoices) => {
+        invoicesByMonth.forEach((monthInvoices, monthId) => {
           monthInvoices.forEach((monthInvoice) => {
             for (const team of Object.keys(data)) {
               if (this.teamService.isTeamEqual(monthInvoice.invoice.nortanTeam, team)) {
@@ -685,6 +685,10 @@ export class AnnualReportComponent implements OnInit {
                       data[team][monthInvoice.month].concluded_invoices_value = this.stringUtil.sumMoney(
                         data[team][monthInvoice.month].concluded_invoices_value,
                         monthInvoice.invoice.value
+                      );
+                      data[team][monthInvoice.month].convertion_time += differenceInDays(
+                        statusEditionHistoryItem.start,
+                        monthInvoice.invoice.created
                       );
                     }
                   }
@@ -714,6 +718,11 @@ export class AnnualReportComponent implements OnInit {
               }
             }
           });
+          for (const team of Object.keys(data)) {
+            if (data[team][monthId].concluded_invoices !== 0) {
+              data[team][monthId].convertion_time /= data[team][monthId].concluded_invoices;
+            }
+          }
         });
         const contractsByYear = Object.values(
           groupBy(
