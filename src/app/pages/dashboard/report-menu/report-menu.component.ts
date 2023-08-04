@@ -4,6 +4,7 @@ enum ReportTypes {
   ANNUAL = 'Relatório anual dos usuários',
   ONGOING_CONTRACTS = 'Contratos em andamento',
   CONTRACT_EXPENSES = 'Despesas do contrato',
+  RECEIPTS = 'Ordem de empenho',
 }
 
 const SECOND_STEP_INDEX = 1;
