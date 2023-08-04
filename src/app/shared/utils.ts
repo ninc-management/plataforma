@@ -337,6 +337,7 @@ export function elapsedTime(time: Date, elapsedLocalTime: Date = new Date()): st
 export function reviveDates<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj), (key, value) => {
     if (
+      value &&
       [
         'created',
         'date',

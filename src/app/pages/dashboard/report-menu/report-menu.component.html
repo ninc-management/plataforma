@@ -11,6 +11,7 @@
         >
           <nb-radio [value]="reportTypes.ANNUAL">Relatório anual</nb-radio>
           <nb-radio [value]="reportTypes.ONGOING_CONTRACTS">Relatório de contratos abertos</nb-radio>
+          <nb-radio [value]="reportTypes.RECEIPTS">Relatório de ordens de empenho</nb-radio>
           <nb-radio [value]="reportTypes.CONTRACT_EXPENSES">Relatório de despesas do contrato</nb-radio>
         </nb-radio-group>
       </form>
@@ -25,6 +26,9 @@
       </ng-container>
       <ng-container *ngIf="selectedReportOption == reportTypes.CONTRACT_EXPENSES">
         <ngx-contract-expenses-report></ngx-contract-expenses-report>
+      </ng-container>
+      <ng-container *ngIf="selectedReportOption == reportTypes.RECEIPTS">
+        <ngx-receipt-report></ngx-receipt-report>
       </ng-container>
     </nb-step>
   </nb-stepper>

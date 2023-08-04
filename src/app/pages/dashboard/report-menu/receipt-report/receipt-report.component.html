@@ -1,0 +1,36 @@
+<div class="row">
+  <div class="col-12 mb-3">
+    <label class="label" for="input-year-selector">Selecione o intervalo de data para o relatório</label>
+    <input
+      nbInput
+      [(ngModel)]="dateInterval"
+      #newRangeInput="ngModel"
+      id="new-action-range"
+      name="new-action-range"
+      fullWidth
+      fieldSize="large"
+      required
+      [nbDatepicker]="inputRangePicker"
+      [status]="newRangeInput.value ? (newRangeInput.invalid ? 'danger' : 'success') : 'basic'"
+      [attr.aria-invalid]="newRangeInput.invalid && newRangeInput.touched ? true : null"
+    />
+    <nb-rangepicker #inputRangePicker></nb-rangepicker>
+  </div>
+  <div class="col-12 col-md-6">
+    <button class="stepper-button" status="warning" size="large" nbButton fullWidth nbStepperPrevious>Voltar</button>
+  </div>
+  <div class="col-12 col-md-6">
+    <button
+      class="stepper-button"
+      status="success"
+      size="large"
+      nbButton
+      fullWidth
+      nbStepperNext
+      (click)="downloadReport()"
+      [disabled]="newRangeInput.invalid"
+    >
+      Gerar relatório
+    </button>
+  </div>
+</div>
