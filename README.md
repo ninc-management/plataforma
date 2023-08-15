@@ -17,16 +17,16 @@ npm i
 3. Then start backend
 
 ```
-npm run start:dev
+npm run start:back
 ```
 
 4. Then start frontend
 
 ```
-npm run start:proxy
+npm run start:front
 ```
 
-5. Finally, Open a browser with this url: `localhost:4200`
+5. Finally, Open a browser with this url: `localhost:3000`
 
 ## Akveo Template Demo
 
