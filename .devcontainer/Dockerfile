@@ -1,17 +1,7 @@
-FROM node:12
-
-# Instala a versão mais recente do Git
-RUN apt-get update && \
-    apt-get install -y make libssl-dev libghc-zlib-dev libcurl4-gnutls-dev libexpat1-dev gettext unzip make wget vim less && \
-    wget https://github.com/git/git/archive/v2.30.0.zip -O git.zip && \
-    unzip git.zip && \
-    cd git-* && \
-    make prefix=/usr/local all && \
-    make prefix=/usr/local install && \
-    cd - && rm -rf git*
+FROM mcr.microsoft.com/devcontainers/typescript-node:1-18-bullseye
 
 # Instala o chromium para os testes
-RUN apt-get install -y chromium
+RUN apt-get update && apt-get install -y chromium
 
 # Instala codecov
 RUN cd /usr/bin && \
@@ -20,7 +10,7 @@ RUN cd /usr/bin && \
     cd -
 
 # Define pasta padrão
-WORKDIR /root/nortan
+#WORKDIR /root/nortan
 
 # Adiciona novo usuário e grupo para evitar usar o root
 #RUN groupadd -r node && useradd -m -r -g node -s /bin/bash node

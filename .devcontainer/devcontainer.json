@@ -3,7 +3,10 @@
 {
 	"name": "Node.js & TypeScript",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-18-bullseye",
+	//"image": "mcr.microsoft.com/devcontainers/typescript-node:1-18-bullseye",
+	"build": {
+		"dockerfile": "Dockerfile",
+	},
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/mongodb-atlas-cli-homebrew:1": {
 			"version": "latest"
