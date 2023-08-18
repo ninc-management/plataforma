@@ -13,7 +13,7 @@ import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
+import { INVOICE_STATOOS, InvoiceService, PAYMENT_FORMS } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
@@ -145,8 +145,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
+  PaymentForms = Object.values(PAYMENT_FORMS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
-
   forceValidatorUpdate = forceValidatorUpdate;
   trackByIndex = trackByIndex;
   isPhone = isPhone;
