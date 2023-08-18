@@ -1752,6 +1752,22 @@
       <div *ngIf="config.hasStageName" class="row">
         <div class="col-md-4">
           <div class="form-control-group">
+            <label class="label" for="input-payment-form" style="display: flex; margin-top: 4px">Forma de pagamento:</label>
+            <nb-radio-group
+              [(ngModel)]="tempInvoice.paymentForm"
+              #paymentForm="ngModel"
+              id="input-payment-form"
+              name="paymentForm"
+              style="height: 16px"
+            >
+              <nb-radio *ngFor="let pForm of PaymentForms" [value]="pForm" style="height: 16px">
+                {{ pForm }}
+              </nb-radio>
+            </nb-radio-group>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-control-group">
             <label class="label" for="input-parcels" style="margin-top: 4px">
               <span style="margin-right: 10px">Número de parcelas:</span>
             </label>
