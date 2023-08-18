@@ -233,6 +233,9 @@ export class Invoice extends StatusHistory {
   @prop()
   invoiceType: string = 'projeto';
 
+  @prop()
+  paymentForm?: string;
+
   @prop({ type: () => [InvoiceProduct] })
   products: InvoiceProduct[] = [];
 
