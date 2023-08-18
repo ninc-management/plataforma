@@ -206,6 +206,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       if (this.tempInvoice.materialListType == undefined) this.tempInvoice.materialListType = '1';
       if (this.tempInvoice.productListType == undefined) this.tempInvoice.productListType = '2';
       if (this.tempInvoice.invoiceType == undefined) this.tempInvoice.invoiceType = 'projeto';
+      if (this.tempInvoice.paymentForm == undefined) this.tempInvoice.paymentForm = 'por entrega';
       this.updateDiscountPercentage();
       this.updateLastValues();
       this.updateDependentValues(this.tempInvoice.products, 'product');

@@ -1283,6 +1283,31 @@
           </p>
         </ng-container>
       </div>
+      <div *ngIf="config.hasType" class="row">
+        <div class="col-auto">
+          <label class="label-divider">Forma de pagamento</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+        <div class="col-12">
+          <div class="form-control-group">
+            <label class="label" for="input-payment-form" style="display: flex; margin-top: 4px">
+              <span style="margin-right: 10px">Forma de pagamento:</span>
+              <nb-radio-group
+                [(ngModel)]="tempInvoice.paymentForm"
+                #invoiceType="ngModel"
+                id="input-payment-form"
+                name="paymentForm"
+                style="height: 16px"
+              >
+                <nb-radio value="por entrega" style="height: 16px">Por entrega</nb-radio>
+                <nb-radio value="parcelado" style="height: 16px">Parcelado</nb-radio>
+              </nb-radio-group>
+            </label>
+          </div>
+        </div>
+      </div>
       <div class="row" style="margin-top: 8px">
         <div class="col-auto">
           <label class="label-divider">Valores</label>
