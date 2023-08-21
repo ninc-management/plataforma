@@ -71,6 +71,9 @@ export class InvoiceStage {
   @prop({ required: true })
   value!: string;
 
+  @prop({ required: true })
+  parcelquantity!: string;
+
   locals: InvoiceStageLocals = {
     percentage: '',
   };

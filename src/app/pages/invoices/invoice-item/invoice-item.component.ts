@@ -98,6 +98,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     stage: {
       value: '',
       name: '',
+      parcelquantity: '',
       locals: {} as InvoiceStageLocals,
     } as InvoiceStage,
     total: '0',
@@ -145,6 +146,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
+  INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
 
   forceValidatorUpdate = forceValidatorUpdate;
   trackByIndex = trackByIndex;
