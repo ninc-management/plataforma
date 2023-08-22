@@ -225,6 +225,9 @@ export class Invoice extends StatusHistory {
   materialListType: string = '1';
 
   @prop()
+  parcelQuantity?: string;
+
+  @prop()
   productListType: string = '2';
 
   @prop()
