@@ -152,6 +152,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   isPhone = isPhone;
   idToProperty = idToProperty;
   tooltipTriggers = tooltipTriggers;
+  PAYMENT_FORMS = PAYMENT_FORMS;
 
   constructor(
     private dialogService: NbDialogService,
