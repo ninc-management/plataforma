@@ -1772,6 +1772,7 @@
               <span style="margin-right: 10px">Número de parcelas:</span>
             </label>
             <nb-select
+              [disabled]="!(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO)"
               [(ngModel)]="tempInvoice.parcelQuantity"
               #stageParcels="ngModel"
               id="input-parcels"
