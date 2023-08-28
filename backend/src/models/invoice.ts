@@ -228,6 +228,9 @@ export class Invoice extends StatusHistory {
   parcelQuantity?: string;
 
   @prop()
+  paymentDay?: number;
+
+  @prop()
   productListType: string = '2';
 
   @prop()
