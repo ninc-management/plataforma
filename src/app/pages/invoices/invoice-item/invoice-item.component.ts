@@ -153,9 +153,11 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   ALL_SECTORS: Sector[] = [];
   USER_SECTORS: Sector[] = [];
   tStatus = INVOICE_STATOOS;
+  PAYMENT_FORMS = PAYMENT_FORMS;
   STATOOS = Object.values(INVOICE_STATOOS);
   PaymentForms = Object.values(PAYMENT_FORMS);
   INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
+  DAYS = [...Array(30).keys()].map((index) => index + 1);
 
   UtilstoPercentage = toPercentage;
   forceValidatorUpdate = forceValidatorUpdate;
