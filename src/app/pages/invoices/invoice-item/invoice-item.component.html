@@ -1766,25 +1766,24 @@
             </nb-radio-group>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" *ngIf="paymentForm.value == PAYMENT_FORMS.PARCELADO">
           <div class="form-control-group">
-            <label class="label" for="input-parcels" style="margin-top: 4px">
-              <span style="margin-right: 10px">Número de parcelas:</span>
+            <label class="label" for="input-paymentDay" style="margin-top: 4px">
+              <span style="margin-right: 10px">Dia de pagamento:</span>
             </label>
             <nb-select
-              [disabled]="!(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO)"
-              [(ngModel)]="tempInvoice.parcelQuantity"
-              #stageParcels="ngModel"
-              id="input-parcels"
-              name="stageParcels"
-              placeholder="Selecione o número de Parcelas"
+              [(ngModel)]="tempInvoice.paymentDay"
+              #paymentDay="ngModel"
+              id="input-paymentDay"
+              name="paymentDay"
+              placeholder="Selecione o dia"
               fullWidth
               size="large"
-              [status]="stageParcels.dirty ? (stageParcels.invalid ? 'danger' : 'success') : 'basic'"
-              [attr.aria-invalid]="stageParcels.invalid && stageParcels.touched ? true : null"
+              [status]="paymentDay.dirty ? (paymentDay.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="paymentDay.invalid && paymentDay.touched ? true : null"
             >
-              <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
-                {{ interest }}
+              <nb-option *ngFor="let day of DAYS" [value]="day">
+                {{ day }}
               </nb-option>
             </nb-select>
           </div>
