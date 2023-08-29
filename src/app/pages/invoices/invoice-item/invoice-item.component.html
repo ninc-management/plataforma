@@ -1800,7 +1800,10 @@
             Adicionar quebra de página no PDF
           </nb-checkbox>
         </div>
-        <div class="col-md-7">
+        <div [ngClass]="{
+                'col-md-7': !(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO),
+                'col-md-5': tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO
+              }">
           <div class="form-control-group">
             <label class="label" for="input-stage">Parcelamentos:</label>
             <input
@@ -1817,7 +1820,32 @@
             />
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3" *ngIf="tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO">
+          <div class="form-control-group">
+            <label class="label" for="input-parcels" style="margin-top: 4px">
+              <span style="margin-right: 10px">Número de parcelas:</span>
+            </label>
+            <nb-select
+              [(ngModel)]="options.stage.parcelQuantity"
+              #stageParcels="ngModel"
+              id="input-parcels"
+              name="stageParcels"
+              placeholder="#"
+              fullWidth
+              size="large"
+              [status]="stageParcels.value ? (stageParcels.invalid ? 'danger' : 'success') : 'basic'"
+              [attr.aria-invalid]="stageParcels.invalid && stageParcels.touched ? true : null"
+            >
+              <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
+                {{ interest }}
+              </nb-option>
+            </nb-select>
+          </div>
+        </div>
+        <div [ngClass]="{
+                'col-md-4': !(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO),
+                'col-md-3': tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO
+              }">
           <div class="form-control-group">
             <label class="label" for="input-paid" style="display: flex; margin-top: 4px">
               <span style="margin-right: 10px">Valor:</span>
@@ -1861,7 +1889,7 @@
             status="primary"
             size="large"
             style="margin-top: 28px"
-            [disabled]="!stage.value || !stagePaid.value"
+            [disabled]="(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO && !options.stage.parcelQuantity) || !stage.value || !stagePaid.value"
             (click)="addStage()"
           >
             +

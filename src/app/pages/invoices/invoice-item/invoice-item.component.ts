@@ -156,7 +156,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   PAYMENT_FORMS = PAYMENT_FORMS;
   STATOOS = Object.values(INVOICE_STATOOS);
   PaymentForms = Object.values(PAYMENT_FORMS);
-  INTERESTS = [...Array(24).keys()].map((index) => (index + 1).toString());
+  INTERESTS = [...Array(24).keys()].map((index) => index + 1);
   DAYS = [...Array(30).keys()].map((index) => index + 1);
 
   UtilstoPercentage = toPercentage;
@@ -165,7 +165,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   isPhone = isPhone;
   idToProperty = idToProperty;
   tooltipTriggers = tooltipTriggers;
-  PAYMENT_FORMS = PAYMENT_FORMS;
 
   constructor(
     private dialogService: NbDialogService,
@@ -677,6 +676,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
     this.updateLastValues();
+    this.options.stage.parcelQuantity = 0;
   }
 
   remainingBalance(base: 'product' | 'stage'): string {
