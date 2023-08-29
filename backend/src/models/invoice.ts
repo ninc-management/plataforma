@@ -71,6 +71,9 @@ export class InvoiceStage {
   @prop({ required: true })
   value!: string;
 
+  @prop()
+  parcelQuantity?: number;
+
   locals: InvoiceStageLocals = {
     percentage: '',
   };
@@ -223,9 +226,6 @@ export class Invoice extends StatusHistory {
 
   @prop()
   materialListType: string = '1';
-
-  @prop()
-  parcelQuantity?: string;
 
   @prop()
   paymentDay?: number;
