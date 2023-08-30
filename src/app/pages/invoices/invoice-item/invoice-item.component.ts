@@ -13,7 +13,7 @@ import { BrMaskDirective } from 'app/shared/directives/br-mask.directive';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { INVOICE_STATOOS, InvoiceService, PAYMENT_FORMS } from 'app/shared/services/invoice.service';
+import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -48,6 +48,7 @@ import {
   InvoiceStage,
   InvoiceStageLocals,
   InvoiceTeamMember,
+  PAYMENT_FORMS,
 } from '@models/invoice';
 import { NotificationTags } from '@models/notification';
 import { InvoiceConfig } from '@models/platformConfig';

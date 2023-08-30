@@ -8,6 +8,11 @@ import { Sector } from './shared/sector';
 import { Team } from './team';
 import { User } from './user';
 
+export enum PAYMENT_FORMS {
+  POR_ENTREGA = 'Por entrega',
+  PARCELADO = 'Parcelado',
+}
+
 export interface InvoiceLocals {
   isModel: boolean;
   role: string;
@@ -237,7 +242,7 @@ export class Invoice extends StatusHistory {
   invoiceType: string = 'projeto';
 
   @prop()
-  paymentForm?: string;
+  paymentForm: string = PAYMENT_FORMS.POR_ENTREGA;
 
   @prop({ type: () => [InvoiceProduct] })
   products: InvoiceProduct[] = [];

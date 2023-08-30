@@ -19,11 +19,6 @@ export enum INVOICE_STATOOS {
   INVALIDADO = 'Invalidado',
 }
 
-export enum PAYMENT_FORMS {
-  POR_ENTREGA = 'Por entrega',
-  PARCELADO = 'Parcelado',
-}
-
 @Injectable({
   providedIn: 'root',
 })
