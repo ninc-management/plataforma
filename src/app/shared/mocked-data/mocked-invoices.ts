@@ -3,11 +3,12 @@ import { externalMockedSectors } from './mocked-sectors';
 import { externalMockedTeams } from './mocked-teams';
 import { externalMockedUsers } from './mocked-users';
 
-import { Invoice } from '@models/invoice';
+import { Invoice, PAYMENT_FORMS } from '@models/invoice';
 
 export const externalMockedInvoices: Invoice[] = [
   {
     _id: '0',
+    paymentForm: PAYMENT_FORMS.POR_ENTREGA,
     administration: 'nortan',
     author: externalMockedUsers[0],
     code: 'ORC-84/2021-NRT/DAD-00',
@@ -73,6 +74,7 @@ export const externalMockedInvoices: Invoice[] = [
   },
   {
     _id: '1',
+    paymentForm: PAYMENT_FORMS.POR_ENTREGA,
     administration: 'pessoal',
     author: externalMockedUsers[1],
     code: 'ORC-2/2021-NRT/DEC-00',
@@ -138,6 +140,7 @@ export const externalMockedInvoices: Invoice[] = [
   },
   {
     _id: '2',
+    paymentForm: PAYMENT_FORMS.POR_ENTREGA,
     administration: 'pessoal',
     author: externalMockedUsers[1],
     code: 'ORC-2/2021-NRT/DEC-00',
