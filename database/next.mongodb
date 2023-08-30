@@ -17,3 +17,8 @@ db.platformconfigs.find().forEach((config) => {
   delete config.oneDriveConfig.providers;
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
+
+db.invoices.find().forEach((invoice) => {
+  invoice.paymentForm = 'Por entrega';
+  db.invoices.replaceOne({ _id: invoice._id }, invoice);
+});
