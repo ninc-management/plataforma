@@ -3,6 +3,7 @@ import { NbIconLibraries } from '@nebular/theme';
 import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { ContractDialogComponent } from './contract-dialog.component';
+import { registerIcons } from 'app/shared/icon-utils';
 
 describe('ContractDialogComponent', () => {
   let iconsLibrary: NbIconLibraries;
@@ -13,18 +14,7 @@ describe('ContractDialogComponent', () => {
 
   beforeEach(() => {
     iconsLibrary = TestBed.inject(NbIconLibraries);
-    iconsLibrary.registerFontPack('far', {
-      packClass: 'far',
-      iconClassPrefix: 'fa',
-    });
-    iconsLibrary.registerFontPack('fa', {
-      packClass: 'fa',
-      iconClassPrefix: 'fa',
-    });
-    iconsLibrary.registerSvgPack('fac', {
-      onedrive: '<svg></svg>',
-      'onedrive-add': '<svg></svg>',
-    });
+    registerIcons(iconsLibrary);
     fixture = TestBed.createComponent(ContractDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
