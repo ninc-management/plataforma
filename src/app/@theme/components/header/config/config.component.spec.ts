@@ -3,8 +3,7 @@ import { NbIconLibraries } from '@nebular/theme';
 import { CommonTestingModule } from 'common-testing.module';
 
 import { ConfigComponent } from './config.component';
-
-import { PlatformConfig } from '@models/platformConfig';
+import { registerIcons } from 'app/shared/icon-utils';
 
 describe('ConfigComponent', () => {
   let component: ConfigComponent;
@@ -16,17 +15,7 @@ describe('ConfigComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ConfigComponent);
     iconsLibrary = TestBed.inject(NbIconLibraries);
-    iconsLibrary.registerFontPack('fa', {
-      packClass: 'fa',
-      iconClassPrefix: 'fa',
-    });
-    iconsLibrary.registerFontPack('ion', {
-      packClass: 'ion',
-      iconClassPrefix: 'ion',
-    });
-    iconsLibrary.registerSvgPack('fac', {
-      minus: '<svg></svg>',
-    });
+    registerIcons(iconsLibrary);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

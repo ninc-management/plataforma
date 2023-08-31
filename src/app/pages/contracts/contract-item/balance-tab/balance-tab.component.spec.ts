@@ -3,6 +3,7 @@ import { NbIconLibraries } from '@nebular/theme';
 import { CommonTestingModule } from 'common-testing.module';
 
 import { BalanceTabComponent } from './balance-tab.component';
+import { registerIcons } from 'app/shared/icon-utils';
 
 describe('BalanceTabComponent', () => {
   let component: BalanceTabComponent;
@@ -13,15 +14,7 @@ describe('BalanceTabComponent', () => {
 
   beforeEach(() => {
     iconsLibrary = TestBed.inject(NbIconLibraries);
-    iconsLibrary.registerFontPack('fa', {
-      packClass: 'fa',
-      iconClassPrefix: 'fa',
-    });
-    iconsLibrary.registerSvgPack('fac', {
-      receipt: '<svg></svg>',
-      minus: '<svg></svg>',
-      scale: '<svg></svg>',
-    });
+    registerIcons(iconsLibrary);
     fixture = TestBed.createComponent(BalanceTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

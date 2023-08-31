@@ -3,6 +3,7 @@ import { NbIconLibraries } from '@nebular/theme';
 import { CommonTestingModule } from 'app/../common-testing.module';
 
 import { InvoiceDialogComponent } from './invoice-dialog.component';
+import { registerIcons } from 'app/shared/icon-utils';
 
 describe('InvoiceDialogComponent', () => {
   let component: InvoiceDialogComponent;
@@ -13,10 +14,7 @@ describe('InvoiceDialogComponent', () => {
 
   beforeEach(() => {
     iconsLibrary = TestBed.inject(NbIconLibraries);
-    iconsLibrary.registerFontPack('far', {
-      packClass: 'far',
-      iconClassPrefix: 'fa',
-    });
+    registerIcons(iconsLibrary);
     fixture = TestBed.createComponent(InvoiceDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
