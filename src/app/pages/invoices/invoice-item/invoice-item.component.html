@@ -1899,7 +1899,10 @@
       <nb-list *ngIf="config.hasStageName" style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let stage of tempInvoice.stages; let i = index; trackBy: trackByIndex">
           <div class="row paymentRow">
-            <div class="col-12 col-md-7">
+            <div class="col-12" [ngClass]="{
+                'col-md-7': !(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO),
+                'col-md-5': tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO
+              }">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.stages[i].name"
@@ -1909,6 +1912,20 @@
                 fullWidth
                 [status]="tempInvoice.stages[i].name.length == 0 ? 'danger' : 'basic'"
               />
+            </div>
+            <div class="col-12 col-md-2" *ngIf="tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO">
+              <nb-select
+              [(ngModel)]="tempInvoice.stages[i].parcelQuantity"
+              id="input-parcels-{{ i }}"
+              name="stageParcels-{{ i }}"
+              placeholder="#"
+              fullWidth
+              status="basic"
+            >
+              <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
+                {{ interest }}
+              </nb-option>
+            </nb-select>
             </div>
             <div class="col-5 col-md-2">
               <input
@@ -1926,7 +1943,7 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
+                [status]="tempInvoice.stages[i].value.length == 0 ? 'danger' : 'basic'"
               />
             </div>
             <div class="col-5 col-md-2" style="display: flex; align-items: center">
@@ -1945,7 +1962,7 @@
                   decimal: 2
                 }"
                 ngxSelectAllText
-                [status]="tempInvoice.stages[i].value ? 'success' : 'basic'"
+                [status]="tempInvoice.stages[i].locals.percentage.length == 0 ? 'danger' : 'basic'"
               />
               %
             </div>
