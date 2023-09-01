@@ -1,4 +1,6 @@
 @import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
   --tabset-content-padding: 0;
@@ -20,6 +22,13 @@
   nb-list-item {
     padding-left: 0 !important;
     padding-right: 0 !important;
+    .row {
+      @include media-breakpoint-down(md) {
+        div {
+          margin-top: 0.7rem;
+        }
+      }
+    }
   }
 
   .subproducts-list {
@@ -49,6 +58,7 @@
   .success {
     color: nb-theme(icon-success-color) !important;
   }
+
 
   nb-tab {
     overflow: unset;
