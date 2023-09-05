@@ -49,6 +49,7 @@ export class DashboardComponent {
   nortanTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
+  openOP: string[] = [];
   isParettoRankLoaded = false;
 
   isPhone = isPhone;
