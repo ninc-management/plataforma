@@ -101,4 +101,8 @@
       padding-bottom: 0.1rem !important;
     }
   }
+  nb-select.appearance-outline.size-medium .select-button {
+    background: var(--select-outline-basic-background-color)!important;
+    border: none;
+  }
 }
