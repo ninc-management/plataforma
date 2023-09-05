@@ -17,6 +17,13 @@
             [isLoading]="!isParettoRankLoaded"
           ></ngx-expansive-list>
         </div>
+        <div class="col-12">
+          <ngx-expansive-list
+            [title]="'Contratos com OP abertas'"
+            [items]="openOP"
+            [isLoading]="false"
+          ></ngx-expansive-list>
+        </div>
       </div>
     </div>
   </nb-tab>
