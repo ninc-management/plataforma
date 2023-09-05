@@ -1817,6 +1817,7 @@
               fieldSize="large"
               [status]="stage.value ? 'success' : 'basic'"
               [attr.aria-invalid]="stage.invalid && stage.touched ? true : null"
+              [disabled]="tempInvoice.stages.length > 0 && tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO"
             />
           </div>
         </div>
@@ -1835,6 +1836,7 @@
               size="large"
               [status]="stageParcels.value ? (stageParcels.invalid ? 'danger' : 'success') : 'basic'"
               [attr.aria-invalid]="stageParcels.invalid && stageParcels.touched ? true : null"
+              [disabled]="tempInvoice.stages.length > 0"
             >
               <nb-option *ngFor="let interest of INTERESTS" [value]="interest">
                 {{ interest }}
@@ -1855,6 +1857,7 @@
                 id="input-value-type"
                 name="stageValueType"
                 style="height: 16px"
+                [disabled]="tempInvoice.stages.length > 0 && tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO"
               >
                 <nb-radio value="$" style="height: 16px">R$</nb-radio>
                 <nb-radio value="%" style="height: 16px">%</nb-radio>
@@ -1878,6 +1881,7 @@
               ngxSelectAllText
               [status]="stagePaid.value ? 'success' : 'basic'"
               [attr.aria-invalid]="stagePaid.invalid && stagePaid.touched ? true : null"
+              [disabled]="tempInvoice.stages.length > 0 && tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO"
             />
           </div>
         </div>
