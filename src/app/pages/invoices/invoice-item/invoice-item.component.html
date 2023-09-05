@@ -1980,8 +1980,17 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-12 col-md-4">Restante: {{ remainingBalance('stage') }}</div>
-            <div class="col-4 col-md-4" style="text-align: right">Total:</div>
+            <div [ngClass]="{
+                'col-12 col-md-4': !((tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO) && tempInvoice.stages.length != 0),
+                'col-6 col-md-3': (tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO) && tempInvoice.stages.length != 0
+              }">Restante: {{ remainingBalance('stage') }}</div>
+            <div class="col-6 col-md-3" style="text-align: right" *ngIf="(tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO) && tempInvoice.stages.length != 0">
+              Parcela: {{ parcelValue() }}
+            </div>
+            <div class="col-4" [ngClass]="{
+                'col-md-4': !((tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO) && tempInvoice.stages.length != 0),
+                'col-md-2': (tempInvoice.paymentForm == PAYMENT_FORMS.PARCELADO) && tempInvoice.stages.length != 0
+              }" style="text-align: right">Total:</div>
             <div
               class="col-4 col-md-2"
               [ngClass]="{
