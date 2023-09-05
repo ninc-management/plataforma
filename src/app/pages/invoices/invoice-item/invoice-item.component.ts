@@ -685,6 +685,16 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     return subtractMoney(this.tempInvoice.value, base === 'product' ? this.options.total : this.options.stageTotal);
   }
 
+  parcelValue() {
+    if (this.tempInvoice.stages[0].parcelQuantity) {
+      return this.stringUtil.numberToMoney(
+        this.stringUtil.moneyToNumber(this.tempInvoice.stages[0].value) / this.tempInvoice.stages[0].parcelQuantity
+      );
+    } else {
+      return '';
+    }
+  }
+
   updateMaterialList(): void {
     if (this.tempInvoice.materialListType == '2') {
       this.tempInvoice.materials.forEach((material, index) => {
