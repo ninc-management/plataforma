@@ -7,9 +7,9 @@ import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
 import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import { numberToMoney } from 'app/shared/string-utils';
 import { groupByDateTimeSerie, isPhone } from 'app/shared/utils';
 
 import { Team } from '@models/team';
@@ -55,7 +55,6 @@ export class DashboardComponent {
 
   constructor(
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private dialogService: NbDialogService,
     private teamService: TeamService
@@ -72,7 +71,7 @@ export class DashboardComponent {
           this.nortanTeam = nortanTeam;
           this.expenses$ = metricsService
             .teamExpenses(nortanTeam._id, this.start, this.end)
-            .pipe(map((metricInfo) => this.stringUtil.numberToMoney(metricInfo.value)));
+            .pipe(map((metricInfo) => numberToMoney(metricInfo.value)));
           this.open$ = metricsService
             .countContracts(CONTRACT_STATOOS.EM_ANDAMENTO)
             .pipe(map((metricInfo) => metricInfo.count));

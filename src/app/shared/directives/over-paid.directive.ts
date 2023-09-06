@@ -1,7 +1,7 @@
 import { Directive, Injectable, Input } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
 
-import { StringUtilService } from '../services/string-util.service';
+import { moneyToNumber } from '../string-utils';
 
 @Directive({
   selector: '[overPaid]',
@@ -19,12 +19,9 @@ import { StringUtilService } from '../services/string-util.service';
 export class OverPaidDirective implements Validator {
   @Input('overPaid') maxMoney = '0,00';
 
-  constructor(private stringUtilService: StringUtilService) {}
-
   validate(control: AbstractControl): { [key: string]: any } | null {
     if (!control.value) return null;
-    const forbidden =
-      this.stringUtilService.moneyToNumber(control.value) > this.stringUtilService.moneyToNumber(this.maxMoney);
+    const forbidden = moneyToNumber(control.value) > moneyToNumber(this.maxMoney);
     return forbidden ? { overpaid: { value: control.value } } : null;
   }
 }

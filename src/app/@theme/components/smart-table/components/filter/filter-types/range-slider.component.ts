@@ -2,8 +2,7 @@ import { Options } from '@angular-slider/ngx-slider';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 
-import { appInjector } from 'app/shared/injector.module';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { moneyToNumber, numberToMoney } from 'app/shared/string-utils';
 
 @Component({
   selector: 'range-slider-filter',
@@ -40,13 +39,11 @@ export class RangeFilterComponent implements OnInit, OnDestroy {
 
   options: Options = {
     translate: (value: number): string => {
-      return 'R$ ' + this.stringUtil.numberToMoney(value);
+      return 'R$ ' + numberToMoney(value);
     },
     enforceStep: false,
     enforceRange: false,
   };
-
-  constructor(private stringUtil: StringUtilService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -60,8 +57,8 @@ export class RangeFilterComponent implements OnInit, OnDestroy {
     this.maxValueSlider = this.options.ceil;
     if (this.query) {
       const [min, max] = this.query.split(' - ');
-      this.minValue = this.stringUtil.moneyToNumber(min);
-      this.maxValue = this.stringUtil.moneyToNumber(max);
+      this.minValue = moneyToNumber(min);
+      this.maxValue = moneyToNumber(max);
       this.minValueSlider = this.minValue;
       this.maxValueSlider = this.maxValue;
     }
@@ -91,20 +88,16 @@ export class RangeFilterComponent implements OnInit, OnDestroy {
     this.minValue = this.minValueSlider;
     this.maxValue = this.maxValueSlider;
     this.valueChanged.emit({
-      min: this.stringUtil.numberToMoney(+this.minValue),
-      max: this.stringUtil.numberToMoney(+this.maxValue),
+      min: numberToMoney(+this.minValue),
+      max: numberToMoney(+this.maxValue),
     });
   }
 }
 
 export function sliderRangeFilter(cell: any, search?: string): boolean {
-  const stringUtil = appInjector.get(StringUtilService);
   if (search) {
     const range = search.split(' - ');
-    return (
-      stringUtil.moneyToNumber(cell) >= stringUtil.moneyToNumber(range[0]) &&
-      stringUtil.moneyToNumber(cell) <= stringUtil.moneyToNumber(range[1])
-    );
+    return moneyToNumber(cell) >= moneyToNumber(range[0]) && moneyToNumber(cell) <= moneyToNumber(range[1]);
   }
   return false;
 }

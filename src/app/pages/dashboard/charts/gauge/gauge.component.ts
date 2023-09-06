@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Input, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { combineLatest, filter, Observable, of } from 'rxjs';
 
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { numberToMoney } from 'app/shared/string-utils';
 
 @Component({
   selector: 'ngx-gauge',
@@ -16,7 +16,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
   themeSubscription: any;
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private stringUtil: StringUtilService) {}
+  constructor(private theme: NbThemeService) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -112,7 +112,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
                 offsetCenter: [0, '-10%'],
                 valueAnimation: true,
                 formatter: (value: number) => {
-                  return this.stringUtil.numberToMoney(value);
+                  return numberToMoney(value);
                 },
                 color: color,
               },

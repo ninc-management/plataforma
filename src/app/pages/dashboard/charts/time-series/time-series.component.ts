@@ -6,7 +6,7 @@ import { combineLatest, Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { TimeSeries } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { numberToMoney } from 'app/shared/string-utils';
 import { formatDate, isWithinInterval } from 'app/shared/utils';
 
 @Component({
@@ -26,7 +26,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
   };
   currentTheme = {};
 
-  constructor(private theme: NbThemeService, private stringUtil: StringUtilService) {}
+  constructor(private theme: NbThemeService) {}
 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
@@ -112,7 +112,7 @@ export class TimeSeriesComponent implements AfterViewInit, OnDestroy {
               let output = '<div style="text-align:center">' + formatDate(new Date(date)) + '</div>';
               for (let i = 0; i < params.length; i++) {
                 const value = this.currentTimeSeries[params[i].seriesIndex].isMoney
-                  ? this.stringUtil.numberToMoney(params[i].value[1])
+                  ? numberToMoney(params[i].value[1])
                   : params[i].value[1];
                 output +=
                   '<div style="display: flex; justify-content: space-between"><span>' +

@@ -14,9 +14,9 @@ import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { applyPercentage, numberToMoney, subtractMoney, sumMoney } from 'app/shared/string-utils';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -118,7 +118,6 @@ export class AnnualReportComponent implements OnInit {
     private invoiceService: InvoiceService,
     private contractService: ContractService,
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService,
     private configService: ConfigService
   ) {
     for (let i = 0; i < defaultMonthlyData.length; i++) {
@@ -362,17 +361,17 @@ export class AnnualReportComponent implements OnInit {
                   ) {
                     const userExpense = monthExpense.expense.team.reduce((sum, member) => {
                       if (this.userService.isEqual(member.user, uId)) {
-                        sum = this.stringUtil.sumMoney(sum, member.value);
+                        sum = sumMoney(sum, member.value);
                       }
                       return sum;
                     }, '0,00');
 
                     if (userExpense != '0,00') {
-                      data[uId].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
+                      data[uId].monthly_data[monthExpense.month].expenses = sumMoney(
                         data[uId].monthly_data[monthExpense.month].expenses,
                         userExpense
                       );
-                      data[uId].overview.expenses = this.stringUtil.sumMoney(data[uId].overview.expenses, userExpense);
+                      data[uId].overview.expenses = sumMoney(data[uId].overview.expenses, userExpense);
                     }
                   }
                 });
@@ -390,17 +389,17 @@ export class AnnualReportComponent implements OnInit {
                 monthPayments.forEach((monthPayment) => {
                   const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
                     if (this.userService.isEqual(payment.user, uId)) {
-                      sum = this.stringUtil.sumMoney(sum, payment.value);
+                      sum = sumMoney(sum, payment.value);
                     }
                     return sum;
                   }, '0,00');
 
                   if (userPayment != '0,00') {
-                    data[uId].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
+                    data[uId].monthly_data[monthPayment.month].received = sumMoney(
                       data[uId].monthly_data[monthPayment.month].received,
                       userPayment
                     );
-                    data[uId].overview.received = this.stringUtil.sumMoney(data[uId].overview.received, userPayment);
+                    data[uId].overview.received = sumMoney(data[uId].overview.received, userPayment);
                   }
                 });
               });
@@ -409,13 +408,11 @@ export class AnnualReportComponent implements OnInit {
                 const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
                 const memberId = invoice.team.findIndex((member) => this.userService.isEqual(member.user, uId));
                 if (memberId != -1) {
-                  const toReceive = this.stringUtil.sumMoney(
+                  const toReceive = sumMoney(
                     this.contractService.notPaidValue(invoice.team[memberId].distribution, uId, monthContract.contract),
-                    this.stringUtil.numberToMoney(
-                      this.contractService.expensesContributions(monthContract.contract, uId).user.cashback
-                    )
+                    numberToMoney(this.contractService.expensesContributions(monthContract.contract, uId).user.cashback)
                   );
-                  data[uId].overview.to_receive = this.stringUtil.sumMoney(data[uId].overview.to_receive, toReceive);
+                  data[uId].overview.to_receive = sumMoney(data[uId].overview.to_receive, toReceive);
                 }
               }
             }
@@ -562,20 +559,17 @@ export class AnnualReportComponent implements OnInit {
                   ) {
                     const userExpense = monthExpense.expense.team.reduce((sum, member) => {
                       if (this.teamService.isSectorEqual(member.sector, sector)) {
-                        sum = this.stringUtil.sumMoney(sum, member.value);
+                        sum = sumMoney(sum, member.value);
                       }
                       return sum;
                     }, '0,00');
 
                     if (userExpense != '0,00') {
-                      data[sector].monthly_data[monthExpense.month].expenses = this.stringUtil.sumMoney(
+                      data[sector].monthly_data[monthExpense.month].expenses = sumMoney(
                         data[sector].monthly_data[monthExpense.month].expenses,
                         userExpense
                       );
-                      data[sector].overview.expenses = this.stringUtil.sumMoney(
-                        data[sector].overview.expenses,
-                        userExpense
-                      );
+                      data[sector].overview.expenses = sumMoney(data[sector].overview.expenses, userExpense);
                     }
                   }
                 });
@@ -593,20 +587,17 @@ export class AnnualReportComponent implements OnInit {
                 monthPayments.forEach((monthPayment) => {
                   const userPayment = monthPayment.payment.team.reduce((sum, payment) => {
                     if (this.teamService.isSectorEqual(payment.sector, sector)) {
-                      sum = this.stringUtil.sumMoney(sum, payment.value);
+                      sum = sumMoney(sum, payment.value);
                     }
                     return sum;
                   }, '0,00');
 
                   if (userPayment != '0,00') {
-                    data[sector].monthly_data[monthPayment.month].received = this.stringUtil.sumMoney(
+                    data[sector].monthly_data[monthPayment.month].received = sumMoney(
                       data[sector].monthly_data[monthPayment.month].received,
                       userPayment
                     );
-                    data[sector].overview.received = this.stringUtil.sumMoney(
-                      data[sector].overview.received,
-                      userPayment
-                    );
+                    data[sector].overview.received = sumMoney(data[sector].overview.received, userPayment);
                   }
                 });
               });
@@ -615,16 +606,13 @@ export class AnnualReportComponent implements OnInit {
                 const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
                 invoice.team.forEach((member) => {
                   if (this.teamService.isSectorEqual(member.sector, sector)) {
-                    const toReceive = this.stringUtil.sumMoney(
+                    const toReceive = sumMoney(
                       this.contractService.notPaidValue(member.distribution, member.user, monthContract.contract),
-                      this.stringUtil.numberToMoney(
+                      numberToMoney(
                         this.contractService.expensesContributions(monthContract.contract, member.user).user.cashback
                       )
                     );
-                    data[sector].overview.to_receive = this.stringUtil.sumMoney(
-                      data[sector].overview.to_receive,
-                      toReceive
-                    );
+                    data[sector].overview.to_receive = sumMoney(data[sector].overview.to_receive, toReceive);
                   }
                 });
               }
@@ -666,7 +654,7 @@ export class AnnualReportComponent implements OnInit {
                 getYear(monthInvoice.invoice.created) == year
               ) {
                 data[team][monthInvoice.month].sent_invoices += 1;
-                data[team][monthInvoice.month].sent_invoices_value = this.stringUtil.sumMoney(
+                data[team][monthInvoice.month].sent_invoices_value = sumMoney(
                   data[team][monthInvoice.month].sent_invoices_value,
                   monthInvoice.invoice.value
                 );
@@ -675,7 +663,7 @@ export class AnnualReportComponent implements OnInit {
                   getYear(monthInvoice.invoice.created) == year
                 ) {
                   data[team][monthInvoice.month].concluded_invoices += 1;
-                  data[team][monthInvoice.month].concluded_invoices_value = this.stringUtil.sumMoney(
+                  data[team][monthInvoice.month].concluded_invoices_value = sumMoney(
                     data[team][monthInvoice.month].concluded_invoices_value,
                     monthInvoice.invoice.value
                   );
@@ -688,7 +676,7 @@ export class AnnualReportComponent implements OnInit {
                   let month = monthInvoice.month;
                   if (getYear(monthInvoice.invoice.created) < year) month = 0;
                   data[team][month].ongoing_invoice += 1;
-                  data[team][month].ongoing_invoice_value = this.stringUtil.sumMoney(
+                  data[team][month].ongoing_invoice_value = sumMoney(
                     data[team][month].ongoing_invoice_value,
                     monthInvoice.invoice.value
                   );
@@ -749,7 +737,7 @@ export class AnnualReportComponent implements OnInit {
                       monthExpense.expense.type !== EXPENSE_TYPES.COMISSAO &&
                       !this.userService.isEqual(monthExpense.expense.source, CLIENT)
                     ) {
-                      data[team][monthExpense.month].expenses = this.stringUtil.sumMoney(
+                      data[team][monthExpense.month].expenses = sumMoney(
                         data[team][monthExpense.month].expenses,
                         monthExpense.expense.value
                       );
@@ -767,7 +755,7 @@ export class AnnualReportComponent implements OnInit {
                 ) as { payment: ContractPayment; month: number }[][];
                 paymentsByMonth.forEach((monthPayments) => {
                   monthPayments.forEach((monthPayment) => {
-                    data[team][monthPayment.month].op = this.stringUtil.sumMoney(
+                    data[team][monthPayment.month].op = sumMoney(
                       data[team][monthPayment.month].op,
                       monthPayment.payment.value
                     );
@@ -795,35 +783,32 @@ export class AnnualReportComponent implements OnInit {
                         monthReceipt.receipt.paidDate &&
                         getYear(monthReceipt.receipt.paidDate) == year
                       ) {
-                        data[team][monthReceipt.month].oe_gross = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_gross = sumMoney(
                           data[team][monthReceipt.month].oe_gross,
                           monthReceipt.receipt.value
                         );
-                        data[team][monthReceipt.month].oe_net = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_net = sumMoney(
                           data[team][monthReceipt.month].oe_net,
                           this.contractService.receiptNetValue(monthReceipt.receipt)
                         );
-                        data[team][monthReceipt.month].oe_organization = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_organization = sumMoney(
                           data[team][monthReceipt.month].oe_organization,
-                          this.stringUtil.applyPercentage(
-                            monthReceipt.receipt.value,
-                            monthReceipt.receipt.nortanPercentage
-                          )
+                          applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.nortanPercentage)
                         );
-                        data[team][monthReceipt.month].oe_nf = this.stringUtil.sumMoney(
+                        data[team][monthReceipt.month].oe_nf = sumMoney(
                           data[team][monthReceipt.month].oe_nf,
-                          this.stringUtil.applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.notaFiscal)
+                          applyPercentage(monthReceipt.receipt.value, monthReceipt.receipt.notaFiscal)
                         );
                         if (
                           monthContract.contract.invoice &&
                           this.invoiceService.idToInvoice(monthContract.contract.invoice).administration == 'nortan'
                         ) {
-                          data[team][monthReceipt.month].support_organization = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].support_organization = sumMoney(
                             data[team][monthReceipt.month].support_organization,
                             monthReceipt.receipt.value
                           );
                         } else {
-                          data[team][monthReceipt.month].support_personal = this.stringUtil.sumMoney(
+                          data[team][monthReceipt.month].support_personal = sumMoney(
                             data[team][monthReceipt.month].support_personal,
                             monthReceipt.receipt.value
                           );
@@ -834,7 +819,7 @@ export class AnnualReportComponent implements OnInit {
                           let month = monthContract.month;
                           if (getYear(monthContract.contract.created) < year) month = 0;
                           data[team][month].ongoing_oe += 1;
-                          data[team][month].ongoing_oe_value = this.stringUtil.sumMoney(
+                          data[team][month].ongoing_oe_value = sumMoney(
                             data[team][month].ongoing_oe_value,
                             monthReceipt.receipt.value
                           );
@@ -848,13 +833,13 @@ export class AnnualReportComponent implements OnInit {
                 //   const invoice = this.invoiceService.idToInvoice(monthContract.contract.invoice);
                 //   invoice.team.forEach((member) => {
                 //     if (this.teamService.isSectorEqual(member.team, team)) {
-                //       const toReceive = this.stringUtil.sumMoney(
+                //       const toReceive = sumMoney(
                 //         this.contractService.notPaidValue(member.distribution, member.user, monthContract.contract),
-                //         this.stringUtil.numberToMoney(
+                //         numberToMoney(
                 //           this.contractService.expensesContributions(monthContract.contract, member.user).user.cashback
                 //         )
                 //       );
-                //       data[team].overview.to_receive = this.stringUtil.sumMoney(
+                //       data[team].overview.to_receive = sumMoney(
                 //         data[team].overview.to_receive,
                 //         toReceive
                 //       );
@@ -867,11 +852,8 @@ export class AnnualReportComponent implements OnInit {
         });
         for (const team of Object.keys(data)) {
           for (let i = 0; i < data[team].length; i++) {
-            data[team][i].expenses_total = this.stringUtil.sumMoney(data[team][i].op, data[team][i].expenses);
-            data[team][i].net_balance = this.stringUtil.subtractMoney(
-              data[team][i].oe_net,
-              data[team][i].expenses_total
-            );
+            data[team][i].expenses_total = sumMoney(data[team][i].op, data[team][i].expenses);
+            data[team][i].net_balance = subtractMoney(data[team][i].oe_net, data[team][i].expenses_total);
           }
         }
         return data;
@@ -885,20 +867,20 @@ export class AnnualReportComponent implements OnInit {
       const start = startOfMonth(new Date(year, i));
       const end = endOfMonth(new Date(year, i));
       tmp.push({
-        Recebido: this.stringUtil.numberToMoney(
+        Recebido: numberToMoney(
           await firstValueFrom(
             this.metricsService.nortanValue(start, end, 'oe').pipe(map((metricInfo) => metricInfo.global))
           )
         ),
-        Repassado: this.stringUtil.numberToMoney(
+        Repassado: numberToMoney(
           await firstValueFrom(
             this.metricsService.receivedValueNortan(start, end).pipe(map((metricInfo) => metricInfo.global))
           )
         ),
-        'Taxa Nortan': this.stringUtil.numberToMoney(
+        'Taxa Nortan': numberToMoney(
           await firstValueFrom(this.metricsService.nortanValue(start, end).pipe(map((metricInfo) => metricInfo.global)))
         ),
-        Impostos: this.stringUtil.numberToMoney(
+        Impostos: numberToMoney(
           await firstValueFrom(
             this.metricsService.nortanValue(start, end, 'taxes').pipe(map((metricInfo) => metricInfo.global))
           )

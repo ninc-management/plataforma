@@ -6,6 +6,18 @@ import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from '
 import { map, take, takeUntil } from 'rxjs/operators';
 
 import {
+  applyPercentage,
+  moneyToNumber,
+  numberToMoney,
+  removePercentage,
+  revertPercentage,
+  round,
+  subtractMoney,
+  sumMoney,
+  toMultiplyPercentage,
+  toPercentage,
+} from '../string-utils';
+import {
   handle,
   idToProperty,
   isOfType,
@@ -18,7 +30,6 @@ import { ConfigService, EXPENSE_TYPES } from './config.service';
 import { ContractorService } from './contractor.service';
 import { InvoiceService } from './invoice.service';
 import { OneDriveService } from './onedrive.service';
-import { StringUtilService } from './string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -100,7 +111,6 @@ export class ContractService implements OnDestroy {
     private http: HttpClient,
     private invoiceService: InvoiceService,
     private onedrive: OneDriveService,
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private wsService: WebSocketService
   ) {
@@ -196,11 +206,11 @@ export class ContractService implements OnDestroy {
   balance(contract: Contract): string {
     const paid = this.paidValue(contract);
     const expenseContribution = this.expensesContributions(contract);
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.round(
-        this.stringUtil.moneyToNumber(paid) -
+    return numberToMoney(
+      round(
+        moneyToNumber(paid) -
           contract.payments.reduce((accumulator: number, payment: any) => {
-            if (payment.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(payment.value);
+            if (payment.paid) accumulator = accumulator + moneyToNumber(payment.value);
             return accumulator;
           }, 0) -
           expenseContribution.global.expense +
@@ -223,28 +233,25 @@ export class ContractService implements OnDestroy {
       .reduce(
         (sum, expense) => {
           if (expense.type == EXPENSE_TYPES.APORTE) {
-            if (this.userService.isEqual(expense.source, user))
-              sum.contribution += this.stringUtil.moneyToNumber(expense.value);
+            if (this.userService.isEqual(expense.source, user)) sum.contribution += moneyToNumber(expense.value);
           } else {
-            if (this.userService.isEqual(expense.source, user))
-              sum.expense += this.stringUtil.moneyToNumber(expense.value);
+            if (this.userService.isEqual(expense.source, user)) sum.expense += moneyToNumber(expense.value);
             for (const member of expense.team) {
-              if (this.userService.isEqual(member.user, user))
-                sum.contract += this.stringUtil.moneyToNumber(member.value);
+              if (this.userService.isEqual(member.user, user)) sum.contract += moneyToNumber(member.value);
             }
           }
           return sum;
         },
         { expense: 0, contribution: 0, contract: 0 }
       );
-    const result = this.stringUtil.round(
-      this.stringUtil.moneyToNumber(contract.locals.liquid) * this.stringUtil.toMultiplyPercentage(distribution) -
+    const result = round(
+      moneyToNumber(contract.locals.liquid) * toMultiplyPercentage(distribution) -
         expenseContribution.contract +
         expenseContribution.expense +
         expenseContribution.contribution
     );
 
-    return this.stringUtil.numberToMoney(result);
+    return numberToMoney(result);
   }
 
   /* eslint-disable indent */
@@ -263,22 +270,22 @@ export class ContractService implements OnDestroy {
       .reduce(
         (accumulator, expense: ContractExpense) => {
           if (expense.source && this.userService.idToUser(expense.source)._id == CONTRACT_BALANCE._id) {
-            const expenseValue = this.stringUtil.moneyToNumber(expense.value);
+            const expenseValue = moneyToNumber(expense.value);
             const member = expense.team.find((el) => {
               return this.userService.isEqual(el.user, user);
             });
 
             if (expense.type == EXPENSE_TYPES.COMISSAO) {
-              accumulator.global.comission += this.stringUtil.moneyToNumber(expense.value);
+              accumulator.global.comission += moneyToNumber(expense.value);
             }
             if (member && expense.type != EXPENSE_TYPES.COMISSAO) {
-              accumulator.user.expense += this.stringUtil.moneyToNumber(member.value);
+              accumulator.user.expense += moneyToNumber(member.value);
             }
             accumulator.global.expense += expenseValue;
           }
 
           if (expense.type == EXPENSE_TYPES.APORTE) {
-            const contributionValue = this.stringUtil.moneyToNumber(expense.value);
+            const contributionValue = moneyToNumber(expense.value);
             if (this.userService.isEqual(expense.author, user)) {
               accumulator.user.contribution += contributionValue;
             }
@@ -294,11 +301,11 @@ export class ContractService implements OnDestroy {
   }
 
   percentageToReceive(distribution: string, user: User | string | undefined, contract: Contract, decimals = 2): string {
-    let sum = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(
+    let sum = numberToMoney(
+      moneyToNumber(
         this.toNetValue(
           this.subtractComissions(
-            this.stringUtil.removePercentage(
+            removePercentage(
               idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
               contract.ISS
             ),
@@ -310,11 +317,8 @@ export class ContractService implements OnDestroy {
         )
       ) + this.getComissionsSum(contract)
     );
-    sum = this.stringUtil.sumMoney(
-      this.stringUtil.subtractMoney(sum, this.paidValue(contract)),
-      contract.locals.balance
-    );
-    return this.stringUtil.toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
+    sum = sumMoney(subtractMoney(sum, this.paidValue(contract)), contract.locals.balance);
+    return toPercentage(this.notPaidValue(distribution, user, contract), sum, decimals).slice(0, -1);
   }
 
   receivedValue(user: User | string | undefined, contract: Contract, start?: Date, end?: Date): string {
@@ -331,46 +335,46 @@ export class ContractService implements OnDestroy {
       .map((payment) => payment.team)
       .flat()
       .reduce((sum, member) => {
-        if (this.userService.isEqual(member.user, user)) sum += this.stringUtil.moneyToNumber(member.value);
+        if (this.userService.isEqual(member.user, user)) sum += moneyToNumber(member.value);
         return sum;
       }, 0);
 
-    return this.stringUtil.numberToMoney(received);
+    return numberToMoney(received);
   }
 
   paidValue(contract: Contract): string {
     const totalPaidValue = contract.receipts.reduce((total, receipt) => {
       if (!receipt.paid) return total;
-      return this.stringUtil.sumMoney(this.receiptNetValue(receipt), total);
+      return sumMoney(this.receiptNetValue(receipt), total);
     }, '0,00');
 
     return totalPaidValue;
   }
 
   notPaidValue(distribution: string, user: User | string | undefined, contract: Contract): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.netValueBalance(distribution, contract, user)) -
-        this.stringUtil.moneyToNumber(this.receivedValue(user, contract))
+    return numberToMoney(
+      moneyToNumber(this.netValueBalance(distribution, contract, user)) -
+        moneyToNumber(this.receivedValue(user, contract))
     );
   }
 
   toGrossValue(netValue: string, NF: string, nortanPercentage: string): string {
-    return this.stringUtil.revertPercentage(this.stringUtil.revertPercentage(netValue, NF), nortanPercentage);
+    return revertPercentage(revertPercentage(netValue, NF), nortanPercentage);
   }
 
   toNetValue(grossValue: string, NF: string, nortanPercentage: string, createdDate: Date): string {
     if (isBefore(createdDate, new Date('2022/08/15')))
-      return this.stringUtil.removePercentage(this.stringUtil.removePercentage(grossValue, NF), nortanPercentage);
-    return this.stringUtil.subtractMoney(
-      this.stringUtil.subtractMoney(grossValue, this.stringUtil.applyPercentage(grossValue, NF)),
-      this.stringUtil.applyPercentage(grossValue, nortanPercentage)
+      return removePercentage(removePercentage(grossValue, NF), nortanPercentage);
+    return subtractMoney(
+      subtractMoney(grossValue, applyPercentage(grossValue, NF)),
+      applyPercentage(grossValue, nortanPercentage)
     );
   }
 
   subtractComissions(contractValue: string, contract: Contract): string {
     const comissionsSum = this.getComissionsSum(contract);
 
-    return this.stringUtil.numberToMoney(this.stringUtil.moneyToNumber(contractValue) - comissionsSum);
+    return numberToMoney(moneyToNumber(contractValue) - comissionsSum);
   }
 
   getComissionsSum(contract: Contract): number {
@@ -401,20 +405,18 @@ export class ContractService implements OnDestroy {
 
     const expensesSum = filteredExpenses.reduce((sum, expense) => {
       if (this.userService.isEqual(expense.user, user)) {
-        sum += this.stringUtil.moneyToNumber(expense.value);
+        sum += moneyToNumber(expense.value);
       }
       return sum;
     }, 0);
 
-    return this.stringUtil.numberToMoney(expensesSum);
+    return numberToMoney(expensesSum);
   }
 
   getMemberBalance(user: User | string | undefined, contract: Contract): string {
     const receivedSum = this.receivedValue(user, contract);
     const expensesSum = this.getMemberExpensesSum(user, contract);
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(receivedSum) - this.stringUtil.moneyToNumber(expensesSum)
-    );
+    return numberToMoney(moneyToNumber(receivedSum) - moneyToNumber(expensesSum));
   }
 
   checkEditPermission(invoice: Invoice): Observable<boolean> {
@@ -442,9 +444,9 @@ export class ContractService implements OnDestroy {
       const nf = nfPercentage(contract, this.config.invoiceConfig);
       const nortan = nortanPercentage(contract, this.config.invoiceConfig);
       const paid = this.toNetValue(
-        this.stringUtil.numberToMoney(
+        numberToMoney(
           contract.receipts.reduce((accumulator: number, recipt: any) => {
-            if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+            if (recipt.paid) accumulator = accumulator + moneyToNumber(recipt.value);
             return accumulator;
           }, 0)
         ),
@@ -453,9 +455,8 @@ export class ContractService implements OnDestroy {
         contract.created
       );
 
-      contract.locals.notPaid = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.toNetValue(invoice.value, nf, nortan, contract.created)) -
-          this.stringUtil.moneyToNumber(paid)
+      contract.locals.notPaid = numberToMoney(
+        moneyToNumber(this.toNetValue(invoice.value, nf, nortan, contract.created)) - moneyToNumber(paid)
       );
     }
     return contract;
@@ -474,7 +475,7 @@ export class ContractService implements OnDestroy {
                 : !this.userService.isEqual(expense.source, CLIENT._id))
             ) {
               const idx = sum.findIndex((el) => el.type == expense.type);
-              sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+              sum[idx].value = sumMoney(sum[idx].value, expense.value);
             }
             return sum;
           },
@@ -483,10 +484,7 @@ export class ContractService implements OnDestroy {
             value: '0,00',
           }))
         );
-        const total = result.reduce(
-          (sum: string, expense: ExpenseTypesSum) => this.stringUtil.sumMoney(sum, expense.value),
-          '0,00'
-        );
+        const total = result.reduce((sum: string, expense: ExpenseTypesSum) => sumMoney(sum, expense.value), '0,00');
         result.push({ type: 'TOTAL', value: total });
         return result;
       })
@@ -543,20 +541,17 @@ export class ContractService implements OnDestroy {
     if (isBefore(receipt.created, new Date('2023/04/05'))) {
       return this.oldReceiptNetValue(receipt);
     }
-    const receiptNetValue = this.stringUtil.subtractMoney(
-      receipt.value,
-      this.stringUtil.applyPercentage(receipt.value, receipt.ISS)
-    );
+    const receiptNetValue = subtractMoney(receipt.value, applyPercentage(receipt.value, receipt.ISS));
     return this.toNetValue(
       receiptNetValue,
-      this.stringUtil.subtractMoney(receipt.notaFiscal, receipt.ISS),
+      subtractMoney(receipt.notaFiscal, receipt.ISS),
       receipt.nortanPercentage,
       receipt.created
     );
   }
 
   contractNetValue(contract: Contract): string {
-    const contractValueWithoutISS = this.stringUtil.removePercentage(
+    const contractValueWithoutISS = removePercentage(
       idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
       contract.ISS
     );
@@ -575,7 +570,7 @@ export class ContractService implements OnDestroy {
     }
 
     let receiptNetValue = receipt.value;
-    receiptNetValue = this.stringUtil.removePercentage(receiptNetValue, receipt.ISS);
+    receiptNetValue = removePercentage(receiptNetValue, receipt.ISS);
     receiptNetValue = this.toNetValue(receiptNetValue, receipt.notaFiscal, receipt.nortanPercentage, receipt.created);
     return receiptNetValue;
   }

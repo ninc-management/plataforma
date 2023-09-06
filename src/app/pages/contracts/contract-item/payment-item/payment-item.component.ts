@@ -11,9 +11,18 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import {
+  applyPercentage,
+  moneyToNumber,
+  numberToMoney,
+  numberToString,
+  sumMoney,
+  toMultiplyPercentage,
+  toPercentage,
+  toValue,
+} from 'app/shared/string-utils';
 import { formatDate, idToProperty, shouldNotifyManager, trackByIndex } from 'app/shared/utils';
 
 import { Contract, ContractPayment, ContractUserPayment } from '@models/contract';
@@ -83,12 +92,13 @@ export class PaymentItemComponent implements OnInit {
   get is100(): boolean {
     return (
       this.payment.team.reduce((sum, m) => {
-        sum = this.stringUtil.sumMoney(sum, m.value);
+        sum = sumMoney(sum, m.value);
         return sum;
       }, '0,00') === this.payment.value
     );
   }
 
+  toPercentage = toPercentage;
   trackByIndex = trackByIndex;
   formatDate = formatDate;
   idToProperty = idToProperty;
@@ -100,7 +110,6 @@ export class PaymentItemComponent implements OnInit {
     private notificationService: NotificationService,
     public accessChecker: NbAccessChecker,
     public contractService: ContractService,
-    public stringUtil: StringUtilService,
     public teamService: TeamService,
     public userService: UserService
   ) {}
@@ -183,8 +192,8 @@ export class PaymentItemComponent implements OnInit {
             percentage: '0',
           };
           if (member.distribution && member.user)
-            payment.value = this.stringUtil.numberToString(
-              this.stringUtil.toMultiplyPercentage(
+            payment.value = numberToString(
+              toMultiplyPercentage(
                 this.contractService.percentageToReceive(
                   member.distribution,
                   this.userService.idToUser(member.user),
@@ -244,7 +253,7 @@ export class PaymentItemComponent implements OnInit {
       if (paymentMember) {
         const notPaidValue = this.contractService.notPaidValue(member.distribution, member.user, this.contract);
         const valueReceived = this.contractService.receivedValue(member.user, this.contract);
-        if (notPaidValue === '0,00' && this.stringUtil.moneyToNumber(paymentMember.value) != 0) {
+        if (notPaidValue === '0,00' && moneyToNumber(paymentMember.value) != 0) {
           this.notificationService.notify(member.user, {
             title: 'Recebimento total do valor do contrato ' + this.invoice.code,
             tag: NotificationTags.VALUE_TO_RECEIVE_PAID,
@@ -258,11 +267,8 @@ export class PaymentItemComponent implements OnInit {
   addColaborator(): void {
     if (this.options.valueType === '%') {
       this.userPayment.percentage = this.userPayment.value;
-      this.userPayment.value = this.stringUtil.toValue(this.userPayment.value, this.payment.value);
-    } else
-      this.userPayment.percentage = this.stringUtil
-        .toPercentage(this.userPayment.value, this.payment.value, 20)
-        .slice(0, -1);
+      this.userPayment.value = toValue(this.userPayment.value, this.payment.value);
+    } else this.userPayment.percentage = toPercentage(this.userPayment.value, this.payment.value, 20).slice(0, -1);
 
     this.payment.team.push(Object.assign({}, this.userPayment));
     this.userPayment = {
@@ -277,16 +283,11 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateValue(idx: number): void {
-    this.payment.team[idx].value = this.stringUtil.applyPercentage(
-      this.payment.value,
-      this.payment.team[idx].percentage
-    );
+    this.payment.team[idx].value = applyPercentage(this.payment.value, this.payment.team[idx].percentage);
   }
 
   updatePercentage(idx: number): void {
-    this.payment.team[idx].percentage = this.stringUtil
-      .toPercentage(this.payment.team[idx].value, this.payment.value, 20)
-      .slice(0, -1);
+    this.payment.team[idx].percentage = toPercentage(this.payment.team[idx].value, this.payment.value, 20).slice(0, -1);
   }
 
   isTeamEmpty(): boolean {
@@ -294,18 +295,16 @@ export class PaymentItemComponent implements OnInit {
   }
 
   updateTotal(): void {
-    this.total = this.stringUtil.numberToMoney(
+    this.total = numberToMoney(
       this.payment.team.reduce(
-        (accumulator: number, userPayment: any) => accumulator + this.stringUtil.moneyToNumber(userPayment.value),
+        (accumulator: number, userPayment: any) => accumulator + moneyToNumber(userPayment.value),
         0
       )
     );
   }
 
   remainingBalance(): string {
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(this.payment.value) - this.stringUtil.moneyToNumber(this.total)
-    );
+    return numberToMoney(moneyToNumber(this.payment.value) - moneyToNumber(this.total));
   }
 
   updatePaidDate(): void {
@@ -319,17 +318,15 @@ export class PaymentItemComponent implements OnInit {
       .idToInvoice(this.contract.invoice)
       .team.find((member) => this.userService.isEqual(member.user, paymentMember.user));
     if (invoiceMember) {
-      let result = this.stringUtil.sumMoney(
+      let result = sumMoney(
         this.contractService.notPaidValue(invoiceMember.distribution, invoiceMember.user, this.contract),
-        this.stringUtil.numberToMoney(
-          this.contractService.expensesContributions(this.contract, invoiceMember.user).user.cashback
-        )
+        numberToMoney(this.contractService.expensesContributions(this.contract, invoiceMember.user).user.cashback)
       );
       if (this.paymentIndex !== undefined) {
         const initialUser = this.options.initialTeam.find((member) =>
           this.userService.isEqual(member.user, paymentMember.user)
         );
-        if (initialUser) result = this.stringUtil.sumMoney(result, initialUser.value);
+        if (initialUser) result = sumMoney(result, initialUser.value);
       }
       return result;
     } else return '0,00';
@@ -346,18 +343,15 @@ export class PaymentItemComponent implements OnInit {
   calculateTeamValues(): void {
     if (this.payment.value !== '0') {
       this.payment.team.map((member, index) => {
-        if (this.stringUtil.moneyToNumber(this.options.lastTeam[index].value) <= 1)
-          member.value = this.stringUtil.numberToMoney(
-            this.stringUtil.moneyToNumber(this.payment.value) *
-              this.stringUtil.moneyToNumber(this.options.lastTeam[index].value)
+        if (moneyToNumber(this.options.lastTeam[index].value) <= 1)
+          member.value = numberToMoney(
+            moneyToNumber(this.payment.value) * moneyToNumber(this.options.lastTeam[index].value)
           );
         else {
-          const p = this.stringUtil
-            .toPercentage(this.options.lastTeam[index].value, this.options.lastValue, 20)
-            .slice(0, -1);
-          member.value = this.stringUtil.applyPercentage(this.payment.value, p);
+          const p = toPercentage(this.options.lastTeam[index].value, this.options.lastValue, 20).slice(0, -1);
+          member.value = applyPercentage(this.payment.value, p);
         }
-        member.percentage = this.stringUtil.toPercentage(member.value, this.payment.value, 20).slice(0, -1);
+        member.percentage = toPercentage(member.value, this.payment.value, 20).slice(0, -1);
         return member;
       });
     }

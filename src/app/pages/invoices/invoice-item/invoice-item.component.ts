@@ -16,9 +16,18 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import {
+  applyPercentage,
+  moneyToNumber,
+  numberToMoney,
+  removePercentage,
+  subtractMoney,
+  toPercentage,
+  toPercentageNumber,
+  toValue,
+} from 'app/shared/string-utils';
 import {
   forceValidatorUpdate,
   idToProperty,
@@ -146,6 +155,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   tStatus = INVOICE_STATOOS;
   STATOOS = Object.values(INVOICE_STATOOS);
 
+  UtilstoPercentage = toPercentage;
   forceValidatorUpdate = forceValidatorUpdate;
   trackByIndex = trackByIndex;
   isPhone = isPhone;
@@ -160,7 +170,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     private configService: ConfigService,
     private notificationService: NotificationService,
     public providerService: ProviderService,
-    public stringUtil: StringUtilService,
     public userService: UserService,
     public contractorService: ContractorService,
     public accessChecker: NbAccessChecker,
@@ -421,10 +430,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         const last = lastArray[index];
         let p = last.locals.percentage ? last.locals.percentage : this.toPercentage(last);
         if (type == 'product') {
-          p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value, 20);
+          p = toPercentage(item.value, this.tempInvoice.value, 20);
         }
         if (type == 'stage') {
-          item.value = this.stringUtil.applyPercentage(this.tempInvoice.value, p);
+          item.value = applyPercentage(this.tempInvoice.value, p);
         }
         item.locals.percentage = p;
         return item;
@@ -547,9 +556,8 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     )
       this.options.material.total = '0,00';
     else
-      this.options.material.total = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(this.options.material.value) *
-          this.stringUtil.moneyToNumber(this.options.material.amount)
+      this.options.material.total = numberToMoney(
+        moneyToNumber(this.options.material.value) * moneyToNumber(this.options.material.amount)
       );
   }
 
@@ -595,19 +603,19 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     )
       this.options.product.total = '0,00';
     else
-      this.options.product.total = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(
+      this.options.product.total = numberToMoney(
+        moneyToNumber(
           this.options.valueType == '$'
             ? this.options.product.value
-            : this.stringUtil.toValue(this.options.product.value, this.tempInvoice.value)
-        ) * this.stringUtil.moneyToNumber(this.options.product.amount)
+            : toValue(this.options.product.value, this.tempInvoice.value)
+        ) * moneyToNumber(this.options.product.amount)
       );
   }
   /* eslint-enable indent */
 
   addProduct(): void {
     if (this.options.valueType === '%')
-      this.options.product.value = this.stringUtil.toValue(this.options.product.value, this.tempInvoice.value);
+      this.options.product.value = toValue(this.options.product.value, this.tempInvoice.value);
     if (this.tempInvoice.productListType == '1') {
       this.options.product.amount = '1';
       this.options.product.total = this.options.product.value;
@@ -615,7 +623,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options.product.name = this.options.product.name.toUpperCase();
     this.tempInvoice.products.push(cloneDeep(this.options.product));
     const lastItem = this.tempInvoice.products[this.tempInvoice.products.length - 1];
-    lastItem.locals.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
+    lastItem.locals.percentage = toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.product = new InvoiceProduct();
     this.updateTotal('product');
     this.updateLastValues();
@@ -643,29 +651,24 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   updateDiscountPercentage(): void {
     if (this.tempInvoice.discount)
-      this.options.discountPercentage = this.stringUtil
-        .toPercentageNumber(
-          this.stringUtil.moneyToNumber(this.tempInvoice.discount),
-          this.stringUtil.moneyToNumber(this.options.subtotal)
-        )
-        .slice(0, -1);
+      this.options.discountPercentage = toPercentageNumber(
+        moneyToNumber(this.tempInvoice.discount),
+        moneyToNumber(this.options.subtotal)
+      ).slice(0, -1);
   }
 
   updateDiscountValue(): void {
     const total = this.options.subtotal;
-    this.tempInvoice.discount = this.stringUtil.subtractMoney(
-      total,
-      this.stringUtil.removePercentage(total, this.options.discountPercentage)
-    );
+    this.tempInvoice.discount = subtractMoney(total, removePercentage(total, this.options.discountPercentage));
   }
 
   addStage(): void {
     if (this.options.stageValueType === '%')
-      this.options.stage.value = this.stringUtil.toValue(this.options.stage.value, this.tempInvoice.value);
+      this.options.stage.value = toValue(this.options.stage.value, this.tempInvoice.value);
     this.options.stage.name = this.options.stage.name;
     this.tempInvoice.stages.push(cloneDeep(this.options.stage));
     const lastItem = this.tempInvoice.stages[this.tempInvoice.stages.length - 1];
-    lastItem.locals.percentage = this.stringUtil.toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
+    lastItem.locals.percentage = toPercentage(lastItem.value, this.tempInvoice.value, 20).slice(0, -1);
     this.options.stage = new InvoiceStage();
     this.updateTotal('stage');
     this.updateLastValues();
@@ -673,10 +676,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
 
   remainingBalance(base: 'product' | 'stage'): string {
     if (this.tempInvoice.value == undefined) return '0,00';
-    return this.stringUtil.subtractMoney(
-      this.tempInvoice.value,
-      base === 'product' ? this.options.total : this.options.stageTotal
-    );
+    return subtractMoney(this.tempInvoice.value, base === 'product' ? this.options.total : this.options.stageTotal);
   }
 
   updateMaterialList(): void {
@@ -694,31 +694,28 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'product': {
         const subtotal = this.tempInvoice.products.reduce(
           (accumulator: number, product: any) =>
-            accumulator +
-            this.stringUtil.moneyToNumber(this.tempInvoice.productListType == '1' ? product.value : product.total),
+            accumulator + moneyToNumber(this.tempInvoice.productListType == '1' ? product.value : product.total),
           0
         );
         if (this.tempInvoice.discount)
-          this.options.total = this.stringUtil.numberToMoney(
-            subtotal - this.stringUtil.moneyToNumber(this.tempInvoice.discount)
-          );
-        else this.options.total = this.stringUtil.numberToMoney(subtotal);
-        this.options.subtotal = this.stringUtil.numberToMoney(subtotal);
+          this.options.total = numberToMoney(subtotal - moneyToNumber(this.tempInvoice.discount));
+        else this.options.total = numberToMoney(subtotal);
+        this.options.subtotal = numberToMoney(subtotal);
         break;
       }
       case 'stage': {
-        this.options.stageTotal = this.stringUtil.numberToMoney(
+        this.options.stageTotal = numberToMoney(
           this.tempInvoice.stages.reduce(
-            (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
+            (accumulator: number, stage: any) => accumulator + moneyToNumber(stage.value),
             0
           )
         );
         break;
       }
       case 'material': {
-        this.options.materialTotal = this.stringUtil.numberToMoney(
+        this.options.materialTotal = numberToMoney(
           this.tempInvoice.materials.reduce(
-            (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
+            (accumulator: number, material: any) => accumulator + moneyToNumber(material.total),
             0
           )
         );
@@ -731,7 +728,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateValue(array: InvoiceStage[] | InvoiceProduct[], idx: number): void {
-    array[idx].value = this.stringUtil.applyPercentage(this.tempInvoice.value, array[idx].locals.percentage);
+    array[idx].value = applyPercentage(this.tempInvoice.value, array[idx].locals.percentage);
   }
 
   updatePercentage(array: InvoiceStage[] | InvoiceProduct[], idx: number): void {
@@ -739,12 +736,9 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toPercentage(item: InvoiceProduct | InvoiceStage): string {
-    let p = this.stringUtil.toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
+    let p = toPercentage(item.value, this.tempInvoice.value).slice(0, -1);
     if (this.tempInvoice.productListType == '2' && isOfType(InvoiceProduct, item))
-      p = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(item.amount) * this.stringUtil.moneyToNumber(p),
-        20
-      );
+      p = numberToMoney(moneyToNumber(item.amount) * moneyToNumber(p), 20);
     return p;
   }
 
@@ -756,10 +750,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
       array[idx].amount.length == 0
     )
       array[idx].total = '0,00';
-    else
-      array[idx].total = this.stringUtil.numberToMoney(
-        this.stringUtil.moneyToNumber(array[idx].value) * this.stringUtil.moneyToNumber(array[idx].amount)
-      );
+    else array[idx].total = numberToMoney(moneyToNumber(array[idx].value) * moneyToNumber(array[idx].amount));
   }
 
   updateNetValue(): void {
@@ -790,7 +781,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getRemainingPercentage(): string {
-    return this.stringUtil.toPercentage(this.options.total, this.tempInvoice.value);
+    return toPercentage(this.options.total, this.tempInvoice.value);
   }
 
   updateInvoiceValue(): void {
