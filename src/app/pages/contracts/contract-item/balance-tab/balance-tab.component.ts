@@ -4,8 +4,8 @@ import { combineLatest, skipWhile, Subject, take } from 'rxjs';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { applyPercentage, moneyToNumber, numberToMoney, removePercentage, sumMoney } from 'app/shared/string-utils';
 import { idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -56,6 +56,7 @@ export class BalanceTabComponent implements OnInit {
 
   config: PlatformConfig = new PlatformConfig();
 
+  removePercentage = removePercentage;
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   idToProperty = idToProperty;
@@ -63,7 +64,6 @@ export class BalanceTabComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private configService: ConfigService,
-    public stringUtil: StringUtilService,
     public contractService: ContractService,
     public userService: UserService
   ) {}
@@ -91,7 +91,7 @@ export class BalanceTabComponent implements OnInit {
     this.calculatePaidValue();
     this.calculateBalance();
     this.contractId = this.clonedContract._id;
-    this.comissionSum = this.stringUtil.numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
+    this.comissionSum = numberToMoney(this.contractService.getComissionsSum(this.clonedContract));
     this.options.interest = this.clonedContract.receipts.length;
   }
 
@@ -101,7 +101,7 @@ export class BalanceTabComponent implements OnInit {
         if (expense.source != undefined) {
           const source = this.userService.idToShortName(expense.source);
           const idx = sum.findIndex((el) => el.user == source);
-          if (idx != -1) sum[idx].value = this.stringUtil.sumMoney(sum[idx].value, expense.value);
+          if (idx != -1) sum[idx].value = sumMoney(sum[idx].value, expense.value);
         }
         return sum;
       },
@@ -117,7 +117,7 @@ export class BalanceTabComponent implements OnInit {
         .map((name) => ({ user: name, value: '0,00' }))
     );
     const contractor = result.splice(1, 1)[0];
-    const total = result.reduce((sum, expense) => this.stringUtil.sumMoney(sum, expense.value), '0,00');
+    const total = result.reduce((sum, expense) => sumMoney(sum, expense.value), '0,00');
     result.push({ user: 'TOTAL', value: total });
     result.push(contractor);
     return result;
@@ -126,9 +126,9 @@ export class BalanceTabComponent implements OnInit {
   updateTeamTotal(): void {
     this.teamTotal = this.invoice.team.reduce(
       (sum, member) => {
-        sum.grossValue = this.stringUtil.sumMoney(sum.grossValue, member.locals.grossValue);
-        sum.netValue = this.stringUtil.sumMoney(sum.netValue, member.locals.netValue);
-        sum.distribution = this.stringUtil.sumMoney(sum.distribution, member.distribution);
+        sum.grossValue = sumMoney(sum.grossValue, member.locals.grossValue);
+        sum.netValue = sumMoney(sum.netValue, member.locals.netValue);
+        sum.distribution = sumMoney(sum.distribution, member.distribution);
         return sum;
       },
       {
@@ -141,16 +141,13 @@ export class BalanceTabComponent implements OnInit {
 
   updateLiquid(): void {
     this.clonedContract.locals.liquid = this.contractService.contractNetValue(this.clonedContract);
-    this.clonedContract.locals.cashback = this.stringUtil.numberToMoney(
+    this.clonedContract.locals.cashback = numberToMoney(
       this.contractService.expensesContributions(this.clonedContract).global.cashback
     );
     if (this.clonedContract.invoice != undefined) {
       const invoice = this.invoiceService.idToInvoice(this.clonedContract.invoice);
       invoice.team.map((member, index) => {
-        member.locals.netValue = this.stringUtil.applyPercentage(
-          this.clonedContract.locals.liquid,
-          member.distribution
-        );
+        member.locals.netValue = applyPercentage(this.clonedContract.locals.liquid, member.distribution);
         this.updateGrossValue(index);
         this.updateTeamTotal();
       });
@@ -174,15 +171,15 @@ export class BalanceTabComponent implements OnInit {
     this.options.notaFiscal = nfPercentage(this.clonedContract, this.config.invoiceConfig);
     this.updateLiquid();
     this.options.paid = this.contractService.paidValue(this.clonedContract);
-    this.clonedContract.locals.notPaid = this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(
+    this.clonedContract.locals.notPaid = numberToMoney(
+      moneyToNumber(
         this.contractService.toNetValue(
           idToProperty(this.clonedContract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value'),
           this.options.notaFiscal,
           this.options.nortanPercentage,
           this.clonedContract.created
         )
-      ) - this.stringUtil.moneyToNumber(this.options.paid)
+      ) - moneyToNumber(this.options.paid)
     );
   }
 

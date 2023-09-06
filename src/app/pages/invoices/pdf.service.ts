@@ -11,9 +11,9 @@ import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber, numberToMoney, toPercentage } from 'app/shared/string-utils';
 import { idToProperty } from 'app/shared/utils';
 
 import { Company } from '@models/company';
@@ -77,7 +77,6 @@ export class PdfService {
     '<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 174" width="800" height="174"><style>.A{fill:#0b2340}</style><path class="A" d="M296.3 60.1v67.6c0 12.9 7.8 21 24.4 21h13.5v22.7h-13.5c-31.2 0-48.8-17.9-48.8-43.7V60.1h-18.6V48.3l6.9-10.1h13.5V0h10.1l15.9 23.2-13.3 15h47.8v21.9z"/><path fill-rule="evenodd" class="A" d="M461.9 81.1v90.3h-11.8l-20-20.2h-.2c0 5.1-3.4 22.8-27.8 22.8-24.4 0-37.1-16.6-37.1-39.6 0-25 17.7-40.4 48-40.4h24.4V81.1c0-13.7-8.7-21-24.4-21h-42.9V38.2H413c31.2 0 48.9 17.1 48.9 42.9zM413 113.3c-15.4 0-23.6 7.9-23.6 20 0 11.8 8.2 19.6 23.6 19.6 16.6 0 24.4-9 24.4-21.9v-17.7zM225.6 81.1v90.3h-11.8l-19.9-20.2h-.3c0 5.1-3.4 22.8-27.8 22.8-24.4 0-37.1-16.6-37.1-39.6 0-25 17.7-40.4 48-40.4h24.5V81.1c0-13.7-8.7-21-24.5-21h-42.9V38.2h42.9c31.2 0 48.9 17.1 48.9 42.9zm-48.9 32.2c-15.4 0-23.5 7.9-23.5 20 0 11.8 8.1 19.6 23.5 19.6 16.6 0 24.5-9 24.5-21.9v-17.7z"/><path class="A" d="M590.4 84.4v87H566v-87c0-12.9-7.9-21.9-24.4-21.9-16.6 0-24.5 9-24.5 21.9v87h-24.4V42.3h11.8l19.9 20.2h.3c0-5.1 3.4-22.7 27.8-22.7 25.3 0 37.9 17.9 37.9 44.6z"/><path d="m34.3 64.4-19.6 22H0V42.3h12.2z" style="fill:#00bcb5"/><path class="A" d="M97.7 84.6v86.8H73.1V84.6c0-13-7.8-22-24.5-22-4.2 0-7.9.6-11 1.7l-.9-1-2.9-3-1.6-1.6c1.4-7.1 7.4-18.9 27.4-18.9 25.4 0 38.1 18 38.1 44.8zm-72.8-4.9q-.4 2.4-.4 4.9v86.8H0V89.8h16z"/><path fill-rule="evenodd" class="A" d="m619.4 95.3 7.6-26.6h7.3l7.6 26.6h-4.3l-1.7-6.2h-10.5l-1.7 6.2zm7-10.1h8.4l-3.9-14h-.6z"/><path class="A" d="M653.5 95.9q-3.6 0-5.9-1.6-2.4-1.6-2.9-4.9l3.6-.8q.3 1.5 1.1 2.4.7 1 1.8 1.3 1.1.4 2.3.4 1.9 0 2.9-.7t1-1.9q0-1.1-1-1.7-.9-.5-2.8-.8l-1.3-.3q-1.9-.3-3.4-.9-1.6-.7-2.5-1.8-.9-1.2-.9-3 0-2.6 2-4.1 1.9-1.5 5.2-1.5 3.2 0 5.2 1.5 2 1.4 2.7 3.8l-3.7 1.1q-.3-1.8-1.5-2.5-1.1-.7-2.7-.7t-2.5.6q-.9.6-.9 1.7t.9 1.7q.9.5 2.4.8l1.3.2q2 .3 3.7.9 1.7.6 2.7 1.8.9 1.1.9 3 0 2.9-2.1 4.4-2.1 1.6-5.6 1.6zm20.2 0q-3.5 0-5.9-1.6-2.4-1.6-2.9-4.9l3.7-.8q.3 1.5 1 2.4.7 1 1.8 1.3 1.1.4 2.3.4 1.9 0 2.9-.7t1-1.9q0-1.1-.9-1.7-1-.5-2.9-.8l-1.2-.3q-2-.3-3.5-.9-1.6-.7-2.5-1.8-.9-1.2-.9-3 0-2.6 2-4.1 2-1.5 5.2-1.5t5.2 1.5q2.1 1.4 2.7 3.8l-3.7 1.1q-.3-1.8-1.4-2.5-1.1-.7-2.8-.7-1.6 0-2.5.6-.9.6-.9 1.7t.9 1.7q.9.5 2.4.8l1.4.2q2 .3 3.6.9 1.7.6 2.7 1.8 1 1.1 1 3 0 2.9-2.1 4.4-2.1 1.6-5.7 1.6z"/><path fill-rule="evenodd" class="A" d="M694.9 95.9q-2.9 0-5-1.2-2.2-1.2-3.3-3.4-1.2-2.2-1.2-5.1v-.5q-.1-2.9 1.1-5.1 1.2-2.2 3.3-3.4 2.1-1.2 4.9-1.2 2.7 0 4.8 1.2 2 1.2 3.1 3.4 1.2 2.1 1.2 5V87h-14.4q0 2.5 1.6 4 1.6 1.4 3.9 1.4t3.4-.9q1.1-1 1.7-2.3l3.3 1.6q-.6 1.1-1.6 2.3-1 1.2-2.6 2-1.7.8-4.2.8zM689.4 84h10.4q-.2-2.1-1.5-3.3-1.4-1.2-3.6-1.2t-3.6 1.2q-1.4 1.2-1.7 3.3z"/><path class="A" d="M716.4 95.9q-3.5 0-5.9-1.6-2.4-1.6-2.9-4.9l3.7-.8q.3 1.5 1 2.4.7 1 1.8 1.3 1.1.4 2.3.4 1.9 0 2.9-.7t1-1.9q0-1.1-.9-1.7-1-.5-2.9-.8l-1.2-.3q-2-.3-3.5-.9-1.6-.7-2.5-1.8-.9-1.2-.9-3 0-2.6 2-4.1 2-1.5 5.2-1.5t5.2 1.5q2.1 1.4 2.7 3.8l-3.7 1.1q-.3-1.8-1.4-2.5-1.1-.7-2.8-.7-1.6 0-2.5.6-.9.6-.9 1.7t.9 1.7q.9.5 2.4.8l1.4.2q2 .3 3.6.9 1.7.6 2.7 1.8 1 1.1 1 3 0 2.9-2.1 4.4-2.1 1.6-5.7 1.6zm20.3 0q-3.6 0-6-1.6-2.3-1.6-2.9-4.9l3.7-.8q.3 1.5 1 2.4.7 1 1.8 1.3 1.1.4 2.4.4 1.8 0 2.8-.7 1-.7 1-1.9 0-1.1-.9-1.7-1-.5-2.8-.8l-1.3-.3q-1.9-.3-3.5-.9-1.6-.7-2.5-1.8-.9-1.2-.9-3 0-2.6 2-4.1 2-1.5 5.3-1.5 3.1 0 5.2 1.5 2 1.4 2.6 3.8l-3.7 1.1q-.3-1.8-1.4-2.5-1.1-.7-2.7-.7t-2.6.6q-.9.6-.9 1.7t.9 1.7q.9.5 2.4.8l1.4.2q2 .3 3.7.9 1.6.6 2.6 1.8 1 1.1 1 3 0 2.9-2.1 4.4-2.1 1.6-5.6 1.6z"/><path fill-rule="evenodd" class="A" d="M758 95.9q-2.8 0-5-1.2-2.2-1.1-3.5-3.3-1.2-2.2-1.2-5.2v-.5q0-3 1.2-5.2 1.3-2.1 3.5-3.3 2.2-1.2 5-1.2t5 1.2q2.2 1.2 3.5 3.3 1.2 2.2 1.2 5.2v.5q0 3-1.2 5.2-1.3 2.2-3.5 3.3-2.2 1.2-5 1.2zm0-3.5q2.6 0 4.2-1.7 1.6-1.6 1.6-4.6v-.3q0-2.9-1.6-4.6-1.6-1.7-4.2-1.7t-4.2 1.7q-1.6 1.7-1.6 4.6v.3q0 3 1.6 4.6 1.6 1.7 4.2 1.7z"/><path class="A" d="M772.8 95.3V76.6h3.9v2.2h.6q.5-1.2 1.5-1.8 1-.5 2.5-.5h2.2V80h-2.4q-1.9 0-3.1 1.1-1.2 1-1.2 3.2v11zm-151.4 38.1v-26.6h16.8v3.7h-12.7v7.7h11.6v3.7h-11.6v7.8h12.9v3.7zm20 0 7.2-9.5-7-9.2h4.6l4.9 6.7h.6l4.9-6.7h4.7l-7.1 9.2 7.2 9.5h-4.7l-5-6.9h-.6l-5 6.9z"/><path fill-rule="evenodd" class="A" d="M673.2 134q-2.8 0-5-1.2-2.1-1.2-3.3-3.4-1.2-2.2-1.2-5.1v-.5q0-2.9 1.2-5.1 1.2-2.2 3.3-3.4 2.1-1.2 4.9-1.2 2.7 0 4.7 1.2 2.1 1.2 3.2 3.4 1.2 2.1 1.2 4.9v1.5h-14.5q.1 2.5 1.7 4 1.6 1.4 3.9 1.4 2.2 0 3.3-1 1.2-.9 1.8-2.2l3.2 1.6q-.5 1.1-1.5 2.3-1 1.2-2.7 2-1.6.8-4.2.8zm-5.4-11.9h10.4q-.2-2.1-1.6-3.3-1.3-1.2-3.6-1.2-2.2 0-3.6 1.2-1.3 1.2-1.6 3.3z"/><path class="A" d="M695.8 134q-2.7 0-4.9-1.2-2.2-1.1-3.4-3.3-1.3-2.2-1.3-5.2v-.5q0-3.1 1.3-5.2 1.2-2.2 3.4-3.3 2.2-1.2 4.9-1.2t4.6 1q1.9 1 3.1 2.6 1.2 1.7 1.5 3.7l-3.8.8q-.2-1.3-.8-2.3-.6-1.1-1.7-1.7-1.1-.6-2.8-.6-1.6 0-3 .8-1.3.7-2 2.1-.8 1.4-.8 3.4v.3q0 2 .8 3.4.7 1.4 2 2.1 1.4.8 3 .8 2.5 0 3.8-1.3 1.3-1.3 1.6-3.3l3.8.9q-.4 1.9-1.6 3.6-1.2 1.6-3.1 2.6-1.9 1-4.6 1zm21.3-.2q-2.2 0-3.8-1-1.7-.9-2.7-2.7-.9-1.7-.9-4.2v-11.2h3.9v11q0 2.4 1.2 3.6 1.3 1.1 3.4 1.1 2.4 0 3.9-1.6t1.5-4.7v-9.4h3.9v18.7h-3.9v-2.8h-.6q-.5 1.2-1.9 2.2-1.4 1-4 1zm23.4-.4q-1.7 0-2.7-1-1-1-1-2.7V118h-5.2v-3.3h5.2v-6.3h3.9v6.3h5.6v3.3h-5.6v11q0 1.1 1.1 1.1h3.9v3.3zm12.6-21.3q-1.1 0-1.9-.7-.8-.8-.8-2 0-1.1.8-1.9.8-.7 1.9-.7 1.2 0 2 .7.8.8.8 1.9 0 1.2-.8 2-.8.7-2 .7zm-1.9 21.3v-18.7h3.9v18.7zm14.3 0-6.3-18.7h4.1l5 15.8h.6l5-15.8h4.2l-6.4 18.7z"/><path fill-rule="evenodd" class="A" d="M790.2 134q-2.8 0-5-1.2t-3.4-3.3q-1.3-2.2-1.3-5.2v-.5q0-3 1.3-5.2 1.2-2.1 3.4-3.3 2.2-1.2 5-1.2 2.9 0 5.1 1.2 2.2 1.2 3.4 3.3 1.3 2.2 1.3 5.2v.5q0 3-1.3 5.2-1.2 2.1-3.4 3.3-2.2 1.2-5.1 1.2zm0-3.5q2.6 0 4.3-1.7 1.6-1.7 1.6-4.6v-.3q0-3-1.6-4.6-1.6-1.7-4.3-1.7-2.5 0-4.1 1.7-1.6 1.6-1.6 4.6v.3q0 2.9 1.6 4.6 1.6 1.7 4.1 1.7zm-168.8 41v-26.6h11.2q2.5 0 4.4.8 1.8.9 2.9 2.5 1 1.6 1 3.8v.4q0 2.5-1.2 4t-2.9 2.1v.6q1.5.1 2.3 1 .9.9.9 2.6v8.8h-4.1v-8.2q0-1.1-.6-1.7-.5-.6-1.7-.6h-8.1v10.5zm4.1-14.2h6.7q2.2 0 3.4-1.1 1.2-1.2 1.2-3.1v-.3q0-2-1.2-3.1t-3.4-1.1h-6.7zm28.9 14.8q-2.8 0-5-1.2-2.1-1.2-3.3-3.4-1.2-2.2-1.2-5.1v-.5q0-2.9 1.2-5.1 1.2-2.2 3.3-3.4 2.1-1.2 4.9-1.2 2.7 0 4.7 1.2t3.2 3.3q1.1 2.2 1.1 5v1.5h-14.4q.1 2.5 1.7 4 1.5 1.4 3.9 1.4 2.2 0 3.3-1 1.2-1 1.8-2.2l3.2 1.6q-.5 1.1-1.5 2.3-1.1 1.2-2.7 2t-4.2.8zm-5.5-11.9h10.4q-.1-2.1-1.5-3.3-1.4-1.2-3.6-1.2t-3.6 1.2q-1.4 1.2-1.7 3.3z"/><path class="A" d="M668.3 171.5v-18.8h3.8v2.3h.6q.6-1 1.8-1.8 1.1-.8 3.2-.8t3.3.9q1.3.9 2 2.2h.6q.6-1.3 1.8-2.2 1.3-.9 3.6-.9 1.8 0 3.2.8 1.4.7 2.3 2.2.8 1.5.8 3.6v12.5h-3.9v-12.2q0-1.7-1-2.6-.9-.9-2.6-.9-1.8 0-2.9 1.1-1.1 1.2-1.1 3.4v11.2h-4v-12.2q0-1.7-.9-2.6-.9-.9-2.7-.9-1.8 0-2.9 1.1-1.1 1.2-1.1 3.4v11.2z"/><path fill-rule="evenodd" class="A" d="M710 172.1q-2.9 0-5.1-1.2-2.1-1.2-3.4-3.3-1.3-2.2-1.3-5.2v-.6q0-2.9 1.3-5.1 1.3-2.1 3.4-3.3 2.2-1.2 5.1-1.2 2.8 0 5 1.2t3.4 3.3q1.3 2.2 1.3 5.1v.6q0 3-1.3 5.2-1.2 2.1-3.4 3.3-2.2 1.2-5 1.2zm0-3.5q2.5 0 4.2-1.7 1.6-1.7 1.6-4.6v-.3q0-3-1.6-4.6-1.6-1.7-4.2-1.7t-4.2 1.7q-1.6 1.6-1.6 4.6v.3q0 2.9 1.6 4.6 1.6 1.7 4.2 1.7z"/><path class="A" d="M731.2 171.5q-1.7 0-2.8-1-1-1-1-2.7v-11.7h-5.1v-3.4h5.1v-6.2h4v6.2h5.6v3.4h-5.6v11q0 1.1 1 1.1h4v3.3z"/><path fill-rule="evenodd" class="A" d="M749.9 172.1q-2.8 0-5-1.2t-3.4-3.3q-1.3-2.2-1.3-5.2v-.6q0-2.9 1.3-5.1 1.2-2.1 3.4-3.3 2.2-1.2 5-1.2t5 1.2q2.3 1.2 3.5 3.3 1.3 2.2 1.3 5.1v.6q0 3-1.3 5.2-1.2 2.1-3.5 3.3-2.2 1.2-5 1.2zm0-3.5q2.6 0 4.2-1.7t1.6-4.6v-.3q0-3-1.6-4.6-1.6-1.7-4.2-1.7-2.5 0-4.2 1.7-1.6 1.6-1.6 4.6v.3q0 2.9 1.6 4.6 1.7 1.7 4.2 1.7z"/></svg>';
 
   constructor(
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private contractorService: ContractorService,
     private teamService: TeamService,
@@ -1044,13 +1043,12 @@ export class PdfService {
             if (invoice.productListType == '2') discount.splice(1, 0, ...[{}, {}, {}]);
             result.push(discount);
           }
-          const total = this.stringUtil.numberToMoney(
+          const total = numberToMoney(
             invoice.products.reduce(
               (accumulator: number, product: any) =>
-                accumulator +
-                this.stringUtil.moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
+                accumulator + moneyToNumber(invoice.productListType == '1' ? product.value : product.total),
               0
-            ) - this.stringUtil.moneyToNumber(invoice.discount)
+            ) - moneyToNumber(invoice.discount)
           );
           const extensoTotal = extenso(total, { mode: 'currency' });
           const productTotal: any[] = [
@@ -1108,7 +1106,7 @@ export class PdfService {
                 border: [false, true, true, true],
               },
               {
-                text: this.stringUtil.toPercentage(stage.value, invoice.value),
+                text: toPercentage(stage.value, invoice.value),
                 alignment: 'center',
                 border: [true, true, true, true],
               },
@@ -1119,11 +1117,8 @@ export class PdfService {
               },
             ];
           });
-          const total = this.stringUtil.numberToMoney(
-            invoice.stages.reduce(
-              (accumulator: number, stage: any) => accumulator + this.stringUtil.moneyToNumber(stage.value),
-              0
-            )
+          const total = numberToMoney(
+            invoice.stages.reduce((accumulator: number, stage: any) => accumulator + moneyToNumber(stage.value), 0)
           );
           pdf.add({
             style: 'insideText',
@@ -1160,7 +1155,7 @@ export class PdfService {
                     border: [false, true, true, true],
                   },
                   {
-                    text: this.stringUtil.toPercentage(total, invoice.value),
+                    text: toPercentage(total, invoice.value),
                     bold: true,
                     alignment: 'center',
                     border: [true, true, true, true],
@@ -1265,9 +1260,9 @@ export class PdfService {
               },
             ];
           };
-          const total = this.stringUtil.numberToMoney(
+          const total = numberToMoney(
             invoice.materials.reduce(
-              (accumulator: number, material: any) => accumulator + this.stringUtil.moneyToNumber(material.total),
+              (accumulator: number, material: any) => accumulator + moneyToNumber(material.total),
               0
             )
           );

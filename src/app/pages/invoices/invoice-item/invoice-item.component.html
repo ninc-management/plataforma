@@ -1914,7 +1914,7 @@
                 success: options.stageTotal === tempInvoice.value && options.stageTotal !== '0'
               }"
             >
-              {{ [options.stageTotal, tempInvoice.value] | transformPipe: stringUtil.toPercentage.bind(stringUtil) }}
+              {{ [options.stageTotal, tempInvoice.value] | transformPipe: UtilstoPercentage }}
             </div>
             <div class="col-md-1"></div>
           </div>

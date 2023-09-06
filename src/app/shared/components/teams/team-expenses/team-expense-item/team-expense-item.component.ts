@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
@@ -11,7 +10,6 @@ import { BaseExpenseComponent } from 'app/shared/components/base-expense/base-ex
 import { ConfigService } from 'app/shared/services/config.service';
 import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { NORTAN, UserService } from 'app/shared/services/user.service';
 import { compareFiles, forceValidatorUpdate, formatDate } from 'app/shared/utils';
@@ -64,7 +62,6 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
   OneDriveFolders = OneDriveFolders;
 
   constructor(
-    protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
     protected providerService: ProviderService,
     protected dialogService: NbDialogService,
@@ -72,7 +69,7 @@ export class TeamExpenseItemComponent extends BaseExpenseComponent implements On
     public teamService: TeamService,
     public userService: UserService
   ) {
-    super(stringUtil, onedrive, dialogService, providerService, userService);
+    super(onedrive, dialogService, providerService, userService);
     this.expense.code = '#0';
   }
 

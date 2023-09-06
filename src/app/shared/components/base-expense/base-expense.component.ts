@@ -8,7 +8,6 @@ import { OneDriveDocumentUploader } from '../onedrive-document-uploader/onedrive
 import { SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 
 import { Provider } from '@models/provider';
@@ -42,7 +41,6 @@ export class BaseExpenseComponent extends OneDriveDocumentUploader implements On
   protected providerArray = new BehaviorSubject<Provider[]>([]);
 
   constructor(
-    protected stringUtil: StringUtilService,
     protected onedrive: OneDriveService,
     protected dialogService: NbDialogService,
     protected providerService: ProviderService,

@@ -544,7 +544,7 @@
               Restante:
               {{
                 [clonedContract.locals.liquid, teamTotal.netValue]
-                  | transformPipe: stringUtil.subtractMoney.bind(stringUtil)
+                  | transformPipe: subtractMoney
               }}
             </div>
             <div class="col-3" style="text-align: right">Total:</div>

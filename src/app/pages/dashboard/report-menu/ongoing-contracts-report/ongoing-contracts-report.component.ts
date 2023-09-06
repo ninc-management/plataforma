@@ -7,9 +7,9 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber, numberToMoney, removePercentage, sumMoney } from 'app/shared/string-utils';
 import { codeSort, idToProperty, nfPercentage, nortanPercentage } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -31,7 +31,6 @@ export class OngoingContractsReportComponent implements OnInit {
   constructor(
     private teamService: TeamService,
     private contractService: ContractService,
-    private stringUtil: StringUtilService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private userService: UserService,
@@ -68,9 +67,9 @@ export class OngoingContractsReportComponent implements OnInit {
     )
       return '0,00';
     return this.contractService.toNetValue(
-      this.stringUtil.numberToMoney(
+      numberToMoney(
         contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          if (recipt.paid) accumulator = accumulator + moneyToNumber(recipt.value);
           return accumulator;
         }, 0)
       ),
@@ -83,7 +82,7 @@ export class OngoingContractsReportComponent implements OnInit {
   getReportExpensesValue(contract: Contract): string {
     return contract.expenses
       .filter((expense) => expense.paid && expense.paidDate)
-      .reduce((totalExpenseValue, expense) => this.stringUtil.sumMoney(totalExpenseValue, expense.value), '0,00');
+      .reduce((totalExpenseValue, expense) => sumMoney(totalExpenseValue, expense.value), '0,00');
   }
 
   getReportContractNotPaid(contract: Contract, invoice: Invoice): string {
@@ -93,9 +92,9 @@ export class OngoingContractsReportComponent implements OnInit {
     )
       return '0,00';
     const paidValue = this.contractService.toNetValue(
-      this.stringUtil.numberToMoney(
+      numberToMoney(
         contract.receipts.reduce((accumulator: number, recipt: any) => {
-          if (recipt.paid) accumulator = accumulator + this.stringUtil.moneyToNumber(recipt.value);
+          if (recipt.paid) accumulator = accumulator + moneyToNumber(recipt.value);
           return accumulator;
         }, 0)
       ),
@@ -104,15 +103,15 @@ export class OngoingContractsReportComponent implements OnInit {
       contract.created
     );
 
-    return this.stringUtil.numberToMoney(
-      this.stringUtil.moneyToNumber(
+    return numberToMoney(
+      moneyToNumber(
         this.contractService.toNetValue(
           invoice.value,
           nfPercentage(contract, this.config.invoiceConfig),
           nortanPercentage(contract, this.config.invoiceConfig),
           contract.created
         )
-      ) - this.stringUtil.moneyToNumber(paidValue)
+      ) - moneyToNumber(paidValue)
     );
   }
 
@@ -166,10 +165,7 @@ export class OngoingContractsReportComponent implements OnInit {
           csv += this.contractService.getComissionsSum(contract) + ';';
           csv +=
             this.contractService.toNetValue(
-              this.contractService.subtractComissions(
-                this.stringUtil.removePercentage(invoice.value, contract.ISS),
-                contract
-              ),
+              this.contractService.subtractComissions(removePercentage(invoice.value, contract.ISS), contract),
               nfPercentage(contract, this.config.invoiceConfig),
               nortanPercentage(contract, this.config.invoiceConfig),
               contract.created

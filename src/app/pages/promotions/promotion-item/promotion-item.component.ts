@@ -9,8 +9,8 @@ import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-sour
 import { SmartTableComponent } from 'app/@theme/components/smart-table/smart-table.component';
 import { MetricsService } from 'app/shared/services/metrics.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber, numberToMoney } from 'app/shared/string-utils';
 import { isPhone } from 'app/shared/utils';
 
 import { Promotion } from '@models/promotion';
@@ -76,7 +76,6 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
   constructor(
     private userService: UserService,
     private metricsService: MetricsService,
-    private stringUtil: StringUtilService,
     private promotionService: PromotionService
   ) {}
 
@@ -166,7 +165,7 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
       case RULE_OBJECTS.VALOR_RECEBIDO:
         objCount = this.metricsService
           .userReceivedValue(uId, this.promotion.start, this.promotion.end)
-          .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
+          .pipe(map((mI) => numberToMoney(mI.value)));
         break;
       default:
         break;
@@ -177,26 +176,26 @@ export class PromotionItemComponent implements OnInit, AfterViewInit, OnDestroy 
   cashbackRule(uId: string): Observable<string> {
     return this.metricsService
       .cashbackValue(uId, this.promotion.cashback, this.promotion.start, this.promotion.end)
-      .pipe(map((mI) => this.stringUtil.numberToMoney(mI.value)));
+      .pipe(map((mI) => numberToMoney(mI.value)));
   }
 
   isValidRule(value: string): boolean {
     let isValid = false;
     switch (this.promotion.rules[0].operator) {
       case RULE_OPERATORS.IGUAL:
-        isValid = this.stringUtil.moneyToNumber(value) == this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = moneyToNumber(value) == moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MAIOR:
-        isValid = this.stringUtil.moneyToNumber(value) > this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = moneyToNumber(value) > moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MAIOR_IGUAL:
-        isValid = this.stringUtil.moneyToNumber(value) >= this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = moneyToNumber(value) >= moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MENOR:
-        isValid = this.stringUtil.moneyToNumber(value) < this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = moneyToNumber(value) < moneyToNumber(this.promotion.rules[0].value);
         break;
       case RULE_OPERATORS.MENOR_IGUAL:
-        isValid = this.stringUtil.moneyToNumber(value) <= this.stringUtil.moneyToNumber(this.promotion.rules[0].value);
+        isValid = moneyToNumber(value) <= moneyToNumber(this.promotion.rules[0].value);
         break;
       default:
         break;

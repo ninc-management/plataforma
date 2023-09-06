@@ -4,8 +4,8 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
+import { moneyToNumber, numberToMoney } from '../string-utils';
 import { handle, isOfType, nameSort, reviveDates } from '../utils';
-import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -25,12 +25,7 @@ export class TeamService implements OnDestroy {
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
-  constructor(
-    private http: HttpClient,
-    private wsService: WebSocketService,
-    private userService: UserService,
-    private stringUtil: StringUtilService
-  ) {}
+  constructor(private http: HttpClient, private wsService: WebSocketService, private userService: UserService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -123,8 +118,8 @@ export class TeamService implements OnDestroy {
         team.sectors.forEach((sector) => {
           if (!sector.locals) sector.locals = {} as SectorLocals;
         });
-        team.locals.balance = this.stringUtil.numberToMoney(
-          team.transactions.reduce((accumulator, t) => (accumulator += this.stringUtil.moneyToNumber(t.value)), 0)
+        team.locals.balance = numberToMoney(
+          team.transactions.reduce((accumulator, t) => (accumulator += moneyToNumber(t.value)), 0)
         );
         return team;
       });

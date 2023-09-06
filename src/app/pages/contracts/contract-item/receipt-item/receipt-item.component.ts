@@ -10,8 +10,8 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber, numberToMoney } from 'app/shared/string-utils';
 import { formatDate, nfPercentage, nortanPercentage, shouldNotifyManager } from 'app/shared/utils';
 
 import { Contract, ContractReceipt } from '@models/contract';
@@ -65,7 +65,6 @@ export class ReceiptItemComponent implements OnInit {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private configService: ConfigService,
     public accessChecker: NbAccessChecker
@@ -181,16 +180,15 @@ export class ReceiptItemComponent implements OnInit {
 
   notPaid(): string {
     let result =
-      this.stringUtil.moneyToNumber(this.invoice.value) -
+      moneyToNumber(this.invoice.value) -
       this.contract.receipts.reduce(
-        (sum: number, receipt: ContractReceipt) => (sum += this.stringUtil.moneyToNumber(receipt.value)),
+        (sum: number, receipt: ContractReceipt) => (sum += moneyToNumber(receipt.value)),
         0
       );
 
-    if (this.receiptIndex != undefined)
-      result += this.stringUtil.moneyToNumber(this.contract.receipts[this.receiptIndex].value);
+    if (this.receiptIndex != undefined) result += moneyToNumber(this.contract.receipts[this.receiptIndex].value);
 
-    return this.stringUtil.numberToMoney(result);
+    return numberToMoney(result);
   }
 
   lastPayment(): string {

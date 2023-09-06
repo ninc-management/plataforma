@@ -523,7 +523,7 @@
               success: total === payment.value && total !== '0'
             }"
           >
-            {{ [total, payment.value] | transformPipe: stringUtil.toPercentage.bind(stringUtil) }}
+            {{ [total, payment.value] | transformPipe: toPercentage }}
           </div>
           <div class="col-md-1"></div>
         </div>

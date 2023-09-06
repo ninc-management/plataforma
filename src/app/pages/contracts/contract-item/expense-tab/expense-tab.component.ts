@@ -14,7 +14,6 @@ import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-
 import { ConfigService } from 'app/shared/services/config.service';
 import { ContractService, SPLIT_TYPES } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
 import { formatDate, greaterAndSmallerValue, idToProperty, isPhone, valueSort } from 'app/shared/utils';
 
@@ -192,8 +191,7 @@ export class ExpenseTabComponent implements OnInit {
     private invoiceService: InvoiceService,
     private configService: ConfigService,
     public contractService: ContractService,
-    public userService: UserService,
-    public stringUtil: StringUtilService
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {

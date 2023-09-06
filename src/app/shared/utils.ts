@@ -27,8 +27,8 @@ import { map } from 'rxjs/operators';
 import { appInjector } from './injector.module';
 import { InvoiceService } from './services/invoice.service';
 import { TimeSeriesItem } from './services/metrics.service';
-import { StringUtilService } from './services/string-util.service';
 import { TeamService } from './services/team.service';
+import { moneyToNumber } from './string-utils';
 import { UploadedFile } from 'app/@theme/components/file-uploader/file-uploader.service';
 
 import { Contract, ContractExpense, ContractPayment, ContractReceipt } from '@models/contract';
@@ -388,10 +388,9 @@ export function getItemsWithValue<T>(originalList: T[], key: string, value: any)
 }
 
 export function greaterAndSmallerValue<T>(object: T[], key: string = 'value'): { min: number; max: number } {
-  const stringUtil = appInjector.get(StringUtilService);
   const propertiesToAccess = key.split('.');
   const values = object.map((obj: any) => {
-    return stringUtil.moneyToNumber(
+    return moneyToNumber(
       propertiesToAccess.length > 1 ? accessNestedProperty(obj, cloneDeep(propertiesToAccess)) : obj[key]
     );
   });

@@ -18,8 +18,8 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MessageService } from 'app/shared/services/message.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { applyBoldToMention, moneyToNumber, toPercentageNumber } from 'app/shared/string-utils';
 import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
 
 import {
@@ -87,7 +87,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   constructor(
     private contractService: ContractService,
-    private stringUtils: StringUtilService,
     private messageService: MessageService,
     private dialogService: NbDialogService,
     private notificationService: NotificationService,
@@ -203,7 +202,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     const remaining = this.checklistRemainingDays();
     if (total != undefined && total != 0 && remaining != undefined) {
       const progress = total - remaining;
-      return this.stringUtils.moneyToNumber(this.stringUtils.toPercentageNumber(progress, total).slice(0, -1));
+      return moneyToNumber(toPercentageNumber(progress, total).slice(0, -1));
     }
     return 0;
   }
@@ -240,9 +239,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     if (item.actionList.length == 0) return 0;
 
     const completedActionsQtd = item.actionList.reduce((count, action) => (action.isFinished ? count + 1 : count), 0);
-    return this.stringUtils.moneyToNumber(
-      this.stringUtils.toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1)
-    );
+    return moneyToNumber(toPercentageNumber(completedActionsQtd, item.actionList.length).slice(0, -1));
   }
 
   hasItemFinished(item: ContractChecklistItem): boolean {
@@ -258,9 +255,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     if (isBefore(today, action.range.start) || isSameDay(today, action.range.start)) return 0;
     if ((action.range.end && isAfter(today, action.range.end)) || action.isFinished) return 100;
 
-    return this.stringUtils.moneyToNumber(
-      this.stringUtils.toPercentageNumber(this.remainingDays(action), this.totalDays(action)).slice(0, -1)
-    );
+    return moneyToNumber(toPercentageNumber(this.remainingDays(action), this.totalDays(action)).slice(0, -1));
   }
 
   itemProgressStatus(item: ContractChecklistItem): string {
@@ -357,7 +352,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.newComment.body = this.stringUtils.applyBoldToMention(this.newComment.body);
+    this.newComment.body = applyBoldToMention(this.newComment.body);
     this.messageService.saveMessage(this.newComment);
     this.newComment.body = '';
   }

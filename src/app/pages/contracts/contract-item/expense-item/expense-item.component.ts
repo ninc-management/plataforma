@@ -11,9 +11,9 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from 'app/shared/services/user.service';
+import { applyPercentage, numberToMoney, sumMoney, toPercentage } from 'app/shared/string-utils';
 import {
   compareFiles,
   forceValidatorUpdate,
@@ -97,7 +97,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
 
   get is100(): boolean {
     const total = this.expense.team.reduce((sum, m) => {
-      sum = this.stringUtil.sumMoney(sum, m.percentage);
+      sum = sumMoney(sum, m.percentage);
       return sum;
     }, '0,00');
     return total === '99,99' || total === '100,00' || total === '100,01';
@@ -124,14 +124,13 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
     private invoiceService: InvoiceService,
     private notificationService: NotificationService,
     protected onedrive: OneDriveService,
-    protected stringUtil: StringUtilService,
     protected providerService: ProviderService,
     protected dialogService: NbDialogService,
     public configService: ConfigService,
     public userService: UserService,
     public teamService: TeamService
   ) {
-    super(stringUtil, onedrive, dialogService, providerService, userService);
+    super(onedrive, dialogService, providerService, userService);
   }
 
   ngOnDestroy(): void {
@@ -337,23 +336,18 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   overPaid(): string {
     if (this.expense.source && this.userService.idToUser(this.expense.source)?._id === CONTRACT_BALANCE._id) {
       if (this.expenseIndex != undefined)
-        return this.stringUtil.sumMoney(this.contract.locals.balance, this.contract.expenses[this.expenseIndex].value);
+        return sumMoney(this.contract.locals.balance, this.contract.expenses[this.expenseIndex].value);
       else return this.contract.locals.balance;
     }
-    return this.stringUtil.numberToMoney(Number.MAX_VALUE);
+    return numberToMoney(Number.MAX_VALUE);
   }
 
   updateValue(idx: number): void {
-    this.expense.team[idx].value = this.stringUtil.applyPercentage(
-      this.expense.value,
-      this.expense.team[idx].percentage
-    );
+    this.expense.team[idx].value = applyPercentage(this.expense.value, this.expense.team[idx].percentage);
   }
 
   updatePercentage(idx: number): void {
-    this.expense.team[idx].percentage = this.stringUtil
-      .toPercentage(this.expense.team[idx].value, this.expense.value, 20)
-      .slice(0, -1);
+    this.expense.team[idx].percentage = toPercentage(this.expense.team[idx].value, this.expense.value, 20).slice(0, -1);
   }
 
   updateLastValues(): void {
@@ -364,7 +358,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
   calculateTeamValues(): void {
     if (this.expense.value !== '0') {
       this.expense.team.map((member) => {
-        member.value = this.stringUtil.applyPercentage(this.expense.value, member.percentage);
+        member.value = applyPercentage(this.expense.value, member.percentage);
         return member;
       });
     }
@@ -393,10 +387,7 @@ export class ExpenseItemComponent extends BaseExpenseComponent implements OnInit
       case SPLIT_TYPES.PROPORCIONAL: {
         for (let index = 0; index < this.expense.team.length; index++) {
           this.expense.team[index].percentage = this.invoice.team[index].distribution;
-          this.expense.team[index].value = this.stringUtil.applyPercentage(
-            this.expense.value,
-            this.expense.team[index].percentage
-          );
+          this.expense.team[index].value = applyPercentage(this.expense.value, this.expense.team[index].percentage);
         }
         break;
       }

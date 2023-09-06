@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, take } from 'rxjs';
@@ -7,7 +7,6 @@ import { COMPONENT_TYPES, ContractDialogComponent } from '../../contract-dialog/
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 
 import { Contract } from '@models/contract';
 import { Invoice } from '@models/invoice';
@@ -27,7 +26,6 @@ export class ReceiptTabComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private invoiceService: InvoiceService,
-    public stringUtil: StringUtilService,
     private dialogService: NbDialogService
   ) {}
 
