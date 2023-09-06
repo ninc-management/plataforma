@@ -4,7 +4,7 @@ import { EChartsOption } from 'echarts';
 import { Subject, take, takeUntil } from 'rxjs';
 
 import { ContractService } from 'app/shared/services/contract.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { moneyToNumber } from 'app/shared/string-utils';
 
 type EchartBarItem = [string, number];
 
@@ -30,11 +30,7 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
   series: EchartBar[] = [];
   private destroy$: Subject<void> = new Subject();
   currentTheme = {};
-  constructor(
-    private theme: NbThemeService,
-    private stringUtilService: StringUtilService,
-    private contractService: ContractService
-  ) {}
+  constructor(private theme: NbThemeService, private contractService: ContractService) {}
 
   onChartInit(event: any): void {
     this.echartsInstance = event;
@@ -100,7 +96,7 @@ export class EchartsBarComponent implements OnInit, OnDestroy {
                         type: 'bar',
                         barGap: '-100%',
                         barWidth: '30%',
-                        data: [[expense.type, this.stringUtilService.moneyToNumber(expense.value)]],
+                        data: [[expense.type, moneyToNumber(expense.value)]],
                       };
                       series.push(temp);
                     });

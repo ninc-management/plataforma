@@ -1,7 +1,7 @@
 import { Directive, Injectable, Input } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
 
-import { StringUtilService } from '../services/string-util.service';
+import { moneyToNumber } from '../string-utils';
 
 @Directive({
   selector: '[lastPayment]',
@@ -19,13 +19,9 @@ import { StringUtilService } from '../services/string-util.service';
 export class LastPaymentDirective implements Validator {
   @Input('lastPayment') lastPaymentMoney = '';
 
-  constructor(private stringUtilService: StringUtilService) {}
-
   validate(control: AbstractControl): { [key: string]: any } | null {
     if (!control.value || this.lastPaymentMoney.length == 0) return null;
-    const forbidden =
-      this.stringUtilService.moneyToNumber(control.value) !==
-      this.stringUtilService.moneyToNumber(this.lastPaymentMoney);
+    const forbidden = moneyToNumber(control.value) !== moneyToNumber(this.lastPaymentMoney);
     return forbidden ? { lastpayment: { value: control.value } } : null;
   }
 }

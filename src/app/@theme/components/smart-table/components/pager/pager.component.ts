@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleCha
 import { Subject, takeUntil } from 'rxjs';
 
 import { DataSource } from '../../lib/data-source/data-source';
-import { StringUtilService } from 'app/shared/services/string-util.service';
+import { numberToMoney } from 'app/shared/string-utils';
 
 type ReduceFunction = (...arg: any) => number;
 
@@ -103,8 +103,6 @@ export class PagerComponent implements OnChanges, OnDestroy {
   protected perPage: number = 0;
   pageSum: string = '0.0';
 
-  constructor(private stringUtil: StringUtilService) {}
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -126,8 +124,7 @@ export class PagerComponent implements OnChanges, OnDestroy {
 
           this.processPageChange(dataChanges);
           this.initPages();
-          if (this.displaySum)
-            this.pageSum = this.stringUtil.numberToMoney(dataChanges.elements.reduce(this.reduceFunction, 0));
+          if (this.displaySum) this.pageSum = numberToMoney(dataChanges.elements.reduce(this.reduceFunction, 0));
         });
     }
   }

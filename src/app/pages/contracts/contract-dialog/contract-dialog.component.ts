@@ -11,8 +11,8 @@ import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber } from 'app/shared/string-utils';
 import { codeSort, idToProperty, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -52,7 +52,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ContractDialogComponent>,
     protected invoiceService: InvoiceService,
-    private stringUtil: StringUtilService,
     private userService: UserService,
     private contractService: ContractService,
     private onedrive: OneDriveService,
@@ -75,7 +74,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
         this.config = config[0];
       });
     this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
-    this.hasBalance = this.stringUtil.moneyToNumber(this.contract.locals.balance) > 0;
+    this.hasBalance = moneyToNumber(this.contract.locals.balance) > 0;
     if (this.componentType == COMPONENT_TYPES.CONTRACT && this.config.oneDriveConfig.isActive) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
@@ -111,15 +110,11 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
                   this.isPayable = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.PAYMENT:
-                  this.availableContracts = contracts.filter(
-                    (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
-                  );
+                  this.availableContracts = contracts.filter((contract) => moneyToNumber(contract.locals.balance) > 0);
                   this.hasBalance = this.availableContracts.length !== 0;
                   break;
                 case COMPONENT_TYPES.EXPENSE:
-                  this.availableContracts = contracts.filter(
-                    (contract) => this.stringUtil.moneyToNumber(contract.locals.balance) > 0
-                  );
+                  this.availableContracts = contracts.filter((contract) => moneyToNumber(contract.locals.balance) > 0);
                   this.hasBalance = this.availableContracts.length !== 0;
                   break;
                 default:

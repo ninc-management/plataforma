@@ -4,8 +4,8 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
+import { numberToString } from '../string-utils';
 import { handle, isOfType, reviveDates } from '../utils';
-import { StringUtilService } from './string-util.service';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -33,12 +33,7 @@ export class InvoiceService implements OnDestroy {
     return this._isDataLoaded$.asObservable();
   }
 
-  constructor(
-    private http: HttpClient,
-    private userService: UserService,
-    private wsService: WebSocketService,
-    private stringUtil: StringUtilService
-  ) {}
+  constructor(private http: HttpClient, private userService: UserService, private wsService: WebSocketService) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -119,7 +114,7 @@ export class InvoiceService implements OnDestroy {
   }
 
   setDefaultDistribution(invoice: Invoice): Invoice {
-    const defaultDistribution = this.stringUtil.numberToString(100 / invoice.team.length, 20);
+    const defaultDistribution = numberToString(100 / invoice.team.length, 20);
 
     const tmpInvoice = cloneDeep(invoice);
     tmpInvoice.team = invoice.team.map((member) => ({

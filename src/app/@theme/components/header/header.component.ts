@@ -21,8 +21,8 @@ import {
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { applyBoldToMention } from 'app/shared/string-utils';
 import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, trackByIndex } from 'app/shared/utils';
 
 import { Company } from '@models/company';
@@ -62,6 +62,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { title: 'Sair', link: '/auth/logout' },
   ];
 
+  applyBoldToMention = applyBoldToMention;
   isPhone = isPhone;
   trackByIndex = trackByIndex;
   elapsedTime = elapsedTime;
@@ -76,7 +77,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private accessChecker: NbAccessChecker,
     private configService: ConfigService,
     public userService: UserService,
-    public stringUtils: StringUtilService,
     public companyService: CompanyService,
     public notificationService: NotificationService
   ) {}

@@ -5,6 +5,15 @@ import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import {
+  applyPercentage,
+  moneyToNumber,
+  numberToMoney,
+  sumMoney,
+  toMultiplyPercentage,
+  toPercentage,
+  toPercentageNumber,
+} from '../string-utils';
+import {
   groupByDateTimeSerie,
   idToProperty,
   isValidDate,
@@ -17,7 +26,6 @@ import { ConfigService } from './config.service';
 import { CONTRACT_STATOOS, ContractService } from './contract.service';
 import { ContractorService } from './contractor.service';
 import { INVOICE_STATOOS, InvoiceService } from './invoice.service';
-import { StringUtilService } from './string-util.service';
 import { TeamService } from './team.service';
 import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 
@@ -129,7 +137,6 @@ export class MetricsService implements OnDestroy {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private userService: UserService,
-    private stringUtil: StringUtilService,
     private teamService: TeamService,
     private contractorService: ContractorService,
     private configService: ConfigService
@@ -204,7 +211,7 @@ export class MetricsService implements OnDestroy {
             ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               metricInfo.count += 1;
-              metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+              metricInfo.value += moneyToNumber(invoice.value);
             }
             return metricInfo;
           },
@@ -231,7 +238,7 @@ export class MetricsService implements OnDestroy {
               const created = invoice.created;
               if (this.invoiceService.isInvoiceAuthor(invoice, uId) && isValidDate(created, last, number, fromToday)) {
                 metricInfo.count += 1;
-                metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                metricInfo.value += moneyToNumber(invoice.value);
               }
               return metricInfo;
             },
@@ -266,7 +273,7 @@ export class MetricsService implements OnDestroy {
             ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               metricInfo.count += 1;
-              metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+              metricInfo.value += moneyToNumber(invoice.value);
             }
             return metricInfo;
           },
@@ -296,10 +303,10 @@ export class MetricsService implements OnDestroy {
                 const created = invoice.created;
                 if (onlyNew && isValidDate(created, last, number, fromToday)) {
                   metricInfo.count += 1;
-                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                  metricInfo.value += moneyToNumber(invoice.value);
                 } else {
                   metricInfo.count += 1;
-                  metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+                  metricInfo.value += moneyToNumber(invoice.value);
                 }
               }
 
@@ -327,9 +334,9 @@ export class MetricsService implements OnDestroy {
                       (o) => o.id == this.teamService.idToSector(member.sector)._id
                     );
                     if (globalIdx != -1) {
-                      upaid.global[globalIdx].value += this.stringUtil.moneyToNumber(member.value);
+                      upaid.global[globalIdx].value += moneyToNumber(member.value);
                       if (this.userService.isEqual(member.user, uId)) {
-                        upaid.user[globalIdx].value += this.stringUtil.moneyToNumber(member.value);
+                        upaid.user[globalIdx].value += moneyToNumber(member.value);
                       }
                     }
 
@@ -362,9 +369,9 @@ export class MetricsService implements OnDestroy {
                       (o) => o.id == this.teamService.idToSector(member.sector)._id
                     );
                     if (globalIdx != -1) {
-                      received.global[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                      received.global[globalIdx].value -= moneyToNumber(member.value);
                       if (this.userService.isEqual(member.user, uId)) {
-                        received.user[globalIdx].value -= this.stringUtil.moneyToNumber(member.value);
+                        received.user[globalIdx].value -= moneyToNumber(member.value);
                       }
                     }
                   }
@@ -426,7 +433,7 @@ export class MetricsService implements OnDestroy {
                         'fullName'
                       );
 
-                      const value = this.stringUtil.moneyToNumber(member.value);
+                      const value = moneyToNumber(member.value);
                       upaid[author] = upaid[author] ? upaid[author] + value : value;
                     }
                     return upaid;
@@ -471,9 +478,7 @@ export class MetricsService implements OnDestroy {
     /* eslint-enable indent */
     return combined$.pipe(
       map(([contracts, invoices]) => {
-        return this.stringUtil.moneyToNumber(
-          this.stringUtil.toPercentageNumber(contracts.count, invoices.count).slice(0, -1)
-        );
+        return moneyToNumber(toPercentageNumber(contracts.count, invoices.count).slice(0, -1));
       }),
       takeUntil(this.destroy$)
     );
@@ -500,9 +505,7 @@ export class MetricsService implements OnDestroy {
     /* eslint-enable indent */
     return combined$.pipe(
       map(([contracts, invoices]) => {
-        return this.stringUtil.moneyToNumber(
-          this.stringUtil.toPercentageNumber(contracts.value, invoices.value).slice(0, -1)
-        );
+        return moneyToNumber(toPercentageNumber(contracts.value, invoices.value).slice(0, -1));
       }),
       takeUntil(this.destroy$)
     );
@@ -529,7 +532,7 @@ export class MetricsService implements OnDestroy {
               .reduce((acc, receipt) => {
                 const paidDate = receipt.paidDate;
                 if (paidDate && isValidDate(paidDate, last, number, fromToday))
-                  acc += this.stringUtil.moneyToNumber(
+                  acc += moneyToNumber(
                     this.contractService.toNetValue(
                       receipt.value,
                       nfPercentage(contract, configs[0].invoiceConfig),
@@ -566,7 +569,7 @@ export class MetricsService implements OnDestroy {
             ) {
               const invoice = this.invoiceService.idToInvoice(contract.invoice);
               metricInfo.count += 1;
-              metricInfo.value += this.stringUtil.moneyToNumber(invoice.value);
+              metricInfo.value += moneyToNumber(invoice.value);
             }
             return metricInfo;
           },
@@ -586,9 +589,9 @@ export class MetricsService implements OnDestroy {
 
         return contracts.reduce((receivedMetricInfo, contract) => {
           if (this.contractService.contractHasPaymentsWithUser(contract, userID)) {
-            receivedMetricInfo.value = this.stringUtil.moneyToNumber(
-              this.stringUtil.sumMoney(
-                this.stringUtil.numberToMoney(receivedMetricInfo.value),
+            receivedMetricInfo.value = moneyToNumber(
+              sumMoney(
+                numberToMoney(receivedMetricInfo.value),
                 this.contractService.receivedValue(userID, contract, start, end)
               )
             );
@@ -625,9 +628,9 @@ export class MetricsService implements OnDestroy {
                   (paid: UserAndGlobalMetric, receipt) => {
                     const paidDate = receipt.paidDate;
                     if (paidDate && isWithinInterval(paidDate, start, end)) {
-                      const value = this.stringUtil.moneyToNumber(
+                      const value = moneyToNumber(
                         type != 'oe'
-                          ? this.stringUtil.applyPercentage(
+                          ? applyPercentage(
                               receipt.value,
                               type == 'nortan' ? receipt.nortanPercentage : receipt.notaFiscal
                             )
@@ -665,7 +668,7 @@ export class MetricsService implements OnDestroy {
               const paidDate = expense.paidDate;
               if (paidDate && isWithinInterval(paidDate, start, end)) {
                 acc.count += 1;
-                acc.value += this.stringUtil.moneyToNumber(expense.value);
+                acc.value += moneyToNumber(expense.value);
               }
               return acc;
             },
@@ -678,7 +681,7 @@ export class MetricsService implements OnDestroy {
   cashbackValue(uId: string, percentage: string, start: Date, end: Date): Observable<MetricInfo> {
     return this.nortanValue(start, end, 'nortan', uId).pipe(
       map((metricInfo): MetricInfo => {
-        metricInfo.user *= this.stringUtil.toMultiplyPercentage(percentage);
+        metricInfo.user *= toMultiplyPercentage(percentage);
         return { count: 0, value: metricInfo.user };
       })
     );
@@ -698,9 +701,7 @@ export class MetricsService implements OnDestroy {
             if (contract.status == status) {
               metricInfo.count += 1;
               if (contract.invoice)
-                metricInfo.value += this.stringUtil.moneyToNumber(
-                  this.invoiceService.idToInvoice(contract.invoice).value
-                );
+                metricInfo.value += moneyToNumber(this.invoiceService.idToInvoice(contract.invoice).value);
             }
             return metricInfo;
           },
@@ -732,7 +733,7 @@ export class MetricsService implements OnDestroy {
           }
           return fPayments.map((payment) => {
             const date: string = payment.paidDate ? format(payment.paidDate, 'yyyy/MM/dd') : '';
-            return [date, this.stringUtil.moneyToNumber(payment.value)] as TimeSeriesItem;
+            return [date, moneyToNumber(payment.value)] as TimeSeriesItem;
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
@@ -766,7 +767,7 @@ export class MetricsService implements OnDestroy {
           }
           return fExpenses.map((expense) => {
             const date: string = expense.paidDate ? format(expense.paidDate, 'yyyy/MM/dd') : '';
-            return [date, -1 * this.stringUtil.moneyToNumber(expense.value)] as TimeSeriesItem;
+            return [date, -1 * moneyToNumber(expense.value)] as TimeSeriesItem;
           });
         });
         const timeSeriesItemsFlat = timeSeriesItems.flat();
@@ -796,7 +797,7 @@ export class MetricsService implements OnDestroy {
           fContracts = fContracts.map((contract) => {
             if (contract.invoice) {
               const invoice = cloneDeep(this.invoiceService.idToInvoice(contract.invoice));
-              invoice.value = this.stringUtil.applyPercentage(
+              invoice.value = applyPercentage(
                 invoice.value,
                 this.invoiceService.idToInvoice(contract.invoice).team[0].distribution
               );
@@ -809,7 +810,7 @@ export class MetricsService implements OnDestroy {
           const date: string = contract.created ? format(contract.created, 'yyyy/MM/dd') : '';
           return [
             date,
-            this.stringUtil.moneyToNumber(
+            moneyToNumber(
               idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'value')
             ),
           ] as TimeSeriesItem;
@@ -852,7 +853,7 @@ export class MetricsService implements OnDestroy {
                   receivableValue: currentReceivableValue,
                 });
 
-                userReceivable.totalValue = this.stringUtil.sumMoney(currentReceivableValue, userReceivable.totalValue);
+                userReceivable.totalValue = sumMoney(currentReceivableValue, userReceivable.totalValue);
               }
             }
 
@@ -892,7 +893,7 @@ export class MetricsService implements OnDestroy {
       map((valueByContractor) => {
         //This array is ordered by descending order
         return valueByContractor.filter((contractorInfo) => {
-          const contractorPercentage = this.stringUtil.moneyToNumber(contractorInfo.data.percentage.slice(0, -1));
+          const contractorPercentage = moneyToNumber(contractorInfo.data.percentage.slice(0, -1));
           if (!hasAchievedLimit && accumulatedPercentage + contractorPercentage <= 80) {
             accumulatedPercentage += contractorPercentage;
             return true;
@@ -922,7 +923,7 @@ export class MetricsService implements OnDestroy {
         );
 
         return filteredContracts.reduce((balanceSum, contract) => {
-          return this.stringUtil.sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
+          return sumMoney(balanceSum, this.contractService.getMemberBalance(userID, contract));
         }, '0,00');
       })
     );
@@ -943,14 +944,11 @@ export class MetricsService implements OnDestroy {
         );
 
         const expensesSum = validContracts.reduce((expensesSum, contract) => {
-          return this.stringUtil.sumMoney(
-            expensesSum,
-            this.contractService.getMemberExpensesSum(userID, contract, start, end)
-          );
+          return sumMoney(expensesSum, this.contractService.getMemberExpensesSum(userID, contract, start, end));
         }, '0,00');
 
         return {
-          value: this.stringUtil.moneyToNumber(expensesSum),
+          value: moneyToNumber(expensesSum),
           count: validContracts.length,
         } as MetricInfo;
       })
@@ -973,10 +971,7 @@ export class MetricsService implements OnDestroy {
     totalValue: string
   ): void {
     Object.keys(valueByContractor).forEach((contractorName) => {
-      valueByContractor[contractorName].percentage = this.stringUtil.toPercentage(
-        valueByContractor[contractorName].value,
-        totalValue
-      );
+      valueByContractor[contractorName].percentage = toPercentage(valueByContractor[contractorName].value, totalValue);
     });
   }
 
@@ -992,12 +987,9 @@ export class MetricsService implements OnDestroy {
             valueByContractor[contractorName] = { value: '0,00', percentage: '0,00%' };
           }
 
-          valueByContractor[contractorName].value = this.stringUtil.sumMoney(
-            valueByContractor[contractorName].value,
-            invoice.value
-          );
+          valueByContractor[contractorName].value = sumMoney(valueByContractor[contractorName].value, invoice.value);
 
-          totalValue = this.stringUtil.sumMoney(totalValue, invoice.value);
+          totalValue = sumMoney(totalValue, invoice.value);
         }
       }
       return valueByContractor;
@@ -1009,10 +1001,8 @@ export class MetricsService implements OnDestroy {
 
   private receivableValue(contract: Contract, member: InvoiceTeamMember): string {
     const notPaid = this.contractService.notPaidValue(member.distribution, member.user, contract);
-    const cashback = this.stringUtil.numberToMoney(
-      this.contractService.expensesContributions(contract, member.user).user.cashback
-    );
+    const cashback = numberToMoney(this.contractService.expensesContributions(contract, member.user).user.cashback);
 
-    return this.stringUtil.sumMoney(notPaid, cashback);
+    return sumMoney(notPaid, cashback);
   }
 }

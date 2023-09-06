@@ -52,7 +52,7 @@
         <ng-template #notify>
           <div class="row" style="padding: 0 2.5rem; overflow-x: hidden">
             <div style="text-align: justify; word-break: break-word">
-              <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
+              <pre [innerHTML]="[notification.message] | transformPipe: applyBoldToMention"></pre>
               <p>
                 Por:
                 {{

@@ -10,7 +10,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { startOfMonth, subMonths } from 'date-fns';
-import { BehaviorSubject, combineLatest, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { MetricItem } from '../metric-item/metric-item.component';
@@ -19,8 +19,8 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { FinancialService } from 'app/shared/services/financial.service';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricInfo, MetricsService } from 'app/shared/services/metrics.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { numberToMoney, toPercentageNumber } from 'app/shared/string-utils';
 import { NOT } from 'app/shared/utils';
 
 /* eslint-disable indent */
@@ -47,7 +47,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
     private renderer: Renderer2,
     private metricsService: MetricsService,
     private userService: UserService,
-    private stringUtil: StringUtilService,
     private financialService: FinancialService,
     private contractService: ContractService,
     private invoiceService: InvoiceService,
@@ -76,10 +75,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma dos valores recebidos por você através dos contratos no mês corrente',
           value: this.metricsService
             .userReceivedValue(user._id, currentMonthStart, today)
-            .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
+            .pipe(map((received) => 'R$ ' + numberToMoney(received.value))),
           previousValue: this.metricsService
             .userReceivedValue(user._id, previousMonthStart, currentMonthStart)
-            .pipe(map((received) => 'R$ ' + this.stringUtil.numberToMoney(received.value))),
+            .pipe(map((received) => 'R$ ' + numberToMoney(received.value))),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
@@ -91,10 +90,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
           tooltip: 'Soma das suas despesas no mês corrente',
           value: this.metricsService
             .userExpenses(user._id, currentMonthStart, today)
-            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
+            .pipe(map((userExpensesMetricData) => 'R$ ' + numberToMoney(userExpensesMetricData.value))),
           previousValue: this.metricsService
             .userExpenses(user._id, previousMonthStart, currentMonthStart)
-            .pipe(map((userExpensesMetricData) => 'R$ ' + this.stringUtil.numberToMoney(userExpensesMetricData.value))),
+            .pipe(map((userExpensesMetricData) => 'R$ ' + numberToMoney(userExpensesMetricData.value))),
           loading: combineLatest([this.contractService.isDataLoaded$, this.invoiceService.isDataLoaded$]).pipe(
             takeUntil(this.destroy$),
             map(([isContractDataLoaded, isInvoiceDataLoaded]) => !(isContractDataLoaded && isInvoiceDataLoaded))
@@ -172,12 +171,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             'Soma de todos os valores recebidos pelo associado no mês corrente menos as despesas como fonte pagas no mês corrente',
           value: this.metricsService
             .receivedValueNortan(currentMonthStart, today, user._id)
-            .pipe(
-              map((receivedValueNortanData) => 'R$ ' + this.stringUtil.numberToMoney(receivedValueNortanData.user))
-            ),
+            .pipe(map((receivedValueNortanData) => 'R$ ' + numberToMoney(receivedValueNortanData.user))),
           previousValue: this.metricsService.receivedValueNortan(previousMonthStart, currentMonthStart, user._id).pipe(
             map((previousReceivedValueNortanData) => {
-              return 'R$ ' + this.stringUtil.numberToMoney(previousReceivedValueNortanData.user);
+              return 'R$ ' + numberToMoney(previousReceivedValueNortanData.user);
             })
           ),
           loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
@@ -258,10 +255,10 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
             'Porcentagem do valor total pago ao associado em relação ao valor pago a todos os associados da empresa, no mês corrente. (R$ total recebido / R$ total pago aos associados da empresa)',
           value: this.metricsService
             .receivedValueNortan(currentMonthStart, today, user._id)
-            .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
+            .pipe(map((userGlobal) => toPercentageNumber(userGlobal.user, userGlobal.global))),
           previousValue: this.metricsService
             .receivedValueNortan(previousMonthStart, currentMonthStart, user._id)
-            .pipe(map((userGlobal) => this.stringUtil.toPercentageNumber(userGlobal.user, userGlobal.global))),
+            .pipe(map((userGlobal) => toPercentageNumber(userGlobal.user, userGlobal.global))),
           loading: NOT(this.contractService.isDataLoaded$).pipe(takeUntil(this.destroy$)),
         });
 
@@ -334,6 +331,6 @@ export class ProgressSectionComponent implements OnInit, AfterViewInit, OnDestro
 
   private userMetricsAverage(data: MetricInfo): string {
     if (data.count == 0) return 'R$ 0,00';
-    return 'R$ ' + this.stringUtil.numberToMoney(data.value / data.count);
+    return 'R$ ' + numberToMoney(data.value / data.count);
   }
 }

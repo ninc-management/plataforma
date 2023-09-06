@@ -6,8 +6,8 @@ import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dial
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { UserService } from 'app/shared/services/user.service';
+import { applyBoldToMention } from 'app/shared/string-utils';
 import { idToProperty, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Notification } from '@models/notification';
@@ -31,6 +31,7 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
   @Input() componentType = COMPONENT_TYPES.CONFIG;
   types = COMPONENT_TYPES;
 
+  applyBoldToMention = applyBoldToMention;
   isPhone = isPhone;
   idToProperty = idToProperty;
   tooltipTriggers = tooltipTriggers;
@@ -41,8 +42,7 @@ export class ConfigDialogComponent extends BaseDialogComponent implements OnInit
     private notificationService: NotificationService,
     private dialogService: NbDialogService,
     private configService: ConfigService,
-    public userService: UserService,
-    public stringUtils: StringUtilService
+    public userService: UserService
   ) {
     super(derivedDocument, derivedRef);
   }

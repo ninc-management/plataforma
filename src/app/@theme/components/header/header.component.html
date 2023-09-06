@@ -108,7 +108,7 @@
               "
             ></nb-user>
             <div class="notification">
-              <pre [innerHTML]="[notification.message] | transformPipe: stringUtils.applyBoldToMention"></pre>
+              <pre [innerHTML]="[notification.message] | transformPipe: applyBoldToMention"></pre>
               <span class="float-right">
                 {{ [notification.created] | transformPipe: elapsedTime.bind(this) }}
               </span>

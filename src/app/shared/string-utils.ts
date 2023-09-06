@@ -1,6 +1,5 @@
 import { BrMaskDirective } from './directives/br-mask.directive';
-
-let brMask: BrMaskDirective;
+import { appInjector } from './injector.module';
 
 export function sumMoney(value1: string, value2: string, decimals = 2): string {
   return numberToMoney(moneyToNumber(value1) + moneyToNumber(value2), decimals);
@@ -34,6 +33,7 @@ export function numberToString(number: number, decimals = 4): string {
 }
 
 export function numberToMoney(value: number, decimals = 2): string {
+  const brMask = appInjector.get(BrMaskDirective);
   const result = brMask.writeValueMoney(value.toFixed(decimals).toString(), {
     money: true,
     thousand: '.',
