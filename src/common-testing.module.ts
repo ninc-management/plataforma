@@ -82,7 +82,6 @@ import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { PromotionService } from 'app/shared/services/promotion.service';
 import { StatecityService } from 'app/shared/services/statecity.service';
 import { StorageService } from 'app/shared/services/storage.service';
-import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { TransactionService } from 'app/shared/services/transaction.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -233,7 +232,6 @@ const PROVIDERS = [
   RedirectGuard,
   StatecityService,
   StorageService,
-  StringUtilService,
   TeamService,
   TransactionService,
   UserService,
