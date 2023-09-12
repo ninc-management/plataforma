@@ -23,7 +23,14 @@ import { CLIENT, CONTRACT_BALANCE, UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
 import { StatusHistoryItem } from '@models/baseStatusHistory';
-import { ChecklistItemAction, Contract, ContractExpense, ContractLocals, ContractReceipt } from '@models/contract';
+import {
+  ChecklistItemAction,
+  Contract,
+  ContractExpense,
+  ContractLocals,
+  ContractPayment,
+  ContractReceipt,
+} from '@models/contract';
 import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
@@ -603,5 +610,17 @@ export class ContractService implements OnDestroy {
   isEqual(u1: string | Contract | undefined, u2: string | Contract | undefined): boolean {
     if (u1 == undefined || u2 == undefined) return false;
     return this.idToContract(u1)._id == this.idToContract(u2)._id;
+  }
+
+  openOPs(): Observable<ContractPayment[]> {
+    return this.getContracts().pipe(
+      takeUntil(this.destroy$),
+      map((contracts) => {
+        return contracts
+          .map((contract) => contract.payments)
+          .flat()
+          .filter((payment) => payment.paid === false);
+      })
+    );
   }
 }
