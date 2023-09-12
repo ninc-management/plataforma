@@ -5,7 +5,7 @@ import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
-import { CONTRACT_STATOOS } from 'app/shared/services/contract.service';
+import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
@@ -58,7 +58,8 @@ export class DashboardComponent {
     private metricsService: MetricsService,
     private userService: UserService,
     private dialogService: NbDialogService,
-    private teamService: TeamService
+    private teamService: TeamService,
+    private contractService: ContractService
   ) {
     this.teamService
       .getTeams()
@@ -155,6 +156,10 @@ export class DashboardComponent {
         this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
         this.isParettoRankLoaded = true;
       });
+
+    this.contractService.openOPs().subscribe((openOPs) => {
+      this.openOP = openOPs.map((payment) => payment.service);
+    });
   }
 
   ngOnDestroy(): void {
