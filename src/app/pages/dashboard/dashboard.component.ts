@@ -157,9 +157,12 @@ export class DashboardComponent {
         this.isParettoRankLoaded = true;
       });
 
-    this.contractService.openOPs().subscribe((openOPs) => {
-      this.openOP = openOPs.map((payment) => payment.service);
-    });
+    this.contractService
+      .openOPs()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((openOPs) => {
+        this.openOP = openOPs.map((payment) => payment.service);
+      });
   }
 
   ngOnDestroy(): void {
