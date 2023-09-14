@@ -608,8 +608,7 @@ export class ContractService implements OnDestroy {
   }
 
   openOPs(): Observable<ContractPayment[]> {
-    return this.getContracts().pipe(
-      takeUntil(this.destroy$),
+    return this.contracts$.pipe(
       map((contracts) => {
         return contracts
           .map((contract) => contract.payments)
