@@ -20,8 +20,10 @@
         <div class="col-12">
           <ngx-expansive-list
             [title]="'Contratos com OP abertas'"
-            [items]="openOP"
-            [isLoading]="false"
+            [items]="openOPs"
+            [isLoading]="!isOPsLoaded"
+            [itemsToString]="contractPaymentInfoToString.bind(this)"
+            [itemClickCallback]="openContractDialog.bind(this)"
           ></ngx-expansive-list>
         </div>
       </div>

@@ -84,6 +84,11 @@ export interface ExpenseTypesSum {
   value: string;
 }
 
+export interface ContractPaymentInfo {
+  contract: Contract;
+  payment: ContractPayment;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -612,13 +617,16 @@ export class ContractService implements OnDestroy {
     return this.idToContract(u1)._id == this.idToContract(u2)._id;
   }
 
-  openOPs(): Observable<ContractPayment[]> {
-    return this.contracts$.pipe(
+  openOPs(): Observable<ContractPaymentInfo[]> {
+    return this.getContracts().pipe(
       map((contracts) => {
         return contracts
-          .map((contract) => contract.payments)
-          .flat()
-          .filter((payment) => payment.paid === false);
+          .map((contract) =>
+            contract.payments
+              .filter((payment) => payment.paid === false)
+              .map((payment) => ({ contract: contract, payment: payment }))
+          )
+          .flat();
       })
     );
   }

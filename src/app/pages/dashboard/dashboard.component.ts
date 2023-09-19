@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
+import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
-import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
+import { ConfigService } from 'app/shared/services/config.service';
+import { CONTRACT_STATOOS, ContractPaymentInfo, ContractService } from 'app/shared/services/contract.service';
+import { ContractorService } from 'app/shared/services/contractor.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { groupByDateTimeSerie, isPhone } from 'app/shared/utils';
 
+import { Contract } from '@models/contract';
 import { Team } from '@models/team';
 
 enum TAB_TITLES {
@@ -24,7 +29,7 @@ enum TAB_TITLES {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   tabTitles = TAB_TITLES;
@@ -49,8 +54,9 @@ export class DashboardComponent {
   nortanTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
-  openOP: string[] = [];
+  openOPs: ContractPaymentInfo[] = [];
   isParettoRankLoaded = false;
+  isOPsLoaded: boolean = false;
 
   isPhone = isPhone;
 
@@ -60,7 +66,10 @@ export class DashboardComponent {
     private userService: UserService,
     private dialogService: NbDialogService,
     private teamService: TeamService,
-    private contractService: ContractService
+    private contractService: ContractService,
+    private invoiceService: InvoiceService,
+    private contractorService: ContractorService,
+    private configService: ConfigService
   ) {
     this.teamService
       .getTeams()
@@ -157,12 +166,54 @@ export class DashboardComponent {
         this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
         this.isParettoRankLoaded = true;
       });
+  }
 
-    this.contractService
-      .openOPs()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((openOPs) => {
-        this.openOP = openOPs.map((payment) => payment.service);
+  ngOnInit(): void {
+    combineLatest([
+      this.contractService.getContracts(),
+      this.invoiceService.getInvoices(),
+      this.contractorService.getContractors(),
+      this.teamService.getTeams(),
+      this.configService.getConfig(),
+      this.contractService.isDataLoaded$,
+      this.invoiceService.isDataLoaded$,
+      this.contractorService.isDataLoaded$,
+      this.teamService.isDataLoaded$,
+      this.configService.isDataLoaded$,
+    ])
+      .pipe(
+        skipWhile(
+          ([
+            ,
+            ,
+            ,
+            ,
+            ,
+            isContractDataLoaded,
+            isInvoiceDataLoaded,
+            isContractorDataLoaded,
+            isTeamDataLoaded,
+            isConfigDataLoaded,
+          ]) =>
+            !(
+              isContractDataLoaded &&
+              isInvoiceDataLoaded &&
+              isContractorDataLoaded &&
+              isTeamDataLoaded &&
+              isConfigDataLoaded
+            )
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(([contracts, ,]) => {
+        contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
+        this.contractService
+          .openOPs()
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((openOPs) => {
+            this.openOPs = openOPs;
+            this.isOPsLoaded = true;
+          });
       });
   }
 
@@ -185,22 +236,50 @@ export class DashboardComponent {
     });
   }
 
+  // CODIGO_DO_CONTRATO - #CODIGO_DA_OP
+  contractPaymentInfoToString(contractPaymentInfo: ContractPaymentInfo): string {
+    if (contractPaymentInfo.contract.invoice)
+      return (
+        this.invoiceService.idToInvoice(contractPaymentInfo.contract.invoice).code +
+        ' - #' +
+        contractPaymentInfo.payment.service
+      );
+    return ' - #' + contractPaymentInfo.payment.service;
+  }
+
+  openContractDialog(contractPayment: ContractPaymentInfo): void {
+    const contract = contractPayment.contract;
+    this.dialogService.open(ContractDialogComponent, {
+      context: {
+        title: 'Contrato',
+        contract: contract,
+        componentType: COMPONENT_TYPES.CONTRACT,
+      },
+      dialogClass: 'my-dialog',
+      closeOnBackdropClick: false,
+      closeOnEsc: false,
+      autoFocus: false,
+    });
+  }
+
   setActiveTab(event: NbTabComponent): void {
-    switch (event.tabTitle.toLowerCase()) {
-      case TAB_TITLES.PESSOAL.toLowerCase(): {
-        this.activeTab = TAB_TITLES.PESSOAL;
-        this.currentTeam = new Team();
-        break;
-      }
-      case this.nortanTeam.name.toLowerCase(): {
-        this.activeTab = this.nortanTeam.name;
-        this.currentTeam = this.teamService.idToTeam(event.tabId);
-        break;
-      }
-      default: {
-        this.activeTab = TAB_TITLES.TEAM;
-        this.currentTeam = this.teamService.idToTeam(event.tabId);
-        break;
+    if (this.nortanTeam) {
+      switch (event.tabTitle.toLowerCase()) {
+        case TAB_TITLES.PESSOAL.toLowerCase(): {
+          this.activeTab = TAB_TITLES.PESSOAL;
+          this.currentTeam = new Team();
+          break;
+        }
+        case this.nortanTeam.name.toLowerCase(): {
+          this.activeTab = this.nortanTeam.name;
+          this.currentTeam = this.teamService.idToTeam(event.tabId);
+          break;
+        }
+        default: {
+          this.activeTab = TAB_TITLES.TEAM;
+          this.currentTeam = this.teamService.idToTeam(event.tabId);
+          break;
+        }
       }
     }
   }
