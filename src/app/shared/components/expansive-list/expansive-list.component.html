@@ -23,8 +23,8 @@
           'overflow-y': items.length > max && isExpanded ? 'scroll' : 'hidden'
         }"
       >
-        <nb-list-item *ngFor="let item of items; let i = index; trackBy: trackByIndex">
-          {{ i + 1 }} - {{ item }}
+        <nb-list-item [ngStyle]="itemClickCallback ? {'cursor': 'pointer'} : {}" *ngFor="let item of items; let i = index; trackBy: trackByIndex" (click)="itemClickCallback ? itemClickCallback(item) : null">
+          {{ i + 1 }} - {{ itemsToString ? itemsToString(item) : item }}
         </nb-list-item>
       </nb-list>
     </ng-template>

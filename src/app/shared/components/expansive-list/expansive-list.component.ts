@@ -7,13 +7,15 @@ import { trackByIndex } from 'app/shared/utils';
   templateUrl: './expansive-list.component.html',
   styleUrls: ['./expansive-list.component.scss'],
 })
-export class ExpansiveListComponent implements OnInit {
+export class ExpansiveListComponent<T> implements OnInit {
   @ViewChild('list', { read: ElementRef }) list!: ElementRef;
   @Input() title = '';
-  @Input() items: string[] = [];
+  @Input() items: T[] = [];
   @Input() min: number = 5;
   @Input() max!: number;
   @Input() isLoading: boolean = false;
+  @Input() itemsToString?: (arg0: T) => string;
+  @Input() itemClickCallback?: (arg0: T) => void;
 
   minHeight = 0;
   maxHeight = 0;
