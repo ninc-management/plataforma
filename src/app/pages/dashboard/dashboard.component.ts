@@ -250,9 +250,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return (
         this.invoiceService.idToInvoice(contractPaymentInfo.contract.invoice).code +
         ' - #' +
+        (contractPaymentInfo.code + 1).toString() +
+        ' - ' +
         contractPaymentInfo.payment.service
       );
-    return ' - #' + contractPaymentInfo.payment.service;
+    return ' - #' + (contractPaymentInfo.code + 1).toString() + ' - ' + contractPaymentInfo.payment.service;
   }
 
   openContractDialog(contractPayment: ContractPaymentInfo): void {

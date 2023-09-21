@@ -87,6 +87,7 @@ export interface ExpenseTypesSum {
 export interface ContractPaymentInfo {
   contract: Contract;
   payment: ContractPayment;
+  code: number;
 }
 
 @Injectable({
@@ -624,7 +625,7 @@ export class ContractService implements OnDestroy {
           .map((contract) =>
             contract.payments
               .filter((payment) => payment.paid === false)
-              .map((payment) => ({ contract: contract, payment: payment }))
+              .map((payment) => ({ contract: contract, payment: payment, code: contract.payments.indexOf(payment) }))
           )
           .flat();
       })
