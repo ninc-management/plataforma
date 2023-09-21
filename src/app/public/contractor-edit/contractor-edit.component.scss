@@ -1,0 +1,26 @@
+@import 'app/@theme/styles/themes';
+
+@include nb-install-component() {
+  .label-divider {
+    color: nb-theme(text-hint-color);
+    font-family: nb-theme(text-label-font-family);
+    font-size: nb-theme(text-basic-font-size);
+    font-weight: nb-theme(text-label-font-weight);
+    line-height: nb-theme(text-label-line-height);
+  }
+
+  .irow {
+    width: 100%;
+    margin-left: 0;
+    align-items: center;
+  }
+
+}
+::ng-deep {
+  .transparent-spinner {
+    nb-spinner.status-primary {
+      background-color: var(--spinner-basic-circle-empty-color);
+    }
+  }
+}
+
