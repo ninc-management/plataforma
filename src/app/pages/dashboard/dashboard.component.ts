@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NbAccessChecker } from '@nebular/security';
 import { NbDialogService, NbTabComponent } from '@nebular/theme';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
@@ -57,6 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   openOPs: ContractPaymentInfo[] = [];
   isParettoRankLoaded = false;
   isOPsLoaded: boolean = false;
+  isFinancialManager: boolean = false;
 
   isPhone = isPhone;
 
@@ -69,7 +71,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private accessChecker: NbAccessChecker
   ) {
     this.teamService
       .getTeams()
@@ -166,6 +169,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
         this.isParettoRankLoaded = true;
       });
+
+    this.accessChecker
+      .isGranted('df', 'dashboard-open-contracts')
+      .pipe(take(1))
+      .subscribe((isGranted) => (this.isFinancialManager = isGranted));
   }
 
   ngOnInit(): void {
@@ -242,9 +250,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return (
         this.invoiceService.idToInvoice(contractPaymentInfo.contract.invoice).code +
         ' - #' +
+        (contractPaymentInfo.code + 1).toString() +
+        ' - ' +
         contractPaymentInfo.payment.service
       );
-    return ' - #' + contractPaymentInfo.payment.service;
+    return ' - #' + (contractPaymentInfo.code + 1).toString() + ' - ' + contractPaymentInfo.payment.service;
   }
 
   openContractDialog(contractPayment: ContractPaymentInfo): void {
