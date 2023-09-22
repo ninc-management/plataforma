@@ -12,7 +12,7 @@ import { Contractor } from '@models/contractor';
   styleUrls: ['./contractor-edit.component.scss'],
 })
 export class ContractorEditComponent implements OnInit {
-  clientID: string = '630802d50060852bb0c26e2d';
+  clientID: string = '';
   destroy$: Subject<void> = new Subject();
   contractorsList: Contractor[] = [];
   contractor: Contractor = new Contractor();
