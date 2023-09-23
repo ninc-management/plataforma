@@ -68,6 +68,7 @@ import { of } from 'rxjs';
 import { NbCompleterModule, NbFileUploaderModule } from 'app/@theme/components';
 import { routes } from 'app/app-routing.module';
 import { AuthService } from 'app/auth/auth.service';
+import { ContractorsModule } from 'app/pages/contractors/contractors.module';
 import { PagesModule } from 'app/pages/pages.module';
 import { AuthGuard } from 'app/shared/guards/auth.guard';
 import { RedirectGuard } from 'app/shared/guards/redirect.guard';
@@ -139,6 +140,7 @@ const IMPORTS = [
   BrowserAnimationsModule,
   AngularFireStorageModule,
   CommonModule,
+  ContractorsModule,
   FormsModule,
   HttpClientTestingModule,
   InjectorModule,

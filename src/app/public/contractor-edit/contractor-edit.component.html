@@ -1,1 +1,14 @@
-<p>Contractor-edit Component created Id = {{ clientID }}</p>
+<div class="row transparent-spinner"
+        *ngIf="!isDataLoaded; else contractorForm"
+        [nbSpinner]="true"
+        nbSpinnerStatus="primary"
+        nbSpinnerSize="giant"
+        style="width: 40px; height: 40px;">
+</div>
+<ng-template #contractorForm>
+       <ngx-contractor-item
+                *ngIf="contractor._id"
+                [iContractor]="contractor"
+                [contractors]="contractorsList"
+        ></ngx-contractor-item>
+</ng-template>

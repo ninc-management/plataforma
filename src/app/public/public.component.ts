@@ -21,12 +21,17 @@ export class NgxPublicComponent implements OnDestroy {
     private configService: ConfigService,
     public companyService: CompanyService
   ) {
-    combineLatest([this.configService.isDataLoaded$, this.configService.getConfig()])
+    combineLatest([
+      this.configService.getConfig(),
+      this.companyService.getCompanies(),
+      this.configService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
+    ])
       .pipe(
-        skipWhile(([configLoaded, _]) => !configLoaded),
+        skipWhile(([, , configLoaded, companyLoaded]) => !configLoaded || !companyLoaded),
         takeUntil(this.destroy$)
       )
-      .subscribe(([_, config]) => {
+      .subscribe(([config, , ,]) => {
         this.config = config[0];
       });
     // NINC: change for each new client
