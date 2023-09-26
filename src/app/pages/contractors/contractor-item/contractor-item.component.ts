@@ -150,7 +150,7 @@ export class ContractorItemComponent implements OnInit {
   }
 
   isSameDocument(fieldValue: string): Contractor[] {
-    if (!this.contractors) return [];
+    if (!this.contractors || this.editing) return [];
     return this.contractors.filter((contractor) => contractor.document === fieldValue);
   }
 }
