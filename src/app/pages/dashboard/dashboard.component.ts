@@ -260,9 +260,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const contract = contractPayment.contract;
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: 'Contrato',
+        title: 'ORDEM DE PAGAMENTO',
         contract: contract,
-        componentType: COMPONENT_TYPES.CONTRACT,
+        paymentIndex: contractPayment.code,
+        componentType: COMPONENT_TYPES.PAYMENT,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
