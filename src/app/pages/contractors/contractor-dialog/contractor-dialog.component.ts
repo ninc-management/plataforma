@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
+import { NB_DOCUMENT, NbComponentStatus, NbDialogRef, NbDialogService, NbToastrService } from '@nebular/theme';
 import { take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -21,15 +21,16 @@ export class ContractorDialogComponent extends BaseDialogComponent implements On
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
+  baseUrl = location.origin;
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<ContractorDialogComponent>,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private nbToastrService: NbToastrService
   ) {
     super(derivedDocument, derivedRef);
   }
-
   dismiss(): void {
     if (this.isFormDirty.value) {
       this.dialogService
@@ -51,5 +52,8 @@ export class ContractorDialogComponent extends BaseDialogComponent implements On
     } else {
       super.dismiss();
     }
+  }
+  notify(status: NbComponentStatus) {
+    this.nbToastrService.show(status, `Copiado com Sucesso`, { status });
   }
 }
