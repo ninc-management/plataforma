@@ -136,16 +136,10 @@ export class DataTabComponent implements OnInit {
               u.AER.unshift(u._id);
               if (this.invoice._id && this.invoice.author) {
                 this.authorData = this.userService.getUsers().pipe(map((users) => users.filter((user) => user.active)));
-                this.authorSearch = idToProperty(
-                  this.invoice.author,
-                  this.userService.idToUser.bind(this.userService),
-                  'fullName'
-                );
               } else {
                 this.authorData = of(
                   u.AER.filter((u): u is User | string => u != undefined).map((u) => this.userService.idToUser(u))
                 );
-                this.authorSearch = '';
                 this.invoice.author = undefined;
               }
             } else {
@@ -163,6 +157,15 @@ export class DataTabComponent implements OnInit {
           });
         }
       });
+    if (this.invoice._id && this.invoice.author) {
+      this.authorSearch = idToProperty(
+        this.invoice.author,
+        this.userService.idToUser.bind(this.userService),
+        'fullName'
+      );
+    } else {
+      this.authorSearch = '';
+    }
     this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       setTimeout(() => {
         this.clonedContract.status = this.contract.status;
