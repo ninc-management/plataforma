@@ -7,7 +7,7 @@
 
 export function updateIfCurrentPlugin(schema: any, options: any) {
   schema.pre('findOneAndUpdate', function (next: any) {
-    this._update.__v += 1;
+    if (this._update.__v !== undefined) this._update.__v += 1;
     next();
   });
 }
