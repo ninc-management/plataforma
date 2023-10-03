@@ -13,6 +13,20 @@
       <nb-card-header>
         {{ title }}
         <div class="buttons">
+          <button *ngIf="contractor._id"
+                nbButton
+                ghost
+                nbTooltip="Link externo para cadastro de Cliente"
+                nbTooltipPlacement="bottom"
+                nbTooltipStatus="info"
+                [copy-clipboard]="baseUrl + '/public/client/' + contractor._id"
+                (click)="notify('success')"
+              >
+                  <nb-icon
+                    icon="link-2-outline"
+                    pack="eva"
+                  ></nb-icon>
+          </button>
           <button
             nbButton
             ghost
