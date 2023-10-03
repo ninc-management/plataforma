@@ -53,7 +53,8 @@ export class ContractorDialogComponent extends BaseDialogComponent implements On
       super.dismiss();
     }
   }
-  notify(status: NbComponentStatus) {
-    this.nbToastrService.show(status, `Copiado com Sucesso`, { status });
+
+  notify(status: NbComponentStatus): void {
+    this.nbToastrService.show(status, `Link do Cliente copiado!`, { status });
   }
 }
