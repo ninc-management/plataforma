@@ -43,6 +43,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   onedriveUrl = '';
   availableContracts: Contract[] = [];
   config: PlatformConfig = new PlatformConfig();
+  creatingOneDriveFolder: boolean = false;
 
   isPhone = isPhone;
   idToProperty = idToProperty;
@@ -166,6 +167,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   addToOnedrive(): void {
+    this.creatingOneDriveFolder = true;
     if (this.contract.invoice)
       this.onedrive
         .copyModelFolder(this.invoiceService.idToInvoice(this.contract.invoice))
