@@ -112,7 +112,7 @@
                   <nb-icon icon="onedrive" pack="fac"></nb-icon>
                 </a>
                 <button
-                  *ngIf="onedriveUrl?.length === 0 && componentType == types.CONTRACT"
+                  *ngIf="onedriveUrl?.length === 0 && componentType == types.CONTRACT && !creatingOneDriveFolder"
                   nbButton
                   ghost
                   nbTooltip="Criar pasta no Onedrive"
