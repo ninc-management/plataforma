@@ -21,8 +21,8 @@ import {
   isWithinInterval as withinInterval,
 } from 'date-fns';
 import { cloneDeep, groupBy, isEqual } from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { appInjector } from './injector.module';
 import { InvoiceService } from './services/invoice.service';
@@ -52,6 +52,11 @@ export interface IdWise {
   _id: string;
 }
 
+export interface IdVersionWise {
+  _id: string;
+  __v: number;
+}
+
 export enum Fees {
   NF_SUPPORT = '15,50',
   NF_INTERMEDIATION = '0,00',
@@ -76,6 +81,27 @@ export function isPhone(): boolean {
 
 export function mockDocument(d: { documentElement: { clientWidth: number } }): void {
   doc = d;
+}
+
+export function isObjectUpdated<T extends IdVersionWise>(
+  objectsList$: Observable<T[]>,
+  objectId: string,
+  objectVersion: number,
+  destroy$: Subject<void>,
+  out$: Subject<void>
+) {
+  objectsList$.pipe(takeUntil(destroy$)).subscribe((objects: T[]) => {
+    const mObjects = objects.filter((obj) => {
+      obj._id == objectId;
+    });
+    if (mObjects.length == 0) {
+      console.error('Objeto não encontrado!');
+      return;
+    }
+    if (mObjects[0].__v != objectVersion) {
+      out$.next();
+    }
+  });
 }
 
 export function nfPercentage(iDocument: Contract | Invoice, invoiceConfig: InvoiceConfig): string {
