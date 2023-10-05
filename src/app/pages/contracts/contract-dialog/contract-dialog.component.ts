@@ -158,6 +158,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
       this.onedrive.webUrl(contract).subscribe(
         (url) => {
           this.onedriveUrl = url;
+          this.creatingOneDriveFolder = false;
         },
         (error) => {
           this.onedriveUrl = '';
