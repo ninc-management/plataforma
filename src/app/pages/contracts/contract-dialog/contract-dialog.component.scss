@@ -14,4 +14,12 @@
       content: '\e900';
     }
   }
+
+  .transparent-spinner {
+    nb-spinner.status-primary {
+      background-color: var(--spinner-basic-circle-empty-color);
+    }
+  }
 }
+
+
