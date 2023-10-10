@@ -10,22 +10,37 @@
         'max-height.px': windowHeight()
       }"
     >
-      <nb-card-header>
-        {{ title }}
-        <div class="buttons">
-          <button
-            nbButton
-            ghost
-            nbTooltip="Fechar"
+
+        <nb-card-header
+          [ngStyle]="{'background-color': (modified) ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}"
+        >
+          <div class = "d-flex align-items-center">
+            {{ title }}
+            <nb-icon
+            *ngIf="modified"
+            icon = "alert-circle"
+            style = "margin-left: 5px;"
+            nbTooltip="O item em edição foi atualizado, por favor feche e reabra o diálogo."
             [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
             nbTooltipStatus="info"
-            (click)="dismiss()"
-          >
-            <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
-          </button>
-        </div>
-      </nb-card-header>
+            ></nb-icon>
+          </div>
+          <div class="buttons">
+            <button
+              [ngStyle]="{'color': (modified) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
+              nbButton
+              ghost
+              nbTooltip="Fechar"
+              [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+              nbTooltipPlacement="bottom"
+              nbTooltipStatus="info"
+              (click)="dismiss()"
+            >
+              <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+            </button>
+          </div>
+        </nb-card-header>
       <nb-card-body>
         <ngx-provider-item
           *ngIf="componentType == dtypes.PROVIDER"
