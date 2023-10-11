@@ -54,7 +54,7 @@ export interface IdWise {
 
 export interface IdVersionWise {
   _id: string;
-  __v: number;
+  __v?: number;
 }
 
 export enum Fees {
@@ -92,7 +92,7 @@ export function isObjectUpdated<T extends IdVersionWise>(
 ) {
   objectsList$.pipe(takeUntil(destroy$)).subscribe((objects: T[]) => {
     const mObjects = objects.filter((obj) => {
-      obj._id == objectId;
+      return obj._id == objectId;
     });
     if (mObjects.length == 0) {
       console.error('Objeto não encontrado!');
