@@ -70,6 +70,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   @Output() submit = new EventEmitter<void>();
+  @Output() updateObjVersion = new EventEmitter();
   @ViewChild('contractor', { static: true }) contractorFieldRef!: NgModel;
   @ViewChild('form') ngForm = {} as NgForm;
 
@@ -400,7 +401,10 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             this.notifyAllUsers();
           }
         }
-
+        this.updateObjVersion.emit();
+        if (this.tempInvoice.__v !== undefined) {
+          this.tempInvoice.__v += 1;
+        }
         this.iInvoice = cloneDeep(this.tempInvoice);
         this.isFormDirty.next(false);
       }
