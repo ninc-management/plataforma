@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { PdfService } from '../pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -10,9 +11,9 @@ import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-
 import { PdfDialogComponent } from 'app/shared/components/pdf-dialog/pdf-dialog.component';
 import { INVOICE_STATOOS, InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { IdVersionWise, isObjectUpdated, isPhone, tooltipTriggers } from 'app/shared/utils';
 
-import { Invoice, InvoiceMaterial, InvoiceProduct, InvoiceProductLocals, InvoiceStageLocals } from '@models/invoice';
+import { Invoice, InvoiceMaterial, InvoiceProduct } from '@models/invoice';
 import { User } from '@models/user';
 
 @Component({
@@ -27,6 +28,12 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
+  objectOutdated$ = new Subject<void>();
+  isOutdated = false;
+  myObj: IdVersionWise = {
+    _id: '0',
+    __v: 0,
+  };
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -45,6 +52,15 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
     if (this.invoice) {
       this.tempInvoice = cloneDeep(this.invoice);
     } else this.invoice = new Invoice();
+
+    this.myObj.__v = this.invoice.__v;
+    this.myObj._id = this.invoice._id;
+    this.objectOutdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isOutdated = true;
+    });
+    if (this.invoice.__v !== undefined) {
+      isObjectUpdated(this.invoiceService.getInvoices(), this.myObj, this.destroy$, this.objectOutdated$);
+    }
   }
 
   dismiss(): void {
@@ -129,5 +145,11 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
       .subscribe(() => {
         this.isBlocked.next(false);
       });
+  }
+
+  updateObjVersion(): void {
+    if (this.myObj.__v !== undefined) {
+      this.myObj.__v += 1;
+    }
   }
 }
