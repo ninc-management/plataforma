@@ -12,14 +12,14 @@
     >
 
         <nb-card-header
-          [ngStyle]="{'background-color': (modified) ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}"
+          [ngStyle]="{'background-color': (isOutdated) ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}"
         >
           <div class = "d-flex align-items-center">
             {{ title }}
             <nb-icon
-            *ngIf="modified"
+            *ngIf="isOutdated"
             icon = "alert-circle"
-            style = "margin-left: 5px;"
+            style = "margin-left: 5px; color: var(--card-header-danger-background-color);"
             nbTooltip="O item em edição foi atualizado, por favor feche e reabra o diálogo."
             [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
             nbTooltipPlacement="bottom"
@@ -28,7 +28,7 @@
           </div>
           <div class="buttons">
             <button
-              [ngStyle]="{'color': (modified) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
+              [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
               nbButton
               ghost
               nbTooltip="Fechar"
