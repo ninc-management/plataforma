@@ -85,20 +85,19 @@ export function mockDocument(d: { documentElement: { clientWidth: number } }): v
 
 export function isObjectUpdated<T extends IdVersionWise>(
   objectsList$: Observable<T[]>,
-  objectId: string,
-  objectVersion: number,
+  objInfo: IdVersionWise,
   destroy$: Subject<void>,
   out$: Subject<void>
 ) {
   objectsList$.pipe(takeUntil(destroy$)).subscribe((objects: T[]) => {
     const mObjects = objects.filter((obj) => {
-      return obj._id == objectId;
+      return obj._id == objInfo._id;
     });
     if (mObjects.length == 0) {
       console.error('Objeto não encontrado!');
       return;
     }
-    if (mObjects[0].__v != objectVersion) {
+    if (mObjects[0].__v != objInfo.__v) {
       out$.next();
     }
   });

@@ -40,11 +40,10 @@ export class ContractorDialogComponent extends BaseDialogComponent implements On
     this.objectOutdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.isOutdated = true;
     });
-    if (this.contractor.__v) {
+    if (this.contractor.__v !== undefined) {
       isObjectUpdated(
         this.contractorService.getContractors(),
-        this.contractor._id,
-        this.contractor.__v,
+        { _id: this.contractor._id, __v: this.contractor.__v },
         this.destroy$,
         this.objectOutdated$
       );
