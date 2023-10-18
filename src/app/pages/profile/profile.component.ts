@@ -3,9 +3,11 @@ import {
   Component,
   DoCheck,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   QueryList,
   ViewChild,
   ViewChildren,
@@ -44,6 +46,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   @ViewChild('expertiseTabs', { read: ElementRef }) tabsRef!: ElementRef;
   @Input() iUser = new User();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
+  @Output() updateObjVersion = new EventEmitter();
   private destroy$ = new Subject<void>();
   isCurrentUser = false;
   user = new User();
@@ -310,6 +313,10 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   updateUser(): void {
     this.isEditing = false;
     this.userService.updateUser(this.user, () => this.checkPrivileges(), this.isCurrentUser);
+    this.updateObjVersion.emit();
+    if (this.user.__v !== undefined) {
+      this.user.__v += 1;
+    }
   }
 
   enableEditing(): void {
