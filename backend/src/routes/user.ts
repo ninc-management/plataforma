@@ -35,7 +35,15 @@ router.post('/', (req, res, next) => {
 
 router.post('/update', async (req, res, next) => {
   try {
-    const savedUser = await UserModel.findByIdAndUpdate(req.body.user._id, req.body.user, { upsert: false });
+    const savedUser = await UserModel.findOneAndUpdate(
+      { _id: req.body.user._id, __v: req.body.user.__v },
+      req.body.user,
+      { upsert: false }
+    );
+    if (!savedUser)
+      return res.status(500).json({
+        message: 'O documento foi atualizado por outro usuário. Por favor, reabra o documento e tente novamente.',
+      });
     if (requested) {
       await mutex.runExclusive(async () => {
         usersMap[req.body.user._id] = cloneDeep(savedUser.toJSON());

@@ -10,8 +10,22 @@
         'max-height.px': windowHeight()
       }"
     >
-      <nb-card-header>
-        {{ title }}
+      <nb-card-header
+        [ngStyle]="{'background-color': (isOutdated) ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}"
+        >
+        <div class = "d-flex align-items-center">
+          {{ title }}
+            <nb-icon
+              *ngIf="isOutdated"
+              icon = "alert-circle"
+              style = "margin-left: 5px; color: var(--card-header-danger-background-color);"
+              nbTooltip="O item em edição foi atualizado, por favor feche e reabra o diálogo."
+              [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+              nbTooltipPlacement="bottom"
+              nbTooltipStatus="info"
+              (click)="dismiss()"
+            ></nb-icon>
+        </div>
         <div class="buttons">
           <nb-toggle
             *ngIf="!isProspect"
@@ -23,6 +37,7 @@
             Ativo?
           </nb-toggle>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             nbTooltip="Fechar"
@@ -36,7 +51,10 @@
         </div>
       </nb-card-header>
       <nb-card-body>
-        <ngx-profile [iUser]="user"></ngx-profile>
+        <ngx-profile
+          [iUser]="user"
+          (updateObjVersion)="updateObjVersion()"
+        ></ngx-profile>
       </nb-card-body>
     </nb-card>
   </div>
