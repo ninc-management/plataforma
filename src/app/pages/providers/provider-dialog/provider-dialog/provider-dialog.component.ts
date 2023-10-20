@@ -23,7 +23,7 @@ export class ProviderDialogComponent extends BaseDialogComponent implements OnIn
   @Input() provider = new Provider();
   @Input() componentType = DIALOG_TYPES.PROVIDER;
   dtypes = DIALOG_TYPES;
-  providerversion?: number = 0;
+  providerVersion?: number = 0;
   objectOutdated$ = new Subject<void>();
   isOutdated: boolean = false;
 
@@ -40,11 +40,11 @@ export class ProviderDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   ngOnInit(): void {
-    this.providerversion = this.provider.__v;
-    if (this.providerversion != undefined) {
+    this.providerVersion = this.provider.__v;
+    if (this.providerVersion != undefined) {
       isObjectUpdated(
         this.providerService.getProviders(),
-        { _id: this.provider._id, __v: this.providerversion },
+        { _id: this.provider._id, __v: this.providerVersion },
         this.destroy$,
         this.objectOutdated$
       );

@@ -42,7 +42,7 @@ router.post('/update', async (req, res, next) => {
     );
     if (!course) {
       return res.status(500).json({
-        message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
+        message: 'O documento foi atualizado por outro usuário. Por favor, reabra o documento e tente novamente.',
       });
     }
     if (requested) {

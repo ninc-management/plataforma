@@ -1,11 +1,13 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { saveAs } from 'file-saver';
+import { Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { CourseService } from 'app/shared/services/course.service';
+import { isObjectUpdated, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Course, CourseParticipant } from '@models/course';
 
@@ -25,6 +27,9 @@ export class CourseDialogComponent extends BaseDialogComponent implements OnInit
   @Input() participant = new CourseParticipant();
   @Input() componentType = DIALOG_TYPES.COURSE;
   dTypes = DIALOG_TYPES;
+  objectOutdated$ = new Subject<void>();
+  courseVersion?: number = 0;
+  isOutdated: boolean = false;
 
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
@@ -32,12 +37,25 @@ export class CourseDialogComponent extends BaseDialogComponent implements OnInit
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<CourseDialogComponent>,
-    private dialogService: NbDialogService
+    private dialogService: NbDialogService,
+    private courseService: CourseService
   ) {
     super(derivedDocument, derivedRef);
   }
 
   ngOnInit(): void {
+    this.courseVersion = this.course.__v;
+    if (this.courseVersion !== undefined) {
+      isObjectUpdated(
+        this.courseService.getCourses(),
+        { _id: this.course._id, __v: this.courseVersion },
+        this.destroy$,
+        this.objectOutdated$
+      );
+      this.objectOutdated$.subscribe(() => {
+        this.isOutdated = true;
+      });
+    }
     super.ngOnInit();
   }
 
