@@ -32,6 +32,7 @@
             <nb-icon icon="file-pdf" pack="far" style="font-size: 18px"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             *ngIf="!isPhone() && invoice._id !== undefined && !invoice.locals.isModel"
@@ -43,6 +44,7 @@
             <nb-icon icon="eye" pack="eva" style="font-size: 18px"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             *ngIf="invoice._id !== undefined && !invoice.locals.isModel"
@@ -55,6 +57,7 @@
             <nb-icon icon="file-add-outline" pack="eva"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             nbTooltip="Fechar"
