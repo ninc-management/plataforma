@@ -93,8 +93,9 @@ export class TeamsComponent implements OnInit, OnDestroy {
       leader: {
         title: 'Líder',
         type: 'string',
-        valuePrepareFunction: (leader: User | string | undefined) =>
-          idToProperty(leader, this.userService.idToUser.bind(this), 'fullName'),
+        valuePrepareFunction: (leader: User | string | undefined) => {
+          return idToProperty(leader, this.userService.idToUser.bind(this.userService), 'fullName');
+        },
         filterFunction: (leader: User | string | undefined, search?: string): boolean => {
           return leader && search
             ? this.userService.idToUser(leader).fullName.toLowerCase().includes(search.toLowerCase())
@@ -103,8 +104,8 @@ export class TeamsComponent implements OnInit, OnDestroy {
         compareFunction: (direction: number, a: User | string | undefined, b: User | string | undefined): number =>
           nameSort(
             direction,
-            idToProperty(a, this.userService.idToUser.bind(this), 'fullName'),
-            idToProperty(b, this.userService.idToUser.bind(this), 'fullName')
+            idToProperty(a, this.userService.idToUser.bind(this.userService), 'fullName'),
+            idToProperty(b, this.userService.idToUser.bind(this.userService), 'fullName')
           ),
       },
     },
