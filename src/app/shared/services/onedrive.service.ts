@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { cloneDeep } from 'lodash';
 import { combineLatest, map, Observable, of, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -87,6 +88,22 @@ export class OneDriveService implements OnDestroy {
             this.config.oneDriveConfig.providerFiles.oneDriveId.toUpperCase() +
             '!' +
             this.config.oneDriveConfig.providerFiles.folderId +
+            ':/';
+        }
+        break;
+      }
+      case OneDriveFolders.TEAMS: {
+        if (
+          this.config.oneDriveConfig.teamTransactions.oneDriveId &&
+          this.config.oneDriveConfig.teamTransactions.folderId
+        ) {
+          URI =
+            environment.onedriveUri +
+            this.config.oneDriveConfig.teamTransactions.oneDriveId.toLowerCase() +
+            '/items/' +
+            this.config.oneDriveConfig.teamTransactions.oneDriveId.toUpperCase() +
+            '!' +
+            this.config.oneDriveConfig.teamTransactions.folderId +
             ':/';
         }
         break;
@@ -180,6 +197,7 @@ export class OneDriveService implements OnDestroy {
       [OneDriveFolders.CONTRACTS]: this.config.oneDriveConfig.contracts.oneDriveId,
     };
 
+    const _filesToRemove = cloneDeep(filesToRemove);
     if (this.config.oneDriveConfig.isActive) {
       this.http
         .get(this.oneDriveURI() + path + ':/children')
@@ -187,14 +205,14 @@ export class OneDriveService implements OnDestroy {
         .subscribe((metadata: any) => {
           if (metadata.value) {
             metadata.value.forEach((data: any) => {
-              filesToRemove.forEach((file) => {
+              _filesToRemove.forEach((file) => {
                 if (file.name === data.name) {
                   this.http
                     .delete(environment.onedriveUri + onedriveId[oneDriveFolder] + '/items/' + data.id)
                     .pipe(take(1))
                     .subscribe(() => console.log('Arquivo apagado!'));
-                  const index = filesToRemove.indexOf(file, 0);
-                  if (index > -1) filesToRemove.splice(index, 1);
+                  const index = _filesToRemove.indexOf(file, 0);
+                  if (index > -1) _filesToRemove.splice(index, 1);
                 }
               });
             });

@@ -45,7 +45,7 @@ export class FileDropDirective implements OnInit {
       return;
     }
     this._preventAndStop(event);
-    this.uploader.uploadAll(transfer.files, this.options);
+    this.uploader.setFileToUpload(transfer.files, this.options);
     this.fileOver.emit(false);
   }
 

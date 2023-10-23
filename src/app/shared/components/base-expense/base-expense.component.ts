@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -19,11 +19,9 @@ import { User } from '@models/user';
   template: '',
   styleUrls: ['./base-expense.component.scss'],
 })
-export class BaseExpenseComponent extends OneDriveDocumentUploader implements OnInit, OnDestroy {
+export abstract class BaseExpenseComponent extends OneDriveDocumentUploader implements OnInit, OnDestroy {
   @ViewChild('form', { static: true })
   formRef!: NgForm;
-  @Output()
-  submit: EventEmitter<void> = new EventEmitter<void>();
   validation: any;
   sTypes = Object.values(SPLIT_TYPES);
   today = new Date();
@@ -56,8 +54,6 @@ export class BaseExpenseComponent extends OneDriveDocumentUploader implements On
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
-
     this.userData = this.userArray;
     this.sourceData = this.sourceArray;
     this.providerData = this.providerArray;

@@ -21,7 +21,6 @@ import { NgxEchartsModule } from 'ngx-echarts';
 
 import { NbCompleterModule, NbFileUploaderModule } from '../@theme/components';
 import { BaseDialogComponent } from './components/base-dialog/base-dialog.component';
-import { BaseExpenseComponent } from './components/base-expense/base-expense.component';
 import { EchartsBarComponent } from './components/charts/echarts-bar/echarts-bar.component';
 import { GanttChartComponent } from './components/charts/gantt-chart/gantt-chart.component';
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
@@ -29,7 +28,6 @@ import { ExpansiveListComponent } from './components/expansive-list/expansive-li
 import { FabItemComponent } from './components/fab/fab-item/fab-item.component';
 import { FabComponent } from './components/fab/fab.component';
 import { FileUploadDialogComponent } from './components/file-upload/file-upload.component';
-import { OneDriveDocumentUploader } from './components/onedrive-document-uploader/onedrive-document-uploader.component';
 import { PdfDialogComponent } from './components/pdf-dialog/pdf-dialog.component';
 import { SelectorDialogComponent } from './components/selector-dialog/selector-dialog.component';
 import { TeamExpensesComponent } from './components/teams/team-expenses/team-expenses.component';
@@ -87,7 +85,6 @@ echarts.registerLocale('PT-BR', langPTBR);
   ],
   declarations: [
     BaseDialogComponent,
-    BaseExpenseComponent,
     BrMaskDirective,
     ConfirmationDialogComponent,
     EchartsBarComponent,
@@ -95,7 +92,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     FabComponent,
     FabItemComponent,
     FileUploadDialogComponent,
-    OneDriveDocumentUploader,
     GanttChartComponent,
     LastPaymentDirective,
     OverPaidDirective,

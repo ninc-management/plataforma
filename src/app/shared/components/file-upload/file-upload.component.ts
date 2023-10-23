@@ -1,7 +1,7 @@
 import { Component, Inject, Input, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from '../../../@theme/components';
 import { UploadedFile } from '../../../@theme/components/file-uploader/file-uploader.service';
@@ -72,8 +72,8 @@ export class FileUploadDialogComponent extends BaseDialogComponent {
     this.hasBaseDropZoneOver = e;
   }
 
-  urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
-    uploadedFile$.pipe(takeUntil(this.destroy$)).subscribe((file$) => {
+  urlReceiver(uploadedFiles: BehaviorSubject<NbFileItem>[]): void {
+    uploadedFiles.forEach((file$) => {
       if (file$)
         file$.pipe(take(2)).subscribe((file) => {
           if (file$.getValue().isSuccess) {

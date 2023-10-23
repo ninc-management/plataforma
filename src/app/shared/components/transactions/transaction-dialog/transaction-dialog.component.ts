@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../../base-dialog/base-dialog.component';
@@ -22,12 +22,14 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
   @Input() team?: Team;
   @Input() contract?: Contract;
 
+  showTransactionItem: boolean = true;
   isPhone = isPhone;
   tooltipTriggers = tooltipTriggers;
   TRANSACTION_TYPES = TRANSACTION_TYPES;
   isPayable = true;
 
   constructor(
+    private changeDetector: ChangeDetectorRef,
     private dialogService: NbDialogService,
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<TransactionDialogComponent>
@@ -40,6 +42,12 @@ export class TransactionDialogComponent extends BaseDialogComponent implements O
     if (this.contract) {
       this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     }
+  }
+
+  resetTransactionItem(): void {
+    this.showTransactionItem = false;
+    this.changeDetector.detectChanges();
+    this.showTransactionItem = true;
   }
 
   openDialog(): void {
