@@ -127,4 +127,8 @@ export class TransactionService implements OnDestroy {
     if (transaction.provider) transaction.provider = providerRevival(transaction.provider);
     if (transaction.contract) transaction.contract = contractRevival(transaction.contract);
   }
+
+  loadedTransactionsCount(): number {
+    return this.transactions$.getValue().length;
+  }
 }

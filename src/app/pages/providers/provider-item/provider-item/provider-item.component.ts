@@ -9,7 +9,7 @@ import { FileUploadDialogComponent } from 'app/shared/components/file-upload/fil
 import { OneDriveDocumentUploader } from 'app/shared/components/onedrive-document-uploader/onedrive-document-uploader.component';
 import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
-import { compareFiles, isPhone, trackByIndex } from 'app/shared/utils';
+import { isPhone, trackByIndex } from 'app/shared/utils';
 
 import { Provider } from '@models/provider';
 import { UploadedFile, UploadedFileWithDescription } from '@models/shared/uploadedFiles';
@@ -30,7 +30,6 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   @Input() clonedProvider = new Provider();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() submit = new EventEmitter<void>();
   @ViewChild('form') ngForm = {} as NgForm;
   provider = new Provider();
   editing = false;
@@ -40,8 +39,6 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   isDataLoading = true;
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   options = { serviceName: '', productName: '' };
-  folderPath: string = '';
-  initialFiles: UploadedFileWithDescription[] = [];
   trackByIndex = trackByIndex;
   isPhone = isPhone;
   tooltipTriggers = NbTrigger;
@@ -64,7 +61,6 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
     if (this.clonedProvider._id !== undefined) {
       this.editing = true;
       this.provider = cloneDeep(this.clonedProvider);
@@ -82,7 +78,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       .subscribe(() => {
         this.isDataLoading = false;
       });
-    this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
+    super.ngOnInit();
   }
 
   ngAfterViewInit() {
@@ -90,6 +86,10 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       if (this.ngForm.dirty) this.isFormDirty.next(true);
       if (status == 'VALID') this.updateUploaderOptions();
     });
+  }
+
+  initializeFilesList(): void {
+    this.initialFiles = cloneDeep(this.uploadedFiles) as UploadedFileWithDescription[];
   }
 
   getFile(file: UploadedFile | UploadedFileWithDescription): UploadedFileWithDescription {
@@ -137,7 +137,7 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
       const extension = name.match('[.].+');
       return 'documento' + extension;
     };
-    this.folderPath = mediaFolderPath;
+    this.updateFolderPath(mediaFolderPath);
     super.updateUploaderOptions(mediaFolderPath, fn, OneDriveFolders.PROVIDERS);
   }
 
@@ -176,10 +176,5 @@ export class ProviderItemComponent extends OneDriveDocumentUploader implements O
           this.providerService.editProvider(this.provider);
         }
       });
-  }
-
-  deleteFiles(): void {
-    const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
-    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove, OneDriveFolders.PROVIDERS);
   }
 }

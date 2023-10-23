@@ -1,15 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { NbAccessChecker } from '@nebular/security';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, of, skipWhile, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, skip, skipWhile, take, takeUntil } from 'rxjs';
 
+import { OneDriveDocumentUploader } from '../../onedrive-document-uploader/onedrive-document-uploader.component';
 import { INPUT_TYPES, TextInputDialogComponent } from '../../text-input-dialog/text-input-dialog.component';
-import { NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
+import { NbFileUploaderComponent } from 'app/@theme/components';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
+import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
 import { ProviderService } from 'app/shared/services/provider.service';
 import { StringUtilService } from 'app/shared/services/string-util.service';
 import { CLIENT, TeamService } from 'app/shared/services/team.service';
@@ -29,7 +32,7 @@ import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
 import { Provider } from '@models/provider';
 import { EditionHistoryItem } from '@models/shared/editionHistoryItem';
-import { UploadedFile } from '@models/shared/uploadedFiles';
+import { UploadedFileWithDescription } from '@models/shared/uploadedFiles';
 import { ExpenseType, Team } from '@models/team';
 import { COST_CENTER_TYPES, Transaction } from '@models/transaction';
 import { User } from '@models/user';
@@ -49,15 +52,17 @@ export enum STATUS_RULES {
   templateUrl: './transaction-item.component.html',
   styleUrls: ['./transaction-item.component.scss'],
 })
-export class TransactionItemComponent implements OnInit {
+export class TransactionItemComponent extends OneDriveDocumentUploader implements OnInit, AfterViewInit {
   @Input() contract?: Contract;
   @Input() iTransaction = new Transaction();
   @Input() type?: TRANSACTION_TYPES;
   @Input() team?: Team;
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output()
-  submit: EventEmitter<void> = new EventEmitter<void>();
 
+  @ViewChild('form', { static: true })
+  formRef!: NgForm;
+  @ViewChild('uploader')
+  uploaderRef?: NbFileUploaderComponent;
   STATUS_RULES = STATUS_RULES;
   validation = transaction_validation as any;
   user: User = new User();
@@ -75,6 +80,7 @@ export class TransactionItemComponent implements OnInit {
   options = {
     liquid: '0,00',
     type: '',
+    hidden: '',
     relatedWithContract: false,
     hasISS: false,
   };
@@ -86,6 +92,7 @@ export class TransactionItemComponent implements OnInit {
   cCTypes = COST_CENTER_TYPES;
   isEditionGranted: boolean = true;
   isFinancialManager: boolean = false;
+  OneDriveFolders = OneDriveFolders;
 
   contractSearch = '';
   get availableContractsData$(): Observable<Contract[]> {
@@ -102,18 +109,8 @@ export class TransactionItemComponent implements OnInit {
 
   today = new Date();
 
-  uploadedFiles: UploadedFile[] = [];
-
   formatDate = formatDate;
   isPhone = isPhone;
-
-  uploaderOptions: NbFileUploaderOptions = {
-    multiple: true,
-    directory: false,
-    showUploadQueue: true,
-    storageProvider: StorageProvider.ONEDRIVE,
-    mediaFolderPath: 'profileImages/',
-  };
 
   constructor(
     private contractService: ContractService,
@@ -123,11 +120,14 @@ export class TransactionItemComponent implements OnInit {
     private userService: UserService,
     private configService: ConfigService,
     private providerService: ProviderService,
-    private dialogService: NbDialogService,
+    protected dialogService: NbDialogService,
     private stringUtil: StringUtilService,
     private contractorService: ContractorService,
-    public accessChecker: NbAccessChecker
-  ) {}
+    public accessChecker: NbAccessChecker,
+    oneDriveService: OneDriveService
+  ) {
+    super(oneDriveService, dialogService);
+  }
 
   ngOnInit(): void {
     if (this.type) {
@@ -207,6 +207,11 @@ export class TransactionItemComponent implements OnInit {
         this.users = users;
         if (this.iTransaction._id) {
           this.transaction = cloneDeep(this.iTransaction);
+          if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
+            this.clonedTeam = cloneDeep(this.transaction.costCenter as Team);
+          }
+          this.uploadedFiles = cloneDeep(this.transaction.uploadedFiles) as UploadedFileWithDescription[];
+          this.updateUploaderOptions();
           this.updateLiquidValue();
           this.providerSearch = idToProperty(
             this.transaction.provider,
@@ -220,12 +225,27 @@ export class TransactionItemComponent implements OnInit {
           ).name;
         } else {
           this.transaction.author = user;
-          if (!this.transaction.modelCostCenter) this.transaction.modelCostCenter = COST_CENTER_TYPES.USER;
+          if (!this.transaction.modelCostCenter) this.transaction.modelCostCenter = COST_CENTER_TYPES.TEAM;
         }
+        super.ngOnInit();
         this.setCostCenterData();
         this.updateTransactionKinds();
       });
     this.providerData$ = this.providerService.getProviders();
+  }
+
+  ngAfterViewInit(): void {
+    this.formRef.control.statusChanges.pipe(skip(1), takeUntil(this.destroy$)).subscribe((status) => {
+      if (status === 'VALID' && this.transaction.nf === true) {
+        if (this.options.relatedWithContract) {
+          if (this.contract) this.updateUploaderOptions();
+        } else this.updateUploaderOptions();
+      }
+    });
+  }
+
+  initializeFilesList(): void {
+    this.initialFiles = cloneDeep(this.transaction.uploadedFiles) as UploadedFileWithDescription[];
   }
 
   fillContractData(): void {
@@ -276,11 +296,47 @@ export class TransactionItemComponent implements OnInit {
     return false;
   }
 
-  removeFile(fileIndex: number): void {
-    console.log('remover arquivo');
+  updateUploaderOptions(): void {
+    const fn = (name: string) => {
+      const item = this.transaction.code.replace('#', '');
+      const type = this.transaction.type;
+      const value = this.transaction.value.replace(/\./g, '');
+      const date = formatDate(new Date(), '-');
+      const extension = name.match('[.].+');
+      if (this.configService.expenseSubTypes(this.transaction.type).length > 0) {
+        const subType = this.transaction.subType;
+        return item + '-' + type + '-' + subType + '-' + value + '-' + date + extension;
+      }
+      return item + '-' + type + '-' + value + '-' + date + extension;
+    };
+    if (this.options.type == TRANSACTION_TYPES.RECEIPT && this.clonedContract.invoice) {
+      const mediaFolderPath =
+        this.onedrive.generatePath(this.invoiceService.idToInvoice(this.clonedContract.invoice)) + '/Recibos';
+      this.updateFolderPath(mediaFolderPath);
+      super.updateUploaderOptions(mediaFolderPath, fn, OneDriveFolders.CONTRACTS);
+    } else {
+      if (this.clonedContract.invoice) {
+        const subType = this.transaction.subType ? '/' + this.transaction.subType : '';
+        const mediaFolderPath = this.options.relatedWithContract
+          ? this.onedrive.generatePath(this.invoiceService.idToInvoice(this.clonedContract.invoice)) + '/Recibos'
+          : 'Comprovantes/' +
+            new Date().getFullYear().toString() +
+            '/' +
+            this.clonedTeam.config.path +
+            '/' +
+            this.transaction.type +
+            subType;
+        this.updateFolderPath(mediaFolderPath);
+        super.updateUploaderOptions(
+          mediaFolderPath,
+          fn,
+          this.options.relatedWithContract ? OneDriveFolders.CONTRACTS : OneDriveFolders.TEAMS
+        );
+      }
+    }
   }
 
-  saveRefTransaction(savedTransaction: Transaction): void {
+  saveRefTransaction(keepDialogOpen: boolean, savedTransaction: Transaction): void {
     const property = this.options.type == TRANSACTION_TYPES.EXPENSE ? 'expenses' : 'receipts';
 
     if (this.clonedTeam._id != CLIENT._id) {
@@ -291,22 +347,31 @@ export class TransactionItemComponent implements OnInit {
       this.clonedContract[property].push(savedTransaction);
       this.contractService.editContract(this.clonedContract);
     }
+    this.transaction = savedTransaction;
+    if (this.uploaderRef) {
+      this.uploaderRef.uploader.uploadAll(this.uploaderRef.options);
+      this.isAllFilesUploaded$.pipe(take(1)).subscribe(() => {
+        this.transaction.uploadedFiles = cloneDeep(this.uploadedFiles);
+        const editionHistoryItem = new EditionHistoryItem();
+        editionHistoryItem.author = this.user;
+        editionHistoryItem.comment = 'Adição de comprovantes';
+        this.transactionService.editTransaction(this.transaction, editionHistoryItem);
+        this.submit.emit(keepDialogOpen);
+      });
+    }
   }
 
-  registerTransaction(): void {
+  registerTransaction(keepDialogOpen: boolean = false): void {
     if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
-      if (this.clonedTeam) {
-        this.clonedTeam = cloneDeep(this.transaction.costCenter as Team);
-      }
       this.transaction.costCenter = (this.transaction.costCenter as User | Team)._id;
-      this.transactionService.saveTransaction(this.transaction, this.saveRefTransaction.bind(this));
+      this.transactionService.saveTransaction(this.transaction, this.saveRefTransaction.bind(this, keepDialogOpen));
     }
-    this.submit.emit();
+
+    if (!this.uploaderRef) this.submit.emit(keepDialogOpen);
   }
 
   editTransaction(): void {
     this.isDialogBlocked.next(true);
-
     this.dialogService
       .open(TextInputDialogComponent, {
         context: {
@@ -331,20 +396,29 @@ export class TransactionItemComponent implements OnInit {
           const editionHistoryItem = new EditionHistoryItem();
           editionHistoryItem.author = this.user;
           editionHistoryItem.comment = response;
-          this.transactionService.editTransaction(this.transaction, editionHistoryItem);
-          this.submit.emit();
+          if (this.uploaderRef && this.uploaderRef.uploader.uploadQueue.length) {
+            this.uploaderRef.uploader.uploadAll(this.uploaderRef.options);
+            this.isAllFilesUploaded$.pipe(take(1)).subscribe(() => {
+              this.transaction.uploadedFiles = cloneDeep(this.uploadedFiles);
+              this.transactionService.editTransaction(this.transaction, editionHistoryItem);
+              this.submit.emit();
+            });
+          } else {
+            this.transactionService.editTransaction(this.transaction, editionHistoryItem);
+            this.submit.emit();
+          }
         }
       });
   }
 
-  addAndClean(): void {}
+  addAndClean(): void {
+    this.registerTransaction(true);
+  }
 
   updatePaidDate(): void {
     if (!this.transaction.paid) this.transaction.paidDate = undefined;
     else this.transaction.paidDate = new Date();
   }
-
-  urlReceiver(event: any): void {}
 
   updateLiquidValue(): void {
     if (this.options.type == TRANSACTION_TYPES.RECEIPT) {
@@ -399,24 +473,26 @@ export class TransactionItemComponent implements OnInit {
   }
 
   setCostCenterData(): void {
-    if (this.options.relatedWithContract && this.contract) {
-      if (this.contract.invoice) {
-        if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM)
-          setTimeout(() => {
-            this.costCenterData$.next([CLIENT].concat(this.teams));
-          }, 50);
-        else {
-          const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
-          const invoiceTeamMembers = this.invoiceService.teamMembers(invoice);
-          setTimeout(() => {
-            this.costCenterData$.next(invoiceTeamMembers);
-          }, 50);
-        }
-      }
-    } else {
-      if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
+    if (this.options.relatedWithContract) {
+      if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM)
         setTimeout(() => {
           this.costCenterData$.next([CLIENT].concat(this.teams));
+        }, 50);
+      else if (this.contract && this.contract.invoice) {
+        const invoice = this.invoiceService.idToInvoice(this.contract.invoice);
+        const invoiceTeamMembers = this.invoiceService.teamMembers(invoice);
+        setTimeout(() => {
+          this.costCenterData$.next(invoiceTeamMembers);
+        }, 50);
+      }
+    } else {
+      if (this.costCenterSearch == CLIENT.name) {
+        this.costCenterSearch = '';
+        this.transaction.costCenter = '';
+      }
+      if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM) {
+        setTimeout(() => {
+          this.costCenterData$.next(this.teams);
         }, 50);
       } else {
         setTimeout(() => {
@@ -507,5 +583,11 @@ export class TransactionItemComponent implements OnInit {
   handleISSToggle(): void {
     this.transaction.ISS = '0,00';
     this.updateLiquidValue();
+  }
+
+  handleCostCenterType(): void {
+    if (this.transaction.modelCostCenter == COST_CENTER_TYPES.TEAM && this.transaction.costCenter) {
+      this.clonedTeam = cloneDeep(this.teamService.idToTeam(this.transaction.costCenter as string | Team));
+    }
   }
 }

@@ -11,7 +11,7 @@
           }"
         >
           <label class="label" for="input-transaction-type" style="margin-bottom: 0; margin-right: 10px">
-            O que deseja {{iTransaction._id ? 'editar' : 'adicionar'}}?
+            O que deseja {{ iTransaction._id ? 'editar' : 'adicionar' }}?
           </label>
           <nb-radio-group
             [(ngModel)]="options.type"
@@ -19,7 +19,7 @@
             id="input-transaction-type"
             name="transactionType"
             required="true"
-            [disabled]="!!team||!!contract"
+            [disabled]="!!team || !!contract"
             [ngStyle]="{
               'height.px': 16,
               display: isPhone() ? 'contents' : 'flex'
@@ -139,7 +139,9 @@
               <p
                 class="caption status-danger"
                 *ngIf="
-                  (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
+                  (value.errors?.minlength || value.errors?.maxlength) &&
+                  value.invalid &&
+                  (value.dirty || value.touched)
                 "
               >
                 O valor da despesa deve conter entre
@@ -225,7 +227,13 @@
               ngxSelectAllText
               [required]="validation.liquid.required"
               [status]="
-                liquid.dirty ? (liquid.invalid ? 'danger' : 'success') : options.liquid != undefined ? 'success' : 'basic'
+                liquid.dirty
+                  ? liquid.invalid
+                    ? 'danger'
+                    : 'success'
+                  : options.liquid != undefined
+                  ? 'success'
+                  : 'basic'
               "
               [attr.aria-invalid]="liquid.invalid && liquid.touched ? true : null"
               [readonly]="true"
@@ -323,7 +331,7 @@
             <label class="label" for="input-is-paid">Pago?</label>
             <nb-select
               [(ngModel)]="transaction.paid"
-              [disabled]="!isEditionGranted  && !isFinancialManager"
+              [disabled]="!isEditionGranted && !isFinancialManager"
               #isPaidInput="ngModel"
               id="input-is-paid"
               name="is-paid"
@@ -405,7 +413,7 @@
             <label class="label" for="input-updated">Última atualização</label>
             <input
               nbInput
-              [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
+              [ngModel]="[transaction.lastUpdate] | transformPipe : formatDate"
               #updated="ngModel"
               id="input-updated"
               name="updated"
@@ -429,7 +437,7 @@
               Associado ao contrato
               <nb-checkbox
                 [(ngModel)]="options.relatedWithContract"
-                (ngModelChange)="updateTransactionKinds()"
+                (ngModelChange)="updateTransactionKinds(); setCostCenterData()"
                 #contractCheckbox="ngModel"
                 name="checkbox-contract"
                 class="ml-2"
@@ -454,7 +462,7 @@
               [data$]="availableContractsData$"
               [minSearchLength]="0"
               [fullWidth]="true"
-              [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id',contractSearch !== '')"
+              [status]="setStatus(contractList, STATUS_RULES.FOURTH_RULE, '_id', contractSearch !== '')"
               [attr.aria-invalid]="contractList.invalid && contractList.touched ? true : null"
             ></nb-completer>
           </div>
@@ -475,7 +483,8 @@
                 [ngStyle]="{
                   'height.px': 16,
                   display: isPhone() ? 'contents' : 'flex',
-                  'align-self': 'center'
+                  'align-self': 'center',
+                  visibility: 'hidden'
                 }"
               >
                 <nb-radio *ngFor="let type of costCenterTypes" [value]="type" class="transaction-radio">
@@ -485,7 +494,7 @@
             </div>
             <nb-completer
               [(ngModel)]="costCenterSearch"
-              (selected)="transaction.costCenter = $event"
+              (selected)="transaction.costCenter = $event; handleCostCenterType()"
               [disabled]="!!this.team"
               inputName="costCenterCompleter"
               #costCenterCompleter="ngModel"
@@ -564,7 +573,9 @@
               <p
                 class="caption status-danger"
                 *ngIf="
-                  (value.errors?.minlength || value.errors?.maxlength) && value.invalid && (value.dirty || value.touched)
+                  (value.errors?.minlength || value.errors?.maxlength) &&
+                  value.invalid &&
+                  (value.dirty || value.touched)
                 "
               >
                 O valor da despesa deve conter entre
@@ -591,7 +602,7 @@
             </label>
             <nb-select
               [(ngModel)]="transaction.nf"
-              [disabled]="!isEditionGranted  && !isFinancialManager"
+              [disabled]="!isEditionGranted && !isFinancialManager"
               #nf="ngModel"
               id="input-nf"
               name="nf"
@@ -670,7 +681,7 @@
               fullWidth
               size="large"
               [required]="validation.type.required"
-              [status]="setStatus(subTypeInput, STATUS_RULES.SECOND_RULE,'subType')"
+              [status]="setStatus(subTypeInput, STATUS_RULES.SECOND_RULE, 'subType')"
               [attr.aria-invalid]="subTypeInput.invalid && subTypeInput.touched ? true : null"
             >
               <nb-option *ngFor="let type of expenseSubTypes" [value]="type">
@@ -817,8 +828,7 @@
               [nbDatepicker]="createdDatePicker"
               [required]="validation.created.required"
               [readonly]="true"
-              [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')
-              "
+              [status]="setStatus(created, STATUS_RULES.SECOND_RULE, 'created')"
               [attr.aria-invalid]="created.invalid && created.touched ? true : null"
             />
             <nb-datepicker #createdDatePicker [max]="today"></nb-datepicker>
@@ -829,7 +839,7 @@
             <label class="label" for="input-updated">Última atualização</label>
             <input
               nbInput
-              [ngModel]="[transaction.lastUpdate] | transformPipe: formatDate"
+              [ngModel]="[transaction.lastUpdate] | transformPipe : formatDate"
               #updated="ngModel"
               id="input-updated"
               name="updated"
@@ -870,7 +880,9 @@
                       status="danger"
                       icon="trash-2-outline"
                       pack="eva"
-                      (click)="removeFile(i)"
+                      (click)="
+                        removeFile(i, options.relatedWithContract ? OneDriveFolders.CONTRACTS : OneDriveFolders.TEAMS)
+                      "
                       [options]="{ animation: { type: 'shake' } }"
                     ></nb-icon>
                   </div>
@@ -881,9 +893,10 @@
         </div>
         <div class="col-md-12" *ngIf="transaction.nf && form.valid">
           <nb-file-uploader
+            #uploader
             [options]="uploaderOptions"
             [isFileDrop]="true"
-            (filesList)="urlReceiver($event)"
+            (filesList)="this.newDocument$.next(); urlReceiver($event)"
             dropAreaLabel="Arraste seu comprovante aqui ou"
             dropAreaFileChooserLabel="escolha um arquivo"
           ></nb-file-uploader>
@@ -904,14 +917,29 @@
       fullWidth
       status="primary"
       size="large"
-      [disabled]="(!isEditionGranted && !isFinancialManager) || iTransaction._id || !form.valid"
+      [disabled]="
+        (!isEditionGranted && !isFinancialManager) ||
+        (transaction.nf && uploaderRef && uploaderRef.uploader.uploadQueue.length == 0) ||
+        !form.valid
+      "
       (click)="iTransaction._id ? editTransaction() : registerTransaction()"
     >
       {{ iTransaction._id ? 'Atualizar' : 'Adicionar' }}
     </button>
   </div>
   <div class="col-6" *ngIf="iTransaction._id === undefined">
-    <button nbButton fullWidth status="success" size="large" [disabled]="!form.valid || (!isEditionGranted && !isFinancialManager)" (click)="addAndClean()">
+    <button
+      nbButton
+      fullWidth
+      status="success"
+      size="large"
+      [disabled]="
+        !form.valid ||
+        (!isEditionGranted && !isFinancialManager) ||
+        (transaction.nf && uploaderRef && uploaderRef.uploader.uploadQueue.length == 0)
+      "
+      (click)="addAndClean()"
+    >
       Adicionar Outro
     </button>
   </div>

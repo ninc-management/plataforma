@@ -1,23 +1,34 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { NbDialogService } from '@nebular/theme';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { NbFileItem, NbFileUploaderOptions, StorageProvider } from 'app/@theme/components';
 import { OneDriveFolders, OneDriveService } from 'app/shared/services/onedrive.service';
+import { compareFiles } from 'app/shared/utils';
 
 import { UploadedFile, UploadedFileWithDescription } from '@models/shared/uploadedFiles';
+
+interface fileInfo {
+  file: UploadedFile[] | UploadedFileWithDescription[];
+  oneDriveFolder: OneDriveFolders;
+}
 
 @Component({
   selector: 'ngx-onedrive-document-uploader',
   template: '',
   styleUrls: ['./onedrive-document-uploader.component.scss'],
 })
-export class OneDriveDocumentUploader implements OnInit, OnDestroy {
+export abstract class OneDriveDocumentUploader implements OnInit, OnDestroy {
+  @Output()
+  submit: EventEmitter<boolean> = new EventEmitter<boolean>();
   protected destroy$ = new Subject<void>();
   protected newDocument$ = new Subject<void>();
+  protected isAllFilesUploaded$ = new Subject<void>();
   uploadedFiles: UploadedFile[] | UploadedFileWithDescription[] = [];
+  initialFiles: UploadedFile[] | UploadedFileWithDescription[] = [];
+  private folderPath: string = '';
+  private filesToRemove: fileInfo[] = [];
 
   uploaderOptions: NbFileUploaderOptions = {
     multiple: true,
@@ -30,7 +41,18 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
   fileTypesAllowed: string[] = [];
   maxFileSize = 4;
 
-  constructor(protected onedrive: OneDriveService, protected dialogService: NbDialogService) {}
+  constructor(protected onedrive: OneDriveService, protected dialogService: NbDialogService) {
+    this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
+      fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
+    );
+    this.submit.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.resolveRemoval();
+    });
+  }
+
+  ngOnInit(): void {
+    this.initializeFilesList();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -39,10 +61,10 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
     this.newDocument$.complete();
   }
 
-  ngOnInit(): void {
-    this.fileTypesAllowed = this.allowedMimeType.map((fileType: string) =>
-      fileType.substring(fileType.lastIndexOf('/') + 1, fileType.length)
-    );
+  abstract initializeFilesList(): void;
+
+  updateFolderPath(folderPath: string) {
+    this.folderPath = folderPath;
   }
 
   updateUploaderOptions(folderPath: string, nameFn: (name: string) => string, onedriveFolder?: string): void {
@@ -75,32 +97,34 @@ export class OneDriveDocumentUploader implements OnInit, OnDestroy {
     };
   }
 
-  urlReceiver(uploadedFile$: Observable<BehaviorSubject<NbFileItem>>): void {
-    uploadedFile$.pipe(takeUntil(this.newDocument$)).subscribe((file$) => {
+  urlReceiver(uploadedFiles: BehaviorSubject<NbFileItem>[]): void {
+    uploadedFiles.forEach((file$) => {
       if (file$)
-        file$.pipe(take(2)).subscribe((file) => {
-          if (file$.getValue().isSuccess) this.uploadedFiles.push({ name: file.name, url: file.url, description: '' });
+        file$.pipe(takeUntil(this.newDocument$), take(2)).subscribe((file) => {
+          if (file$.getValue().isSuccess) {
+            this.uploadedFiles.push({ name: file.name, url: file.url, description: '' });
+            if (this.uploadedFiles.length == uploadedFiles.filter((file$) => file$).length)
+              this.isAllFilesUploaded$.next();
+          }
         });
     });
   }
 
-  removeFile(index: number, path: string, oneDriveFolder: OneDriveFolders): void {
-    this.dialogService
-      .open(ConfirmationDialogComponent, {
-        context: {
-          question: 'Deseja remover o arquivo permanentemente?',
-        },
-        dialogClass: 'my-dialog',
-        closeOnBackdropClick: false,
-        closeOnEsc: false,
-        autoFocus: false,
-      })
-      .onClose.pipe(take(1))
-      .subscribe((response: boolean) => {
-        if (response) {
-          this.onedrive.deleteFiles(path, [this.uploadedFiles[index]], oneDriveFolder);
-          this.uploadedFiles.splice(index, 1);
-        }
-      });
+  removeFile(index: number, oneDriveFolder: OneDriveFolders): void {
+    this.filesToRemove.push({
+      file: this.uploadedFiles.splice(index, 1),
+      oneDriveFolder: oneDriveFolder,
+    });
+  }
+
+  resolveRemoval(): void {
+    this.filesToRemove.forEach((fileInfo) => {
+      this.onedrive.deleteFiles(this.folderPath, fileInfo.file, fileInfo.oneDriveFolder);
+    });
+  }
+
+  deleteFiles(): void {
+    const filesToRemove = this.uploadedFiles.filter((file) => !compareFiles(this.initialFiles, file));
+    if (filesToRemove.length > 0) this.onedrive.deleteFiles(this.folderPath, filesToRemove, OneDriveFolders.CONTRACTS);
   }
 }

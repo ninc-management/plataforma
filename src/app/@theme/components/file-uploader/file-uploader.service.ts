@@ -5,8 +5,8 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, filter, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Subject } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
 
 import { StorageService } from '../../../shared/services/storage.service';
 import { FilterFunction, NbFileItem, NbFileUploaderOptions } from './file-uploader.model';
@@ -19,7 +19,7 @@ export interface UploadedFile {
 @Injectable()
 export class NbFileUploaderService implements OnDestroy {
   private destroy$ = new Subject<void>();
-  uploadQueue$ = new BehaviorSubject<BehaviorSubject<NbFileItem>[]>([]);
+  uploadQueue: BehaviorSubject<NbFileItem>[] = [];
 
   constructor(private storageService: StorageService) {}
 
@@ -29,13 +29,8 @@ export class NbFileUploaderService implements OnDestroy {
   }
 
   /* eslint-disable indent */
-  get uploadedFiles$(): Observable<BehaviorSubject<NbFileItem>> {
-    return this.uploadQueue$.pipe(
-      map((fileList: BehaviorSubject<NbFileItem>[]): BehaviorSubject<NbFileItem> | undefined =>
-        fileList.slice(-1).pop()
-      ),
-      filter((file): file is BehaviorSubject<NbFileItem> => file != undefined)
-    );
+  get uploadedFiles(): BehaviorSubject<NbFileItem>[] {
+    return this.uploadQueue.filter((file): file is BehaviorSubject<NbFileItem> => file != undefined);
   }
   /* eslint-enble indent */
 
@@ -52,19 +47,20 @@ export class NbFileUploaderService implements OnDestroy {
     return Array.from(files).map((file: File) => new BehaviorSubject(new NbFileItem(file)));
   }
 
-  uploadAll(fileList: FileList, options: NbFileUploaderOptions): void {
+  setFileToUpload(fileList: FileList, options: NbFileUploaderOptions): void {
     if (!options.filter) return;
     const files: BehaviorSubject<NbFileItem>[] = this.getPreparedFiles(fileList, options.filter);
     if (!files) return;
     this.addToQueue(files);
-    files.forEach((file: BehaviorSubject<NbFileItem>) => this.upload(file, options));
+  }
+
+  uploadAll(options: NbFileUploaderOptions): void {
+    this.uploadQueue.forEach((file: BehaviorSubject<NbFileItem>) => this.upload(file, options));
   }
 
   private addToQueue(files: BehaviorSubject<NbFileItem>[]) {
     files.forEach((file) => {
-      const tmp = this.uploadQueue$.value;
-      tmp.push(file);
-      this.uploadQueue$.next(tmp);
+      this.uploadQueue.push(file);
     });
   }
 

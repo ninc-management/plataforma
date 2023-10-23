@@ -62,12 +62,13 @@
         </nb-card-header>
         <nb-card-body>
           <ngx-transaction-item
+            *ngIf = showTransactionItem
             [team]="team"
             [contract]="contract"
             [iTransaction]="transaction"
             [type]="type"
             [isDialogBlocked]="isBlocked"
-            (submit)="dismiss()"
+            (submit)="$event ? resetTransactionItem() : dismiss()"
           ></ngx-transaction-item>
         </nb-card-body>
       </nb-card>
