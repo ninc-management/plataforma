@@ -15,12 +15,30 @@
         'max-height.px': windowHeight()
       }"
     >
-      <nb-card-header>
+      <nb-card-header
+      [ngStyle]="{'background-color': (isOutdated) ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}"
+      >
+      <div class = "d-flex align-items-center">
         {{ title }}
-        <div class="buttons" [ngStyle]="{ width: clonedTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }">
+        <nb-icon
+            *ngIf="isOutdated"
+            icon = "alert-circle"
+            style = "margin-left: 5px; color: var(--card-header-danger-background-color);"
+            nbTooltip="O item em edição foi atualizado, por favor feche e reabra o diálogo."
+            [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            ></nb-icon>
+      </div>
+        <div class="buttons"
+          [ngStyle]="{ width: clonedTeam._id && componentType === dTypes.TEAM ? '250px' : 'auto' }"
+        >
           <nb-toggle
             *ngIf="clonedTeam._id && componentType === dTypes.TEAM"
             [disabled]="!iTeam.isOrganizationTeam && teamService.hasOrganizationTeam()"
+            [ngClass]="{
+              'isOutdated' : isOutdated
+            }"
             [(ngModel)]="clonedTeam.isOrganizationTeam"
             name="organizationTeam"
             labelPosition="start"
@@ -28,6 +46,7 @@
             Time da organização
           </nb-toggle>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             nbTooltip="Fechar"
