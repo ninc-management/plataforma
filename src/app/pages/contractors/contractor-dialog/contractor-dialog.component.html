@@ -26,6 +26,7 @@
         </div>
         <div class="buttons">
           <button *ngIf="contractor._id"
+                [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
                 nbButton
                 ghost
                 nbTooltip="Link externo para cadastro de Cliente"
@@ -40,6 +41,7 @@
                   ></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             nbTooltip="Fechar"

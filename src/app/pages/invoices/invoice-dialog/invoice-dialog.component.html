@@ -10,10 +10,21 @@
         'max-height.px': windowHeight()
       }"
     >
-      <nb-card-header>
-        {{ title }}
+      <nb-card-header [ngStyle]="{'background-color': isOutdated ? 'var(--card-header-warning-background-color)' : 'var(--card-background-color)'}">
+        <div class="d-flex align-items-center">
+          {{ title }}
+          <nb-icon *ngIf="isOutdated"
+            icon="alert-circle"
+            nbTooltip="O item em edição foi atualizado, por favor feche e reabra o diálogo."
+            [nbTooltipTrigger]="tooltipTriggers.HINT"
+            nbTooltipPlacement="bottom"
+            nbTooltipStatus="info"
+            style="margin-right: 15px; margin-left: 5px; color: var(--card-header-danger-background-color);">
+          </nb-icon>
+        </div>
         <div class="buttons">
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             *ngIf="isPhone() && invoice._id !== undefined && !invoice.locals.isModel"
@@ -22,6 +33,7 @@
             <nb-icon icon="file-pdf" pack="far" style="font-size: 18px"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             *ngIf="!isPhone() && invoice._id !== undefined && !invoice.locals.isModel"
@@ -33,6 +45,7 @@
             <nb-icon icon="eye" pack="eva" style="font-size: 18px"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             *ngIf="invoice._id !== undefined && !invoice.locals.isModel"
@@ -45,6 +58,7 @@
             <nb-icon icon="file-add-outline" pack="eva"></nb-icon>
           </button>
           <button
+            [ngStyle]="{'color': (isOutdated) ? 'var(--card-header-warning-text-color)' : 'var(--button-ghost-basic-text-color)'}"
             nbButton
             ghost
             nbTooltip="Fechar"
@@ -64,6 +78,7 @@
           [isDialogBlocked]="isBlocked"
           [isFormDirty]="isFormDirty"
           (submit)="dismiss()"
+          (updateObjVersion)="updateObjVersion()"
         ></ngx-invoice-item>
       </nb-card-body>
     </nb-card>
