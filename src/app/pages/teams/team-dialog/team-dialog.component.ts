@@ -1,12 +1,12 @@
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { take } from 'rxjs';
+import { Subject, take } from 'rxjs';
 
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TeamService } from 'app/shared/services/team.service';
-import { isPhone, tooltipTriggers } from 'app/shared/utils';
+import { isObjectUpdated, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Team } from '@models/team';
 
@@ -28,6 +28,9 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   @Input() expenseIdx?: number;
   @Input() componentType = TEAM_COMPONENT_TYPES.TEAM;
   clonedTeam = new Team();
+  teamVersion?: number = 0;
+  objectOutdated$ = new Subject<void>();
+  isOutdated: boolean = false;
 
   dTypes = TEAM_COMPONENT_TYPES;
 
@@ -46,6 +49,18 @@ export class TeamDialogComponent extends BaseDialogComponent implements OnInit {
   ngOnInit(): void {
     super.ngOnInit();
     this.clonedTeam = cloneDeep(this.iTeam);
+    this.teamVersion = this.clonedTeam.__v;
+    if (this.teamVersion != undefined) {
+      isObjectUpdated(
+        this.teamService.getTeams(),
+        { _id: this.clonedTeam._id, __v: this.teamVersion },
+        this.destroy$,
+        this.objectOutdated$
+      );
+      this.objectOutdated$.subscribe(() => {
+        this.isOutdated = true;
+      });
+    }
   }
 
   dismiss(): void {
