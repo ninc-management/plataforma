@@ -37,6 +37,7 @@ import { isNotificationEnabled, isUserAuthenticated, notifyByEmail, overdueRecei
 class NortanAPI {
   public express;
   public lastChanges: SizeLimitedQueue<any>;
+  private dbWatcher$;
 
   constructor() {
     this.express = express();
@@ -55,6 +56,10 @@ class NortanAPI {
       mongoose
         .connect(process.env.MONGODB_URI, options)
         .then(() => {
+          this.dbWatcher$ = mongoose.connection.watch();
+          this.dbWatcher$.on('change', (data) => {
+            api.lastChanges.queue(data);
+          });
           console.log('Database connection ready!');
         })
         .catch((error) => {

@@ -49,19 +49,13 @@ const io = require('socket.io')(server, {
 
 const connMap = {};
 
-const dbWatcher$ = app.db.watch();
-
-dbWatcher$.on('change', (data) => {
-  app.api.lastChanges.queue(data);
-});
-
 io.on('connection', (socket) => {
   console.log('Nova conexao', socket.id, socket.client.conn.id);
   connMap[socket.id] = app.api.lastChanges.inserted$.subscribe((data) => {
     socket.emit('dbchange', data);
   });
 
-  socket.on('disconnect', (socket) => {
+  socket.on('disconnect', () => {
     if (connMap[socket.id]) {
       console.log('Encerrando conexao', socket.id);
       connMap[socket.id].unsubscribe();
