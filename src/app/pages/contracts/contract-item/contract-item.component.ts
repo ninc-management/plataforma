@@ -1,10 +1,12 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
-import { isPhone } from 'app/shared/utils';
+import { ContractService } from 'app/shared/services/contract.service';
+import { isOfType, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
+import { Invoice } from '@models/invoice';
 
 enum TABS {
   DATA = 'Dados',
@@ -54,10 +56,19 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor() {}
+  constructor(private contractService: ContractService) {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);
+    this.contractService.submittedToEdit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.clonedContract.__v !== undefined) this.clonedContract.__v += 1;
+      if (
+        this.clonedContract.invoice &&
+        isOfType(Invoice, this.clonedContract.invoice) &&
+        this.clonedContract.invoice.__v !== undefined
+      )
+        this.clonedContract.invoice.__v += 1;
+    });
   }
 
   ngOnDestroy(): void {

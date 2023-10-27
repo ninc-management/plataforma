@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { combineLatest, map, skipWhile, take, takeUntil } from 'rxjs';
+import { combineLatest, map, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -13,7 +13,7 @@ import { InvoiceService } from 'app/shared/services/invoice.service';
 import { OneDriveService } from 'app/shared/services/onedrive.service';
 import { UserService } from 'app/shared/services/user.service';
 import { moneyToNumber } from 'app/shared/string-utils';
-import { codeSort, idToProperty, isPhone, tooltipTriggers } from 'app/shared/utils';
+import { codeSort, idToProperty, IdVersionWise, isObjectUpdated, isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { PlatformConfig } from '@models/platformConfig';
@@ -43,6 +43,12 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   onedriveUrl = '';
   availableContracts: Contract[] = [];
   config: PlatformConfig = new PlatformConfig();
+  objectOutdated$ = new Subject<void>();
+  isOutdated = false;
+  contractInfo: IdVersionWise = {
+    _id: '0',
+    __v: 0,
+  };
 
   isPhone = isPhone;
   idToProperty = idToProperty;
@@ -75,6 +81,17 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
       });
     this.isPayable = this.contract.total != undefined && this.contract.receipts.length < +this.contract.total;
     this.hasBalance = moneyToNumber(this.contract.locals.balance) > 0;
+    this.contractInfo.__v = this.contract.__v;
+    this.contractInfo._id = this.contract._id;
+    this.contractService.submittedToEdit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.contractInfo.__v !== undefined) this.contractInfo.__v += 1;
+    });
+    this.objectOutdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isOutdated = true;
+    });
+    if (this.contract.__v !== undefined) {
+      isObjectUpdated(this.contractService.getContracts(), this.contractInfo, this.destroy$, this.objectOutdated$);
+    }
     if (this.componentType == COMPONENT_TYPES.CONTRACT && this.config.oneDriveConfig.isActive) this.getOnedriveUrl();
     else if (this.contract._id === undefined) {
       this.userService.currentUser$.pipe(take(1)).subscribe((user) => {

@@ -99,6 +99,7 @@ export class ContractService implements OnDestroy {
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
   edited$ = new Subject<void>();
+  submittedToEdit$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
 
   get isDataLoaded$(): Observable<boolean> {
@@ -161,6 +162,7 @@ export class ContractService implements OnDestroy {
         if (contract.status === CONTRACT_STATOOS.CONCLUIDO && !isMoved && isOfType(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
+    this.submittedToEdit$.next();
   }
 
   getContracts(): Observable<Contract[]> {
