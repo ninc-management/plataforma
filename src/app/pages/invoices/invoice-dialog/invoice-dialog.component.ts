@@ -30,7 +30,7 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
   tooltipTriggers = tooltipTriggers;
   objectOutdated$ = new Subject<void>();
   isOutdated = false;
-  myObj: IdVersionWise = {
+  invoiceInfo: IdVersionWise = {
     _id: '0',
     __v: 0,
   };
@@ -53,13 +53,13 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
       this.tempInvoice = cloneDeep(this.invoice);
     } else this.invoice = new Invoice();
 
-    this.myObj.__v = this.invoice.__v;
-    this.myObj._id = this.invoice._id;
+    this.invoiceInfo.__v = this.invoice.__v;
+    this.invoiceInfo._id = this.invoice._id;
     this.objectOutdated$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.isOutdated = true;
     });
     if (this.invoice.__v !== undefined) {
-      isObjectUpdated(this.invoiceService.getInvoices(), this.myObj, this.destroy$, this.objectOutdated$);
+      isObjectUpdated(this.invoiceService.getInvoices(), this.invoiceInfo, this.destroy$, this.objectOutdated$);
     }
   }
 
@@ -148,8 +148,8 @@ export class InvoiceDialogComponent extends BaseDialogComponent implements OnIni
   }
 
   updateObjVersion(): void {
-    if (this.myObj.__v !== undefined) {
-      this.myObj.__v += 1;
+    if (this.invoiceInfo.__v !== undefined) {
+      this.invoiceInfo.__v += 1;
     }
   }
 }
