@@ -7,6 +7,7 @@ import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
+import { AppUpdaterService } from 'app/shared/services/app-updater.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractPaymentInfo, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -71,7 +72,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
     private configService: ConfigService,
-    private accessChecker: NbAccessChecker
+    private accessChecker: NbAccessChecker,
+    public Pwa: AppUpdaterService
   ) {
     this.teamService
       .getTeams()
