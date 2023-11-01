@@ -24,7 +24,10 @@ import { environment } from 'app/../environments/environment';
         #sidebar
       >
         <ng-content select="[slot=main]"></ng-content>
-        <ng-content select="[slot=social]"></ng-content>
+        <div>
+          <ng-content select="[slot=social]"></ng-content>
+          <ng-content select="[slot=pwa]"></ng-content>
+        </div>
       </nb-sidebar>
 
       <nb-layout-column>

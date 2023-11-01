@@ -20,6 +20,7 @@ import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
 import { registerIcons } from 'app/shared/icon-utils';
+import { AppUpdaterService } from 'app/shared/services/app-updater.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
@@ -68,7 +69,8 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     private dialogService: NbDialogService,
     private teamService: TeamService,
     private wsService: WebSocketService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    public Pwa: AppUpdaterService
   ) {}
 
   ngOnInit(): void {
@@ -277,6 +279,12 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
     this.layoutService.changeLayoutSize();
 
     return false;
+  }
+
+  installPwa(): void {
+    if (this.Pwa.promptEvent) {
+      this.Pwa.promptEvent.prompt();
+    }
   }
 
   openDialog(dType: DIALOG_TYPES): void {
