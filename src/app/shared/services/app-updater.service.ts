@@ -3,10 +3,27 @@ import { SwUpdate } from '@angular/service-worker';
 import { environment } from 'environments/environment';
 import { interval } from 'rxjs';
 
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
+declare global {
+  interface WindowEventMap {
+    beforeinstallprompt: BeforeInstallPromptEvent;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AppUpdaterService {
+  promptEvent?: BeforeInstallPromptEvent;
+
   constructor(updates: SwUpdate) {
     if (environment.production) {
       const everyHalfHour$ = interval(1000 * 60 * 30);
@@ -33,5 +50,8 @@ export class AppUpdaterService {
         );
       });
     }
+    window.addEventListener('beforeinstallprompt', (event) => {
+      this.promptEvent = event;
+    });
   }
 }

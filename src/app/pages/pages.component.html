@@ -1,6 +1,14 @@
 <ngx-one-column-layout>
   <nb-menu [items]="menu" tag="main" slot="main"></nb-menu>
   <nb-menu [items]="social" tag="social" slot="social"></nb-menu>
+  <button  (click)="installPwa()" nbButton style="width: 100%" status="primary" tag = "pwa" slot="pwa">
+    <nb-icon
+    icon="download-outline"
+    pack="eva"
+    nbTooltip="Adicionar atalho da plataforma {{ company.companyName }} na área de trabalho"
+    nbTooltipPlacement="top"
+    nbTooltipStatus="primary"></nb-icon>
+  </button>
   <router-outlet></router-outlet>
 </ngx-one-column-layout>
 <ngx-fab icon="plus">
