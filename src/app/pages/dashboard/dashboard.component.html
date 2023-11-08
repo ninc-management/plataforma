@@ -26,6 +26,15 @@
             [itemClickCallback]="openContractDialog.bind(this)"
           ></ngx-expansive-list>
         </div>
+        <div class="col-12">
+          <ngx-expansive-list *ngIf="isFinancialManager"
+            [title]="'Contratos com OE abertas'"
+            [items]="[]"
+            [isLoading]="false"
+            [itemsToString]=""
+            [itemClickCallback]=""
+          ></ngx-expansive-list>
+        </div>
       </div>
     </div>
   </nb-tab>
