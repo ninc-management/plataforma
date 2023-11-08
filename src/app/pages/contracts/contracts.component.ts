@@ -16,6 +16,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
+import { moneyToNumber } from 'app/shared/string-utils';
 import {
   codeSort,
   formatDate,
@@ -89,6 +90,17 @@ export class ContractsComponent implements OnInit, OnDestroy {
     delete: {
       deleteButtonContent: '<i class="fa fa-dollar-sign payment"></i>',
       confirmDelete: false,
+      setDeleteButtonColor: (rowData: any, content: string): string => {
+        const parser = new DOMParser();
+        const htmlElement = parser.parseFromString(content, 'text/html');
+        const newContent = htmlElement.querySelector('i');
+        const balance = moneyToNumber(rowData.locals.balance);
+        if (newContent) {
+          balance > 0.0 ? newContent.classList.add('green-balance') : newContent.classList.remove('green-balance');
+          balance < 0.0 ? newContent.classList.add('red-balance') : newContent.classList.remove('red-balance');
+        }
+        return newContent ? newContent.outerHTML : content;
+      },
     },
     actions: {
       columnTitle: 'Ações',
