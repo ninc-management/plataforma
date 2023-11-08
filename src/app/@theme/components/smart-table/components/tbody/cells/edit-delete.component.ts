@@ -74,6 +74,14 @@ export class TbodyEditDeleteComponent implements OnChanges {
     this.isActionEdit = this.grid.getSetting('actions.edit');
     this.isActionDelete = this.grid.getSetting('actions.delete');
     this.editRowButtonContent = this.grid.getSetting('edit.editButtonContent');
-    this.deleteRowButtonContent = this.grid.getSetting('delete.deleteButtonContent');
+    const deleteSetting = this.grid.getSetting('delete');
+    if (deleteSetting.setDeleteButtonColor) {
+      this.deleteRowButtonContent = deleteSetting.setDeleteButtonColor(
+        this.row.getData(),
+        this.grid.getSetting('delete.deleteButtonContent')
+      );
+    } else {
+      this.deleteRowButtonContent = this.grid.getSetting('delete.deleteButtonContent');
+    }
   }
 }

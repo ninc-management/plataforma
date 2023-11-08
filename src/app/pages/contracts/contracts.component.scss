@@ -16,12 +16,33 @@
     text-align: center;
   }
 
-  .payment {
-    font-size: 1.5rem;
-  }
   .contracts {
-    .ng2-smart-action-delete-delete:hover {
-      color: nb-theme(icon-success-color) !important;
+    .ng2-smart-action-delete-delete {
+      .payment {
+        font-size: 1.5rem;
+      }
+
+      .red-balance {
+        color: var(--color-danger-500);
+      }
+
+      .green-balance {
+        color: var(--color-success-500);
+      }
+
+      &:hover {
+        > .payment {
+          color: nb-theme(icon-success-color);
+        }
+
+        > .red-balance {
+          color: var(--color-danger-700);
+        }
+
+        > .green-balance {
+          color: var(--color-success-700);
+        }
+      }
     }
   }
 }
