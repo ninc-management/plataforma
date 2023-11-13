@@ -22,16 +22,16 @@
             [title]="'Contratos com OP abertas'"
             [items]="openOPs"
             [isLoading]="!isOPsLoaded"
-            [itemsToString]="contractPaymentInfoToString.bind(this)"
+            [itemsToString]="contractTransactionInfoToString.bind(this)"
             [itemClickCallback]="openContractDialog.bind(this)"
           ></ngx-expansive-list>
         </div>
         <div class="col-12">
           <ngx-expansive-list *ngIf="isFinancialManager"
             [title]="'Contratos com OE abertas'"
-            [items]="[]"
-            [isLoading]="false"
-            [itemsToString]=""
+            [items]="openOEs"
+            [isLoading]="!isOEsLoaded"
+            [itemsToString]="contractTransactionInfoToString.bind(this)"
             [itemClickCallback]=""
           ></ngx-expansive-list>
         </div>
