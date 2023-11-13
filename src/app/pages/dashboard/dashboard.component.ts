@@ -8,7 +8,12 @@ import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
 import { ConfigService } from 'app/shared/services/config.service';
-import { CONTRACT_STATOOS, ContractPaymentInfo, ContractService } from 'app/shared/services/contract.service';
+import {
+  CONTRACT_STATOOS,
+  CONTRACT_TRANSACTION_TYPES,
+  ContractService,
+  ContractTransactionInfo,
+} from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { MetricsService, TimeSeries } from 'app/shared/services/metrics.service';
@@ -55,9 +60,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   nortanTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
-  openOPs: ContractPaymentInfo[] = [];
+  openOPs: ContractTransactionInfo[] = [];
+  openOEs: ContractTransactionInfo[] = [];
   isParettoRankLoaded = false;
   isOPsLoaded: boolean = false;
+  isOEsLoaded: boolean = false;
   isFinancialManager: boolean = false;
 
   isPhone = isPhone;
@@ -168,14 +175,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.parettoRank = parettoRank.map((contractor) => contractor.contractorName);
         this.isParettoRankLoaded = true;
       });
+  }
 
+  ngOnInit(): void {
     this.accessChecker
       .isGranted('df', 'dashboard-open-contracts')
       .pipe(take(1))
       .subscribe((isGranted) => (this.isFinancialManager = isGranted));
-  }
-
-  ngOnInit(): void {
     combineLatest([
       this.contractService.getContracts(),
       this.invoiceService.getInvoices(),
@@ -215,11 +221,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe(([contracts, ,]) => {
         contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.contractService
-          .openOPs()
+          .openItems(CONTRACT_TRANSACTION_TYPES.PAYMENTS)
           .pipe(takeUntil(this.destroy$))
-          .subscribe((openOPs) => {
+          .subscribe((openOPs: ContractTransactionInfo[]) => {
             this.openOPs = openOPs;
             this.isOPsLoaded = true;
+          });
+        this.contractService
+          .openItems(CONTRACT_TRANSACTION_TYPES.RECEIPTS)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((openOEs: ContractTransactionInfo[]) => {
+            this.openOEs = openOEs;
+            this.isOEsLoaded = true;
           });
       });
   }
@@ -244,19 +257,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   // CODIGO_DO_CONTRATO - #CODIGO_DA_OP
-  contractPaymentInfoToString(contractPaymentInfo: ContractPaymentInfo): string {
-    if (contractPaymentInfo.contract.invoice)
+  contractTransactionInfoToString(contractTransactionInfo: ContractTransactionInfo): string {
+    if (contractTransactionInfo.contract.invoice)
       return (
-        this.invoiceService.idToInvoice(contractPaymentInfo.contract.invoice).code +
+        this.invoiceService.idToInvoice(contractTransactionInfo.contract.invoice).code +
         ' - #' +
-        (contractPaymentInfo.code + 1).toString() +
+        (contractTransactionInfo.code + 1).toString() +
         ' - ' +
-        contractPaymentInfo.payment.service
+        (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
+        (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '')
       );
-    return ' - #' + (contractPaymentInfo.code + 1).toString() + ' - ' + contractPaymentInfo.payment.service;
+    return (
+      ' - #' +
+      (contractTransactionInfo.code + 1).toString() +
+      ' - ' +
+      (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
+      (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '')
+    );
   }
 
-  openContractDialog(contractPayment: ContractPaymentInfo): void {
+  openContractDialog(contractPayment: ContractTransactionInfo): void {
     const contract = contractPayment.contract;
     this.dialogService.open(ContractDialogComponent, {
       context: {

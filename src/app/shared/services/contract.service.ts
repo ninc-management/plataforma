@@ -46,6 +46,10 @@ import { Invoice } from '@models/invoice';
 import { PlatformConfig } from '@models/platformConfig';
 import { User } from '@models/user';
 
+export enum CONTRACT_TRANSACTION_TYPES {
+  RECEIPTS = 'receipts',
+  PAYMENTS = 'payments',
+}
 export enum SPLIT_TYPES {
   INDIVIDUAL = 'Individual',
   PERSONALIZADO = 'Personalizado',
@@ -95,9 +99,10 @@ export interface ExpenseTypesSum {
   value: string;
 }
 
-export interface ContractPaymentInfo {
+export interface ContractTransactionInfo {
   contract: Contract;
-  payment: ContractPayment;
+  payment?: ContractPayment;
+  receipt?: ContractReceipt;
   code: number;
 }
 
@@ -613,14 +618,19 @@ export class ContractService implements OnDestroy {
     return this.idToContract(u1)._id == this.idToContract(u2)._id;
   }
 
-  openOPs(): Observable<ContractPaymentInfo[]> {
+  openItems(type: CONTRACT_TRANSACTION_TYPES): Observable<ContractTransactionInfo[]> {
     return this.getContracts().pipe(
       map((contracts) => {
         return contracts
           .map((contract) =>
-            contract.payments
-              .filter((payment) => payment.paid === false)
-              .map((payment) => ({ contract: contract, payment: payment, code: contract.payments.indexOf(payment) }))
+            (contract[type] as (ContractPayment | ContractReceipt)[])
+              .filter((item) => item.paid === false)
+              .map((item) => ({
+                contract: contract,
+                payment: type === CONTRACT_TRANSACTION_TYPES.PAYMENTS ? (item as ContractPayment) : undefined,
+                receipt: type === CONTRACT_TRANSACTION_TYPES.RECEIPTS ? (item as ContractReceipt) : undefined,
+                code: (contract[type] as (ContractPayment | ContractReceipt)[]).indexOf(item),
+              }))
           )
           .flat();
       })
