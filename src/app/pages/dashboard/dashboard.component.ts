@@ -276,14 +276,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  openContractDialog(contractPayment: ContractTransactionInfo): void {
-    const contract = contractPayment.contract;
+  openContractDialog(contractTransaction: ContractTransactionInfo): void {
+    const contract = contractTransaction.contract;
+    const title = contractTransaction.receipt
+      ? 'ORDEM DE EMPENHO'
+      : contractTransaction.payment
+      ? 'ORDEM DE PAGAMENTO'
+      : '';
     this.dialogService.open(ContractDialogComponent, {
       context: {
-        title: 'ORDEM DE PAGAMENTO',
+        title: title,
         contract: contract,
-        paymentIndex: contractPayment.code,
-        componentType: COMPONENT_TYPES.PAYMENT,
+        paymentIndex: contractTransaction.payment ? contractTransaction.code : undefined,
+        receiptIndex: contractTransaction.receipt ? contractTransaction.code : undefined,
+        componentType: contractTransaction.payment ? COMPONENT_TYPES.PAYMENT : COMPONENT_TYPES.RECEIPT,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
