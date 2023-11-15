@@ -49,6 +49,7 @@ import { User } from '@models/user';
 export enum CONTRACT_TRANSACTION_TYPES {
   RECEIPTS = 'receipts',
   PAYMENTS = 'payments',
+  EXPENSES = 'expenses',
 }
 export enum SPLIT_TYPES {
   INDIVIDUAL = 'Individual',
@@ -103,6 +104,7 @@ export interface ContractTransactionInfo {
   contract: Contract;
   payment?: ContractPayment;
   receipt?: ContractReceipt;
+  expense?: ContractExpense;
   code: number;
 }
 
@@ -623,13 +625,14 @@ export class ContractService implements OnDestroy {
       map((contracts) => {
         return contracts
           .map((contract) =>
-            (contract[type] as (ContractPayment | ContractReceipt)[])
+            (contract[type] as (ContractPayment | ContractReceipt | ContractExpense)[])
               .filter((item) => item.paid === false)
               .map((item) => ({
                 contract: contract,
                 payment: type === CONTRACT_TRANSACTION_TYPES.PAYMENTS ? (item as ContractPayment) : undefined,
                 receipt: type === CONTRACT_TRANSACTION_TYPES.RECEIPTS ? (item as ContractReceipt) : undefined,
-                code: (contract[type] as (ContractPayment | ContractReceipt)[]).indexOf(item),
+                expense: type === CONTRACT_TRANSACTION_TYPES.EXPENSES ? (item as ContractExpense) : undefined,
+                code: (contract[type] as (ContractPayment | ContractReceipt | ContractExpense)[]).indexOf(item),
               }))
           )
           .flat();
