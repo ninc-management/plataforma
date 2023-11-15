@@ -38,9 +38,9 @@
         <div class="col-12">
           <ngx-expansive-list *ngIf="isFinancialManager"
             [title]="'Contratos com Despesas abertas'"
-            [items]="[]"
-            [isLoading]="false"
-            [itemsToString]="contractPaymentInfoToString.bind(this)"
+            [items]="openExpenses"
+            [isLoading]="!isExpensesLoaded"
+            [itemsToString]="contractTransactionInfoToString.bind(this)"
             [itemClickCallback]="openContractDialog.bind(this)"
           ></ngx-expansive-list>
         </div>
