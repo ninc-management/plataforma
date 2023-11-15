@@ -64,9 +64,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   parettoRank: string[] = [];
   openOPs: ContractTransactionInfo[] = [];
   openOEs: ContractTransactionInfo[] = [];
+  openExpenses: ContractTransactionInfo[] = [];
   isParettoRankLoaded = false;
   isOPsLoaded: boolean = false;
   isOEsLoaded: boolean = false;
+  isExpensesLoaded: boolean = false;
   isFinancialManager: boolean = false;
   THEMES = THEMES;
   currentTheme: string = '';
@@ -240,6 +242,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.openOEs = openOEs;
             this.isOEsLoaded = true;
           });
+        this.contractService
+          .openItems(CONTRACT_TRANSACTION_TYPES.EXPENSES)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((openExpenses: ContractTransactionInfo[]) => {
+            this.openExpenses = openExpenses;
+            this.isExpensesLoaded = true;
+          });
       });
 
     this.themeService
@@ -278,14 +287,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
         (contractTransactionInfo.code + 1).toString() +
         ' - ' +
         (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
-        (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '')
+        (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '') +
+        (contractTransactionInfo.expense ? contractTransactionInfo.expense.description : '')
       );
     return (
       ' - #' +
       (contractTransactionInfo.code + 1).toString() +
       ' - ' +
       (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
-      (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '')
+      (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '') +
+      (contractTransactionInfo.expense ? contractTransactionInfo.expense.description : '')
     );
   }
 
