@@ -293,6 +293,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ? 'ORDEM DE EMPENHO'
       : contractTransaction.payment
       ? 'ORDEM DE PAGAMENTO'
+      : contractTransaction.expense
+      ? 'DESPESA'
       : '';
     this.dialogService.open(ContractDialogComponent, {
       context: {
@@ -300,7 +302,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         contract: contract,
         paymentIndex: contractTransaction.payment ? contractTransaction.code : undefined,
         receiptIndex: contractTransaction.receipt ? contractTransaction.code : undefined,
-        componentType: contractTransaction.payment ? COMPONENT_TYPES.PAYMENT : COMPONENT_TYPES.RECEIPT,
+        expenseIndex: contractTransaction.expense ? contractTransaction.code : undefined,
+        componentType: contractTransaction.payment
+          ? COMPONENT_TYPES.PAYMENT
+          : contractTransaction.receipt
+          ? COMPONENT_TYPES.RECEIPT
+          : contractTransaction.expense
+          ? COMPONENT_TYPES.EXPENSE
+          : undefined,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
