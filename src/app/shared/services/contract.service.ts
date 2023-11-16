@@ -102,6 +102,7 @@ export interface ExpenseTypesSum {
 
 export interface ContractTransactionInfo {
   contract: Contract;
+  value: string;
   payment?: ContractPayment;
   receipt?: ContractReceipt;
   expense?: ContractExpense;
@@ -629,6 +630,7 @@ export class ContractService implements OnDestroy {
               .filter((item) => item.paid === false)
               .map((item) => ({
                 contract: contract,
+                value: item.value,
                 payment: type === CONTRACT_TRANSACTION_TYPES.PAYMENTS ? (item as ContractPayment) : undefined,
                 receipt: type === CONTRACT_TRANSACTION_TYPES.RECEIPTS ? (item as ContractReceipt) : undefined,
                 expense: type === CONTRACT_TRANSACTION_TYPES.EXPENSES ? (item as ContractExpense) : undefined,

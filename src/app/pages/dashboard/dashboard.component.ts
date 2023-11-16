@@ -283,16 +283,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (contractTransactionInfo.contract.invoice)
       return (
         this.invoiceService.idToInvoice(contractTransactionInfo.contract.invoice).code +
-        ' - #' +
-        (contractTransactionInfo.code + 1).toString() +
+        ' - ' +
+        (contractTransactionInfo.expense
+          ? contractTransactionInfo.expense.code
+          : '#' + (contractTransactionInfo.code + 1).toString()) +
+        ' - ' +
+        'R$' +
+        contractTransactionInfo.value +
         ' - ' +
         (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
         (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '') +
         (contractTransactionInfo.expense ? contractTransactionInfo.expense.description : '')
       );
     return (
-      ' - #' +
-      (contractTransactionInfo.code + 1).toString() +
+      ' - ' +
+      (contractTransactionInfo.expense
+        ? contractTransactionInfo.expense.code
+        : '#' + (contractTransactionInfo.code + 1).toString()) +
+      ' - ' +
+      'R$' +
+      contractTransactionInfo.value +
       ' - ' +
       (contractTransactionInfo.payment ? contractTransactionInfo.payment.service : '') +
       (contractTransactionInfo.receipt ? contractTransactionInfo.receipt.description : '') +
@@ -306,6 +316,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ? 'ORDEM DE EMPENHO'
       : contractTransaction.payment
       ? 'ORDEM DE PAGAMENTO'
+      : contractTransaction.expense
+      ? 'DESPESA'
       : '';
     this.dialogService.open(ContractDialogComponent, {
       context: {
@@ -313,7 +325,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         contract: contract,
         paymentIndex: contractTransaction.payment ? contractTransaction.code : undefined,
         receiptIndex: contractTransaction.receipt ? contractTransaction.code : undefined,
-        componentType: contractTransaction.payment ? COMPONENT_TYPES.PAYMENT : COMPONENT_TYPES.RECEIPT,
+        expenseIndex: contractTransaction.expense ? contractTransaction.code : undefined,
+        componentType: contractTransaction.payment
+          ? COMPONENT_TYPES.PAYMENT
+          : contractTransaction.receipt
+          ? COMPONENT_TYPES.RECEIPT
+          : contractTransaction.expense
+          ? COMPONENT_TYPES.EXPENSE
+          : undefined,
       },
       dialogClass: 'my-dialog',
       closeOnBackdropClick: false,
