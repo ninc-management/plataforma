@@ -37,7 +37,7 @@ export class ExpansiveListComponent<T> implements OnInit {
   }
 
   toggleExpansive(): void {
-    if (this.items.length > this.max && this.isExpanded) this.list.nativeElement.scrollTop = 0;
+    if (this.items.length >= this.max && this.isExpanded) this.list.nativeElement.scrollTop = 0;
     this.isExpanded = !this.isExpanded;
   }
 }
