@@ -2,8 +2,13 @@
   <div class="col-12">
     <nb-card>
       <nb-card-header *ngIf="pageWidth() < 576">
-        <div class="row">
-          <div class="col-12">
+        <div class="row d-flex align-items-center">
+          <div class="col-2" style="padding-left: 0; padding-right: 0">
+            <button nbButton fullWidth status="primary" (click)="downloadContractData()" style="height: 100%">
+              <i class="icon-file-csv"></i>
+            </button>
+          </div>
+          <div class="col-10">
             <input
               nbInput
               [(ngModel)]="searchQuery"
@@ -31,6 +36,7 @@
           #smartTable
           [settings]="settings"
           [source]="source"
+          (create)="downloadContractData"
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"
         ></nb-smart-table>
@@ -45,11 +51,11 @@
                     size="giant"
                     [name]="
                       [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'name']
-                        | transformPipe: idToProperty
+                        | transformPipe : idToProperty
                     "
                     [title]="
                       [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'code']
-                        | transformPipe: idToProperty
+                        | transformPipe : idToProperty
                     "
                     [picture]="invoiceService.idToProfilePicture(contract.invoice)"
                   ></nb-user>
@@ -60,7 +66,7 @@
                     <span style="vertical-align: 0.1em">
                       {{
                         [contract.invoice, invoiceService.idToInvoice.bind(invoiceService), 'value']
-                          | transformPipe: idToProperty
+                          | transformPipe : idToProperty
                       }}
                     </span>
                   </p>
@@ -73,7 +79,7 @@
                 </div>
                 <div class="col-12">
                   <nb-icon icon="user-tie" pack="fa" status="primary"></nb-icon>
-                  {{ [contract.invoice] | transformPipe: getContractorName.bind(this) }}
+                  {{ [contract.invoice] | transformPipe : getContractorName.bind(this) }}
                 </div>
               </div>
             </a>
