@@ -82,6 +82,11 @@ export class ContractsComponent implements OnInit, OnDestroy {
   settings = {
     mode: 'external',
     noDataMessage: 'Não encontramos nenhum contrato para o filtro selecionado.',
+    add: {
+      addButtonContent: '<i class="icon-file-csv"></i>',
+      createButtonContent: '<i class="nb-checkmark"></i>',
+      cancelButtonContent: '<i class="nb-close"></i>',
+    },
     edit: {
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
@@ -104,7 +109,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     },
     actions: {
       columnTitle: 'Ações',
-      add: false,
+      add: true,
       edit: true,
       delete: true,
     },
@@ -359,5 +364,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
       default:
         return 'warning';
     }
+  }
+  downloadContractData(): void {
+    //TODO:
   }
 }
