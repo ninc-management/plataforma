@@ -20,7 +20,7 @@
       <nb-list
         #list
         [ngStyle]="{
-          'overflow-y': items.length > max && isExpanded ? 'scroll' : 'hidden'
+          'overflow-y': items.length >= max && isExpanded ? 'scroll' : 'hidden'
         }"
       >
         <nb-list-item [ngStyle]="itemClickCallback ? {'cursor': 'pointer'} : {}" *ngFor="let item of items; let i = index; trackBy: trackByIndex" (click)="itemClickCallback ? itemClickCallback(item) : null">
