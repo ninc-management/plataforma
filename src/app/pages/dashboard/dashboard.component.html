@@ -68,11 +68,31 @@
         </a>
       </div>
     </nb-card>
-    <div class="col-12 col-md-6" style="padding: 0;">
-      <nb-card>
-        <iframe src="https://embed.styledcalendar.com/#7DQ1AbeiS7EsnNhMUmLg" title="Styled Calendar" class="styled-calendar-container" style="border: 1px solid rgb(0,0,0) ;border-radius: .35rem; height: 400px; padding: 0.5rem" data-cy="calendar-embed-iframe"></iframe>
+    <div class="col-12 col-md-6" style="padding: 0">
+      <nb-card *ngIf="currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE; else dark">
+        <iframe
+          src="https://embed.styledcalendar.com/#pJb2THZfDOvcqttqQsVn"
+          title="Styled Calendar"
+          scrolling="no"
+          class="styled-calendar-container"
+          style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem; overflow-y: clip;"
+          data-cy="calendar-embed-iframe"
+        ></iframe>
         <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
       </nb-card>
+      <ng-template #dark>
+        <nb-card>
+          <iframe
+            src="https://embed.styledcalendar.com/#8TgvOZJI7arWLIrG6CXF"
+            title="Styled Calendar"
+            scrolling="no"
+            class="styled-calendar-container"
+            style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem"
+            data-cy="calendar-embed-iframe"
+          ></iframe>
+          <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
+        </nb-card>
+      </ng-template>
     </div>
   </nb-tab>
   <nb-tab

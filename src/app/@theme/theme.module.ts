@@ -97,6 +97,15 @@ const themeProviders = NbThemeModule.forRoot(
   [DEFAULT_THEME, COSMIC_THEME, CORPORATE_THEME, DARK_THEME]
 ).providers;
 
+const teste: string = 'teste';
+
+export const THEMES = {
+  DEFAULT: DEFAULT_THEME.name,
+  COSMIC: COSMIC_THEME.name,
+  CORPORATE: CORPORATE_THEME.name,
+  DARK: DARK_THEME.name,
+};
+
 @NgModule({
   imports: [CommonModule, MatRippleModule, SharedModule, ...NB_MODULES],
   exports: [CommonModule, NbCompleterModule, ...PIPES, ...COMPONENTS],
