@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NbAccessChecker } from '@nebular/security';
-import { NbDialogService, NbTabComponent } from '@nebular/theme';
+import { NbDialogService, NbTabComponent, NbThemeService } from '@nebular/theme';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
+import { THEMES } from 'app/@theme/theme.module';
 import { AppUpdaterService } from 'app/shared/services/app-updater.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractPaymentInfo, ContractService } from 'app/shared/services/contract.service';
@@ -60,6 +61,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isParettoRankLoaded = false;
   isOPsLoaded: boolean = false;
   isFinancialManager: boolean = false;
+  THEMES = THEMES;
+  currentTheme: string = '';
 
   isPhone = isPhone;
 
@@ -73,6 +76,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private contractorService: ContractorService,
     private configService: ConfigService,
     private accessChecker: NbAccessChecker,
+    private themeService: NbThemeService,
     public Pwa: AppUpdaterService
   ) {
     this.teamService
@@ -223,6 +227,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.openOPs = openOPs;
             this.isOPsLoaded = true;
           });
+      });
+
+    this.themeService
+      .getJsTheme()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((theme) => {
+        this.currentTheme = theme.name;
       });
   }
 
