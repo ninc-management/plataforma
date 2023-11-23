@@ -36,7 +36,7 @@
           #smartTable
           [settings]="settings"
           [source]="source"
-          (create)="downloadContractData"
+          (create)="downloadContractData()"
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"
         ></nb-smart-table>
