@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import saveAs from 'file-saver';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
@@ -365,7 +366,63 @@ export class ContractsComponent implements OnInit, OnDestroy {
         return 'warning';
     }
   }
+
   downloadContractData(): void {
     //TODO:
+    this.source.getFilteredAndSorted().then((contracts: Contract[]) => {
+      this.downloadReceiptsData(contracts);
+    });
+  }
+
+  downloadReceiptsData(contracts: Contract[]) {
+    const filteredContracts = contracts.filter((contract) => contract.receipts.length > 0);
+    const csv = this.createReceiptsDataObject(filteredContracts);
+    const blob = new Blob([csv], { type: 'text/csv' });
+
+    saveAs(blob, 'dados_ordens_de_empenho.csv');
+  }
+
+  createReceiptsDataObject(contracts: Contract[]): string {
+    const mainHeaders = [
+      'Código do Orçamento',
+      'Nº da OE no Contrato',
+      'Valor',
+      'Valor Líquido',
+      'NF (%)',
+      'Empresa(%)',
+      'ISS (%)',
+      'Descrição',
+      'Será pago em',
+      'Pago?',
+      'Data do Pagamento',
+      'Data de Criação',
+      'Última Atualização',
+    ];
+
+    let csv = mainHeaders.join(';') + '\r\n';
+
+    contracts.forEach((contract) => {
+      contract.receipts.forEach((receipt, idx) => {
+        if (contract.invoice) {
+          csv +=
+            idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code') + ';';
+          csv += `#${idx + 1}` + ';';
+          csv += receipt.value + ';';
+          csv += this.contractService.receiptNetValue(receipt) + ';';
+          csv += receipt.notaFiscal + ';';
+          csv += receipt.nortanPercentage + ';';
+          csv += (receipt.ISS ? receipt.ISS : '0,00') + ';';
+          csv += receipt.description + ';';
+          csv += (receipt.dueDate ? formatDate(receipt.dueDate) : '') + ';';
+          csv += (receipt.paid ? 'Sim' : 'Não') + ';';
+          csv += (receipt.paidDate ? formatDate(receipt.paidDate) : '') + ';';
+          csv += formatDate(receipt.created) + ';';
+          csv += formatDate(receipt.lastUpdate) + ';';
+          csv += '\r\n';
+        }
+      });
+    });
+
+    return csv;
   }
 }
