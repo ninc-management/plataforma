@@ -371,6 +371,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     //TODO:
     this.source.getFilteredAndSorted().then((contracts: Contract[]) => {
       this.downloadReceiptsData(contracts);
+      this.downloadPaymentsData(contracts);
     });
   }
 
@@ -418,6 +419,49 @@ export class ContractsComponent implements OnInit, OnDestroy {
           csv += (receipt.paidDate ? formatDate(receipt.paidDate) : '') + ';';
           csv += formatDate(receipt.created) + ';';
           csv += formatDate(receipt.lastUpdate) + ';';
+          csv += '\r\n';
+        }
+      });
+    });
+
+    return csv;
+  }
+
+  downloadPaymentsData(contracts: Contract[]) {
+    const filteredContracts = contracts.filter((contract) => contract.payments.length > 0);
+    const csv = this.createPaymentsDataObject(filteredContracts);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'dados_ordem_de_pagamento.csv');
+  }
+
+  createPaymentsDataObject(contracts: Contract[]): string {
+    const mainHeaders = [
+      'Código do Orçamento',
+      'Nº da OP no Contrato',
+      'Valor',
+      'Data prevista do pagamento',
+      'Pago?',
+      'Data de pagamento',
+      'Data de criação',
+      'Data de atualização',
+      'Serviço',
+    ];
+
+    let csv = mainHeaders.join(';') + '\r\n';
+
+    contracts.forEach((contract) => {
+      contract.payments.forEach((payment, idx) => {
+        if (contract.invoice) {
+          csv +=
+            idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code') + ';';
+          csv += `#${idx + 1}` + ';';
+          csv += payment.value + ';';
+          csv += formatDate(payment.predictedDate) + ';';
+          csv += (payment.paid ? 'Sim' : 'Não') + ';';
+          csv += (payment.paidDate ? formatDate(payment.paidDate) : '') + ';';
+          csv += formatDate(payment.created) + ';';
+          csv += formatDate(payment.lastUpdate) + ';';
+          csv += payment.service + ';';
           csv += '\r\n';
         }
       });
