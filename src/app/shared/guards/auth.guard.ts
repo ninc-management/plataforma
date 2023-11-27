@@ -52,8 +52,15 @@ const accessControl = {
   'Elo Principal de Engenharia Civil': {
     parent: 'Elo Principal',
   },
-  'Diretor Financeiro': {
+  'Diretor Comercial': {
     parent: 'Elo Principal',
+    dc: '*',
+  },
+  'Diretora Comercial': {
+    parent: 'Diretor Comercial',
+  },
+  'Diretor Financeiro': {
+    parent: 'Diretor Comercial',
     df: '*',
   },
   'Diretora Financeira': {
@@ -157,6 +164,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
             } else if (position.permission == 'AER Natan®') {
               obj[position.roleTypeName] = {
                 parent: 'Assessor Executivo Remoto',
+              };
+            } else if (position.permission == 'Comercial') {
+              obj[position.roleTypeName] = {
+                parent: 'Diretor Comercial',
               };
             }
           });
