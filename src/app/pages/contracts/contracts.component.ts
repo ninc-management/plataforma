@@ -17,7 +17,7 @@ import { ContractorService } from 'app/shared/services/contractor.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { moneyToNumber } from 'app/shared/string-utils';
+import { moneyToNumber, numberToMoney } from 'app/shared/string-utils';
 import {
   codeSort,
   formatDate,
@@ -370,6 +370,10 @@ export class ContractsComponent implements OnInit, OnDestroy {
   downloadContractData(): void {
     //TODO:
     this.source.getFilteredAndSorted().then((contracts: Contract[]) => {
+      const csv = this.createContractsDataObject(contracts);
+      const blob = new Blob([csv], { type: 'text/csv' });
+      saveAs(blob, 'dados_contratos.csv');
+
       this.downloadReceiptsData(contracts);
       this.downloadPaymentsData(contracts);
     });
@@ -465,6 +469,63 @@ export class ContractsComponent implements OnInit, OnDestroy {
           csv += '\r\n';
         }
       });
+    });
+
+    return csv;
+  }
+
+  createContractsDataObject(contracts: Contract[]): string {
+    const mainHeaders = [
+      'Código do Orçamento',
+      'Gestor',
+      'Revisão',
+      'Status',
+      'Time',
+      'Setor',
+      'Cliente',
+      'Administração do contrato',
+      'Empreendimento',
+      'Valor do contrato',
+      'Valor de comissão',
+      'Valor líquido',
+      'Data de Criação',
+      'Última Atualização',
+      'Caixa',
+      'Valor pago',
+      'Parcelas criadas',
+      'Parcelas totais',
+    ];
+
+    let csv = mainHeaders.join(';') + '\r\n';
+
+    contracts.forEach((contract) => {
+      if (contract.invoice) {
+        const invoice = this.invoiceService.idToInvoice(contract.invoice);
+        csv += invoice.code + ';';
+        csv += idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName') + ';';
+        csv += contract.version + ';';
+        csv += contract.status + ';';
+        csv += (invoice.nortanTeam ? this.teamService.idToTeam(invoice.nortanTeam).abrev : '') + ';';
+        csv += this.teamService.idToSectorComposedName(invoice.sector) + ';';
+        csv += (invoice.contractor ? this.contractorService.idToContractor(invoice.contractor).fullName : '') + ';';
+        csv +=
+          (invoice.administration === 'nortan'
+            ? 'Suporte Empresarial'
+            : invoice.administration === 'pessoal'
+            ? 'Intermediação de Negócios'
+            : '') + ';';
+        csv += invoice.name + ';';
+        csv += invoice.value + ';';
+        csv += numberToMoney(this.contractService.getComissionsSum(contract)) + ';';
+        csv += contract.locals.liquid + ';';
+        csv += formatDate(contract.created) + ';';
+        csv += formatDate(contract.lastUpdate) + ';';
+        csv += contract.locals.balance + ';';
+        csv += this.contractService.paidValue(contract) + ';';
+        csv += contract.receipts.length + ';';
+        csv += contract.total + ';';
+        csv += '\r\n';
+      }
     });
 
     return csv;
