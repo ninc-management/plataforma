@@ -376,6 +376,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
 
       this.downloadReceiptsData(contracts);
       this.downloadPaymentsData(contracts);
+      this.downloadExpensesData(contracts);
     });
   }
 
@@ -526,6 +527,40 @@ export class ContractsComponent implements OnInit, OnDestroy {
         csv += contract.total + ';';
         csv += '\r\n';
       }
+    });
+
+    return csv;
+  }
+
+  downloadExpensesData(contracts: Contract[]): void {
+    const filteredContracts = contracts.filter((contract) => contract.expenses.length > 0);
+    const csv = this.createExpensesDataObject(filteredContracts);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    saveAs(blob, 'dados_despesas.csv');
+  }
+
+  createExpensesDataObject(contracts: Contract[]): string {
+    const mainHeaders = ['#', 'Fonte', 'Descrição', 'Valor', 'Categoria', 'Tipo', 'Criação', 'Pago?', 'Pagamento'];
+
+    let csv = mainHeaders.join(';') + '\r\n';
+
+    contracts.forEach((contract) => {
+      contract.expenses.forEach((expense, idx) => {
+        if (contract.invoice) {
+          csv +=
+            idToProperty(contract.invoice, this.invoiceService.idToInvoice.bind(this.invoiceService), 'code') + ';';
+          csv += `#${idx + 1}` + ';';
+          csv += expense.source + ';';
+          csv += expense.description + ';';
+          csv += expense.value + ';';
+          csv += expense.type + ';';
+          csv += expense.subType + ';';
+          csv += expense.created + ';';
+          csv += (expense.paid ? 'Sim' : 'Não') + ';';
+          csv += (expense.paidDate ? formatDate(expense.paidDate) : '') + ';';
+          csv += '\r\n';
+        }
+      });
     });
 
     return csv;
