@@ -1,8 +1,9 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NbAccessChecker } from '@nebular/security';
 import { NbComponentStatus, NbDialogService } from '@nebular/theme';
 import saveAs from 'file-saver';
 import { combineLatest, Subject } from 'rxjs';
-import { skipWhile, takeUntil } from 'rxjs/operators';
+import { skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { COMPONENT_TYPES, ContractDialogComponent } from './contract-dialog/contract-dialog.component';
 import {
@@ -47,6 +48,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   searchQuery = '';
   isDataLoaded = false;
   config: PlatformConfig = new PlatformConfig();
+  isComercialManager = false;
 
   idToProperty = idToProperty;
 
@@ -110,7 +112,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     },
     actions: {
       columnTitle: 'Ações',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
@@ -244,6 +246,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
     private dialogService: NbDialogService,
     private teamService: TeamService,
     private configService: ConfigService,
+    private accessChecker: NbAccessChecker,
     public contractService: ContractService,
     public contractorService: ContractorService,
     public invoiceService: InvoiceService,
@@ -322,6 +325,14 @@ export class ContractsComponent implements OnInit, OnDestroy {
         search: [CONTRACT_STATOOS.EM_ANDAMENTO, CONTRACT_STATOOS.A_RECEBER, CONTRACT_STATOOS.ENTREGUE].join(' '),
       },
     ]);
+    this.accessChecker
+      .isGranted('dc', 'download-data')
+      .pipe(take(1))
+      .subscribe((isGranted) => {
+        this.isComercialManager = isGranted;
+        this.settings.actions.add = true;
+        this.settings = Object.assign({}, this.settings);
+      });
   }
 
   getContractorName(invoice: Invoice | string | undefined): string {

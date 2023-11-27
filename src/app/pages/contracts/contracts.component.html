@@ -3,7 +3,7 @@
     <nb-card>
       <nb-card-header *ngIf="pageWidth() < 576">
         <div class="row d-flex align-items-center">
-          <div class="col-2" style="padding-left: 0; padding-right: 0">
+          <div *ngIf="isComercialManager" class="col-2" style="padding-left: 0; padding-right: 0">
             <button nbButton fullWidth status="primary" (click)="downloadContractData()" style="height: 100%">
               <i class="icon-file-csv"></i>
             </button>
