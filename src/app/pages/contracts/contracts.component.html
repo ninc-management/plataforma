@@ -36,6 +36,7 @@
           #smartTable
           [settings]="settings"
           [source]="source"
+          [areRowsVisible]="areRowsVisible"
           (create)="downloadContractData()"
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"

@@ -49,6 +49,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   isDataLoaded = false;
   config: PlatformConfig = new PlatformConfig();
   isComercialManager = false;
+  areRowsVisible = true;
 
   idToProperty = idToProperty;
 
