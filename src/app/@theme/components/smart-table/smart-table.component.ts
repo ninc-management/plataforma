@@ -16,6 +16,7 @@ import { deepExtend, getPageForRowIndex } from './lib/helpers';
 export class SmartTableComponent implements OnChanges, OnDestroy {
   @Input() source: any;
   @Input() settings: object = {};
+  @Input() areRowsVisible: boolean = true;
 
   @Output() rowSelect = new EventEmitter<any>();
   @Output() rowDeselect = new EventEmitter<any>();
