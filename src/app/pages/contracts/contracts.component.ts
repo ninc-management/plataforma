@@ -46,6 +46,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   searchQuery = '';
   isDataLoaded = false;
   config: PlatformConfig = new PlatformConfig();
+  areRowsVisible = true;
 
   idToProperty = idToProperty;
 
