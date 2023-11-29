@@ -342,6 +342,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
       {
         type: 'slider',
         rangeMode: 'value',
+        filterMode: 'none',
         top: 3,
         right: 22,
         start: 0,
@@ -354,7 +355,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
         type: 'inside',
         id: 'insideX',
         xAxisIndex: 0,
-        filterMode: 'weakFilter',
+        filterMode: 'none',
         start: 0,
         end: 30,
         zoomOnMouseWheel: false,
