@@ -41,6 +41,10 @@
           (edit)="contractDialog($event, true)"
           (delete)="contractDialog($event, false)"
         ></nb-smart-table>
+        <br>
+        <ngx-gantt-chart
+          *ngIf="!areRowsVisible"
+        ></ngx-gantt-chart>
       </ng-template>
       <ng-template #phone>
         <nb-list>
