@@ -1,3 +1,9 @@
+<nb-tabset *ngIf="!isPhone()" class="contracts-views" (changeTab)="setActiveTab($event)" fullWidth>
+  <nb-tab tabTitle="Visão em Tabela">
+  </nb-tab>
+  <nb-tab tabTitle="Visão em Linha do Tempo">
+  </nb-tab>
+</nb-tabset>
 <div class="row">
   <div class="col-12">
     <nb-card>
