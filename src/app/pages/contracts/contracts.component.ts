@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import { NbComponentStatus, NbDialogService, NbTabComponent } from '@nebular/theme';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, takeUntil } from 'rxjs/operators';
 
@@ -360,5 +360,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
       default:
         return 'warning';
     }
+  }
+
+  setActiveTab(event: NbTabComponent): void {
+    event.tabTitle === 'Visão em Tabela' ? (this.areRowsVisible = true) : (this.areRowsVisible = false);
   }
 }
