@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NbAccessChecker } from '@nebular/security';
-import { NbComponentStatus, NbDialogService } from '@nebular/theme';
+import { NbComponentStatus, NbDialogService, NbTabComponent } from '@nebular/theme';
 import saveAs from 'file-saver';
 import { combineLatest, Subject } from 'rxjs';
 import { skipWhile, take, takeUntil } from 'rxjs/operators';
@@ -576,5 +576,9 @@ export class ContractsComponent implements OnInit, OnDestroy {
     });
 
     return csv;
+  }
+
+  setActiveTab(event: NbTabComponent): void {
+    event.tabTitle === 'Visão em Tabela' ? (this.areRowsVisible = true) : (this.areRowsVisible = false);
   }
 }

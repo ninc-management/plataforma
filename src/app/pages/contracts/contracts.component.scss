@@ -1,4 +1,10 @@
 @import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
+
+@include nb-install-component() {
+  --tabset-content-padding: 1rem 0;
+}
 @font-face {
   font-family: 'icons';
   src: url('../../../assets/fonts/icons.eot?6rw0ga');
@@ -17,9 +23,29 @@
     overflow-y: auto;
   }
 
+
   th {
     &[ng2-st-actions-title] {
       width: 5%;
+    }
+  }
+
+  .contracts-views {
+    display: flex !important;
+    flex-direction: column;
+    margin-top: -2.5rem;
+    margin-bottom: -1rem;
+    @include media-breakpoint-down(md) {
+      margin-top: -1rem;
+    }
+
+    .tabset {
+      align-self: center;
+      width: fit-content;
+      background-color: nb-theme(card-background-color);
+      border: nb-theme(card-border-width) nb-theme(card-border-style) nb-theme(card-border-color);
+      border-radius: nb-theme(card-border-radius);
+      box-shadow: nb-theme(card-shadow);
     }
   }
 
