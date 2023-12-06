@@ -1,6 +1,26 @@
 <nb-tabset class="dashboard" (changeTab)="setActiveTab($event)">
   <nb-tab [tabTitle]="isPhone() ? '' : tabTitles.PESSOAL" tabIcon="person" responsive>
     <div class="row">
+      <div class="col-12" style="display:flex; justify-content: center;">
+        <nb-card class="announcements">
+          <nb-card-header><span style="font-size: 20px; padding-right: 5px;">Anúncios administrativos</span>
+            <button
+              nbButton
+              style="margin-bottom: 5px;"
+              size="large"
+              ghost
+              nbTooltip="Editar anúncio"
+              nbTooltipPlacement="right"
+              nbTooltipStatus="info"
+            >
+              <nb-icon icon="edit-2-outline" status="info"></nb-icon>
+            </button>
+          </nb-card-header>
+          <nb-card-body>
+            {{currentAnnouncement ? currentAnnouncement : "Não há nenhum anúncio atualmente"}}
+          </nb-card-body>
+        </nb-card>
+      </div>
       <div class="col-12 col-md-6">
         <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
         <div class="col-12">
