@@ -72,6 +72,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isFinancialManager: boolean = false;
   THEMES = THEMES;
   currentTheme: string = '';
+  currentAnnouncement: string = '';
 
   isPhone = isPhone;
 
