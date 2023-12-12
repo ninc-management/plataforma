@@ -23,7 +23,7 @@ export function sendMail(mailOptions: any, callback: any): void {
 router.post('/', (req, res, next) => {
   const user = req.body as User;
   const mailOptions = {
-    from: '"Diretoria de Administração" <dad@nortanprojetos.com>',
+    from: '"Plataforma NINC" <contato@ninc.digital>',
     to: 'hugocunha@nortanprojetos.com,natanael.filho@nortanprojetos.com',
     subject: 'Novo cadastro na Plataforma! 🎉🎉🎉',
     html:
