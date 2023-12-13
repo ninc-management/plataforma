@@ -16,6 +16,7 @@ export const externalMockedCompanies: Company[] = [
   {
     _id: '0',
     showCompanyName: true,
+    announcement: 'test',
     address: 'rua teste 0',
     cnpj: '03.778.130/0001-48',
     companyName: 'Teste 1',
@@ -57,6 +58,7 @@ export const externalMockedCompanies: Company[] = [
   {
     _id: '1',
     showCompanyName: true,
+    announcement: 'test',
     address: 'rua teste 2',
     cnpj: '03.778.130/0001-49',
     companyName: 'Teste 2',

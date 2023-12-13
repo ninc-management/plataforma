@@ -3,6 +3,12 @@ import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 
+export enum INPUT_TYPES {
+  INPUT = 'input',
+  TEXT_AREA = 'textarea',
+  EDITOR = 'editor',
+}
+
 @Component({
   selector: 'ngx-text-input-dialog',
   templateUrl: './text-input-dialog.component.html',
@@ -12,6 +18,11 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   @ViewChild('name', { read: ElementRef }) inputRef!: ElementRef;
   @Input() title = '';
   @Input() placeholder = '';
+  @Input() inputType = INPUT_TYPES.INPUT;
+  @Input() editorPreviousText = '';
+  INPUT_TYPES = INPUT_TYPES;
+
+  text: string = '';
 
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
@@ -21,6 +32,7 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   }
 
   ngOnInit(): void {
+    this.text = this.editorPreviousText;
     super.ngOnInit();
   }
 
