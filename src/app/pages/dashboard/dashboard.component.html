@@ -6,17 +6,25 @@
           <nb-card class="announcements">
             <nb-card-header style="height: 3.5rem;"><span style=" padding-right: 5px;">Anúncios administrativos</span>
               <button
-                nbButton
-                style="margin-bottom: 5px; padding: 0; font-size: 30px;"
-                ghost
-                nbTooltip="Editar anúncio"
-                nbTooltipPlacement="right"
-                (click)="inputDialog()"
-              >
+                  nbButton
+                  style="margin-bottom: 5px; padding: 0; font-size: 30px;"
+                  ghost
+                  nbTooltip="Editar anúncio"
+                  nbTooltipPlacement="right"
+                  (click)="inputDialog()"
+                >
                 <i class="nb-edit"></i>
-            </button>
+              </button>
             </nb-card-header>
-            <nb-card-body [innerHtml]="currentAnnouncement ? currentAnnouncement : 'Não há nenhum anúncio atualmente'">
+            <div
+              *ngIf="!isCurrentAnnouncementLoaded"
+              [nbSpinner]="true"
+              nbSpinnerStatus="primary"
+              nbSpinnerSize="giant"
+              style="width: 100%; height: 80px;"
+            ></div>
+            <nb-card-body *ngIf="isCurrentAnnouncementLoaded"
+            [innerHtml]="currentAnnouncement ? currentAnnouncement : 'Não há nenhum anúncio atualmente'">
             </nb-card-body>
           </nb-card>
         </div>
