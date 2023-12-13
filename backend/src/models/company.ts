@@ -51,6 +51,9 @@ export class Colors {
 
 export class Company extends Base<string> {
   @prop({ required: true })
+  announcement: string = '';
+
+  @prop({ required: true })
   youtubeLink: string = '';
 
   @prop({ required: true })

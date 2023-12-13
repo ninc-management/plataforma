@@ -8,7 +8,12 @@ import { map, skipWhile, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { COMPONENT_TYPES, ContractDialogComponent } from '../contracts/contract-dialog/contract-dialog.component';
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from '../teams/team-dialog/team-dialog.component';
 import { THEMES } from 'app/@theme/theme.module';
+import {
+  INPUT_TYPES,
+  TextInputDialogComponent,
+} from 'app/shared/components/text-input-dialog/text-input-dialog.component';
 import { AppUpdaterService } from 'app/shared/services/app-updater.service';
+import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import {
   CONTRACT_STATOOS,
@@ -24,6 +29,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { numberToMoney } from 'app/shared/string-utils';
 import { groupByDateTimeSerie, isPhone } from 'app/shared/utils';
 
+import { Company } from '@models/company';
 import { Contract } from '@models/contract';
 import { Team } from '@models/team';
 
@@ -65,6 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   openOPs: ContractTransactionInfo[] = [];
   openOEs: ContractTransactionInfo[] = [];
   openExpenses: ContractTransactionInfo[] = [];
+  company: Company = new Company();
   isParettoRankLoaded = false;
   isOPsLoaded: boolean = false;
   isOEsLoaded: boolean = false;
@@ -84,6 +91,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private contractService: ContractService,
     private invoiceService: InvoiceService,
     private contractorService: ContractorService,
+    public companyService: CompanyService,
     private configService: ConfigService,
     private accessChecker: NbAccessChecker,
     private themeService: NbThemeService,
@@ -193,15 +201,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe((isGranted) => (this.isFinancialManager = isGranted));
     combineLatest([
       this.contractService.getContracts(),
+      this.companyService.getCompanies(),
+      this.configService.getConfig(),
       this.invoiceService.getInvoices(),
       this.contractorService.getContractors(),
       this.teamService.getTeams(),
-      this.configService.getConfig(),
       this.contractService.isDataLoaded$,
+      this.companyService.isDataLoaded$,
+      this.configService.isDataLoaded$,
       this.invoiceService.isDataLoaded$,
       this.contractorService.isDataLoaded$,
       this.teamService.isDataLoaded$,
-      this.configService.isDataLoaded$,
     ])
       .pipe(
         skipWhile(
@@ -211,24 +221,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
             ,
             ,
             ,
+            ,
             isContractDataLoaded,
+            isCompanyDataLoaded,
+            isConfigDataLoaded,
             isInvoiceDataLoaded,
             isContractorDataLoaded,
             isTeamDataLoaded,
-            isConfigDataLoaded,
           ]) =>
             !(
               isContractDataLoaded &&
+              isCompanyDataLoaded &&
+              isConfigDataLoaded &&
               isInvoiceDataLoaded &&
               isContractorDataLoaded &&
-              isTeamDataLoaded &&
-              isConfigDataLoaded
+              isTeamDataLoaded
             )
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([contracts, ,]) => {
+      .subscribe(([contracts, companies]) => {
         contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
+        this.company = companies[0];
+        this.currentAnnouncement = this.company.announcement;
         this.contractService
           .openItems(CONTRACT_TRANSACTION_TYPES.PAYMENTS)
           .pipe(takeUntil(this.destroy$))
@@ -362,5 +377,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     }
+  }
+
+  inputDialog(): void {
+    this.dialogService
+      .open(TextInputDialogComponent, {
+        context: {
+          title: 'ADICIONAR ANÚNCIO',
+          inputType: INPUT_TYPES.EDITOR,
+          editorPreviousText: this.currentAnnouncement,
+        },
+        dialogClass: 'my-dialog',
+        closeOnBackdropClick: false,
+        closeOnEsc: false,
+        autoFocus: false,
+      })
+      .onClose.pipe(take(1))
+      .subscribe((name) => {
+        if (name) this.company.announcement = name;
+        else this.company.announcement = '';
+        this.companyService.editCompany(this.company);
+      });
   }
 }

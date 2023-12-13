@@ -5,9 +5,26 @@
 >
   <nb-card-header>{{ title }}</nb-card-header>
   <nb-card-body>
-    <input #name nbInput fullWidth [placeholder]="placeholder" />
+    <input *ngIf="inputType == INPUT_TYPES.INPUT"
+      #name
+      nbInput
+      fullWidth
+      [placeholder]="placeholder"
+      [(ngModel)]="text"
+    />
+    <textarea *ngIf="inputType == INPUT_TYPES.TEXT_AREA"
+      #name
+      nbInput
+      fullWidth
+      [placeholder]="placeholder"
+      [(ngModel)]="text">
+    </textarea>
+    <editor *ngIf="inputType == INPUT_TYPES.EDITOR"
+      #name
+      [(ngModel)]="text">
+    </editor>
   </nb-card-body>
   <nb-card-footer>
-    <button nbButton fullWidth status="primary" (click)="dismiss(name.value)">Adicionar</button>
+    <button nbButton fullWidth status="primary" (click)="dismiss(text)">Adicionar</button>
   </nb-card-footer>
 </nb-card>

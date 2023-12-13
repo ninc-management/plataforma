@@ -16,7 +16,6 @@ import {
   NbTooltipModule,
   NbUserModule,
 } from '@nebular/theme';
-import { EditorModule } from '@tinymce/tinymce-angular';
 import * as echarts from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -65,7 +64,6 @@ echarts.registerLocale('PT-BR', langPTBR);
     ThemeModule,
     NbSmartTableModule,
     NbStepperModule,
-    EditorModule,
   ],
   declarations: [
     DashboardComponent,
