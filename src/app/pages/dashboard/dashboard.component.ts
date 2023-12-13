@@ -77,6 +77,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isOEsLoaded: boolean = false;
   isExpensesLoaded: boolean = false;
   isFinancialManager: boolean = false;
+  isCurrentAnnouncementLoaded: boolean = false;
   THEMES = THEMES;
   currentTheme: string = '';
   currentAnnouncement: string = '';
@@ -244,6 +245,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.company = companies[0];
         this.currentAnnouncement = this.company.announcement;
+        this.isCurrentAnnouncementLoaded = true;
         this.contractService
           .openItems(CONTRACT_TRANSACTION_TYPES.PAYMENTS)
           .pipe(takeUntil(this.destroy$))
