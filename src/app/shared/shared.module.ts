@@ -13,6 +13,7 @@ import {
   NbTooltipModule,
   NbUserModule,
 } from '@nebular/theme';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import * as echarts from 'echarts';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -59,6 +60,7 @@ echarts.registerLocale('PT-BR', langPTBR);
     NbInputModule,
     NbListModule,
     NbSelectModule,
+    EditorModule,
     NbSmartTableModule,
     NbSpinnerModule,
     NbTooltipModule,
