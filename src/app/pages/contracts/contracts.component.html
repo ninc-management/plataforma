@@ -50,6 +50,7 @@
         <br>
         <ngx-gantt-chart
           *ngIf="!areRowsVisible"
+          [taskData]="contractsData"
         ></ngx-gantt-chart>
       </ng-template>
       <ng-template #phone>

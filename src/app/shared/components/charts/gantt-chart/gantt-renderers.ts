@@ -137,6 +137,7 @@ export class GanttRenderers {
     const shouldDrawGroupConnector = api.value(9);
     const groupColor = api.value(10);
     const isFinished = api.value(11);
+    const isContract = api.value(14);
 
     const y = ChartConstants.DEFAULT_BAR_HEIGHT * (index + 1) + ChartConstants.LABEL_OFFSET;
 
@@ -166,7 +167,7 @@ export class GanttRenderers {
           style: {
             x: 63,
             y: y + 24,
-            text: taskName,
+            text: isContract ? taskName.split('/', 2).join('/') : taskName,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
             textFill: '#000',
@@ -182,7 +183,7 @@ export class GanttRenderers {
             y: y + 38,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            text: isFinished ? 'Finalizado' : daysLeft(end),
+            text: isFinished ? 'Finalizado' : isContract ? '' : daysLeft(end),
             textFill: '#000',
             fontSize: 11,
             fontFamily: this._currentTheme.variables.fontMain,
