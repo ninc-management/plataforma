@@ -412,4 +412,14 @@ export class ContractsComponent implements OnInit, OnDestroy {
       this.contractsData = taskData;
     });
   }
+
+  onTaskClicked(event: TaskModel) {
+    const contract = this.contracts.find((contract) =>
+      contract.invoice ? this.invoiceService.idToInvoice(contract.invoice).code === event.taskName : false
+    );
+
+    if (contract) {
+      this.contractDialog({ data: contract }, true);
+    }
+  }
 }
