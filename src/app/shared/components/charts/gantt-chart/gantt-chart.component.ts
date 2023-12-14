@@ -472,6 +472,7 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
   actionStatusText(value: any): string {
     const isFinished = value[11];
     const isAction = value[12];
+    const isContract = value[14];
     const actionEndDate = value[3];
 
     if (isAction) return isFinished ? this.actionFinishedText(value) : daysLeft(actionEndDate);
@@ -481,6 +482,8 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     const progressPercentage = value[5];
     return isFinished
       ? 'Item finalizado'
+      : isContract
+      ? ''
       : (progressPercentage == 100 ? 0 : progressPercentage) + '% ' + 'de ações feitas';
   }
 

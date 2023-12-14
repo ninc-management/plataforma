@@ -10,6 +10,7 @@ import {
 } from 'app/@theme/components/smart-table/components/filter/filter-types/date-filter.component';
 import { sliderRangeFilter } from 'app/@theme/components/smart-table/components/filter/filter-types/range-slider.component';
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
+import { TaskModel } from 'app/shared/components/charts/gantt-chart/task-data.model';
 import { ConfigService } from 'app/shared/services/config.service';
 import { CONTRACT_STATOOS, ContractService } from 'app/shared/services/contract.service';
 import { ContractorService } from 'app/shared/services/contractor.service';
@@ -47,6 +48,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
   isDataLoaded = false;
   config: PlatformConfig = new PlatformConfig();
   areRowsVisible = true;
+  contractsData: TaskModel[] = [];
 
   idToProperty = idToProperty;
 
@@ -317,6 +319,13 @@ export class ContractsComponent implements OnInit, OnDestroy {
         search: [CONTRACT_STATOOS.EM_ANDAMENTO, CONTRACT_STATOOS.A_RECEBER, CONTRACT_STATOOS.ENTREGUE].join(' '),
       },
     ]);
+
+    this.source
+      .onChanged()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.transformContractsData();
+      });
   }
 
   getContractorName(invoice: Invoice | string | undefined): string {
@@ -364,5 +373,43 @@ export class ContractsComponent implements OnInit, OnDestroy {
 
   setActiveTab(event: NbTabComponent): void {
     event.tabTitle === 'Visão em Tabela' ? (this.areRowsVisible = true) : (this.areRowsVisible = false);
+  }
+
+  transformContractsData() {
+    let groupCount = 0;
+    let taskCount = 0;
+    const taskData: TaskModel[] = [];
+
+    return this.source.getFilteredAndSorted().then((contracts: Contract[]) => {
+      contracts.forEach((contract) => {
+        groupCount += 1;
+        taskCount = 0;
+
+        if (contract.invoice) {
+          const invoice = this.invoiceService.idToInvoice(contract.invoice);
+
+          taskData.push({
+            groupName: invoice.code,
+            groupOrder: groupCount,
+            taskName: invoice.code,
+            taskId: groupCount.toString() + taskCount.toString(),
+            taskDependencies: [],
+            start: contract.created,
+            end:
+              contract.status === 'Concluído'
+                ? contract.statusHistory[contract.statusHistory.length - 1].start
+                : new Date(),
+            progressPercentage: 0, //this.isItemOverdue(item) ? 100 : this.percentualItemProgress(item),
+            owner: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
+            image: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'profilePicture'),
+            isFinished: contract.status === 'Concluído' ? 1 : 0,
+            isAction: 0,
+            isContract: true,
+          } as TaskModel);
+        }
+      });
+
+      this.contractsData = taskData;
+    });
   }
 }
