@@ -11,6 +11,7 @@ export class TaskModel {
   progressPercentage!: number;
   isFinished!: number;
   isAction!: number;
+  isContract!: boolean;
   finishedDate?: Date;
 
   /**

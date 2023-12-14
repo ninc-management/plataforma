@@ -49,6 +49,7 @@ export class TaskDataManipulator {
         item.isFinished,
         item.isAction,
         item.finishedDate,
+        item.isContract,
       ];
 
       mappedData.push(index_attributes);

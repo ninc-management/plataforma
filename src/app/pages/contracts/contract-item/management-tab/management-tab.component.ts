@@ -379,6 +379,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
         image: idToProperty(item.assignee, this.userService.idToUser.bind(this.userService), 'profilePicture'),
         isFinished: this.hasItemFinished(item) ? 1 : 0,
         isAction: 0,
+        isContract: false,
       } as TaskModel);
 
       item.actionList.forEach((action) => {
