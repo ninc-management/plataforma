@@ -621,11 +621,18 @@ export class ContractsComponent implements OnInit, OnDestroy {
             isFinished: contract.status === 'Concluído' ? 1 : 0,
             isAction: 0,
             isContract: true,
+            contract: contract,
           } as TaskModel);
         }
       });
 
       this.contractsData = taskData;
     });
+  }
+
+  onTaskClicked(event: TaskModel) {
+    if (event.contract) {
+      this.contractDialog({ data: event.contract }, true);
+    }
   }
 }

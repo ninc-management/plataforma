@@ -51,6 +51,7 @@
         <ngx-gantt-chart
           *ngIf="!areRowsVisible"
           [taskData]="contractsData"
+          (taskClicked)="onTaskClicked($event)"
         ></ngx-gantt-chart>
       </ng-template>
       <ng-template #phone>
