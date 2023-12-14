@@ -6,6 +6,7 @@
           <nb-card class="announcements">
             <nb-card-header style="height: 3.5rem;"><span style=" padding-right: 5px;">Anúncios administrativos</span>
               <button
+                  *ngIf="isFinancialManager"
                   nbButton
                   style="margin-bottom: 5px; padding: 0; font-size: 30px;"
                   ghost
