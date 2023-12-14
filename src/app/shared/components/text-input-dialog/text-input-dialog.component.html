@@ -21,7 +21,10 @@
     </textarea>
     <editor *ngIf="inputType == INPUT_TYPES.EDITOR"
       #name
-      [(ngModel)]="text">
+      [(ngModel)]="text"
+      [init]="{
+        language: 'pt_BR'
+      }">
     </editor>
   </nb-card-body>
   <nb-card-footer>
