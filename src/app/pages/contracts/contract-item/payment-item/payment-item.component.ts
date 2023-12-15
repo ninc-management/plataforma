@@ -233,7 +233,7 @@ export class PaymentItemComponent implements OnInit {
       if (this.invoice.author) {
         const manager = this.userService.idToUser(this.invoice.author);
         this.notificationService.notifyFinancial({
-          title: 'Nova pagamento ' + this.invoice.code,
+          title: 'Novo pagamento ' + this.invoice.code,
           tag: NotificationTags.PAYMENT_ORDER_CREATED,
           message: `${manager.article.toUpperCase()} ${manager.article == 'a' ? 'gestora' : 'gestor'} do contrato ${
             manager.fullName
