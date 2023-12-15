@@ -7,14 +7,14 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 	},
-	"features": {
-		"ghcr.io/devcontainers-contrib/features/mongodb-atlas-cli-homebrew:1": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers-contrib/features/mongosh-homebrew:1": {
-			"version": "latest"
-		}
-	},
+	//"features": {
+	//	"ghcr.io/devcontainers-contrib/features/mongodb-atlas-cli-homebrew:1": {
+	//		"version": "latest"
+	//	},
+	//	"ghcr.io/devcontainers-contrib/features/mongosh-homebrew:1": {
+	//		"version": "latest"
+	//	}
+	//},
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
