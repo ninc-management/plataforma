@@ -26,8 +26,8 @@ const COMPLETER_CONTROL_VALUE_ACCESSOR = {
 export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
   @Input() data$!: Observable<any>;
   @Input() inputName = '';
-  @Input() nameField = '';
-  @Input() pictureField = '';
+  @Input() nameProperty = '';
+  @Input() pictureProperty = '';
   @Input() placeholder = '';
   @Input() disabled = false;
   @Input() fullWidth = false;
@@ -59,7 +59,8 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
           this.searchActive = true;
           const filterValue = this.prepareString(this.searchStr);
           return objs.filter((obj: any) => {
-            const result = this.prepareString(obj[this.nameField]).includes(filterValue);
+            console.log(obj);
+            const result = this.prepareString(obj[this.nameProperty]).includes(filterValue);
             this.searchActive = false;
             return result;
           });
