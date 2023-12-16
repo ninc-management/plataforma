@@ -183,7 +183,7 @@ export class GanttRenderers {
             y: y + 38,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            text: isFinished ? 'Finalizado' : isContract ? '' : daysLeft(end),
+            text: isContract ? '' : isFinished ? 'Finalizado' : daysLeft(end),
             textFill: '#000',
             fontSize: 11,
             fontFamily: this._currentTheme.variables.fontMain,
@@ -325,7 +325,9 @@ export class GanttRenderers {
     const timeEnd = api.coord([api.value(2), index]);
 
     //if time start > timeToday we need to fix the bar lenght and x position
-    const barLength = timeEnd[0] - (timeStart[0] > timeToday[0] ? timeToday[0] : timeStart[0]);
+    const barLength =
+      (timeEnd[0] > timeToday[0] ? timeEnd[0] : timeToday[0]) -
+      (timeStart[0] > timeToday[0] ? timeToday[0] : timeStart[0]);
     const x = timeStart[0] > timeToday[0] ? timeToday[0] : timeStart[0];
     const y = (index + 1) * ChartConstants.DEFAULT_BAR_HEIGHT;
 
