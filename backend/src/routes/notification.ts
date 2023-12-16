@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { isEqual } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 
 import { Notification, NotificationApps } from '../models/notification';
 import UserModel from '../models/user';
@@ -18,7 +18,11 @@ export async function updateNotification(notification: Notification, companyId: 
         { $push: { notifications: notification } },
         { upsert: false }
       );
-      if (notificationConfig[NotificationApps.EMAIL]) notifyByEmail(notification);
+      if (notificationConfig[NotificationApps.EMAIL]) {
+        const emailNotification = cloneDeep(notification);
+        emailNotification.to = await userCompanyModel.findById(notification.to);
+        notifyByEmail(emailNotification);
+      }
       if (isEqual(notification, lastNotification) && res) {
         return res
           .status(200)
@@ -31,7 +35,22 @@ export async function updateNotification(notification: Notification, companyId: 
       });
     }
   } else {
-    if (notificationConfig[NotificationApps.EMAIL]) notifyByEmail(notification);
+    if (notificationConfig[NotificationApps.EMAIL]) {
+      try {
+        const userCompanyModel = await getModelForCompany(companyId, UserModel);
+        const emailNotification = cloneDeep(notification);
+        emailNotification.to = await userCompanyModel.findById(notification.to);
+        notifyByEmail(emailNotification);
+      } catch (err) {
+        return res.status(500).json({
+          message: res.req.url === '/' ? 'Erro ao enviar notificação!' : 'Erro ao enviar notificações!',
+          error: err,
+        });
+      }
+    }
+    if (isEqual(notification, lastNotification) && res) {
+      return res.status(200).json({ message: res.req.url === '/' ? 'Notificação enviada!' : 'Notificações enviadas!' });
+    }
   }
 }
 
