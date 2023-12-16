@@ -396,13 +396,20 @@ export class ContractsComponent implements OnInit, OnDestroy {
             taskDependencies: [],
             start: contract.created,
             end:
-              contract.status === 'Concluído'
+              contract.status === CONTRACT_STATOOS.CONCLUIDO ||
+              contract.status === CONTRACT_STATOOS.ARQUIVADO ||
+              contract.status === CONTRACT_STATOOS.ENTREGUE
                 ? contract.statusHistory[contract.statusHistory.length - 1].start
                 : new Date(),
-            progressPercentage: 0, //this.isItemOverdue(item) ? 100 : this.percentualItemProgress(item),
+            progressPercentage: 0,
             owner: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'fullName'),
             image: idToProperty(invoice.author, this.userService.idToUser.bind(this.userService), 'profilePicture'),
-            isFinished: contract.status === 'Concluído' ? 1 : 0,
+            isFinished:
+              contract.status === CONTRACT_STATOOS.CONCLUIDO ||
+              contract.status === CONTRACT_STATOOS.ARQUIVADO ||
+              contract.status === CONTRACT_STATOOS.ENTREGUE
+                ? 1
+                : 0,
             isAction: 0,
             isContract: true,
           } as TaskModel);
