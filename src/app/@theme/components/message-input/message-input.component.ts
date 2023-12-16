@@ -59,7 +59,6 @@ export class NbMessageInputComponent implements OnInit, ControlValueAccessor {
           this.searchActive = true;
           const filterValue = this.prepareString(this.searchStr);
           return objs.filter((obj: any) => {
-            console.log(obj);
             const result = this.prepareString(obj[this.nameProperty]).includes(filterValue);
             this.searchActive = false;
             return result;
