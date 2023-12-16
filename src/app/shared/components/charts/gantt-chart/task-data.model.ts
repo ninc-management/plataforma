@@ -16,6 +16,7 @@ export class TaskModel {
   isContract!: boolean;
   contract?: Contract;
   finishedDate?: Date;
+  status?: string;
 
   /**
    * url to image
