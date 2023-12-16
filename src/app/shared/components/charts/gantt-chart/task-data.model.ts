@@ -13,6 +13,7 @@ export class TaskModel {
   isAction!: number;
   isContract!: boolean;
   finishedDate?: Date;
+  status?: string;
 
   /**
    * url to image

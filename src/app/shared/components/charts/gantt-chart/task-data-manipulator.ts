@@ -50,6 +50,7 @@ export class TaskDataManipulator {
         item.isAction,
         item.finishedDate,
         item.isContract,
+        item.status,
       ];
 
       mappedData.push(index_attributes);

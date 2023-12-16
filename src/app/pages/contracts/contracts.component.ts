@@ -412,6 +412,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
                 : 0,
             isAction: 0,
             isContract: true,
+            status: contract.status,
           } as TaskModel);
         }
       });
