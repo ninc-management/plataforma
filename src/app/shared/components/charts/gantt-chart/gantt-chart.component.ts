@@ -474,16 +474,19 @@ export class GanttChartComponent implements OnInit, OnChanges, AfterContentCheck
     const isAction = value[12];
     const isContract = value[14];
     const actionEndDate = value[3];
+    const status = value[15];
 
     if (isAction) return isFinished ? this.actionFinishedText(value) : daysLeft(actionEndDate);
 
     //if the progress is 100 but item isn't finished
     //the progress bar remains full but in red color
     const progressPercentage = value[5];
-    return isFinished
+    return isContract
+      ? status
+        ? status
+        : ''
+      : isFinished
       ? 'Item finalizado'
-      : isContract
-      ? ''
       : (progressPercentage == 100 ? 0 : progressPercentage) + '% ' + 'de ações feitas';
   }
 
