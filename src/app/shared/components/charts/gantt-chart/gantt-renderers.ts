@@ -138,6 +138,7 @@ export class GanttRenderers {
     const groupColor = api.value(10);
     const isFinished = api.value(11);
     const isContract = api.value(14);
+    const status = api.value(15);
 
     const y = ChartConstants.DEFAULT_BAR_HEIGHT * (index + 1) + ChartConstants.LABEL_OFFSET;
 
@@ -183,7 +184,7 @@ export class GanttRenderers {
             y: y + 38,
             textVerticalAlign: 'bottom',
             textAlign: 'left',
-            text: isContract ? '' : isFinished ? 'Finalizado' : daysLeft(end),
+            text: isContract ? (status ? status : '') : isFinished ? 'Finalizado' : daysLeft(end),
             textFill: '#000',
             fontSize: 11,
             fontFamily: this._currentTheme.variables.fontMain,
