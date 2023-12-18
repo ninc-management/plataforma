@@ -23,7 +23,9 @@
       #name
       [(ngModel)]="text"
       [init]="{
-        language: 'pt_BR'
+        language: 'pt_BR',
+        skin: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'oxide' : 'oxide-dark',
+        content_css: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'default' : 'dark'
       }">
     </editor>
   </nb-card-body>
