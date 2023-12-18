@@ -2,6 +2,7 @@ import { Component, ElementRef, Inject, Input, OnInit, Optional, ViewChild } fro
 import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
+import { THEMES } from 'app/@theme/theme.module';
 
 export enum INPUT_TYPES {
   INPUT = 'input',
@@ -20,8 +21,9 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   @Input() placeholder = '';
   @Input() inputType = INPUT_TYPES.INPUT;
   @Input() editorPreviousText = '';
+  @Input() currentTheme = '';
   INPUT_TYPES = INPUT_TYPES;
-
+  THEMES = THEMES;
   text: string = '';
 
   constructor(
