@@ -388,6 +388,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           title: 'ADICIONAR ANÚNCIO',
           inputType: INPUT_TYPES.EDITOR,
           editorPreviousText: this.currentAnnouncement,
+          currentTheme: this.currentTheme,
         },
         dialogClass: 'my-dialog',
         closeOnBackdropClick: false,
