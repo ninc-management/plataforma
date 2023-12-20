@@ -25,8 +25,11 @@
       [init]="{
         language: 'pt_BR',
         skin: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'oxide' : 'oxide-dark',
-        content_css: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'default' : 'dark'
-      }">
+        content_css: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'default' : 'dark',
+        plugins: 'link',
+        toolbar: ' undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | link'
+      }"
+      >
     </editor>
   </nb-card-body>
   <nb-card-footer>
