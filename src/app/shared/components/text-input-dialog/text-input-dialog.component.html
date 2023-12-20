@@ -22,6 +22,7 @@
     <editor *ngIf="inputType == INPUT_TYPES.EDITOR"
       #name
       [(ngModel)]="text"
+      apiKey='z187q3t4frdev1emaq2u91r980frnen7qhv5sjln98m5bmga'
       [init]="{
         language: 'pt_BR',
         skin: currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE ? 'oxide' : 'oxide-dark',
