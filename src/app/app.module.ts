@@ -71,7 +71,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
     auth: {
       clientId: environment.msalClientId,
       redirectUri: environment.msalRedirectUri,
-      postLogoutRedirectUri: 'https://plataforma.nortanprojetos.com',
+      postLogoutRedirectUri: environment.msalRedirectUri,
       navigateToLoginRequestUrl: false,
     },
     cache: {
