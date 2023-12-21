@@ -34,7 +34,14 @@
         <div class="col-12"><ngx-progress-section></ngx-progress-section></div>
         <div class="col-12">
           <nb-card>
-            <ngx-time-series [series$]="timeSeries$"></ngx-time-series>
+            <div
+            *ngIf="!isTimeSeriesLoaded"
+              [nbSpinner]="true"
+              nbSpinnerStatus="primary"
+              nbSpinnerSize="giant"
+              style="height: 400px"
+            ></div>
+            <ngx-time-series *ngIf="isTimeSeriesLoaded" [series$]="timeSeries$"></ngx-time-series>
           </nb-card>
         </div>
       </div>

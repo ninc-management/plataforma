@@ -4,6 +4,7 @@
 
 @include nb-install-component() {
   --tabset-content-padding: 0;
+  --spinner-primary-background-color: transparent;
 
   nb-tab {
     overflow: unset;

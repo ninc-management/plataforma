@@ -722,13 +722,14 @@ export class MetricsService implements OnDestroy {
           if (uId != undefined) {
             fPayments = fPayments.filter((payment) => {
               return payment.team
-                .map((team) => this.userService.isEqual(team.user, uId))
+                .map((team) => this.userService.isEqual(team.user, uId) && moneyToNumber(team.value) > 0)
                 .filter((isSameUser) => isSameUser).length;
             });
             fPayments = fPayments.map((payment) => {
-              const tmp = cloneDeep(payment);
-              tmp.value = payment.team[0].value;
-              return tmp;
+              const clonedPayment = cloneDeep(payment);
+              const tmp = clonedPayment.team.find((team) => this.userService.isEqual(team.user, uId));
+              if (tmp) clonedPayment.value = tmp.value;
+              return clonedPayment;
             });
           }
           return fPayments.map((payment) => {
