@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isOPsLoaded: boolean = false;
   isOEsLoaded: boolean = false;
   isExpensesLoaded: boolean = false;
+  isTimeSeriesLoaded: boolean = false;
   isFinancialManager: boolean = false;
   THEMES = THEMES;
   currentTheme: string = '';
@@ -115,66 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .pipe(map((metricInfo) => metricInfo.global));
         }
       });
-    this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.teamService
-        .getTeams()
-        .pipe(
-          skipWhile((teams) => teams.length == 0),
-          takeWhile((teams) => teams.length > 0)
-        )
-        .subscribe(() => {
-          this.teams = this.teamService.userToTeams(user).filter((team) => !team.isOrganizationTeam);
-        });
-      this.timeSeries$ = combineLatest([
-        this.metricsService.receivedValueTimeSeries(user._id),
-        this.metricsService.expensesTimeSeries(user._id),
-        this.metricsService.contractValueTimeSeries(user._id),
-      ]).pipe(
-        map(([receivedSeriesItems, expensesSeriesItems, contractValueSeriesItems]) => {
-          const received: TimeSeries = {
-            name: 'Recebido',
-            type: 'bar',
-            smooth: false,
-            cumulative: false,
-            symbol: 'none',
-            barGap: '-100%',
-            barMaxWidth: 25,
-            isMoney: true,
-            data: receivedSeriesItems,
-          };
-          const expenses: TimeSeries = {
-            name: 'Despesas',
-            type: 'bar',
-            smooth: false,
-            cumulative: false,
-            symbol: 'none',
-            barGap: '-100%',
-            barMaxWidth: 25,
-            isMoney: true,
-            data: expensesSeriesItems,
-          };
-          const contractsValue: TimeSeries = {
-            name: 'Total em contratos',
-            type: 'line',
-            smooth: false,
-            cumulative: true,
-            symbol: 'circle',
-            isMoney: true,
-            data: contractValueSeriesItems,
-          };
-          const balance: TimeSeries = {
-            name: 'Balanço',
-            type: 'line',
-            smooth: false,
-            cumulative: true,
-            symbol: 'circle',
-            isMoney: true,
-            data: groupByDateTimeSerie(receivedSeriesItems.concat(expensesSeriesItems)),
-          };
-          return [received, expenses, contractsValue, balance];
-        })
-      );
-    });
 
     this.metricsService
       .parettoRank()
@@ -249,6 +190,68 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.openExpenses = openExpenses;
             this.isExpensesLoaded = true;
           });
+
+        this.userService.currentUser$.pipe(take(1)).subscribe((user) => {
+          this.teamService
+            .getTeams()
+            .pipe(
+              skipWhile((teams) => teams.length == 0),
+              takeWhile((teams) => teams.length > 0)
+            )
+            .subscribe(() => {
+              this.teams = this.teamService.userToTeams(user).filter((team) => !team.isOrganizationTeam);
+            });
+          this.isTimeSeriesLoaded = true;
+          this.timeSeries$ = combineLatest([
+            this.metricsService.receivedValueTimeSeries(user._id),
+            this.metricsService.expensesTimeSeries(user._id),
+            this.metricsService.contractValueTimeSeries(user._id),
+          ]).pipe(
+            map(([receivedSeriesItems, expensesSeriesItems, contractValueSeriesItems]) => {
+              const received: TimeSeries = {
+                name: 'Recebido',
+                type: 'bar',
+                smooth: false,
+                cumulative: false,
+                symbol: 'none',
+                barGap: '-100%',
+                barMaxWidth: 25,
+                isMoney: true,
+                data: receivedSeriesItems,
+              };
+              const expenses: TimeSeries = {
+                name: 'Despesas',
+                type: 'bar',
+                smooth: false,
+                cumulative: false,
+                symbol: 'none',
+                barGap: '-100%',
+                barMaxWidth: 25,
+                isMoney: true,
+                data: expensesSeriesItems,
+              };
+              const contractsValue: TimeSeries = {
+                name: 'Total em contratos',
+                type: 'line',
+                smooth: false,
+                cumulative: true,
+                symbol: 'circle',
+                isMoney: true,
+                data: contractValueSeriesItems,
+              };
+              const balance: TimeSeries = {
+                name: 'Balanço',
+                type: 'line',
+                smooth: false,
+                cumulative: true,
+                symbol: 'circle',
+                isMoney: true,
+                data: groupByDateTimeSerie(receivedSeriesItems.concat(expensesSeriesItems)),
+              };
+              return [received, expenses, contractsValue, balance];
+            })
+          );
+        });
       });
 
     this.themeService
