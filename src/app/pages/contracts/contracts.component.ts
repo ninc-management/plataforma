@@ -405,6 +405,7 @@ export class ContractsComponent implements OnInit, OnDestroy {
             isFinished: contract.status === 'Concluído' ? 1 : 0,
             isAction: 0,
             isContract: true,
+            contract: contract,
           } as TaskModel);
         }
       });
@@ -414,12 +415,8 @@ export class ContractsComponent implements OnInit, OnDestroy {
   }
 
   onTaskClicked(event: TaskModel) {
-    const contract = this.contracts.find((contract) =>
-      contract.invoice ? this.invoiceService.idToInvoice(contract.invoice).code === event.taskName : false
-    );
-
-    if (contract) {
-      this.contractDialog({ data: contract }, true);
+    if (event.contract) {
+      this.contractDialog({ data: event.contract }, true);
     }
   }
 }

@@ -1,5 +1,7 @@
 // This code was initially made by https://github.com/mfandre
 
+import { Contract } from '@models/contract';
+
 export class TaskModel {
   taskName!: string;
   taskId!: number | string;
@@ -12,6 +14,7 @@ export class TaskModel {
   isFinished!: number;
   isAction!: number;
   isContract!: boolean;
+  contract?: Contract;
   finishedDate?: Date;
 
   /**
