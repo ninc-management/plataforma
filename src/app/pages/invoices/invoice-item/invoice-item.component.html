@@ -1529,7 +1529,7 @@
                 </nb-list-item>
               </nb-list>
             </div>
-            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+            <div class="col-6 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               <input
                 nbInput
                 [(ngModel)]="tempInvoice.products[i].amount"
@@ -1552,7 +1552,7 @@
                 [status]="tempInvoice.products[i].amount ? 'success' : 'basic'"
               />
             </div>
-            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+            <div class="col-6 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               <nb-select
                 [(ngModel)]="tempInvoice.products[i].unit"
                 #unit="ngModel"
@@ -1569,7 +1569,7 @@
             </div>
             <div
               [ngClass]="{
-                'col-3': tempInvoice.productListType == '2',
+                'col-6': tempInvoice.productListType == '2',
                 'col-5': tempInvoice.productListType == '1',
                 'col-md-2': true
               }"
@@ -1620,7 +1620,7 @@
               />
               %
             </div>
-            <div class="col-3 col-md-2" *ngIf="tempInvoice.productListType == '2'">
+            <div class="col-6 col-md-2" *ngIf="tempInvoice.productListType == '2'">
               {{ product.total }}
             </div>
             <div class="col-3 col-md-1" style="text-align: right">
@@ -1710,7 +1710,7 @@
         </nb-list-item>
         <nb-list-item>
           <div class="row paymentRow">
-            <div class="col-6 col-md-3">
+            <div class="col-2 col-md-3">
               <nb-icon
                 class="addIcon mr-1"
                 status="basic"
@@ -1723,12 +1723,13 @@
                 (click)="updateInvoiceValue()"
                 [options]="{ animation: { type: 'pulse' } }"
               ></nb-icon>
-              Contrato: {{ tempInvoice.value }}
+              <span *ngIf="!isPhone()">Contrato: {{ tempInvoice.value }}</span>
             </div>
-            <div class="col-6 col-md-3">Restante: {{ remainingBalance('product') }}</div>
-            <div class="col-4 col-md-1" style="text-align: right">Total:</div>
+            <div *ngIf="isPhone()" class="col-5">Contrato: {{ tempInvoice.value }}</div>
+            <div class="col-5 col-md-3">Restante: {{ remainingBalance('product') }}</div>
+            <div class="col-2 col-md-1" style = "text-align: left;">Total:</div>
             <div
-              class="col-4 col-md-2"
+              class="col-5 col-md-2"
               [ngClass]="{
                 danger: !isTotalOK(),
                 success: isTotalOK()
@@ -1737,7 +1738,7 @@
               {{ options.total }}
             </div>
             <div
-              class="col-4 col-md-1"
+              class="col-5 col-md-1"
               [ngClass]="{
                 danger: !isTotalOK(),
                 success: isTotalOK()
