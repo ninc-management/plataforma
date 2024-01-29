@@ -1,5 +1,5 @@
 <nb-tabset fullWidth (changeTab)="getActiveTab($event)">
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Dados'" tabIcon="info-outline" responsive>
+  <nb-tab tabTitle='Dados' tabIcon="info-outline" responsive>
     <ngx-data-tab
       *ngIf="tabActive === TABS.DATA"
       [contract]="contract"
@@ -7,7 +7,7 @@
       [isFormDirty]="isFormDirty"
     ></ngx-data-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Gestão'" [tabIcon]="contractIcon" responsive>
+  <nb-tab tabTitle='Gestão' [tabIcon]="contractIcon" responsive>
     <ngx-management-tab
       *ngIf="tabActive === TABS.MANAGEMENT"
       [clonedContract]="clonedContract"
@@ -15,10 +15,10 @@
       [isFormDirty]="isFormDirty"
     ></ngx-management-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Balanço'" [tabIcon]="scaleIcon" responsive>
+  <nb-tab tabTitle='Balanço' [tabIcon]="scaleIcon" responsive>
     <ngx-balance-tab *ngIf="tabActive === TABS.BALANCE" [clonedContract]="clonedContract"></ngx-balance-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de empenho'" [tabIcon]="receiptIcon" responsive>
+  <nb-tab tabTitle='Ordens de empenho' [tabIcon]="receiptIcon" responsive>
     <ngx-receipt-tab
       *ngIf="tabActive === TABS.RECEIPTS"
       [contract]="contract"
@@ -26,7 +26,7 @@
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-receipt-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Ordens de pagamento'" [tabIcon]="paymentIcon" responsive>
+  <nb-tab tabTitle='Ordens de pagamento' [tabIcon]="paymentIcon" responsive>
     <ngx-payment-tab
       *ngIf="tabActive === TABS.PAYMENTS"
       [contract]="contract"
@@ -34,7 +34,7 @@
       [isDialogBlocked]="isDialogBlocked"
     ></ngx-payment-tab>
   </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Despesas'" [tabIcon]="expenseIcon" responsive>
+  <nb-tab tabTitle='Despesas' [tabIcon]="expenseIcon" responsive>
     <ngx-expense-tab
       *ngIf="tabActive === TABS.EXPENSES"
       [contract]="contract"
