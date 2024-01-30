@@ -950,22 +950,55 @@
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
+              <ng-template #eyeButtonPreliminaryStage>
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  [icon]="tempInvoice.laep[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                  pack="eva"
+                  (click)="tempInvoice.laep[i].isVisible = !tempInvoice.laep[i].isVisible; isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #trashButtonPreliminaryStage>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="tempInvoice.laep.splice(i, 1); isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #listButtonsPreliminaryStage>
+                <nb-list>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="eyeButtonPreliminaryStage"></ng-container>
+                      <span style = "padding-left: 5px">{{tempInvoice.laep[i].isVisible ? "Visível" : "Invisível"}}</span>
+                    </button>
+                  </nb-list-item>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="trashButtonPreliminaryStage"></ng-container>
+                      <span style = "padding-left: 5px">Excluir</span>
+                    </button>
+                  </nb-list-item>
+                </nb-list>
+              </ng-template>
               <nb-icon
-                class="addIcon"
-                status="basic"
-                [icon]="tempInvoice.laep[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
-                pack="eva"
-                (click)="tempInvoice.laep[i].isVisible = !tempInvoice.laep[i].isVisible; isFormDirty.next(true)"
-                [options]="{ animation: { type: 'pulse' } }"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="tempInvoice.laep.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
+                *ngIf="isPhone()"
+                [nbPopover]="listButtonsPreliminaryStage"
+                nbPopoverPlacement="start"
+                type="button"
+                nbButton
+                ghost
+                icon="chevron-down" pack="eva">
+              </nb-icon>
+              <div *ngIf="!isPhone()">
+                <ng-container *ngTemplateOutlet="eyeButtonPreliminaryStage"></ng-container>
+                <ng-container *ngTemplateOutlet="trashButtonPreliminaryStage"></ng-container>
+              </div>
             </div>
           </div>
         </nb-list-item>
@@ -1093,22 +1126,55 @@
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
+              <ng-template #eyeButtonExecutiveStage>
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  [icon]="tempInvoice.laee[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                  pack="eva"
+                  (click)="tempInvoice.laee[i].isVisible = !tempInvoice.laee[i].isVisible; isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #trashButtonExecutiveStage>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="tempInvoice.laee.splice(i, 1); isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #listButtonsExecutiveStage>
+                <nb-list>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="eyeButtonExecutiveStage"></ng-container>
+                      <span style = "padding-left: 5px">{{tempInvoice.laee[i].isVisible ? "Visível" : "Invisível"}}</span>
+                    </button>
+                  </nb-list-item>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="trashButtonExecutiveStage"></ng-container>
+                      <span style = "padding-left: 5px">Excluir</span>
+                    </button>
+                  </nb-list-item>
+                </nb-list>
+              </ng-template>
               <nb-icon
-                class="addIcon"
-                status="basic"
-                [icon]="tempInvoice.laee[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
-                pack="eva"
-                (click)="tempInvoice.laee[i].isVisible = !tempInvoice.laee[i].isVisible; isFormDirty.next(true)"
-                [options]="{ animation: { type: 'pulse' } }"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="tempInvoice.laee.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
+                *ngIf="isPhone()"
+                [nbPopover]="listButtonsExecutiveStage"
+                nbPopoverPlacement="start"
+                type="button"
+                nbButton
+                ghost
+                icon="chevron-down" pack="eva">
+              </nb-icon>
+              <div *ngIf="!isPhone()">
+                <ng-container *ngTemplateOutlet="eyeButtonExecutiveStage"></ng-container>
+                <ng-container *ngTemplateOutlet="trashButtonExecutiveStage"></ng-container>
+              </div>
             </div>
           </div>
         </nb-list-item>
@@ -1238,22 +1304,55 @@
               />
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
+              <ng-template #eyeButtonComplementaryStage>
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  [icon]="tempInvoice.laec[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                  pack="eva"
+                  (click)="tempInvoice.laec[i].isVisible = !tempInvoice.laec[i].isVisible; isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #trashButtonComplementaryStage>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="tempInvoice.laec.splice(i, 1); isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #listButtonsComplementaryStage>
+                <nb-list>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="eyeButtonComplementaryStage"></ng-container>
+                      <span style = "padding-left: 5px">{{tempInvoice.laec[i].isVisible ? "Visível" : "Invisível"}}</span>
+                    </button>
+                  </nb-list-item>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="trashButtonComplementaryStage"></ng-container>
+                      <span style = "padding-left: 5px">Excluir</span>
+                    </button>
+                  </nb-list-item>
+                </nb-list>
+              </ng-template>
               <nb-icon
-                class="addIcon"
-                status="basic"
-                [icon]="tempInvoice.laec[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
-                pack="eva"
-                (click)="tempInvoice.laec[i].isVisible = !tempInvoice.laec[i].isVisible; isFormDirty.next(true)"
-                [options]="{ animation: { type: 'pulse' } }"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="tempInvoice.laec.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
+                *ngIf="isPhone()"
+                [nbPopover]="listButtonsComplementaryStage"
+                nbPopoverPlacement="start"
+                type="button"
+                nbButton
+                ghost
+                icon="chevron-down" pack="eva">
+              </nb-icon>
+              <div *ngIf="!isPhone()">
+                <ng-container *ngTemplateOutlet="eyeButtonComplementaryStage"></ng-container>
+                <ng-container *ngTemplateOutlet="trashButtonComplementaryStage"></ng-container>
+              </div>
             </div>
           </div>
         </nb-list-item>
@@ -1624,22 +1723,56 @@
               {{ product.total }}
             </div>
             <div class="col-3 col-md-1" style="text-align: right">
+              <ng-template #addValues>
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  icon="plus-outline"
+                  pack="eva"
+                  (click)="addSubproduct(product)"
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #trashButtonValues>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="tempInvoice.products.splice(i, 1); updateTotal('product')"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #listButtonsValues>
+                <nb-list>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="addValues"></ng-container>
+                      <span style = "padding-left: 5px">Subproduto</span>
+                    </button>
+                  </nb-list-item>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="trashButtonValues"></ng-container>
+                      <span style = "padding-left: 5px">Excluir</span>
+                    </button>
+                  </nb-list-item>
+                </nb-list>
+              </ng-template>
               <nb-icon
-                class="addIcon"
-                status="basic"
-                icon="plus-outline"
-                pack="eva"
-                (click)="addSubproduct(product)"
-                [options]="{ animation: { type: 'pulse' } }"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="tempInvoice.products.splice(i, 1); updateTotal('product')"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
+                *ngIf="isPhone()"
+                [nbPopover]="listButtonsValues"
+                nbPopoverPlacement="start"
+                type="button"
+                nbButton
+                ghost
+                icon="chevron-down"
+                pack="eva">
+              </nb-icon>
+              <div *ngIf="!isPhone()">
+                <ng-container *ngTemplateOutlet="addValues"></ng-container>
+                <ng-container *ngTemplateOutlet="trashButtonValues"></ng-container>
+              </div>
             </div>
           </div>
         </nb-list-item>
@@ -2077,24 +2210,57 @@
               ></textarea>
             </div>
             <div class="col-2 col-md-1" style="text-align: right">
+              <ng-template #eyeButtonImportantsStage>
+                <nb-icon
+                  class="addIcon"
+                  status="basic"
+                  [icon]="tempInvoice.importants[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
+                  pack="eva"
+                  (click)="
+                    tempInvoice.importants[i].isVisible = !tempInvoice.importants[i].isVisible; isFormDirty.next(true)
+                  "
+                  [options]="{ animation: { type: 'pulse' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #trashButtonImportantsStage>
+                <nb-icon
+                  class="xIcon"
+                  status="basic"
+                  icon="trash-2-outline"
+                  pack="eva"
+                  (click)="tempInvoice.importants.splice(i, 1); isFormDirty.next(true)"
+                  [options]="{ animation: { type: 'shake' } }"
+                ></nb-icon>
+              </ng-template>
+              <ng-template #listButtonsImportantsStage>
+                <nb-list>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="eyeButtonImportantsStage"></ng-container>
+                      <span style = "padding-left: 5px">{{tempInvoice.importants[i].isVisible ? "Visível" : "Invisível"}}</span>
+                    </button>
+                  </nb-list-item>
+                  <nb-list-item>
+                    <button nbButton ghost>
+                      <ng-container *ngTemplateOutlet="trashButtonImportantsStage"></ng-container>
+                      <span style = "padding-left: 5px">Excluir</span>
+                    </button>
+                  </nb-list-item>
+                </nb-list>
+              </ng-template>
               <nb-icon
-                class="addIcon"
-                status="basic"
-                [icon]="tempInvoice.importants[i].isVisible ? 'eye-outline' : 'eye-off-outline'"
-                pack="eva"
-                (click)="
-                  tempInvoice.importants[i].isVisible = !tempInvoice.importants[i].isVisible; isFormDirty.next(true)
-                "
-                [options]="{ animation: { type: 'pulse' } }"
-              ></nb-icon>
-              <nb-icon
-                class="xIcon"
-                status="basic"
-                icon="trash-2-outline"
-                pack="eva"
-                (click)="tempInvoice.importants.splice(i, 1); isFormDirty.next(true)"
-                [options]="{ animation: { type: 'shake' } }"
-              ></nb-icon>
+                icon="chevron-down" pack="eva"
+                *ngIf="isPhone()"
+                [nbPopover]="listButtonsImportantsStage"
+                nbPopoverPlacement="start"
+                type="button"
+                nbButton
+                ghost>
+              </nb-icon>
+              <div *ngIf="!isPhone()">
+                <ng-container *ngTemplateOutlet="eyeButtonImportantsStage"></ng-container>
+                <ng-container *ngTemplateOutlet="trashButtonImportantsStage"></ng-container>
+              </div>
             </div>
           </div>
         </nb-list-item>
