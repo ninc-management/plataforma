@@ -1,28 +1,24 @@
 <nb-list>
   <nb-list-item *ngFor="let payment of clonedContract.payments; let i = index">
-    <div class="row irow" style="width: 100%">
-      <div class="col-10 col-md-11">
-        <div class="irow row">
-          <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex">
-            <div class="col-1">#{{ +i + 1 }}</div>
-            <div class="col">{{ payment.service }}</div>
-            <div class="col-md-2">
-              <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-              <span style="vertical-align: 0.1em">{{ payment.value }}</span>
-            </div>
-            <div class="col-md-2">
-              <nb-icon icon="calendar" pack="fa" status="warning"></nb-icon>
-              <span style="vertical-align: 0.1em">{{ [payment.predictedDate] | transformPipe: formatDate }}</span>
-            </div>
-            <div class="col-md-2">
-              <nb-icon icon="calendar-check" pack="fa" status="success"></nb-icon>
-              <span style="vertical-align: 0.1em">
-                {{ payment.paidDate ? ([payment.paidDate] | transformPipe: formatDate) : 'Não pago' }}
-              </span>
-            </div>
-          </a>
+    <div class="irow row">
+      <a (click)="openDialog(i)"  style="width: 100%; cursor: pointer; display: contents;">
+        <div class="col-2 col-md-1">#{{ +i + 1 }}</div>
+        <div class="col-10 col-md-4">{{ payment.service }}</div>
+        <div class="col-6 py-1 col-md-2 py-md-0">
+          <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+          <span style="vertical-align: 0.1em">{{ payment.value }}</span>
         </div>
-      </div>
+        <div class="col-6 py-1 col-md-2 py-md-0">
+          <nb-icon icon="calendar" pack="fa" status="warning"></nb-icon>
+          <span style="vertical-align: 0.1em">{{ [payment.predictedDate] | transformPipe: formatDate }}</span>
+        </div>
+        <div class="col-6 col-md-2">
+          <nb-icon icon="calendar-check" pack="fa" status="success"></nb-icon>
+          <span style="vertical-align: 0.1em">
+            {{ payment.paidDate ? ([payment.paidDate] | transformPipe: formatDate) : 'Não pago' }}
+          </span>
+        </div>
+      </a>
       <div class="col-2 col-md-1" style="text-align: right">
         <span
           class="mr-1"

@@ -1,4 +1,6 @@
 @import 'app/@theme/styles/themes';
+@import '~@nebular/theme/styles/global/breakpoints';
+@import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
   --radio-height: 14px;
@@ -20,6 +22,15 @@
     margin-left: 0;
     align-items: center;
   }
+
+  .adjustRow {
+    div:not(:first-of-type) {
+      @include media-breakpoint-down(md) {
+        padding-top: 10px;
+      }
+    }
+  }
+
 
   .xIcon:hover {
     color: nb-theme(icon-danger-color) !important;

@@ -7,10 +7,5 @@
     width: 100%;
     margin-left: 0;
     align-items: center;
-    div:not(:first-of-type) {
-      @include media-breakpoint-down(md) {
-        padding-top: 10px;
-      }
-    }
   }
 }
