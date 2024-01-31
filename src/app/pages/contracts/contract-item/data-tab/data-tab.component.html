@@ -451,7 +451,7 @@
       </div>
       <nb-list style="width: 100%; padding: 10px 0">
         <nb-list-item *ngFor="let member of invoice.team; let i = index; trackBy: trackByIndex">
-          <div class="row irow">
+          <div class="row irow adjustRow">
             <div class="col-12 col-md-3 list-name">
               {{ member.user ? userService.idToShortName(member.user) : '' }}
             </div>
