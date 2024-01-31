@@ -23,7 +23,7 @@ import {
   toPercentage,
   toValue,
 } from 'app/shared/string-utils';
-import { formatDate, idToProperty, shouldNotifyManager, trackByIndex } from 'app/shared/utils';
+import { formatDate, idToProperty, isPhone, shouldNotifyManager, trackByIndex } from 'app/shared/utils';
 
 import { Contract, ContractPayment, ContractUserPayment } from '@models/contract';
 import { Invoice, InvoiceTeamMember } from '@models/invoice';
@@ -83,6 +83,7 @@ export class PaymentItemComponent implements OnInit {
   memberChanged$ = new BehaviorSubject<boolean>(true);
   userSearch = '';
   availableUsers: Observable<User[]> = of([]);
+  isPhone = isPhone;
 
   contractSearch = '';
   get availableContractsData(): Observable<Contract[]> {

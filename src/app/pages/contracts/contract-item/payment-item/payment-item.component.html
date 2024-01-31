@@ -411,7 +411,7 @@
     </div>
     <nb-list style="width: 100%; padding: 10px 0">
       <nb-list-item *ngFor="let userPayment of payment.team; let i = index; trackBy: trackByIndex">
-        <div class="row paymentRow">
+        <div class="row paymentRow adjustRow">
           <div class="col-12 col-md-4">
             {{ [userPayment.user, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty }}
             <ng-container>
@@ -506,7 +506,7 @@
       <nb-list-item>
         <div class="row paymentRow">
           <div class="col-12 col-md-4">Restante: {{ remainingBalance() }}</div>
-          <div class="col-4 col-md-4" style="text-align: right">Total:</div>
+          <div class="col-4 col-md-4" [ngStyle]="{'text-align': !isPhone() ? 'right' : 'left'}">Total:</div>
           <div
             class="col-4 col-md-2"
             [ngClass]="{
