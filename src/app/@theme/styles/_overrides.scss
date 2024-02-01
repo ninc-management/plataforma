@@ -12,4 +12,22 @@
   fieldset {
     padding: 0;
   }
+
+  nb-tabset .tabset {
+    overflow-x: auto;
+    overflow-y: hidden;
+    @include media-breakpoint-down(md) {
+        justify-content: flex-start !important;
+    }
+  }
+
+  nb-tabset .tabset::-webkit-scrollbar {
+    height: var(--card-scrollbar-width);
+  }
+
+  nb-tabset .tabset::-webkit-scrollbar-thumb {
+    background: var(--card-scrollbar-color);
+    cursor: pointer;
+    border-radius: calc(var(--card-scrollbar-width) * 0.5);
+  }
 }
