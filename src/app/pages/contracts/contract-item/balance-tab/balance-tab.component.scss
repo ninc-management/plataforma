@@ -20,4 +20,9 @@
   .noPadding {
     padding: nb-theme(list-item-padding) 0;
   }
+
+  .balance-table {
+    overflow-x: auto;
+  }
+
 }
