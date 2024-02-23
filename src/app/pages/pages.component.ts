@@ -94,6 +94,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
         if (configs[0].company) {
           this.social = [];
           this.company = this.companyService.idToCompany(configs[0].company);
+          this.wsService.emit('company', this.company._id);
           document.title = this.company.companyName;
           if (this.company.glassfrogLink) {
             this.social.push({
@@ -160,6 +161,41 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
               selected: false,
             });
           }
+          this.wsService.manager.on('reconnect', () => {
+            this.http
+              .post('/api/checkdb', { change: this.lastReceivedChange })
+              .pipe(take(1))
+              .subscribe((res: any) => {
+                const response = JSON.parse(res) as EventsChecker<object>;
+                if (!response['isUpdated']) {
+                  // Last received event is too old
+                  if (response['newEvents'].length == 0) {
+                    this.dialogService
+                      .open(ConfirmationDialogComponent, {
+                        context: {
+                          question:
+                            'Novas alterações estão disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
+                        },
+                        dialogClass: 'my-dialog',
+                        closeOnBackdropClick: false,
+                        closeOnEsc: false,
+                        autoFocus: false,
+                      })
+                      .onClose.pipe(take(1))
+                      .subscribe((response: boolean) => {
+                        if (response) {
+                          window.location.reload();
+                        }
+                      });
+                  } else {
+                    response['newEvents'].forEach((event: any) => {
+                      this.wsService.manualEvents$.next(event);
+                    });
+                  }
+                }
+              });
+            this.wsService.ioSocket.disconnect().connect();
+          });
         }
 
         if (isGranted) {
@@ -214,42 +250,6 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
       .fromEvent('dbchange')
       .pipe(takeUntil(this.destroy$))
       .subscribe((data: any) => (this.lastReceivedChange = data));
-
-    this.wsService.manager.on('reconnect', () => {
-      this.http
-        .post('/api/checkdb', { change: this.lastReceivedChange })
-        .pipe(take(1))
-        .subscribe((res: any) => {
-          const response = JSON.parse(res) as EventsChecker<object>;
-          if (!response['isUpdated']) {
-            // Last received event is too old
-            if (response['newEvents'].length == 0) {
-              this.dialogService
-                .open(ConfirmationDialogComponent, {
-                  context: {
-                    question:
-                      'Novas alterações estão disponíveis na plataforma. Deseja atualizar a página para carregar as alterações?',
-                  },
-                  dialogClass: 'my-dialog',
-                  closeOnBackdropClick: false,
-                  closeOnEsc: false,
-                  autoFocus: false,
-                })
-                .onClose.pipe(take(1))
-                .subscribe((response: boolean) => {
-                  if (response) {
-                    window.location.reload();
-                  }
-                });
-            } else {
-              response['newEvents'].forEach((event: any) => {
-                this.wsService.manualEvents$.next(event);
-              });
-            }
-          }
-        });
-      this.wsService.ioSocket.disconnect().connect();
-    });
   }
 
   ngOnDestroy(): void {
