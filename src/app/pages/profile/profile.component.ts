@@ -26,7 +26,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { chunkify, idToProperty, NOT, Permissions, trackByIndex } from 'app/shared/utils';
 
 import { ProfileConfig } from '@models/platformConfig';
-import { Sector } from '@models/shared/sector';
+import { Sector, SectorLocals } from '@models/shared/sector';
 import { Team } from '@models/team';
 import { User } from '@models/user';
 
@@ -365,8 +365,10 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   buildGroupedSectors(): void {
     this.groupedSectors = chunkify(
       this.teamService.sectorsListAll().map((sector) => {
-        if (this.user.sectors.some((sectorUser) => this.teamService.isSectorEqual(sectorUser, sector)))
+        if (this.user.sectors.some((sectorUser) => this.teamService.isSectorEqual(sectorUser, sector))) {
+          if (!sector.locals) sector.locals = {} as SectorLocals;
           sector.locals.isChecked = true;
+        }
         return sector;
       }),
       3

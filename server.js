@@ -51,8 +51,10 @@ const connMap = {};
 
 io.on('connection', (socket) => {
   console.log('Nova conexao', socket.id, socket.client.conn.id);
-  connMap[socket.id] = app.api.lastChanges.inserted$.subscribe((data) => {
-    socket.emit('dbchange', data);
+
+  socket.on('company', async (id) => {
+    await app.api.setCompanyDbWatcher(id);
+    connMap[socket.id] = app.api.lastChanges[id].inserted$.subscribe((data) => socket.emit('dbchange', data));
   });
 
   socket.on('disconnect', () => {
