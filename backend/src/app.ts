@@ -30,16 +30,17 @@ import teamRoutes from './routes/team';
 import transactionRoutes from './routes/transaction';
 import userRoutes from './routes/user';
 import { SizeLimitedQueue } from './shared/sizeLimitedQueue';
-import { isUserAuthenticated, overdueReceiptNotification } from './shared/util';
+import { createConnection, isUserAuthenticated, overdueReceiptNotification } from './shared/util';
+import { ChangeStream, ChangeStreamDocument } from 'mongodb';
+import CompanyModel, { Company } from './models/company';
 
 class NortanAPI {
   public express;
-  public lastChanges: SizeLimitedQueue<any>;
-  private dbWatcher$;
+  public lastChanges: Record<string, SizeLimitedQueue<any>> = {};
+  private dbWatchers: Record<string, ChangeStream<any, ChangeStreamDocument<any>>> = {};
 
   constructor() {
     this.express = express();
-    this.lastChanges = new SizeLimitedQueue<any>(10000);
 
     // Connect to the database before starting the expresslication server.
     const options = {
@@ -54,10 +55,6 @@ class NortanAPI {
       mongoose
         .connect(process.env.MONGODB_URI, options)
         .then(() => {
-          this.dbWatcher$ = mongoose.connection.watch();
-          this.dbWatcher$.on('change', (data) => {
-            api.lastChanges.queue(data);
-          });
           console.log('Database connection ready!');
         })
         .catch((error) => {
@@ -128,6 +125,18 @@ class NortanAPI {
         timezone: 'America/Sao_Paulo',
       }
     );
+  }
+
+  async setCompanyDbWatcher(companyId: string): Promise<void> {
+    if (!this.lastChanges[companyId]) {
+      this.lastChanges[companyId] = new SizeLimitedQueue<any>(10000);
+    }
+    if (!this.dbWatchers[companyId]) {
+      const company: Company = await CompanyModel.findById(companyId);
+      const connection = createConnection(company);
+      this.dbWatchers[companyId] = connection.watch();
+      this.dbWatchers[companyId].on('change', (data) => api.lastChanges[companyId].queue(data));
+    }
   }
 }
 
