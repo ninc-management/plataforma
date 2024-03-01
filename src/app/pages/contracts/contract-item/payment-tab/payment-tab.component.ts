@@ -102,7 +102,6 @@ export class PaymentTabComponent implements OnInit {
       });
     }
     this.contract = cloneDeep(this.clonedContract);
-    this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.contract);
   }
 }

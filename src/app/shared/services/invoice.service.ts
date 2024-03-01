@@ -29,6 +29,8 @@ export class InvoiceService implements OnDestroy {
   private destroy$ = new Subject<void>();
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
+  submittedToEdit$ = new Subject<void>();
+
   get isDataLoaded$(): Observable<boolean> {
     return this._isDataLoaded$.asObservable();
   }
@@ -59,6 +61,7 @@ export class InvoiceService implements OnDestroy {
       invoice: invoice,
     };
     this.http.post('/api/invoice/update', req).pipe(take(1)).subscribe();
+    this.submittedToEdit$.next();
   }
 
   getInvoices(): Observable<Invoice[]> {
