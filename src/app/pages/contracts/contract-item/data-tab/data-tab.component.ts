@@ -339,7 +339,7 @@ export class DataTabComponent implements OnInit {
       });
     }
     this.contract = cloneDeep(this.clonedContract);
-    this.invoiceService.editInvoice(this.invoice);
+    if (!isEqual(this.contract.invoice, this.invoice)) this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.contract);
     this.ngForm.form.markAsPristine();
     setTimeout(() => {
