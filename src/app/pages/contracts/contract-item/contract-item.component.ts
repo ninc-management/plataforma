@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 import { ContractService } from 'app/shared/services/contract.service';
+import { InvoiceService } from 'app/shared/services/invoice.service';
 import { isOfType, isPhone } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
@@ -56,12 +57,14 @@ export class ContractItemComponent implements OnInit, OnDestroy {
     pack: 'fac',
   };
 
-  constructor(private contractService: ContractService) {}
+  constructor(private contractService: ContractService, private invoiceService: InvoiceService) {}
 
   ngOnInit(): void {
     this.clonedContract = cloneDeep(this.contract);
     this.contractService.submittedToEdit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       if (this.clonedContract.__v !== undefined) this.clonedContract.__v += 1;
+    });
+    this.invoiceService.submittedToEdit$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       if (
         this.clonedContract.invoice &&
         isOfType(Invoice, this.clonedContract.invoice) &&
