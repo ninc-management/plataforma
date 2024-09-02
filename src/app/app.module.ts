@@ -85,6 +85,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
         piiLoggingEnabled: false,
       },
       allowRedirectInIframe: true,
+      pollIntervalMilliseconds: 1000,
     },
   });
 }
