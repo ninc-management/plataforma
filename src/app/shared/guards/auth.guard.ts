@@ -118,7 +118,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       take(1),
       concatMap(([isAuthenticated, isUserActive]) => {
         if (!isAuthenticated || !isUserActive || this.msAuthService.instance.getAllAccounts().length === 0) {
-          this.router.navigate(['auth/login']);
+          this.router.navigate(['auth/login'], {
+            queryParams: state.root.queryParams,
+            fragment: state.root.fragment ? state.root.fragment : '',
+          });
           return of(false);
         } else {
           return this.authService.isCompanyLoaded$.pipe(skipWhile((isCompanyLoaded) => !isCompanyLoaded));

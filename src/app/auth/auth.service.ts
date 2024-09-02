@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from '@azure/msal-angular';
-import { EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
+import { AuthenticationResult, EventMessage, EventType, PopupRequest } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, skipWhile, take, takeUntil } from 'rxjs/operators';
 
@@ -40,7 +40,7 @@ export class AuthService {
       )
       .subscribe((msg: EventMessage) => {
         this.onUserChange$.next();
-        this.msAuthService.instance.setActiveAccount((msg.payload as any).account);
+        this.msAuthService.instance.setActiveAccount((msg.payload as AuthenticationResult).account);
       });
   }
 
