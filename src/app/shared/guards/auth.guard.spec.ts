@@ -39,7 +39,11 @@ describe('AuthGuard', () => {
     instance: instanceSpy,
   });
 
-  const stateSpy = jasmine.createSpyObj('RouterStateSnapshot', ['toString']);
+  const stateSpy = jasmine.createSpyObj('RouterStateSnapshot', ['toString'], {
+    root: {
+      queryParams: 'tkn=test',
+    },
+  });
 
   CommonTestingModule.setUpTestBed();
 
@@ -72,10 +76,11 @@ describe('AuthGuard', () => {
   it('should be not authenticated and redirected to auth/login', (done: DoneFn) => {
     nbAuthServiceSpy.isAuthenticated.and.returnValue(of(false));
     instanceSpy.getAllAccounts.and.returnValue([]);
+    instanceSpy.getActiveAccount.and.returnValue(null);
     spyOn(router, 'navigate');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(false, 'user is not authenticated');
-      expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
+      expect(router.navigate).toHaveBeenCalledWith(['auth/login'], Object({ queryParams: 'tkn=test', fragment: '' }));
       done();
     });
   });
@@ -143,7 +148,7 @@ describe('AuthGuard', () => {
     spyOn(router, 'navigate');
     (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
       expect(result).toBe(false, 'user is authenticated');
-      expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
+      expect(router.navigate).toHaveBeenCalledWith(['auth/login'], Object({ queryParams: 'tkn=test', fragment: '' }));
       done();
     });
     const req = httpMock.expectOne('/api/auth/isActive');
