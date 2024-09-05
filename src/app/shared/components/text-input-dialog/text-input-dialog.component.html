@@ -3,7 +3,20 @@
     'width.px': dialogWidth()
   }"
 >
-  <nb-card-header>{{ title }}</nb-card-header>
+  <nb-card-header>
+    {{ title }}
+    <button
+      nbButton
+      ghost
+      nbTooltip="Fechar"
+      [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+      nbTooltipPlacement="bottom"
+      nbTooltipStatus="info"
+      (click)="dismiss()"
+    >
+      <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+    </button>
+  </nb-card-header>
   <nb-card-body>
     <input *ngIf="inputType == INPUT_TYPES.INPUT"
       #name
@@ -34,6 +47,6 @@
     </editor>
   </nb-card-body>
   <nb-card-footer>
-    <button nbButton fullWidth status="primary" (click)="dismiss(text)">Adicionar</button>
+    <button nbButton fullWidth status="primary" (click)="save()">Adicionar</button>
   </nb-card-footer>
 </nb-card>
