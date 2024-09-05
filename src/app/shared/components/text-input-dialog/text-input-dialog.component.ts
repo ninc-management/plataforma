@@ -3,6 +3,7 @@ import { NB_DOCUMENT, NbDialogRef } from '@nebular/theme';
 
 import { BaseDialogComponent } from '../base-dialog/base-dialog.component';
 import { THEMES } from 'app/@theme/theme.module';
+import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 export enum INPUT_TYPES {
   INPUT = 'input',
@@ -26,6 +27,9 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
   THEMES = THEMES;
   text: string = '';
 
+  isPhone = isPhone;
+  tooltipTriggers = tooltipTriggers;
+
   constructor(
     @Inject(NB_DOCUMENT) protected derivedDocument: Document,
     @Optional() protected derivedRef: NbDialogRef<TextInputDialogComponent>
@@ -42,8 +46,14 @@ export class TextInputDialogComponent extends BaseDialogComponent implements OnI
     this.inputRef.nativeElement.focus();
   }
 
-  dismiss(response: string): void {
-    this.derivedRef.close(response);
+  dismiss(res: any = ''): void {
+    this.ref?.close(this.editorPreviousText);
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  save(): void {
+    this.ref?.close(this.text);
   }
 
   dialogWidth(): number {

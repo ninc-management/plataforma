@@ -400,9 +400,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
       .onClose.pipe(take(1))
       .subscribe((announcement) => {
-        if (announcement) this.company.announcement = announcement;
-        else this.company.announcement = '';
-        this.companyService.editCompany(this.company);
+        if (this.company.announcement != announcement) {
+          this.company.announcement = announcement;
+          this.companyService.editCompany(this.company);
+        }
       });
   }
 }
