@@ -38,6 +38,7 @@ class NortanAPI {
   public express;
   public lastChanges: Record<string, SizeLimitedQueue<any>> = {};
   private dbWatchers: Record<string, ChangeStream<any, ChangeStreamDocument<any>>> = {};
+  private dbWatchers$;
 
   constructor() {
     this.express = express();
@@ -55,6 +56,7 @@ class NortanAPI {
       mongoose
         .connect(process.env.MONGODB_URI, options)
         .then(() => {
+          this.dbWatchers$ = mongoose.connection.watch();
           console.log('Database connection ready!');
         })
         .catch((error) => {
@@ -136,6 +138,7 @@ class NortanAPI {
       const connection = createConnection(company);
       this.dbWatchers[companyId] = connection.watch();
       this.dbWatchers[companyId].on('change', (data) => api.lastChanges[companyId].queue(data));
+      this.dbWatchers$.on('change', (data) => api.lastChanges[companyId].queue(data));
     }
   }
 }
