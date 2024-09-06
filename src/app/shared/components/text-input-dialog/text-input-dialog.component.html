@@ -5,17 +5,19 @@
 >
   <nb-card-header>
     {{ title }}
-    <button
-      nbButton
-      ghost
-      nbTooltip="Fechar"
-      [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
-      nbTooltipPlacement="bottom"
-      nbTooltipStatus="info"
-      (click)="dismiss()"
-    >
-      <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
-    </button>
+    <div class="buttons">
+      <button
+        nbButton
+        ghost
+        nbTooltip="Fechar"
+        [nbTooltipTrigger]="isPhone() ? tooltipTriggers.NOOP : tooltipTriggers.HINT"
+        nbTooltipPlacement="bottom"
+        nbTooltipStatus="info"
+        (click)="dismiss()"
+      >
+        <nb-icon icon="close-outline" pack="nebular-essentials"></nb-icon>
+      </button>
+    </div>
   </nb-card-header>
   <nb-card-body>
     <input *ngIf="inputType == INPUT_TYPES.INPUT"
