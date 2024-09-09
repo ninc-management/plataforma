@@ -1,6 +1,5 @@
 import * as express from 'express';
 
-import CompanyModel from '../models/company';
 import PlatformConfigModel, { PlatformConfig } from '../models/platformConfig';
 import { getModelForCompany } from '../shared/util';
 
@@ -48,19 +47,12 @@ router.post('/update', async (req, res, next) => {
   try {
     const companyId = req.headers.companyid as string;
     const platformConfigCompanyModel = await getModelForCompany(companyId, PlatformConfigModel);
-    const gconfig = await CompanyModel.findByIdAndUpdate(
-      { _id: req.body.config.company._id, __v: req.body.config.company.__v },
-      req.body.config.company,
-      {
-        upsert: false,
-      }
-    );
     const config = await platformConfigCompanyModel.findOneAndUpdate(
       { _id: req.body.config._id, __v: req.body.config.__v },
       req.body.config,
       { upsert: false }
     );
-    if (!gconfig || !config) {
+    if (!config) {
       return res.status(500).json({
         message: 'O documento foi atualizado por outro usuário. Por favor, recarregue os dados e tente novamente.',
       });
