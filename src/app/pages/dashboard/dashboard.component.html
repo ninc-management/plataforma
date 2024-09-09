@@ -92,22 +92,29 @@
   >
     <nb-card fullWidth class="noOverflow">
       <div class="row">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-4">
           <ngx-gauge [value$]="contractsBalance$" name="Nortan"></ngx-gauge>
         </div>
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-4">
           <ngx-gauge [value$]="taxesBalance$" name="Impostos"></ngx-gauge>
         </div>
-        <div class="col-12 col-md-2" style="text-align: center">
+        <div class="col-12 col-md-4">
+          <ngx-gauge [max]="350000" [value$]="oeBalance$" name="O.E."></ngx-gauge>
+        </div>
+      </div>
+    </nb-card>
+    <nb-card fullWidth class="noOverflow">
+      <div class="row">
+        <div class="col-12 col-md-4" style="text-align: center">
           <h2 style="margin-top: 15px">{{ open$ | async }}</h2>
           <p>Contratos em Aberto</p>
         </div>
-        <div class="col-12 col-md-2" style="text-align: center">
+        <div class="col-12 col-md-4" style="text-align: center">
           <h2 style="margin-top: 15px">{{ toReceive$ | async }}</h2>
           <p>Contratos a Receber</p>
         </div>
         <a style="text-decoration: none; display: contents; cursor: pointer" (click)="openDialog()">
-          <div class="col-12 col-md-2" style="text-align: center">
+          <div class="col-12 col-md-4" style="text-align: center">
             <h2 style="margin-top: 15px; display: flex; align-items: flex-start; justify-content: center">
               R$ {{ expenses$ | async }}
               <nb-icon
