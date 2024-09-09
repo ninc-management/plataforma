@@ -54,13 +54,13 @@ export class Company extends Base<string> {
   announcement: string = '';
 
   @prop({ required: true })
-  contractsMeta: number = 8000;
+  contractsGoal: number = 8000;
 
   @prop({ required: true })
-  taxesMeta: number = 8000;
+  taxesGoal: number = 8000;
 
   @prop({ required: true })
-  oeMeta: number = 350000;
+  oeGoal: number = 350000;
 
   @prop({ required: true })
   youtubeLink: string = '';
