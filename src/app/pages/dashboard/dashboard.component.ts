@@ -63,6 +63,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   expenses$: Observable<string> = of('');
   contractsBalance$: Observable<number> = of(0);
   taxesBalance$: Observable<number> = of(0);
+  oeBalance$: Observable<number> = of(0);
   timeSeries$: Observable<TimeSeries[]> = of([] as TimeSeries[]);
   teams: Team[] = [];
   nortanTeam!: Team;
@@ -123,6 +124,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .pipe(map((metricInfo) => metricInfo.global));
           this.taxesBalance$ = this.metricsService
             .nortanValue(this.start, this.end, 'taxes')
+            .pipe(map((metricInfo) => metricInfo.global));
+          this.oeBalance$ = this.metricsService
+            .nortanValue(this.start, this.end, 'oe')
             .pipe(map((metricInfo) => metricInfo.global));
         }
       });

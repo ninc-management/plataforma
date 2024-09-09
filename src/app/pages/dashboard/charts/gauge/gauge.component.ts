@@ -12,6 +12,7 @@ import { numberToMoney } from 'app/shared/string-utils';
 export class GaugeComponent implements AfterViewInit, OnDestroy {
   @Input() value$: Observable<number> = of(-1);
   @Input() name = '';
+  @Input() max = 8000;
   options: any = {};
   themeSubscription: any;
   currentTheme = {};
@@ -29,8 +30,8 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
         const colors: any = config.variables;
         this.currentTheme = colors.echarts;
         let color: string;
-        if (dataValue <= 2500) color = colors.danger;
-        else if (dataValue <= 5000) color = colors.warning;
+        if (dataValue <= this.max * 0.3125) color = colors.danger;
+        else if (dataValue <= this.max * 0.625) color = colors.warning;
         else color = colors.success;
 
         this.options = {
@@ -40,7 +41,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
               startAngle: 180,
               endAngle: 0,
               min: 0,
-              max: 8000,
+              max: this.max,
               radius: '170%',
               center: ['50%', '90%'],
               splitNumber: 8,
@@ -90,18 +91,7 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
               axisLabel: {
                 fontSize: 8,
                 distance: 7,
-                formatter: function (value: number) {
-                  if (value === 7000) {
-                    return '7K';
-                  } else if (value === 5000) {
-                    return '5K';
-                  } else if (value === 3000) {
-                    return '3K';
-                  } else if (value === 1000) {
-                    return '1K';
-                  }
-                  return '';
-                },
+                formatter: this.formatter.bind(this),
               },
               title: {
                 offsetCenter: [0, '-30%'],
@@ -126,5 +116,20 @@ export class GaugeComponent implements AfterViewInit, OnDestroy {
           ],
         };
       });
+  }
+
+  formatter(value: number) {
+    if (this.max === value) {
+      return (value / 1000).toFixed(1) + 'k';
+    } else if (this.max * 0.875 === value) {
+      return (value / 1000).toFixed(1) + 'k';
+    } else if (this.max * 0.625 === value) {
+      return (value / 1000).toFixed(1) + 'k';
+    } else if (this.max * 0.375 === value) {
+      return (value / 1000).toFixed(1) + 'k';
+    } else if (this.max * 0.125 === value) {
+      return (value / 1000).toFixed(1) + 'k';
+    }
+    return '';
   }
 }
