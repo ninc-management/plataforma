@@ -54,6 +54,15 @@ export class Company extends Base<string> {
   announcement: string = '';
 
   @prop({ required: true })
+  contractsGoal: number = 8000;
+
+  @prop({ required: true })
+  taxesGoal: number = 8000;
+
+  @prop({ required: true })
+  oeGoal: number = 350000;
+
+  @prop({ required: true })
   youtubeLink: string = '';
 
   @prop({ required: true })
