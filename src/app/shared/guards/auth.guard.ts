@@ -10,7 +10,7 @@ import {
 import { MsalService } from '@azure/msal-angular';
 import { NbAuthService } from '@nebular/auth';
 import { NbAccessChecker, NbAclService } from '@nebular/security';
-import { Observable, of } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { concatMap, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 
 import { ConfigService } from '../services/config.service';
@@ -112,10 +112,12 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     // canActive can return Observable<boolean>, which is exactly what isAuthenticated returns
-    return this.nbAuthService.isAuthenticated().pipe(
+    const userEmail = this.authService.userEmail();
+    const userActive$ = userEmail ? this.authService.isUserActive(userEmail) : of(false);
+    return combineLatest([this.nbAuthService.isAuthenticated(), userActive$]).pipe(
       take(1),
-      concatMap((isAuthenticated) => {
-        if (!isAuthenticated || this.msAuthService.instance.getAllAccounts().length === 0) {
+      concatMap(([isAuthenticated, isUserActive]) => {
+        if (!isAuthenticated || !isUserActive || this.msAuthService.instance.getAllAccounts().length === 0) {
           this.router.navigate(['auth/login']);
           return of(false);
         } else {
