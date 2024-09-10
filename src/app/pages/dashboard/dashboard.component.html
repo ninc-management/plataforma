@@ -93,13 +93,13 @@
     <nb-card fullWidth class="noOverflow">
       <div class="row">
         <div class="col-12 col-md-4">
-          <ngx-gauge [value$]="contractsBalance$" name="Nortan"></ngx-gauge>
+          <ngx-gauge [max]="company.contractsGoal" [value$]="contractsBalance$" name="Nortan"></ngx-gauge>
         </div>
         <div class="col-12 col-md-4">
-          <ngx-gauge [value$]="taxesBalance$" name="Impostos"></ngx-gauge>
+          <ngx-gauge [max]="company.taxesGoal" [value$]="taxesBalance$" name="Impostos"></ngx-gauge>
         </div>
         <div class="col-12 col-md-4">
-          <ngx-gauge [max]="350000" [value$]="oeBalance$" name="O.E."></ngx-gauge>
+          <ngx-gauge [max]="company.oeGoal" [value$]="oeBalance$" name="O.E."></ngx-gauge>
         </div>
       </div>
     </nb-card>
