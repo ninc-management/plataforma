@@ -422,6 +422,70 @@
       </div>
       <div class="row">
         <div class="col-auto">
+          <label class="label-divider">Metas da empresa</label>
+        </div>
+        <div class="col">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="form-control-group">
+            <label class="label">Acumulado para Organização</label>
+            <input
+              nbInput
+              [(ngModel)]="configCompany.contractsGoal"
+              #contractsGoal="ngModel"
+              id="input-contractsGoal"
+              name="contractsGoal"
+              placeholder=8000
+              fullWidth
+              required="true"
+              fieldSize="large"
+              [status]="contractsGoal.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="contractsGoal.invalid && contractsGoal.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="form-control-group">
+            <label class="label">Acumulado para Impostos</label>
+            <input
+              nbInput
+              [(ngModel)]="configCompany.taxesGoal"
+              #taxesGoal="ngModel"
+              id="input-taxesGoal"
+              name="taxesMeta"
+              placeholder=8000
+              fullWidth
+              required="true"
+              fieldSize="large"
+              [status]="taxesGoal.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="taxesGoal.invalid && taxesGoal.touched ? true : null"
+            />
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="form-control-group">
+            <label class="label">Ordens de Empenho</label>
+            <input
+              nbInput
+              [(ngModel)]="configCompany.oeGoal"
+              #oeGoal="ngModel"
+              id="input-oeGoal"
+              name="oeGoal"
+              placeholder=350000
+              fullWidth
+              required="true"
+              fieldSize="large"
+              [status]="oeGoal.value ? 'success' : 'basic'"
+              [attr.aria-invalid]="oeGoal.invalid && oeGoal.touched ? true : null"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-auto">
           <label class="label-divider">Redes sociais</label>
         </div>
         <div class="col">
