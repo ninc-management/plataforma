@@ -106,10 +106,50 @@ describe('AuthGuard', () => {
       expect(router.navigate).not.toHaveBeenCalled();
       done();
     });
-    const req = httpMock.expectOne('/api/auth/id');
+    const req1 = httpMock.expectOne('/api/auth/isActive');
+    expect(req1.request.method).toBe('POST');
+    setTimeout(() => {
+      req1.flush(mockedUsers[0].active);
+    }, 2);
+    setTimeout(() => {
+      const req2 = httpMock.expectOne('/api/auth/id');
+      expect(req2.request.method).toBe('POST');
+      setTimeout(() => {
+        req2.flush(mockedUsers[0].company ? mockedUsers[0].company : '');
+      }, 50);
+    }, 10);
+  });
+
+  it('should be authenticated and not active and redirected to auth/login', (done: DoneFn) => {
+    nbAuthServiceSpy.isAuthenticated.and.returnValue(of(true));
+    instanceSpy.getAllAccounts.and.returnValue([
+      {
+        homeAccountId: mockedUsers[3]._id,
+        environment: '',
+        tenantId: mockedUsers[3]._id,
+        name: mockedUsers[3].fullName,
+        username: mockedUsers[3].email,
+        localAccountId: mockedUsers[3]._id,
+      },
+    ]);
+    instanceSpy.getActiveAccount.and.returnValue({
+      homeAccountId: mockedUsers[3]._id,
+      environment: '',
+      tenantId: mockedUsers[3]._id,
+      name: mockedUsers[3].fullName,
+      username: mockedUsers[3].email,
+      localAccountId: mockedUsers[3]._id,
+    });
+    spyOn(router, 'navigate');
+    (guard.canActivate(next, stateSpy) as Observable<boolean>).subscribe((result) => {
+      expect(result).toBe(false, 'user is authenticated');
+      expect(router.navigate).toHaveBeenCalledWith(['auth/login']);
+      done();
+    });
+    const req = httpMock.expectOne('/api/auth/isActive');
     expect(req.request.method).toBe('POST');
     setTimeout(() => {
-      req.flush(mockedUsers[0].company ? mockedUsers[0].company : '');
+      req.flush(mockedUsers[3].active);
     }, 50);
   });
 
