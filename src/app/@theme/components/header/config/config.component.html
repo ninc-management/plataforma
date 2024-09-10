@@ -440,6 +440,7 @@
               name="contractsGoal"
               placeholder=8000
               fullWidth
+              required="true"
               fieldSize="large"
               [status]="contractsGoal.value ? 'success' : 'basic'"
               [attr.aria-invalid]="contractsGoal.invalid && contractsGoal.touched ? true : null"
@@ -457,6 +458,7 @@
               name="taxesMeta"
               placeholder=8000
               fullWidth
+              required="true"
               fieldSize="large"
               [status]="taxesGoal.value ? 'success' : 'basic'"
               [attr.aria-invalid]="taxesGoal.invalid && taxesGoal.touched ? true : null"
@@ -474,6 +476,7 @@
               name="oeGoal"
               placeholder=350000
               fullWidth
+              required="true"
               fieldSize="large"
               [status]="oeGoal.value ? 'success' : 'basic'"
               [attr.aria-invalid]="oeGoal.invalid && oeGoal.touched ? true : null"
