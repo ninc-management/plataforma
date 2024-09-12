@@ -9,7 +9,7 @@
 ></nb-smart-table>
 <ng-template #phone>
   <div class="row">
-    <div class="col-2" style="padding-left: 0; padding-right: 0">
+    <div class="col-2 pl-0 pr-0">
       <button
         nbButton
         fullWidth
@@ -35,50 +35,43 @@
     </div>
   </div>
   <nb-list>
-    <nb-list-item *ngFor="let expense of filtredExpenses; let i = index">
-      <div class="row irow" style="width: 100%">
-        <div class="col-10 col-md-11">
-          <div class="irow row">
-            <a (click)="openDialog(i)" style="width: 100%; cursor: pointer; display: flex; align-items: center">
-              <div class="col-auto">
-                <nb-user
-                  [onlyPicture]="true"
-                  [name]="
-                    [expense.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
-                  "
-                  [picture]="
-                    [expense.author, userService.idToUser.bind(userService), 'profilePicture']
-                      | transformPipe: idToProperty
-                  "
-                ></nb-user>
-              </div>
-              <div class="col-auto">#{{ +i + 1 }}</div>
-              <div class="col">{{ expense.description }}</div>
-              <div class="col-md-auto">
-                <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
-                <span style="vertical-align: 0.1em">
-                  {{ expense.value }}
-                </span>
-              </div>
-              <div class="col-md-auto">
-                <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
-                <span style="vertical-align: 0.1em">
-                  {{ [expense.created] | transformPipe: formatDate }}
-                </span>
-              </div>
-            </a>
-          </div>
+    <nb-list-item class="pl-0 pr-0" *ngFor="let expense of filtredExpenses; let i = index">
+      <a (click)="openDialog(i)" class="row irow">
+        <div class="col-2" style="padding-left: 0;">
+          <nb-user
+            [onlyPicture]="true"
+            [name]="
+              [expense.author, userService.idToUser.bind(userService), 'fullName'] | transformPipe: idToProperty
+            "
+            [picture]="
+              [expense.author, userService.idToUser.bind(userService), 'profilePicture']
+                | transformPipe: idToProperty
+            "
+          ></nb-user>
         </div>
-        <div class="col-2 col-md-auto" style="text-align: right" *ngIf="isEditionGranted">
-          <nb-icon
-            class="xIcon"
-            status="basic"
-            icon="trash-2-outline"
-            pack="eva"
-            (click)="confirmationDialog(i)"
-            [options]="{ animation: { type: 'shake' } }"
-          ></nb-icon>
+        <div class="col-10">#{{ +i + 1 }} {{ expense.description }}</div>
+        <div class="col-7 pl-0 pt-2">
+          <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
+          <span style="vertical-align: 0.1em">
+            {{ expense.value }}
+          </span>
         </div>
+        <div class="col-5 pl-0 pt-2 pr-0">
+          <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
+          <span style="vertical-align: 0.1em">
+            {{ [expense.created] | transformPipe: formatDate }}
+          </span>
+        </div>
+      </a>
+      <div  style="text-align: right; margin-left: 30px;" *ngIf="isEditionGranted">
+        <nb-icon
+          class="xIcon"
+          status="basic"
+          icon="trash-2-outline"
+          pack="eva"
+          (click)="confirmationDialog(i)"
+          [options]="{ animation: { type: 'shake' } }"
+        ></nb-icon>
       </div>
     </nb-list-item>
   </nb-list>
