@@ -1,6 +1,28 @@
-<nb-tabset>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Detalhes'" responsive>
-    <div class="container-fluid p-0">
+<nb-tabset *ngIf="!isPhone(); else phone">
+  <nb-tab [tabTitle]="'Detalhes'" style="overflow-x: hidden;" responsive>
+    <ng-container *ngTemplateOutlet="Details"></ng-container>
+  </nb-tab>
+  <nb-tab [tabTitle]="'Gráfico de Gantt'" responsive>
+    <ngx-gantt-chart
+      *ngIf="actionsData.length > 0; else emptyChecklistAlert"
+      [taskData]="actionsData"
+      [contract]="clonedContract"
+    ></ngx-gantt-chart>
+    <ng-template #emptyChecklistAlert>
+      <div class="emptyChecklistAlert">
+        <nb-icon status="basic" icon="info-outline" pack="eva"></nb-icon>
+        <h6>Adicione um item para iniciar o gráfico</h6>
+      </div>
+    </ng-template>
+  </nb-tab>
+</nb-tabset>
+
+<ng-template #phone>
+  <ng-container *ngTemplateOutlet="Details"></ng-container>
+</ng-template>
+
+<ng-template #Details> <!-- Content for Tab 1 -->
+  <div class="container-fluid p-0">
       <div class="row">
         <div class="col-12 my-3">
           <nb-progress-bar
@@ -14,7 +36,7 @@
       <form (ngSubmit)="updateContractManagement()" #form="ngForm" aria-labelledby="title">
         <fieldset [disabled]="!isEditionGranted">
           <div class="row">
-            <div class="col-4">
+            <div class="col-md-4 col-12">
               <div class="form-control-group">
                 <label class="label" for="contract-code">Código do Contrato:</label>
                 <input
@@ -27,7 +49,7 @@
                 />
               </div>
             </div>
-            <div class="col-5">
+            <div class="col-md-5 col-6">
               <div class="form-control-group">
                 <label class="label" for="contractor">Cliente:</label>
                 <input
@@ -46,7 +68,7 @@
                 />
               </div>
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-6">
               <div class="form-control-group">
                 <label class="label" for="model">Modelo:</label>
                 <nb-completer
@@ -67,7 +89,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-2">
+            <div class="col-md-2 col-6">
               <div class="form-control-group">
                 <label class="label" for="start-date">Início:</label>
                 <input
@@ -80,7 +102,7 @@
                 />
               </div>
             </div>
-            <div class="col-2">
+            <div class="col-md-2 col-6">
               <div class="form-control-group">
                 <label class="label" for="end-date">
                   Fim:
@@ -104,7 +126,7 @@
                 />
               </div>
             </div>
-            <div class="col-2">
+            <div class="col-md-2 col-3">
               <div class="form-control-group">
                 <label class="label" for="remaining-days">Dias restantes:</label>
                 <input
@@ -117,7 +139,7 @@
                 />
               </div>
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-9" [ngStyle]="{'padding-top' : isPhone() ?  '12px' : ''}" >
               <div class="form-control-group">
                 <label class="label" for="assignee">Responsável:</label>
                 <input
@@ -130,7 +152,7 @@
                 />
               </div>
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-12">
               <div class="form-control-group">
                 <label class="label" for="management-status">Status de gestão:</label>
                 <nb-select
@@ -175,7 +197,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-3">
+            <div class="col-md-3 col-6">
               <label class="label" for="input-item-name">Ação:</label>
               <input
                 nbInput
@@ -189,7 +211,7 @@
                 [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
               />
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-6">
               <label class="label" for="input-item-range">Prazo:</label>
               <input
                 nbInput
@@ -205,7 +227,7 @@
               />
               <nb-rangepicker #rangePicker></nb-rangepicker>
             </div>
-            <div class="col-3">
+            <div class="col-md-3 col-12">
               <label class="label" for="input-item-assignee">Responsável:</label>
               <nb-completer
                 [(ngModel)]="assigneeSearch"
@@ -223,7 +245,7 @@
                 [minSearchLength]="0"
               ></nb-completer>
             </div>
-            <div class="col-2">
+            <div class="col-md-2 col-6">
               <label class="label" for="input-item-status">Status:</label>
               <nb-select
                 id="input-item-status"
@@ -240,7 +262,7 @@
                 </nb-option>
               </nb-select>
             </div>
-            <div class="col-1">
+            <div class="col-md-1 col-6">
               <button
                 nbButton
                 type="button"
@@ -261,7 +283,7 @@
               *ngFor="let item of clonedContract.checklist; let i = index"
             >
               <div class="row w-100">
-                <div class="col-3">
+                <div class="col-md-3 col-12">
                   <input
                     nbInput
                     [(ngModel)]="clonedContract.checklist[i].name"
@@ -275,7 +297,7 @@
                     [attr.aria-invalid]="nameInput.invalid && nameInput.touched ? true : null"
                   />
                 </div>
-                <div class="col-2">
+                <div class="col-md-2 col-12"  [ngStyle]="{'padding-top' : isPhone() ?  '12px' : ''}">
                   <input
                     nbInput
                     [(ngModel)]="clonedContract.checklist[i].range"
@@ -291,7 +313,10 @@
                   />
                   <nb-rangepicker #rangePicker></nb-rangepicker>
                 </div>
-                <div class="col-3">
+                <div class="col-md-3 col-12"  [ngStyle]="{
+                'padding-top' : isPhone() ?  '12px' : '',
+                'padding-bottom' : isPhone() ?  '12px' : ''
+                }">
                   <input
                     nbInput
                     [ngModel]="
@@ -306,7 +331,7 @@
                     [readonly]="true"
                   />
                 </div>
-                <div class="col-2">
+                <div class="col-md-2 col-6">
                   <nb-select
                     [(ngModel)]="clonedContract.checklist[i].status"
                     #statusInput="ngModel"
@@ -323,7 +348,7 @@
                     </nb-option>
                   </nb-select>
                 </div>
-                <div class="col-1 icon-container">
+                <div class="col-md-1 col-3 icon-container">
                   <nb-icon
                     icon="external-link-outline"
                     pack="eva"
@@ -331,7 +356,7 @@
                     (click)="openItemDialog(i)"
                   ></nb-icon>
                 </div>
-                <div class="col-1 icon-container">
+                <div class="col-md-1 col-3 icon-container">
                   <nb-icon
                     class="xIcon"
                     status="danger"
@@ -417,7 +442,7 @@
         </nb-list-item>
       </nb-list>
       <div class="row" style="margin-top: 1rem">
-        <div class="col-11">
+        <div class="col-md-11 col-12">
           <div class="d-flex justify-content-between">
             <label class="label" for="new-comment">Novo comentário</label>
             <label class="label" for="new-comment">Menção: *@nome*</label>
@@ -442,14 +467,15 @@
             </div>
           </fieldset>
         </div>
-        <div class="col-1">
+        <div class="col-md-1 col-12">
           <button
             nbButton
             type="button"
             fullWidth
             status="primary"
             size="large"
-            style="margin-top: 28px; height: 72px"
+            style="margin-top: 24px"
+             [ngStyle]="{'height' : isPhone() ?  '46px' : '72px'}"
             (click)="registerNewComment()"
             [disabled]="!commentInput.value"
           >
@@ -459,22 +485,9 @@
               icon="paper-plane-outline"
               pack="eva"
             ></nb-icon>
+            <span *ngIf="isPhone()">Enviar Comentário</span>
           </button>
         </div>
       </div>
     </div>
-  </nb-tab>
-  <nb-tab [tabTitle]="isPhone() ? '' : 'Gráfico de Gantt'" responsive>
-    <ngx-gantt-chart
-      *ngIf="actionsData.length > 0; else emptyChecklistAlert"
-      [taskData]="actionsData"
-      [contract]="clonedContract"
-    ></ngx-gantt-chart>
-    <ng-template #emptyChecklistAlert>
-      <div class="emptyChecklistAlert">
-        <nb-icon status="basic" icon="info-outline" pack="eva"></nb-icon>
-        <h6>Adicione um item para iniciar o gráfico</h6>
-      </div>
-    </ng-template>
-  </nb-tab>
-</nb-tabset>
+</ng-template>
