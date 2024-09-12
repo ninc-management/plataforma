@@ -442,7 +442,7 @@
         </nb-list-item>
       </nb-list>
       <div class="row" style="margin-top: 1rem">
-        <div class="col-md-11 col-8">
+        <div class="col-md-11 col-12">
           <div class="d-flex justify-content-between">
             <label class="label" for="new-comment">Novo comentário</label>
             <label class="label" for="new-comment">Menção: *@nome*</label>
@@ -467,14 +467,15 @@
             </div>
           </fieldset>
         </div>
-        <div class="col-md-1 col-4" [ngStyle]="{'padding-top' : isPhone() ?  '12px' : ''}">
+        <div class="col-md-1 col-12">
           <button
             nbButton
             type="button"
             fullWidth
             status="primary"
             size="large"
-            style="margin-top: 28px; height: 72px"
+            style="margin-top: 24px"
+             [ngStyle]="{'height' : isPhone() ?  '46px' : '72px'}"
             (click)="registerNewComment()"
             [disabled]="!commentInput.value"
           >
@@ -484,6 +485,7 @@
               icon="paper-plane-outline"
               pack="eva"
             ></nb-icon>
+            <span *ngIf="isPhone()">Enviar Comentário</span>
           </button>
         </div>
       </div>
