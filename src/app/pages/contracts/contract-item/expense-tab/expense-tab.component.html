@@ -9,7 +9,7 @@
 ></nb-smart-table>
 <ng-template #phone>
   <div class="row">
-    <div class="col-2" style="padding-left: 0; padding-right: 0">
+    <div class="col-2 pl-0 pr-0">
       <button
         nbButton
         fullWidth
@@ -35,7 +35,7 @@
     </div>
   </div>
   <nb-list>
-    <nb-list-item style="padding-left: 0px; padding-right: 0;" *ngFor="let expense of filtredExpenses; let i = index">
+    <nb-list-item class="pl-0 pr-0" *ngFor="let expense of filtredExpenses; let i = index">
       <a (click)="openDialog(i)" class="row irow">
         <div class="col-2" style="padding-left: 0;">
           <nb-user
@@ -50,13 +50,13 @@
           ></nb-user>
         </div>
         <div class="col-10">#{{ +i + 1 }} {{ expense.description }}</div>
-        <div class="col-7" style="padding-left: 0;  padding-top: 10px;">
+        <div class="col-7 pl-0 pt-2">
           <nb-icon icon="dollar-sign" pack="fa" status="success"></nb-icon>
           <span style="vertical-align: 0.1em">
             {{ expense.value }}
           </span>
         </div>
-        <div class="col-5" style="padding-left: 0; padding-top: 10px; padding-right: 0;">
+        <div class="col-5 pl-0 pt-2 pr-0">
           <nb-icon icon="calendar-alt" pack="fa" status="primary"></nb-icon>
           <span style="vertical-align: 0.1em">
             {{ [expense.created] | transformPipe: formatDate }}
