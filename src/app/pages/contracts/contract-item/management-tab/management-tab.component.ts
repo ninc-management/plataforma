@@ -78,6 +78,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   isCommentGranted = false;
   actionsData: TaskModel[] = [];
   checklistItems: ContractChecklistItem[] = [];
+  unchangedContract: Contract = new Contract();
   isChecklistEdited = false;
 
   isPhone = isPhone;
@@ -101,6 +102,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.unchangedContract = cloneDeep(this.clonedContract);
     if (this.clonedContract._id) {
       this.invoice = idToProperty(
         this.clonedContract,
@@ -169,6 +171,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   updateContractManagement(): void {
     this.contractService.editContract(this.clonedContract);
     this.sendNotificationsToNewAssignees();
+    this.unchangedContract = cloneDeep(this.clonedContract);
     this.checklistItems = cloneDeep(this.clonedContract.checklist);
     this.isChecklistEdited = false;
     this.ngForm.form.markAsPristine();
@@ -304,7 +307,19 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   removeItem(index: number): void {
     this.clonedContract.checklist.splice(index, 1);
-    this.isChecklistEdited = true;
+    if (!isEqual(this.clonedContract.checklist.length, this.checklistItems.length)) this.isChecklistEdited = true;
+  }
+
+  isNotEdited(): boolean {
+    const A = cloneDeep(this.unchangedContract);
+    const B = cloneDeep(this.clonedContract);
+    for (const item of A.checklist) {
+      delete (item as any).locals;
+    }
+    for (const item of B.checklist) {
+      delete (item as any).locals;
+    }
+    return isEqual(A, B);
   }
 
   applyManagementModel(selectedContract: Contract): void {

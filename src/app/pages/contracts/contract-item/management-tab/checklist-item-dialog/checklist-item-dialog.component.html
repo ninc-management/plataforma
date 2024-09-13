@@ -5,7 +5,7 @@
   }"
 >
   <div class="col-md-8">
-    <form #form="ngForm" (ngSubmit)="updateAction()" aria-labelledby="title">
+    <form #form="ngForm" aria-labelledby="title">
       <nb-card
         [ngStyle]="{
           'max-height.px': [] | transformPipe: windowWidth.bind(this)
@@ -205,6 +205,7 @@
                 status="primary"
                 size="large"
                 [disabled]="(!form.valid || !form.dirty) && !isChecklistEdited"
+                (click)="updateAction()"
               >
                 Atualizar
               </button>
