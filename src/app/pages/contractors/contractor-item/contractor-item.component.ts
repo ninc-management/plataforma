@@ -39,6 +39,7 @@ export class ContractorItemComponent implements OnInit {
 
   editing = false;
   submitted = false;
+  today = new Date();
   cities: string[] = [];
   states: string[] = [];
   trackByIndex = trackByIndex;
