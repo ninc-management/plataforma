@@ -307,7 +307,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
 
   removeItem(index: number): void {
     this.clonedContract.checklist.splice(index, 1);
-    if (!isEqual(this.clonedContract.checklist.length, this.checklistItems.length)) this.isChecklistEdited = true;
+    this.isChecklistEdited = !this.isNotEdited();
   }
 
   isNotEdited(): boolean {
