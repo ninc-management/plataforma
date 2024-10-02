@@ -391,7 +391,7 @@
                 fullWidth
                 status="primary"
                 size="large"
-                [disabled]="(!form.valid || !form.dirty) && !isChecklistEdited"
+                [disabled]="(!form.valid || !form.dirty || isNotEdited()) && !isChecklistEdited"
               >
                 Atualizar
               </button>
