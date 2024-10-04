@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   };
   start = startOfMonth(new Date());
   end = endOfMonth(new Date());
+  currentMonth = new Date().getMonth();
   open$: Observable<number> = of(0);
   toReceive$: Observable<number> = of(0);
   expenses$: Observable<string> = of('');
@@ -69,11 +70,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   nortanTeam!: Team;
   currentTeam = new Team();
   parettoRank: string[] = [];
+  monthBirthdays: string[] = [];
   openOPs: ContractTransactionInfo[] = [];
   openOEs: ContractTransactionInfo[] = [];
   openExpenses: ContractTransactionInfo[] = [];
   company: Company = new Company();
   isParettoRankLoaded = false;
+  isMonthBirthdaysLoaded = false;
   isOPsLoaded: boolean = false;
   isOEsLoaded: boolean = false;
   isExpensesLoaded: boolean = false;
@@ -186,7 +189,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ),
         takeUntil(this.destroy$)
       )
-      .subscribe(([contracts, companies]) => {
+      .subscribe(([contracts, companies, , , contractors]) => {
         contracts = contracts.map((contract: Contract) => this.contractService.fillContract(contract));
         this.company = companies[0];
         this.currentAnnouncement = this.company.announcement;
@@ -274,6 +277,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
             })
           );
         });
+        this.monthBirthdays = contractors
+          .filter((contractor) => contractor.birthDay?.getMonth() === this.currentMonth)
+          .map((contractor) => `${contractor.birthDay?.getDate()} - ${contractor.fullName} (${contractor.email})`)
+          .sort((a, b) => a.localeCompare(b));
+        this.isMonthBirthdaysLoaded = true;
       });
 
     this.themeService

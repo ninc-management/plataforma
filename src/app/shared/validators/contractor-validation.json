@@ -1,6 +1,7 @@
 {
   "email": { "required": true },
-  "corporateName": { "required": true },
+  "corporateName": { "required": false },
+  "birthday": { "required": false },
   "address": {
     "zipCode": {
       "required": true,

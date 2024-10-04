@@ -14,6 +14,7 @@ export class ExpansiveListComponent<T> implements OnInit {
   @Input() min: number = 5;
   @Input() max!: number;
   @Input() isLoading: boolean = false;
+  @Input() showIndex: boolean = true;
   @Input() itemsToString?: (arg0: T) => string;
   @Input() itemClickCallback?: (arg0: T) => void;
 

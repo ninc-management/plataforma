@@ -9,6 +9,7 @@ import { SocketMock } from 'types/socketio-mock';
 
 import { externalMockedCompanies } from '../mocked-data/mocked-companies';
 import { externalMockedContractors } from '../mocked-data/mocked-contractors';
+import { reviveDates } from '../utils';
 import { ContractorService } from './contractor.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
@@ -96,6 +97,7 @@ describe('ContractorService', () => {
       city: '',
       state: '',
     };
+    tmpContractor.birthDay = new Date('1991-02-03');
     tmpContractor.document = '000.000.000-13';
     tmpContractor.email = 'test3@te.st';
     tmpContractor.fullName = 'Test3';
@@ -123,7 +125,7 @@ describe('ContractorService', () => {
           case 2: {
             i += 1;
             expect(contractors.length).toBe(2);
-            expect(contractors).toEqual(mockedContractors);
+            expect(contractors).toEqual(reviveDates(mockedContractors));
             service.saveContractor(tmpContractor);
             const req1 = httpMock.expectOne('/api/contractor/');
             expect(req1.request.method).toBe('POST');
@@ -134,7 +136,7 @@ describe('ContractorService', () => {
           case 3: {
             expect(contractors.length).toBe(3);
             mockedContractors.push(tmpContractor);
-            expect(contractors).toEqual(mockedContractors);
+            expect(contractors).toEqual(reviveDates(mockedContractors));
             done();
             break;
           }

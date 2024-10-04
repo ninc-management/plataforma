@@ -84,6 +84,9 @@ export class Contractor extends Base<string> {
   @prop({ required: true })
   phone: string = '';
 
+  @prop()
+  birthDay?: Date;
+
   @prop({ required: true, type: () => [LegalRepresentative] })
   legalRepresentatives: LegalRepresentative[] = [];
 
