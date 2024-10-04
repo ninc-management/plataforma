@@ -3,7 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
-import { handle, isOfType, nameSort } from '../utils';
+import { handle, isOfType, nameSort, reviveDates } from '../utils';
 import { WebSocketService } from './web-socket.service';
 
 import { Contractor } from '@models/contractor';
@@ -49,8 +49,9 @@ export class ContractorService implements OnDestroy {
         .post('/api/contractor/all', {})
         .pipe(take(1))
         .subscribe((contractors: any) => {
+          const tmp = reviveDates(contractors);
           this.contractors$.next(
-            (contractors as Contractor[]).sort((a, b) => {
+            (tmp as Contractor[]).sort((a, b) => {
               return nameSort(1, a.fullName, b.fullName);
             })
           );
