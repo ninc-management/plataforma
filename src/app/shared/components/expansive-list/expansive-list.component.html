@@ -24,7 +24,7 @@
         }"
       >
         <nb-list-item [ngStyle]="itemClickCallback ? {'cursor': 'pointer'} : {}" *ngFor="let item of items; let i = index; trackBy: trackByIndex" (click)="itemClickCallback ? itemClickCallback(item) : null">
-          {{ i + 1 }} - {{ itemsToString ? itemsToString(item) : item }}
+          <span *ngIf="showIndex">{{ i + 1 }} - </span>{{ itemsToString ? itemsToString(item) : item }}
         </nb-list-item>
       </nb-list>
     </ng-template>
