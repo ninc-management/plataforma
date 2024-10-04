@@ -193,10 +193,18 @@ export class OngoingContractsReportComponent implements OnInit {
     const filteredContracts = this.contracts.filter((contract) => {
       if (contract.invoice) {
         const invoice = this.invoiceService.idToInvoice(contract.invoice);
+        const team = this.teamService.idToTeam(this.selectedTeam);
+        let teamMatch = false;
+        if (this.teamService.isTeamEqual(invoice.nortanTeam, this.selectedTeam)) {
+          teamMatch = true;
+        } else {
+          for (const member of invoice.team) {
+            teamMatch = team.sectors.some((teamSector) => this.teamService.isSectorEqual(teamSector, member.sector));
+            if (teamMatch) break;
+          }
+        }
         return (
-          this.teamService.isTeamEqual(invoice.nortanTeam, this.selectedTeam) &&
-          contract.status != CONTRACT_STATOOS.ARQUIVADO &&
-          contract.status != CONTRACT_STATOOS.CONCLUIDO
+          teamMatch && contract.status != CONTRACT_STATOOS.ARQUIVADO && contract.status != CONTRACT_STATOOS.CONCLUIDO
         );
       }
       return false;
