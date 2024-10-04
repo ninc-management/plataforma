@@ -370,6 +370,7 @@ export function reviveDates<T>(obj: T): T {
     if (
       value &&
       [
+        'birthDay',
         'created',
         'date',
         'dueDate',
