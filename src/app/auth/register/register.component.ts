@@ -6,8 +6,8 @@ import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
+import { buildCityList, buildStateList } from 'app/shared/data-utils';
 import { CompanyService } from 'app/shared/services/company.service';
-import { StatecityService } from 'app/shared/services/statecity.service';
 import { isPhone, tooltipTriggers } from 'app/shared/utils';
 
 import { Prospect } from '@models/prospect';
@@ -33,7 +33,6 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   tooltipTriggers = tooltipTriggers;
 
   constructor(
-    private statecityService: StatecityService,
     private authService: AuthService,
     private route: ActivatedRoute,
     private companyService: CompanyService,
@@ -46,7 +45,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
   }
 
   ngOnInit() {
-    this.states = this.statecityService.buildStateList();
+    this.states = buildStateList();
     this.authService.submitted$.next(false);
     this.companyService
       .getCompanies()
@@ -122,7 +121,7 @@ export class NgxRegisterComponent extends NbRegisterComponent implements OnInit 
 
   buildCityList(state: string): void {
     this.user.city = undefined;
-    this.cities = this.statecityService.buildCityList(state);
+    this.cities = buildCityList(state);
   }
 
   gotoTop(): void {

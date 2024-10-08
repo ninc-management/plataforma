@@ -6,8 +6,8 @@ import { BehaviorSubject, take } from 'rxjs';
 
 import { ContractorDialogComponent } from '../contractor-dialog/contractor-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { buildCityList, buildStateList } from 'app/shared/data-utils';
 import { ContractorService } from 'app/shared/services/contractor.service';
-import { StatecityService } from 'app/shared/services/statecity.service';
 import { trackByIndex } from 'app/shared/utils';
 
 import { ComercialRepresentative, Contractor, LegalRepresentative } from '@models/contractor';
@@ -49,11 +49,7 @@ export class ContractorItemComponent implements OnInit {
   selectedOption = TypesOfPerson.PESSOA_FISICA;
   personType = { hasChanged: false, type: this.typesOfPerson.PESSOA_FISICA };
 
-  constructor(
-    private contractorService: ContractorService,
-    private dialogService: NbDialogService,
-    private statecityService: StatecityService
-  ) {}
+  constructor(private contractorService: ContractorService, private dialogService: NbDialogService) {}
 
   ngOnInit(): void {
     if (this.iContractor._id !== undefined) {
@@ -64,8 +60,8 @@ export class ContractorItemComponent implements OnInit {
           ? TypesOfPerson.PESSOA_FISICA
           : TypesOfPerson.PESSOA_JURIDICA;
     }
-    this.states = this.statecityService.buildStateList();
-    if (this.contractor.address.state) this.cities = this.statecityService.buildCityList(this.contractor.address.state);
+    this.states = buildStateList();
+    if (this.contractor.address.state) this.cities = buildCityList(this.contractor.address.state);
   }
 
   ngAfterViewInit() {
@@ -83,7 +79,7 @@ export class ContractorItemComponent implements OnInit {
   }
 
   buildCityList(state: string): void {
-    this.cities = this.statecityService.buildCityList(state);
+    this.cities = buildCityList(state);
   }
 
   openRepresentativeDialog(
