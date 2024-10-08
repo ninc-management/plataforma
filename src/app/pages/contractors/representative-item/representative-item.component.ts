@@ -4,7 +4,7 @@ import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 
 import { RepresentativeTypes } from '../contractor-item/contractor-item.component';
-import { StatecityService } from 'app/shared/services/statecity.service';
+import { buildCityList, buildStateList } from 'app/shared/data-utils';
 import { isOfType } from 'app/shared/utils';
 
 import { ComercialRepresentative, Contractor, LegalRepresentative } from '@models/contractor';
@@ -33,12 +33,10 @@ export class RepresentativeItemComponent implements OnInit, AfterViewInit {
   isOfType = isOfType;
   LegalRepresentative = LegalRepresentative;
 
-  constructor(private statecityService: StatecityService) {}
-
   ngOnInit(): void {
     this.clonedRepresentative = cloneDeep(this.representative);
     this.isEditing = !this.clonedRepresentative.locals.isNew;
-    this.states = this.statecityService.buildStateList();
+    this.states = buildStateList();
   }
 
   ngAfterViewInit() {
@@ -48,7 +46,7 @@ export class RepresentativeItemComponent implements OnInit, AfterViewInit {
   }
 
   buildCityList(state: string): void {
-    this.cities = this.statecityService.buildCityList(state);
+    this.cities = buildCityList(state);
   }
 
   isLegalRepresentative(

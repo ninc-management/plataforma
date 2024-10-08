@@ -19,8 +19,8 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { buildCityList, buildStateList } from 'app/shared/data-utils';
 import { ConfigService } from 'app/shared/services/config.service';
-import { StatecityService } from 'app/shared/services/statecity.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
 import { chunkify, idToProperty, NOT, Permissions, trackByIndex } from 'app/shared/utils';
@@ -120,7 +120,6 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   idToProperty = idToProperty;
 
   constructor(
-    private statecityService: StatecityService,
     private themeService: NbThemeService,
     private dialogService: NbDialogService,
     private configService: ConfigService,
@@ -149,14 +148,14 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       )
       .subscribe(([, configs, user, ,]) => {
         if (configs[0]) this.config = configs[0].profileConfig;
-        this.states = this.statecityService.buildStateList();
+        this.states = buildStateList();
         if (this.iUser._id !== undefined) this.user = cloneDeep(this.iUser);
         else {
           this.iUser = user;
           this.user = cloneDeep(this.iUser);
           this.isCurrentUser = true;
         }
-        if (this.user.state) this.cities = this.statecityService.buildCityList(this.user.state);
+        if (this.user.state) this.cities = buildCityList(this.user.state);
         this.buildGroupedSectors();
         this.buildPositionsList();
         this.buildLevelList();
@@ -331,7 +330,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   buildCityList(state: string): void {
-    this.cities = this.statecityService.buildCityList(state);
+    this.cities = buildCityList(state);
   }
 
   uploadDialog(): void {
