@@ -1,0 +1,45 @@
+{
+  "Dashboard" : {
+    "view-individualmetrics": "Visualizar Métricas Individuais",
+    "view-sectormetrics": "Visualizar Métricas do Setor",
+    "view-companymetrics": "Visualizar Métricas da Empresa",
+    "view-openreceipts": "Visualizar Contratos com O.E.s Abertas",
+    "view-openpayments": "Visualizar Contratos com O.P.s Abertas",
+    "view-openexpenses": "Visualizar Contratos com Despesas Abertas"
+  },
+  "Contratos" : {
+    "view-contracts": "Visualizar Contratos",
+    "view-datatab": "Visualizar Dados do Contrato",
+    "edit-datatab": "Editar Dados do Contrato",
+    "view-managementtab": "Visualizar Gestão do Contrato",
+    "edit-managementtab": "Editar Gestão do Contrato",
+    "view-balancetab": "Visualizar Balanço do Contrato",
+    "edit-balancetab": "Editar Balanço do Contrato",
+    "view-receipttab": "Visualizar Ordems de Empenho do Contrato",
+    "edit-receipttab": "Editar Ordems de Empenho do Contrato",
+    "view-paymenttab": "Visualizar Ordems de Pagamento do Contrato",
+    "edit-paymenttab": "Editar Ordems de Pagamento do Contrato",
+    "view-expensetab": "Visualizar Despesas do Contrato",
+    "edit-expensetab": "Editar Despesas do Contrato"
+  },
+  "Orçamentos" : {
+    "view-invoices": "Visualizar Orçamentos",
+    "edit-invoices": "Editar Orçamentos",
+    "create-invoices": "Criar Orçamentos"
+  },
+  "Clientes" : {
+    "view-contractors": "Visualizar Clientes",
+    "edit-contractors": "Editar Clientes",
+    "create-contractors": "Criar Clientes"
+  },
+  "Fornecedores" : {
+    "view-providers": "Visualizar Fornecedores",
+    "edit-providers": "Editar Fornecedores",
+    "create-providers": "Criar Fornecedores"
+  },
+  "Times" : {
+    "view-teams": "Visualizar Times",
+    "edit-teams": "Editar Times",
+    "create-teams": "Criar Times"
+  }
+}

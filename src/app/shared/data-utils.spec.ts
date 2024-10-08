@@ -1,23 +1,12 @@
-import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 
-import { StatecityService } from './statecity.service';
+import { buildCityList, buildStateList } from './data-utils';
 
-describe('StatecityService', () => {
-  let service: StatecityService;
-
+describe('DataUtilsService', () => {
   CommonTestingModule.setUpTestBed();
 
-  beforeEach(() => {
-    service = TestBed.inject(StatecityService);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
   it('should create state list', () => {
-    expect(service.buildStateList()).toEqual([
+    expect(buildStateList()).toEqual([
       'AC',
       'AL',
       'AM',
@@ -49,7 +38,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Acre city list', () => {
-    expect(service.buildCityList('AC')).toEqual([
+    expect(buildCityList('AC')).toEqual([
       'Acrelândia',
       'Assis Brasil',
       'Brasiléia',
@@ -76,7 +65,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Alagoas city list', () => {
-    expect(service.buildCityList('AL')).toEqual([
+    expect(buildCityList('AL')).toEqual([
       'Água Branca',
       'Anadia',
       'Arapiraca',
@@ -183,7 +172,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Amazonas city list', () => {
-    expect(service.buildCityList('AM')).toEqual([
+    expect(buildCityList('AM')).toEqual([
       'Alvarães',
       'Amaturá',
       'Anamã',
@@ -250,7 +239,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Amapá city list', () => {
-    expect(service.buildCityList('AP')).toEqual([
+    expect(buildCityList('AP')).toEqual([
       'Amapá',
       'Calçoene',
       'Cutias',
@@ -271,7 +260,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Bahia city list', () => {
-    expect(service.buildCityList('BA')).toEqual([
+    expect(buildCityList('BA')).toEqual([
       'Abaíra',
       'Abaré',
       'Acajutiba',
@@ -693,7 +682,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Ceará city list', () => {
-    expect(service.buildCityList('CE')).toEqual([
+    expect(buildCityList('CE')).toEqual([
       'Abaiara',
       'Acarapé',
       'Acaraú',
@@ -882,7 +871,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Distrito Federal city list', () => {
-    expect(service.buildCityList('DF')).toEqual([
+    expect(buildCityList('DF')).toEqual([
       'Águas Claras',
       'Brasília',
       'Ceilândia',
@@ -898,7 +887,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Espírito Santo city list', () => {
-    expect(service.buildCityList('ES')).toEqual([
+    expect(buildCityList('ES')).toEqual([
       'Afonso Cláudio',
       'Água Doce do Norte',
       'Águia Branca',
@@ -981,7 +970,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Goiás city list', () => {
-    expect(service.buildCityList('GO')).toEqual([
+    expect(buildCityList('GO')).toEqual([
       'Abadia de Goiás',
       'Abadiânia',
       'Acreúna',
@@ -1232,7 +1221,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Maranhão city list', () => {
-    expect(service.buildCityList('MA')).toEqual([
+    expect(buildCityList('MA')).toEqual([
       'Açailândia',
       'Afonso Cunha',
       'Água Doce do Maranhão',
@@ -1454,7 +1443,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Minas Gerais city list', () => {
-    expect(service.buildCityList('MG')).toEqual([
+    expect(buildCityList('MG')).toEqual([
       'Abadia dos Dourados',
       'Abaeté',
       'Abre Campo',
@@ -2312,7 +2301,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Mato Grosso do Sul city list', () => {
-    expect(service.buildCityList('MS')).toEqual([
+    expect(buildCityList('MS')).toEqual([
       'Água Clara',
       'Alcinópolis',
       'Amambaí',
@@ -2394,7 +2383,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Mato Grosso city list', () => {
-    expect(service.buildCityList('MT')).toEqual([
+    expect(buildCityList('MT')).toEqual([
       'Acorizal',
       'Água Boa',
       'Alta Floresta',
@@ -2538,7 +2527,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Pará city list', () => {
-    expect(service.buildCityList('PA')).toEqual([
+    expect(buildCityList('PA')).toEqual([
       'Abaetetuba',
       'Abel Figueiredo',
       'Acará',
@@ -2686,7 +2675,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Paraíba city list', () => {
-    expect(service.buildCityList('PB')).toEqual([
+    expect(buildCityList('PB')).toEqual([
       'Água Branca',
       'Aguiar',
       'Alagoa Grande',
@@ -2914,7 +2903,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Pernambuco city list', () => {
-    expect(service.buildCityList('PE')).toEqual([
+    expect(buildCityList('PE')).toEqual([
       'Abreu e Lima',
       'Afogados da Ingazeira',
       'Afrânio',
@@ -3104,7 +3093,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Piauí city list', () => {
-    expect(service.buildCityList('PI')).toEqual([
+    expect(buildCityList('PI')).toEqual([
       'Acauã',
       'Agricolândia',
       'Água Branca',
@@ -3331,7 +3320,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Paraná city list', () => {
-    expect(service.buildCityList('PR')).toEqual([
+    expect(buildCityList('PR')).toEqual([
       'Abatiá',
       'Adrianópolis',
       'Agudos do Sul',
@@ -3735,7 +3724,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Rio de Janeiro city list', () => {
-    expect(service.buildCityList('RJ')).toEqual([
+    expect(buildCityList('RJ')).toEqual([
       'Angra dos Reis',
       'Aperibé',
       'Araruama',
@@ -3832,7 +3821,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Rio Grande do Norte city list', () => {
-    expect(service.buildCityList('RN')).toEqual([
+    expect(buildCityList('RN')).toEqual([
       'Acari',
       'Açu',
       'Afonso Bezerra',
@@ -4004,7 +3993,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Rondônia city list', () => {
-    expect(service.buildCityList('RO')).toEqual([
+    expect(buildCityList('RO')).toEqual([
       "Alta Floresta d'Oeste",
       'Alto Alegre do Parecis',
       'Alto Paraíso',
@@ -4061,7 +4050,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Roraima city list', () => {
-    expect(service.buildCityList('RR')).toEqual([
+    expect(buildCityList('RR')).toEqual([
       'Alto Alegre',
       'Amajari',
       'Boa Vista',
@@ -4081,7 +4070,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Rio Grande do Sul city list', () => {
-    expect(service.buildCityList('RS')).toEqual([
+    expect(buildCityList('RS')).toEqual([
       'Aceguá',
       'Água Santa',
       'Agudo',
@@ -4582,7 +4571,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Santa Catarina city list', () => {
-    expect(service.buildCityList('SC')).toEqual([
+    expect(buildCityList('SC')).toEqual([
       'Abdon Batista',
       'Abelardo Luz',
       'Agrolândia',
@@ -4880,7 +4869,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Sergipe city list', () => {
-    expect(service.buildCityList('SE')).toEqual([
+    expect(buildCityList('SE')).toEqual([
       'Amparo de São Francisco',
       'Aquidabã',
       'Aracaju',
@@ -4960,7 +4949,7 @@ describe('StatecityService', () => {
   });
 
   it('should create São Paulo city list', () => {
-    expect(service.buildCityList('SP')).toEqual([
+    expect(buildCityList('SP')).toEqual([
       'Adamantina',
       'Adolfo',
       'Aguaí',
@@ -5610,7 +5599,7 @@ describe('StatecityService', () => {
   });
 
   it('should create Tocantins city list', () => {
-    expect(service.buildCityList('TO')).toEqual([
+    expect(buildCityList('TO')).toEqual([
       'Abreulândia',
       'Aguiarnópolis',
       'Aliança do Tocantins',
