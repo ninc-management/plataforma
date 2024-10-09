@@ -1,49 +1,52 @@
-db.users.find().forEach((user) => {
-  const company = db.companies.findOne();
-  user.company = company._id;
-  db.users.replaceOne({ _id: user._id }, user);
-});
+const default_permissions = {
+  "Dashboard" : [
+    "Visualizar Métricas Individuais",
+    "Visualizar Métricas do Setor",
+    "Visualizar Métricas da Empresa",
+    "Visualizar Contratos com O.E.s Abertas",
+    "Visualizar Contratos com O.P.s Abertas",
+    "Visualizar Contratos com Despesas Abertas"
+  ],
+  "Contratos" : [
+    "Visualizar Contratos",
+    "Visualizar Dados do Contrato",
+    "Editar Dados do Contrato",
+    "Visualizar Gestão do Contrato",
+    "Editar Gestão do Contrato",
+    "Visualizar Balanço do Contrato",
+    "Editar Balanço do Contrato",
+    "Visualizar Ordems de Empenho do Contrato",
+    "Editar Ordems de Empenho do Contrato",
+    "Visualizar Ordems de Pagamento do Contrato",
+    "Editar Ordems de Pagamento do Contrato",
+    "Visualizar Despesas do Contrato",
+    "Editar Despesas do Contrato"
+  ],
+  "Orçamentos" : [
+    "Visualizar Orçamentos",
+    "Editar Orçamentos",
+    "Criar Orçamentos"
+  ],
+  "Clientes" : [
+    "Visualizar Clientes",
+    "Editar Clientes",
+    "Criar Clientes"
+  ],
+  "Fornecedores" : [
+    "Visualizar Fornecedores",
+    "Editar Fornecedores",
+    "Criar Fornecedores"
+  ],
+  "Times" : [
+    "Visualizar Times",
+    "Editar Times",
+    "Criar Times"
+  ]
+};
 
 db.platformconfigs.find().forEach((config) => {
-  config.oneDriveConfig.teamTransactions = {
-    oneDriveId: '',
-    folderId: '',
-  };
-  config.oneDriveConfig.providerFiles = {
-    oneDriveId: '',
-    folderId: '',
-  };
-  delete config.oneDriveConfig.teams;
-  delete config.oneDriveConfig.providers;
+  for (const i in config.profileConfig.positions) {
+    config.profileConfig.positions[i].permission = default_permissions;
+  }
   db.platformconfigs.replaceOne({ _id: config._id }, config);
 });
-
-db.invoices.find().forEach((invoice) => {
-  invoice.paymentForm = 'Por entrega';
-  db.invoices.replaceOne({ _id: invoice._id }, invoice);
-});
-
-db.certificates.drop();
-db.contractors.drop();
-db.contracts.drop();
-db.courses.drop();
-db.expenses.drop();
-db.internaltransactions.drop();
-db.invoices.drop();
-db.messages.drop();
-db.notifications.drop();
-db.platformconfigs.drop();
-db.promotions.drop();
-db.providers.drop();
-db.teams.drop();
-db.transactions.drop();
-
-db.users.find().forEach((user) => {
-  db.userrefs.insertOne({ _id: user._id, email: user.email, active: user.active, company: user.company });
-});
-db.users.drop();
-
-db.prospects.find().forEach((prospect) => {
-  db.prospectrefs.insertOne({ _id: prospect._id, email: prospect.email, active: prospect.active, company: prospect.company });
-});
-db.prospects.drop();

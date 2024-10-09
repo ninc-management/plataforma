@@ -25,12 +25,32 @@ export class BusinessFees {
   support: FeesPercentages = new FeesPercentages();
 }
 
+export class Resources {
+  @prop({ required: true })
+  dashboard: string[] = [];
+
+  @prop({ required: true })
+  invoices: string[] = [];
+
+  @prop({ required: true })
+  contracts: string[] = [];
+
+  @prop({ required: true })
+  clients: string[] = [];
+
+  @prop({ required: true })
+  contractors: string[] = [];
+
+  @prop({ required: true })
+  teams: string[] = [];
+}
+
 export class AccessControl {
   @prop({ required: true })
   roleTypeName: string = '';
 
   @prop({ required: true })
-  permission: string = '';
+  permission: Resources = new Resources();
 }
 
 export class ProfileConfig {
