@@ -44,14 +44,6 @@
             <ngx-time-series *ngIf="isTimeSeriesLoaded" [series$]="timeSeries$"></ngx-time-series>
           </nb-card>
         </div>
-        <div class="col-12">
-          <ngx-expansive-list
-            [title]="'Aniversariantes do Mês'"
-            [items]="monthBirthdays"
-            [isLoading]="!isMonthBirthdaysLoaded"
-            [showIndex]="false"
-          ></ngx-expansive-list>
-        </div>
       </div>
       <div class="col-12 col-md-6">
         <div class="col-12">
@@ -181,5 +173,13 @@
         </div>
       </div>
     </nb-card>
+    <div class="col-md-6" style="padding: 0;">
+      <ngx-expansive-list
+        [title]="'Aniversariantes do Mês'"
+        [items]="monthBirthdays"
+        [isLoading]="!isMonthBirthdaysLoaded"
+        [showIndex]="false"
+      ></ngx-expansive-list>
+    </div>
   </nb-tab>
 </nb-tabset>
