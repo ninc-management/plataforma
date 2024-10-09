@@ -55,7 +55,7 @@
         </div>
         <div class="col-12">
           <ngx-expansive-list *ngIf="isFinancialManager"
-            [title]="'Contratos com OP abertas'"
+            [title]="'Contratos com OP abertas (' + openOPs.length + ')'"
             [items]="openOPs"
             [isLoading]="!isOPsLoaded"
             [itemsToString]="contractTransactionInfoToString.bind(this)"
@@ -64,7 +64,7 @@
         </div>
         <div class="col-12">
           <ngx-expansive-list *ngIf="isFinancialManager"
-            [title]="'Contratos com OE abertas'"
+            [title]="'Contratos com OE abertas (' + openOEs.length + ')'"
             [items]="openOEs"
             [isLoading]="!isOEsLoaded"
             [itemsToString]="contractTransactionInfoToString.bind(this)"
@@ -73,7 +73,7 @@
         </div>
         <div class="col-12">
           <ngx-expansive-list *ngIf="isFinancialManager"
-            [title]="'Contratos com Despesas abertas'"
+            [title]="'Contratos com Despesas abertas (' + openExpenses.length + ')'"
             [items]="openExpenses"
             [isLoading]="!isExpensesLoaded"
             [itemsToString]="contractTransactionInfoToString.bind(this)"
