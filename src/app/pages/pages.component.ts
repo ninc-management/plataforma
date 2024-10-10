@@ -19,13 +19,13 @@ import { InvoiceDialogComponent } from 'app/pages/invoices/invoice-dialog/invoic
 import { TEAM_COMPONENT_TYPES, TeamDialogComponent } from 'app/pages/teams/team-dialog/team-dialog.component';
 import { ConfirmationDialogComponent } from 'app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TransactionDialogComponent } from 'app/shared/components/transactions/transaction-dialog/transaction-dialog.component';
+import { PERMISSIONS, RESOURCES } from 'app/shared/data-utils';
 import { registerIcons } from 'app/shared/icon-utils';
 import { AppUpdaterService } from 'app/shared/services/app-updater.service';
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { WebSocketService } from 'app/shared/services/web-socket.service';
-import { Permissions } from 'app/shared/utils';
 
 import { Company } from '@models/company';
 import { EventsChecker } from '@models/platformConfig';
@@ -82,7 +82,7 @@ export class PagesComponent implements OnDestroy, DoCheck, AfterViewInit, OnInit
       this.configService.getConfig(),
       this.teamService.getTeams(),
       this.companyService.getCompanies(),
-      this.accessChecker.isGranted(Permissions.ELO_PRINCIPAL, 'view-users'),
+      this.accessChecker.isGranted(PERMISSIONS.usuário, RESOURCES.view_users),
     ])
       .pipe(
         takeUntil(this.destroy$),

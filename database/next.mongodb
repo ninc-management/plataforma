@@ -1,47 +1,48 @@
 const default_permissions = {
-  "Dashboard" : [
-    "Visualizar Métricas Individuais",
-    "Visualizar Métricas do Setor",
-    "Visualizar Métricas da Empresa",
-    "Visualizar Contratos com O.E.s Abertas",
-    "Visualizar Contratos com O.P.s Abertas",
-    "Visualizar Contratos com Despesas Abertas"
+  dashboard: [
+    'Visualizar Dashboard',
+    'Visualizar Métricas Individuais',
+    'Visualizar Métricas do Setor',
+    'Visualizar Métricas da Empresa',
+    'Visualizar Contratos com O.E.s Abertas',
+    'Visualizar Contratos com O.P.s Abertas',
+    'Visualizar Contratos com Despesas Abertas',
   ],
-  "Contratos" : [
-    "Visualizar Contratos",
-    "Visualizar Dados do Contrato",
-    "Editar Dados do Contrato",
-    "Visualizar Gestão do Contrato",
-    "Editar Gestão do Contrato",
-    "Visualizar Balanço do Contrato",
-    "Editar Balanço do Contrato",
-    "Visualizar Ordems de Empenho do Contrato",
-    "Editar Ordems de Empenho do Contrato",
-    "Visualizar Ordems de Pagamento do Contrato",
-    "Editar Ordems de Pagamento do Contrato",
-    "Visualizar Despesas do Contrato",
-    "Editar Despesas do Contrato"
+  configurações: [
+    "Visualizar Configurações",
+    "Editar Configurações"
   ],
-  "Orçamentos" : [
-    "Visualizar Orçamentos",
-    "Editar Orçamentos",
-    "Criar Orçamentos"
+  perfil: ['Visualizar Perfil', 'Editar Perfil', "Editar Cargos"],
+  usuário: ['Visualizar Usuários', 'Editar Usuários', 'Criar Usuários', 'Editar Status de Acesso à Plataforma'],
+  contratos: [
+    'Visualizar Contratos',
+    'Visualizar Dados do Contrato',
+    'Editar Dados do Contrato',
+    'Visualizar Gestão do Contrato',
+    'Editar Gestão do Contrato',
+    'Visualizar Balanço do Contrato',
+    'Editar Balanço do Contrato',
+    'Visualizar Ordems de Empenho do Contrato',
+    'Editar Ordems de Empenho do Contrato',
+    'Visualizar Ordems de Pagamento do Contrato',
+    'Editar Ordems de Pagamento do Contrato',
+    'Visualizar Despesas do Contrato',
+    'Editar Despesas do Contrato',
   ],
-  "Clientes" : [
-    "Visualizar Clientes",
-    "Editar Clientes",
-    "Criar Clientes"
+  orçamentos: ['Visualizar Orçamentos', 'Editar Orçamentos', 'Criar Orçamentos'],
+  clientes: ['Visualizar Clientes', 'Editar Clientes', 'Criar Clientes'],
+  fornecedores: ['Visualizar Fornecedores', 'Editar Fornecedores', 'Criar Fornecedores'],
+  times: ['Visualizar Times', 'Editar Times', 'Criar Times'],
+  cursos: [
+    'Visualizar Cursos',
+    'Editar Cursos',
+    'Criar Cursos',
   ],
-  "Fornecedores" : [
-    "Visualizar Fornecedores",
-    "Editar Fornecedores",
-    "Criar Fornecedores"
+  promoções: [
+    'Visualizar Promoções',
+    'Editar Promoções',
+    'Criar Promoções',
   ],
-  "Times" : [
-    "Visualizar Times",
-    "Editar Times",
-    "Criar Times"
-  ]
 };
 
 db.platformconfigs.find().forEach((config) => {

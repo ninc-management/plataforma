@@ -30,19 +30,34 @@ export class Resources {
   dashboard: string[] = [];
 
   @prop({ required: true })
-  invoices: string[] = [];
+  perfil: string[] = [];
 
   @prop({ required: true })
-  contracts: string[] = [];
+  configurações: string[] = [];
 
   @prop({ required: true })
-  clients: string[] = [];
+  usuário: string[] = [];
 
   @prop({ required: true })
-  contractors: string[] = [];
+  orçamentos: string[] = [];
 
   @prop({ required: true })
-  teams: string[] = [];
+  contratos: string[] = [];
+
+  @prop({ required: true })
+  clientes: string[] = [];
+
+  @prop({ required: true })
+  fornecedores: string[] = [];
+
+  @prop({ required: true })
+  times: string[] = [];
+
+  @prop({ required: true })
+  cursos: string[] = [];
+
+  @prop({ required: true })
+  promoções: string[] = [];
 }
 
 export class AccessControl {
