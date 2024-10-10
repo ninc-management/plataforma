@@ -197,7 +197,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
     this.errorInPositions = this.clonedConfig.profileConfig.positions.some(
       (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.PARENTS.includes(this.newRole.roleTypeName)
     );
-    if (!this.errorInPositions) this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
+    //if (!this.errorInPositions) this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
     this.newRole.roleTypeName = '';
     this.newRole.permission = '';
   }

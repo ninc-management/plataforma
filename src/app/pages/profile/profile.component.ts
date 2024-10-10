@@ -19,11 +19,11 @@ import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { map, skipWhile, take, takeUntil } from 'rxjs/operators';
 
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
-import { buildCityList, buildStateList } from 'app/shared/data-utils';
+import { buildCityList, buildStateList, PERMISSIONS, RESOURCES } from 'app/shared/data-utils';
 import { ConfigService } from 'app/shared/services/config.service';
 import { TeamService } from 'app/shared/services/team.service';
 import { UserService } from 'app/shared/services/user.service';
-import { chunkify, idToProperty, NOT, Permissions, trackByIndex } from 'app/shared/utils';
+import { chunkify, idToProperty, NOT, trackByIndex } from 'app/shared/utils';
 
 import { ProfileConfig } from '@models/platformConfig';
 import { Sector, SectorLocals } from '@models/shared/sector';
@@ -75,7 +75,8 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
     remoto: { o: 'Remoto', a: 'Remota' },
   };
   LEVELS: string[] = [];
-  permissions = Permissions;
+  PERMISSIONS = PERMISSIONS;
+  RESOURCES = RESOURCES;
   isDataLoading = true;
   THEMES = [
     {
@@ -104,7 +105,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
   get positionMessage(): string {
     let response = '';
     this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'edit-level')
+      .isGranted(PERMISSIONS.perfil, RESOURCES.edit_permission_level)
       .pipe(take(1))
       .subscribe(
         (result: boolean) =>
@@ -304,7 +305,7 @@ export class ProfileComponent implements OnInit, OnDestroy, DoCheck {
       });
 
     this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'edit-level-position')
+      .isGranted(PERMISSIONS.perfil, RESOURCES.edit_permission_level)
       .pipe(take(1))
       .subscribe((isGranted) => (this.isEloPrincipal = isGranted));
   }

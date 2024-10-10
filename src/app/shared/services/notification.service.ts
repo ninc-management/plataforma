@@ -92,7 +92,7 @@ export class NotificationService implements OnDestroy {
         map(([users, config, , _]) => {
           return users.filter((user) =>
             config[0].profileConfig.positions.some((pos) => {
-              return user.position.includes(pos.roleTypeName) && pos.permission === 'Financeiro';
+              return user.position.includes(pos.roleTypeName) && Object(pos.permission).keys().includes('Financeiro');
             })
           );
         })

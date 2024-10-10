@@ -181,11 +181,10 @@ describe('AuthGuard', () => {
   });
 
   it('loadList should work', (done: DoneFn) => {
-    const accessControl = {
-      Administrador: { parent: 'Diretor de T.I' },
-      Membro: { parent: 'Associado' },
-      Financeiro: { parent: 'Diretor Financeiro' },
-    };
+    const accessControl: any = {};
+    mockedConfigs[0].profileConfig.positions.forEach((position) => {
+      accessControl[position.roleTypeName] = Object(position.permission);
+    });
     guard
       .loadList()
       .pipe(take(1))

@@ -12,7 +12,7 @@ import { PromotionsComponent } from './promotions/promotions.component';
 import { ProvidersComponent } from './providers/providers.component';
 import { TeamsComponent } from './teams/teams.component';
 import { UsersComponent } from './users/users.component';
-import { Permissions } from 'app/shared/utils';
+import { PERMISSIONS, RESOURCES } from 'app/shared/data-utils';
 
 const routes: Routes = [
   {
@@ -23,80 +23,80 @@ const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         data: {
-          resource: 'view-dashboard',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_dashboard,
+          permission: PERMISSIONS.dashboard,
         },
       },
       {
         path: 'profile',
         component: ProfileComponent,
         data: {
-          resource: 'view-profile',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_profile,
+          permission: PERMISSIONS.perfil,
         },
       },
       {
         path: 'invoices',
         component: InvoicesComponent,
         data: {
-          resource: 'view-invoices',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_invoices,
+          permission: PERMISSIONS.orçamentos,
         },
       },
       {
         path: 'contracts',
         component: ContractsComponent,
         data: {
-          resource: 'view-contracts',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_contracts,
+          permission: PERMISSIONS.contratos,
         },
       },
       {
         path: 'contractors',
         component: ContractorsComponent,
         data: {
-          resource: 'view-contractors',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_contractors,
+          permission: PERMISSIONS.clientes,
         },
       },
       {
         path: 'providers',
         component: ProvidersComponent,
         data: {
-          resource: 'view-providers',
-          permission: Permissions.ASSOCIADO,
+          resource: RESOURCES.view_providers,
+          permission: PERMISSIONS.fornecedores,
         },
       },
       {
         path: 'users',
         component: UsersComponent,
         data: {
-          resource: 'view-users',
-          permission: Permissions.ELO_PRINCIPAL,
+          resource: RESOURCES.view_users,
+          permission: PERMISSIONS.usuário,
         },
       },
       {
         path: 'teams',
         component: TeamsComponent,
         data: {
-          resource: 'view-teams',
-          permission: Permissions.ELO_PRINCIPAL,
+          resource: RESOURCES.view_teams,
+          permission: PERMISSIONS.times,
         },
       },
       {
         path: 'promotions',
         component: PromotionsComponent,
         data: {
-          resource: 'view-promotions',
-          permission: Permissions.ELO_PRINCIPAL,
+          resource: RESOURCES.view_promotions,
+          permission: PERMISSIONS.promoções,
         },
       },
       {
         path: 'courses',
         component: CoursesComponent,
         data: {
-          resource: 'view-courses',
-          permission: Permissions.ELO_PRINCIPAL,
+          resource: RESOURCES.view_courses,
+          permission: PERMISSIONS.cursos,
         },
       },
       {

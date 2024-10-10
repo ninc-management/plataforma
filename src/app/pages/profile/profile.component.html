@@ -347,12 +347,12 @@
                       <label class="label" for="input-level">
                         Cargo:
                         <nb-icon
-                          *ngIf="NOT(accessChecker.isGranted(permissions.ELO_PRINCIPAL, 'edit-level')) | async"
+                          *ngIf="NOT(accessChecker.isGranted(PERMISSIONS.perfil, RESOURCES.edit_permission_level)) | async"
                           status="info"
                           icon="info"
                           pack="eva"
                           [options]="{ animation: { type: 'pulse' } }"
-                          nbTooltip="Somente o elo principal pode alterar o cargo dos associados."
+                          nbTooltip="Somente o gestor pode alterar o cargo dos associados."
                           nbTooltipPlacement="top"
                           nbTooltipStatus="info"
                         ></nb-icon>

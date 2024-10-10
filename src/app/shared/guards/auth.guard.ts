@@ -15,83 +15,6 @@ import { concatMap, map, skipWhile, switchMap, take, tap } from 'rxjs/operators'
 
 import { ConfigService } from '../services/config.service';
 import { AuthService } from 'app/auth/auth.service';
-// TODO: Remove this part
-const accessControl = {
-  Parceiro: {
-    parceiro: '*',
-  },
-  Parceira: {
-    parent: 'Parceiro',
-  },
-  Cliente: {
-    parent: 'Parceiro',
-    cliente: '*',
-  },
-  Associado: {
-    associado: '*',
-  },
-  Associada: {
-    parent: 'Associado',
-  },
-  'Elo Principal': {
-    parent: 'Associado',
-    'elo-principal': '*',
-  },
-  'Elo Principal de Administração': {
-    parent: 'Elo Principal',
-  },
-  'Elo Principal de Arquitetura': {
-    parent: 'Elo Principal',
-  },
-  'Elo Principal de Projetos Complementares': {
-    parent: 'Elo Principal',
-  },
-  'Elo Principal de Recursos Hídricos e Meio Ambiente': {
-    parent: 'Elo Principal',
-  },
-  'Elo Principal de Engenharia Civil': {
-    parent: 'Elo Principal',
-  },
-  'Diretor Comercial': {
-    parent: 'Elo Principal',
-    dc: '*',
-  },
-  'Diretora Comercial': {
-    parent: 'Diretor Comercial',
-  },
-  'Diretor Financeiro': {
-    parent: 'Diretor Comercial',
-    df: '*',
-  },
-  'Diretora Financeira': {
-    parent: 'Diretor Financeiro',
-  },
-  'Diretor Administrativo': {
-    parent: 'Elo Principal',
-    da: '*',
-  },
-  'Diretora Administrativa': {
-    parent: 'Diretor Administrativo',
-  },
-  'Assessor Executivo Remoto': {
-    parent: 'Elo Principal',
-    aer: '*',
-  },
-  'Assessora Executiva Remota': {
-    parent: 'Assessor Executivo Remoto',
-  },
-  'Elo Principal Nortan': {
-    parent: 'Diretor Financeiro',
-    'elo-nortan': '*',
-  },
-  'Diretor de T.I': {
-    parent: 'Elo Principal Nortan',
-    dti: '*',
-  },
-  'Diretora de T.I': {
-    parent: 'Diretor de T.I',
-  },
-};
 
 @Injectable({
   providedIn: 'root',
@@ -154,34 +77,13 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         const obj: any = {};
         if (configs[0]) {
           configs[0].profileConfig.positions.forEach((position) => {
-            if (position.permission == 'Administrador') {
-              obj[position.roleTypeName] = {
-                parent: 'Diretor de T.I',
-              };
-            } else if (position.permission == 'Membro') {
-              obj[position.roleTypeName] = {
-                parent: 'Associado',
-              };
-            } else if (position.permission == 'Financeiro') {
-              obj[position.roleTypeName] = {
-                parent: 'Diretor Financeiro',
-              };
-            } else if (position.permission == 'AER Natan®') {
-              obj[position.roleTypeName] = {
-                parent: 'Assessor Executivo Remoto',
-              };
-            } else if (position.permission == 'Comercial') {
-              obj[position.roleTypeName] = {
-                parent: 'Diretor Comercial',
-              };
-            }
+            obj[position.roleTypeName] = Object(position.permission);
           });
         }
         return obj;
       }),
-      tap((obj: any) => {
-        const objMerged = { ...accessControl, ...obj };
-        this.aclService.setAccessControl(objMerged as any);
+      tap((acl: any) => {
+        this.aclService.setAccessControl(acl as any);
       })
     );
   }

@@ -18,12 +18,13 @@ import {
   COMPONENT_TYPES,
   ConfigDialogComponent,
 } from 'app/@theme/components/header/config/config-dialog/config-dialog.component';
+import { PERMISSIONS, RESOURCES } from 'app/shared/data-utils';
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService } from 'app/shared/services/config.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { UserService } from 'app/shared/services/user.service';
 import { applyBoldToMention } from 'app/shared/string-utils';
-import { elapsedTime, idToProperty, isPhone, Permissions, sortNotifications, trackByIndex } from 'app/shared/utils';
+import { elapsedTime, idToProperty, isPhone, sortNotifications, trackByIndex } from 'app/shared/utils';
 
 import { Company } from '@models/company';
 import { Notification, NotificationTags } from '@models/notification';
@@ -132,7 +133,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
 
     this.accessChecker
-      .isGranted(Permissions.ELO_PRINCIPAL, 'change-configs')
+      .isGranted(PERMISSIONS.configurações, RESOURCES.view_config)
       .pipe(take(1))
       .subscribe((isGranted) => {
         if (isGranted) this.userMenu.splice(1, 0, { title: 'Configurações', tag: 'config' });
