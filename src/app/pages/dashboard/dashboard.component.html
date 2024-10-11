@@ -44,14 +44,6 @@
             <ngx-time-series *ngIf="isTimeSeriesLoaded" [series$]="timeSeries$"></ngx-time-series>
           </nb-card>
         </div>
-        <div class="col-12">
-          <ngx-expansive-list
-            [title]="'Aniversariantes do Mês'"
-            [items]="monthBirthdays"
-            [isLoading]="!isMonthBirthdaysLoaded"
-            [showIndex]="false"
-          ></ngx-expansive-list>
-        </div>
       </div>
       <div class="col-12 col-md-6">
         <div class="col-12">
@@ -137,31 +129,41 @@
         </a>
       </div>
     </nb-card>
-    <div class="col-12 col-md-6" style="padding: 0">
-      <nb-card *ngIf="currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE; else dark">
-        <iframe
-          src="https://embed.styledcalendar.com/#pJb2THZfDOvcqttqQsVn"
-          title="Styled Calendar"
-          scrolling="no"
-          class="styled-calendar-container"
-          style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem; overflow-y: clip;"
-          data-cy="calendar-embed-iframe"
-        ></iframe>
-        <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
-      </nb-card>
-      <ng-template #dark>
-        <nb-card>
+    <div class="row">
+      <div class="col-md-6">
+        <nb-card *ngIf="currentTheme === THEMES.DEFAULT || currentTheme === THEMES.CORPORATE; else dark">
           <iframe
-            src="https://embed.styledcalendar.com/#8TgvOZJI7arWLIrG6CXF"
+            src="https://embed.styledcalendar.com/#pJb2THZfDOvcqttqQsVn"
             title="Styled Calendar"
             scrolling="no"
             class="styled-calendar-container"
-            style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem"
+            style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem; overflow-y: clip;"
             data-cy="calendar-embed-iframe"
           ></iframe>
           <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
         </nb-card>
-      </ng-template>
+        <ng-template #dark>
+          <nb-card>
+            <iframe
+              src="https://embed.styledcalendar.com/#8TgvOZJI7arWLIrG6CXF"
+              title="Styled Calendar"
+              scrolling="no"
+              class="styled-calendar-container"
+              style="border: 0px solid rgb(0, 0, 0); border-radius: 0.35rem; height: 650px; padding: 0.5rem"
+              data-cy="calendar-embed-iframe"
+            ></iframe>
+            <script async type="module" src="https://embed.styledcalendar.com/assets/parent-window.js"></script>
+          </nb-card>
+        </ng-template>
+      </div>
+      <div class="col-md-6">
+        <ngx-expansive-list
+          [title]="'Clientes Aniversariantes do Mês'"
+          [items]="monthBirthdays"
+          [isLoading]="!isMonthBirthdaysLoaded"
+          [showIndex]="false"
+        ></ngx-expansive-list>
+      </div>
     </div>
   </nb-tab>
   <nb-tab
