@@ -1,45 +1,71 @@
 {
-  "Dashboard" : {
-    "view-individualmetrics": "Visualizar Métricas Individuais",
-    "view-sectormetrics": "Visualizar Métricas do Setor",
-    "view-companymetrics": "Visualizar Métricas da Empresa",
-    "view-openreceipts": "Visualizar Contratos com O.E.s Abertas",
-    "view-openpayments": "Visualizar Contratos com O.P.s Abertas",
-    "view-openexpenses": "Visualizar Contratos com Despesas Abertas"
+  "dashboard": {
+    "view_dashboard": "Visualizar Dashboard",
+    "view_individualmetrics": "Visualizar Métricas Individuais",
+    "view_sectormetrics": "Visualizar Métricas do Setor",
+    "view_companymetrics": "Visualizar Métricas da Empresa",
+    "view_openreceipts": "Visualizar Contratos com O.E.s Abertas",
+    "view_openpayments": "Visualizar Contratos com O.P.s Abertas",
+    "view_openexpenses": "Visualizar Contratos com Despesas Abertas"
   },
-  "Contratos" : {
-    "view-contracts": "Visualizar Contratos",
-    "view-datatab": "Visualizar Dados do Contrato",
-    "edit-datatab": "Editar Dados do Contrato",
-    "view-managementtab": "Visualizar Gestão do Contrato",
-    "edit-managementtab": "Editar Gestão do Contrato",
-    "view-balancetab": "Visualizar Balanço do Contrato",
-    "edit-balancetab": "Editar Balanço do Contrato",
-    "view-receipttab": "Visualizar Ordems de Empenho do Contrato",
-    "edit-receipttab": "Editar Ordems de Empenho do Contrato",
-    "view-paymenttab": "Visualizar Ordems de Pagamento do Contrato",
-    "edit-paymenttab": "Editar Ordems de Pagamento do Contrato",
-    "view-expensetab": "Visualizar Despesas do Contrato",
-    "edit-expensetab": "Editar Despesas do Contrato"
+  "configurações": {
+    "view_config": "Visualizar Configurações",
+    "edit_config": "Editar Configurações"
   },
-  "Orçamentos" : {
-    "view-invoices": "Visualizar Orçamentos",
-    "edit-invoices": "Editar Orçamentos",
-    "create-invoices": "Criar Orçamentos"
+  "perfil": {
+    "view_profile": "Visualizar Perfil",
+    "edit_profile": "Editar Perfil",
+    "edit_permission_level": "Editar Cargos"
   },
-  "Clientes" : {
-    "view-contractors": "Visualizar Clientes",
-    "edit-contractors": "Editar Clientes",
-    "create-contractors": "Criar Clientes"
+  "usuário": {
+    "view_users": "Visualizar Usuários",
+    "edit_users": "Editar Usuários",
+    "create_users": "Criar Usuários",
+    "user_active": "Editar Status de Acesso à Plataforma"
   },
-  "Fornecedores" : {
-    "view-providers": "Visualizar Fornecedores",
-    "edit-providers": "Editar Fornecedores",
-    "create-providers": "Criar Fornecedores"
+  "contratos": {
+    "view_contracts": "Visualizar Contratos",
+    "view_datatab": "Visualizar Dados do Contrato",
+    "edit_datatab": "Editar Dados do Contrato",
+    "view_managementtab": "Visualizar Gestão do Contrato",
+    "edit_managementtab": "Editar Gestão do Contrato",
+    "view_balancetab": "Visualizar Balanço do Contrato",
+    "edit_balancetab": "Editar Balanço do Contrato",
+    "view_receipttab": "Visualizar Ordems de Empenho do Contrato",
+    "edit_receipttab": "Editar Ordems de Empenho do Contrato",
+    "view_paymenttab": "Visualizar Ordems de Pagamento do Contrato",
+    "edit_paymenttab": "Editar Ordems de Pagamento do Contrato",
+    "view_expensetab": "Visualizar Despesas do Contrato",
+    "edit_expensetab": "Editar Despesas do Contrato"
   },
-  "Times" : {
-    "view-teams": "Visualizar Times",
-    "edit-teams": "Editar Times",
-    "create-teams": "Criar Times"
+  "orçamentos": {
+    "view_invoices": "Visualizar Orçamentos",
+    "edit_invoices": "Editar Orçamentos",
+    "create_invoices": "Criar Orçamentos"
+  },
+  "clientes": {
+    "view_contractors": "Visualizar Clientes",
+    "edit_contractors": "Editar Clientes",
+    "create_contractors": "Criar Clientes"
+  },
+  "fornecedores": {
+    "view_providers": "Visualizar Fornecedores",
+    "edit_providers": "Editar Fornecedores",
+    "create_providers": "Criar Fornecedores"
+  },
+  "times": {
+    "view_teams": "Visualizar Times",
+    "edit_teams": "Editar Times",
+    "create_teams": "Criar Times"
+  },
+  "cursos": {
+    "view_courses": "Visualizar Cursos",
+    "edit_courses": "Editar Cursos",
+    "create_courses": "Criar Cursos"
+  },
+  "promoções": {
+    "view_promotions": "Visualizar Promoções",
+    "edit_promotions": "Editar Promoções",
+    "create_promotions": "Criar Promoções"
   }
 }

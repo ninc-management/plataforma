@@ -25,12 +25,47 @@ export class BusinessFees {
   support: FeesPercentages = new FeesPercentages();
 }
 
+export class Resources {
+  @prop({ required: true })
+  dashboard: string[] = [];
+
+  @prop({ required: true })
+  perfil: string[] = [];
+
+  @prop({ required: true })
+  configurações: string[] = [];
+
+  @prop({ required: true })
+  usuário: string[] = [];
+
+  @prop({ required: true })
+  orçamentos: string[] = [];
+
+  @prop({ required: true })
+  contratos: string[] = [];
+
+  @prop({ required: true })
+  clientes: string[] = [];
+
+  @prop({ required: true })
+  fornecedores: string[] = [];
+
+  @prop({ required: true })
+  times: string[] = [];
+
+  @prop({ required: true })
+  cursos: string[] = [];
+
+  @prop({ required: true })
+  promoções: string[] = [];
+}
+
 export class AccessControl {
   @prop({ required: true })
   roleTypeName: string = '';
 
   @prop({ required: true })
-  permission: string = '';
+  permission: Resources = new Resources();
 }
 
 export class ProfileConfig {
