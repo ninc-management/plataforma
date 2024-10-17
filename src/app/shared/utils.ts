@@ -85,6 +85,30 @@ export function isPhone(): boolean {
   return doc.documentElement.clientWidth <= breakpoints['md'];
 }
 
+export function omitDeep<T>(collection: T, excludeKeys: string[]): T {
+  const clonedCollection = cloneDeep(collection);
+
+  function omitFn(value: any) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      excludeKeys.forEach((key) => {
+        delete value[key];
+      });
+    }
+  }
+
+  function traverse(value: any) {
+    if (Array.isArray(value)) {
+      value.forEach(traverse);
+    } else if (value && typeof value === 'object') {
+      omitFn(value);
+      Object.keys(value).forEach((key) => traverse(value[key]));
+    }
+  }
+
+  traverse(clonedCollection);
+  return clonedCollection;
+}
+
 export function mockDocument(d: { documentElement: { clientWidth: number } }): void {
   doc = d;
 }
