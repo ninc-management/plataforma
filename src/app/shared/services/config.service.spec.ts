@@ -7,8 +7,8 @@ import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
 import { externalMockedCompanies } from '../mocked-data/mocked-companies';
-import { externalMockedConfigs } from '../mocked-data/mocked-config';
-import { ConfigService, DEFAULT_CONFIG } from './config.service';
+import { DEFAULT_CONFIG, externalMockedConfigs } from '../mocked-data/mocked-config';
+import { ConfigService } from './config.service';
 import { WebSocketService } from './web-socket.service';
 import { AuthService } from 'app/auth/auth.service';
 
