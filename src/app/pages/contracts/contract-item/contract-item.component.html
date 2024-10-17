@@ -10,6 +10,7 @@
   <nb-tab tabTitle='Gestão' [tabIcon]="contractIcon">
     <ngx-management-tab
       *ngIf="tabActive === TABS.MANAGEMENT"
+      [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
       [isFormDirty]="isFormDirty"

@@ -20,7 +20,7 @@ import { MessageService } from 'app/shared/services/message.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { UserService } from 'app/shared/services/user.service';
 import { applyBoldToMention, moneyToNumber, toPercentageNumber } from 'app/shared/string-utils';
-import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
+import { formatDate, idToProperty, isOfType, isPhone, omitDeep, trackByIndex } from 'app/shared/utils';
 
 import {
   ChecklistItemAction,
@@ -52,6 +52,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
   @ViewChild('newCommentInput', { static: true }) commentInput!: ElementRef<HTMLInputElement>;
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
+  @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
@@ -311,15 +312,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   isNotEdited(): boolean {
-    const A = cloneDeep(this.unchangedContract);
-    const B = cloneDeep(this.clonedContract);
-    for (const item of A.checklist) {
-      delete (item as any).locals;
-    }
-    for (const item of B.checklist) {
-      delete (item as any).locals;
-    }
-    return isEqual(A, B);
+    return isEqual(omitDeep(this.contract, ['locals']), omitDeep(this.clonedContract, ['locals']));
   }
 
   applyManagementModel(selectedContract: Contract): void {
