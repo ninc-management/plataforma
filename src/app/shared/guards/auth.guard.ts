@@ -74,7 +74,22 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       skipWhile((configs) => configs.length == 0),
       take(1),
       map((configs) => {
-        const obj: any = {};
+        const obj: any = {
+          roleTypeName: 'Guest',
+          permission: {
+            dashboard: ['Visualizar Dashboard'],
+            perfil: [],
+            configurações: [],
+            usuário: [],
+            orçamentos: [],
+            contratos: [],
+            clientes: [],
+            fornecedores: [],
+            times: [],
+            cursos: [],
+            promoções: [],
+          },
+        };
         if (configs[0]) {
           configs[0].profileConfig.positions.forEach((position) => {
             obj[position.roleTypeName] = Object(position.permission);

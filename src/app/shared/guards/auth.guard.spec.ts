@@ -181,7 +181,22 @@ describe('AuthGuard', () => {
   });
 
   it('loadList should work', (done: DoneFn) => {
-    const accessControl: any = {};
+    const accessControl: any = {
+      roleTypeName: 'Guest',
+      permission: {
+        dashboard: ['Visualizar Dashboard'],
+        perfil: [],
+        configurações: [],
+        usuário: [],
+        orçamentos: [],
+        contratos: [],
+        clientes: [],
+        fornecedores: [],
+        times: [],
+        cursos: [],
+        promoções: [],
+      },
+    };
     mockedConfigs[0].profileConfig.positions.forEach((position) => {
       accessControl[position.roleTypeName] = Object(position.permission);
     });
