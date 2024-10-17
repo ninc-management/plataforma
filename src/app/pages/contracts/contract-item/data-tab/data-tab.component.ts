@@ -22,10 +22,10 @@ import {
 import {
   formatDate,
   idToProperty,
-  isOfType,
   isPhone,
   nfPercentage,
   nortanPercentage,
+  omitDeep,
   trackByIndex,
 } from 'app/shared/utils';
 
@@ -368,25 +368,7 @@ export class DataTabComponent implements OnInit {
   }
 
   isNotEdited(): boolean {
-    const A = cloneDeep(this.contract);
-    const B = cloneDeep(this.clonedContract);
-    delete (A as any).locals;
-    delete (B as any).locals;
-    if (isOfType(Invoice, A.invoice) && isOfType(Invoice, B.invoice)) {
-      for (const teamMember of A.invoice.team) {
-        delete (teamMember as any).locals;
-      }
-      for (const teamMember of B.invoice.team) {
-        delete (teamMember as any).locals;
-      }
-    }
-    for (const item of A.checklist) {
-      delete (item as any).locals;
-    }
-    for (const item of B.checklist) {
-      delete (item as any).locals;
-    }
-    return isEqual(A, B);
+    return isEqual(omitDeep(this.contract, ['locals']), omitDeep(this.clonedContract, ['locals']));
   }
 
   onNewMemberSelected(event: User): void {
