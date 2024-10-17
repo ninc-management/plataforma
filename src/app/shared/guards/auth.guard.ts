@@ -13,6 +13,7 @@ import { NbAccessChecker, NbAclService } from '@nebular/security';
 import { combineLatest, Observable, of } from 'rxjs';
 import { concatMap, map, skipWhile, switchMap, take, tap } from 'rxjs/operators';
 
+import { RESOURCES } from '../data-utils';
 import { ConfigService } from '../services/config.service';
 import { AuthService } from 'app/auth/auth.service';
 
@@ -77,7 +78,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         const obj: any = {
           roleTypeName: 'GUEST',
           permission: {
-            dashboard: ['Visualizar Dashboard'],
+            dashboard: [RESOURCES.view_dashboard],
             perfil: [],
             configurações: [],
             usuário: [],

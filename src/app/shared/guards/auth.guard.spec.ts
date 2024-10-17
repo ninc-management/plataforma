@@ -9,6 +9,7 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
 import { Observable, of, take } from 'rxjs';
 
+import { RESOURCES } from '../data-utils';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ConfigService } from '../services/config.service';
@@ -184,7 +185,7 @@ describe('AuthGuard', () => {
     const accessControl: any = {
       roleTypeName: 'GUEST',
       permission: {
-        dashboard: ['Visualizar Dashboard'],
+        dashboard: [RESOURCES.view_dashboard],
         perfil: [],
         configurações: [],
         usuário: [],
