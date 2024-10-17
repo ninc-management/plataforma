@@ -64,6 +64,10 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren(NgForm) ngForms = {} as QueryList<NgForm>;
   @Input() config: PlatformConfig = new PlatformConfig();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  #permissions = Object.keys(PERMISSIONS).reduce((acc, key) => {
+    acc[key as Permission] = [];
+    return acc;
+  }, {} as { [K in Permission]: string[] });
   clonedConfig: PlatformConfig = new PlatformConfig();
   configCompany: Company = new Company();
   unchangedConfigCompany: Company = new Company();
@@ -73,10 +77,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   RESOURCES = Object.values(modules_resources).map((obj) => Object.values(obj));
   newRole = {
     roleTypeName: '',
-    permission: Object.keys(PERMISSIONS).reduce((acc, key) => {
-      acc[key as Permission] = [];
-      return acc;
-    }, {} as { [K in Permission]: string[] }),
+    permission: cloneDeep(this.#permissions),
   };
   untreatedPermissionsAddition: [string, string][] = [];
   untreatedPermissionsEditing: [string, string][][] = [];
@@ -84,7 +85,6 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   contractExpenseTypes: TypeItem[] = [];
   invoices: Invoice[] = [];
   users: User[] = [];
-  PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado', 'Assessor Executivo Remoto', 'Diretor Comercial'];
 
   newLevel: string = '';
   newUnit: string = '';
@@ -219,7 +219,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
 
   treatPermissions(untreated: [string, string][]): { [K in Permission]: string[] } {
     untreated.sort((a, b) => a[1].localeCompare(b[1]));
-    const obj = cloneDeep(this.newRole.permission);
+    const obj = cloneDeep(this.#permissions);
     untreated.forEach((item) => {
       const key = item[0];
       obj[key as Permission].push(item[1]);
@@ -234,17 +234,14 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   addRole(): void {
     this.newRole.permission = this.treatPermissions(this.untreatedPermissionsAddition);
     this.errorInPositions = this.clonedConfig.profileConfig.positions.some(
-      (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.PARENTS.includes(this.newRole.roleTypeName)
+      (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.newRole.roleTypeName == 'GUEST'
     );
     if (!this.errorInPositions) {
       this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
       this.untreatedPermissionsEditing.push(this.untreatedPermissionsAddition);
     }
     this.newRole.roleTypeName = '';
-    this.newRole.permission = Object.keys(PERMISSIONS).reduce((acc, key) => {
-      acc[key as Permission] = [];
-      return acc;
-    }, {} as { [K in Permission]: string[] });
+    this.newRole.permission = cloneDeep(this.#permissions);
     this.untreatedPermissionsAddition = [];
   }
 
