@@ -64,10 +64,17 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren(NgForm) ngForms = {} as QueryList<NgForm>;
   @Input() config: PlatformConfig = new PlatformConfig();
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
-  #permissions = Object.keys(PERMISSIONS).reduce((acc, key) => {
-    acc[key as Permission] = [];
-    return acc;
-  }, {} as { [K in Permission]: string[] });
+  get #permissions(): { [K in Permission]: string[] } {
+    return Object.keys(PERMISSIONS).reduce(
+      (acc, key) => {
+        acc[key as Permission] = [];
+        return acc;
+      },
+      {} as {
+        [K in Permission]: string[];
+      }
+    );
+  }
   clonedConfig: PlatformConfig = new PlatformConfig();
   configCompany: Company = new Company();
   unchangedConfigCompany: Company = new Company();
