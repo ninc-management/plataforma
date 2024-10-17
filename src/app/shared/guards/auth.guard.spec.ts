@@ -9,6 +9,7 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
 import { Observable, of, take } from 'rxjs';
 
+import { RESOURCES } from '../data-utils';
 import { externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedUsers } from '../mocked-data/mocked-users';
 import { ConfigService } from '../services/config.service';
@@ -181,7 +182,22 @@ describe('AuthGuard', () => {
   });
 
   it('loadList should work', (done: DoneFn) => {
-    const accessControl: any = {};
+    const accessControl: any = {
+      roleTypeName: 'GUEST',
+      permission: {
+        dashboard: [RESOURCES.view_dashboard],
+        perfil: [],
+        configurações: [],
+        usuário: [],
+        orçamentos: [],
+        contratos: [],
+        clientes: [],
+        fornecedores: [],
+        times: [],
+        cursos: [],
+        promoções: [],
+      },
+    };
     mockedConfigs[0].profileConfig.positions.forEach((position) => {
       accessControl[position.roleTypeName] = Object(position.permission);
     });
