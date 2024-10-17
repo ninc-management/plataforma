@@ -1,16 +1,18 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take } from 'rxjs';
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
+import { Permission, PERMISSIONS } from 'app/shared/data-utils';
+import modules_resources from 'app/shared/modules-resources.json';
 import { CompanyService } from 'app/shared/services/company.service';
 import { ConfigService, EXPENSE_TYPES } from 'app/shared/services/config.service';
 import { InvoiceService } from 'app/shared/services/invoice.service';
 import { UserService } from 'app/shared/services/user.service';
-import { getItemsWithValue, idToProperty, isPhone, tooltipTriggers, trackByIndex } from 'app/shared/utils';
+import { getItemsWithValue, idToProperty, isPhone, omitDeep, tooltipTriggers, trackByIndex } from 'app/shared/utils';
 
 import { ColorShades, Company } from '@models/company';
 import { Invoice } from '@models/invoice';
@@ -64,14 +66,24 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() isFormDirty = new BehaviorSubject<boolean>(false);
   clonedConfig: PlatformConfig = new PlatformConfig();
   configCompany: Company = new Company();
+  unchangedConfigCompany: Company = new Company();
   newAdminExpense: TypeItem = { name: '', subTypes: [] };
   newContractExpense: TypeItem = { name: '', subTypes: [] };
-  newRole = { roleTypeName: '', permission: '' };
+  MODULES = Object.keys(modules_resources);
+  RESOURCES = Object.values(modules_resources).map((obj) => Object.values(obj));
+  newRole = {
+    roleTypeName: '',
+    permission: Object.keys(PERMISSIONS).reduce((acc, key) => {
+      acc[key as Permission] = [];
+      return acc;
+    }, {} as { [K in Permission]: string[] }),
+  };
+  untreatedPermissionsAddition: [string, string][] = [];
+  untreatedPermissionsEditing: [string, string][][] = [];
   adminExpenseTypes: TypeItem[] = [];
   contractExpenseTypes: TypeItem[] = [];
   invoices: Invoice[] = [];
   users: User[] = [];
-  PERMISSIONS = ['Administrador', 'Membro', 'Financeiro', 'AER Natan®', 'Comercial'];
   PARENTS = ['Diretor de T.I', 'Diretor Financeiro', 'Associado', 'Assessor Executivo Remoto', 'Diretor Comercial'];
 
   newLevel: string = '';
@@ -117,8 +129,20 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.clonedConfig = cloneDeep(this.config);
-    if (this.clonedConfig.company)
+    for (let index = 0; index < this.clonedConfig.profileConfig.positions.length; index++) {
+      const item = this.clonedConfig.profileConfig.positions[index];
+      const result: [string, string][] = [];
+      Object.keys(item.permission).forEach((key) => {
+        for (const value of item.permission[key as Permission]) {
+          result.push([key, value]);
+        }
+      });
+      this.untreatedPermissionsEditing[index] = cloneDeep(result);
+    }
+    if (this.clonedConfig.company) {
       this.configCompany = cloneDeep(this.companyService.idToCompany(this.clonedConfig.company));
+      this.unchangedConfigCompany = cloneDeep(this.configCompany);
+    }
     this.adminExpenseTypes = this.clonedConfig.expenseConfig.adminExpenseTypes.map((eType: any) => {
       const typeItem = cloneDeep(eType);
       if (typeItem.subTypes.length) {
@@ -167,7 +191,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get allFormsValid(): boolean {
-    return this.forms.some((form) => !form.valid);
+    return this.forms.some((form) => form.valid);
   }
 
   openDialog(itemsWithValue: string[], warning: string): void {
@@ -193,13 +217,42 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  treatPermissions(untreated: [string, string][]): { [K in Permission]: string[] } {
+    untreated.sort((a, b) => a[1].localeCompare(b[1]));
+    const obj = cloneDeep(this.newRole.permission);
+    untreated.forEach((item) => {
+      const key = item[0];
+      obj[key as Permission].push(item[1]);
+    });
+    return obj as { [K in Permission]: string[] };
+  }
+
+  comparePermissions(value1: [string, string], value2: [string, string]): boolean {
+    return value1[0] === value2[0] && value1[1] === value2[1];
+  }
+
   addRole(): void {
+    this.newRole.permission = this.treatPermissions(this.untreatedPermissionsAddition);
     this.errorInPositions = this.clonedConfig.profileConfig.positions.some(
       (pos) => pos.roleTypeName === this.newRole.roleTypeName || this.PARENTS.includes(this.newRole.roleTypeName)
     );
-    //if (!this.errorInPositions) this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
+    if (!this.errorInPositions) {
+      this.clonedConfig.profileConfig.positions.push(cloneDeep(this.newRole));
+      this.untreatedPermissionsEditing.push(this.untreatedPermissionsAddition);
+    }
     this.newRole.roleTypeName = '';
-    this.newRole.permission = '';
+    this.newRole.permission = Object.keys(PERMISSIONS).reduce((acc, key) => {
+      acc[key as Permission] = [];
+      return acc;
+    }, {} as { [K in Permission]: string[] });
+    this.untreatedPermissionsAddition = [];
+  }
+
+  isNotEdited(): boolean {
+    return (
+      isEqual(omitDeep(this.config, ['_id']), omitDeep(this.clonedConfig, ['_id'])) &&
+      isEqual(this.configCompany, this.unchangedConfigCompany)
+    );
   }
 
   addLevel(): void {
