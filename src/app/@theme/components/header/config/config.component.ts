@@ -84,7 +84,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
   RESOURCES = Object.values(modules_resources).map((obj) => Object.values(obj));
   newRole = {
     roleTypeName: '',
-    permission: cloneDeep(this.#permissions),
+    permission: this.#permissions,
   };
   untreatedPermissionsAddition: [string, string][] = [];
   untreatedPermissionsEditing: [string, string][][] = [];
@@ -226,7 +226,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
 
   treatPermissions(untreated: [string, string][]): { [K in Permission]: string[] } {
     untreated.sort((a, b) => a[1].localeCompare(b[1]));
-    const obj = cloneDeep(this.#permissions);
+    const obj = this.#permissions;
     untreated.forEach((item) => {
       const key = item[0];
       obj[key as Permission].push(item[1]);
@@ -248,7 +248,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       this.untreatedPermissionsEditing.push(this.untreatedPermissionsAddition);
     }
     this.newRole.roleTypeName = '';
-    this.newRole.permission = cloneDeep(this.#permissions);
+    this.newRole.permission = this.#permissions;
     this.untreatedPermissionsAddition = [];
   }
 
