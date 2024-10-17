@@ -237,6 +237,7 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       );
     this.companyService.editCompany(this.configCompany);
     this.configService.editConfig(this.clonedConfig);
+    if (this.clonedConfig.__v) this.clonedConfig.__v += 1;
   }
 
   deleteUnit(index: number): void {
