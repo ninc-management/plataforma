@@ -3,8 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { CommonTestingModule } from 'app/../common-testing.module';
 import { cloneDeep } from 'lodash';
 
-import { externalMockedConfigs } from '../mocked-data/mocked-config';
-import { DEFAULT_CONFIG } from './config.service';
+import { DEFAULT_CONFIG, externalMockedConfigs } from '../mocked-data/mocked-config';
 import { MetricsService } from './metrics.service';
 
 describe('MetricsService', () => {

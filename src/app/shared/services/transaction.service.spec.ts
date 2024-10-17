@@ -6,9 +6,8 @@ import { Subject, take } from 'rxjs';
 import MockedServerSocket from 'socket.io-mock';
 import { SocketMock } from 'types/socketio-mock';
 
-import { externalMockedConfigs } from '../mocked-data/mocked-config';
+import { DEFAULT_CONFIG, externalMockedConfigs } from '../mocked-data/mocked-config';
 import { externalMockedTeams } from '../mocked-data/mocked-teams';
-import { DEFAULT_CONFIG } from './config.service';
 import { TransactionService } from './transaction.service';
 import { WebSocketService } from './web-socket.service';
 import { Fees, reviveDates } from 'app/shared/utils';
