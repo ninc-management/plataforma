@@ -182,7 +182,7 @@ describe('AuthGuard', () => {
 
   it('loadList should work', (done: DoneFn) => {
     const accessControl: any = {
-      roleTypeName: 'Guest',
+      roleTypeName: 'GUEST',
       permission: {
         dashboard: ['Visualizar Dashboard'],
         perfil: [],

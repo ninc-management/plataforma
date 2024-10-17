@@ -75,7 +75,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       take(1),
       map((configs) => {
         const obj: any = {
-          roleTypeName: 'Guest',
+          roleTypeName: 'GUEST',
           permission: {
             dashboard: ['Visualizar Dashboard'],
             perfil: [],

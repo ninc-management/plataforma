@@ -19,8 +19,8 @@ export class RoleProvider implements NbRoleProvider {
         skipWhile((user) => user === undefined),
         take(1),
         map((user: User | undefined): string | string[] => {
-          if (user === undefined) return 'Guest';
-          return user.position?.length > 0 ? user.position : 'Guest';
+          if (user === undefined) return 'GUEST';
+          return user.position?.length > 0 ? user.position : 'GUEST';
         })
       );
     } else return of([]);
