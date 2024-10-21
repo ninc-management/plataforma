@@ -122,6 +122,18 @@ describe('ContractService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('isEqual should be true', () => {
+    expect(service.isEqual(mockedContracts[0], mockedContracts[0])).toBeTrue();
+    expect(service.isEqual(mockedContracts[1], mockedContracts[1])).toBeTrue();
+    expect(service.isEqual(mockedContracts[2], mockedContracts[2])).toBeTrue();
+  });
+
+  it('isEqual should be false', () => {
+    expect(service.isEqual(mockedContracts[0], mockedContracts[1])).toBeFalse();
+    expect(service.isEqual(mockedContracts[0], mockedContracts[2])).toBeFalse();
+    expect(service.isEqual(mockedContracts[1], mockedContracts[2])).toBeFalse();
+  });
+
   it('saveContract should work', (done: DoneFn) => {
     const baseInvoice = new Invoice();
     baseInvoice._id = '2';
