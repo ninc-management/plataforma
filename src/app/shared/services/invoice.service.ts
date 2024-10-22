@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqualWith } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
 import { numberToString } from '../string-utils';
-import { handle, isOfType, reviveDates } from '../utils';
+import { handle, isOfType, omitDeep, reviveDates } from '../utils';
 import { UserService } from './user.service';
 import { WebSocketService } from './web-socket.service';
 
@@ -108,6 +108,20 @@ export class InvoiceService implements OnDestroy {
     const invoice = this.idToInvoice(iId);
     if (invoice.team) return invoice.team.filter((member) => this.userService.isEqual(member.user, uId)).length > 0;
     return false;
+  }
+
+  isEqual(i1: string | Invoice | undefined, i2: string | Invoice | undefined): boolean {
+    if (i1 == undefined || i2 == undefined) return false;
+    if (typeof i1 !== 'string' && !i1.statusHistory) i1.statusHistory = [];
+    if (typeof i2 !== 'string' && !i2.statusHistory) i2.statusHistory = [];
+    i1 = omitDeep(this.idToInvoice(i1), ['locals', 'team._id']);
+    i2 = omitDeep(this.idToInvoice(i2), ['locals', 'team._id']);
+    return isEqualWith(i1, i2, (value, other, key) => {
+      if (key == 'user') {
+        return this.userService.isEqual(value, other);
+      }
+      return undefined;
+    });
   }
 
   role(invoice: Invoice, user: User): string {

@@ -87,25 +87,33 @@ export function isPhone(): boolean {
 
 export function omitDeep<T>(collection: T, excludeKeys: string[]): T {
   const clonedCollection = cloneDeep(collection);
-
-  function omitFn(value: any) {
+  function omitFn(value: any, parent: string[]) {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       excludeKeys.forEach((key) => {
-        delete value[key];
+        const keys = key.split('.');
+        if (keys.length > 1 && isEqual(parent, keys.slice(0, -1))) {
+          delete value[keys[keys.length - 1]];
+        } else {
+          delete value[key];
+        }
       });
     }
   }
 
-  function traverse(value: any) {
+  function traverse(value: any, parent: string[]) {
     if (Array.isArray(value)) {
-      value.forEach(traverse);
+      value.forEach((val) => traverse(val, parent));
     } else if (value && typeof value === 'object') {
-      omitFn(value);
-      Object.keys(value).forEach((key) => traverse(value[key]));
+      omitFn(value, parent);
+      Object.keys(value).forEach((key) => {
+        const copyParent = cloneDeep(parent);
+        copyParent.push(key);
+        traverse(value[key], copyParent);
+      });
     }
   }
 
-  traverse(clonedCollection);
+  traverse(clonedCollection, []);
   return clonedCollection;
 }
 

@@ -158,6 +158,18 @@ describe('InvoiceService', () => {
     }, 50);
   });
 
+  it('isEqual should be true', () => {
+    expect(service.isEqual(mockedInvoices[0], mockedInvoices[0])).toBeTrue();
+    expect(service.isEqual(mockedInvoices[1], mockedInvoices[1])).toBeTrue();
+    expect(service.isEqual(mockedInvoices[2], mockedInvoices[2])).toBeTrue();
+  });
+
+  it('isEqual should be false', () => {
+    expect(service.isEqual(mockedInvoices[0], mockedInvoices[1])).toBeFalse();
+    expect(service.isEqual(mockedInvoices[0], mockedInvoices[2])).toBeFalse();
+    expect(service.isEqual(mockedInvoices[1], mockedInvoices[2])).toBeFalse();
+  });
+
   it('editInvoice should work', (done: DoneFn) => {
     const tmpInvoice = cloneDeep(mockedInvoices[1]);
     tmpInvoice.nortanTeam = 'Trocar';

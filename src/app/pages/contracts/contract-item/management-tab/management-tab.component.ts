@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
@@ -20,7 +20,7 @@ import { MessageService } from 'app/shared/services/message.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { UserService } from 'app/shared/services/user.service';
 import { applyBoldToMention, moneyToNumber, toPercentageNumber } from 'app/shared/string-utils';
-import { formatDate, idToProperty, isOfType, isPhone, omitDeep, trackByIndex } from 'app/shared/utils';
+import { formatDate, idToProperty, isOfType, isPhone, trackByIndex } from 'app/shared/utils';
 
 import {
   ChecklistItemAction,
@@ -55,7 +55,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @Output() isContractNotEdited = new EventEmitter<boolean>();
 
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
@@ -123,11 +123,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
       )),
         (this.deadline = this.contractService.deadline(this.clonedContract));
       this.avaliableContracts$ = this.contractService.getContracts();
-      this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-        if (this.clonedContract.invoice)
-          this.avaliableAssignees$.next(this.invoiceService.teamMembers(this.clonedContract.invoice));
-        this.actionsData = this.transformActionsData();
-      });
       this.messageService
         .getMessages()
         .pipe(takeUntil(this.destroy$))
@@ -155,12 +150,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit() {
-    this.ngForm.statusChanges?.subscribe(() => {
-      if (this.ngForm.dirty) this.isFormDirty.next(true);
-    });
-  }
-
   tooltipText(): string {
     if (this.invoice._id && this.invoice.contractor) {
       const { document, email, address } = this.contractorService.idToContractor(this.invoice.contractor);
@@ -170,15 +159,14 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   updateContractManagement(): void {
+    if (!this.invoiceService.isEqual(this.contract.invoice, this.invoice))
+      this.invoiceService.editInvoice(this.invoice);
     this.contractService.editContract(this.clonedContract);
     this.sendNotificationsToNewAssignees();
     this.unchangedContract = cloneDeep(this.clonedContract);
     this.checklistItems = cloneDeep(this.clonedContract.checklist);
     this.isChecklistEdited = false;
     this.ngForm.form.markAsPristine();
-    setTimeout(() => {
-      this.isFormDirty.next(false);
-    }, 10);
   }
 
   checklistTotalDays(): number | undefined {
@@ -312,7 +300,12 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   isNotEdited(): boolean {
-    return isEqual(omitDeep(this.contract, ['locals']), omitDeep(this.clonedContract, ['locals']));
+    let result = true;
+    if (this.contract.invoice) {
+      result = this.contractService.isEqual(this.contract, this.clonedContract);
+    }
+    this.isContractNotEdited.emit(result);
+    return result;
   }
 
   applyManagementModel(selectedContract: Contract): void {
