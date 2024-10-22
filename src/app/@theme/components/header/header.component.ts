@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   state = 'inactive';
   config: PlatformConfig = new PlatformConfig();
   company: Company = new Company();
-  logoWhite: UploadedFile = new UploadedFile();
+  logo: UploadedFile = new UploadedFile();
   userMenu: NbMenuItem[] = [
     { title: 'Perfil', link: 'pages/profile' },
     { title: 'Sair', link: '/auth/logout' },
@@ -107,7 +107,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (config[0].company) {
           this.company = this.companyService.idToCompany(config[0].company);
           this.menuTitle = this.company.companyName;
-          if (this.company.logoWhite) this.logoWhite = this.company.logoWhite;
+          this.themeService
+            .onThemeChange()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((theme) => {
+              if (this.company.logoDefault) this.logo = this.company.logoDefault;
+              if (this.company.logoWhite && ['dark', 'cosmic'].includes(theme.name)) this.logo = this.company.logoWhite;
+            });
         }
       });
 

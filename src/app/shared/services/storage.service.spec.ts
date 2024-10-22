@@ -4,7 +4,7 @@ import { CommonTestingModule } from 'app/../common-testing.module';
 import { combineLatest } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-import { DEFAULT_CONFIG } from './config.service';
+import { DEFAULT_CONFIG } from '../mocked-data/mocked-config';
 import { StorageService } from './storage.service';
 import { StorageProvider } from 'app/@theme/components';
 
