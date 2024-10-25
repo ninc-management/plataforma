@@ -37,7 +37,7 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
-  @Output() isContractNotEdited = new EventEmitter<boolean>();
+  @Output() contractChangedStatus = new EventEmitter<boolean>();
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
   isEditionGranted = false;
@@ -350,7 +350,7 @@ export class DataTabComponent implements OnInit {
     if (this.contract.invoice) {
       result = this.contractService.isEqual(this.contract, this.clonedContract);
     }
-    this.isContractNotEdited.emit(result);
+    this.contractChangedStatus.emit(result);
     return result;
   }
 

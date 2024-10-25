@@ -55,7 +55,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() isContractNotEdited = new EventEmitter<boolean>();
+  @Output() contractChangedStatus = new EventEmitter<boolean>();
 
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
@@ -304,7 +304,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     if (this.contract.invoice) {
       result = this.contractService.isEqual(this.contract, this.clonedContract);
     }
-    this.isContractNotEdited.emit(result);
+    this.contractChangedStatus.emit(result);
     return result;
   }
 

@@ -50,7 +50,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     _id: '0',
     __v: 0,
   };
-  isContractNotEdited = true;
+  isContractEdited = false;
 
   isPhone = isPhone;
   idToProperty = idToProperty;
@@ -147,11 +147,11 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   receiveEditedFlag(flag: boolean) {
-    this.isContractNotEdited = flag;
+    this.isContractEdited = flag;
   }
 
   dismiss(): void {
-    if (this.isFormDirty.value || this.isContractNotEdited == false) {
+    if (this.isFormDirty.value || !this.isContractEdited) {
       this.dialogService
         .open(ConfirmationDialogComponent, {
           context: {

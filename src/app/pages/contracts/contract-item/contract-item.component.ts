@@ -27,7 +27,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() isContractNotEdited = new EventEmitter<boolean>();
+  @Output() contractChangedStatus = new EventEmitter<boolean>();
 
   TABS = TABS;
   tabActive = TABS.DATA;
@@ -85,9 +85,5 @@ export class ContractItemComponent implements OnInit, OnDestroy {
 
   getActiveTab(e: any) {
     this.tabActive = e.tabTitle;
-  }
-
-  reemit(flag: boolean) {
-    this.isContractNotEdited.emit(flag);
   }
 }

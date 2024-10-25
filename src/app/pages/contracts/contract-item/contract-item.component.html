@@ -1,7 +1,7 @@
 <nb-tabset fullWidth (changeTab)="getActiveTab($event)">
   <nb-tab tabTitle='Dados' tabIcon="info-outline">
     <ngx-data-tab
-      (isContractNotEdited)="reemit($event)"
+      (contractChangedStatus)="contractChangedStatus.emit($event)"
       *ngIf="tabActive === TABS.DATA"
       [contract]="contract"
       [clonedContract]="clonedContract"
@@ -9,7 +9,7 @@
   </nb-tab>
   <nb-tab tabTitle='Gestão' [tabIcon]="contractIcon">
     <ngx-management-tab
-      (isContractNotEdited)="reemit($event)"
+      (contractChangedStatus)="contractChangedStatus.emit($event)"
       *ngIf="tabActive === TABS.MANAGEMENT"
       [contract]="contract"
       [clonedContract]="clonedContract"
