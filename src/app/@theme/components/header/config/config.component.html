@@ -1471,11 +1471,15 @@
                 <div class="col-9 col-lg-6" style="margin: 5px 5px">
                   <input
                     nbInput
-                    [(ngModel)]="position.roleTypeName"
+                    [ngModel]="position.roleTypeName"
                     id="input-role-type-{{ i }}"
                     name="role-type-{{ i }}"
-                    placeholder="Nome do tipo de papel"
                     fullWidth
+                    [nbTooltipTrigger]="!getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue() ? tooltipTriggers.NOOP : tooltipTriggers.HOVER"
+                    [nbTooltip]="getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue()"
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                    [disabled]="!!getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue()"
                     [status]="!position.roleTypeName ? 'danger' : 'basic'"
                     [required]="validation.roleTypeName.required"
                     [readonly]="validation.roleTypeName.readyonly"
