@@ -167,7 +167,7 @@
           </nb-card-header>
           <nb-card-body>
             <ngx-contract-item
-              (contractChangedStatus)="receiveEditedFlag($event)"
+              [isContractNotEdited$]="isContractNotEdited$"
               [isDialogBlocked]="isBlocked"
               [contract]="contract"
               *ngIf="componentType == types.CONTRACT"

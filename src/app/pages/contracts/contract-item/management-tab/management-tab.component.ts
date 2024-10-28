@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { differenceInCalendarDays, isAfter, isBefore, isSameDay } from 'date-fns';
@@ -55,7 +55,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() contractChangedStatus = new EventEmitter<boolean>();
+  @Input() isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
 
   avaliableAssignees$ = new BehaviorSubject<User[]>([]);
   invoice: Invoice = new Invoice();
@@ -103,6 +103,7 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isContractNotEdited$.next(this.isNotEdited.bind(this));
     this.unchangedContract = cloneDeep(this.clonedContract);
     if (this.clonedContract._id) {
       this.invoice = idToProperty(
@@ -304,7 +305,6 @@ export class ManagementTabComponent implements OnInit, OnDestroy {
     if (this.contract.invoice) {
       result = this.contractService.isEqual(this.contract, this.clonedContract);
     }
-    this.contractChangedStatus.emit(result);
     return result;
   }
 

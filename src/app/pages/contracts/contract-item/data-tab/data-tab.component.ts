@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, combineLatest, map, Observable, of, skipWhile, Subject, take } from 'rxjs';
@@ -37,7 +37,7 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
-  @Output() contractChangedStatus = new EventEmitter<boolean>();
+  @Input() isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
   isEditionGranted = false;
@@ -99,6 +99,7 @@ export class DataTabComponent implements OnInit {
   }
 
   initializeData(): void {
+    this.isContractNotEdited$.next(this.isNotEdited.bind(this));
     combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
         skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
@@ -350,7 +351,6 @@ export class DataTabComponent implements OnInit {
     if (this.contract.invoice) {
       result = this.contractService.isEqual(this.contract, this.clonedContract);
     }
-    this.contractChangedStatus.emit(result);
     return result;
   }
 

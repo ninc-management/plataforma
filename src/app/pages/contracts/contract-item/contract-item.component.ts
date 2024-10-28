@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
@@ -27,7 +27,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Output() contractChangedStatus = new EventEmitter<boolean>();
+  @Input() isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
 
   TABS = TABS;
   tabActive = TABS.DATA;
