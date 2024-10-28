@@ -46,6 +46,7 @@ const default_permissions = {
 };
 
 db.platformconfigs.find().forEach((config) => {
+  config.version = '2.0.1';
   for (const i in config.profileConfig.positions) {
     config.profileConfig.positions[i].permission = default_permissions;
   }
