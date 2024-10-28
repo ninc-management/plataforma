@@ -14,6 +14,7 @@ db.users.find().forEach((user) => {
 });
 
 db.platformconfigs.find().forEach((config) => {
+  config.version = '2.0.0';
   config.oneDriveConfig.teamTransactions = {
     oneDriveId: '',
     folderId: '',
