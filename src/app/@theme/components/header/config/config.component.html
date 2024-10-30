@@ -1411,7 +1411,7 @@
                   #roleType="ngModel"
                   id="input-role-type"
                   name="roleType"
-                  placeholder="Nome do tipo de papel"
+                  placeholder="Nome do papel"
                   fullWidth
                   fieldSize="large"
                   [status]="newRole.roleTypeName && newRole.permission ? 'success' : 'basic'"
@@ -1474,8 +1474,13 @@
                     [(ngModel)]="position.roleTypeName"
                     id="input-role-type-{{ i }}"
                     name="role-type-{{ i }}"
-                    placeholder="Nome do tipo de papel"
+                    placeholder="Nome do papel"
                     fullWidth
+                    [nbTooltipTrigger]="!getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue() ? tooltipTriggers.NOOP : tooltipTriggers.HOVER"
+                    [nbTooltip]="getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue()"
+                    nbTooltipPlacement="top"
+                    nbTooltipStatus="info"
+                    [disabled]="!!getTooltipText(i, KEYS_TO_VERIFY.POSITION).getValue()"
                     [status]="!position.roleTypeName ? 'danger' : 'basic'"
                     [required]="validation.roleTypeName.required"
                     [readonly]="validation.roleTypeName.readyonly"
