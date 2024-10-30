@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Input, OnDestroy, OnInit, QueryList, ViewChil
 import { NgForm } from '@angular/forms';
 import { NbDialogService } from '@nebular/theme';
 import { cloneDeep, isEqual } from 'lodash';
-import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, skipWhile, Subject, take } from 'rxjs';
 
 import { RemainingItemsComponent } from './remaining-items/remaining-items.component';
 import { FileUploadDialogComponent } from 'app/shared/components/file-upload/file-upload.component';
@@ -325,33 +325,52 @@ export class ConfigComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  deletePositionOrLevel(index: number, key: string): void {
-    combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$])
-      .pipe(
-        skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
-        take(1)
-      )
-      .subscribe(([users, _]) => {
-        const usersWithValue = getItemsWithValue(
+  getUsersWithValue(index: number, key: string): Observable<string[]> {
+    return combineLatest([this.userService.getUsers(), this.userService.isDataLoaded$]).pipe(
+      skipWhile(([, isUserDataLoaded]) => !isUserDataLoaded),
+      take(1),
+      map(([users, _]) => {
+        return getItemsWithValue(
           users,
           key,
-          key == 'position'
+          key === 'position'
             ? this.clonedConfig.profileConfig.positions[index].roleTypeName
             : this.clonedConfig.profileConfig.levels[index]
-        );
-        if (usersWithValue.length != 0) {
-          this.openDialog(
-            usersWithValue.map((user) => user.fullName),
-            'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
-              (key == 'position' ? 'papel:' : 'cargo:')
-          );
-        } else {
-          if (key == 'position') this.clonedConfig.profileConfig.positions.splice(index, 1);
-          else this.clonedConfig.profileConfig.levels.splice(index, 1);
+        ).map((user) => user.fullName);
+      })
+    );
+  }
 
-          this.isFormDirty.next(true);
+  getTooltipText(index: number, key: string): BehaviorSubject<string> {
+    const tooltipText = new BehaviorSubject<string>('');
+
+    this.getUsersWithValue(index, key).subscribe((usersWithValue) => {
+      if (usersWithValue.length > 0) {
+        tooltipText.next(`Os seguintes usuários estão utilizando este papel: ${usersWithValue.join(', ')}`);
+      }
+    });
+
+    return tooltipText;
+  }
+
+  deletePositionOrLevel(index: number, key: string): void {
+    this.getUsersWithValue(index, key).subscribe((usersWithValue) => {
+      if (usersWithValue.length > 0) {
+        this.openDialog(
+          usersWithValue,
+          'Não é possível remover o item. Os seguintes usuários estão utilizando este ' +
+            (key === 'position' ? 'papel:' : 'cargo:')
+        );
+      } else {
+        if (key === 'position') {
+          this.clonedConfig.profileConfig.positions.splice(index, 1);
+        } else {
+          this.clonedConfig.profileConfig.levels.splice(index, 1);
         }
-      });
+
+        this.isFormDirty.next(true);
+      }
+    });
   }
 
   openUploadDialog(logoType: LOGO_TYPES): void {
