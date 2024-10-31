@@ -149,7 +149,7 @@ export class ContractService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  saveContract(invoice: Invoice): void {
+  saveContract(invoice: Invoice, callback?: () => void): void {
     const contract = new Contract();
     contract.statusHistory.push({
       status: contract.status,
@@ -163,7 +163,10 @@ export class ContractService implements OnDestroy {
     this.http
       .post('/api/contract/', req)
       .pipe(take(1))
-      .subscribe(() => this.onedrive.copyModelFolder(invoice));
+      .subscribe(() => {
+        this.onedrive.copyModelFolder(invoice);
+        if (callback) callback();
+      });
   }
 
   isEqual(c1: string | Contract | undefined, c2: string | Contract | undefined): boolean {

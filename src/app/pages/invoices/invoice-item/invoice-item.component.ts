@@ -134,6 +134,7 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
   revision = 0;
   validation = invoice_validation as any;
   oldStatus: INVOICE_STATOOS = INVOICE_STATOOS.EM_ANALISE;
+  isLoading = false;
 
   currentUser: User = new User();
   isInputDisabled$ = new BehaviorSubject<boolean>(true);
@@ -378,7 +379,13 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         : null;
   }
 
+  emitAndStopSpinner(): void {
+    this.isLoading = false;
+    this.submit.emit();
+  }
+
   registerInvoice(): void {
+    this.isLoading = true;
     if (this.editing) {
       if (!isEqual(this.iInvoice, this.tempInvoice)) {
         if (!this.tempInvoice.team.map((member) => member.distribution).every((distribution) => distribution !== ''))
@@ -393,20 +400,21 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
             start: this.tempInvoice.lastUpdate,
           });
         }
-        this.invoiceService.editInvoice(this.tempInvoice);
-        if (this.oldStatus !== this.tempInvoice.status) {
-          if (this.tempInvoice.status === INVOICE_STATOOS.FECHADO) {
-            this.contractService.saveContract(this.tempInvoice);
-            this.notifyInvoiceTeam();
-            this.notifyAllUsers();
-          }
-        }
+        this.invoiceService.editInvoice(
+          this.tempInvoice,
+          (() => {
+            if (this.oldStatus !== this.tempInvoice.status && this.tempInvoice.status === INVOICE_STATOOS.FECHADO) {
+              this.contractService.saveContract(this.tempInvoice, this.emitAndStopSpinner.bind(this));
+              this.notifyInvoiceTeam();
+              this.notifyAllUsers();
+            } else this.emitAndStopSpinner();
+          }).bind(this)
+        );
         this.updateObjVersion.emit();
         if (this.tempInvoice.__v !== undefined) {
           this.tempInvoice.__v += 1;
         }
         this.iInvoice = cloneDeep(this.tempInvoice);
-        this.isFormDirty.next(false);
       }
     } else {
       this.tempInvoice.lastUpdate = new Date();
@@ -414,16 +422,18 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         status: this.tempInvoice.status,
         start: this.tempInvoice.created,
       });
-      this.invoiceService.saveInvoice(this.tempInvoice, (savedInvoice: Invoice) => {
-        if (savedInvoice.status === INVOICE_STATOOS.FECHADO) {
-          this.contractService.saveContract(savedInvoice);
-          this.notifyInvoiceTeam();
-          this.notifyAllUsers();
-        }
-      });
-      this.isFormDirty.next(false);
-      this.submit.emit();
+      this.invoiceService.saveInvoice(
+        this.tempInvoice,
+        ((savedInvoice: Invoice) => {
+          if (savedInvoice.status === INVOICE_STATOOS.FECHADO) {
+            this.contractService.saveContract(savedInvoice, this.emitAndStopSpinner.bind(this));
+            this.notifyInvoiceTeam();
+            this.notifyAllUsers();
+          } else this.emitAndStopSpinner();
+        }).bind(this)
+      );
     }
+    this.isFormDirty.next(false);
   }
 
   updateLastValues(): void {
@@ -531,7 +541,6 @@ export class InvoiceItemComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe((response) => {
           if (response) {
             this.registerInvoice();
-            this.submit.emit();
           }
           this.isDialogBlocked.next(false);
         });
