@@ -2552,11 +2552,13 @@
 </form>
 <button
   (click)="editing ? confirmationDialog() : registerInvoice()"
+  [nbSpinner]="isLoading"
   nbButton
   fullWidth
   status="primary"
   size="large"
-  [disabled]="!form.valid || isNotEdited()"
+  [ngStyle]="{ height: isLoading ? '48px' : 'auto' }"
+  [disabled]="!form.valid || isNotEdited() || isLoading"
 >
-  {{ editing ? 'Atualizar' : 'Cadastrar' }}
+  {{ isLoading ? '' : (editing ? 'Atualizar' : 'Cadastrar') }}
 </button>

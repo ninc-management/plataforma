@@ -56,11 +56,16 @@ export class InvoiceService implements OnDestroy {
       });
   }
 
-  editInvoice(invoice: Invoice): void {
+  editInvoice(invoice: Invoice, callback?: () => void): void {
     const req = {
       invoice: invoice,
     };
-    this.http.post('/api/invoice/update', req).pipe(take(1)).subscribe();
+    this.http
+      .post('/api/invoice/update', req)
+      .pipe(take(1))
+      .subscribe(() => {
+        if (callback) callback();
+      });
     this.submittedToEdit$.next();
   }
 
