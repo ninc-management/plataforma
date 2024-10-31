@@ -147,7 +147,6 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   dismiss(): void {
-    console.log('dismiss', this.isContractNotEdited$.getValue()());
     if (this.isFormDirty.value || !this.isContractNotEdited$.getValue()()) {
       this.dialogService
         .open(ConfirmationDialogComponent, {
