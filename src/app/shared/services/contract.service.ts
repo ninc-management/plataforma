@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { isAfter, isBefore } from 'date-fns';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqualWith } from 'lodash';
 import { BehaviorSubject, combineLatest, Observable, skipWhile, Subject } from 'rxjs';
 import { map, take, takeUntil } from 'rxjs/operators';
 
@@ -24,6 +24,7 @@ import {
   isWithinInterval,
   nfPercentage,
   nortanPercentage,
+  omitDeep,
   reviveDates,
 } from '../utils';
 import { ConfigService, EXPENSE_TYPES } from './config.service';
@@ -119,7 +120,6 @@ export class ContractService implements OnDestroy {
   private contracts$ = new BehaviorSubject<Contract[]>([]);
   private _isDataLoaded$ = new BehaviorSubject<boolean>(false);
 
-  edited$ = new Subject<void>();
   submittedToEdit$ = new Subject<void>();
   config: PlatformConfig = new PlatformConfig();
 
@@ -166,6 +166,18 @@ export class ContractService implements OnDestroy {
       .subscribe(() => this.onedrive.copyModelFolder(invoice));
   }
 
+  isEqual(c1: string | Contract | undefined, c2: string | Contract | undefined): boolean {
+    if (c1 == undefined || c2 == undefined) return false;
+    c1 = omitDeep(this.idToContract(c1), ['locals', 'statusHistory']);
+    c2 = omitDeep(this.idToContract(c2), ['locals', 'statusHistory']);
+    return isEqualWith(c1, c2, (value, other, key) => {
+      if (key == 'invoice') {
+        return this.invoiceService.isEqual(value, other);
+      }
+      return undefined;
+    });
+  }
+
   editContract(contract: Contract): void {
     contract.lastUpdate = new Date();
     const req = {
@@ -179,7 +191,6 @@ export class ContractService implements OnDestroy {
       .post('/api/contract/update', req)
       .pipe(take(1))
       .subscribe(() => {
-        this.edited$.next();
         if (contract.status === CONTRACT_STATOOS.CONCLUIDO && !isMoved && isOfType(Invoice, contract.invoice))
           this.onedrive.moveToConcluded(contract.invoice);
       });
@@ -200,7 +211,9 @@ export class ContractService implements OnDestroy {
       this.wsService
         .fromEvent('dbchange')
         .pipe(takeUntil(this.destroy$))
-        .subscribe((data: any) => handle(data, this.contracts$, 'contracts'));
+        .subscribe((data: any) => {
+          handle(data, this.contracts$, 'contracts');
+        });
     }
     return this.contracts$;
   }
@@ -624,11 +637,6 @@ export class ContractService implements OnDestroy {
       }
     }
     return latestDate;
-  }
-
-  isEqual(u1: string | Contract | undefined, u2: string | Contract | undefined): boolean {
-    if (u1 == undefined || u2 == undefined) return false;
-    return this.idToContract(u1)._id == this.idToContract(u2)._id;
   }
 
   openItems(type: CONTRACT_TRANSACTION_TYPES): Observable<ContractTransactionInfo[]> {

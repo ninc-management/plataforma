@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { cloneDeep, isEqual } from 'lodash';
-import { BehaviorSubject, combineLatest, map, Observable, of, skipWhile, Subject, take, takeUntil } from 'rxjs';
+import { cloneDeep } from 'lodash';
+import { BehaviorSubject, combineLatest, map, Observable, of, skipWhile, Subject, take } from 'rxjs';
 
 import { LocalDataSource } from 'app/@theme/components/smart-table/lib/data-source/local/local.data-source';
 import { ConfigService } from 'app/shared/services/config.service';
@@ -19,15 +19,7 @@ import {
   sumMoney,
   toPercentage,
 } from 'app/shared/string-utils';
-import {
-  formatDate,
-  idToProperty,
-  isPhone,
-  nfPercentage,
-  nortanPercentage,
-  omitDeep,
-  trackByIndex,
-} from 'app/shared/utils';
+import { formatDate, idToProperty, isPhone, nfPercentage, nortanPercentage, trackByIndex } from 'app/shared/utils';
 
 import { Contract } from '@models/contract';
 import { Invoice, InvoiceTeamMember, InvoiceTeamMemberLocals } from '@models/invoice';
@@ -45,7 +37,7 @@ export class DataTabComponent implements OnInit {
   private destroy$ = new Subject<void>();
   @Input() contract: Contract = new Contract();
   @Input() clonedContract: Contract = new Contract();
-  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @Input() isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
   @ViewChild('form') ngForm: NgForm = {} as NgForm;
 
   isEditionGranted = false;
@@ -101,18 +93,13 @@ export class DataTabComponent implements OnInit {
     this.applyDistribution();
   }
 
-  ngAfterViewInit() {
-    this.ngForm.statusChanges?.subscribe(() => {
-      if (this.ngForm.dirty) this.isFormDirty.next(true);
-    });
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   initializeData(): void {
+    this.isContractNotEdited$.next(this.isNotEdited.bind(this));
     combineLatest([this.configService.getConfig(), this.configService.isDataLoaded$])
       .pipe(
         skipWhile(([_, isConfigDataLoaded]) => !isConfigDataLoaded),
@@ -174,11 +161,6 @@ export class DataTabComponent implements OnInit {
     } else {
       this.authorSearch = '';
     }
-    this.contractService.edited$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      setTimeout(() => {
-        this.clonedContract.status = this.contract.status;
-      }, 100);
-    });
     if (this.clonedContract.ISS) {
       if (moneyToNumber(this.clonedContract.ISS) == 0) this.options.hasISS = false;
       else this.options.hasISS = true;
@@ -346,13 +328,10 @@ export class DataTabComponent implements OnInit {
         start: this.clonedContract.lastUpdate,
       });
     }
-    this.contract = cloneDeep(this.clonedContract);
-    if (!isEqual(this.contract.invoice, this.invoice)) this.invoiceService.editInvoice(this.invoice);
-    this.contractService.editContract(this.contract);
+    if (!this.invoiceService.isEqual(this.contract.invoice, this.invoice))
+      this.invoiceService.editInvoice(this.invoice);
+    this.contractService.editContract(this.clonedContract);
     this.ngForm.form.markAsPristine();
-    setTimeout(() => {
-      this.isFormDirty.next(false);
-    }, 10);
   }
 
   applyDistribution(): void {
@@ -368,7 +347,11 @@ export class DataTabComponent implements OnInit {
   }
 
   isNotEdited(): boolean {
-    return isEqual(omitDeep(this.contract, ['locals']), omitDeep(this.clonedContract, ['locals']));
+    let result = true;
+    if (this.contract.invoice) {
+      result = this.contractService.isEqual(this.contract, this.clonedContract);
+    }
+    return result;
   }
 
   onNewMemberSelected(event: User): void {

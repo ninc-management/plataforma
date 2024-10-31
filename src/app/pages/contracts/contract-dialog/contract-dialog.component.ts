@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
 import { NB_DOCUMENT, NbDialogRef, NbDialogService } from '@nebular/theme';
 import { cloneDeep } from 'lodash';
-import { combineLatest, map, skipWhile, Subject, take, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, skipWhile, Subject, take, takeUntil } from 'rxjs';
 
 import { PdfService } from 'app/pages/invoices/pdf.service';
 import { BaseDialogComponent } from 'app/shared/components/base-dialog/base-dialog.component';
@@ -50,6 +50,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
     _id: '0',
     __v: 0,
   };
+  isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
 
   isPhone = isPhone;
   idToProperty = idToProperty;
@@ -146,7 +147,7 @@ export class ContractDialogComponent extends BaseDialogComponent implements OnIn
   }
 
   dismiss(): void {
-    if (this.isFormDirty.value) {
+    if (this.isFormDirty.value || !this.isContractNotEdited$.getValue()()) {
       this.dialogService
         .open(ConfirmationDialogComponent, {
           context: {

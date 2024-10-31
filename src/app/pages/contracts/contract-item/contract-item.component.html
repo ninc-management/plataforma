@@ -1,19 +1,19 @@
 <nb-tabset fullWidth (changeTab)="getActiveTab($event)">
   <nb-tab tabTitle='Dados' tabIcon="info-outline">
     <ngx-data-tab
+      [isContractNotEdited$]="isContractNotEdited$"
       *ngIf="tabActive === TABS.DATA"
       [contract]="contract"
       [clonedContract]="clonedContract"
-      [isFormDirty]="isFormDirty"
     ></ngx-data-tab>
   </nb-tab>
   <nb-tab tabTitle='Gestão' [tabIcon]="contractIcon">
     <ngx-management-tab
+      [isContractNotEdited$]="isContractNotEdited$"
       *ngIf="tabActive === TABS.MANAGEMENT"
       [contract]="contract"
       [clonedContract]="clonedContract"
       [isDialogBlocked]="isDialogBlocked"
-      [isFormDirty]="isFormDirty"
     ></ngx-management-tab>
   </nb-tab>
   <nb-tab tabTitle='Balanço' [tabIcon]="scaleIcon">
