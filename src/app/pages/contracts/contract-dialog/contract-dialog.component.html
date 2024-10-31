@@ -167,8 +167,8 @@
           </nb-card-header>
           <nb-card-body>
             <ngx-contract-item
+              [isContractNotEdited$]="isContractNotEdited$"
               [isDialogBlocked]="isBlocked"
-              [isFormDirty]="isFormDirty"
               [contract]="contract"
               *ngIf="componentType == types.CONTRACT"
             ></ngx-contract-item>

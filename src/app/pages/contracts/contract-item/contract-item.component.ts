@@ -27,7 +27,7 @@ export class ContractItemComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   @Input() contract = new Contract();
   @Input() isDialogBlocked = new BehaviorSubject<boolean>(false);
-  @Input() isFormDirty = new BehaviorSubject<boolean>(false);
+  @Input() isContractNotEdited$: BehaviorSubject<() => boolean> = new BehaviorSubject<() => boolean>(() => true);
 
   TABS = TABS;
   tabActive = TABS.DATA;
