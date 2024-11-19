@@ -28,6 +28,13 @@ function port(port: string, fallback = '8080'): string {
   return !isNaN(+port) && +port >= 0 ? port : fallback;
 }
 
+export const mongooseOptions = {
+  autoIndex: false,
+  maxPoolSize: 250,
+  serverSelectionTimeoutMS: 15000,
+  connectTimeoutMS: 15000,
+};
+
 export function isUserAuthenticated(req, res, next): boolean {
   const urlCheck = req.url.split('/').filter((el) => el.length > 0);
   if (urlCheck.length > 0 && urlCheck[0] == 'api') {
@@ -126,9 +133,15 @@ export function createConnection(company: Company): mongoose.Connection {
   let connection = connectionPool[company._id];
   if (!connection) {
     connection = mongoose.createConnection(
-      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWD}@${company.uri}?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWD}@${company.uri}?retryWrites=true&w=majority`,
+      mongooseOptions
     );
     connectionPool[company._id] = connection;
+
+    connection.on('error', () => {
+      console.warn(`Mongoose ${company.companyName} database has been disconnected! Retrying in 2 seconds...`);
+      setTimeout(createConnection, 2000, company);
+    });
   }
   return connection;
 }

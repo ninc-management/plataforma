@@ -48,9 +48,11 @@ const io = require('socket.io')(server, {
 });
 
 const connMap = {};
+let connectedClients = 0;
 
 io.on('connection', (socket) => {
-  console.log('Nova conexao', socket.id, socket.client.conn.id);
+  connectedClients++;
+  console.log('Nova conexao', socket.id, '-- Usuários conectados: ', connectedClients);
 
   socket.on('company', async (id) => {
     await app.api.setCompanyDbWatcher(id);
@@ -58,8 +60,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    connectedClients--;
+    console.log('Encerrando conexao', socket.id, '-- Usuários conectados: ', connectedClients);
     if (connMap[socket.id]) {
-      console.log('Encerrando conexao', socket.id);
       connMap[socket.id].unsubscribe();
       delete connMap[socket.id];
     }
