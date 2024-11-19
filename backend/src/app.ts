@@ -30,7 +30,7 @@ import teamRoutes from './routes/team';
 import transactionRoutes from './routes/transaction';
 import userRoutes from './routes/user';
 import { SizeLimitedQueue } from './shared/sizeLimitedQueue';
-import { createConnection, isUserAuthenticated, overdueReceiptNotification } from './shared/util';
+import { createConnection, isUserAuthenticated, mongooseOptions, overdueReceiptNotification } from './shared/util';
 import { ChangeStream, ChangeStreamDocument } from 'mongodb';
 import CompanyModel, { Company } from './models/company';
 
@@ -43,18 +43,11 @@ class NortanAPI {
   constructor() {
     this.express = express();
 
-    // Connect to the database before starting the expresslication server.
-    const options = {
-      autoIndex: false,
-      maxPoolSize: 250,
-      serverSelectionTimeoutMS: 15000,
-      connectTimeoutMS: 15000,
-    };
-
+    // Connect to the database before starting the express application server.
     const connectWithRetry = () => {
       console.log('Trying to connect with database');
       mongoose
-        .connect(process.env.MONGODB_URI, options)
+        .connect(process.env.MONGODB_URI, mongooseOptions)
         .then(() => {
           this.dbWatchers$ = mongoose.connection.watch();
           console.log('Database connection ready!');
